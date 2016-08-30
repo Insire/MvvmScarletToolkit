@@ -25,7 +25,7 @@ namespace MvvmScarletToolkit
             return true;
         }
 
-        public void SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null, Action OnChanged)
+        public void SetValue<T>(ref T field, T value, Action OnChanged, [CallerMemberName]string propertyName = null)
         {
             if (SetValue(ref field, value, propertyName))
                 OnChanged();
