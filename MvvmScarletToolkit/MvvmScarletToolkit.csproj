@@ -47,6 +47,9 @@
     <Compile Include="Xaml\BindingProxy.cs" />
     <Compile Include="BusyStack.cs" />
     <Compile Include="BusyToken.cs" />
+    <Compile Include="Xaml\ConfigurableWindow\ConfigurableWindow.cs" />
+    <Compile Include="Xaml\ConfigurableWindow\ConfigurableWindowSettings.cs" />
+    <Compile Include="Xaml\ConfigurableWindow\IConfigurableWindowSettings.cs" />
     <Compile Include="Xaml\DebugConverter.cs" />
     <Compile Include="DispatcherFactory.cs" />
     <Compile Include="Observable\ObservableDictionary.cs" />
