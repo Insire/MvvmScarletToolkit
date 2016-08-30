@@ -23,7 +23,6 @@ namespace MvvmScarletToolkit
                 throw new ArgumentNullException(nameof(item), "can't serialze null");
 
             var serializer = new XmlSerializer(typeof(T));
-
             using (var writer = new StreamWriter(info.FullName))
                 serializer.Serialize(writer, item);
         }
@@ -66,7 +65,6 @@ namespace MvvmScarletToolkit
         public static string Save<T>(T item)
         {
             var serializer = new XmlSerializer(typeof(T));
-
             using (var textWriter = new StringWriter())
             {
                 serializer.Serialize(textWriter, item);
