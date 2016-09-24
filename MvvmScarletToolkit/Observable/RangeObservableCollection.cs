@@ -27,7 +27,7 @@ namespace MvvmScarletToolkit
                 Add(item);
 
             _suppressNotification = false;
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items));
         }
 
         public virtual void AddRange(IList<T> items)
@@ -41,7 +41,7 @@ namespace MvvmScarletToolkit
                 Add(item);
 
             _suppressNotification = false;
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items));
         }
 
         public virtual void RemoveRange(IEnumerable<T> items)
@@ -55,7 +55,7 @@ namespace MvvmScarletToolkit
                 Remove(item);
 
             _suppressNotification = false;
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items));
         }
 
         public virtual void RemoveRange(IList<T> items)
@@ -69,7 +69,7 @@ namespace MvvmScarletToolkit
                 Remove(item);
 
             _suppressNotification = false;
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items));
         }
     }
 }

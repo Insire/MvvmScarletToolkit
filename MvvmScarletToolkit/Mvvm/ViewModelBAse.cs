@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -8,7 +9,7 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
-    public class ViewModelBase : ObservableObject
+    public class ViewModelBase<T> : ObservableObject where T : ObservableObject
     {
         protected object _itemsLock;
 
@@ -31,12 +32,12 @@ namespace MvvmScarletToolkit
             get { return _busyStack; }
             private set { SetValue(ref _busyStack, value); }
         }
-        
-        private RangeObservableCollection<INotifyPropertyChanged> _items;
+
+        private RangeObservableCollection<T> _items;
         /// <summary>
         /// Contains all the UI relevant Models and notifies about changes in the collection and inside the Models themself
         /// </summary>
-        public RangeObservableCollection<INotifyPropertyChanged> Items
+        public RangeObservableCollection<T> Items
         {
             get { return _items; }
             private set { SetValue(ref _items, value); }
@@ -57,7 +58,7 @@ namespace MvvmScarletToolkit
             get { return Items.Count; }
         }
 
-        public INotifyPropertyChanged this[int index]
+        public T this[int index]
         {
             get { return Items[index]; }
         }
@@ -77,7 +78,7 @@ namespace MvvmScarletToolkit
         {
             _itemsLock = new object();
 
-            Items = new RangeObservableCollection<INotifyPropertyChanged>();
+            Items = new RangeObservableCollection<T>();
             Items.CollectionChanged += ItemsCollectionChanged;
 
             BusyStack = new BusyStack();
@@ -92,7 +93,7 @@ namespace MvvmScarletToolkit
 
         private void InitializeCommands()
         {
-            RemoveCommand = new RelayCommand<INotifyPropertyChanged>(Remove, CanRemove);
+            RemoveCommand = new RelayCommand<T>(Remove, CanRemove);
             ClearCommand = new RelayCommand(() => Clear(), CanClear);
         }
 
@@ -106,7 +107,7 @@ namespace MvvmScarletToolkit
             OnPropertyChanged(nameof(Count));
         }
 
-        public virtual void Add(INotifyPropertyChanged item)
+        public virtual void Add(T item)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
@@ -115,7 +116,7 @@ namespace MvvmScarletToolkit
                 Items.Add(item);
         }
 
-        public virtual void AddRange(IEnumerable<INotifyPropertyChanged> items)
+        public virtual void AddRange(IEnumerable<T> items)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
@@ -129,13 +130,13 @@ namespace MvvmScarletToolkit
             return Items != null;
         }
 
-        public void Remove(INotifyPropertyChanged item)
+        public void Remove(T item)
         {
             using (BusyStack.GetToken())
                 Items.Remove(item);
         }
 
-        public void RemoveRange(IEnumerable<INotifyPropertyChanged> items)
+        public void RemoveRange(IEnumerable<T> items)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
@@ -144,7 +145,16 @@ namespace MvvmScarletToolkit
                 Items.RemoveRange(items);
         }
 
-        protected virtual bool CanRemove(INotifyPropertyChanged item)
+        public void RemoveRange(IList items)
+        {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
+            using (BusyStack.GetToken())
+                Items.RemoveRange(items.Cast<T>());
+        }
+
+        protected virtual bool CanRemove(T item)
         {
             return CanClear() && item != null && Items.Contains(item);
         }
@@ -154,9 +164,14 @@ namespace MvvmScarletToolkit
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>
-        protected virtual bool CanRemoveRange(IEnumerable<INotifyPropertyChanged> items)
+        protected virtual bool CanRemoveRange(IEnumerable<T> items)
         {
             return CanClear() && items != null && items.Any(p => Items.Contains(p));
+        }
+
+        protected virtual bool CanRemoveRange(IList items)
+        {
+            return CanRemoveRange(items.Cast<T>());
         }
 
         public void Clear()

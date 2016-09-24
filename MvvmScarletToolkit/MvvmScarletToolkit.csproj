@@ -45,6 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Observable\PropertyObserver.cs" />
+    <Compile Include="Util\EventExtension.cs" />
+    <Compile Include="Util\Scene.cs" />
+    <Compile Include="Util\SceneChangedEvntArgs.cs" />
+    <Compile Include="Util\SceneViewModel.cs" />
     <Compile Include="Xaml\BindingProxy.cs" />
     <Compile Include="Mvvm\BusyStack.cs" />
     <Compile Include="Mvvm\BusyToken.cs" />
