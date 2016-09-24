@@ -18,17 +18,5 @@ namespace MvvmScarletToolkit
             get { return _name; }
             set { SetValue(ref _name, value); }
         }
-
-        private Guid _id;
-        public Guid ID
-        {
-            get { return _id; }
-            set { SetValue(ref _id, value); }
-        }
-
-        public Scene()
-        {
-            ID = Guid.NewGuid();
-        }
     }
 }

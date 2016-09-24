@@ -13,9 +13,13 @@ namespace MvvmScarletToolkit
     {
         protected object _itemsLock;
 
+        public EventHandler SelectionChanged;
+        public EventHandler SelectionChaging;
+
         private bool _isBusy;
         /// <summary>
-        /// Indicates if there is an operation running
+        /// Indicates if there is an operation running.
+        /// Modified by adding <see cref="BusyToken"/> to the <see cref="BusyStack"/> property
         /// </summary>
         public bool IsBusy
         {
@@ -31,6 +35,23 @@ namespace MvvmScarletToolkit
         {
             get { return _busyStack; }
             private set { SetValue(ref _busyStack, value); }
+        }
+
+        private T _selectedItem;
+        public virtual T SelectedItem
+        {
+            get { return _selectedItem; }
+            set
+            {
+                if (EqualityComparer<T>.Default.Equals(_selectedItem, value))
+                    return;
+
+                SelectionChaging?.Raise(this);
+                _selectedItem = value;
+                SelectionChanged?.Raise(this);
+
+                OnPropertyChanged();
+            }
         }
 
         private RangeObservableCollection<T> _items;
