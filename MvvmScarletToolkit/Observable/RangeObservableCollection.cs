@@ -94,7 +94,7 @@ namespace MvvmScarletToolkit
                 Remove(item);
 
             _suppressNotification = false;
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         public virtual void RemoveRange(IList<T> items)

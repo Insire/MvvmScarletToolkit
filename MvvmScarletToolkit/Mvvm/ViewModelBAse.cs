@@ -84,6 +84,7 @@ namespace MvvmScarletToolkit
             get { return Items[index]; }
         }
 
+        public ICommand RemoveRangeCommand { get; private set; }
         public ICommand RemoveCommand { get; private set; }
         public ICommand ClearCommand { get; private set; }
 
@@ -93,6 +94,21 @@ namespace MvvmScarletToolkit
             InitializeCommands();
 
             BindingOperations.EnableCollectionSynchronization(Items, _itemsLock);
+        }
+
+        public ViewModelBase(IList items) : this()
+        {
+            Items.AddRange(items);
+        }
+
+        public ViewModelBase(IList<T> items) : this()
+        {
+            Items.AddRange(items);
+        }
+
+        public ViewModelBase(IEnumerable<T> items) : this()
+        {
+            Items.AddRange(items);
         }
 
         private void InitializeProperties()
@@ -105,7 +121,7 @@ namespace MvvmScarletToolkit
             BusyStack = new BusyStack();
             BusyStack.CollectionChanged += BusyStackChanged;
 
-            using (View.DeferRefresh())
+            using (View?.DeferRefresh())
                 View = CollectionViewSource.GetDefaultView(Items);
 
             // initial Notification, so that UI recognizes the value
@@ -115,6 +131,7 @@ namespace MvvmScarletToolkit
         private void InitializeCommands()
         {
             RemoveCommand = new RelayCommand<T>(Remove, CanRemove);
+            RemoveRangeCommand = new RelayCommand<IList>(RemoveRange, CanRemoveRange);
             ClearCommand = new RelayCommand(() => Clear(), CanClear);
         }
 
@@ -138,6 +155,15 @@ namespace MvvmScarletToolkit
         }
 
         public virtual void AddRange(IEnumerable<T> items)
+        {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
+            using (BusyStack.GetToken())
+                Items.AddRange(items);
+        }
+
+        public virtual void AddRange(IList items)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
@@ -172,7 +198,7 @@ namespace MvvmScarletToolkit
                 throw new ArgumentNullException(nameof(items));
 
             using (BusyStack.GetToken())
-                Items.RemoveRange(items.Cast<T>());
+                Items.RemoveRange(items);
         }
 
         protected virtual bool CanRemove(T item)
@@ -192,7 +218,7 @@ namespace MvvmScarletToolkit
 
         protected virtual bool CanRemoveRange(IList items)
         {
-            return CanRemoveRange(items.Cast<T>());
+            return items == null ? false : CanRemoveRange(items.Cast<T>());
         }
 
         public void Clear()

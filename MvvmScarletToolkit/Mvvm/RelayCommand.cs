@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit
@@ -53,7 +54,7 @@ namespace MvvmScarletToolkit
         public RelayCommand(Action<T> execute, Predicate<T> canExecute)
         {
             if (execute == null)
-                throw new ArgumentNullException("execute");
+                throw new ArgumentNullException(nameof(execute));
 
             _execute = execute;
             _canExecute = canExecute;
@@ -61,7 +62,20 @@ namespace MvvmScarletToolkit
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute == null ? true : _canExecute((T)parameter);
+            if (_canExecute == null)
+                return true;
+
+            if (parameter == null && typeof(T).IsValueType)
+                return _canExecute.Invoke(default(T));
+
+
+            if (parameter == null || parameter is T)
+                return (_canExecute.Invoke((T)parameter));
+
+            //if(parameter == null || parameter is IList)
+            //    return (_canExecute.Invoke((IList)parameter));
+
+            return false;
         }
 
         public event EventHandler CanExecuteChanged
@@ -76,3 +90,4 @@ namespace MvvmScarletToolkit
         }
     }
 }
+

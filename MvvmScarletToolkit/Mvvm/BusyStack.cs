@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit
 
                 _items = value;
                 OnPropertyChanged(nameof(Items));
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset, _items));
             }
         }
 
@@ -43,7 +43,7 @@ namespace MvvmScarletToolkit
             var result = Items.TryTake(out token);
 
             if (result)
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove));
+                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, token));
 
             return result;
         }
@@ -54,7 +54,7 @@ namespace MvvmScarletToolkit
         public void Push(BusyToken token)
         {
             Items.Add(token);
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add));
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, token));
         }
 
         /// <summary>
@@ -62,8 +62,9 @@ namespace MvvmScarletToolkit
         /// </summary>
         public void Push()
         {
-            Items.Add(GetToken());
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add));
+            var token = GetToken();
+            Items.Add(token);
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, token));
         }
 
         public bool HasItems()

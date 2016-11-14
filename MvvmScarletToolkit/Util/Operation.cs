@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Util
 {
+    /// <summary>
+    /// base viewmodel for wrapping long running synchronous operations
+    /// </summary>
     public class Operation : ObservableObject
     {
         private Action _action;
@@ -63,6 +66,9 @@ namespace MvvmScarletToolkit.Util
         }
     }
 
+    /// <summary>
+    /// base viewmodel for wrapping long running synchronous operations
+    /// </summary>
     public class Operation<T> : ObservableObject
     {
         private Action<T> _action;

@@ -35,7 +35,6 @@ namespace MvvmScarletToolkit
             _canExecute = canExecuteEvaluator;
         }
         
-
         public bool CanExecute(object parameter)
         {
             return _task == null || _task.IsCompleted;
