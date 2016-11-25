@@ -1,113 +1,46 @@
-﻿<Window x:Class="DemoApp.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:DemoApp"
-        Title="MainWindow"
-        Width="525"
-        Height="350">
+﻿<toolkit:ConfigurableWindow x:Class="DemoApp.MainWindow"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:local="clr-namespace:DemoApp"
+                            xmlns:toolkit="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit"
+                            Title="MainWindow"
+                            Width="1025"
+                            Height="350">
+    <toolkit:ConfigurableWindow.Resources>
+        <local:SceneViewModel x:Key="ScenesViewModel" />
+    </toolkit:ConfigurableWindow.Resources>
 
-    <Window.Resources>
-        <local:ParentViewModel x:Key="vm" />
-    </Window.Resources>
-
-    <Grid Margin="4" DataContext="{StaticResource vm}">
+    <Grid DataContext="{StaticResource ScenesViewModel}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="4" />
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="4*" />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="4" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="4" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <ListBox x:Name="DemoItems"
-                     Grid.Row="0"
-                     ItemsSource="{Binding DemoItems.Items}"
-                     SelectedItem="{Binding DemoItems.SelectedItem}"
-                     SelectionMode="Extended">
+        <StackPanel Grid.Column="0" Orientation="Vertical">
+            <TextBlock>Navigation</TextBlock>
+            <ListBox x:Name="Scenes"
+                     ItemsSource="{Binding Items}"
+                     SelectionMode="Single">
                 <ListBox.ItemContainerStyle>
                     <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
                         <Setter Property="IsSelected" Value="{Binding IsSelected}" />
                     </Style>
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <DockPanel>
-                            <TextBlock Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}" />
-                        </DockPanel>
+                    <DataTemplate DataType="Scene">
+                        <TextBlock VerticalAlignment="Center" Text="{Binding DisplayName}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Button Margin="0,4"
-                        Command="{Binding DemoItems.AddCommand}"
-                        Content="New" />
-                <Button Margin="4"
-                        Command="{Binding DemoItems.RemoveRangeCommand}"
-                        CommandParameter="{Binding ElementName=DemoItems, Path=SelectedItems}"
-                        Content="Remove" />
-                <Button Margin="0,4"
-                        Command="{Binding DemoItems.ClearCommand}"
-                        Content="Clear" />
-            </StackPanel>
-        </Grid>
-        <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="4" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <ListBox x:Name="LogItems"
-                     Grid.Row="0"
-                     DockPanel.Dock="Top"
-                     ItemsSource="{Binding LogItems.Items}"
-                     SelectedItem="{Binding LogItems.SelectedItem}"
-                     SelectionMode="Extended">
-                <ListBox.ItemContainerStyle>
-                    <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
-                    </Style>
-                </ListBox.ItemContainerStyle>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Grid.IsSharedSizeScope="True">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="Col1" />
-                                <ColumnDefinition Width="*" MinWidth="4" />
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="Col2" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding CreatedOn, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Grid.Column="2" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" />
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Button Margin="0,4"
-                        Command="{Binding LogItems.AddCommand}"
-                        Content="New" />
-                <Button Margin="4"
-                        Command="{Binding LogItems.RemoveRangeCommand}"
-                        CommandParameter="{Binding ElementName=LogItems, Path=SelectedItems}"
-                        Content="Remove" />
-                <Button Margin="0,4"
-                        Command="{Binding LogItems.ClearCommand}"
-                        Content="Clear" />
-            </StackPanel>
-        </Grid>
-        
-        <Button Grid.Row="2"
-                Grid.Column="0"
-                Grid.ColumnSpan="3"
-                Content="AddLinked"
-                Margin="4"
-                Command="{Binding AddLinkedCommand}" />
+        </StackPanel>
+
+
+        <GridSplitter Grid.Column="1"
+                      Width="5"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Stretch" />
+
+        <ContentControl Grid.Column="2" Content="{Binding ElementName=Scenes, Path=SelectedItem.Content}" />
     </Grid>
-</Window>
+
+</toolkit:ConfigurableWindow>

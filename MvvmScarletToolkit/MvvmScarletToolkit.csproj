@@ -44,27 +44,28 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mvvm\AsyncRelayCommand.cs" />
-    <Compile Include="Observable\PropertyObserver.cs" />
-    <Compile Include="Util\EventExtension.cs" />
-    <Compile Include="Util\Navigation\Scene.cs" />
-    <Compile Include="Util\Operation.cs" />
-    <Compile Include="Xaml\BindingProxy.cs" />
-    <Compile Include="Mvvm\BusyStack.cs" />
-    <Compile Include="Mvvm\BusyToken.cs" />
-    <Compile Include="Xaml\ConfigurableWindow\ConfigurableWindow.cs" />
-    <Compile Include="Xaml\ConfigurableWindow\ConfigurableWindowSettings.cs" />
-    <Compile Include="Xaml\ConfigurableWindow\IConfigurableWindowSettings.cs" />
-    <Compile Include="Xaml\DebugConverter.cs" />
-    <Compile Include="Util\DispatcherFactory.cs" />
-    <Compile Include="Observable\ObservableDictionary.cs" />
-    <Compile Include="Observable\ObservableObject.cs" />
+    <Compile Include="Commands\AsyncRelayCommand.cs" />
+    <Compile Include="Interfaces\IIsBusy.cs" />
+    <Compile Include="Observables\PropertyObserver.cs" />
+    <Compile Include="Extensions\EventExtension.cs" />
+    <Compile Include="Observables\Navigation\Scene.cs" />
+    <Compile Include="Observables\Operation.cs" />
+    <Compile Include="UI\BindingProxy.cs" />
+    <Compile Include="Observables\BusyStack.cs" />
+    <Compile Include="Observables\BusyToken.cs" />
+    <Compile Include="UI\ConfigurableWindow\ConfigurableWindow.cs" />
+    <Compile Include="UI\ConfigurableWindow\ConfigurableWindowSettings.cs" />
+    <Compile Include="UI\ConfigurableWindow\IConfigurableWindowSettings.cs" />
+    <Compile Include="Converters\DebugConverter.cs" />
+    <Compile Include="DispatcherFactory.cs" />
+    <Compile Include="Observables\ObservableDictionary.cs" />
+    <Compile Include="Observables\ObservableObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Observable\RangeObservableCollection.cs" />
-    <Compile Include="Mvvm\RelayCommand.cs" />
-    <Compile Include="Mvvm\ViewModelBase.cs" />
+    <Compile Include="Observables\RangeObservableCollection.cs" />
+    <Compile Include="Commands\RelayCommand.cs" />
+    <Compile Include="Observables\ViewModelBase.cs" />
     <Compile Include="Xml\ObjectToXmlSerializer.cs" />
-    <Compile Include="Util\StringExtention.cs" />
+    <Compile Include="Extensions\StringExtention.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

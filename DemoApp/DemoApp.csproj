@@ -55,11 +55,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Default.xaml.cs">
+      <DependentUpon>Default.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Empty.xaml.cs">
+      <DependentUpon>Empty.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindowSettings.cs" />
     <Compile Include="ViewModel\DemoItem.cs" />
     <Compile Include="ViewModel\DemoItems.cs" />
     <Compile Include="ViewModel\LogItem.cs" />
     <Compile Include="ViewModel\LogItems.cs" />
     <Compile Include="ViewModel\ParentViewModel.cs" />
+    <Compile Include="ViewModel\SceneViewModel.cs" />
+    <Page Include="Default.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Empty.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

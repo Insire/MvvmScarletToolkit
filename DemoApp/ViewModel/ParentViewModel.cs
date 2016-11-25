@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Input;
 using MvvmScarletToolkit;
+using System.Collections.Generic;
 
 namespace DemoApp
 {
@@ -9,6 +10,7 @@ namespace DemoApp
     {
         private PropertyObserver<DemoItems> _demoItemsObserver;
         public ICommand AddLinkedCommand { get; private set; }
+        public ICommand AddRangeCommand { get; private set; }
 
         private DemoItems _demoItems;
         public DemoItems DemoItems
@@ -33,6 +35,7 @@ namespace DemoApp
             //_demoItemsObserver.RegisterHandler(item=>item.SelectedItem, p=>LogItems.Items.Where(logItem=>logItem.Message == p.))
 
             AddLinkedCommand = new RelayCommand(AddLinked, CanAddLink);
+            AddRangeCommand = new RelayCommand(AddRange, CanAddRange);
         }
 
         public void AddLinked()
@@ -43,6 +46,24 @@ namespace DemoApp
         }
 
         private bool CanAddLink()
+        {
+            return LogItems.Items != null
+                && DemoItems.Items != null;
+        }
+
+        public void AddRange()
+        {
+            var items = new List<string>();
+            for (var i = 0; i < 5; i++)
+            {
+                items.Add(Guid.NewGuid().ToString());
+            }
+
+            LogItems.AddRange(items.Select(p => new LogItem(p)));
+            DemoItems.AddRange(items.Select(p => new DemoItem(p)));
+        }
+
+        private bool CanAddRange()
         {
             return LogItems.Items != null
                 && DemoItems.Items != null;

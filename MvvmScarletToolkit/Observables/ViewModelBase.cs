@@ -9,12 +9,12 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
-    public class ViewModelBase<T> : ObservableObject where T : ObservableObject
+    public class ViewModelBase<T> : ObservableObject, IIsBusy where T : ObservableObject
     {
         protected object _itemsLock;
 
         public EventHandler SelectionChanged;
-        public EventHandler SelectionChaging;
+        public EventHandler SelectionChanging;
 
         private bool _isBusy;
         /// <summary>
@@ -46,7 +46,7 @@ namespace MvvmScarletToolkit
                 if (EqualityComparer<T>.Default.Equals(_selectedItem, value))
                     return;
 
-                SelectionChaging?.Raise(this);
+                SelectionChanging?.Raise(this);
                 _selectedItem = value;
                 SelectionChanged?.Raise(this);
 
@@ -155,15 +155,6 @@ namespace MvvmScarletToolkit
         }
 
         public virtual void AddRange(IEnumerable<T> items)
-        {
-            if (items == null)
-                throw new ArgumentNullException(nameof(items));
-
-            using (BusyStack.GetToken())
-                Items.AddRange(items);
-        }
-
-        public virtual void AddRange(IList items)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
