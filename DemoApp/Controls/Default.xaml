@@ -1,0 +1,117 @@
+﻿<UserControl x:Class="DemoApp.Default"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:DemoApp">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="4" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="4" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0" LastChildFill="True">
+                <TextBlock DockPanel.Dock="Top">DemoItems</TextBlock>
+                <ListBox x:Name="DemoItems"
+                         ItemsSource="{Binding DemoItems.Items}"
+                         SelectedItem="{Binding DemoItems.SelectedItem}"
+                         SelectionMode="Extended">
+                    <ListBox.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <TextBlock Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <Button Margin="0,4"
+                        Command="{Binding DemoItems.AddCommand}"
+                        Content="New" />
+                <Button Margin="4"
+                        Command="{Binding DemoItems.RemoveRangeCommand}"
+                        CommandParameter="{Binding ElementName=DemoItems, Path=SelectedItems}"
+                        Content="Remove" />
+                <Button Margin="0,4"
+                        Command="{Binding DemoItems.ClearCommand}"
+                        Content="Clear" />
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="4" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0" LastChildFill="True">
+                <TextBlock DockPanel.Dock="Top">LogItems</TextBlock>
+                <ListBox x:Name="LogItems"
+                         DockPanel.Dock="Top"
+                         ItemsSource="{Binding LogItems.Items}"
+                         SelectedItem="{Binding LogItems.SelectedItem}"
+                         SelectionMode="Extended">
+                    <ListBox.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Grid.IsSharedSizeScope="True">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Col1" />
+                                    <ColumnDefinition Width="*" MinWidth="4" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Col2" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding CreatedOn, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Grid.Column="2" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <Button Margin="0,4"
+                        Command="{Binding LogItems.AddCommand}"
+                        Content="New" />
+                <Button Margin="4"
+                        Command="{Binding LogItems.RemoveRangeCommand}"
+                        CommandParameter="{Binding ElementName=LogItems, Path=SelectedItems}"
+                        Content="Remove" />
+                <Button Margin="0,4"
+                        Command="{Binding LogItems.ClearCommand}"
+                        Content="Clear" />
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="2"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Orientation="Horizontal">
+            <Button Margin="4"
+                    Command="{Binding AddLinkedCommand}"
+                    Content="AddLinked" />
+
+            <Button Margin="4"
+                    Command="{Binding AddRangeCommand}"
+                    Content="AddRange" />
+        </StackPanel>
+
+    </Grid>
+</UserControl>

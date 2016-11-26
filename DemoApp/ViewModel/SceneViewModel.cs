@@ -22,6 +22,14 @@ namespace DemoApp
                     DisplayName = "No datacontext loading",
                     IsSelected = false,
                 },
+
+                new Scene
+                {
+                    Content = new ImagesView(),
+                    DisplayName = "async image loading",
+                    GetDataContext = ()=> new Images(),
+                    IsSelected = false,
+                },
             };
 
             AddRange(content);

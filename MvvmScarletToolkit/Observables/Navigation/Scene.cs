@@ -64,7 +64,7 @@ namespace MvvmScarletToolkit
 
         private void UpdateDataContext()
         {
-            if (!IsSelected || GetDataContext == null)
+            if (Content == null || !IsSelected || GetDataContext == null)
                 return;
 
             // while fetching the dataconext, we will switch IsBusy accordingly

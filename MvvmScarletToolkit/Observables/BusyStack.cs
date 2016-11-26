@@ -5,6 +5,28 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit
 {
+    /*
+     * Usage: 
+     * 
+     * using System.Collections.Specialized;
+     * 
+     * ctor:
+     * BusyStack = new BusyStack();
+     * BusyStack.CollectionChanged += BusyStackChanged;
+     * 
+     * private void BusyStackChanged(object sender, NotifyCollectionChangedEventArgs e)
+     * {
+     *      IsBusy = BusyStack.Items.Count > 0;
+     * }
+     * 
+     * using (var token = BusyStack.GetToken())
+     * {
+     *      run your operation here
+     * }
+     * 
+     * IIsBusy.cs can help here 
+     * 
+     */
     /// <summary>
     /// BusyStack will handle notifying a viewmodel on if actions are pending
     /// </summary>

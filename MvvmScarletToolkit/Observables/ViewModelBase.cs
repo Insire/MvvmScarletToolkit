@@ -96,11 +96,6 @@ namespace MvvmScarletToolkit
             BindingOperations.EnableCollectionSynchronization(Items, _itemsLock);
         }
 
-        public ViewModelBase(IList items) : this()
-        {
-            Items.AddRange(items);
-        }
-
         public ViewModelBase(IList<T> items) : this()
         {
             Items.AddRange(items);

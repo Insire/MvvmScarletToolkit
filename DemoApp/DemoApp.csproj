@@ -55,24 +55,33 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Default.xaml.cs">
+    <Compile Include="Controls\Default.xaml.cs">
       <DependentUpon>Default.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Empty.xaml.cs">
+    <Compile Include="Controls\Empty.xaml.cs">
       <DependentUpon>Empty.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ImagesView.xaml.cs">
+      <DependentUpon>ImagesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindowSettings.cs" />
     <Compile Include="ViewModel\DemoItem.cs" />
     <Compile Include="ViewModel\DemoItems.cs" />
+    <Compile Include="ViewModel\Image.cs" />
+    <Compile Include="ViewModel\Images.cs" />
     <Compile Include="ViewModel\LogItem.cs" />
     <Compile Include="ViewModel\LogItems.cs" />
     <Compile Include="ViewModel\ParentViewModel.cs" />
     <Compile Include="ViewModel\SceneViewModel.cs" />
-    <Page Include="Default.xaml">
+    <Page Include="Controls\Default.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Empty.xaml">
+    <Page Include="Controls\Empty.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ImagesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -121,6 +130,26 @@
       <Project>{d555c0fd-335d-4c64-b80b-8999e66402b8}</Project>
       <Name>MvvmScarletToolkit</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Death_to_Stock_Photography_RideorDie_8.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Moon_Color_Hypersaturated_Stars_900.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\wallhaven-245035.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\wallhaven-319605.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\wallhaven-401406.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\wallhaven-75354.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

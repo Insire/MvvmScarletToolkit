@@ -2,16 +2,27 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace MvvmScarletToolkit
 {
     public abstract class ObservableObject : INotifyPropertyChanged
     {
+        private SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (SynchronizationContext.Current == _synchronizationContext)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            else
+            {
+                //_synchronizationContext.Send(delegate { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }, null);
+                _synchronizationContext.Send(state=> PropertyChanged(this, new PropertyChangedEventArgs(propertyName)), null);
+            }
         }
 
         public bool SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null)

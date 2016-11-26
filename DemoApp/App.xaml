@@ -2,8 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:DemoApp"
+             xmlns:toolkit="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <toolkit:DebugConverter x:Key="DebugConverter" />
     </Application.Resources>
 </Application>
