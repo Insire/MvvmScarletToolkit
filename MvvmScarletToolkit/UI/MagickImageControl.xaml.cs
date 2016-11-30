@@ -1,4 +1,5 @@
 ﻿using GraphicsMagick;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -76,8 +77,13 @@ namespace MvvmScarletToolkit
 
         private async void MagickImageControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
+            if (IsBusy)
+                return;
+
             using (BusyStack.GetToken())
             {
+                CollectOldData(); 
+
                 try
                 {
                     Image = await AnalyzeContext(e);
@@ -122,17 +128,30 @@ namespace MvvmScarletToolkit
 
             return Task.Run(() =>
             {
-                using (var image = new MagickImage(path, settings))
+                using (var image = new MagickImage(path,settings))
                 {
                     if (image.Width < bounds.Width || image.Height < bounds.Height)
                         image.Resize(bounds);
 
                     var bitmapSource = image.ToBitmapSource();
                     bitmapSource.Freeze();
+                    
                     return bitmapSource;
                 }
             });
         }
+
+        private void CollectOldData()
+        {
+            // the bitmap source can stay quite a while in memory, for some reason...
+            // this forces it out of memory sooner
+            var oldValue = Image;
+
+            if (oldValue == null) // only call the garbage collector if there was actually an image loaded
+                return;
+
+            Image = default(BitmapSource);
+            GC.Collect();
+        }
     }
 }
-

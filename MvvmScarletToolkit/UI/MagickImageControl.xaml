@@ -226,14 +226,14 @@
         <ContentControl.Style>
             <Style TargetType="ContentControl">
                 <Style.Triggers>
-                <DataTrigger Binding="{Binding IsBusy, ElementName=This, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                    <Setter Property="Template" Value="{StaticResource IsBusy}" />
-                </DataTrigger>
+                    <DataTrigger Binding="{Binding IsBusy, ElementName=This, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                        <Setter Property="Template" Value="{StaticResource IsBusy}" />
+                    </DataTrigger>
 
-                <DataTrigger Binding="{Binding IsBusy, ElementName=This, UpdateSourceTrigger=PropertyChanged}" Value="False">
-                    <Setter Property="Template" Value="{StaticResource Display}" />
-                </DataTrigger>
-            </Style.Triggers>
+                    <DataTrigger Binding="{Binding IsBusy, ElementName=This, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                        <Setter Property="Template" Value="{StaticResource Display}" />
+                    </DataTrigger>
+                </Style.Triggers>
             </Style>
         </ContentControl.Style>
     </ContentControl>
