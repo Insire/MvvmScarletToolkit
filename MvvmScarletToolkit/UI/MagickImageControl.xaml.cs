@@ -77,17 +77,28 @@ namespace MvvmScarletToolkit
         private async void MagickImageControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             using (BusyStack.GetToken())
-                Image = await AnalyzeContext(e);
+            {
+                try
+                {
+                    Image = await AnalyzeContext(e);
+                }
+                catch (IOException)
+                {
+                    Image = default(BitmapSource);
+
+                    // this exception should be logged, instead of being ignored
+                }
+            }
         }
 
         private Task<BitmapSource> AnalyzeContext(DependencyPropertyChangedEventArgs e)
         {
             var path = e.NewValue as string;
-            if (!string.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(path) && File.Exists(path))
                 return LoadImage(path);
 
-            var info = e.NewValue as FileInfo;
-            if (info != null)
+            var info = e.NewValue as FileInfo; // info is not threadsafe, so only use it as datastore, dont use its methods
+            if (info != null && File.Exists(info.FullName))
                 return LoadImage(info);
 
             return Task.FromResult(default(BitmapSource));
@@ -105,11 +116,7 @@ namespace MvvmScarletToolkit
 
         private Task<BitmapSource> LoadImageInternal(string path)
         {
-            var settings = new MagickReadSettings
-            {
-                Format = MagickFormat.Jpeg,
-            };
-
+            var settings = MagickReadSettingsFactory.GetSettings(path);
             var bounds = new MagickGeometry(Screen.PrimaryScreen.Bounds);
             bounds.IgnoreAspectRatio = false;
 

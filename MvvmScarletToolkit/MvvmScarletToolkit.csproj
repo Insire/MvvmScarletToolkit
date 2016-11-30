@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Commands\AsyncRelayCommand.cs" />
     <Compile Include="Interfaces\IIsBusy.cs" />
+    <Compile Include="MagickReadSettingsFactory.cs" />
     <Compile Include="Observables\PropertyObserver.cs" />
     <Compile Include="Extensions\EventExtension.cs" />
     <Compile Include="Observables\Navigation\Scene.cs" />
