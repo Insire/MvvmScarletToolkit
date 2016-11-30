@@ -82,7 +82,7 @@ namespace MvvmScarletToolkit
 
             using (BusyStack.GetToken())
             {
-                CollectOldData(); 
+                CollectOldData();
 
                 try
                 {
@@ -128,14 +128,14 @@ namespace MvvmScarletToolkit
 
             return Task.Run(() =>
             {
-                using (var image = new MagickImage(path,settings))
+                using (var image = new MagickImage(path, settings))
                 {
                     if (image.Width < bounds.Width || image.Height < bounds.Height)
                         image.Resize(bounds);
 
                     var bitmapSource = image.ToBitmapSource();
                     bitmapSource.Freeze();
-                    
+
                     return bitmapSource;
                 }
             });
