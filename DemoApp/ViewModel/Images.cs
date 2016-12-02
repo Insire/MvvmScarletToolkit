@@ -5,8 +5,11 @@ namespace DemoApp
 {
     public class Images : ViewModelBase<Image>
     {
-        public Images()
+        public Images(bool filled = false)
         {
+            if (!filled)
+                return;
+
             var absolutePath = Path.GetFullPath(".");
             var resourcesFolder = "Resources";
 

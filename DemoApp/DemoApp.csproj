@@ -58,6 +58,9 @@
     <Compile Include="Controls\Default.xaml.cs">
       <DependentUpon>Default.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DragAndDrop.xaml.cs">
+      <DependentUpon>DragAndDrop.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Empty.xaml.cs">
       <DependentUpon>Empty.xaml</DependentUpon>
     </Compile>
@@ -72,8 +75,13 @@
     <Compile Include="ViewModel\LogItem.cs" />
     <Compile Include="ViewModel\LogItems.cs" />
     <Compile Include="ViewModel\ParentViewModel.cs" />
+    <Compile Include="ViewModel\ProcessingImagesViewModel.cs" />
     <Compile Include="ViewModel\SceneViewModel.cs" />
     <Page Include="Controls\Default.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DragAndDrop.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

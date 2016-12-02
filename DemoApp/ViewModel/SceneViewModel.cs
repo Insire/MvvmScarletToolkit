@@ -30,6 +30,14 @@ namespace DemoApp
                     GetDataContext = ()=> new Images(),
                     IsSelected = false,
                 },
+
+                new Scene
+                {
+                    Content = new DragAndDrop(),
+                    DisplayName = "async image dragging and dropping",
+                    GetDataContext = ()=> new ProcessingImagesViewModel(),
+                    IsSelected = false,
+                },
             };
 
             AddRange(content);

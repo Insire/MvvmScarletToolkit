@@ -12,14 +12,16 @@
 
     <Grid DataContext="{StaticResource ScenesViewModel}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0" Orientation="Vertical">
-            <TextBlock>Navigation</TextBlock>
+        <DockPanel Grid.Column="0" LastChildFill="True">
+            <TextBlock DockPanel.Dock="Top">Navigation</TextBlock>
             <ListBox x:Name="Scenes"
                      ItemsSource="{Binding Items}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                      SelectionMode="Single">
                 <ListBox.ItemContainerStyle>
                     <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
@@ -28,11 +30,13 @@
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="Scene">
-                        <TextBlock VerticalAlignment="Center" Text="{Binding DisplayName}" />
+                        <TextBlock HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding DisplayName}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-        </StackPanel>
+        </DockPanel>
 
 
         <GridSplitter Grid.Column="1"
