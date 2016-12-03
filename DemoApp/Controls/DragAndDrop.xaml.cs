@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using MvvmScarletToolkit;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -72,7 +73,6 @@ namespace DemoApp
                         vm.Target.Add(image);
                     }
                 }
-
             }
 
             e.Handled = true;
@@ -106,7 +106,6 @@ namespace DemoApp
                         vm.Source.Add(image);
                     }
                 }
-
             }
 
             e.Handled = true;

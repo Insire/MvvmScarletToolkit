@@ -3,7 +3,7 @@ using System.IO;
 
 namespace DemoApp
 {
-    public class Images : OrderableViewModelBase<Image>
+    public class Images : ViewModelBase<Image>
     {
         public Images(bool filled = false)
         {

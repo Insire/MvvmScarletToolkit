@@ -2,7 +2,7 @@
 
 namespace DemoApp
 {
-    public class Image : ObservableObject, IOrderable
+    public class Image : ObservableObject
     {
         private string _displayName;
         public string DisplayName
