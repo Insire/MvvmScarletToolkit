@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
-    public class ViewModelBase<T> : ObservableObject, IIsBusy where T : ObservableObject
+    public class ViewModelBase<T> : ObservableObject, IIsBusy where T : INotifyPropertyChanged
     {
         protected object _itemsLock;
 

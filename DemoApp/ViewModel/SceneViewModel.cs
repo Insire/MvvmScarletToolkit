@@ -27,7 +27,7 @@ namespace DemoApp
                 {
                     Content = new ImagesView(),
                     DisplayName = "async image loading",
-                    GetDataContext = ()=> new Images(),
+                    GetDataContext = ()=> new Images(true),
                     IsSelected = false,
                 },
 

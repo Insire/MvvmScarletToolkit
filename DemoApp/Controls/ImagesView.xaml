@@ -38,7 +38,28 @@
                       HorizontalAlignment="Center"
                       VerticalAlignment="Stretch" />
 
-        <toolkit:MagickImageControl Grid.Column="2" DataContext="{Binding ElementName=Images, Path=SelectedItem.Path, UpdateSourceTrigger=PropertyChanged}" />
+        <Grid Grid.Column="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <toolkit:MagickImageControl Grid.Row="0"
+                                        Grid.Column="0"
+                                        DataContext="{Binding ElementName=Images, Path=SelectedItem.Path, UpdateSourceTrigger=PropertyChanged}" />
+
+            <toolkit:MagickImageControl Grid.Row="2"
+                                        Grid.Column="2"
+                                        Width="100"
+                                        Height="100"
+                                        DataContext="{Binding ElementName=Images, Path=SelectedItem.Path, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
 
     </Grid>
 </UserControl>

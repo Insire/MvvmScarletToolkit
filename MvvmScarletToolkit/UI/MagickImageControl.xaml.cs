@@ -122,21 +122,24 @@ namespace MvvmScarletToolkit
 
         private Task<BitmapSource> LoadImageInternal(string path)
         {
-            var settings = MagickReadSettingsFactory.GetSettings(path);
-            var bounds = new MagickGeometry(Screen.PrimaryScreen.Bounds);
-            bounds.IgnoreAspectRatio = false;
-
             return Task.Run(() =>
             {
-                using (var image = new MagickImage(path, settings))
+                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    if (image.Width < bounds.Width || image.Height < bounds.Height)
-                        image.Resize(bounds);
+                    var settings = MagickReadSettingsFactory.GetSettings(path);
+                    var bounds = new MagickGeometry(Screen.PrimaryScreen.Bounds);
+                    bounds.IgnoreAspectRatio = false;
 
-                    var bitmapSource = image.ToBitmapSource();
-                    bitmapSource.Freeze();
+                    using (var image = new MagickImage(stream, settings))
+                    {
+                        if (image.Width < bounds.Width || image.Height < bounds.Height)
+                            image.Resize(bounds);
 
-                    return bitmapSource;
+                        var bitmapSource = image.ToBitmapSource();
+                        bitmapSource.Freeze();
+
+                        return bitmapSource;
+                    }
                 }
             });
         }

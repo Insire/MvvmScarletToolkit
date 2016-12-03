@@ -2,7 +2,7 @@
 
 namespace DemoApp
 {
-    public class Image : ObservableObject
+    public class Image : ObservableObject, IOrderable
     {
         private string _displayName;
         public string DisplayName
@@ -23,6 +23,13 @@ namespace DemoApp
         {
             get { return _isSelected; }
             set { SetValue(ref _isSelected, value); }
+        }
+
+        private int _sequence;
+        public int Sequence
+        {
+            get { return _sequence; }
+            set { SetValue(ref _sequence, value); }
         }
     }
 }
