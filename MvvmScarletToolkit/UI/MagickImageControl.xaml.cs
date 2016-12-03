@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.Caching;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -88,7 +89,7 @@ namespace MvvmScarletToolkit
                 {
                     Image = await AnalyzeContext(e);
                 }
-                catch (IOException)
+                catch (UnauthorizedAccessException)
                 {
                     Image = default(BitmapSource);
 
@@ -126,7 +127,7 @@ namespace MvvmScarletToolkit
             {
                 using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    var settings = MagickReadSettingsFactory.GetSettings(path);
+                    var settings = MagickReadSettingsFactory.GetSettings(stream);
                     var bounds = new MagickGeometry(Screen.PrimaryScreen.Bounds);
                     bounds.IgnoreAspectRatio = false;
 

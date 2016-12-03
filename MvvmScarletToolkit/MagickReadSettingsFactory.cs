@@ -22,13 +22,17 @@ namespace MvvmScarletToolkit
         {
             var info = new MagickImageInfo(stream);
 
-            return new MagickReadSettings
+            var settings = new MagickReadSettings
             {
                 Format = info.Format,
                 ColorSpace = info.ColorSpace,
                 Height = info.Height,
                 Width = info.Width,
             };
+
+            stream.Position = 0;
+
+            return settings;
         }
     }
 }
