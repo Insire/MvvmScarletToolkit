@@ -20,12 +20,12 @@ namespace MvvmScarletToolkit
                 dispatcher.BeginInvoke(action);
         }
 
-        public static void Invoke(Action<object> action, object[] parameter, DispatcherPriority priority = DispatcherPriority.Normal)
+        public static void Invoke<T>(Action<T> action, T parameter, DispatcherPriority priority = DispatcherPriority.Normal)
         {
             var dispatcher = GetDispatcher();
 
             if (dispatcher.CheckAccess())
-                action(parameter);
+                action?.Invoke(parameter);
             else
                 dispatcher.BeginInvoke(action, priority, parameter);
         }

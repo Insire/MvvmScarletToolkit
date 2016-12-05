@@ -89,11 +89,7 @@ namespace MvvmScarletToolkit
 
         private void InvokeOnChanged()
         {
-            var dispatcher = DispatcherFactory.GetDispatcher();
-            if (dispatcher.CheckAccess())
-                OnChanged?.Invoke(HasItems());
-            else
-                dispatcher.BeginInvoke(OnChanged, HasItems());
+            DispatcherFactory.Invoke(OnChanged, HasItems());
         }
     }
 }
