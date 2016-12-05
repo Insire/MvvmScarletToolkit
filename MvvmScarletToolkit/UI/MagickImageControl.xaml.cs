@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Runtime.Caching;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -68,12 +67,10 @@ namespace MvvmScarletToolkit
             InitializeComponent();
 
             BusyStack = new BusyStack();
-            BusyStack.CollectionChanged += BusyStack_Changed;
-        }
-
-        private void BusyStack_Changed(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            IsBusy = BusyStack.HasItems();
+            BusyStack.OnChanged = (hasItems) =>
+            {
+                IsBusy = hasItems;
+            };
         }
 
         private async void MagickImageControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -154,7 +151,7 @@ namespace MvvmScarletToolkit
             if (oldValue == null) // only call the garbage collector if there was actually an image loaded
                 return;
 
-            Image = default(BitmapSource);
+            Image = default(BitmapSource); // fancy way of setting the image to null
             GC.Collect();
         }
     }

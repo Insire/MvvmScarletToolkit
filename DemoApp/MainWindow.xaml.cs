@@ -2,7 +2,7 @@
 
 namespace DemoApp
 {
-    public partial class MainWindow
+    public partial class MainWindow : ConfigurableWindow
     {
         private IConfigurableWindowSettings _settings;
         public MainWindow()

@@ -30,7 +30,5 @@ namespace DemoApp
                     IsFirstRun = false;
             };
         }
-
-
     }
 }

@@ -37,17 +37,15 @@ namespace MvvmScarletToolkit.Util
         private Operation()
         {
             BusyStack = new BusyStack();
-            BusyStack.CollectionChanged += BusyStackChanged;
+            BusyStack.OnChanged = (hasItems) =>
+            {
+                IsBusy = hasItems;
+            };
         }
 
         public Operation(Action action) : this()
         {
             _action = action;
-        }
-
-        public virtual void BusyStackChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            IsBusy = BusyStack.HasItems();
         }
 
         public Task Execute(CancellationTokenSource source = default(CancellationTokenSource))
@@ -98,7 +96,10 @@ namespace MvvmScarletToolkit.Util
         private Operation()
         {
             BusyStack = new BusyStack();
-            BusyStack.CollectionChanged += BusyStackChanged;
+            BusyStack.OnChanged = (hasItems) =>
+            {
+                IsBusy = hasItems;
+            };
         }
 
         public Operation(Action<T> action) : this()

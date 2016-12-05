@@ -20,8 +20,8 @@ namespace DemoApp
 
         public ProcessingImagesViewModel()
         {
-            Source = new Images(true);
-            Target = new Images(false);
+            Source = ImageFactory.GetImages();
+            Target = new Images();
         }
     }
 }

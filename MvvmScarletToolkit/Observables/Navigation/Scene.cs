@@ -54,14 +54,14 @@ namespace MvvmScarletToolkit
         public Scene()
         {
             BusyStack = new BusyStack();
-            BusyStack.CollectionChanged += BusyStackChanged;
+            BusyStack.OnChanged = (hasItems) =>
+            {
+                IsBusy = hasItems;
+            };
         }
 
-        private void BusyStackChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            IsBusy = BusyStack.Items.Count > 0;
-        }
-
+        // TODO fiure out a way to call this async and still maintain order
+        // maybe blocking collection + cancellationtokensource
         private void UpdateDataContext()
         {
             if (Content == null || !IsSelected || GetDataContext == null)

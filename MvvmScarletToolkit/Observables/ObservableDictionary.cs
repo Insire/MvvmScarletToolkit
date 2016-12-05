@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 
 namespace MvvmScarletToolkit
 {
+    [Serializable]
     public class ObservableDictionary<TKey, TValue> : Dictionary<TKey, TValue> where TValue : ObservableObject, INotifyCollectionChanged
     {
         public event NotifyCollectionChangedEventHandler CollectionChanged;

@@ -1,7 +1,5 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Concurrent;
 
 namespace MvvmScarletToolkit
 {
@@ -12,12 +10,10 @@ namespace MvvmScarletToolkit
      * 
      * ctor:
      * BusyStack = new BusyStack();
-     * BusyStack.CollectionChanged += BusyStackChanged;
-     * 
-     * private void BusyStackChanged(object sender, NotifyCollectionChangedEventArgs e)
-     * {
-     *      IsBusy = BusyStack.Items.Count > 0;
-     * }
+     * BusyStack.OnChanged = (hasItems) =>
+     *      {
+     *          IsBusy = hasItems;
+     *      };
      * 
      * using (var token = BusyStack.GetToken())
      * {
@@ -30,24 +26,20 @@ namespace MvvmScarletToolkit
     /// <summary>
     /// BusyStack will handle notifying a viewmodel on if actions are pending
     /// </summary>
-    public class BusyStack : ObservableObject, INotifyCollectionChanged
+    public class BusyStack : ObservableObject
     {
         private ConcurrentBag<BusyToken> _items;
-
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
-
-        public ConcurrentBag<BusyToken> Items
+        protected ConcurrentBag<BusyToken> Items
         {
             get { return _items; }
-            set
-            {
-                if (EqualityComparer<ConcurrentBag<BusyToken>>.Default.Equals(value))
-                    return;
+            set { SetValue(ref _items, value, InvokeOnChanged); }
+        }
 
-                _items = value;
-                OnPropertyChanged(nameof(Items));
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset, _items));
-            }
+        private Action<bool> _onChanged;
+        public Action<bool> OnChanged
+        {
+            get { return _onChanged; }
+            set { SetValue(ref _onChanged, value); }
         }
 
         public BusyStack()
@@ -61,11 +53,11 @@ namespace MvvmScarletToolkit
         /// <returns></returns>
         public bool Pull()
         {
-            BusyToken token;
+            var token = default(BusyToken);
             var result = Items.TryTake(out token);
 
             if (result)
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, token));
+                InvokeOnChanged();
 
             return result;
         }
@@ -76,30 +68,14 @@ namespace MvvmScarletToolkit
         public void Push(BusyToken token)
         {
             Items.Add(token);
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, token));
-        }
 
-        /// <summary>
-        /// Adds a new <see cref="BusyToken"/> to the Stack
-        /// </summary>
-        public void Push()
-        {
-            var token = GetToken();
-            Items.Add(token);
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, token));
+            InvokeOnChanged();
         }
 
         public bool HasItems()
         {
-            return Items.Count > 0;
-        }
-
-        public BusyToken GetToken(Task task, TaskScheduler scheduler)
-        {
-            var token = new BusyToken(this);
-            token.TaskScheduler = scheduler;
-
-            return token;
+            var token = default(BusyToken);
+            return Items.TryPeek(out token);
         }
 
         /// <summary>
@@ -109,6 +85,15 @@ namespace MvvmScarletToolkit
         public BusyToken GetToken()
         {
             return new BusyToken(this);
+        }
+
+        private void InvokeOnChanged()
+        {
+            var dispatcher = DispatcherFactory.GetDispatcher();
+            if (dispatcher.CheckAccess())
+                OnChanged?.Invoke(HasItems());
+            else
+                dispatcher.BeginInvoke(OnChanged, HasItems());
         }
     }
 }

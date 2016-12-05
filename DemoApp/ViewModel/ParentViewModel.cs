@@ -1,14 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Windows.Input;
-using MvvmScarletToolkit;
+﻿using MvvmScarletToolkit;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace DemoApp
 {
-    public class ParentViewModel : ObservableObject
+    public class ParentViewModel : ObservableObject, IIsBusy
     {
-        private PropertyObserver<DemoItems> _demoItemsObserver;
         public ICommand AddLinkedCommand { get; private set; }
         public ICommand AddRangeCommand { get; private set; }
 
@@ -26,23 +26,47 @@ namespace DemoApp
             set { SetValue(ref _logItems, value); }
         }
 
-        public ParentViewModel()
+        private BusyStack _busyStack;
+        public BusyStack BusyStack
         {
-            DemoItems = new DemoItems();
-            LogItems = new LogItems();
-            // TODO
-            //_demoItemsObserver = new PropertyObserver<DemoItems>(DemoItems);
-            //_demoItemsObserver.RegisterHandler(item=>item.SelectedItem, p=>LogItems.Items.Where(logItem=>logItem.Message == p.))
-
-            AddLinkedCommand = new RelayCommand(AddLinked, CanAddLink);
-            AddRangeCommand = new RelayCommand(AddRange, CanAddRange);
+            get { return _busyStack; }
+            private set { SetValue(ref _busyStack, value); }
         }
 
-        public void AddLinked()
+        private bool _isBusy;
+        public bool IsBusy
         {
-            var timeStamp = DateTime.UtcNow.ToLongTimeString();
-            DemoItems.Items.Add(new DemoItem(timeStamp));
-            LogItems.Items.Add(new LogItem(timeStamp));
+            get { return _isBusy; }
+            private set { SetValue(ref _isBusy, value); }
+        }
+
+        public ParentViewModel()
+        {
+            BusyStack = new BusyStack();
+            BusyStack.OnChanged = (hasItems) =>
+              {
+                  IsBusy = hasItems;
+              };
+
+            DemoItems = new DemoItems();
+            LogItems = new LogItems();
+
+            AddLinkedCommand = new AsyncRelayCommand(AddLinked, CanAddLink);
+            AddRangeCommand = new AsyncRelayCommand(AddRange, CanAddRange);
+        }
+
+        public async Task AddLinked()
+        {
+            using (BusyStack.GetToken())
+            {
+                var result = await Task.Run(() =>
+                {
+                    return DateTime.UtcNow.ToLongTimeString();
+                });
+
+                DemoItems.Items.Add(new DemoItem(result));
+                LogItems.Items.Add(new LogItem(result));
+            }
         }
 
         private bool CanAddLink()
@@ -51,16 +75,24 @@ namespace DemoApp
                 && DemoItems.Items != null;
         }
 
-        public void AddRange()
+        public async Task AddRange()
         {
-            var items = new List<string>();
-            for (var i = 0; i < 5; i++)
+            using (BusyStack.GetToken())
             {
-                items.Add(Guid.NewGuid().ToString());
-            }
+                var result = await Task.Run(() =>
+                {
+                    var items = new List<string>();
+                    for (var i = 0; i < 5; i++)
+                    {
+                        items.Add(Guid.NewGuid().ToString());
+                    }
 
-            LogItems.AddRange(items.Select(p => new LogItem(p)));
-            DemoItems.AddRange(items.Select(p => new DemoItem(p)));
+                    return items;
+                });
+
+                LogItems.AddRange(result.Select(p => new LogItem(p)));
+                DemoItems.AddRange(result.Select(p => new DemoItem(p)));
+            }
         }
 
         private bool CanAddRange()

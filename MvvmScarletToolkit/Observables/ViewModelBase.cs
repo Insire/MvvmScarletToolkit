@@ -114,7 +114,10 @@ namespace MvvmScarletToolkit
             Items.CollectionChanged += ItemsCollectionChanged;
 
             BusyStack = new BusyStack();
-            BusyStack.CollectionChanged += BusyStackChanged;
+            BusyStack.OnChanged = (hasItems) =>
+            {
+                IsBusy = hasItems;
+            };
 
             using (View?.DeferRefresh())
                 View = CollectionViewSource.GetDefaultView(Items);
@@ -130,17 +133,12 @@ namespace MvvmScarletToolkit
             ClearCommand = new RelayCommand(() => Clear(), CanClear);
         }
 
-        public virtual void BusyStackChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            IsBusy = BusyStack.HasItems();
-        }
-
-        public virtual void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(Count));
         }
 
-        public virtual void Add(T item)
+        public void Add(T item)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
@@ -149,7 +147,7 @@ namespace MvvmScarletToolkit
                 Items.Add(item);
         }
 
-        public virtual void AddRange(IEnumerable<T> items)
+        public void AddRange(IEnumerable<T> items)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
