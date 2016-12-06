@@ -130,7 +130,7 @@ namespace MvvmScarletToolkit
 
                     using (var image = new MagickImage(stream, settings))
                     {
-                        if (image.Width < bounds.Width || image.Height < bounds.Height)
+                        if (image.Width > bounds.Width || image.Height > bounds.Height)
                             image.Resize(bounds);
 
                         var bitmapSource = image.ToBitmapSource();

@@ -7,9 +7,11 @@
                             Width="1025"
                             Height="350">
     <toolkit:ConfigurableWindow.Resources>
+        <!--  create an instance of Scenes which we can use as datacontext. its filled on creation with static data  -->
         <local:Scenes x:Key="ScenesViewModel" />
     </toolkit:ConfigurableWindow.Resources>
 
+    <!--  set the datacontext to the ScenesViewModel  -->
     <Grid DataContext="{StaticResource ScenesViewModel}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -18,11 +20,14 @@
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Column="0" LastChildFill="True">
             <TextBlock DockPanel.Dock="Top">Navigation</TextBlock>
+
+            <!--  display the Scenes inside the ScenesViewModel in a ListBox  -->
             <ListBox x:Name="Scenes"
                      ItemsSource="{Binding Items}"
                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      SelectionMode="Single">
+                <!--  sync the IsSelected property of the ListBoxItem to the SceneViewModel.IsSelected  -->
                 <ListBox.ItemContainerStyle>
                     <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
                         <Setter Property="IsSelected" Value="{Binding IsSelected}" />
@@ -38,12 +43,12 @@
             </ListBox>
         </DockPanel>
 
-
         <GridSplitter Grid.Column="1"
                       Width="5"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Stretch" />
 
+        <!--  fill a contentcontrol with the content from the selected scene  -->
         <ContentControl Grid.Column="2" Content="{Binding ElementName=Scenes, Path=SelectedItem.Content}" />
     </Grid>
 
