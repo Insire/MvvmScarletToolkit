@@ -6,21 +6,16 @@ namespace MvvmScarletToolkit
     /*
      * Usage: 
      * 
-     * using System.Collections.Specialized;
-     * 
      * ctor:
      * BusyStack = new BusyStack();
-     * BusyStack.OnChanged = (hasItems) =>
-     *      {
-     *          IsBusy = hasItems;
-     *      };
+     * BusyStack.OnChanged = (hasItems) => IsBusy = hasItems;
+
      * 
      * using (var token = BusyStack.GetToken())
      * {
      *      run your operation here
      * }
      * 
-     * IIsBusy.cs can help here 
      * 
      */
     /// <summary>

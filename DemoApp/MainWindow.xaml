@@ -7,7 +7,7 @@
                             Width="1025"
                             Height="350">
     <toolkit:ConfigurableWindow.Resources>
-        <local:SceneViewModel x:Key="ScenesViewModel" />
+        <local:Scenes x:Key="ScenesViewModel" />
     </toolkit:ConfigurableWindow.Resources>
 
     <Grid DataContext="{StaticResource ScenesViewModel}">

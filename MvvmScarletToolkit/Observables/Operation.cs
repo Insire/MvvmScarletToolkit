@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Util
     /// base viewmodel for wrapping long running synchronous operations
     /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! still in progress
     /// </summary>
-    public class Operation : ObservableObject, IIsBusy
+    public class Operation : ObservableObject
     {
         private Action _action;
 

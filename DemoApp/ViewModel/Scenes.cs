@@ -1,10 +1,11 @@
 ﻿using MvvmScarletToolkit;
+using System.ComponentModel;
 
 namespace DemoApp
 {
-    public class SceneViewModel : ViewModelBase<Scene>
+    public class Scenes : ViewModelBase<Scene>
     {
-        public SceneViewModel()
+        public Scenes()
         {
             var content = new[]
             {
@@ -40,7 +41,15 @@ namespace DemoApp
                 },
             };
 
-            AddRange(content);
+            using (BusyStack.GetToken())
+            {
+                AddRange(content);
+
+                using (View.DeferRefresh())
+                {
+                    View.SortDescriptions.Add(new SortDescription(nameof(Scene.DisplayName), ListSortDirection.Ascending));
+                }
+            }
         }
     }
 }

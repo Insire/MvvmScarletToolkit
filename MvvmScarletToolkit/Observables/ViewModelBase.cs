@@ -9,7 +9,31 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
-    public class ViewModelBase<T> : ObservableObject, IIsBusy where T : INotifyPropertyChanged
+    /*
+     * Usage:
+     * 
+     * public class SomeViewModel : ViewModelBase<SomeModel>
+     * {
+     *      public SomeViewModel()
+     *      {
+     *          using (BusyStack.GetToken())
+     *          {
+     *              using (View.DeferRefresh())
+     *              {
+     *                  View.SortDescriptions.Add(new SortDescription(nameof(SomeModel.SomeProperty), ListSortDirection.Ascending));
+     *                  View.SortDescriptions.Add(new SortDescription(nameof(SomeModel.SomeOtherProperty), ListSortDirection.Ascending));
+     *              }
+     *          }
+     *      }
+     * }
+     * 
+     */
+
+    /// <summary>
+    /// A base class for abstracting away all the fundamental functionality for list based ViewModels
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public abstract class ViewModelBase<T> : ObservableObject where T : INotifyPropertyChanged
     {
         protected object _itemsLock;
 
@@ -31,7 +55,7 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// Provides IDisposable tokens for running async operations
         /// </summary>
-        public BusyStack BusyStack
+        protected BusyStack BusyStack
         {
             get { return _busyStack; }
             private set { SetValue(ref _busyStack, value); }
@@ -114,13 +138,9 @@ namespace MvvmScarletToolkit
             Items.CollectionChanged += ItemsCollectionChanged;
 
             BusyStack = new BusyStack();
-            BusyStack.OnChanged = (hasItems) =>
-            {
-                IsBusy = hasItems;
-            };
+            BusyStack.OnChanged = (hasItems) => IsBusy = hasItems;
 
-            using (View?.DeferRefresh())
-                View = CollectionViewSource.GetDefaultView(Items);
+            View = CollectionViewSource.GetDefaultView(Items);
 
             // initial Notification, so that UI recognizes the value
             OnPropertyChanged(nameof(Count));

@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace DemoApp
 {
-    public class ParentViewModel : ObservableObject, IIsBusy
+    public class ParentViewModel : ObservableObject
     {
         public ICommand AddLinkedCommand { get; private set; }
         public ICommand AddRangeCommand { get; private set; }

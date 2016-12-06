@@ -78,7 +78,7 @@
     <Compile Include="ViewModel\LogItems.cs" />
     <Compile Include="ViewModel\ParentViewModel.cs" />
     <Compile Include="ViewModel\ProcessingImagesViewModel.cs" />
-    <Compile Include="ViewModel\SceneViewModel.cs" />
+    <Compile Include="ViewModel\Scenes.cs" />
     <Page Include="Controls\Default.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Windows;
 
 namespace MvvmScarletToolkit
 {
-    public class Scene : ObservableObject, IIsBusy
+    public class Scene : ObservableObject
     {
         public Func<ObservableObject> GetDataContext { get; set; }
 
