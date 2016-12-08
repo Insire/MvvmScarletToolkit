@@ -36,31 +36,43 @@
                       HorizontalAlignment="Center"
                       VerticalAlignment="Stretch" />
 
-        <ListBox x:Name="TargetList"
-                 Grid.Column="2"
-                 AllowDrop="True"
-                 Drop="TargetList_Drop"
-                 ItemsSource="{Binding Target.Items}"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <DockPanel x:Name="TargetItem"
-                               Width="200"
-                               Height="200"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               GiveFeedback="Element_GiveFeedback"
-                               LastChildFill="True"
-                               MouseMove="Element_MouseMove">
-                        <toolkit:MagickImageControl DataContext="{Binding Path}" />
-                    </DockPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <DockPanel Grid.Column="2" LastChildFill="True">
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                <Button Margin="4"
+                        Command="{Binding Target.RemoveRangeCommand}"
+                        CommandParameter="{Binding ElementName=TargetList, Path=SelectedItems}"
+                        Content="Remove" />
+                <Button Margin="0,4"
+                        Command="{Binding Target.ClearCommand}"
+                        Content="Clear" />
+            </StackPanel>
+
+            <ListBox x:Name="TargetList"
+                     AllowDrop="True"
+                     Drop="TargetList_Drop"
+                     ItemsSource="{Binding Target.Items}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel x:Name="TargetItem"
+                                   Width="200"
+                                   Height="200"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   GiveFeedback="Element_GiveFeedback"
+                                   LastChildFill="True"
+                                   MouseMove="Element_MouseMove">
+                            <toolkit:MagickImageControl DataContext="{Binding Path}" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+
     </Grid>
 </UserControl>

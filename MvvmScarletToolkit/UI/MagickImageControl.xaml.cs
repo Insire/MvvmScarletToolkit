@@ -1,5 +1,6 @@
 ﻿using GraphicsMagick;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -13,6 +14,7 @@ namespace MvvmScarletToolkit
 {
     public partial class MagickImageControl : INotifyPropertyChanged
     {
+        private static ConcurrentDictionary<string, WeakReference<BitmapSource>> _inMemoryCache;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
@@ -62,15 +64,17 @@ namespace MvvmScarletToolkit
             }
         }
 
+        static MagickImageControl()
+        {
+            _inMemoryCache = new ConcurrentDictionary<string, WeakReference<BitmapSource>>();
+        }
+
         public MagickImageControl()
         {
             InitializeComponent();
 
             BusyStack = new BusyStack();
-            BusyStack.OnChanged = (hasItems) =>
-            {
-                IsBusy = hasItems;
-            };
+            BusyStack.OnChanged = (hasItems) => IsBusy = hasItems;
         }
 
         private async void MagickImageControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -80,8 +84,6 @@ namespace MvvmScarletToolkit
 
             using (BusyStack.GetToken())
             {
-                CollectOldData();
-
                 try
                 {
                     Image = await AnalyzeContext(e);
@@ -103,56 +105,58 @@ namespace MvvmScarletToolkit
 
             var info = e.NewValue as FileInfo; // info is not threadsafe, so only use it as datastore, dont use its methods
             if (info != null && File.Exists(info.FullName))
-                return LoadImage(info);
+                return LoadImage(info.FullName);
 
             return Task.FromResult(default(BitmapSource));
         }
 
         private Task<BitmapSource> LoadImage(string path)
         {
-            return LoadImageInternal(path);
-        }
-
-        private Task<BitmapSource> LoadImage(FileInfo info)
-        {
-            return LoadImageInternal(info.FullName);
-        }
-
-        private Task<BitmapSource> LoadImageInternal(string path)
-        {
             return Task.Run(() =>
             {
-                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                var source = default(BitmapSource);
+                var reference = default(WeakReference<BitmapSource>);
+
+                do
                 {
-                    var settings = MagickReadSettingsFactory.GetSettings(stream);
-                    var bounds = new MagickGeometry(Screen.PrimaryScreen.Bounds);
-                    bounds.IgnoreAspectRatio = false;
-
-                    using (var image = new MagickImage(stream, settings))
-                    {
-                        if (image.Width > bounds.Width || image.Height > bounds.Height)
-                            image.Resize(bounds);
-
-                        var bitmapSource = image.ToBitmapSource();
-                        bitmapSource.Freeze();
-
-                        return bitmapSource;
-                    }
+                    reference = GetFromCache(path);
                 }
+                while (!reference.TryGetTarget(out source));
+
+                return source;
             });
         }
 
-        private void CollectOldData()
+        private WeakReference<BitmapSource> GetFromCache(string path)
         {
-            // the bitmap source can stay quite a while in memory, for some reason...
-            // this forces it out of memory sooner
-            var oldValue = Image;
+            var factory = new Func<WeakReference<BitmapSource>>(() =>
+            {
+                var sourceInt = LoadImageInternal(path);
+                return new WeakReference<BitmapSource>(sourceInt);
+            });
 
-            if (oldValue == null) // only call the garbage collector if there was actually an image loaded
-                return;
+            return _inMemoryCache.GetOrAdd(path, factory());
+        }
 
-            Image = default(BitmapSource); // fancy way of setting the image to null
-            GC.Collect();
+        private BitmapSource LoadImageInternal(string path)
+        {
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                var settings = MagickReadSettingsFactory.GetSettings(stream);
+                var bounds = new MagickGeometry(Screen.PrimaryScreen.Bounds);
+                bounds.IgnoreAspectRatio = false;
+
+                using (var image = new MagickImage(stream, settings))
+                {
+                    if (image.Width > bounds.Width || image.Height > bounds.Height)
+                        image.Resize(bounds);
+
+                    var bitmapSource = image.ToBitmapSource();
+                    bitmapSource.Freeze();
+
+                    return bitmapSource;
+                }
+            }
         }
     }
 }
