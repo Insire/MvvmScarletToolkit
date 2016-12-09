@@ -1,8 +1,8 @@
 ﻿using GraphicsMagick;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -28,7 +28,7 @@ namespace MvvmScarletToolkit
             get { return _isBusy; }
             private set
             {
-                if (EqualityComparer<bool>.Default.Equals(_isBusy, value))
+                if (_isBusy == value)
                     return;
 
                 _isBusy = value;
@@ -42,7 +42,7 @@ namespace MvvmScarletToolkit
             get { return _busyStack; }
             private set
             {
-                if (EqualityComparer<BusyStack>.Default.Equals(_busyStack, value))
+                if (_busyStack == value)
                     return;
 
                 _busyStack = value;
@@ -56,7 +56,7 @@ namespace MvvmScarletToolkit
             get { return _image; }
             private set
             {
-                if (EqualityComparer<BitmapSource>.Default.Equals(_image, value))
+                if (_image == value)
                     return;
 
                 _image = value;
@@ -116,12 +116,15 @@ namespace MvvmScarletToolkit
             {
                 var source = default(BitmapSource);
                 var reference = default(WeakReference<BitmapSource>);
-
+                var success = false;
                 do
                 {
                     reference = GetFromCache(path);
+                    success = reference.TryGetTarget(out source);
+                    if (!success)
+                        _inMemoryCache.TryRemove(path,out reference);
                 }
-                while (!reference.TryGetTarget(out source));
+                while (!success);
 
                 return source;
             });
@@ -140,6 +143,7 @@ namespace MvvmScarletToolkit
 
         private BitmapSource LoadImageInternal(string path)
         {
+            Debug.WriteLine(path);
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 var settings = MagickReadSettingsFactory.GetSettings(stream);
