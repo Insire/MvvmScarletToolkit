@@ -15,6 +15,8 @@ namespace MvvmScarletToolkit
     public partial class MagickImageControl : INotifyPropertyChanged
     {
         private static ConcurrentDictionary<string, WeakReference<BitmapSource>> _inMemoryCache;
+        private readonly object _syncRoot = new object();
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
@@ -114,20 +116,33 @@ namespace MvvmScarletToolkit
         {
             return Task.Run(() =>
             {
-                var source = default(BitmapSource);
-                var reference = default(WeakReference<BitmapSource>);
-                var success = false;
-                do
+                if (_inMemoryCache.ContainsKey(path))
                 {
-                    reference = GetFromCache(path);
-                    success = reference.TryGetTarget(out source);
-                    if (!success)
-                        _inMemoryCache.TryRemove(path,out reference);
+                    lock (_syncRoot)
+                    {
+                        return LoadImageInternalFromCache(path);
+                    }
                 }
-                while (!success);
-
-                return source;
+                else
+                    return LoadImageInternalFromCache(path);
             });
+        }
+
+        private BitmapSource LoadImageInternalFromCache(string path)
+        {
+            var source = default(BitmapSource);
+            var reference = default(WeakReference<BitmapSource>);
+            var success = false;
+            do
+            {
+                reference = GetFromCache(path);
+                success = reference.TryGetTarget(out source);
+                if (!success)
+                    _inMemoryCache.TryRemove(path, out reference);
+            }
+            while (!success);
+
+            return source;
         }
 
         private WeakReference<BitmapSource> GetFromCache(string path)
