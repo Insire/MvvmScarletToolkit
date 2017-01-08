@@ -1,2 +1,2 @@
 # MvvmScarletToolkit
-MvvmScarletToolkit a bunch of classes that speedup the MVVM dev process
+MvvmScarletToolkit provides classes to speedup the MVVM development process
