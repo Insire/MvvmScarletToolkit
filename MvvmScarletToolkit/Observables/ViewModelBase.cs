@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -36,6 +37,7 @@ namespace MvvmScarletToolkit
     public abstract class ViewModelBase<T> : ObservableObject where T : INotifyPropertyChanged
     {
         protected object _itemsLock;
+        protected bool IsInDesignMode = DesignerProperties.GetIsInDesignMode(new DependencyObject());
 
         public EventHandler SelectionChanged;
         public EventHandler SelectionChanging;
@@ -158,7 +160,7 @@ namespace MvvmScarletToolkit
             OnPropertyChanged(nameof(Count));
         }
 
-        public void Add(T item)
+        public virtual void Add(T item)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
@@ -167,7 +169,7 @@ namespace MvvmScarletToolkit
                 Items.Add(item);
         }
 
-        public void AddRange(IEnumerable<T> items)
+        public virtual void AddRange(IEnumerable<T> items)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
