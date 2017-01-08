@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("MvvmScarletToolkit")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("MvvmScarletToolkit provides classes to speedup the MVVM development process")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("InsireCorp")]
 [assembly: AssemblyProduct("MvvmScarletToolkit")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
