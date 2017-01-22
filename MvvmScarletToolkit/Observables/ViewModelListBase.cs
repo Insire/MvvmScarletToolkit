@@ -183,13 +183,13 @@ namespace MvvmScarletToolkit
             return Items != null;
         }
 
-        public void Remove(T item)
+        public virtual void Remove(T item)
         {
             using (BusyStack.GetToken())
                 Items.Remove(item);
         }
 
-        public void RemoveRange(IEnumerable<T> items)
+        public virtual void RemoveRange(IEnumerable<T> items)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
@@ -198,7 +198,7 @@ namespace MvvmScarletToolkit
                 Items.RemoveRange(items);
         }
 
-        public void RemoveRange(IList items)
+        public virtual void RemoveRange(IList items)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
@@ -227,7 +227,7 @@ namespace MvvmScarletToolkit
             return items == null ? false : CanRemoveRange(items.Cast<T>());
         }
 
-        public void Clear()
+        public virtual void Clear()
         {
             using (BusyStack.GetToken())
                 Items.Clear();

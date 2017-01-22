@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace MvvmScarletToolkit
@@ -100,6 +101,11 @@ namespace MvvmScarletToolkit
 
             _suppressNotification = false;
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        public void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
