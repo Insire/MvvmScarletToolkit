@@ -2,7 +2,7 @@
 
 namespace DemoApp
 {
-    public class Images : ViewModelBase<Image>
+    public class Images : ViewModelListBase<Image>
     {
     }
 }

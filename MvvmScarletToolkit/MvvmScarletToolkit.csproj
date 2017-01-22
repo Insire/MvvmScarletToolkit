@@ -38,6 +38,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Caching" />
@@ -57,7 +58,6 @@
     <Compile Include="MagickReadSettingsFactory.cs" />
     <Compile Include="Observables\PropertyObserver.cs" />
     <Compile Include="Extensions\EventExtension.cs" />
-    <Compile Include="Observables\Navigation\Scene.cs" />
     <Compile Include="Observables\Operation.cs" />
     <Compile Include="UI\BindingProxy.cs" />
     <Compile Include="Observables\BusyStack.cs" />
@@ -72,7 +72,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Observables\RangeObservableCollection.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
-    <Compile Include="Observables\ViewModelBase.cs" />
+    <Compile Include="Observables\ViewModelListBase.cs" />
     <Compile Include="UI\MagickImageControl.xaml.cs">
       <DependentUpon>MagickImageControl.xaml</DependentUpon>
     </Compile>
@@ -87,9 +87,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

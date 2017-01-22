@@ -34,7 +34,7 @@ namespace MvvmScarletToolkit
     /// A base class for abstracting away all the fundamental functionality for list based ViewModels
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class ViewModelBase<T> : ObservableObject where T : INotifyPropertyChanged
+    public abstract class ViewModelListBase<T> : ObservableObject where T : INotifyPropertyChanged
     {
         protected object _itemsLock;
         protected bool IsInDesignMode = DesignerProperties.GetIsInDesignMode(new DependencyObject());
@@ -114,7 +114,7 @@ namespace MvvmScarletToolkit
         public ICommand RemoveCommand { get; private set; }
         public ICommand ClearCommand { get; private set; }
 
-        public ViewModelBase()
+        public ViewModelListBase()
         {
             InitializeProperties();
             InitializeCommands();
@@ -122,12 +122,12 @@ namespace MvvmScarletToolkit
             BindingOperations.EnableCollectionSynchronization(Items, _itemsLock);
         }
 
-        public ViewModelBase(IList<T> items) : this()
+        public ViewModelListBase(IList<T> items) : this()
         {
             Items.AddRange(items);
         }
 
-        public ViewModelBase(IEnumerable<T> items) : this()
+        public ViewModelListBase(IEnumerable<T> items) : this()
         {
             Items.AddRange(items);
         }

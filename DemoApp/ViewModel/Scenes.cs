@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace DemoApp
 {
-    public class Scenes : ViewModelBase<Scene>
+    public class Scenes : ViewModelListBase<Scene>
     {
         public Scenes()
         {

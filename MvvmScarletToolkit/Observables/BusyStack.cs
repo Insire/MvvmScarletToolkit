@@ -70,7 +70,7 @@ namespace MvvmScarletToolkit
         public bool HasItems()
         {
             var token = default(BusyToken);
-            return Items.TryPeek(out token);
+            return Items?.TryPeek(out token) ?? false;
         }
 
         /// <summary>

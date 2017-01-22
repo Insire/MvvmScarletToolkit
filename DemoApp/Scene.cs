@@ -1,12 +1,14 @@
-﻿using System;
+﻿using MvvmScarletToolkit;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     public class Scene : ObservableObject
     {
         public Func<ObservableObject> GetDataContext { get; set; }
+        public Func<string> GetDisplayName { get; set; }
 
         private BusyStack _busyStack;
         /// <summary>
@@ -47,16 +49,13 @@ namespace MvvmScarletToolkit
         public bool IsSelected
         {
             get { return _isSelected; }
-            set { SetValue(ref _isSelected, value, UpdateDataContext); }
+            set { SetValue(ref _isSelected, value, Changed: UpdateDataContext); }
         }
 
         public Scene()
         {
             BusyStack = new BusyStack();
-            BusyStack.OnChanged = (hasItems) =>
-            {
-                IsBusy = hasItems;
-            };
+            BusyStack.OnChanged = (hasItems) => IsBusy = hasItems;
         }
 
         // TODO fiure out a way to call this async and still maintain order

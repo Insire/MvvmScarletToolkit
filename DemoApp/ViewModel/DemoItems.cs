@@ -3,7 +3,7 @@ using MvvmScarletToolkit;
 
 namespace DemoApp
 {
-    public class DemoItems : ViewModelBase<DemoItem>
+    public class DemoItems : ViewModelListBase<DemoItem>
     {
         public ICommand AddCommand { get; private set; }
 

@@ -71,6 +71,7 @@
     </Compile>
     <Compile Include="ImageFactory.cs" />
     <Compile Include="MainWindowSettings.cs" />
+    <Compile Include="Scene.cs" />
     <Compile Include="ViewModel\DemoItem.cs" />
     <Compile Include="ViewModel\DemoItems.cs" />
     <Compile Include="ViewModel\Image.cs" />
