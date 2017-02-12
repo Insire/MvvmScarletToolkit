@@ -19,7 +19,7 @@ namespace MvvmScarletToolkit
 
             var drives = Environment.GetLogicalDrives()
                                     .Select(p => new DriveInfo(p))
-                                    .Select(p => new ScarletDrive(p))
+                                    .Select(p => new ScarletDrive(p, new FileSystemDepth(1)))
                                     .ToList();
             Drives.AddRange(drives);
         }

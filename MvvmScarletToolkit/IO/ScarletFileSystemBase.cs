@@ -44,6 +44,13 @@ namespace MvvmScarletToolkit
             set { SetValue(ref _isSelected, value); }
         }
 
+        private IDepth _depth;
+        public IDepth Depth
+        {
+            get { return _depth; }
+            protected set { SetValue(ref _depth, value); }
+        }
+
         protected ScarletFileSystemBase()
         {
             _busyStack = new BusyStack();

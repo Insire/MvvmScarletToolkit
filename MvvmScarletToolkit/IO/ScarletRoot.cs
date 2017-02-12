@@ -69,15 +69,27 @@ namespace MvvmScarletToolkit
             Children = new RangeObservableCollection<IFileSystemInfo>();
         }
 
-        public ScarletDrive(DriveInfo info) : this()
+        public ScarletDrive(DriveInfo info, IDepth depth) : this()
         {
-            Name = info.Name;
-            Length = info.TotalSize - info.TotalFreeSpace;
-            FreeSpace = info.TotalFreeSpace;
-            TotalSize = info.TotalSize;
-            DriveFormat = info.DriveFormat;
-            DriveType = info.DriveType;
-            VolumeLabel = info.VolumeLabel;
+            using (_busyStack.GetToken())
+            {
+                Depth = depth;
+                Depth.Depth++;
+
+                Name = info.Name;
+                Length = info.TotalSize - info.TotalFreeSpace;
+                FreeSpace = info.TotalFreeSpace;
+                TotalSize = info.TotalSize;
+                DriveFormat = info.DriveFormat;
+                DriveType = info.DriveType;
+                VolumeLabel = info.VolumeLabel;
+
+                if (Depth.CanLoad)
+                {
+                    Load();
+                    IsExpanded = true;
+                }
+            }
         }
 
         public override void Load()
@@ -87,9 +99,10 @@ namespace MvvmScarletToolkit
                 Clear();
                 var info = new DriveInfo(Name);
 
-                Children.AddRange(info.RootDirectory.GetChildren());
+                Children.AddRange(info.RootDirectory.GetChildren(Depth));
 
                 Length = Children.Sum(p => p.Length);
+                IsLoaded = true;
             }
         }
 

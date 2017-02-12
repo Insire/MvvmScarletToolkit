@@ -60,12 +60,20 @@ namespace MvvmScarletToolkit
             Children = new RangeObservableCollection<IFileSystemInfo>();
         }
 
-        public ScarletDirectory(DirectoryInfo info) : this()
+        public ScarletDirectory(DirectoryInfo info, IDepth depth) : this()
         {
             using (_busyStack.GetToken())
             {
+                Depth = depth;
+                Depth.Depth++;
                 Name = info.Name;
                 FullName = info.FullName;
+
+                if (Depth.CanLoad)
+                {
+                    Load();
+                    IsExpanded = true;
+                }
             }
         }
 
@@ -82,7 +90,7 @@ namespace MvvmScarletToolkit
                 LastWriteTimeUtc = info.LastWriteTimeUtc;
                 CreationTimeUtc = info.CreationTimeUtc;
 
-                Children.AddRange(FileSystemExtensions.GetChildren(this));
+                Children.AddRange(FileSystemExtensions.GetChildren(this, Depth));
 
                 Length = Children.Sum(p => p.Length);
 

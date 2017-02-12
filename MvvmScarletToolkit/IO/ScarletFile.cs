@@ -52,13 +52,25 @@ namespace MvvmScarletToolkit
             ClearCommand = new RelayCommand(Clear);
         }
 
-        public ScarletFile(FileInfo info) : this()
+        public ScarletFile(FileInfo info, IDepth depth) : this()
         {
-            if (info == null)
-                throw new ArgumentNullException(nameof(info));
+            using (_busyStack.GetToken())
+            {
+                if (info == null)
+                    throw new ArgumentNullException(nameof(info));
 
-            Name = info.Name;
-            FullName = info.FullName;
+                Depth = depth;
+                Depth.Depth++;
+
+                Name = info.Name;
+                FullName = info.FullName;
+
+                if (Depth.CanLoad)
+                {
+                    Load();
+                    IsExpanded = true;
+                }
+            }
         }
 
         public override void Load()

@@ -10,28 +10,28 @@ namespace MvvmScarletToolkit
 {
     public static class FileSystemExtensions
     {
-        public static List<IFileSystemInfo> GetChildren(this DirectoryInfo directory)
+        public static List<IFileSystemInfo> GetChildren(this DirectoryInfo directory, IDepth depth)
         {
             var result = new List<IFileSystemInfo>();
 
             if (!CanAccess(directory.FullName) && directory.DirectoryIsEmpty())
                 return result;
 
-            result.AddRange(GetDirectories(directory.FullName));
-            result.AddRange(GetFiles(directory.FullName));
+            result.AddRange(GetDirectories(directory.FullName,depth));
+            result.AddRange(GetFiles(directory.FullName, depth));
 
             return result;
         }
 
-        public static List<IFileSystemInfo> GetChildren(this IFileSystemDirectory directory)
+        public static List<IFileSystemInfo> GetChildren(this IFileSystemDirectory directory, IDepth depth)
         {
             var result = new List<IFileSystemInfo>();
 
             if (!CanAccess(directory.FullName) && directory.DirectoryIsEmpty())
                 return result;
 
-            result.AddRange(GetDirectories(directory.FullName));
-            result.AddRange(GetFiles(directory.FullName));
+            result.AddRange(GetDirectories(directory.FullName, depth));
+            result.AddRange(GetFiles(directory.FullName, depth));
 
             return result;
         }
@@ -51,14 +51,14 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private static List<ScarletDirectory>GetDirectories(string path)
+        private static List<IFileSystemInfo> GetDirectories(string path, IDepth depth)
         {
-            var result = new List<ScarletDirectory>();
+            var result = new List<IFileSystemInfo>();
             try
             {
                 var directories = Directory.GetDirectories(path)
                                             .Select(p => new DirectoryInfo(p))
-                                            .Select(p => new ScarletDirectory(p))
+                                            .Select(p => new ScarletDirectory(p, depth))
                                             .ToList();
 
                 result.AddRange(directories);
@@ -70,14 +70,14 @@ namespace MvvmScarletToolkit
             return result;
         }
 
-        private static List<ScarletFile> GetFiles(string path)
+        private static List<IFileSystemInfo> GetFiles(string path, IDepth depth)
         {
-            var result = new List<ScarletFile>();
+            var result = new List<IFileSystemInfo>();
             try
             {
                 var files = Directory.GetFiles(path)
                                         .Select(p => new FileInfo(p))
-                                        .Select(p => new ScarletFile(p))
+                                        .Select(p => new ScarletFile(p, depth))
                                                     .ToList();
 
                 result.AddRange(files);

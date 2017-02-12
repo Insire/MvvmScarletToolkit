@@ -59,10 +59,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\AsyncRelayCommand.cs" />
+    <Compile Include="IO\FileSystemDepth.cs" />
     <Compile Include="IO\FileSystemBrowser.cs" />
     <Compile Include="IO\FileSystemViewModel.cs" />
-    <Compile Include="IO\IFileSystemDirectory.cs" />
-    <Compile Include="IO\IFileSystemInfo.cs" />
+    <Compile Include="IO\Interfaces\IDepth.cs" />
+    <Compile Include="IO\Interfaces\IFileSystemDirectory.cs" />
+    <Compile Include="IO\Interfaces\IFileSystemInfo.cs" />
     <Compile Include="Extensions\FileSystemExtensions.cs" />
     <Compile Include="IO\ScarletDirectory.cs" />
     <Compile Include="IO\ScarletFile.cs" />
