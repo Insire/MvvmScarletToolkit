@@ -44,6 +44,10 @@
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -55,10 +59,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\AsyncRelayCommand.cs" />
+    <Compile Include="IO\FileSystemBrowser.cs" />
+    <Compile Include="IO\FileSystemViewModel.cs" />
+    <Compile Include="IO\IFileSystemDirectory.cs" />
+    <Compile Include="IO\IFileSystemInfo.cs" />
+    <Compile Include="Extensions\FileSystemExtensions.cs" />
+    <Compile Include="IO\ScarletDirectory.cs" />
+    <Compile Include="IO\ScarletFile.cs" />
+    <Compile Include="IO\ScarletFileSystemBase.cs" />
+    <Compile Include="IO\ScarletRoot.cs" />
     <Compile Include="MagickReadSettingsFactory.cs" />
     <Compile Include="Observables\PropertyObserver.cs" />
     <Compile Include="Extensions\EventExtension.cs" />
     <Compile Include="Observables\Operation.cs" />
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Compile Include="UI\BindingProxy.cs" />
     <Compile Include="Observables\BusyStack.cs" />
     <Compile Include="Observables\BusyToken.cs" />
