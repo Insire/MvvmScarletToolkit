@@ -1,4 +1,6 @@
-﻿using System.Windows.Input;
+﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
@@ -34,7 +36,7 @@ namespace MvvmScarletToolkit
         public bool IsExpanded
         {
             get { return _isExpanded; }
-            set { SetValue(ref _isExpanded, value, Changed: OnLoadingChanged); }
+            set { SetValue(ref _isExpanded, value); }
         }
 
         private bool _isSelected;
@@ -51,6 +53,13 @@ namespace MvvmScarletToolkit
             protected set { SetValue(ref _depth, value); }
         }
 
+        private ICollectionView _noFilesCollectionView;
+        public ICollectionView NoFilesCollectionView
+        {
+            get { return _noFilesCollectionView; }
+            protected set { SetValue(ref _noFilesCollectionView, value); }
+        }
+
         protected ScarletFileSystemBase()
         {
             _busyStack = new BusyStack();
@@ -61,8 +70,11 @@ namespace MvvmScarletToolkit
 
         protected virtual void OnLoadingChanged()
         {
-            if (IsLoaded)
+            if (!IsLoaded)
+            {
+                Debug.WriteLine("Loading");
                 Load();
+            }
         }
 
         public abstract void Load();
@@ -70,6 +82,11 @@ namespace MvvmScarletToolkit
         protected bool CanLoad()
         {
             return !IsBusy && !IsLoaded;
+        }
+
+        protected bool NoFilesFilter(object obj)
+        {
+            return !(obj is ScarletFile);
         }
     }
 }

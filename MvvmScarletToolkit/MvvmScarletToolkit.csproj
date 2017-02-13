@@ -69,7 +69,7 @@
     <Compile Include="IO\ScarletDirectory.cs" />
     <Compile Include="IO\ScarletFile.cs" />
     <Compile Include="IO\ScarletFileSystemBase.cs" />
-    <Compile Include="IO\ScarletRoot.cs" />
+    <Compile Include="IO\ScarletDrive.cs" />
     <Compile Include="MagickReadSettingsFactory.cs" />
     <Compile Include="Observables\PropertyObserver.cs" />
     <Compile Include="Extensions\EventExtension.cs" />

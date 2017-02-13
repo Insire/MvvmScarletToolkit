@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
@@ -58,6 +59,11 @@ namespace MvvmScarletToolkit
         private ScarletDirectory() : base()
         {
             Children = new RangeObservableCollection<IFileSystemInfo>();
+
+            NoFilesCollectionView = CollectionViewSource.GetDefaultView(Children);
+
+            using (NoFilesCollectionView.DeferRefresh())
+                NoFilesCollectionView.Filter = NoFilesFilter;
         }
 
         public ScarletDirectory(DirectoryInfo info, IDepth depth) : this()

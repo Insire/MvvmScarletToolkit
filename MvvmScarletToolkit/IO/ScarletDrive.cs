@@ -64,7 +64,7 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _children, value); }
         }
 
-        private ScarletDrive():base()
+        private ScarletDrive() : base()
         {
             Children = new RangeObservableCollection<IFileSystemInfo>();
         }
