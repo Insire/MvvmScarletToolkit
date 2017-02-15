@@ -64,16 +64,20 @@
     <Compile Include="IO\FileSystemViewModel.cs" />
     <Compile Include="IO\Interfaces\IDepth.cs" />
     <Compile Include="IO\Interfaces\IFileSystemDirectory.cs" />
+    <Compile Include="IO\Interfaces\IFileSystemDrive.cs" />
+    <Compile Include="IO\Interfaces\IFileSystemFile.cs" />
     <Compile Include="IO\Interfaces\IFileSystemInfo.cs" />
     <Compile Include="Extensions\FileSystemExtensions.cs" />
     <Compile Include="IO\ScarletDirectory.cs" />
     <Compile Include="IO\ScarletFile.cs" />
     <Compile Include="IO\ScarletFileSystemBase.cs" />
     <Compile Include="IO\ScarletDrive.cs" />
+    <Compile Include="IO\ScarletFileSystemContainerBase.cs" />
     <Compile Include="MagickReadSettingsFactory.cs" />
     <Compile Include="Observables\PropertyObserver.cs" />
     <Compile Include="Extensions\EventExtension.cs" />
     <Compile Include="Observables\Operation.cs" />
+    <Compile Include="UI\SelectedTreeViewItemBehavior.cs" />
     <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

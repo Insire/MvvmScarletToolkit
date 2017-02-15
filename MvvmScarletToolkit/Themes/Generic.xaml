@@ -5,26 +5,6 @@
 
     <local:DebugConverter x:Key="DebugConverter" />
 
-    <DataTemplate DataType="{x:Type local:ScarletDirectory}">
-        <ListBox ItemsSource="{Binding Children}" >
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                        <TextBlock Text="{Binding Name}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type local:ScarletDrive}">
-        <ListBox ItemsSource="{Binding Children}" >
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Name}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </DataTemplate>
-
     <Style x:Key="{x:Type local:FileSystemBrowser}" TargetType="{x:Type local:FileSystemBrowser}">
         <Style.Resources>
             <local:FileSystemViewModel x:Key="FileSystemViewModel" />
@@ -73,12 +53,13 @@
             </Style>
 
             <Style x:Key="{x:Type TreeViewItem}" TargetType="{x:Type TreeViewItem}">
-                <Setter Property="Background" Value="Transparent" />
                 <Setter Property="HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
                 <Setter Property="VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
+                <Setter Property="Background" Value="Transparent" />
                 <Setter Property="Padding" Value="1,0,0,0" />
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
                 <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}" />
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type TreeViewItem}">
@@ -92,26 +73,15 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <ToggleButton x:Name="Expander"
+
+                                <!--  Toggle  -->
+                                <ToggleButton x:Name="PART_Expander"
                                               ClickMode="Press"
-                                              Command="{Binding LoadCommand}"
-                                              IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <ToggleButton.Style>
-                                        <Style BasedOn="{StaticResource ExpandCollapseToggleStyle}" TargetType="{x:Type ToggleButton}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsLoaded}">
-                                                    <Setter Property="Visibility" Value="Hidden" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ToggleButton.Style>
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="Checked">
-                                            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
+                                              IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                              Style="{StaticResource ExpandCollapseToggleStyle}">
                                 </ToggleButton>
 
+                                <!--  Toggle Title  -->
                                 <Border Name="Bd"
                                         Grid.Column="1"
                                         Padding="{TemplateBinding Padding}"
@@ -120,15 +90,12 @@
                                         BorderThickness="{TemplateBinding BorderThickness}">
                                     <ContentPresenter x:Name="PART_Header"
                                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                      ContentSource="Header" >
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
-                                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
+                                                      ContentSource="Header">
                                     </ContentPresenter>
                                 </Border>
-                                <ItemsPresenter x:Name="ItemsHost"
+
+                                <!--  Children  -->
+                                <ItemsPresenter x:Name="PART_ItemsHost"
                                                 Grid.Row="1"
                                                 Grid.Column="1"
                                                 Grid.ColumnSpan="2" />
@@ -136,7 +103,7 @@
 
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsExpanded" Value="false">
-                                    <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+                                    <Setter TargetName="PART_ItemsHost" Property="Visibility" Value="Collapsed" />
                                 </Trigger>
                                 <MultiTrigger>
                                     <MultiTrigger.Conditions>
@@ -145,13 +112,29 @@
                                     </MultiTrigger.Conditions>
                                     <Setter TargetName="PART_Header" Property="MinWidth" Value="75" />
                                 </MultiTrigger>
+
+                                
+                                <DataTrigger Binding="{Binding IsContainer}" Value="true">
+                                    <Setter TargetName="PART_Expander" Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <!--<DataTrigger Binding="{Binding IsLoaded}" Value="false">
+                                    <Setter TargetName="PART_Expander" Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsLoaded}" Value="true">
+                                    <Setter TargetName="PART_Expander" Property="Visibility" Value="Hidden" />
+                                </DataTrigger>-->
+                                <DataTrigger Binding="{Binding IsContainer}" Value="false">
+                                    <Setter TargetName="PART_Expander" Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
                                 <MultiTrigger>
                                     <MultiTrigger.Conditions>
                                         <Condition Property="HasItems" Value="false" />
                                         <Condition Property="IsExpanded" Value="true" />
                                     </MultiTrigger.Conditions>
-                                    <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
+                                    <Setter TargetName="PART_Expander" Property="Visibility" Value="Hidden" />
                                 </MultiTrigger>
+                                
+                                
                                 <MultiTrigger>
                                     <MultiTrigger.Conditions>
                                         <Condition Property="HasHeader" Value="false" />
@@ -178,10 +161,25 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsContainer}" Value="true">
+                        <Setter Property="Visibility" Value="Visible" />
+                    </DataTrigger>
+
+                    <DataTrigger Binding="{Binding IsHidden}" Value="false">
+                        <Setter Property="Visibility" Value="Visible" />
+                    </DataTrigger>
+
+                    <DataTrigger Binding="{Binding IsContainer}" Value="false">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </DataTrigger>
+
+                    <DataTrigger Binding="{Binding IsHidden}" Value="true">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </DataTrigger>
+                </Style.Triggers>
             </Style>
         </Style.Resources>
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="IsTabStop" Value="False" />
@@ -191,7 +189,7 @@
                 <ControlTemplate TargetType="{x:Type local:FileSystemBrowser}">
                     <Grid Background="Transparent">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="0.5*" />
+                            <ColumnDefinition Width="0.4*" MinWidth="100" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
@@ -208,14 +206,17 @@
                                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                   ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <TreeView.Resources>
-                                <HierarchicalDataTemplate DataType="{x:Type local:ScarletDirectory}" ItemsSource="{Binding NoFilesCollectionView}">
-                                    <TextBlock Foreground="Green" Text="{Binding Name}" />
+                                <HierarchicalDataTemplate DataType="{x:Type local:ScarletDirectory}" ItemsSource="{Binding Children}">
+                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                                 </HierarchicalDataTemplate>
 
                                 <HierarchicalDataTemplate DataType="{x:Type local:ScarletDrive}" ItemsSource="{Binding Children}">
-                                    <TextBlock Foreground="Blue" Text="{Binding Name}" />
+                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                                 </HierarchicalDataTemplate>
                             </TreeView.Resources>
+                            <i:Interaction.Behaviors>
+                                <local:SelectedTreeViewItemBehavior SelectedItem="{Binding SelectedItem, Source={StaticResource FileSystemViewModel}, Mode=TwoWay}" />
+                            </i:Interaction.Behaviors>
                         </TreeView>
 
                         <GridSplitter x:Name="PART_GridSplitter"
@@ -232,26 +233,170 @@
                                     Grid.Column="0"
                                     Grid.ColumnSpan="2" />
 
-
                         <DockPanel Grid.Row="0"
                                    Grid.Column="2"
                                    LastChildFill="True">
                             <Grid DockPanel.Dock="Top">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="0.25*" />
+                                    <ColumnDefinition Width="5" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="5" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
                                 <!--  Nav and Filter  -->
-                                <TextBlock Grid.Column="0" />
-                                <TextBox Grid.Column="2" />
+                                <TextBlock Grid.Column="0" Text="Filter" />
+                                <TextBox Grid.Column="1"
+                                         Grid.ColumnSpan="2"
+                                         Text="{Binding Filter, Source={StaticResource FileSystemViewModel}, UpdateSourceTrigger=PropertyChanged, Delay=500, Mode=TwoWay}" />
+                                <ToggleButton Grid.Column="4" IsChecked="{Binding DisplayListView, Source={StaticResource FileSystemViewModel}}">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="{x:Type ToggleButton}">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsChecked" Value="true">
+                                                    <Setter Property="Content">
+                                                        <Setter.Value>
+                                                            <TextBlock Text="Tiles" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+
+                                                <Trigger Property="IsChecked" Value="false">
+                                                    <Setter Property="Content">
+                                                        <Setter.Value>
+                                                            <TextBlock Text="List" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
                             </Grid>
 
                             <!--  DetailView  -->
-                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                                <ContentPresenter Content="{Binding SelectedItem, ElementName=PART_TreeView}" />
-                            </ScrollViewer>
+                            <ContentControl Content="{Binding DisplayListView, Source={StaticResource FileSystemViewModel}}" DataContext="{StaticResource FileSystemViewModel}">
+                                <ContentControl.Style>
+                                    <Style TargetType="{x:Type ContentControl}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DisplayListView}" Value="True">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ContentControl}">
+                                                            <ContentPresenter Content="{Binding SelectedItem, Source={StaticResource FileSystemViewModel}, Mode=TwoWay}">
+                                                                <ContentPresenter.Resources>
+
+                                                                    <DataTemplate DataType="{x:Type local:ScarletFile}">
+                                                                        <TextBlock Text="{Binding Name}" />
+                                                                    </DataTemplate>
+
+                                                                    <DataTemplate DataType="{x:Type local:ScarletDirectory}">
+                                                                        <ListBox ItemsSource="{Binding DefaultCollectionView}" SelectionMode="Extended">
+                                                                            <ListBox.Resources>
+                                                                                <DataTemplate DataType="{x:Type local:ScarletDirectory}">
+                                                                                    <TextBlock Text="{Binding Name}" />
+                                                                                </DataTemplate>
+                                                                            </ListBox.Resources>
+                                                                        </ListBox>
+                                                                    </DataTemplate>
+
+                                                                    <DataTemplate DataType="{x:Type local:ScarletDrive}">
+                                                                        <ListBox ItemsSource="{Binding DefaultCollectionView}" SelectionMode="Extended">
+                                                                            <ListBox.Resources>
+                                                                                <DataTemplate DataType="{x:Type local:ScarletDirectory}">
+                                                                                    <TextBlock Text="{Binding Name}" />
+                                                                                </DataTemplate>
+                                                                            </ListBox.Resources>
+                                                                        </ListBox>
+                                                                    </DataTemplate>
+
+                                                                </ContentPresenter.Resources>
+                                                            </ContentPresenter>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+
+                                            <DataTrigger Binding="{Binding DisplayListView}" Value="False">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ContentControl}">
+                                                            <ContentPresenter Content="{Binding SelectedItem, Source={StaticResource FileSystemViewModel}, Mode=TwoWay}">
+                                                                <ContentPresenter.Resources>
+
+                                                                    <DataTemplate DataType="{x:Type local:ScarletFile}">
+                                                                        <DockPanel Width="100">
+                                                                            <TextBlock HorizontalAlignment="Center"
+                                                                                       DockPanel.Dock="Bottom"
+                                                                                       Text="{Binding Name}"
+                                                                                       TextTrimming="CharacterEllipsis" />
+                                                                            <Rectangle Width="66"
+                                                                                       Height="66"
+                                                                                       Fill="#777" />
+                                                                        </DockPanel>
+                                                                    </DataTemplate>
+
+                                                                    <DataTemplate DataType="{x:Type local:ScarletDirectory}">
+                                                                        <ListBox ItemsSource="{Binding DefaultCollectionView}"
+                                                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                                                 SelectionMode="Extended">
+                                                                            <ListBox.ItemsPanel>
+                                                                                <ItemsPanelTemplate>
+                                                                                    <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                                                                                </ItemsPanelTemplate>
+                                                                            </ListBox.ItemsPanel>
+                                                                            <ListBox.Resources>
+                                                                                <DataTemplate DataType="{x:Type local:ScarletDirectory}">
+                                                                                    <DockPanel Width="100">
+                                                                                        <TextBlock HorizontalAlignment="Center"
+                                                                                                   DockPanel.Dock="Bottom"
+                                                                                                   Text="{Binding Name}"
+                                                                                                   TextTrimming="CharacterEllipsis" />
+                                                                                        <Rectangle Width="66"
+                                                                                                   Height="66"
+                                                                                                   Fill="#777" />
+                                                                                    </DockPanel>
+                                                                                </DataTemplate>
+                                                                            </ListBox.Resources>
+                                                                        </ListBox>
+                                                                    </DataTemplate>
+
+                                                                    <DataTemplate DataType="{x:Type local:ScarletDrive}">
+                                                                        <ListBox ItemsSource="{Binding DefaultCollectionView}"
+                                                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                                                 SelectionMode="Extended">
+                                                                            <ListBox.ItemsPanel>
+                                                                                <ItemsPanelTemplate>
+                                                                                    <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                                                                                </ItemsPanelTemplate>
+                                                                            </ListBox.ItemsPanel>
+                                                                            <ListBox.Resources>
+                                                                                <DataTemplate DataType="{x:Type local:ScarletDirectory}">
+                                                                                    <DockPanel Width="100">
+                                                                                        <TextBlock HorizontalAlignment="Center"
+                                                                                                   DockPanel.Dock="Bottom"
+                                                                                                   Text="{Binding Name}"
+                                                                                                   TextTrimming="CharacterEllipsis" />
+                                                                                        <Rectangle Width="66"
+                                                                                                   Height="66"
+                                                                                                   Fill="#777" />
+                                                                                    </DockPanel>
+                                                                                </DataTemplate>
+                                                                            </ListBox.Resources>
+                                                                        </ListBox>
+                                                                    </DataTemplate>
+
+                                                                </ContentPresenter.Resources>
+                                                            </ContentPresenter>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ContentControl.Style>
+                            </ContentControl>
 
                         </DockPanel>
                     </Grid>

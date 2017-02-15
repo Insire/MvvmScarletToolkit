@@ -1,11 +1,19 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 
 namespace MvvmScarletToolkit
 {
     public class FileSystemViewModel : ObservableObject
     {
+        protected readonly BusyStack _busyStack;
+
+        private RangeObservableCollection<IFileSystemInfo> _selectedItems;
+        public RangeObservableCollection<IFileSystemInfo> SelectedItems
+        {
+            get { return _selectedItems; }
+            private set { SetValue(ref _selectedItems, value); }
+        }
+
         private RangeObservableCollection<ScarletDrive> _drives;
         public RangeObservableCollection<ScarletDrive> Drives
         {
@@ -13,15 +21,58 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _drives, value); }
         }
 
+        private ScarletFileSystemContainerBase _selectedItem;
+        public ScarletFileSystemContainerBase SelectedItem
+        {
+            get { return _selectedItem; }
+            set { SetValue(ref _selectedItem, value, Changed: OnSelectedItemChanged); }
+        }
+
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            private set { SetValue(ref _isBusy, value); }
+        }
+
+        private string _filter;
+        public string Filter
+        {
+            get { return _filter; }
+            set { SetValue(ref _filter, value, Changed: () => SelectedItem.OnFilterChanged(Filter)); }
+        }
+
+        private bool _displayListView;
+        public bool DisplayListView
+        {
+            get { return _displayListView; }
+            set { SetValue(ref _displayListView, value); }
+        }
+
         public FileSystemViewModel()
         {
-            Drives = new RangeObservableCollection<ScarletDrive>();
+            _busyStack = new BusyStack();
+            _busyStack.OnChanged += (hasItems) => IsBusy = hasItems;
 
-            var drives = Environment.GetLogicalDrives()
-                                    .Select(p => new DriveInfo(p))
-                                    .Select(p => new ScarletDrive(p, new FileSystemDepth(0)))
-                                    .ToList();
-            Drives.AddRange(drives);
+            using (_busyStack.GetToken())
+            {
+                DisplayListView = false;
+
+                Drives = new RangeObservableCollection<ScarletDrive>();
+                SelectedItems = new RangeObservableCollection<IFileSystemInfo>();
+
+                var drives = DriveInfo.GetDrives()
+                                        .Where(p => p.IsReady && p.DriveType != DriveType.CDRom && p.DriveType != DriveType.Unknown)
+                                        .Select(p => new ScarletDrive(p, new FileSystemDepth(0)))
+                                        .ToList();
+                Drives.AddRange(drives);
+            }
+        }
+
+        private void OnSelectedItemChanged()
+        {
+            SelectedItem.Load();
+            SelectedItem.LoadMetaData();
         }
     }
 }

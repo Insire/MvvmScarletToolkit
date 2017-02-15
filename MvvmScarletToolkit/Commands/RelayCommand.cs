@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit
@@ -17,18 +16,12 @@ namespace MvvmScarletToolkit
 
         public RelayCommand(Action methodToExecute)
         {
-            if (methodToExecute == null)
-                throw new ArgumentNullException(nameof(methodToExecute));
-
-            _execute = methodToExecute;
+            _execute = methodToExecute ?? throw new ArgumentNullException(nameof(methodToExecute));
         }
 
         public RelayCommand(Action methodToExecute, Func<bool> canExecuteEvaluator) : this(methodToExecute)
         {
-            if (canExecuteEvaluator == null)
-                throw new ArgumentNullException(nameof(canExecuteEvaluator));
-
-            _canExecute = canExecuteEvaluator;
+            _canExecute = canExecuteEvaluator ?? throw new ArgumentNullException(nameof(canExecuteEvaluator));
         }
 
         public bool CanExecute(object parameter)
@@ -53,10 +46,7 @@ namespace MvvmScarletToolkit
 
         public RelayCommand(Action<T> execute, Predicate<T> canExecute)
         {
-            if (execute == null)
-                throw new ArgumentNullException(nameof(execute));
-
-            _execute = execute;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
 
@@ -90,4 +80,3 @@ namespace MvvmScarletToolkit
         }
     }
 }
-

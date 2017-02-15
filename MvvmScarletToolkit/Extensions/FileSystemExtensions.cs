@@ -10,20 +10,7 @@ namespace MvvmScarletToolkit
 {
     public static class FileSystemExtensions
     {
-        public static List<IFileSystemInfo> GetChildren(this DirectoryInfo directory, IDepth depth)
-        {
-            var result = new List<IFileSystemInfo>();
-
-            if (!CanAccess(directory.FullName) && directory.DirectoryIsEmpty())
-                return result;
-
-            result.AddRange(GetDirectories(directory.FullName,depth));
-            result.AddRange(GetFiles(directory.FullName, depth));
-
-            return result;
-        }
-
-        public static List<IFileSystemInfo> GetChildren(this IFileSystemDirectory directory, IDepth depth)
+        public static List<IFileSystemInfo> GetChildren(this ScarletFileSystemContainerBase directory, IDepth depth)
         {
             var result = new List<IFileSystemInfo>();
 
@@ -45,8 +32,10 @@ namespace MvvmScarletToolkit
                 permission.Demand();
                 return true;
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
+                Debug.WriteLine($"{nameof(UnauthorizedAccessException)} occured during reading off {path}");
+                Debug.WriteLine(ex.Message);
                 return false;
             }
         }
@@ -58,14 +47,20 @@ namespace MvvmScarletToolkit
             {
                 var directories = Directory.GetDirectories(path)
                                             .Select(p => new DirectoryInfo(p))
+                                            .Where(p => p.Attributes.HasFlag(FileAttributes.Directory)
+                                                        && !p.Attributes.HasFlag(FileAttributes.Hidden)
+                                                        && !p.Attributes.HasFlag(FileAttributes.System)
+                                                        && !p.Attributes.HasFlag(FileAttributes.Offline)
+                                                        && !p.Attributes.HasFlag(FileAttributes.Encrypted))
                                             .Select(p => new ScarletDirectory(p, depth))
                                             .ToList();
 
                 result.AddRange(directories);
             }
-            catch(UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
                 Debug.WriteLine($"{nameof(UnauthorizedAccessException)} occured during reading off {path}");
+                Debug.WriteLine(ex.Message);
             }
             return result;
         }
@@ -77,27 +72,25 @@ namespace MvvmScarletToolkit
             {
                 var files = Directory.GetFiles(path)
                                         .Select(p => new FileInfo(p))
+                                        .Where(p => !p.Attributes.HasFlag(FileAttributes.Directory)
+                                                    && !p.Attributes.HasFlag(FileAttributes.Hidden)
+                                                    && !p.Attributes.HasFlag(FileAttributes.System)
+                                                    && !p.Attributes.HasFlag(FileAttributes.Offline)
+                                                    && !p.Attributes.HasFlag(FileAttributes.Encrypted))
                                         .Select(p => new ScarletFile(p, depth))
-                                                    .ToList();
+                                        .ToList();
 
                 result.AddRange(files);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
                 Debug.WriteLine($"{nameof(UnauthorizedAccessException)} occured during reading off {path}");
+                Debug.WriteLine(ex.Message);
             }
             return result;
         }
 
-        public static bool DirectoryIsEmpty(this IFileSystemDirectory info)
-        {
-            if (!Directory.Exists(info.FullName))
-                return false;
-
-            return DirectoryIsEmpty(info.FullName);
-        }
-
-        public static bool DirectoryIsEmpty(this DirectoryInfo info)
+        public static bool DirectoryIsEmpty(this ScarletFileSystemContainerBase info)
         {
             if (!Directory.Exists(info.FullName))
                 return false;

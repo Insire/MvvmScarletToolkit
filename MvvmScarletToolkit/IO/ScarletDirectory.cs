@@ -1,120 +1,26 @@
-﻿using System;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
-    public class ScarletDirectory : ScarletFileSystemBase, IFileSystemDirectory
+    [DebuggerDisplay("Directory: {Name} IsContainer: {IsContainer}")]
+    public class ScarletDirectory : ScarletFileSystemContainerBase, IFileSystemDirectory
     {
-        private string _name;
-        public string Name
-        {
-            get { return _name; }
-            private set { SetValue(ref _name, value); }
-        }
-
-        private string _fullName;
-        public string FullName
-        {
-            get { return _fullName; }
-            private set { SetValue(ref _fullName, value); }
-        }
-
-        private long _length;
-        public long Length
-        {
-            get { return _length; }
-            private set { SetValue(ref _length, value); }
-        }
-
-        private DateTime _lastWriteTimeUtc;
-        public DateTime LastWriteTimeUtc
-        {
-            get { return _lastWriteTimeUtc; }
-            private set { SetValue(ref _lastWriteTimeUtc, value); }
-        }
-
-        private DateTime _lastAccessTimeUtc;
-        public DateTime LastAccessTimeUtc
-        {
-            get { return _lastAccessTimeUtc; }
-            private set { SetValue(ref _lastAccessTimeUtc, value); }
-        }
-
-        private DateTime _creationTimeUtc;
-        public DateTime CreationTimeUtc
-        {
-            get { return _creationTimeUtc; }
-            private set { SetValue(ref _creationTimeUtc, value); }
-        }
-
-        private RangeObservableCollection<IFileSystemInfo> _children;
-        public RangeObservableCollection<IFileSystemInfo> Children
-        {
-            get { return _children; }
-            private set { SetValue(ref _children, value); }
-        }
-
-        private ScarletDirectory() : base()
-        {
-            Children = new RangeObservableCollection<IFileSystemInfo>();
-
-            NoFilesCollectionView = CollectionViewSource.GetDefaultView(Children);
-
-            using (NoFilesCollectionView.DeferRefresh())
-                NoFilesCollectionView.Filter = NoFilesFilter;
-        }
-
-        public ScarletDirectory(DirectoryInfo info, IDepth depth) : this()
+        public ScarletDirectory(DirectoryInfo info, IDepth depth) : base(info.Name, info.FullName, depth)
         {
             using (_busyStack.GetToken())
             {
-                Depth = depth;
-                Depth.Depth++;
-                Name = info.Name;
-                FullName = info.FullName;
-
-                if (Depth.CanLoad)
-                {
-                    Load();
-                    IsExpanded = true;
-                }
+                if (!Depth.IsMaxReached)
+                    Refresh();
             }
         }
 
-        public override void Load()
+        public override void LoadMetaData()
         {
-            using (_busyStack.GetToken())
-            {
-                Clear();
+            var info = new DirectoryInfo(FullName);
 
-                var info = new DirectoryInfo(FullName);
-
-                Exists = info.Exists;
-                LastAccessTimeUtc = info.LastAccessTime;
-                LastWriteTimeUtc = info.LastWriteTimeUtc;
-                CreationTimeUtc = info.CreationTimeUtc;
-
-                Children.AddRange(FileSystemExtensions.GetChildren(this, Depth));
-
-                Length = Children.Sum(p => p.Length);
-
-                IsLoaded = true;
-            }
-        }
-
-        private void Clear()
-        {
-            Children.Clear();
-
-            Length = 0;
-            Exists = false;
-            LastAccessTimeUtc = DateTime.MinValue;
-            LastWriteTimeUtc = DateTime.MinValue;
-            CreationTimeUtc = DateTime.MinValue;
-
-            IsLoaded = false;
+            Exists = info.Exists;
+            IsHidden = info.Attributes.HasFlag(FileAttributes.Hidden);
         }
     }
 }

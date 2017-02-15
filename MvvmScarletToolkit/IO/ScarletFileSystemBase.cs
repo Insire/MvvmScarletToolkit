@@ -1,15 +1,59 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
+﻿using System;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
-    public abstract class ScarletFileSystemBase : ObservableObject
+    public abstract class ScarletFileSystemBase : ObservableObject, IFileSystemInfo
     {
         protected readonly BusyStack _busyStack;
 
+        public static bool NoFilesFilter(object obj)
+        {
+            if (obj is IFileSystemFile)
+                return false;
+
+            return SearchFilter(obj);
+        }
+
+        public static bool SearchFilter(object obj)
+        {
+            var info = obj as IFileSystemInfo;
+
+            if (info == null)
+                return false;
+
+            if (info.IsHidden || info.IsBusy)
+                return false;
+
+            if (string.IsNullOrWhiteSpace(info.Filter))
+                return true;
+
+            return info.Name.ToLowerInvariant().Contains(info.Filter.ToLowerInvariant());
+        }
+
         public ICommand LoadCommand { get; protected set; }
-        public ICommand ClearCommand { get; protected set; }
+        public ICommand RefreshCommand { get; protected set; }
+
+        private string _name;
+        public string Name
+        {
+            get { return _name; }
+            protected set { SetValue(ref _name, value); }
+        }
+
+        private string _fullName;
+        public string FullName
+        {
+            get { return _fullName; }
+            protected set { SetValue(ref _fullName, value); }
+        }
+
+        private string _filter;
+        public string Filter
+        {
+            get { return _filter; }
+            set { SetValue(ref _filter, value); }
+        }
 
         private bool _exists;
         public bool Exists
@@ -29,14 +73,14 @@ namespace MvvmScarletToolkit
         public bool IsLoaded
         {
             get { return _isLoaded; }
-            set { SetValue(ref _isLoaded, value); }
+            protected set { SetValue(ref _isLoaded, value); }
         }
 
         private bool _isExpanded;
         public bool IsExpanded
         {
             get { return _isExpanded; }
-            set { SetValue(ref _isExpanded, value); }
+            set { SetValue(ref _isExpanded, value, Changed: OnExpandedChanged); }
         }
 
         private bool _isSelected;
@@ -46,6 +90,20 @@ namespace MvvmScarletToolkit
             set { SetValue(ref _isSelected, value); }
         }
 
+        private bool _isHidden;
+        public bool IsHidden
+        {
+            get { return _isHidden; }
+            protected set { SetValue(ref _isHidden, value); }
+        }
+
+        private bool _isContainer;
+        public bool IsContainer
+        {
+            get { return _isContainer; }
+            protected set { SetValue(ref _isContainer, value); }
+        }
+
         private IDepth _depth;
         public IDepth Depth
         {
@@ -53,40 +111,69 @@ namespace MvvmScarletToolkit
             protected set { SetValue(ref _depth, value); }
         }
 
-        private ICollectionView _noFilesCollectionView;
-        public ICollectionView NoFilesCollectionView
-        {
-            get { return _noFilesCollectionView; }
-            protected set { SetValue(ref _noFilesCollectionView, value); }
-        }
-
-        protected ScarletFileSystemBase()
+        private ScarletFileSystemBase()
         {
             _busyStack = new BusyStack();
             _busyStack.OnChanged += (hasItems) => IsBusy = hasItems;
 
             LoadCommand = new RelayCommand(Load, CanLoad);
+            RefreshCommand = new RelayCommand(Refresh, CanRefresh);
+
+            Exists = true;
+            IsHidden = false;
+            IsContainer = false;
         }
 
-        protected virtual void OnLoadingChanged()
+        protected ScarletFileSystemBase(string name, string fullName, IDepth depth) : this()
         {
-            if (!IsLoaded)
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentException($"{nameof(Name)} can't be empty.", nameof(Name));
+
+            if (string.IsNullOrEmpty(fullName))
+                throw new ArgumentException($"{nameof(FullName)} can't be empty.", nameof(FullName));
+
+            if (depth == null)
+                throw new ArgumentException($"{nameof(Depth)} can't be empty.", nameof(Depth));
+
+            using (_busyStack.GetToken())
             {
-                Debug.WriteLine("Loading");
-                Load();
+                Depth = depth;
+                Depth.Current++;
+
+                Name = name;
+                FullName = fullName;
             }
         }
 
-        public abstract void Load();
+        public void Load()
+        {
+            if (IsLoaded)
+                return;
+
+            Refresh();
+        }
+
+        public abstract void Refresh();
+        public abstract void LoadMetaData();
+        public abstract void OnFilterChanged(string filter);
 
         protected bool CanLoad()
         {
             return !IsBusy && !IsLoaded;
         }
 
-        protected bool NoFilesFilter(object obj)
+        protected bool CanRefresh()
         {
-            return !(obj is ScarletFile);
+            return !IsBusy;
+        }
+
+        private void OnExpandedChanged()
+        {
+            if (!IsBusy && !IsLoaded)
+            {
+                Load();
+                IsLoaded = true;
+            }
         }
     }
 }
