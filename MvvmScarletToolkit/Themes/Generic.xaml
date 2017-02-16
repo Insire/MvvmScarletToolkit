@@ -78,8 +78,7 @@
                                 <ToggleButton x:Name="PART_Expander"
                                               ClickMode="Press"
                                               IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
-                                              Style="{StaticResource ExpandCollapseToggleStyle}">
-                                </ToggleButton>
+                                              Style="{StaticResource ExpandCollapseToggleStyle}" />
 
                                 <!--  Toggle Title  -->
                                 <Border Name="Bd"
@@ -90,8 +89,7 @@
                                         BorderThickness="{TemplateBinding BorderThickness}">
                                     <ContentPresenter x:Name="PART_Header"
                                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                      ContentSource="Header">
-                                    </ContentPresenter>
+                                                      ContentSource="Header" />
                                 </Border>
 
                                 <!--  Children  -->
@@ -113,7 +111,7 @@
                                     <Setter TargetName="PART_Header" Property="MinWidth" Value="75" />
                                 </MultiTrigger>
 
-                                
+
                                 <DataTrigger Binding="{Binding IsContainer}" Value="true">
                                     <Setter TargetName="PART_Expander" Property="Visibility" Value="Visible" />
                                 </DataTrigger>
@@ -133,8 +131,8 @@
                                     </MultiTrigger.Conditions>
                                     <Setter TargetName="PART_Expander" Property="Visibility" Value="Hidden" />
                                 </MultiTrigger>
-                                
-                                
+
+
                                 <MultiTrigger>
                                     <MultiTrigger.Conditions>
                                         <Condition Property="HasHeader" Value="false" />
@@ -219,6 +217,7 @@
                             </i:Interaction.Behaviors>
                         </TreeView>
 
+                        <!--  Splitter  -->
                         <GridSplitter x:Name="PART_GridSplitter"
                                       Grid.Row="0"
                                       Grid.RowSpan="2"
@@ -295,7 +294,13 @@
                                                                         <ListBox ItemsSource="{Binding DefaultCollectionView}" SelectionMode="Extended">
                                                                             <ListBox.Resources>
                                                                                 <DataTemplate DataType="{x:Type local:ScarletDirectory}">
-                                                                                    <TextBlock Text="{Binding Name}" />
+                                                                                    <TextBlock Text="{Binding Name}">
+                                                                                        <TextBlock.InputBindings>
+                                                                                            <MouseBinding Command="{Binding SelectCommand, Source={StaticResource FileSystemViewModel}}"
+                                                                                                          CommandParameter="{Binding .}"
+                                                                                                          Gesture="LeftDoubleClick" />
+                                                                                        </TextBlock.InputBindings>
+                                                                                    </TextBlock>
                                                                                 </DataTemplate>
                                                                             </ListBox.Resources>
                                                                         </ListBox>
@@ -305,7 +310,13 @@
                                                                         <ListBox ItemsSource="{Binding DefaultCollectionView}" SelectionMode="Extended">
                                                                             <ListBox.Resources>
                                                                                 <DataTemplate DataType="{x:Type local:ScarletDirectory}">
-                                                                                    <TextBlock Text="{Binding Name}" />
+                                                                                    <TextBlock Text="{Binding Name}">
+                                                                                        <TextBlock.InputBindings>
+                                                                                            <MouseBinding Command="{Binding SelectCommand, Source={StaticResource FileSystemViewModel}}"
+                                                                                                          CommandParameter="{Binding .}"
+                                                                                                          Gesture="LeftDoubleClick" />
+                                                                                        </TextBlock.InputBindings>
+                                                                                    </TextBlock>
                                                                                 </DataTemplate>
                                                                             </ListBox.Resources>
                                                                         </ListBox>
@@ -349,6 +360,11 @@
                                                                             <ListBox.Resources>
                                                                                 <DataTemplate DataType="{x:Type local:ScarletDirectory}">
                                                                                     <DockPanel Width="100">
+                                                                                        <DockPanel.InputBindings>
+                                                                                            <MouseBinding Command="{Binding SelectCommand, Source={StaticResource FileSystemViewModel}}"
+                                                                                                          CommandParameter="{Binding .}"
+                                                                                                          Gesture="LeftDoubleClick" />
+                                                                                        </DockPanel.InputBindings>
                                                                                         <TextBlock HorizontalAlignment="Center"
                                                                                                    DockPanel.Dock="Bottom"
                                                                                                    Text="{Binding Name}"
@@ -374,6 +390,11 @@
                                                                             <ListBox.Resources>
                                                                                 <DataTemplate DataType="{x:Type local:ScarletDirectory}">
                                                                                     <DockPanel Width="100">
+                                                                                        <DockPanel.InputBindings>
+                                                                                            <MouseBinding Command="{Binding SelectCommand, Source={StaticResource FileSystemViewModel}}"
+                                                                                                          CommandParameter="{Binding .}"
+                                                                                                          Gesture="LeftDoubleClick" />
+                                                                                        </DockPanel.InputBindings>
                                                                                         <TextBlock HorizontalAlignment="Center"
                                                                                                    DockPanel.Dock="Bottom"
                                                                                                    Text="{Binding Name}"

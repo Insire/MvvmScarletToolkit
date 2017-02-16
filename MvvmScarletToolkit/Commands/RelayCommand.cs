@@ -16,12 +16,18 @@ namespace MvvmScarletToolkit
 
         public RelayCommand(Action methodToExecute)
         {
-            _execute = methodToExecute ?? throw new ArgumentNullException(nameof(methodToExecute));
+            if (methodToExecute == null)
+                throw new ArgumentException($"{nameof(methodToExecute)} can't be empty.", nameof(methodToExecute));
+
+            _execute = methodToExecute;
         }
 
         public RelayCommand(Action methodToExecute, Func<bool> canExecuteEvaluator) : this(methodToExecute)
         {
-            _canExecute = canExecuteEvaluator ?? throw new ArgumentNullException(nameof(canExecuteEvaluator));
+            if(canExecuteEvaluator== null)
+                throw new ArgumentException($"{nameof(canExecuteEvaluator)} can't be empty.", nameof(canExecuteEvaluator));
+
+            _canExecute = canExecuteEvaluator;
         }
 
         public bool CanExecute(object parameter)
@@ -46,7 +52,10 @@ namespace MvvmScarletToolkit
 
         public RelayCommand(Action<T> execute, Predicate<T> canExecute)
         {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            if (execute == null)
+                throw new ArgumentException($"{nameof(execute)} can't be empty.", nameof(execute));
+
+            _execute = execute;
             _canExecute = canExecute;
         }
 
@@ -58,12 +67,8 @@ namespace MvvmScarletToolkit
             if (parameter == null && typeof(T).IsValueType)
                 return _canExecute.Invoke(default(T));
 
-
             if (parameter == null || parameter is T)
                 return (_canExecute.Invoke((T)parameter));
-
-            //if(parameter == null || parameter is IList)
-            //    return (_canExecute.Invoke((IList)parameter));
 
             return false;
         }
