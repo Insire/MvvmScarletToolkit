@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
-    public abstract class ScarletFileSystemContainerBase : ScarletFileSystemBase
+    public abstract class ScarletFileSystemContainerBase : ScarletFileSystemBase, IFileSystemDirectory
     {
         private ICollectionView _noFilesCollectionView;
         public ICollectionView NoFilesCollectionView
@@ -27,7 +27,7 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _children, value); }
         }
 
-        protected ScarletFileSystemContainerBase(string name, string fullName, IDepth depth) : base(name, fullName, depth)
+        protected ScarletFileSystemContainerBase(string name, string fullName, IDepth depth, IFileSystemDirectory parent) : base(name, fullName, depth, parent)
         {
             using (_busyStack.GetToken())
             {

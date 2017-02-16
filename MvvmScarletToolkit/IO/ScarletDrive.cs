@@ -6,7 +6,7 @@ namespace MvvmScarletToolkit
     [DebuggerDisplay("Drive: {Name} IsContainer: {IsContainer}")]
     public class ScarletDrive : ScarletFileSystemContainerBase, IFileSystemDrive
     {
-        public ScarletDrive(DriveInfo info, IDepth depth) : base(info.Name, info.Name, depth)
+        public ScarletDrive(DriveInfo info, IDepth depth) : base(info.Name, info.Name, depth, null)
         {
             using (_busyStack.GetToken())
             {
@@ -17,6 +17,15 @@ namespace MvvmScarletToolkit
 
         public override void LoadMetaData()
         {
+        }
+
+        public override void Delete()
+        {
+        }
+
+        public override bool CanDelete()
+        {
+            return false;
         }
     }
 }

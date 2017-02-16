@@ -87,6 +87,8 @@ namespace MvvmScarletToolkit
                 return;
 
             SelectedItem = value;
+            SelectedItem.ExpandPath();
+            SelectedItem.Parent.IsSelected = true;
         }
 
         private bool CanSetSelectedItem(IFileSystemInfo item)

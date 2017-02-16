@@ -60,6 +60,7 @@
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
                 <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}" />
                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type TreeViewItem}">
@@ -128,12 +129,12 @@
 
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding IsLoaded}" Value="true"/>
-                                        <Condition Binding="{Binding HasContainers}" Value="false"/>
+                                        <Condition Binding="{Binding IsLoaded}" Value="true" />
+                                        <Condition Binding="{Binding HasContainers}" Value="false" />
                                     </MultiDataTrigger.Conditions>
                                     <Setter TargetName="PART_Expander" Property="Visibility" Value="Hidden" />
                                 </MultiDataTrigger>
-                                
+
                                 <MultiTrigger>
                                     <MultiTrigger.Conditions>
                                         <Condition Property="HasHeader" Value="false" />
@@ -206,11 +207,25 @@
                                   ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <TreeView.Resources>
                                 <HierarchicalDataTemplate DataType="{x:Type local:ScarletDirectory}" ItemsSource="{Binding Children}">
-                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis">
+                                        <TextBlock.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                            </ContextMenu>
+                                        </TextBlock.ContextMenu>
+                                    </TextBlock>
                                 </HierarchicalDataTemplate>
 
                                 <HierarchicalDataTemplate DataType="{x:Type local:ScarletDrive}" ItemsSource="{Binding Children}">
-                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis">
+                                        <TextBlock.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                            </ContextMenu>
+                                        </TextBlock.ContextMenu>
+                                    </TextBlock>
                                 </HierarchicalDataTemplate>
                             </TreeView.Resources>
                             <i:Interaction.Behaviors>
@@ -275,6 +290,8 @@
                                 </ToggleButton>
                             </Grid>
 
+                            <TextBlock DockPanel.Dock="Bottom" Text="{Binding SelectedItem.FullName, Source={StaticResource FileSystemViewModel}}" />
+
                             <!--  DetailView  -->
                             <ContentControl Content="{Binding DisplayListView, Source={StaticResource FileSystemViewModel}}" DataContext="{StaticResource FileSystemViewModel}">
                                 <ContentControl.Style>
@@ -288,11 +305,22 @@
                                                                 <ContentPresenter.Resources>
 
                                                                     <DataTemplate DataType="{x:Type local:ScarletFile}">
-                                                                        <TextBlock Text="{Binding Name}" />
+                                                                        <TextBlock Text="{Binding Name}">
+                                                                            <TextBlock.ContextMenu>
+                                                                                <ContextMenu>
+                                                                                    <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                                                </ContextMenu>
+                                                                            </TextBlock.ContextMenu>
+                                                                        </TextBlock>
                                                                     </DataTemplate>
 
                                                                     <DataTemplate DataType="{x:Type local:ScarletDirectory}">
                                                                         <ListBox ItemsSource="{Binding DefaultCollectionView}" SelectionMode="Extended">
+                                                                            <ListBox.ContextMenu>
+                                                                                <ContextMenu>
+                                                                                    <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                                </ContextMenu>
+                                                                            </ListBox.ContextMenu>
                                                                             <ListBox.Resources>
                                                                                 <DataTemplate DataType="{x:Type local:ScarletDirectory}">
                                                                                     <TextBlock Text="{Binding Name}">
@@ -301,6 +329,12 @@
                                                                                                           CommandParameter="{Binding .}"
                                                                                                           Gesture="LeftDoubleClick" />
                                                                                         </TextBlock.InputBindings>
+                                                                                        <TextBlock.ContextMenu>
+                                                                                            <ContextMenu>
+                                                                                                <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                                            </ContextMenu>
+                                                                                        </TextBlock.ContextMenu>
                                                                                     </TextBlock>
                                                                                 </DataTemplate>
                                                                             </ListBox.Resources>
@@ -309,6 +343,11 @@
 
                                                                     <DataTemplate DataType="{x:Type local:ScarletDrive}">
                                                                         <ListBox ItemsSource="{Binding DefaultCollectionView}" SelectionMode="Extended">
+                                                                            <ListBox.ContextMenu>
+                                                                                <ContextMenu>
+                                                                                    <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                                </ContextMenu>
+                                                                            </ListBox.ContextMenu>
                                                                             <ListBox.Resources>
                                                                                 <DataTemplate DataType="{x:Type local:ScarletDirectory}">
                                                                                     <TextBlock Text="{Binding Name}">
@@ -317,6 +356,12 @@
                                                                                                           CommandParameter="{Binding .}"
                                                                                                           Gesture="LeftDoubleClick" />
                                                                                         </TextBlock.InputBindings>
+                                                                                        <TextBlock.ContextMenu>
+                                                                                            <ContextMenu>
+                                                                                                <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                                            </ContextMenu>
+                                                                                        </TextBlock.ContextMenu>
                                                                                     </TextBlock>
                                                                                 </DataTemplate>
                                                                             </ListBox.Resources>
@@ -339,6 +384,11 @@
 
                                                                     <DataTemplate DataType="{x:Type local:ScarletFile}">
                                                                         <DockPanel Width="100">
+                                                                            <DockPanel.ContextMenu>
+                                                                                <ContextMenu>
+                                                                                    <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                                                </ContextMenu>
+                                                                            </DockPanel.ContextMenu>
                                                                             <TextBlock HorizontalAlignment="Center"
                                                                                        DockPanel.Dock="Bottom"
                                                                                        Text="{Binding Name}"
@@ -353,6 +403,11 @@
                                                                         <ListBox ItemsSource="{Binding DefaultCollectionView}"
                                                                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                                                                  SelectionMode="Extended">
+                                                                            <ListBox.ContextMenu>
+                                                                                <ContextMenu>
+                                                                                    <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                                </ContextMenu>
+                                                                            </ListBox.ContextMenu>
                                                                             <ListBox.ItemsPanel>
                                                                                 <ItemsPanelTemplate>
                                                                                     <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
@@ -361,6 +416,12 @@
                                                                             <ListBox.Resources>
                                                                                 <DataTemplate DataType="{x:Type local:ScarletDirectory}">
                                                                                     <DockPanel Width="100">
+                                                                                        <DockPanel.ContextMenu>
+                                                                                            <ContextMenu>
+                                                                                                <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                                            </ContextMenu>
+                                                                                        </DockPanel.ContextMenu>
                                                                                         <DockPanel.InputBindings>
                                                                                             <MouseBinding Command="{Binding SelectCommand, Source={StaticResource FileSystemViewModel}}"
                                                                                                           CommandParameter="{Binding .}"
@@ -383,6 +444,11 @@
                                                                         <ListBox ItemsSource="{Binding DefaultCollectionView}"
                                                                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                                                                  SelectionMode="Extended">
+                                                                            <ListBox.ContextMenu>
+                                                                                <ContextMenu>
+                                                                                    <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                                </ContextMenu>
+                                                                            </ListBox.ContextMenu>
                                                                             <ListBox.ItemsPanel>
                                                                                 <ItemsPanelTemplate>
                                                                                     <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
@@ -391,6 +457,12 @@
                                                                             <ListBox.Resources>
                                                                                 <DataTemplate DataType="{x:Type local:ScarletDirectory}">
                                                                                     <DockPanel Width="100">
+                                                                                        <DockPanel.ContextMenu>
+                                                                                            <ContextMenu>
+                                                                                                <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                                            </ContextMenu>
+                                                                                        </DockPanel.ContextMenu>
                                                                                         <DockPanel.InputBindings>
                                                                                             <MouseBinding Command="{Binding SelectCommand, Source={StaticResource FileSystemViewModel}}"
                                                                                                           CommandParameter="{Binding .}"

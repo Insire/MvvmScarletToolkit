@@ -4,9 +4,9 @@ using System.IO;
 namespace MvvmScarletToolkit
 {
     [DebuggerDisplay("File: {Name} IsContainer: {IsContainer}")]
-    public class ScarletFile : ScarletFileSystemBase, IFileSystemInfo, IFileSystemFile
+    public class ScarletFile : ScarletFileSystemBase, IFileSystemFile
     {
-        public ScarletFile(FileInfo info, IDepth depth) : base(info.Name, info.FullName, depth)
+        public ScarletFile(FileInfo info, IDepth depth, IFileSystemDirectory parent) : base(info.Name, info.FullName, depth, parent)
         {
             using (_busyStack.GetToken())
             {
@@ -37,6 +37,17 @@ namespace MvvmScarletToolkit
 
             Exists = info.Exists;
             IsHidden = info.Attributes.HasFlag(FileAttributes.Hidden);
+        }
+
+        public override void Delete()
+        {
+            File.Delete(FullName);
+            Parent.Refresh();
+        }
+
+        public override bool CanDelete()
+        {
+            return File.Exists(FullName);
         }
     }
 }

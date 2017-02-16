@@ -6,7 +6,7 @@ namespace MvvmScarletToolkit
     [DebuggerDisplay("Directory: {Name} IsContainer: {IsContainer}")]
     public class ScarletDirectory : ScarletFileSystemContainerBase, IFileSystemDirectory
     {
-        public ScarletDirectory(DirectoryInfo info, IDepth depth) : base(info.Name, info.FullName, depth)
+        public ScarletDirectory(DirectoryInfo info, IDepth depth, IFileSystemDirectory parent) : base(info.Name, info.FullName, depth, parent)
         {
             using (_busyStack.GetToken())
             {
@@ -21,6 +21,17 @@ namespace MvvmScarletToolkit
 
             Exists = info.Exists;
             IsHidden = info.Attributes.HasFlag(FileAttributes.Hidden);
+        }
+
+        public override void Delete()
+        {
+            Directory.Delete(FullName);
+            Refresh();
+        }
+
+        public override bool CanDelete()
+        {
+            return Directory.Exists(FullName);
         }
     }
 }

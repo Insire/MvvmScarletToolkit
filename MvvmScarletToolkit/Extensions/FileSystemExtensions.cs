@@ -17,8 +17,8 @@ namespace MvvmScarletToolkit
             if (!CanAccess(directory.FullName) && directory.DirectoryIsEmpty())
                 return result;
 
-            result.AddRange(GetDirectories(directory.FullName, depth));
-            result.AddRange(GetFiles(directory.FullName, depth));
+            result.AddRange(GetDirectories(directory.FullName, depth, directory));
+            result.AddRange(GetFiles(directory.FullName, depth, directory));
 
             return result;
         }
@@ -40,7 +40,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private static List<IFileSystemInfo> GetDirectories(string path, IDepth depth)
+        private static List<IFileSystemInfo> GetDirectories(string path, IDepth depth, IFileSystemDirectory parent)
         {
             var result = new List<IFileSystemInfo>();
             try
@@ -52,7 +52,7 @@ namespace MvvmScarletToolkit
                                                         && !p.Attributes.HasFlag(FileAttributes.System)
                                                         && !p.Attributes.HasFlag(FileAttributes.Offline)
                                                         && !p.Attributes.HasFlag(FileAttributes.Encrypted))
-                                            .Select(p => new ScarletDirectory(p, depth))
+                                            .Select(p => new ScarletDirectory(p, depth, parent))
                                             .ToList();
 
                 result.AddRange(directories);
@@ -65,7 +65,7 @@ namespace MvvmScarletToolkit
             return result;
         }
 
-        private static List<IFileSystemInfo> GetFiles(string path, IDepth depth)
+        private static List<IFileSystemInfo> GetFiles(string path, IDepth depth, IFileSystemDirectory parent)
         {
             var result = new List<IFileSystemInfo>();
             try
@@ -77,7 +77,7 @@ namespace MvvmScarletToolkit
                                                     && !p.Attributes.HasFlag(FileAttributes.System)
                                                     && !p.Attributes.HasFlag(FileAttributes.Offline)
                                                     && !p.Attributes.HasFlag(FileAttributes.Encrypted))
-                                        .Select(p => new ScarletFile(p, depth))
+                                        .Select(p => new ScarletFile(p, depth, parent))
                                         .ToList();
 
                 result.AddRange(files);
@@ -101,6 +101,18 @@ namespace MvvmScarletToolkit
         public static bool DirectoryIsEmpty(string path)
         {
             return !Directory.EnumerateFileSystemEntries(path).Any();
+        }
+
+        public static void ExpandPath(this IFileSystemInfo item)
+        {
+            item.IsExpanded = true;
+            var parent = item.Parent;
+
+            while (parent != null)
+            {
+                parent.IsExpanded = true;
+                parent = parent.Parent;
+            }
         }
     }
 }

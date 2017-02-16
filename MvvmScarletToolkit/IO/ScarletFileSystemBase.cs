@@ -33,6 +33,14 @@ namespace MvvmScarletToolkit
 
         public ICommand LoadCommand { get; protected set; }
         public ICommand RefreshCommand { get; protected set; }
+        public ICommand DeleteCommand { get; protected set; }
+
+        private IFileSystemDirectory _parent;
+        public IFileSystemDirectory Parent
+        {
+            get { return _parent; }
+            protected set { SetValue(ref _parent, value); }
+        }
 
         private string _name;
         public string Name
@@ -125,6 +133,7 @@ namespace MvvmScarletToolkit
 
             LoadCommand = new RelayCommand(Load, CanLoad);
             RefreshCommand = new RelayCommand(Refresh, CanRefresh);
+            DeleteCommand = new RelayCommand(Delete, CanDelete);
 
             Exists = true;
             IsHidden = false;
@@ -132,7 +141,7 @@ namespace MvvmScarletToolkit
             HasContainers = false;
         }
 
-        protected ScarletFileSystemBase(string name, string fullName, IDepth depth) : this()
+        protected ScarletFileSystemBase(string name, string fullName, IDepth depth, IFileSystemDirectory parent) : this()
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException($"{nameof(Name)} can't be empty.", nameof(Name));
@@ -143,6 +152,9 @@ namespace MvvmScarletToolkit
             if (depth == null)
                 throw new ArgumentException($"{nameof(Depth)} can't be empty.", nameof(Depth));
 
+            if (!(this is IFileSystemDrive) && parent == null)
+                throw new ArgumentException($"{nameof(Parent)} can't be empty.", nameof(Parent));
+
             using (_busyStack.GetToken())
             {
                 Depth = depth;
@@ -150,6 +162,7 @@ namespace MvvmScarletToolkit
 
                 Name = name;
                 FullName = fullName;
+                Parent = parent;
             }
         }
 
@@ -164,6 +177,8 @@ namespace MvvmScarletToolkit
         public abstract void Refresh();
         public abstract void LoadMetaData();
         public abstract void OnFilterChanged(string filter);
+        public abstract void Delete();
+        public abstract bool CanDelete();
 
         protected bool CanLoad()
         {
