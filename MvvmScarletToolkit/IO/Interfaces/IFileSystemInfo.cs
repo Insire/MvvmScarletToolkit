@@ -19,6 +19,8 @@ namespace MvvmScarletToolkit
         bool IsHidden { get; }
         bool IsContainer { get; }
 
+        bool HasContainers { get; }
+
         void Refresh();
         void LoadMetaData();
         void OnFilterChanged(string filter);

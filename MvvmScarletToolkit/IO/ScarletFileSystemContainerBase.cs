@@ -65,6 +65,7 @@ namespace MvvmScarletToolkit
             {
                 Children.Clear();
                 Children.AddRange(FileSystemExtensions.GetChildren(this, Depth));
+                HasContainers = Children.Any(p => p is ScarletFileSystemContainerBase);
 
                 OnFilterChanged(string.Empty);
             }

@@ -115,12 +115,6 @@
                                 <DataTrigger Binding="{Binding IsContainer}" Value="true">
                                     <Setter TargetName="PART_Expander" Property="Visibility" Value="Visible" />
                                 </DataTrigger>
-                                <!--<DataTrigger Binding="{Binding IsLoaded}" Value="false">
-                                    <Setter TargetName="PART_Expander" Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsLoaded}" Value="true">
-                                    <Setter TargetName="PART_Expander" Property="Visibility" Value="Hidden" />
-                                </DataTrigger>-->
                                 <DataTrigger Binding="{Binding IsContainer}" Value="false">
                                     <Setter TargetName="PART_Expander" Property="Visibility" Value="Hidden" />
                                 </DataTrigger>
@@ -132,7 +126,14 @@
                                     <Setter TargetName="PART_Expander" Property="Visibility" Value="Hidden" />
                                 </MultiTrigger>
 
-
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsLoaded}" Value="true"/>
+                                        <Condition Binding="{Binding HasContainers}" Value="false"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter TargetName="PART_Expander" Property="Visibility" Value="Hidden" />
+                                </MultiDataTrigger>
+                                
                                 <MultiTrigger>
                                     <MultiTrigger.Conditions>
                                         <Condition Property="HasHeader" Value="false" />

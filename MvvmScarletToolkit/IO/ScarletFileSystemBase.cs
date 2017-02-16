@@ -104,6 +104,13 @@ namespace MvvmScarletToolkit
             protected set { SetValue(ref _isContainer, value); }
         }
 
+        private bool _hasContainers;
+        public bool HasContainers
+        {
+            get { return _hasContainers; }
+            protected set { SetValue(ref _hasContainers, value); }
+        }
+
         private IDepth _depth;
         public IDepth Depth
         {
@@ -122,6 +129,7 @@ namespace MvvmScarletToolkit
             Exists = true;
             IsHidden = false;
             IsContainer = false;
+            HasContainers = false;
         }
 
         protected ScarletFileSystemBase(string name, string fullName, IDepth depth) : this()
