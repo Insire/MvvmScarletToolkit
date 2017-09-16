@@ -14,11 +14,7 @@
                          Value="0" />
         </ControlTemplate>
 
-        <ControlTemplate x:Key="Display">
-            <Image HorizontalAlignment="Stretch"
-                   VerticalAlignment="Stretch"
-                   Source="{Binding ElementName=This, Path=Image, IsAsync=True, UpdateSourceTrigger=PropertyChanged}" />
-        </ControlTemplate>
+
 
         <Storyboard x:Key="FadeIn">
             <DoubleAnimation Storyboard.TargetProperty="Opacity"
@@ -41,6 +37,42 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>
+
+        <ControlTemplate x:Key="Display" >
+
+            <toolkit:Overlay x:Name="RootOverlay">
+                <toolkit:Overlay.OverlayContent>
+                    <StackPanel HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Orientation="Vertical">
+                        <Button x:Name="Button1">Test</Button>
+                        <Button Margin="0,5" x:Name="Button2">lul</Button>
+                        <Button x:Name="Button3">funny</Button>
+                    </StackPanel>
+                </toolkit:Overlay.OverlayContent>
+
+                <Image HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Source="{Binding ElementName=This, Path=Image, IsAsync=True, UpdateSourceTrigger=PropertyChanged}" />
+            </toolkit:Overlay>
+
+            <ControlTemplate.Triggers>
+                <Trigger SourceName="RootOverlay" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="RootOverlay" Property="IsOverlayContentVisible" Value="True" />
+                </Trigger>
+                <Trigger SourceName="Button1"  Property="IsMouseOver" Value="True">
+                    <Setter TargetName="RootOverlay" Property="IsOverlayContentVisible" Value="True" />
+                </Trigger>
+
+                <Trigger SourceName="Button2"  Property="IsMouseOver" Value="True">
+                    <Setter TargetName="RootOverlay" Property="IsOverlayContentVisible" Value="True" />
+                </Trigger>
+
+                <Trigger SourceName="Button3"  Property="IsMouseOver" Value="True">
+                    <Setter TargetName="RootOverlay" Property="IsOverlayContentVisible" Value="True" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
     </UserControl.Resources>
 
     <ContentControl>

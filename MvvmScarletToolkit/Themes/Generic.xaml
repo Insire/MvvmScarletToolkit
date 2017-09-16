@@ -5,6 +5,18 @@
 
     <local:DebugConverter x:Key="DebugConverter" />
 
+    <Style TargetType="{x:Type local:Overlay}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ContentControl}">
+                    <AdornerDecorator x:Name="PART_OverlayAdorner">
+                        <ContentPresenter/>
+                    </AdornerDecorator>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="{x:Type local:FileSystemBrowser}" TargetType="{x:Type local:FileSystemBrowser}">
         <Style.Resources>
             <local:FileSystemViewModel x:Key="FileSystemViewModel" />
