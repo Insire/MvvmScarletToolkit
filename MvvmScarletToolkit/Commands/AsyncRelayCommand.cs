@@ -18,18 +18,13 @@ namespace MvvmScarletToolkit
 
         public AsyncRelayCommand(Func<T, Task> methodToExecute)
         {
-            if (methodToExecute == null)
-                throw new ArgumentNullException(nameof(methodToExecute));
-
-            _execute = methodToExecute;
+            _execute = methodToExecute ?? throw new ArgumentNullException(nameof(methodToExecute));
         }
 
-        public AsyncRelayCommand(Func<T, Task> methodToExecute, Func<bool> canExecuteEvaluator) : this(methodToExecute)
+        public AsyncRelayCommand(Func<T, Task> methodToExecute, Func<bool> canExecuteEvaluator)
+            : this(methodToExecute)
         {
-            if (canExecuteEvaluator == null)
-                throw new ArgumentNullException(nameof(canExecuteEvaluator));
-
-            _canExecute = canExecuteEvaluator;
+            _canExecute = canExecuteEvaluator ?? throw new ArgumentNullException(nameof(canExecuteEvaluator));
         }
 
         public bool CanExecute(object parameter)
@@ -41,7 +36,14 @@ namespace MvvmScarletToolkit
         {
             _task = _execute((T)parameter);
 
-            await _task;
+            try
+            {
+                await _task.ConfigureAwait(true);
+            }
+            finally
+            {
+                _task = null;
+            }
         }
     }
 
@@ -59,18 +61,13 @@ namespace MvvmScarletToolkit
 
         public AsyncRelayCommand(Func<Task> methodToExecute)
         {
-            if (methodToExecute == null)
-                throw new ArgumentNullException(nameof(methodToExecute));
-
-            _execute = methodToExecute;
+            _execute = methodToExecute ?? throw new ArgumentNullException(nameof(methodToExecute));
         }
 
-        public AsyncRelayCommand(Func<Task> methodToExecute, Func<bool> canExecuteEvaluator) : this(methodToExecute)
+        public AsyncRelayCommand(Func<Task> methodToExecute, Func<bool> canExecuteEvaluator)
+            : this(methodToExecute)
         {
-            if (canExecuteEvaluator == null)
-                throw new ArgumentNullException(nameof(canExecuteEvaluator));
-
-            _canExecute = canExecuteEvaluator;
+            _canExecute = canExecuteEvaluator ?? throw new ArgumentNullException(nameof(canExecuteEvaluator));
         }
 
         public bool CanExecute(object parameter)
@@ -82,7 +79,14 @@ namespace MvvmScarletToolkit
         {
             _task = _execute();
 
-            await _task;
+            try
+            {
+                await _task.ConfigureAwait(true);
+            }
+            finally
+            {
+                _task = null;
+            }
         }
     }
 }
