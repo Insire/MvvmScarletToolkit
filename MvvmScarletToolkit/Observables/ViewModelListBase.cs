@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit
 {
     /*
      * Usage:
-     * 
+     *
      * public class SomeViewModel : ViewModelBase<SomeModel>
      * {
      *      public SomeViewModel()
@@ -27,7 +27,7 @@ namespace MvvmScarletToolkit
      *          }
      *      }
      * }
-     * 
+     *
      */
 
     /// <summary>
@@ -140,7 +140,7 @@ namespace MvvmScarletToolkit
             Items.CollectionChanged += ItemsCollectionChanged;
 
             BusyStack = new BusyStack();
-            BusyStack.OnChanged = (hasItems) => IsBusy = hasItems;
+            BusyStack.OnChanged += (hasItems) => IsBusy = hasItems;
 
             View = CollectionViewSource.GetDefaultView(Items);
 

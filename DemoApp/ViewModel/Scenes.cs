@@ -46,8 +46,16 @@ namespace DemoApp
                     Content = new DataContextSchenanigans(),
                     DisplayName = "Stuff with content controls and datatemplates",
 
-                    IsSelected = true,
+                    IsSelected = false,
                 },
+
+                new Scene
+                {
+                    GetDataContext = ()=> new AsyncCommandViewModelStuff(),
+                    Content = new AsyncCommands(),
+                    DisplayName = "Async Commands",
+                    IsSelected = true,
+                }
             };
 
             using (BusyStack.GetToken())

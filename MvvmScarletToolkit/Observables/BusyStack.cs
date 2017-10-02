@@ -4,19 +4,19 @@ using System.Collections.Concurrent;
 namespace MvvmScarletToolkit
 {
     /*
-     * Usage: 
-     * 
+     * Usage:
+     *
      * ctor:
      * BusyStack = new BusyStack();
      * BusyStack.OnChanged = (hasItems) => IsBusy = hasItems;
 
-     * 
+     *
      * using (var token = BusyStack.GetToken())
      * {
      *      run your operation here
      * }
-     * 
-     * 
+     *
+     *
      */
     /// <summary>
     /// BusyStack will handle notifying a viewmodel on if actions are pending
@@ -48,8 +48,7 @@ namespace MvvmScarletToolkit
         /// <returns></returns>
         public bool Pull()
         {
-            var token = default(BusyToken);
-            var result = Items.TryTake(out token);
+            var result = Items.TryTake(out BusyToken token);
 
             if (result)
                 InvokeOnChanged();
@@ -69,8 +68,7 @@ namespace MvvmScarletToolkit
 
         public bool HasItems()
         {
-            var token = default(BusyToken);
-            return Items?.TryPeek(out token) ?? false;
+            return Items?.TryPeek(out BusyToken token) ?? false;
         }
 
         /// <summary>

@@ -105,8 +105,8 @@ namespace MvvmScarletToolkit
             if (!string.IsNullOrEmpty(path) && File.Exists(path))
                 return LoadImage(path);
 
-            var info = e.NewValue as FileInfo; // info is not threadsafe, so only use it as datastore, dont use its methods
-            if (info != null && File.Exists(info.FullName))
+            // info is not threadsafe, so only use it as datastore, dont use its methods
+            if (e.NewValue is FileInfo info && File.Exists(info.FullName))
                 return LoadImage(info.FullName);
 
             return Task.FromResult(default(BitmapSource));

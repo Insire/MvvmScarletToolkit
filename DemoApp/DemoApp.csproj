@@ -60,6 +60,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\AsyncCommands.xaml.cs">
+      <DependentUpon>AsyncCommands.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DataContextSchenanigans.xaml.cs">
       <DependentUpon>DataContextSchenanigans.xaml</DependentUpon>
     </Compile>
@@ -78,6 +81,8 @@
     <Compile Include="ImageFactory.cs" />
     <Compile Include="MainWindowSettings.cs" />
     <Compile Include="Scene.cs" />
+    <Compile Include="ViewModel\AsyncCommandViewModelStuff.cs" />
+    <Compile Include="ViewModel\AsyncDemoItem.cs" />
     <Compile Include="ViewModel\DataContextSchenanigansViewModel.cs" />
     <Compile Include="ViewModel\DemoItem.cs" />
     <Compile Include="ViewModel\DemoItems.cs" />
@@ -88,6 +93,10 @@
     <Compile Include="ViewModel\ParentViewModel.cs" />
     <Compile Include="ViewModel\ProcessingImagesViewModel.cs" />
     <Compile Include="ViewModel\Scenes.cs" />
+    <Page Include="Controls\AsyncCommands.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\DataContextSchenanigans.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -58,7 +58,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\Async\AsyncCommand.cs" />
+    <Compile Include="Commands\Async\AsyncCommandBase.cs" />
     <Compile Include="Commands\AsyncRelayCommand.cs" />
+    <Compile Include="Commands\Async\IAsyncCommand.cs" />
+    <Compile Include="Commands\Async\NotifyTaskCompletion.cs" />
     <Compile Include="IO\FileSystemDepth.cs" />
     <Compile Include="IO\FileSystemBrowser.cs" />
     <Compile Include="IO\FileSystemViewModel.cs" />
@@ -76,7 +80,6 @@
     <Compile Include="MagickReadSettingsFactory.cs" />
     <Compile Include="Observables\PropertyObserver.cs" />
     <Compile Include="Extensions\EventExtension.cs" />
-    <Compile Include="Observables\Operation.cs" />
     <Compile Include="UI\Overlay.cs" />
     <Compile Include="UI\SelectedTreeViewItemBehavior.cs" />
     <Page Include="Themes\Generic.xaml">

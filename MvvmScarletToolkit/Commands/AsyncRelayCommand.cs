@@ -4,6 +4,7 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
+    [Obsolete]
     public class AsyncRelayCommand<T> : ICommand
     {
         private readonly Func<bool> _canExecute = null;
@@ -29,7 +30,7 @@ namespace MvvmScarletToolkit
 
         public bool CanExecute(object parameter)
         {
-            return _task == null || _task.IsCompleted;
+            return _task == null && _canExecute();
         }
 
         public async void Execute(object parameter)
@@ -47,6 +48,7 @@ namespace MvvmScarletToolkit
         }
     }
 
+    [Obsolete]
     public class AsyncRelayCommand : ICommand
     {
         private readonly Func<bool> _canExecute = null;
@@ -72,7 +74,7 @@ namespace MvvmScarletToolkit
 
         public bool CanExecute(object parameter)
         {
-            return _task == null || _task.IsCompleted;
+            return _task == null && _canExecute();
         }
 
         public async void Execute(object parameter)

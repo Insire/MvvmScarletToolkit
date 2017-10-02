@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace DemoApp
 {
-    public class DataContextSchenanigansViewModel : ObservableObject
+    public class AsyncCommandViewModelStuff : ObservableObject
     {
         private AsyncDemoItem _selectedItem;
         public AsyncDemoItem SelectedItem
@@ -19,7 +19,7 @@ namespace DemoApp
             set { SetValue(ref _items, value); }
         }
 
-        public DataContextSchenanigansViewModel()
+        public AsyncCommandViewModelStuff()
         {
             Items = new ObservableCollection<AsyncDemoItem>();
             for (var i = 0; i < 10; i++)
@@ -27,7 +27,7 @@ namespace DemoApp
 
                 Items.Add(new AsyncDemoItem
                 {
-                    DisplayName = "Test X",
+                    DisplayName = "Test " + i,
                 });
 
             };

@@ -12,15 +12,15 @@ namespace MvvmScarletToolkit
     // Josh Smiths PropertyObserver https://joshsmithonwpf.wordpress.com/2009/07/11/one-way-to-avoid-messy-propertychanged-event-handling/
     /*
      * Sample:
-     * 
+     *
      * PropertyObserver<T> _observer;
-     * 
+     *
      * public T()
      * {
      *      _observer= new PropertyObserver<T>(this T)
      *      .RegisterHandler(n=>n.Property1, n=> someAction)
      *      .RegisterHandler(n=>n.Property2, n=> anotherAction)
-     *      
+     *
      */
 
     /// <summary>
@@ -157,8 +157,7 @@ namespace MvvmScarletToolkit
                 }
                 else
                 {
-                    Action<TPropertySource> handler;
-                    if (_propertyNameToHandlerMap.TryGetValue(propertyName, out handler))
+                    if (_propertyNameToHandlerMap.TryGetValue(propertyName, out Action<TPropertySource> handler))
                     {
                         handler(propertySource);
                         return true;

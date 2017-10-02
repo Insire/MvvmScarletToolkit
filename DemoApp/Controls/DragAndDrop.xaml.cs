@@ -53,9 +53,7 @@ namespace DemoApp
             {
                 var image = (Image)e.Data.GetData(typeof(Image));
 
-                var vm = DataContext as ProcessingImagesViewModel;
-
-                if (vm != null)
+                if (DataContext is ProcessingImagesViewModel vm)
                 {
                     // Set Effects to notify the drag source what effect
                     // the drag-and-drop operation had.
@@ -86,9 +84,7 @@ namespace DemoApp
             {
                 var image = (Image)e.Data.GetData(typeof(Image));
 
-                var vm = DataContext as ProcessingImagesViewModel;
-
-                if (vm != null)
+                if (DataContext is ProcessingImagesViewModel vm)
                 {
                     // Set Effects to notify the drag source what effect
                     // the drag-and-drop operation had.

@@ -16,23 +16,17 @@ namespace MvvmScarletToolkit
 
         public RelayCommand(Action methodToExecute)
         {
-            if (methodToExecute == null)
-                throw new ArgumentException($"{nameof(methodToExecute)} can't be empty.", nameof(methodToExecute));
-
-            _execute = methodToExecute;
+            _execute = methodToExecute ?? throw new ArgumentException($"{nameof(methodToExecute)} can't be empty.", nameof(methodToExecute));
         }
 
         public RelayCommand(Action methodToExecute, Func<bool> canExecuteEvaluator) : this(methodToExecute)
         {
-            if(canExecuteEvaluator== null)
-                throw new ArgumentException($"{nameof(canExecuteEvaluator)} can't be empty.", nameof(canExecuteEvaluator));
-
-            _canExecute = canExecuteEvaluator;
+            _canExecute = canExecuteEvaluator ?? throw new ArgumentException($"{nameof(canExecuteEvaluator)} can't be empty.", nameof(canExecuteEvaluator));
         }
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute == null ? true : _canExecute.Invoke();
+            return _canExecute == null ? true : _canExecute();
         }
 
         public void Execute(object parameter)
@@ -46,16 +40,14 @@ namespace MvvmScarletToolkit
         private readonly Action<T> _execute = null;
         private readonly Predicate<T> _canExecute = null;
 
-        public RelayCommand(Action<T> execute) : this(execute, null)
+        public RelayCommand(Action<T> execute)
+            : this(execute, null)
         {
         }
 
         public RelayCommand(Action<T> execute, Predicate<T> canExecute)
         {
-            if (execute == null)
-                throw new ArgumentException($"{nameof(execute)} can't be empty.", nameof(execute));
-
-            _execute = execute;
+            _execute = execute ?? throw new ArgumentException($"{nameof(execute)} can't be empty.", nameof(execute));
             _canExecute = canExecute;
         }
 
@@ -65,7 +57,7 @@ namespace MvvmScarletToolkit
                 return true;
 
             if (parameter == null && typeof(T).IsValueType)
-                return _canExecute.Invoke(default(T));
+                return _canExecute(default(T));
 
             if (parameter == null || parameter is T)
                 return (_canExecute.Invoke((T)parameter));
