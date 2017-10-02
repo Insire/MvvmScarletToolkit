@@ -14,7 +14,7 @@ namespace DemoApp
                     Content = new Default(),
                     DisplayName = "Loading a ParentViewModel",
                     GetDataContext = ()=> new ParentViewModel(),
-                    IsSelected = true,
+                    IsSelected = false,
                 },
 
                 new Scene
@@ -38,6 +38,15 @@ namespace DemoApp
                     DisplayName = "async image dragging and dropping",
                     GetDataContext = ()=> new ProcessingImagesViewModel(),
                     IsSelected = false,
+                },
+
+                new Scene
+                {
+                    GetDataContext = ()=> new DataContextSchenanigansViewModel(),
+                    Content = new DataContextSchenanigans(),
+                    DisplayName = "Stuff with content controls and datatemplates",
+
+                    IsSelected = true,
                 },
             };
 
