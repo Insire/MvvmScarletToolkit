@@ -60,6 +60,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\AnotherImageControl.xaml.cs">
+      <DependentUpon>AnotherImageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\AsyncCommands.xaml.cs">
       <DependentUpon>AsyncCommands.xaml</DependentUpon>
     </Compile>
@@ -93,6 +96,10 @@
     <Compile Include="ViewModel\ParentViewModel.cs" />
     <Compile Include="ViewModel\ProcessingImagesViewModel.cs" />
     <Compile Include="ViewModel\Scenes.cs" />
+    <Page Include="Controls\AnotherImageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\AsyncCommands.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
