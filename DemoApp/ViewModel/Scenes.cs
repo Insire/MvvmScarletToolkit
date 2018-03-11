@@ -1,5 +1,6 @@
-﻿using MvvmScarletToolkit;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+
+using MvvmScarletToolkit;
 
 namespace DemoApp
 {
@@ -54,6 +55,14 @@ namespace DemoApp
                     GetDataContext = ()=> new AsyncCommandViewModelStuff(),
                     Content = new AsyncCommands(),
                     DisplayName = "Async Commands",
+                    IsSelected = true,
+                },
+
+                new Scene
+                {
+
+                    Content = new SnakeView(),
+                    DisplayName = "Snake",
                     IsSelected = true,
                 }
             };

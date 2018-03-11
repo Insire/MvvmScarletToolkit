@@ -1,4 +1,4 @@
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -59,6 +59,7 @@
     <Compile Include="Commands\Async\IAsyncCommand.cs" />
     <Compile Include="Commands\Async\NotifyTaskCompletion.cs" />
     <Compile Include="Converters\NullValueConverter.cs" />
+    <Compile Include="Extensions\EnumBindingSourceExtension.cs" />
     <Compile Include="IO\FileSystemDepth.cs" />
     <Compile Include="IO\FileSystemBrowser.cs" />
     <Compile Include="IO\FileSystemViewModel.cs" />
@@ -78,6 +79,19 @@
     <Compile Include="Extensions\EventExtension.cs" />
     <Compile Include="UI\Overlay.cs" />
     <Compile Include="UI\SelectedTreeViewItemBehavior.cs" />
+    <Compile Include="UI\Snake\Apple.cs" />
+    <Compile Include="UI\Snake\GameState.cs" />
+    <Compile Include="UI\Snake\IPositionable.cs" />
+    <Compile Include="UI\Snake\Position.cs" />
+    <Compile Include="UI\Snake\Snake.cs" />
+    <Compile Include="UI\Snake\SnakeBase.cs" />
+    <Compile Include="UI\Snake\SnakeHead.cs" />
+    <Compile Include="UI\Snake\SnakeManager.cs" />
+    <Compile Include="UI\Snake\SnakeOptions.cs" />
+    <Compile Include="UI\Snake\SnakeSegment.cs" />
+    <Compile Include="UI\Snake\SnakeView.xaml.cs">
+      <DependentUpon>SnakeView.xaml</DependentUpon>
+    </Compile>
     <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -100,6 +114,9 @@
       <DependentUpon>MagickImageControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\StringExtention.cs" />
+    <Page Include="UI\Snake\SnakeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Include="UI\MagickImageControl.xaml">
