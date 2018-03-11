@@ -6,4 +6,13 @@
         Running = 1,
         Paused = 2,
     }
+
+    public enum Direction
+    {
+        None,
+        North,
+        South,
+        West,
+        East,
+    }
 }

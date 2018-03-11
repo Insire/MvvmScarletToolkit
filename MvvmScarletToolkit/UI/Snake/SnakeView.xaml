@@ -23,19 +23,25 @@
                        Height="16"
                        Fill="GreenYellow" />
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:Apple}">
+            <Rectangle Width="16"
+                       Height="16"
+                       Fill="Red" />
+        </DataTemplate>
     </UserControl.Resources>
     <WrapPanel>
         <Viewbox>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Loaded">
-                    <i:InvokeCommandAction Command="{Binding LoadCommand, Source={StaticResource Manager}, diag:PresentationTraceSources.TraceLevel=High}" />
+                    <i:InvokeCommandAction Command="{Binding LoadCommand, Source={StaticResource Manager}}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
             <ItemsControl Width="{Binding UpperBoundX, Source={StaticResource Manager}}"
                           Height="{Binding UpperBoundY, Source={StaticResource Manager}}"
                           Background="LightGray"
-                          ItemsSource="{Binding BoardPieces, Source={StaticResource Manager}}">
+                          ItemsSource="{Binding BoardPieces, Source={StaticResource Manager}, IsAsync=True}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas />
@@ -43,8 +49,8 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding CurrentPosition.X}" />
-                        <Setter Property="Canvas.Top" Value="{Binding CurrentPosition.Y}" />
+                        <Setter Property="Canvas.Left" Value="{Binding CurrentPosition.X, IsAsync=True}" />
+                        <Setter Property="Canvas.Top" Value="{Binding CurrentPosition.Y, IsAsync=True}" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>

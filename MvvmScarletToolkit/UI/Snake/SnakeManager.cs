@@ -1,25 +1,34 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Timers;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace MvvmScarletToolkit
 {
     public sealed class SnakeManager : ObservableObject
     {
+        private readonly object _syncRoot;
         private readonly SnakeOptions _options;
         private readonly ConcurrentBag<Apple> _apples;
+        private readonly Random _random;
 
         private bool _isLoaded = false;
-        private Timer _timer;
+
+        private Task _snakeTask;
+        private CancellationTokenSource _snakeSource;
+
+        private Task _appleTask;
+        private CancellationTokenSource _appleSource;
 
         public int UpperBoundX { get; }
         public int LowerBoundX { get; }
 
         public int UpperBoundY { get; }
         public int LowerBoundY { get; }
-
 
         private Snake _snake;
         public Snake Snake
@@ -52,6 +61,13 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _state, value); }
         }
 
+        private Direction _direction;
+        public Direction Direction
+        {
+            get { return _direction; }
+            private set { SetValue(ref _direction, value); }
+        }
+
         public SnakeManager()
             : this(new SnakeOptions())
         {
@@ -61,6 +77,8 @@ namespace MvvmScarletToolkit
         {
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _apples = new ConcurrentBag<Apple>();
+            _random = new Random();
+            _syncRoot = new object();
 
             LowerBoundY = 0;
             LowerBoundX = 0;
@@ -70,9 +88,10 @@ namespace MvvmScarletToolkit
 
             Snake = new Snake(_options);
             BoardPieces = new ObservableCollection<IPositionable>();
+            BindingOperations.EnableCollectionSynchronization(BoardPieces, _syncRoot);
 
             PlayCommand = new RelayCommand(Play);
-            ResetCommand = new RelayCommand(Reset);
+            ResetCommand = AsyncCommand.Create(Reset);
 
             LoadCommand = new RelayCommand(Load, CanLoad);
 
@@ -111,11 +130,40 @@ namespace MvvmScarletToolkit
             _isLoaded = true;
         }
 
-        private void Reset()
+        private void Start()
+        {
+            State = GameState.Running;
+            UpdateBoardPieces();
+
+            _snakeSource = new CancellationTokenSource();
+            _snakeTask = CreateSnakeLoop(_snakeSource.Token);
+
+            _appleSource = new CancellationTokenSource();
+            _appleTask = CreateAppleLoop(_appleSource.Token);
+        }
+
+        private async Task Reset()
         {
             State = GameState.None;
+
             _boardPieces.Clear();
-            Start();
+
+            _snakeSource.Cancel();
+
+            await _snakeTask;
+
+            _snakeSource.Dispose();
+            _snakeTask = null;
+
+            _appleSource.Cancel();
+
+            await _appleTask;
+
+            _appleSource.Dispose();
+            _appleTask = null;
+
+            Snake = new Snake(_options);
+            UpdateBoardPieces();
         }
 
         private void Pause()
@@ -130,16 +178,6 @@ namespace MvvmScarletToolkit
             // pause timer
         }
 
-        private void Start()
-        {
-            State = GameState.Running;
-            UpdateBoardPieces();
-            _timer = CreateTimer();
-
-            // start timer
-            // set initial movement direction
-        }
-
         private bool CanMoveNorth()
         {
             return State.HasFlag(GameState.Running);
@@ -148,6 +186,7 @@ namespace MvvmScarletToolkit
         private void MoveNorth()
         {
             Snake.MoveNorth();
+            Direction = Direction.North;
         }
 
         private bool CanMoveSouth()
@@ -158,6 +197,7 @@ namespace MvvmScarletToolkit
         private void MoveSouth()
         {
             Snake.MoveSouth();
+            Direction = Direction.South;
         }
 
         private bool CanMoveWest()
@@ -168,6 +208,7 @@ namespace MvvmScarletToolkit
         private void MoveWest()
         {
             Snake.MoveWest();
+            Direction = Direction.West;
         }
 
         private bool CanMoveEast()
@@ -178,6 +219,7 @@ namespace MvvmScarletToolkit
         private void MoveEast()
         {
             Snake.MoveEast();
+            Direction = Direction.East;
         }
 
         private void UpdateBoardPieces()
@@ -198,13 +240,57 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private Timer CreateTimer()
+        private Task CreateSnakeLoop(CancellationToken token)
         {
-            return new Timer
+            // we create a new thread, since this is most likely running for a while and unrelated to IO stuff
+            return Task.Factory.StartNew(async () =>
             {
-                AutoReset = true,
-                Interval = _options.GlobalTickRate,
-            };
+                while (State != GameState.None)
+                {
+                    if (State != GameState.Paused)
+                    {
+                        switch (Direction)
+                        {
+                            case Direction.North:
+                                MoveNorth();
+                                break;
+
+                            case Direction.South:
+                                MoveSouth();
+                                break;
+
+                            case Direction.West:
+                                MoveWest();
+                                break;
+
+                            case Direction.East:
+                                MoveEast();
+                                break;
+                        }
+                    }
+                    await Task.Delay(_options.GlobalTickRate).ConfigureAwait(false);
+                }
+
+            }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        }
+
+        private Task CreateAppleLoop(CancellationToken token)
+        {
+            return Task.Factory.StartNew(async () =>
+            {
+                while (State != GameState.None)
+                {
+                    if (Direction != Direction.None && _options.MaxFoodCount > _apples.Count) // start generating appls, as soon as the snake moves
+                        _apples.Add(new Apple(_random.Next(LowerBoundX, UpperBoundX), _random.Next(UpperBoundY, UpperBoundY)));
+
+                    DispatcherFactory.Invoke(() =>
+                    {
+                        UpdateBoardPieces();
+                    }, DispatcherPriority.Send);
+                    await Task.Delay(_options.FoodTickRate).ConfigureAwait(false);
+                }
+
+            }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
     }
 }

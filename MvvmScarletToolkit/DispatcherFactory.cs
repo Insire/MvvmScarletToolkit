@@ -29,5 +29,16 @@ namespace MvvmScarletToolkit
             else
                 dispatcher.BeginInvoke(action, priority, parameter);
         }
+
+
+        public static void Invoke(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
+        {
+            var dispatcher = GetDispatcher();
+
+            if (dispatcher.CheckAccess())
+                action();
+            else
+                dispatcher.BeginInvoke(action, priority);
+        }
     }
 }
