@@ -79,16 +79,19 @@
     <Compile Include="Extensions\EventExtension.cs" />
     <Compile Include="UI\Overlay.cs" />
     <Compile Include="UI\SelectedTreeViewItemBehavior.cs" />
-    <Compile Include="UI\Snake\Apple.cs" />
-    <Compile Include="UI\Snake\GameState.cs" />
-    <Compile Include="UI\Snake\IPositionable.cs" />
-    <Compile Include="UI\Snake\Position.cs" />
-    <Compile Include="UI\Snake\Snake.cs" />
-    <Compile Include="UI\Snake\SnakeBase.cs" />
-    <Compile Include="UI\Snake\SnakeHead.cs" />
-    <Compile Include="UI\Snake\SnakeManager.cs" />
-    <Compile Include="UI\Snake\SnakeOptions.cs" />
-    <Compile Include="UI\Snake\SnakeSegment.cs" />
+    <Compile Include="UI\Snake\ViewModels\Apple.cs" />
+    <Compile Include="UI\Snake\Types\Direction.cs" />
+    <Compile Include="UI\Snake\Types\GameState.cs" />
+    <Compile Include="UI\Snake\Interfaces\IPositionable.cs" />
+    <Compile Include="UI\Snake\Interfaces\IRefresh.cs" />
+    <Compile Include="UI\Snake\ViewModels\Position.cs" />
+    <Compile Include="UI\Snake\ViewModels\Size.cs" />
+    <Compile Include="UI\Snake\ViewModels\Snake\Snake.cs" />
+    <Compile Include="UI\Snake\ViewModels\Snake\Base\SnakeBase.cs" />
+    <Compile Include="UI\Snake\ViewModels\Snake\SnakeHead.cs" />
+    <Compile Include="UI\Snake\ViewModels\SnakeManager.cs" />
+    <Compile Include="UI\Snake\ViewModels\SnakeOptions.cs" />
+    <Compile Include="UI\Snake\ViewModels\Snake\SnakeSegment.cs" />
     <Compile Include="UI\Snake\SnakeView.xaml.cs">
       <DependentUpon>SnakeView.xaml</DependentUpon>
     </Compile>

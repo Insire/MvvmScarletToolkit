@@ -10,38 +10,37 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <local:SnakeManager x:Key="Manager" />
-
-        <DataTemplate DataType="{x:Type local:SnakeHead}">
-            <Rectangle Width="16"
-                       Height="16"
-                       Fill="Green" />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type local:SnakeSegment}">
-            <Rectangle Width="16"
-                       Height="16"
-                       Fill="GreenYellow" />
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type local:Apple}">
-            <Rectangle Width="16"
-                       Height="16"
-                       Fill="Red" />
-        </DataTemplate>
-    </UserControl.Resources>
+    <UserControl.Resources />
     <WrapPanel>
         <Viewbox>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Loaded">
-                    <i:InvokeCommandAction Command="{Binding LoadCommand, Source={StaticResource Manager}}" />
+                    <i:InvokeCommandAction Command="{Binding Manager.LoadCommand}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
-            <ItemsControl Width="{Binding UpperBoundX, Source={StaticResource Manager}}"
-                          Height="{Binding UpperBoundY, Source={StaticResource Manager}}"
+            <ItemsControl Width="{Binding Manager.UpperBoundX}"
+                          Height="{Binding Manager.UpperBoundY}"
                           Background="LightGray"
-                          ItemsSource="{Binding BoardPieces, Source={StaticResource Manager}, IsAsync=True}">
+                          ItemsSource="{Binding Manager.BoardPieces}">
+                <ItemsControl.Resources>
+                    <DataTemplate DataType="{x:Type local:SnakeHead}">
+                        <Rectangle Width="{Binding Size.Width}"
+                                   Height="{Binding Size.Height}"
+                                   Fill="Green" />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:SnakeSegment}">
+                        <Rectangle Width="{Binding Size.Width}"
+                                   Height="{Binding Size.Height}"
+                                   Fill="GreenYellow" />
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type local:Apple}">
+                        <Rectangle Width="{Binding Size.Width}"
+                                   Height="{Binding Size.Height}"
+                                   Fill="Red" />
+                    </DataTemplate>
+                </ItemsControl.Resources>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas />
@@ -49,8 +48,8 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding CurrentPosition.X, IsAsync=True}" />
-                        <Setter Property="Canvas.Top" Value="{Binding CurrentPosition.Y, IsAsync=True}" />
+                        <Setter Property="Canvas.Left" Value="{Binding CurrentPosition.X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding CurrentPosition.Y}" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>
@@ -78,42 +77,42 @@
                     Grid.Column="2"
                     Width="32"
                     Height="32"
-                    Command="{Binding MoveNorthCommand, Source={StaticResource Manager}}"
+                    Command="{Binding Manager.MoveNorthCommand}"
                     Content="North" />
             <Button Grid.Row="4"
                     Grid.Column="2"
                     Width="32"
                     Height="32"
-                    Command="{Binding MoveSouthCommand, Source={StaticResource Manager}}"
+                    Command="{Binding Manager.MoveSouthCommand}"
                     Content="South" />
             <Button Grid.Row="2"
                     Grid.Column="0"
                     Width="32"
                     Height="32"
-                    Command="{Binding MoveWestCommand, Source={StaticResource Manager}}"
+                    Command="{Binding Manager.MoveWestCommand}"
                     Content="West" />
             <Button Grid.Row="2"
                     Grid.Column="4"
                     Width="32"
                     Height="32"
-                    Command="{Binding MoveEastCommand, Source={StaticResource Manager}}"
+                    Command="{Binding Manager.MoveEastCommand}"
                     Content="East" />
 
             <Button Grid.Row="2"
                     Grid.Column="2"
                     Width="32"
                     Height="32"
-                    Command="{Binding PlayCommand, Source={StaticResource Manager}}">
+                    Command="{Binding Manager.PlayCommand}">
                 <Button.Style>
                     <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding State, Source={StaticResource Manager}}" Value="{x:Static local:GameState.None}">
+                            <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.None}">
                                 <Setter Property="Content" Value="Play" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding State, Source={StaticResource Manager}}" Value="{x:Static local:GameState.Running}">
+                            <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.Running}">
                                 <Setter Property="Content" Value="Pause" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding State, Source={StaticResource Manager}}" Value="{x:Static local:GameState.Paused}">
+                            <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.Paused}">
                                 <Setter Property="Content" Value="Resume" />
                             </DataTrigger>
                         </Style.Triggers>

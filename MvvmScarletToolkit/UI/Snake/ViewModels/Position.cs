@@ -16,5 +16,4 @@
             set { SetValue(ref _y, value); }
         }
     }
-
 }

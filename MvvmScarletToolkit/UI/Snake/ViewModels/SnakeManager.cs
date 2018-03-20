@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class SnakeManager : ObservableObject
+    public sealed class SnakeManager : ObservableObject, IRefresh
     {
-        private readonly object _syncRoot;
         private readonly SnakeOptions _options;
-        private readonly ConcurrentBag<Apple> _apples;
+        private readonly IProducerConsumerCollection<Apple> _apples;
         private readonly Random _random;
 
         private bool _isLoaded = false;
@@ -76,9 +74,8 @@ namespace MvvmScarletToolkit
         public SnakeManager(SnakeOptions options)
         {
             _options = options ?? throw new ArgumentNullException(nameof(options));
-            _apples = new ConcurrentBag<Apple>();
+            _apples = new ConcurrentQueue<Apple>();
             _random = new Random();
-            _syncRoot = new object();
 
             LowerBoundY = 0;
             LowerBoundX = 0;
@@ -88,7 +85,6 @@ namespace MvvmScarletToolkit
 
             Snake = new Snake(_options);
             BoardPieces = new ObservableCollection<IPositionable>();
-            BindingOperations.EnableCollectionSynchronization(BoardPieces, _syncRoot);
 
             PlayCommand = new RelayCommand(Play);
             ResetCommand = AsyncCommand.Create(Reset);
@@ -185,8 +181,7 @@ namespace MvvmScarletToolkit
 
         private void MoveNorth()
         {
-            Snake.MoveNorth();
-            Direction = Direction.North;
+            InternalMove(Direction.North);
         }
 
         private bool CanMoveSouth()
@@ -196,8 +191,7 @@ namespace MvvmScarletToolkit
 
         private void MoveSouth()
         {
-            Snake.MoveSouth();
-            Direction = Direction.South;
+            InternalMove(Direction.South);
         }
 
         private bool CanMoveWest()
@@ -207,8 +201,7 @@ namespace MvvmScarletToolkit
 
         private void MoveWest()
         {
-            Snake.MoveWest();
-            Direction = Direction.West;
+            InternalMove(Direction.West);
         }
 
         private bool CanMoveEast()
@@ -218,26 +211,56 @@ namespace MvvmScarletToolkit
 
         private void MoveEast()
         {
-            Snake.MoveEast();
-            Direction = Direction.East;
+            InternalMove(Direction.East);
+        }
+
+        private void InternalMove(Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.East:
+                    Snake.MoveEast();
+                    break;
+                case Direction.West:
+                    Snake.MoveWest();
+                    break;
+                case Direction.North:
+                    Snake.MoveNorth();
+                    break;
+                case Direction.South:
+                    Snake.MoveSouth();
+                    break;
+                default:
+                    return;
+            }
+
+            Direction = direction;
+
+            var tastyApple = IsSnakeEatingApple();
+            if (tastyApple == null)
+                return;
+
+            BoardPieces.Remove(tastyApple);
+        }
+
+        private IPositionable IsSnakeEatingApple()
+        {
+            return BoardPieces.FirstOrDefault(p => Snake.IsEating(p));
         }
 
         private void UpdateBoardPieces()
         {
             if (!_boardPieces.Contains(Snake.Head))
-                _boardPieces.Add(Snake.Head);
+                BoardPieces.Add(Snake.Head);
 
             foreach (var part in Snake.Body)
             {
                 if (!_boardPieces.Contains(part))
-                    _boardPieces.Add(part);
+                    BoardPieces.Add(part);
             }
 
-            foreach (var apple in _apples)
-            {
-                if (!_boardPieces.Contains(apple))
-                    _boardPieces.Add(apple);
-            }
+            if (_apples.TryTake(out var apple))
+                BoardPieces.Add(apple);
         }
 
         private Task CreateSnakeLoop(CancellationToken token)
@@ -280,17 +303,19 @@ namespace MvvmScarletToolkit
             {
                 while (State != GameState.None)
                 {
-                    if (Direction != Direction.None && _options.MaxFoodCount > _apples.Count) // start generating appls, as soon as the snake moves
-                        _apples.Add(new Apple(_random.Next(LowerBoundX, UpperBoundX), _random.Next(UpperBoundY, UpperBoundY)));
+                    if (Direction != Direction.None && _options.MaxFoodCount > _apples.Count) // start generating apples, as soon as the snake moves
+                        _apples.TryAdd(new Apple(_random.Next(LowerBoundX, UpperBoundX), _random.Next(LowerBoundY, UpperBoundY), _options));
 
-                    DispatcherFactory.Invoke(() =>
-                    {
-                        UpdateBoardPieces();
-                    }, DispatcherPriority.Send);
-                    await Task.Delay(_options.FoodTickRate).ConfigureAwait(false);
+                    await Task.Delay(1000);
                 }
 
             }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        }
+
+        public void Refresh()
+        {
+            if (State == GameState.Running)
+                UpdateBoardPieces();
         }
     }
 }

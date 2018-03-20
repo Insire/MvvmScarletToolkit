@@ -1,5 +1,7 @@
 ﻿using System;
 
+using MvvmScarletToolkit.SnakeGame;
+
 namespace MvvmScarletToolkit
 {
     public abstract class SnakeBase : ObservableObject, IPositionable
@@ -13,9 +15,22 @@ namespace MvvmScarletToolkit
             protected set { SetValue(ref _currentPosition, value); }
         }
 
-        public SnakeBase(SnakeOptions options)
+        private Size _size;
+        public Size Size
+        {
+            get { return _size; }
+            protected set { SetValue(ref _size, value); }
+        }
+
+        public SnakeBase(SnakeOptions options, Size size)
         {
             _options = options ?? throw new ArgumentNullException(nameof(options));
+            Size = size ?? throw new ArgumentNullException(nameof(size));
+        }
+
+        public SnakeBase(SnakeOptions options)
+            : this(options, new Size(options.FieldSize, options.FieldSize))
+        {
         }
 
         /// <summary>

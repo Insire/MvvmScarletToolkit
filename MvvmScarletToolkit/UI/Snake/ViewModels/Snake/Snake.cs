@@ -88,12 +88,39 @@ namespace MvvmScarletToolkit
                 part.MoveEast();
         }
 
-        public void AddSegment()
+        public bool IsEating(IPositionable boardPiece)
         {
-            var segment = new SnakeSegment(_options, _head);
-            Body.Add(segment);
+            if (!(boardPiece is Apple))
+                return false;
 
-            _isFed = true;
+            // simple calculation if an apple intersects with the snake head, which will consume the apple by default
+            // and a new Snake segment
+
+            // XH1 < XH2
+            // YH1 < YH2
+            var XH1 = Head.CurrentPosition.X - Head.Size.Width;
+            var YH1 = Head.CurrentPosition.Y - Head.Size.Height;
+            var XH2 = Head.CurrentPosition.X + Head.Size.Width;
+            var YH2 = Head.CurrentPosition.Y + Head.Size.Height;
+
+            // XA1 < XA2
+            // YA1 < YA2
+            var XA1 = boardPiece.CurrentPosition.X - boardPiece.Size.Width;
+            var YA1 = boardPiece.CurrentPosition.Y - boardPiece.Size.Height;
+            var XA2 = boardPiece.CurrentPosition.X + boardPiece.Size.Width;
+            var YA2 = boardPiece.CurrentPosition.Y + boardPiece.Size.Height;
+
+            if ((XA2 >= XH1 && XA1 <= XH2) && (YA2 >= YH1 && YA1 <= YH2))
+            {
+                var segment = new SnakeSegment(_options, _head);
+                Body.Add(segment);
+
+                _isFed = true;
+
+                return true;
+            }
+
+            return false;
         }
     }
 }
