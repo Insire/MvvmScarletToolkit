@@ -6,7 +6,6 @@ namespace MvvmScarletToolkit
 {
     public partial class SnakeView
     {
-
         public IRefresh Manager { get; }
 
         public int FramesPerSecond
@@ -19,11 +18,11 @@ namespace MvvmScarletToolkit
             "FramesPerSecond",
             typeof(int),
             typeof(SnakeView),
-            new PropertyMetadata(0));
+            new PropertyMetadata(0)); // TODO
 
         public SnakeView()
         {
-            Manager = new SnakeManager();
+            Manager = new SnakeManager(new SnakeOptions(), Application.Current.Dispatcher);
             this.DataContext = this;
 
 

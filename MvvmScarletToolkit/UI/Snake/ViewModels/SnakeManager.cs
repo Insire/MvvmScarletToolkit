@@ -5,11 +5,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace MvvmScarletToolkit
 {
     public sealed class SnakeManager : ObservableObject, IRefresh
     {
+        private readonly Dispatcher _dispatcher;
         private readonly SnakeOptions _options;
         private readonly IProducerConsumerCollection<Apple> _apples;
         private readonly Random _random;
@@ -45,10 +47,10 @@ namespace MvvmScarletToolkit
         public ICommand PlayCommand { get; }
         public ICommand ResetCommand { get; }
 
-        public ICommand MoveNorthCommand { get; }
-        public ICommand MoveSouthCommand { get; }
-        public ICommand MoveWestCommand { get; }
-        public ICommand MoveEastCommand { get; }
+        public IAsyncCommand MoveNorthCommand { get; }
+        public IAsyncCommand MoveSouthCommand { get; }
+        public IAsyncCommand MoveWestCommand { get; }
+        public IAsyncCommand MoveEastCommand { get; }
 
         public ICommand LoadCommand { get; }
 
@@ -66,13 +68,9 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _direction, value); }
         }
 
-        public SnakeManager()
-            : this(new SnakeOptions())
+        public SnakeManager(SnakeOptions options, Dispatcher dispatcher)
         {
-        }
-
-        public SnakeManager(SnakeOptions options)
-        {
+            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _apples = new ConcurrentQueue<Apple>();
             _random = new Random();
@@ -91,10 +89,10 @@ namespace MvvmScarletToolkit
 
             LoadCommand = new RelayCommand(Load, CanLoad);
 
-            MoveNorthCommand = new RelayCommand(MoveNorth, CanMoveNorth);
-            MoveSouthCommand = new RelayCommand(MoveSouth, CanMoveSouth);
-            MoveWestCommand = new RelayCommand(MoveWest, CanMoveWest);
-            MoveEastCommand = new RelayCommand(MoveEast, CanMoveEast);
+            MoveNorthCommand = AsyncCommand.Create(MoveNorth, CanMoveNorth);
+            MoveSouthCommand = AsyncCommand.Create(MoveSouth, CanMoveSouth);
+            MoveWestCommand = AsyncCommand.Create(MoveWest, CanMoveWest);
+            MoveEastCommand = AsyncCommand.Create(MoveEast, CanMoveEast);
         }
 
         private void Play()
@@ -121,7 +119,6 @@ namespace MvvmScarletToolkit
         private void Load()
         {
             UpdateBoardPieces();
-
 
             _isLoaded = true;
         }
@@ -179,9 +176,9 @@ namespace MvvmScarletToolkit
             return State.HasFlag(GameState.Running);
         }
 
-        private void MoveNorth()
+        private Task MoveNorth()
         {
-            InternalMove(Direction.North);
+            return InternalMoveAsync(Direction.North);
         }
 
         private bool CanMoveSouth()
@@ -189,9 +186,9 @@ namespace MvvmScarletToolkit
             return State.HasFlag(GameState.Running);
         }
 
-        private void MoveSouth()
+        private Task MoveSouth()
         {
-            InternalMove(Direction.South);
+            return InternalMoveAsync(Direction.South);
         }
 
         private bool CanMoveWest()
@@ -199,9 +196,9 @@ namespace MvvmScarletToolkit
             return State.HasFlag(GameState.Running);
         }
 
-        private void MoveWest()
+        private Task MoveWest()
         {
-            InternalMove(Direction.West);
+            return InternalMoveAsync(Direction.West);
         }
 
         private bool CanMoveEast()
@@ -209,9 +206,14 @@ namespace MvvmScarletToolkit
             return State.HasFlag(GameState.Running);
         }
 
-        private void MoveEast()
+        private Task MoveEast()
         {
-            InternalMove(Direction.East);
+            return InternalMoveAsync(Direction.East);
+        }
+
+        private async Task InternalMoveAsync(Direction direction)
+        {
+            await _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<Direction>((d) => InternalMove(d)), direction);
         }
 
         private void InternalMove(Direction direction)
@@ -259,7 +261,7 @@ namespace MvvmScarletToolkit
                     BoardPieces.Add(part);
             }
 
-            if (_apples.TryTake(out var apple))
+            if (BoardPieces.Where(p => p is Apple).Count() < _options.MaxFoodCount && _apples.TryTake(out var apple))
                 BoardPieces.Add(apple);
         }
 
@@ -275,19 +277,19 @@ namespace MvvmScarletToolkit
                         switch (Direction)
                         {
                             case Direction.North:
-                                MoveNorth();
+                                await MoveNorth().ConfigureAwait(false);
                                 break;
 
                             case Direction.South:
-                                MoveSouth();
+                                await MoveSouth().ConfigureAwait(false);
                                 break;
 
                             case Direction.West:
-                                MoveWest();
+                                await MoveWest().ConfigureAwait(false);
                                 break;
 
                             case Direction.East:
-                                MoveEast();
+                                await MoveEast().ConfigureAwait(false);
                                 break;
                         }
                     }

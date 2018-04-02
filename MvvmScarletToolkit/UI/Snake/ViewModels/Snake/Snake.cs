@@ -34,58 +34,51 @@ namespace MvvmScarletToolkit
 
         public void MoveNorth()
         {
+            var head = Head.CurrentPosition;
             Head.MoveNorth();
 
-            if (_isFed)
-            {
-                _isFed = false;
-                return;
-            }
-
-            foreach (var part in _body.Where(p => p is SnakeSegment))
-                part.MoveNorth();
+            MoveTail(head);
         }
 
         public void MoveSouth()
         {
+            var head = Head.CurrentPosition;
             Head.MoveSouth();
 
-            if (_isFed)
-            {
-                _isFed = false;
-                return;
-            }
-
-            foreach (var part in _body.Where(p => p is SnakeSegment))
-                part.MoveSouth();
+            MoveTail(head);
         }
 
         public void MoveWest()
         {
+            var head = Head.CurrentPosition;
             Head.MoveWest();
 
-            if (_isFed)
-            {
-                _isFed = false;
-                return;
-            }
-
-            foreach (var part in _body.Where(p => p is SnakeSegment))
-                part.MoveWest();
+            MoveTail(head);
         }
 
         public void MoveEast()
         {
+            var head = Head.CurrentPosition;
             Head.MoveEast();
 
+            MoveTail(head);
+        }
+
+        private void MoveTail(Position initialPosition)
+        {
             if (_isFed)
             {
                 _isFed = false;
                 return;
             }
 
+            var previousPosition = initialPosition;
             foreach (var part in _body.Where(p => p is SnakeSegment))
-                part.MoveEast();
+            {
+                var temp = part.CurrentPosition;
+                part.Move(previousPosition);
+                previousPosition = temp;
+            }
         }
 
         public bool IsEating(IPositionable boardPiece)

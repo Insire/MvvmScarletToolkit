@@ -84,7 +84,7 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// move to absolute position
         /// </summary>
-        private void Move(Position position)
+        internal void Move(Position position)
         {
             CurrentPosition = position;
         }
