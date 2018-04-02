@@ -86,6 +86,16 @@ namespace MvvmScarletToolkit
         /// </summary>
         internal void Move(Position position)
         {
+            if (position.X > _options.MaxWidth)
+                position.X = 0;
+            if (position.X < 0)
+                position.X = _options.MaxWidth;
+
+            if (position.Y > _options.MaxHeight)
+                position.Y = 0;
+            if (position.Y < 0)
+                position.Y = _options.MaxHeight;
+
             CurrentPosition = position;
         }
     }

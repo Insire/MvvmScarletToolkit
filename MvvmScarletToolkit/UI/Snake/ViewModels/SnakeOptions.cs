@@ -5,7 +5,13 @@ namespace MvvmScarletToolkit
     public sealed class SnakeOptions : ObservableObject
     {
         public int FieldSize { get; set; } = 16;
+        /// <summary>
+        /// max amount of fields on x-axis
+        /// </summary>
         public int FieldCountX { get; set; } = 100;
+        /// <summary>
+        /// max amount of fields on y-axis
+        /// </summary>
         public int FieldCountY { get; set; } = 100;
 
         public int SpeedMultiplier { get; set; } = 1;
