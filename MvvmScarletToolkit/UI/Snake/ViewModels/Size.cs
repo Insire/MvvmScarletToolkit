@@ -9,14 +9,14 @@ namespace MvvmScarletToolkit.SnakeGame
         public int Width
         {
             get { return _width; }
-            protected set { SetValue(ref _width, value); }
+            private set { SetValue(ref _width, value); }
         }
 
         private int _height;
         public int Height
         {
             get { return _height; }
-            protected set { SetValue(ref _height, value); }
+            private set { SetValue(ref _height, value); }
         }
 
         public Size(int width, int height)
