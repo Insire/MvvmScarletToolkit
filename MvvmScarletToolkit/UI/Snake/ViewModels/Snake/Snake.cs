@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace MvvmScarletToolkit
@@ -7,8 +8,6 @@ namespace MvvmScarletToolkit
     public sealed class Snake : ObservableObject
     {
         private readonly SnakeOptions _options;
-
-        private bool _isFed;
 
         private SnakeHead _head;
         public SnakeHead Head
@@ -66,12 +65,6 @@ namespace MvvmScarletToolkit
 
         private void MoveTail(Position initialPosition)
         {
-            if (_isFed)
-            {
-                _isFed = false;
-                return;
-            }
-
             var previousPosition = initialPosition;
             foreach (var part in _body.Where(p => p is SnakeSegment))
             {
@@ -105,10 +98,10 @@ namespace MvvmScarletToolkit
 
             if ((XA2 >= XH1 && XA1 <= XH2) && (YA2 >= YH1 && YA1 <= YH2))
             {
+                Debug.WriteLine($"EAT: {_head.CurrentPosition.X};{_head.CurrentPosition.Y}");
+
                 var segment = new SnakeSegment(_options, _head);
                 Body.Add(segment);
-
-                _isFed = true;
 
                 return true;
             }

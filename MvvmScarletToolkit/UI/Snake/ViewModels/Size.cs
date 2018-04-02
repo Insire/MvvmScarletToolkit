@@ -1,6 +1,9 @@
-﻿namespace MvvmScarletToolkit.SnakeGame
+﻿using System.Diagnostics;
+
+namespace MvvmScarletToolkit.SnakeGame
 {
-    public class Size : ObservableObject
+    [DebuggerDisplay("Size {Width};{Height}")]
+    public sealed class Size : ObservableObject
     {
         private int _width;
         public int Width

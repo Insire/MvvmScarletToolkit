@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 
 using MvvmScarletToolkit.SnakeGame;
 
 namespace MvvmScarletToolkit
 {
+    [DebuggerDisplay("Apple {CurrentPosition.X};{CurrentPosition.Y}")]
     public sealed class Apple : ObservableObject, IPositionable
     {
         private Position _currentPosition;

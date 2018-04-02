@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 using MvvmScarletToolkit.SnakeGame;
 
@@ -7,6 +8,7 @@ namespace MvvmScarletToolkit
     public abstract class SnakeBase : ObservableObject, IPositionable
     {
         private readonly SnakeOptions _options;
+        private readonly string _debugName;
 
         private Position _currentPosition;
         public Position CurrentPosition
@@ -26,6 +28,8 @@ namespace MvvmScarletToolkit
         {
             _options = options ?? throw new ArgumentNullException(nameof(options));
             Size = size ?? throw new ArgumentNullException(nameof(size));
+
+            _debugName = $"DEBUG: {GetType().Name}".PadRight(35);
         }
 
         public SnakeBase(SnakeOptions options)
@@ -95,6 +99,8 @@ namespace MvvmScarletToolkit
                 position.Y = 0;
             if (position.Y < 0)
                 position.Y = _options.MaxHeight;
+
+            Debug.WriteLine($"{_debugName} {CurrentPosition.X};{CurrentPosition.Y} -> {position.X};{position.Y}");
 
             CurrentPosition = position;
         }
