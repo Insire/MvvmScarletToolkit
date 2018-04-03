@@ -49,7 +49,7 @@ namespace DemoApp
         public bool IsSelected
         {
             get { return _isSelected; }
-            set { SetValue(ref _isSelected, value, Changed: UpdateDataContext); }
+            set { SetValue(ref _isSelected, value, OnChanged: UpdateDataContext); }
         }
 
         public Scene()

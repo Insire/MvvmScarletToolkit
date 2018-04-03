@@ -28,7 +28,7 @@ namespace MvvmScarletToolkit
         public ScarletFileSystemContainerBase SelectedItem
         {
             get { return _selectedItem; }
-            set { SetValue(ref _selectedItem, value, Changed: OnSelectedItemChanged); }
+            set { SetValue(ref _selectedItem, value, OnChanged: OnSelectedItemChanged); }
         }
 
         private bool _isBusy;
@@ -42,7 +42,7 @@ namespace MvvmScarletToolkit
         public string Filter
         {
             get { return _filter; }
-            set { SetValue(ref _filter, value, Changed: () => SelectedItem.OnFilterChanged(Filter)); }
+            set { SetValue(ref _filter, value, OnChanged: () => SelectedItem.OnFilterChanged(Filter)); }
         }
 
         private bool _displayListView;
