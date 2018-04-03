@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit", "MvvmScarletToolkit\MvvmScarletToolkit.csproj", "{D555C0FD-335D-4C64-B80B-8999E66402B8}"
 EndProject
@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE94110B-58A4-473C-819C-C331D83C14ED}"
 	ProjectSection(SolutionItems) = preProject
 		nuget\nuget.exe = nuget\nuget.exe
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
@@ -29,5 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {57591B2A-CCBB-43A1-B8BE-5DA13ED5FE66}
 	EndGlobalSection
 EndGlobal

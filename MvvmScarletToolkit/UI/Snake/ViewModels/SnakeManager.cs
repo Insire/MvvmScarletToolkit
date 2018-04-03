@@ -144,7 +144,8 @@ namespace MvvmScarletToolkit
 
             _boardPieces.Clear();
 
-            await _snakeTask;
+            if (_snakeTask != null)
+                await _snakeTask;
 
             if (_snakeSource != null)
             {
@@ -154,7 +155,8 @@ namespace MvvmScarletToolkit
             }
             _snakeTask = null;
 
-            await _appleTask;
+            if (_appleTask != null)
+                await _appleTask;
 
             if (_appleSource != null)
             {
