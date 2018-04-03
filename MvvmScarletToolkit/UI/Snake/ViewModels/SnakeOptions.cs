@@ -9,7 +9,6 @@ namespace MvvmScarletToolkit
             return new SnakeOptions()
             {
                 SpeedMultiplier = 0.1,
-
             };
         }
 
@@ -18,7 +17,6 @@ namespace MvvmScarletToolkit
             return new SnakeOptions()
             {
                 SpeedMultiplier = 0.075,
-
             };
         }
 
@@ -27,34 +25,45 @@ namespace MvvmScarletToolkit
             return new SnakeOptions()
             {
                 SpeedMultiplier = 0.035,
-
             };
         }
 
-        public int FieldSize { get; set; } = 16;
+        public int FieldSize { get; set; }
         /// <summary>
         /// max amount of fields on x-axis
         /// </summary>
-        public int FieldCountX { get; set; } = 100;
+        public int FieldCountX { get; set; }
         /// <summary>
         /// max amount of fields on y-axis
         /// </summary>
-        public int FieldCountY { get; set; } = 100;
+        public int FieldCountY { get; set; }
 
         /// <summary>
         /// a value between 0 and 1
         /// </summary>
-        public double SpeedMultiplier { get; private set; } = 0.075;
+        public double SpeedMultiplier { get; private set; }
 
-        public int FoodInterval { get; set; } = 3;
-        public int MaxFoodCount { get; set; } = 5;
+        public int FoodInterval { get; set; }
+        public int MaxFoodCount { get; set; }
 
         public int StepWidth => FieldSize;
         public int MaxWidth => FieldCountX * FieldSize;
         public int MaxHeight => FieldCountY * FieldSize;
 
-        public int GlobalTickRate => Convert.ToInt32(Math.Round(1000 * SpeedMultiplier, MidpointRounding.AwayFromZero));
+        public int GlobalTickRate => Convert.ToInt32(Math.Round(100 * SpeedMultiplier, MidpointRounding.AwayFromZero));
         public int FoodTickRate => Convert.ToInt32(Math.Round(1000 * SpeedMultiplier * FoodInterval, MidpointRounding.AwayFromZero));
+
+        public SnakeOptions()
+        {
+            FieldSize = 16;
+
+            FieldCountX = 100;
+            FieldCountY = 100;
+
+            SpeedMultiplier = 0.075;
+            FoodInterval = 3;
+            MaxFoodCount = 5;
+        }
 
         public Position GetStartingPosition()
         {

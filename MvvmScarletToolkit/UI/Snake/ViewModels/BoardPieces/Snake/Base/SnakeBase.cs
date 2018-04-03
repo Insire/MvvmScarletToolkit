@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 using MvvmScarletToolkit.SnakeGame;
 
@@ -7,6 +6,7 @@ namespace MvvmScarletToolkit
 {
     public abstract class SnakeBase : ObservableObject, IPositionable
     {
+        private readonly ILogger _log;
         private readonly SnakeOptions _options;
         private readonly string _debugName;
 
@@ -24,16 +24,17 @@ namespace MvvmScarletToolkit
             protected set { SetValue(ref _size, value); }
         }
 
-        public SnakeBase(SnakeOptions options, Size size)
+        public SnakeBase(SnakeOptions options, Size size, ILogger log)
         {
+            _log = log ?? throw new ArgumentNullException(nameof(log));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             Size = size ?? throw new ArgumentNullException(nameof(size));
 
             _debugName = $"DEBUG: {GetType().Name}".PadRight(35);
         }
 
-        public SnakeBase(SnakeOptions options)
-            : this(options, new Size(options.FieldSize, options.FieldSize))
+        public SnakeBase(SnakeOptions options, ILogger log)
+            : this(options, new Size(options.FieldSize, options.FieldSize), log)
         {
         }
 
@@ -100,7 +101,7 @@ namespace MvvmScarletToolkit
             if (position.Y < 0)
                 position.Y = _options.MaxHeight;
 
-            Debug.WriteLine($"{_debugName} {CurrentPosition.X};{CurrentPosition.Y} -> {position.X};{position.Y}");
+            _log.Log($"{_debugName} {CurrentPosition.X};{CurrentPosition.Y} -> {position.X};{position.Y}");
 
             CurrentPosition = position;
         }

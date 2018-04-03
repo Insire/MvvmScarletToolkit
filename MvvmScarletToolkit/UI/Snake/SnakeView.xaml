@@ -8,118 +8,129 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:DesignHeight="450"
              d:DesignWidth="800"
+             Loaded="UserControl_Loaded"
+             Unloaded="SnakeView_Unloaded"
              mc:Ignorable="d">
 
-    <UserControl.Resources />
-    <WrapPanel>
-        <Viewbox>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Loaded">
-                    <i:InvokeCommandAction Command="{Binding Manager.LoadCommand}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+            <TextBlock>
+                <Run Text="{Binding FramesPerSecond, StringFormat={}FPS: {0}, Mode=OneWay}" />
+                <Run Text=" " />
+                <Run Text="{Binding Manager.Snake.Body.Count, StringFormat={}Tail length: {0}, Mode=OneWay}" />
+            </TextBlock>
+        </StackPanel>
 
-            <ItemsControl Width="{Binding Manager.UpperBoundX}"
-                          Height="{Binding Manager.UpperBoundY}"
-                          Background="LightGray"
-                          ItemsSource="{Binding Manager.BoardPieces}">
-                <ItemsControl.Resources>
-                    <DataTemplate DataType="{x:Type local:SnakeHead}">
-                        <Rectangle Width="{Binding Size.Width}"
-                                   Height="{Binding Size.Height}"
-                                   Fill="Green" />
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:SnakeSegment}">
-                        <Rectangle Width="{Binding Size.Width}"
-                                   Height="{Binding Size.Height}"
-                                   Fill="GreenYellow" />
-                    </DataTemplate>
+        <WrapPanel>
+            <Viewbox>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Loaded">
+                        <i:InvokeCommandAction Command="{Binding Manager.LoadCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
 
-                    <DataTemplate DataType="{x:Type local:Apple}">
-                        <Rectangle Width="{Binding Size.Width}"
-                                   Height="{Binding Size.Height}"
-                                   Fill="Red" />
-                    </DataTemplate>
-                </ItemsControl.Resources>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding CurrentPosition.X}" />
-                        <Setter Property="Canvas.Top" Value="{Binding CurrentPosition.Y}" />
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
-            </ItemsControl>
-        </Viewbox>
+                <ItemsControl Width="{Binding Manager.UpperBoundX}"
+                              Height="{Binding Manager.UpperBoundY}"
+                              Background="LightGray"
+                              ItemsSource="{Binding Manager.BoardPieces}">
+                    <ItemsControl.Resources>
+                        <DataTemplate DataType="{x:Type local:SnakeHead}">
+                            <Rectangle Width="{Binding Size.Width}"
+                                       Height="{Binding Size.Height}"
+                                       Fill="Green" />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type local:SnakeSegment}">
+                            <Rectangle Width="{Binding Size.Width}"
+                                       Height="{Binding Size.Height}"
+                                       Fill="GreenYellow" />
+                        </DataTemplate>
 
-        <Grid Margin="5"
-              HorizontalAlignment="Center"
-              VerticalAlignment="Center">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="5" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="5" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+                        <DataTemplate DataType="{x:Type local:Apple}">
+                            <Rectangle Width="{Binding Size.Width}"
+                                       Height="{Binding Size.Height}"
+                                       Fill="Red" />
+                        </DataTemplate>
+                    </ItemsControl.Resources>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding CurrentPosition.X}" />
+                            <Setter Property="Canvas.Top" Value="{Binding CurrentPosition.Y}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+            </Viewbox>
 
-            <Button Grid.Row="0"
-                    Grid.Column="2"
-                    Width="32"
-                    Height="32"
-                    Command="{Binding Manager.MoveNorthCommand}"
-                    Content="North" />
-            <Button Grid.Row="4"
-                    Grid.Column="2"
-                    Width="32"
-                    Height="32"
-                    Command="{Binding Manager.MoveSouthCommand}"
-                    Content="South" />
-            <Button Grid.Row="2"
-                    Grid.Column="0"
-                    Width="32"
-                    Height="32"
-                    Command="{Binding Manager.MoveWestCommand}"
-                    Content="West" />
-            <Button Grid.Row="2"
-                    Grid.Column="4"
-                    Width="32"
-                    Height="32"
-                    Command="{Binding Manager.MoveEastCommand}"
-                    Content="East" />
+            <Grid Margin="5"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <Button Grid.Row="2"
-                    Grid.Column="2"
-                    Width="32"
-                    Height="32"
-                    Command="{Binding Manager.PlayCommand}">
-                <Button.Style>
-                    <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.None}">
-                                <Setter Property="Content" Value="Play" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.Running}">
-                                <Setter Property="Content" Value="Pause" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.Paused}">
-                                <Setter Property="Content" Value="Resume" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
-        </Grid>
+                <Button Grid.Row="0"
+                        Grid.Column="2"
+                        Width="32"
+                        Height="32"
+                        Command="{Binding Manager.MoveNorthCommand}"
+                        Content="North" />
+                <Button Grid.Row="4"
+                        Grid.Column="2"
+                        Width="32"
+                        Height="32"
+                        Command="{Binding Manager.MoveSouthCommand}"
+                        Content="South" />
+                <Button Grid.Row="2"
+                        Grid.Column="0"
+                        Width="32"
+                        Height="32"
+                        Command="{Binding Manager.MoveWestCommand}"
+                        Content="West" />
+                <Button Grid.Row="2"
+                        Grid.Column="4"
+                        Width="32"
+                        Height="32"
+                        Command="{Binding Manager.MoveEastCommand}"
+                        Content="East" />
 
-    </WrapPanel>
+                <Button Grid.Row="2"
+                        Grid.Column="2"
+                        Width="32"
+                        Height="32"
+                        Command="{Binding Manager.PlayCommand}">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.None}">
+                                    <Setter Property="Content" Value="Play" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.Running}">
+                                    <Setter Property="Content" Value="Pause" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.Paused}">
+                                    <Setter Property="Content" Value="Resume" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+
+        </WrapPanel>
+    </DockPanel>
 </UserControl>

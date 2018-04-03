@@ -79,12 +79,15 @@
     <Compile Include="Extensions\EventExtension.cs" />
     <Compile Include="UI\Overlay.cs" />
     <Compile Include="UI\SelectedTreeViewItemBehavior.cs" />
+    <Compile Include="UI\Snake\Util\FrameCounter.cs" />
+    <Compile Include="UI\Snake\Interfaces\ILogger.cs" />
+    <Compile Include="UI\Snake\Interfaces\ISnakeManager.cs" />
     <Compile Include="UI\Snake\Types\Difficulty.cs" />
+    <Compile Include="UI\Snake\Util\InternalLogger.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Apple.cs" />
     <Compile Include="UI\Snake\Types\Direction.cs" />
     <Compile Include="UI\Snake\Types\GameState.cs" />
     <Compile Include="UI\Snake\Interfaces\IPositionable.cs" />
-    <Compile Include="UI\Snake\Interfaces\IRefresh.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Base\Position.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Base\Size.cs" />
     <Compile Include="UI\Snake\ViewModels\SnakeViewModel.cs" />

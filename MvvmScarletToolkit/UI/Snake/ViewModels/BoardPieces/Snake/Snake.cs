@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 
 namespace MvvmScarletToolkit
@@ -8,6 +7,7 @@ namespace MvvmScarletToolkit
     public sealed class Snake : ObservableObject
     {
         private readonly SnakeOptions _options;
+        private readonly ILogger _log;
 
         private SnakeHead _head;
         public SnakeHead Head
@@ -23,12 +23,13 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _body, value); }
         }
 
-        public Snake(SnakeOptions options)
+        public Snake(SnakeOptions options, ILogger log)
         {
+            _log = log ?? throw new ArgumentNullException(nameof(log));
             _options = options ?? throw new ArgumentNullException(nameof(options));
 
             Body = new ObservableCollection<SnakeBase>();
-            Head = new SnakeHead(options);
+            Head = new SnakeHead(options, log);
         }
 
         public void MoveNorth()
@@ -98,9 +99,9 @@ namespace MvvmScarletToolkit
 
             if ((XA2 >= XH1 && XA1 <= XH2) && (YA2 >= YH1 && YA1 <= YH2))
             {
-                Debug.WriteLine($"EAT: {_head.CurrentPosition.X};{_head.CurrentPosition.Y}");
+                _log.Log($"EAT: {_head.CurrentPosition.X};{_head.CurrentPosition.Y}");
 
-                var segment = new SnakeSegment(_options, _head);
+                var segment = new SnakeSegment(_options, _head, _log);
                 Body.Add(segment);
 
                 return true;

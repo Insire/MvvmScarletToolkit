@@ -5,8 +5,8 @@ namespace MvvmScarletToolkit
     [DebuggerDisplay("Segment {CurrentPosition.X};{CurrentPosition.Y}")]
     public sealed class SnakeSegment : SnakeBase
     {
-        public SnakeSegment(SnakeOptions options, SnakeHead head)
-            : base(options)
+        public SnakeSegment(SnakeOptions options, SnakeHead head, ILogger log)
+            : base(options, log)
         {
             CurrentPosition = head.CurrentPosition;
         }

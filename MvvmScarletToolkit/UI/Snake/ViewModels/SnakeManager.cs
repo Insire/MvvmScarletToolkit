@@ -9,14 +9,16 @@ using System.Windows.Threading;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class SnakeManager : ObservableObject, IRefresh
+    public sealed class SnakeManager : ObservableObject, ISnakeManager
     {
         private readonly Dispatcher _dispatcher;
         private readonly SnakeOptions _options;
         private readonly IProducerConsumerCollection<Apple> _apples;
         private readonly Random _random;
+        private readonly ILogger _log;
 
         private bool _isLoaded = false;
+        private bool _disposed = false;
 
         private Task _snakeTask;
         private CancellationTokenSource _snakeSource;
@@ -68,8 +70,9 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _direction, value); }
         }
 
-        public SnakeManager(SnakeOptions options, Dispatcher dispatcher)
+        public SnakeManager(SnakeOptions options, Dispatcher dispatcher, ILogger log)
         {
+            _log = log ?? throw new ArgumentNullException(nameof(log));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _apples = new ConcurrentQueue<Apple>();
@@ -81,7 +84,7 @@ namespace MvvmScarletToolkit
             UpperBoundY = _options.MaxHeight;
             UpperBoundX = _options.MaxWidth;
 
-            Snake = new Snake(_options);
+            Snake = new Snake(_options, _log);
             BoardPieces = new ObservableCollection<IPositionable>();
 
             PlayCommand = new RelayCommand(Play);
@@ -141,21 +144,28 @@ namespace MvvmScarletToolkit
 
             _boardPieces.Clear();
 
-            _snakeSource.Cancel();
-
             await _snakeTask;
 
-            _snakeSource.Dispose();
+            if (_snakeSource != null)
+            {
+                _snakeSource.Cancel();
+                _snakeSource.Dispose();
+                _snakeSource = null;
+            }
             _snakeTask = null;
-
-            _appleSource.Cancel();
 
             await _appleTask;
 
-            _appleSource.Dispose();
+            if (_appleSource != null)
+            {
+                _appleSource.Cancel();
+                _appleSource.Dispose();
+                _appleSource = null;
+            }
+
             _appleTask = null;
 
-            Snake = new Snake(_options);
+            Snake = new Snake(_options, _log);
             UpdateBoardPieces();
         }
 
@@ -293,7 +303,11 @@ namespace MvvmScarletToolkit
                                 break;
                         }
                     }
-                    await Task.Delay(_options.GlobalTickRate).ConfigureAwait(false);
+
+                    if (_snakeSource?.Token == null || _snakeSource.Token.IsCancellationRequested)
+                        return;
+
+                    await Task.Delay(_options.GlobalTickRate, _snakeSource.Token).ConfigureAwait(false);
                 }
 
             }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
@@ -308,7 +322,10 @@ namespace MvvmScarletToolkit
                     if (Direction != Direction.None && _options.MaxFoodCount > _apples.Count) // start generating apples, as soon as the snake moves
                         _apples.TryAdd(new Apple(_random.Next(LowerBoundX, UpperBoundX), _random.Next(LowerBoundY, UpperBoundY), _options));
 
-                    await Task.Delay(1000);
+                    if (_appleSource?.Token == null || _appleSource.Token.IsCancellationRequested)
+                        return;
+
+                    await Task.Delay(_options.FoodTickRate);
                 }
 
             }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
@@ -318,6 +335,47 @@ namespace MvvmScarletToolkit
         {
             if (State == GameState.Running)
                 UpdateBoardPieces();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            // Check to see if Dispose has already been called.
+            if (!_disposed)
+            {
+                // If disposing equals true, dispose all managed
+                // and unmanaged resources.
+                if (disposing)
+                {
+                    if (_appleSource != null)
+                    {
+                        _appleSource.Cancel();
+                        _appleSource.Dispose();
+                        _appleSource = null;
+                    }
+
+                    _snakeTask?.Wait();
+
+                    if (_snakeSource != null)
+                    {
+                        _snakeSource.Cancel();
+                        _snakeSource.Dispose();
+                        _snakeSource = null;
+                    }
+
+                    _appleTask?.Wait();
+
+                    Reset().Wait();
+                }
+
+                // Note disposing has been done.
+                _disposed = true;
+            }
         }
     }
 }
