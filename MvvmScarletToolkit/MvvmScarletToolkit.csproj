@@ -82,7 +82,6 @@
     <Compile Include="UI\Snake\Util\FrameCounter.cs" />
     <Compile Include="UI\Snake\Interfaces\ILogger.cs" />
     <Compile Include="UI\Snake\Interfaces\ISnakeManager.cs" />
-    <Compile Include="UI\Snake\Types\Difficulty.cs" />
     <Compile Include="UI\Snake\Util\InternalLogger.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Apple.cs" />
     <Compile Include="UI\Snake\Types\Direction.cs" />

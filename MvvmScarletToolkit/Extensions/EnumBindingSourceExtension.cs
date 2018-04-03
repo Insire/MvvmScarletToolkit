@@ -3,7 +3,7 @@ using System.Windows.Markup;
 
 namespace MvvmScarletToolkit
 {
-    public class EnumBindingSourceExtension : MarkupExtension
+    public sealed class EnumBindingSourceExtension : MarkupExtension
     {
         private Type _enumType;
         public Type EnumType
