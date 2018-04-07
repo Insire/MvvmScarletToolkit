@@ -120,13 +120,13 @@ namespace MvvmScarletToolkit
                 RemoveVisualChild(_uiElement);
             }
 
-            protected override Size MeasureOverride(Size constraint)
+            protected override System.Windows.Size MeasureOverride(System.Windows.Size constraint)
             {
                 _uiElement.Measure(constraint);
                 return _uiElement.DesiredSize;
             }
 
-            protected override Size ArrangeOverride(Size finalSize)
+            protected override System.Windows.Size ArrangeOverride(System.Windows.Size finalSize)
             {
                 var location = new Point(0, 0);
                 var rect = new Rect(location, finalSize);

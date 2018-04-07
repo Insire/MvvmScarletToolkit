@@ -6,13 +6,13 @@ using System.Windows.Threading;
 namespace MvvmScarletToolkit
 {
     /* Josh Smiths ConfigurableWindow (https://joshsmithonwpf.wordpress.com/2007/12/27/a-configurable-window-for-wpf/)
-      
+
      Sample:
 
      public partial class DemoWindow : ConfigurableWindow
-     
+
         ...
-     
+
         protected override IConfigurableWindowSettings CreateSettings()
         {
             return new DemoWindowConfigSettings(this);
@@ -63,8 +63,8 @@ namespace MvvmScarletToolkit
         }
 
         /// <summary>
-        /// Derived classes must return the object which exposes 
-        /// persisted window settings. This method is only invoked 
+        /// Derived classes must return the object which exposes
+        /// persisted window settings. This method is only invoked
         /// once per Window, during construction.
         /// </summary>
         protected abstract IConfigurableWindowSettings CreateSettings();
@@ -73,11 +73,11 @@ namespace MvvmScarletToolkit
         {
             base.OnLocationChanged(e);
 
-            // We need to delay this call because we are 
-            // notified of a location change before a 
-            // window state change.  That causes a problem 
-            // when maximizing the window because we record 
-            // the maximized window's location, which is not 
+            // We need to delay this call because we are
+            // notified of a location change before a
+            // window state change.  That causes a problem
+            // when maximizing the window because we record
+            // the maximized window's location, which is not
             // something worth saving.
             Dispatcher.BeginInvoke(DispatcherPriority.Background, new ThreadStart(() =>
                                                                  {
@@ -105,7 +105,7 @@ namespace MvvmScarletToolkit
 
             if (_isLoaded)
             {
-                // We don't want the Window to open in the 
+                // We don't want the Window to open in the
                 // minimized state, so ignore that value.
                 if (WindowState != WindowState.Minimized)
                     _settings.WindowState = WindowState;

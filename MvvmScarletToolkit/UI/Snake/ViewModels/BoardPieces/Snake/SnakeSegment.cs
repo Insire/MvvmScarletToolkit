@@ -2,13 +2,16 @@
 
 namespace MvvmScarletToolkit
 {
-    [DebuggerDisplay("Segment {CurrentPosition.X};{CurrentPosition.Y}")]
+    [DebuggerDisplay("Segment {Sequence},{CurrentPosition.X};{CurrentPosition.Y}")]
     public sealed class SnakeSegment : SnakeBase
     {
-        public SnakeSegment(SnakeOptions options, SnakeHead head, ILogger log)
+        public int Sequence { get; }
+
+        public SnakeSegment(SnakeOptions options, IPositionable positionable, ILogger log, int sequence)
             : base(options, log)
         {
-            CurrentPosition = head.CurrentPosition;
+            CurrentPosition = positionable.CurrentPosition;
+            Sequence = sequence;
         }
     }
 }

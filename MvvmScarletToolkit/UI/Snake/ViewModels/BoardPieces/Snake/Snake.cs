@@ -16,8 +16,8 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _head, value); }
         }
 
-        private ObservableCollection<SnakeBase> _body;
-        public ObservableCollection<SnakeBase> Body
+        private ObservableCollection<SnakeSegment> _body;
+        public ObservableCollection<SnakeSegment> Body
         {
             get { return _body; }
             private set { SetValue(ref _body, value); }
@@ -28,40 +28,85 @@ namespace MvvmScarletToolkit
             _log = log ?? throw new ArgumentNullException(nameof(log));
             _options = options ?? throw new ArgumentNullException(nameof(options));
 
-            Body = new ObservableCollection<SnakeBase>();
+            Body = new ObservableCollection<SnakeSegment>();
             Head = new SnakeHead(options, log);
         }
 
-        public void MoveNorth()
+        public bool MoveNorth()
         {
             var head = Head.CurrentPosition;
-            Head.MoveNorth();
+            var position = Head.MoveNorth();
+
+            if (CanMove(position))
+                Head.Move(position);
+            else
+                return false;
 
             MoveTail(head);
+
+            return true;
         }
 
-        public void MoveSouth()
+        public bool MoveSouth()
         {
             var head = Head.CurrentPosition;
-            Head.MoveSouth();
+            var position = Head.MoveSouth();
+
+            if (CanMove(position))
+                Head.Move(position);
+            else
+                return false;
 
             MoveTail(head);
+
+            return true;
         }
 
-        public void MoveWest()
+        public bool MoveWest()
         {
             var head = Head.CurrentPosition;
-            Head.MoveWest();
+            var position = Head.MoveWest();
+
+            if (CanMove(position))
+                Head.Move(position);
+            else
+                return false;
 
             MoveTail(head);
+
+            return true;
         }
 
-        public void MoveEast()
+        public bool MoveEast()
         {
             var head = Head.CurrentPosition;
-            Head.MoveEast();
+            var position = Head.MoveEast();
+
+            if (CanMove(position))
+                Head.Move(position);
+            else
+                return false;
 
             MoveTail(head);
+
+            return true;
+        }
+
+        private bool CanMove(Position position)
+        {
+            if (Body.Count < 4) // snake is not long enough to bite itself
+                return true;
+
+            var model = new PositionDTO(Head)
+            {
+                CurrentPosition = position
+            };
+
+            var result = Body.OrderBy(p => p.Sequence)
+                             .Skip(3)
+                             .FirstOrDefault(p => model.Intersect(p));
+
+            return result == null;
         }
 
         private void MoveTail(Position initialPosition)
@@ -70,6 +115,10 @@ namespace MvvmScarletToolkit
             foreach (var part in _body.Where(p => p is SnakeSegment))
             {
                 var temp = part.CurrentPosition;
+
+                if (previousPosition == temp)
+                    continue;
+
                 part.Move(previousPosition);
                 previousPosition = temp;
             }
@@ -80,28 +129,19 @@ namespace MvvmScarletToolkit
             if (!(boardPiece is Apple))
                 return false;
 
-            // simple calculation if an apple intersects with the snake head, which will consume the apple by default
-            // and a new Snake segment
+            // simple calculation if an apple intersects with the snake head, which will consume the
+            // apple by default and a new Snake segment
 
-            // XH1 < XH2
-            // YH1 < YH2
-            var XH1 = Head.CurrentPosition.X - Head.Size.Width;
-            var YH1 = Head.CurrentPosition.Y - Head.Size.Height;
-            var XH2 = Head.CurrentPosition.X + Head.Size.Width;
-            var YH2 = Head.CurrentPosition.Y + Head.Size.Height;
-
-            // XA1 < XA2
-            // YA1 < YA2
-            var XA1 = boardPiece.CurrentPosition.X - boardPiece.Size.Width;
-            var YA1 = boardPiece.CurrentPosition.Y - boardPiece.Size.Height;
-            var XA2 = boardPiece.CurrentPosition.X + boardPiece.Size.Width;
-            var YA2 = boardPiece.CurrentPosition.Y + boardPiece.Size.Height;
-
-            if ((XA2 >= XH1 && XA1 <= XH2) && (YA2 >= YH1 && YA1 <= YH2))
+            if (Head.Intersect(boardPiece))
             {
                 _log.Log($"EAT: {_head.CurrentPosition.X};{_head.CurrentPosition.Y}");
 
-                var segment = new SnakeSegment(_options, _head, _log);
+                var segment = Body.LastOrDefault();
+                if (segment != null)
+                    segment = new SnakeSegment(_options, segment, _log, Body.Count);
+                else
+                    segment = new SnakeSegment(_options, Head, _log, Body.Count);
+
                 Body.Add(segment);
 
                 return true;

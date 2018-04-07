@@ -1,6 +1,4 @@
-﻿using MvvmScarletToolkit.SnakeGame;
-
-namespace MvvmScarletToolkit
+﻿namespace MvvmScarletToolkit
 {
     public interface IPositionable
     {

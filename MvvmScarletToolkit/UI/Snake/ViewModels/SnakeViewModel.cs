@@ -32,7 +32,6 @@ namespace MvvmScarletToolkit
         }
 
         // [core functionality]
-        // add new movement type "change direction"
         // bind buttons to "change direction"
 
         // [core functionality]

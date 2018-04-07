@@ -5,7 +5,7 @@ namespace MvvmScarletToolkit
     public interface IConfigurableWindowSettings
     {
         /// <summary>
-        /// Returns true if the application has never 
+        /// Returns true if the application has never
         /// been run before by the current user.  If
         /// this returns true, the Window's initial
         /// location is determined by the operating
@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// Gets/sets the size of the Window.
         /// </summary>
-        Size WindowSize { get; set; }
+        System.Windows.Size WindowSize { get; set; }
 
         /// <summary>
         /// Gets/sets the WindowState of the Window.

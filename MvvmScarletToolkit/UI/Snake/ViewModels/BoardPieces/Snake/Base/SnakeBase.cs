@@ -1,6 +1,5 @@
-﻿using System;
-
-using MvvmScarletToolkit.SnakeGame;
+﻿
+using System;
 
 namespace MvvmScarletToolkit
 {
@@ -34,56 +33,56 @@ namespace MvvmScarletToolkit
         }
 
         public SnakeBase(SnakeOptions options, ILogger log)
-            : this(options, new Size(options.FieldSize, options.FieldSize), log)
+            : this(options, new Size(options.BoardPieceSize, options.BoardPieceSize), log)
         {
         }
 
         /// <summary>
         /// move relative
         /// </summary>
-        public void MoveNorth()
+        public Position MoveNorth()
         {
-            Move(new Position()
+            return new Position()
             {
                 X = _currentPosition.X,
                 Y = _currentPosition.Y - _options.StepWidth,
-            });
+            };
         }
 
         /// <summary>
         /// move relative
         /// </summary>
-        public void MoveSouth()
+        public Position MoveSouth()
         {
-            Move(new Position()
+            return new Position()
             {
                 X = _currentPosition.X,
                 Y = _currentPosition.Y + _options.StepWidth,
-            });
+            };
         }
 
         /// <summary>
         /// move relative
         /// </summary>
-        public void MoveWest()
+        public Position MoveWest()
         {
-            Move(new Position()
+            return new Position()
             {
                 X = _currentPosition.X - _options.StepWidth,
                 Y = _currentPosition.Y,
-            });
+            };
         }
 
         /// <summary>
         /// move relative
         /// </summary>
-        public void MoveEast()
+        public Position MoveEast()
         {
-            Move(new Position()
+            return new Position()
             {
                 X = _currentPosition.X + _options.StepWidth,
                 Y = _currentPosition.Y,
-            });
+            };
         }
 
         /// <summary>

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace MvvmScarletToolkit.SnakeGame
+namespace MvvmScarletToolkit
 {
     [DebuggerDisplay("Size {Width};{Height}")]
     public sealed class Size : ObservableObject

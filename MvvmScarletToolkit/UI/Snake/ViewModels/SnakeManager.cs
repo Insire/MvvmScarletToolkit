@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,10 +50,10 @@ namespace MvvmScarletToolkit
         public ICommand PlayCommand { get; }
         public ICommand ResetCommand { get; }
 
-        public IAsyncCommand MoveNorthCommand { get; }
-        public IAsyncCommand MoveSouthCommand { get; }
-        public IAsyncCommand MoveWestCommand { get; }
-        public IAsyncCommand MoveEastCommand { get; }
+        public ICommand MoveNorthCommand { get; }
+        public ICommand MoveSouthCommand { get; }
+        public ICommand MoveWestCommand { get; }
+        public ICommand MoveEastCommand { get; }
 
         public ICommand LoadCommand { get; }
 
@@ -60,14 +61,28 @@ namespace MvvmScarletToolkit
         public GameState State
         {
             get { return _state; }
-            private set { SetValue(ref _state, value); }
+            private set
+            {
+                if (_state == value)
+                    return;
+
+                _state = value;
+                OnPropertyChanged(nameof(State));
+            }
         }
 
         private Direction _direction;
         public Direction Direction
         {
             get { return _direction; }
-            private set { SetValue(ref _direction, value); }
+            private set
+            {
+                if (_direction == value)
+                    return;
+
+                _direction = value;
+                OnPropertyChanged(nameof(Direction));
+            }
         }
 
         public SnakeManager(SnakeOptions options, Dispatcher dispatcher, ILogger log)
@@ -77,6 +92,9 @@ namespace MvvmScarletToolkit
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _apples = new ConcurrentQueue<Apple>();
             _random = new Random();
+
+            _direction = Direction.North;
+            _state = GameState.None;
 
             LowerBoundY = 0;
             LowerBoundX = 0;
@@ -92,10 +110,10 @@ namespace MvvmScarletToolkit
 
             LoadCommand = new RelayCommand(Load, CanLoad);
 
-            MoveNorthCommand = AsyncCommand.Create(MoveNorth, CanMoveNorth);
-            MoveSouthCommand = AsyncCommand.Create(MoveSouth, CanMoveSouth);
-            MoveWestCommand = AsyncCommand.Create(MoveWest, CanMoveWest);
-            MoveEastCommand = AsyncCommand.Create(MoveEast, CanMoveEast);
+            MoveNorthCommand = new RelayCommand(SetDirectionNorth, CanMoveNorth);
+            MoveSouthCommand = new RelayCommand(SetDirectionSouth, CanMoveSouth);
+            MoveWestCommand = new RelayCommand(SetDirectionWest, CanMoveWest);
+            MoveEastCommand = new RelayCommand(SetDirectionEast, CanMoveEast);
         }
 
         private void Play()
@@ -105,9 +123,11 @@ namespace MvvmScarletToolkit
                 case GameState.None:
                     Start();
                     break;
+
                 case GameState.Running:
                     Pause();
                     break;
+
                 case GameState.Paused:
                     Resume();
                     break;
@@ -183,78 +203,95 @@ namespace MvvmScarletToolkit
             // pause timer
         }
 
-        private bool CanMoveNorth()
+        private void SetDirectionNorth()
         {
-            return State.HasFlag(GameState.Running);
+            Direction = Direction.North;
         }
 
-        private Task MoveNorth()
+        private void SetDirectionSouth()
         {
-            return InternalMoveAsync(Direction.North);
+            Direction = Direction.South;
+        }
+
+        private void SetDirectionEast()
+        {
+            Direction = Direction.East;
+        }
+
+        private void SetDirectionWest()
+        {
+            Direction = Direction.West;
+        }
+
+        private bool CanMoveNorth()
+        {
+            return State.HasFlag(GameState.Running)
+                && Direction != Direction.South
+                && Direction != Direction.North;
         }
 
         private bool CanMoveSouth()
         {
-            return State.HasFlag(GameState.Running);
-        }
-
-        private Task MoveSouth()
-        {
-            return InternalMoveAsync(Direction.South);
+            return State.HasFlag(GameState.Running)
+                && Direction != Direction.North
+                && Direction != Direction.South;
         }
 
         private bool CanMoveWest()
         {
-            return State.HasFlag(GameState.Running);
-        }
-
-        private Task MoveWest()
-        {
-            return InternalMoveAsync(Direction.West);
+            return State.HasFlag(GameState.Running)
+                && Direction != Direction.East
+                && Direction != Direction.West;
         }
 
         private bool CanMoveEast()
         {
-            return State.HasFlag(GameState.Running);
+            return State.HasFlag(GameState.Running)
+                && Direction != Direction.West
+                && Direction != Direction.East;
         }
 
-        private Task MoveEast()
+        private async Task InternalMoveAsync()
         {
-            return InternalMoveAsync(Direction.East);
+            await _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<Direction>((d) =>
+            {
+                if (!InternalMove(d))
+                    State = GameState.Fail;
+            }), _direction);
         }
 
-        private async Task InternalMoveAsync(Direction direction)
+        private bool InternalMove(Direction direction)
         {
-            await _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<Direction>((d) => InternalMove(d)), direction);
-        }
-
-        private void InternalMove(Direction direction)
-        {
+            var result = false;
             switch (direction)
             {
                 case Direction.East:
-                    Snake.MoveEast();
+                    result = Snake.MoveEast();
                     break;
-                case Direction.West:
-                    Snake.MoveWest();
-                    break;
-                case Direction.North:
-                    Snake.MoveNorth();
-                    break;
-                case Direction.South:
-                    Snake.MoveSouth();
-                    break;
-                default:
-                    return;
-            }
 
-            Direction = direction;
+                case Direction.West:
+                    result = Snake.MoveWest();
+                    break;
+
+                case Direction.North:
+                    result = Snake.MoveNorth();
+                    break;
+
+                case Direction.South:
+                    result = Snake.MoveSouth();
+                    break;
+
+                default:
+                    return false;
+            }
 
             var tastyApple = IsSnakeEatingApple();
             if (tastyApple == null)
-                return;
+                return result;
 
             BoardPieces.Remove(tastyApple);
+
+            return result;
         }
 
         private IPositionable IsSnakeEatingApple()
@@ -279,39 +316,23 @@ namespace MvvmScarletToolkit
 
         private Task CreateSnakeLoop(CancellationToken token)
         {
-            // we create a new thread, since this is most likely running for a while and unrelated to IO stuff
+            // we create a new thread, since this is most likely running for a while and unrelated to
+            // IO stuff
             return Task.Factory.StartNew(async () =>
             {
                 while (State != GameState.None)
                 {
+                    if (State == GameState.Fail)
+                        return;
+
                     if (State != GameState.Paused)
-                    {
-                        switch (Direction)
-                        {
-                            case Direction.North:
-                                await MoveNorth().ConfigureAwait(false);
-                                break;
-
-                            case Direction.South:
-                                await MoveSouth().ConfigureAwait(false);
-                                break;
-
-                            case Direction.West:
-                                await MoveWest().ConfigureAwait(false);
-                                break;
-
-                            case Direction.East:
-                                await MoveEast().ConfigureAwait(false);
-                                break;
-                        }
-                    }
+                        await InternalMoveAsync().ConfigureAwait(false);
 
                     if (_snakeSource?.Token == null || _snakeSource.Token.IsCancellationRequested)
                         return;
 
                     await Task.Delay(_options.GlobalTickRate, _snakeSource.Token).ConfigureAwait(false);
                 }
-
             }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
@@ -321,15 +342,22 @@ namespace MvvmScarletToolkit
             {
                 while (State != GameState.None)
                 {
-                    if (Direction != Direction.None && _options.MaxFoodCount > _apples.Count) // start generating apples, as soon as the snake moves
-                        _apples.TryAdd(new Apple(_random.Next(LowerBoundX, UpperBoundX), _random.Next(LowerBoundY, UpperBoundY), _options));
+                    if (State == GameState.Fail)
+                        return;
+
+                    if (Debugger.IsAttached)
+                        _apples.TryAdd(new Apple(Snake.Head.CurrentPosition.X, _random.Next(LowerBoundY, UpperBoundY), _options));
+                    else
+                    {
+                        if (Direction != Direction.None && _options.MaxFoodCount > _apples.Count) // start generating apples, as soon as the snake moves
+                            _apples.TryAdd(new Apple(_random.Next(LowerBoundX, UpperBoundX), _random.Next(LowerBoundY, UpperBoundY), _options));
+                    }
 
                     if (_appleSource?.Token == null || _appleSource.Token.IsCancellationRequested)
                         return;
 
                     await Task.Delay(_options.FoodTickRate);
                 }
-
             }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
@@ -350,8 +378,7 @@ namespace MvvmScarletToolkit
             // Check to see if Dispose has already been called.
             if (!_disposed)
             {
-                // If disposing equals true, dispose all managed
-                // and unmanaged resources.
+                // If disposing equals true, dispose all managed and unmanaged resources.
                 if (disposing)
                 {
                     if (_appleSource != null)

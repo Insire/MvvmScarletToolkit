@@ -39,8 +39,7 @@ namespace MvvmScarletToolkit
             // Check to see if Dispose has already been called.
             if (!disposed)
             {
-                // If disposing equals true, dispose all managed
-                // and unmanaged resources.
+                // If disposing equals true, dispose all managed and unmanaged resources.
                 if (disposing)
                 {
                     // Dispose managed resources.

@@ -51,8 +51,8 @@ namespace DemoApp
             DemoItems = new DemoItems();
             LogItems = new LogItems();
 
-            AddLinkedCommand = new AsyncRelayCommand(AddLinked, CanAddLink);
-            AddRangeCommand = new AsyncRelayCommand(AddRange, CanAddRange);
+            AddLinkedCommand = AsyncCommand.Create(AddLinked, CanAddLink);
+            AddRangeCommand = AsyncCommand.Create(AddRange, CanAddRange);
         }
 
         public async Task AddLinked()

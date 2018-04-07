@@ -24,9 +24,9 @@ namespace MvvmScarletToolkit
             set { SetValue(_windowLocationProp, value); }
         }
 
-        public Size WindowSize
+        public System.Windows.Size WindowSize
         {
-            get { return GetValue<Size>(_windowSizeProp); }
+            get { return GetValue<System.Windows.Size>(_windowSizeProp); }
             set { SetValue(_windowSizeProp, value); }
         }
 

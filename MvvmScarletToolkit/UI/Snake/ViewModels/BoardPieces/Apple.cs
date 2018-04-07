@@ -1,7 +1,6 @@
-﻿using System;
+﻿
+using System;
 using System.Diagnostics;
-
-using MvvmScarletToolkit.SnakeGame;
 
 namespace MvvmScarletToolkit
 {
@@ -29,7 +28,7 @@ namespace MvvmScarletToolkit
         }
 
         public Apple(int x, int y, SnakeOptions options)
-            : this(new Position { X = x, Y = y, }, new Size(options.FieldSize, options.FieldSize))
+            : this(new Position { X = x, Y = y, }, new Size(options.BoardPieceSize, options.BoardPieceSize))
         {
         }
     }

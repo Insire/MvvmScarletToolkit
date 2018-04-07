@@ -130,7 +130,6 @@
                     </Button.Style>
                 </Button>
             </Grid>
-
         </WrapPanel>
     </DockPanel>
 </UserControl>
