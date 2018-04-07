@@ -121,6 +121,18 @@
             <Grid Margin="5"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center">
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SnakeViewModel.SelectedOption.IsDebug}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SnakeViewModel.SelectedOption.IsDebug}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="5" />
@@ -142,18 +154,21 @@
                         Height="32"
                         Command="{Binding Manager.MoveNorthCommand}"
                         Content="North" />
+
                 <Button Grid.Row="4"
                         Grid.Column="2"
                         Width="32"
                         Height="32"
                         Command="{Binding Manager.MoveSouthCommand}"
                         Content="South" />
+
                 <Button Grid.Row="2"
                         Grid.Column="0"
                         Width="32"
                         Height="32"
                         Command="{Binding Manager.MoveWestCommand}"
                         Content="West" />
+
                 <Button Grid.Row="2"
                         Grid.Column="4"
                         Width="32"

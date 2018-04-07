@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -96,7 +95,7 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _loadCommand, value); }
         }
 
-        private GameState _state;
+        private volatile GameState _state;
         public GameState State
         {
             get { return _state; }
@@ -110,7 +109,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private Direction _direction;
+        private volatile Direction _direction;
         public Direction Direction
         {
             get { return _direction; }
@@ -201,8 +200,6 @@ namespace MvvmScarletToolkit
         {
             State = GameState.None;
 
-            _boardPieces.Clear();
-
             if (_snakeTask != null)
                 await _snakeTask;
 
@@ -225,6 +222,8 @@ namespace MvvmScarletToolkit
             }
 
             _appleTask = null;
+
+            _boardPieces.Clear();
 
             Snake = new Snake(_options, _log);
             UpdateBoardPieces();
@@ -292,11 +291,26 @@ namespace MvvmScarletToolkit
 
         private async Task InternalMoveAsync()
         {
-            await _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<Direction>((d) =>
+            var error = true;
+            try
             {
-                if (!InternalMove(d))
+                await _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<Direction>((d) =>
+                {
+                    if (!InternalMove(d))
+                        State = GameState.Fail;
+
+                    error = false;
+                }), _direction);
+            }
+            catch (TaskCanceledException)
+            {
+                // game loop was cancellled, nothing to see here...move on
+            }
+            finally
+            {
+                if (error)
                     State = GameState.Fail;
-            }), _direction);
+            }
         }
 
         private bool InternalMove(Direction direction)
@@ -359,19 +373,27 @@ namespace MvvmScarletToolkit
             // IO stuff
             return Task.Factory.StartNew(async () =>
             {
-                while (State != GameState.None)
+                try
                 {
-                    if (State == GameState.Fail)
-                        return;
+                    while (State != GameState.None)
+                    {
+                        if (State == GameState.Fail)
+                            return;
 
-                    if (State != GameState.Paused)
-                        await InternalMoveAsync().ConfigureAwait(false);
+                        if (State != GameState.Paused)
+                            await InternalMoveAsync().ConfigureAwait(false);
 
-                    if (_snakeSource?.Token == null || _snakeSource.Token.IsCancellationRequested)
-                        return;
+                        if (_snakeSource?.Token == null || _snakeSource.Token.IsCancellationRequested)
+                            return;
 
-                    await Task.Delay(_options.GlobalTickRate, _snakeSource.Token).ConfigureAwait(false);
+                        await Task.Delay(_options.GlobalTickRate, _snakeSource.Token).ConfigureAwait(false);
+                    }
                 }
+                catch (TaskCanceledException)
+                {
+                    // game loop was cancellled, nothing to see here...move on
+                }
+
             }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
@@ -379,24 +401,32 @@ namespace MvvmScarletToolkit
         {
             return Task.Factory.StartNew(async () =>
             {
-                while (State != GameState.None)
+                try
                 {
-                    if (State == GameState.Fail)
-                        return;
-
-                    if (Debugger.IsAttached)
-                        _apples.TryAdd(new Apple(Snake.Head.CurrentPosition.X, _random.Next(LowerBoundY, UpperBoundY), _options));
-                    else
+                    while (State != GameState.None)
                     {
-                        if (Direction != Direction.None && _options.MaxFoodCount > _apples.Count) // start generating apples, as soon as the snake moves
-                            _apples.TryAdd(new Apple(_random.Next(LowerBoundX, UpperBoundX), _random.Next(LowerBoundY, UpperBoundY), _options));
+                        if (State == GameState.Fail)
+                            return;
+
+                        if (_options.IsDebug)
+                            _apples.TryAdd(new Apple(Snake.Head.CurrentPosition.X, _random.Next(LowerBoundY, UpperBoundY), _options));
+                        else
+                        {
+                            if (Direction != Direction.None && _options.MaxFoodCount > _apples.Count) // start generating apples, as soon as the snake moves
+                                _apples.TryAdd(new Apple(_random.Next(LowerBoundX, UpperBoundX), _random.Next(LowerBoundY, UpperBoundY), _options));
+                        }
+
+                        if (_appleSource?.Token == null || _appleSource.Token.IsCancellationRequested)
+                            return;
+
+                        await Task.Delay(_options.FoodTickRate);
                     }
-
-                    if (_appleSource?.Token == null || _appleSource.Token.IsCancellationRequested)
-                        return;
-
-                    await Task.Delay(_options.FoodTickRate);
                 }
+                catch (TaskCanceledException)
+                {
+                    // game loop was cancellled, nothing to see here...move on
+                }
+
             }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 

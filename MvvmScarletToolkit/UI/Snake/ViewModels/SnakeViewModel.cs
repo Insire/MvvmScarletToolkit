@@ -39,18 +39,8 @@ namespace MvvmScarletToolkit
             SelectedOption = Options[1];
         }
 
-        // [core functionality]
-        // bind buttons to "change direction"
-
-        // [core functionality]
-        // snake cant travel over its own body
-        // add area check to snake head checking its segements for intersections
-
         // [Keyboard support]
-        // set up keyboard shortcuts (keymap)
-        // wasd, spacebar
-        // arrL,arrR,arrU,arrD, insert, ctrl
-        // bind keyboard shortcuts to "change direction"
+        // filter invalid keys, or provide valid subset from enum collection
 
         // [screen management]
         // add general screen management
@@ -58,6 +48,10 @@ namespace MvvmScarletToolkit
         // add options screen
         // update game screen
         // add debug screen (virtualized log?)
+
+        // [logging]
+        // provide a visual log
+        // virtualize the log
 
         // [customization]
         // load images displaying board pieces
