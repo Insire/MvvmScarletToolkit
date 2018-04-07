@@ -4,31 +4,39 @@ namespace MvvmScarletToolkit
 {
     public sealed class SnakeViewModel : ObservableObject
     {
-        private SnakeOptions _selectedOptions;
-        public SnakeOptions SelectedOptions
+        private SnakeOption _selectedOption;
+        public SnakeOption SelectedOption
         {
-            get { return _selectedOptions; }
-            set { SetValue(ref _selectedOptions, value); }
+            get { return _selectedOption; }
+            set { SetValue(ref _selectedOption, value); }
         }
 
-        private ObservableCollection<SnakeOptions> _options;
-        public ObservableCollection<SnakeOptions> Options
+        private ObservableCollection<SnakeOption> _options;
+        public ObservableCollection<SnakeOption> Options
         {
             get { return _options; }
             private set { SetValue(ref _options, value); }
         }
 
+        private KeyMapViewModel _keyMapViewModel;
+        public KeyMapViewModel KeyMapViewModel
+        {
+            get { return _keyMapViewModel; }
+            private set { SetValue(ref _keyMapViewModel, value); }
+        }
+
         public SnakeViewModel()
         {
-            Options = new ObservableCollection<SnakeOptions>()
+            KeyMapViewModel = new KeyMapViewModel();
+            Options = new ObservableCollection<SnakeOption>()
             {
-                SnakeOptions.Easy(),
-                SnakeOptions.Normal(),
-                SnakeOptions.Hard(),
-                new SnakeOptions(),
+                SnakeOption.Easy(),
+                SnakeOption.Normal(),
+                SnakeOption.Hard(),
+                new SnakeOption(),
             };
 
-            SelectedOptions = Options[1];
+            SelectedOption = Options[1];
         }
 
         // [core functionality]

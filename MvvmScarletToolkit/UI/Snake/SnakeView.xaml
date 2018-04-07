@@ -12,6 +12,17 @@
              Unloaded="SnakeView_Unloaded"
              mc:Ignorable="d">
 
+    <UserControl.InputBindings>
+        <KeyBinding Key="{Binding SnakeViewModel.KeyMapViewModel.MoveNorthKey, Mode=OneWay}" Command="{Binding Manager.MoveNorthCommand, Mode=OneWay}" />
+        <KeyBinding Key="{Binding SnakeViewModel.KeyMapViewModel.MoveSouthKey, Mode=OneWay}" Command="{Binding Manager.MoveSouthCommand, Mode=OneWay}" />
+        <KeyBinding Key="{Binding SnakeViewModel.KeyMapViewModel.MoveWestKey, Mode=OneWay}" Command="{Binding Manager.MoveWestCommand, Mode=OneWay}" />
+        <KeyBinding Key="{Binding SnakeViewModel.KeyMapViewModel.MoveEastKey, Mode=OneWay}" Command="{Binding Manager.MoveEastCommand, Mode=OneWay}" />
+
+        <KeyBinding Key="{Binding SnakeViewModel.KeyMapViewModel.PlayKey, Mode=OneWay}" Command="{Binding Manager.PlayCommand, Mode=OneWay}" />
+
+        <KeyBinding Key="Esc" Command="{Binding Manager.ResetCommand, Mode=OneWay}" />
+    </UserControl.InputBindings>
+
     <DockPanel>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
             <TextBlock>
@@ -20,6 +31,47 @@
                 <Run Text="{Binding Manager.Snake.Body.Count, StringFormat={}Tail length: {0}, Mode=OneWay}" />
             </TextBlock>
         </StackPanel>
+
+        <DockPanel DataContext="{Binding SnakeViewModel}" DockPanel.Dock="Right">
+            <TextBlock DockPanel.Dock="Top" Text="Options" />
+            <ComboBox DockPanel.Dock="Top"
+                      ItemsSource="{Binding Options}"
+                      SelectedItem="{Binding SelectedOption}">
+                <ComboBox.Resources>
+                    <DataTemplate DataType="{x:Type local:SnakeOption}">
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.Resources>
+            </ComboBox>
+
+            <CheckBox Content="IsDebug"
+                      DockPanel.Dock="Top"
+                      IsChecked="{Binding SelectedOption.IsDebug}" />
+            <CheckBox Content="IsDefault"
+                      DockPanel.Dock="Top"
+                      IsChecked="{Binding SelectedOption.IsDefault, Mode=OneWay}"
+                      IsEnabled="False" />
+
+            <ComboBox DockPanel.Dock="Top"
+                      ItemsSource="{Binding KeyMapViewModel.Keys}"
+                      SelectedItem="{Binding KeyMapViewModel.MoveNorthKey}" />
+
+            <ComboBox DockPanel.Dock="Top"
+                      ItemsSource="{Binding KeyMapViewModel.Keys}"
+                      SelectedItem="{Binding KeyMapViewModel.MoveSouthKey}" />
+
+            <ComboBox DockPanel.Dock="Top"
+                      ItemsSource="{Binding KeyMapViewModel.Keys}"
+                      SelectedItem="{Binding KeyMapViewModel.MoveWestKey}" />
+
+            <ComboBox DockPanel.Dock="Top"
+                      ItemsSource="{Binding KeyMapViewModel.Keys}"
+                      SelectedItem="{Binding KeyMapViewModel.MoveEastKey}" />
+
+            <ComboBox DockPanel.Dock="Top"
+                      ItemsSource="{Binding KeyMapViewModel.Keys}"
+                      SelectedItem="{Binding KeyMapViewModel.PlayKey}" />
+        </DockPanel>
 
         <WrapPanel>
             <Viewbox>
@@ -51,6 +103,7 @@
                                        Fill="Red" />
                         </DataTemplate>
                     </ItemsControl.Resources>
+                    <ItemsControl.InputBindings />
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <Canvas />

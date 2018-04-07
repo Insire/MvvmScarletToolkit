@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit
     public sealed class SnakeManager : ObservableObject, ISnakeManager
     {
         private readonly Dispatcher _dispatcher;
-        private readonly SnakeOptions _options;
+        private readonly SnakeOption _options;
         private readonly IProducerConsumerCollection<Apple> _apples;
         private readonly Random _random;
         private readonly ILogger _log;
@@ -47,15 +47,54 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _boardPieces, value); }
         }
 
-        public ICommand PlayCommand { get; }
-        public ICommand ResetCommand { get; }
+        private ICommand _playCommand;
+        public ICommand PlayCommand
+        {
+            get { return _playCommand; }
+            private set { SetValue(ref _playCommand, value); }
+        }
 
-        public ICommand MoveNorthCommand { get; }
-        public ICommand MoveSouthCommand { get; }
-        public ICommand MoveWestCommand { get; }
-        public ICommand MoveEastCommand { get; }
+        private ICommand _resetCommand;
+        public ICommand ResetCommand
+        {
+            get { return _resetCommand; }
+            private set { SetValue(ref _resetCommand, value); }
+        }
 
-        public ICommand LoadCommand { get; }
+        private ICommand _moveNorthCommand;
+        public ICommand MoveNorthCommand
+        {
+            get { return _moveNorthCommand; }
+            private set { SetValue(ref _moveNorthCommand, value); }
+        }
+
+        private ICommand _moveSouthCommand;
+        public ICommand MoveSouthCommand
+        {
+            get { return _moveSouthCommand; }
+            private set { SetValue(ref _moveSouthCommand, value); }
+        }
+
+        private ICommand _moveWestCommand;
+        public ICommand MoveWestCommand
+        {
+            get { return _moveWestCommand; }
+            private set { SetValue(ref _moveWestCommand, value); }
+        }
+
+        private ICommand _moveEastCommand;
+        public ICommand MoveEastCommand
+        {
+            get { return _moveEastCommand; }
+            private set { SetValue(ref _moveEastCommand, value); }
+        }
+
+        private ICommand _loadCommand;
+        public ICommand LoadCommand
+        {
+            get { return _loadCommand; }
+            private set { SetValue(ref _loadCommand, value); }
+        }
 
         private GameState _state;
         public GameState State
@@ -85,7 +124,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        public SnakeManager(SnakeOptions options, Dispatcher dispatcher, ILogger log)
+        public SnakeManager(SnakeOption options, Dispatcher dispatcher, ILogger log)
         {
             _log = log ?? throw new ArgumentNullException(nameof(log));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));

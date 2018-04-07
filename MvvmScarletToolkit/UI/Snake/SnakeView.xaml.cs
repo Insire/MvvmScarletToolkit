@@ -47,17 +47,32 @@ namespace MvvmScarletToolkit
             typeof(SnakeView),
             new PropertyMetadata(false));
 
+        public SnakeViewModel SnakeViewModel
+        {
+            get { return (SnakeViewModel)GetValue(SnakeViewModelProperty); }
+            set { SetValue(SnakeViewModelProperty, value); }
+        }
+
+        public static readonly DependencyProperty SnakeViewModelProperty = DependencyProperty.Register(
+            "SnakeViewModel",
+            typeof(SnakeViewModel),
+            typeof(SnakeView),
+            new PropertyMetadata(default(SnakeViewModel)));
+
         public SnakeView()
         {
             _dispatcher = Application.Current.Dispatcher;
             DataContext = this;
+
+            if (SnakeViewModel == null)
+                SnakeViewModel = new SnakeViewModel();
 
             InitializeComponent();
         }
 
         private void Initialize()
         {
-            Manager = new SnakeManager(SnakeOptions.Normal(), _dispatcher, new InternalLogger());
+            Manager = new SnakeManager(SnakeOption.Normal(), _dispatcher, new InternalLogger());
             _frameCounter = new FrameCounter(RenderNotification);
 
             CompositionTarget.Rendering += CompositionTarget_Rendering;

@@ -27,7 +27,7 @@ namespace MvvmScarletToolkit
             Size = size ?? throw new ArgumentNullException(nameof(size));
         }
 
-        public Apple(int x, int y, SnakeOptions options)
+        public Apple(int x, int y, SnakeOption options)
             : this(new Position { X = x, Y = y, }, new Size(options.BoardPieceSize, options.BoardPieceSize))
         {
         }

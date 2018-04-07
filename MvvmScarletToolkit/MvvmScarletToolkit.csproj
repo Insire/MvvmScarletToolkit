@@ -91,12 +91,13 @@
     <Compile Include="UI\Snake\Interfaces\IPositionable.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Base\Position.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Base\Size.cs" />
+    <Compile Include="UI\Snake\ViewModels\KeyMapViewModel.cs" />
+    <Compile Include="UI\Snake\ViewModels\SnakeOption.cs" />
     <Compile Include="UI\Snake\ViewModels\SnakeViewModel.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Snake\Snake.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Snake\Base\SnakeBase.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Snake\SnakeHead.cs" />
     <Compile Include="UI\Snake\ViewModels\SnakeManager.cs" />
-    <Compile Include="UI\Snake\ViewModels\SnakeOptions.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Snake\SnakeSegment.cs" />
     <Compile Include="UI\Snake\SnakeView.xaml.cs">
       <DependentUpon>SnakeView.xaml</DependentUpon>

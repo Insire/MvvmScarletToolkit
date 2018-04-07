@@ -1,35 +1,39 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class SnakeOptions : ObservableObject
+    public sealed class SnakeOption : ObservableObject
     {
-        public static SnakeOptions Easy()
+        public static SnakeOption Easy()
         {
-            return new SnakeOptions()
+            return new SnakeOption()
             {
                 SpeedMultiplier = 0.1,
                 IsDefault = true,
+                IsDebug = false,
                 Name = "Easy",
             };
         }
 
-        public static SnakeOptions Normal()
+        public static SnakeOption Normal()
         {
-            return new SnakeOptions()
+            return new SnakeOption()
             {
                 SpeedMultiplier = 0.075,
                 IsDefault = true,
+                IsDebug = false,
                 Name = "Normal",
             };
         }
 
-        public static SnakeOptions Hard()
+        public static SnakeOption Hard()
         {
-            return new SnakeOptions()
+            return new SnakeOption()
             {
                 SpeedMultiplier = 0.035,
                 IsDefault = true,
+                IsDebug = false,
                 Name = "Hard",
             };
         }
@@ -125,7 +129,7 @@ namespace MvvmScarletToolkit
         /// </summary>
         public int FoodTickRate => Convert.ToInt32(Math.Round(1000 * SpeedMultiplier * FoodInterval, MidpointRounding.AwayFromZero));
 
-        public SnakeOptions()
+        public SnakeOption()
         {
             FieldSize = 16;
 
@@ -136,7 +140,7 @@ namespace MvvmScarletToolkit
             FoodInterval = 3;
             MaxFoodCount = 5;
 
-            IsDebug = false;
+            IsDebug = Debugger.IsAttached;
             IsDefault = false;
             Name = "Custom";
         }

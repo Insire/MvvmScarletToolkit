@@ -5,7 +5,7 @@ namespace MvvmScarletToolkit
     [DebuggerDisplay("Head {CurrentPosition.X};{CurrentPosition.Y}")]
     public sealed class SnakeHead : SnakeBase
     {
-        public SnakeHead(SnakeOptions options, ILogger log)
+        public SnakeHead(SnakeOption options, ILogger log)
             : base(options, log)
         {
             CurrentPosition = options.GetStartingPosition();

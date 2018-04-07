@@ -6,7 +6,7 @@ namespace MvvmScarletToolkit
     public abstract class SnakeBase : ObservableObject, IPositionable
     {
         private readonly ILogger _log;
-        private readonly SnakeOptions _options;
+        private readonly SnakeOption _options;
         private readonly string _debugName;
 
         private Position _currentPosition;
@@ -23,7 +23,7 @@ namespace MvvmScarletToolkit
             protected set { SetValue(ref _size, value); }
         }
 
-        public SnakeBase(SnakeOptions options, Size size, ILogger log)
+        public SnakeBase(SnakeOption options, Size size, ILogger log)
         {
             _log = log ?? throw new ArgumentNullException(nameof(log));
             _options = options ?? throw new ArgumentNullException(nameof(options));
@@ -32,7 +32,7 @@ namespace MvvmScarletToolkit
             _debugName = $"DEBUG: {GetType().Name}".PadRight(35);
         }
 
-        public SnakeBase(SnakeOptions options, ILogger log)
+        public SnakeBase(SnakeOption options, ILogger log)
             : this(options, new Size(options.BoardPieceSize, options.BoardPieceSize), log)
         {
         }

@@ -6,7 +6,7 @@ namespace MvvmScarletToolkit
 {
     public sealed class Snake : ObservableObject
     {
-        private readonly SnakeOptions _options;
+        private readonly SnakeOption _options;
         private readonly ILogger _log;
 
         private SnakeHead _head;
@@ -23,7 +23,7 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _body, value); }
         }
 
-        public Snake(SnakeOptions options, ILogger log)
+        public Snake(SnakeOption options, ILogger log)
         {
             _log = log ?? throw new ArgumentNullException(nameof(log));
             _options = options ?? throw new ArgumentNullException(nameof(options));
