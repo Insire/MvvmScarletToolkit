@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+﻿using MvvmScarletToolkit;
 
-using MvvmScarletToolkit;
+using System.ComponentModel;
 
 namespace DemoApp
 {
@@ -10,22 +10,21 @@ namespace DemoApp
         {
             var content = new[]
             {
-                new Scene
+                new DemoApp.Scene
                 {
                     Content = new Default(),
                     DisplayName = "Loading a ParentViewModel",
                     GetDataContext = ()=> new ParentViewModel(),
                     IsSelected = false,
                 },
-
-                new Scene
+                new DemoApp.Scene
                 {
                     Content = new Empty(),
                     DisplayName = "No datacontext loading",
                     IsSelected = false,
                 },
 
-                new Scene
+                new DemoApp.Scene
                 {
                     Content = new ImagesView(),
                     DisplayName = "async image loading",
@@ -33,7 +32,7 @@ namespace DemoApp
                     IsSelected = false,
                 },
 
-                new Scene
+                new DemoApp.Scene
                 {
                     Content = new DragAndDrop(),
                     DisplayName = "async image dragging and dropping",
@@ -41,7 +40,7 @@ namespace DemoApp
                     IsSelected = false,
                 },
 
-                new Scene
+                new DemoApp.Scene
                 {
                     GetDataContext = ()=> new DataContextSchenanigansViewModel(),
                     Content = new DataContextSchenanigans(),
@@ -50,7 +49,7 @@ namespace DemoApp
                     IsSelected = false,
                 },
 
-                new Scene
+                new DemoApp.Scene
                 {
                     GetDataContext = ()=> new AsyncCommandViewModelStuff(),
                     Content = new AsyncCommands(),
@@ -58,7 +57,7 @@ namespace DemoApp
                     IsSelected = true,
                 },
 
-                new Scene
+                new DemoApp.Scene
                 {
 
                     Content = new SnakeView(),

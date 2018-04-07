@@ -77,9 +77,11 @@
     <Compile Include="MagickReadSettingsFactory.cs" />
     <Compile Include="Observables\PropertyObserver.cs" />
     <Compile Include="Extensions\EventExtension.cs" />
+    <Compile Include="UI\Navigation\Scene.cs" />
     <Compile Include="UI\Overlay.cs" />
     <Compile Include="UI\SelectedTreeViewItemBehavior.cs" />
     <Compile Include="UI\Snake\Models\PositionDTO.cs" />
+    <Compile Include="UI\Snake\Types\View.cs" />
     <Compile Include="UI\Snake\Util\Extensions.cs" />
     <Compile Include="UI\Snake\Util\FrameCounter.cs" />
     <Compile Include="UI\Snake\Interfaces\ILogger.cs" />
