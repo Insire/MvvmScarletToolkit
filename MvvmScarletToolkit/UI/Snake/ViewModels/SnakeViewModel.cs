@@ -43,8 +43,7 @@ namespace MvvmScarletToolkit
                 SelectedOption = Options[1];
         }
 
-        // [Keyboard support]
-        // filter invalid keys, or provide valid subset from enum collection
+        // - steal eventaggregator from maple
 
         // [screen management]
         // - update game screen
@@ -54,6 +53,9 @@ namespace MvvmScarletToolkit
         // switch from property checks to event pipeline
         // - provide a visual log of events
         // - virtualize the log
+
+        // [Keyboard support]
+        // filter invalid keys, or provide valid subset from enum collection
 
         // [customization]
         // - load images displaying board pieces

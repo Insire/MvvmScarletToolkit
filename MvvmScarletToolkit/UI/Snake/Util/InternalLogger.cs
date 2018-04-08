@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace MvvmScarletToolkit
 {
@@ -8,6 +9,12 @@ namespace MvvmScarletToolkit
         {
             if (Debugger.IsAttached)
                 Debug.WriteLine(message);
+        }
+
+        public void Log(Exception exception)
+        {
+            if (Debugger.IsAttached)
+                Debug.WriteLine(exception);
         }
     }
 }

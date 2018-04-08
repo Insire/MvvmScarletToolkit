@@ -56,10 +56,24 @@
   <ItemGroup>
     <Compile Include="Commands\Async\AsyncCommand.cs" />
     <Compile Include="Commands\Async\AsyncCommandBase.cs" />
-    <Compile Include="Commands\AsyncRelayCommand.cs" />
     <Compile Include="Commands\Async\IAsyncCommand.cs" />
     <Compile Include="Commands\Async\NotifyTaskCompletion.cs" />
     <Compile Include="Converters\NullValueConverter.cs" />
+    <Compile Include="EventAggregator\DefaultMessageProxy.cs" />
+    <Compile Include="EventAggregator\Interfaces\IMessenger.cs" />
+    <Compile Include="EventAggregator\Interfaces\IScarletMessage.cs" />
+    <Compile Include="EventAggregator\Interfaces\IScarletMessageProxy.cs" />
+    <Compile Include="EventAggregator\Interfaces\IScarletMessageSubscription.cs" />
+    <Compile Include="EventAggregator\Interfaces\ISubscriberErrorHandler.cs" />
+    <Compile Include="EventAggregator\Messages\CancellableGenericScarletMessage.cs" />
+    <Compile Include="EventAggregator\Messages\GenericScarletMessage.cs" />
+    <Compile Include="EventAggregator\Messages\ScarletMessageBase.cs" />
+    <Compile Include="EventAggregator\ScarletMessenger.cs" />
+    <Compile Include="EventAggregator\ScarletMessengerSubscriptionException.cs" />
+    <Compile Include="EventAggregator\Subscriptions\StrongScarletMessageSubscription.cs" />
+    <Compile Include="EventAggregator\Subscriptions\SubscriptionItem.cs" />
+    <Compile Include="EventAggregator\Subscriptions\WeakScarletMessageSubscription.cs" />
+    <Compile Include="EventAggregator\SubscriptionToken.cs" />
     <Compile Include="Extensions\EnumBindingSourceExtension.cs" />
     <Compile Include="IO\FileSystemDepth.cs" />
     <Compile Include="IO\FileSystemBrowser.cs" />
@@ -85,7 +99,7 @@
     <Compile Include="UI\Snake\Types\View.cs" />
     <Compile Include="UI\Snake\Util\Extensions.cs" />
     <Compile Include="UI\Snake\Util\FrameCounter.cs" />
-    <Compile Include="UI\Snake\Interfaces\ILogger.cs" />
+    <Compile Include="ILogger.cs" />
     <Compile Include="UI\Snake\Interfaces\ISnakeManager.cs" />
     <Compile Include="UI\Snake\Util\InternalLogger.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Apple.cs" />
