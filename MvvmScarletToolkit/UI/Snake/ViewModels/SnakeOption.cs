@@ -119,6 +119,10 @@ namespace MvvmScarletToolkit
         /// </summary>
         public int MaxHeight => FieldCountY * FieldSize;
 
+        public int MinWidth => 0;
+
+        public int MinHeight => 0;
+
         /// <summary>
         /// interval of which the snake gets updated
         /// </summary>

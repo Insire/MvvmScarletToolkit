@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -134,8 +135,8 @@ namespace MvvmScarletToolkit
             _direction = Direction.North;
             _state = GameState.None;
 
-            LowerBoundY = 0;
-            LowerBoundX = 0;
+            LowerBoundY = _options.MinHeight;
+            LowerBoundX = _options.MinWidth;
 
             UpperBoundY = _options.MaxHeight;
             UpperBoundX = _options.MaxWidth;
@@ -200,19 +201,18 @@ namespace MvvmScarletToolkit
         {
             State = GameState.None;
 
-            if (_snakeTask != null)
-                await _snakeTask;
-
             if (_snakeSource != null)
             {
                 _snakeSource.Cancel();
                 _snakeSource.Dispose();
                 _snakeSource = null;
             }
-            _snakeTask = null;
 
-            if (_appleTask != null)
-                await _appleTask;
+            if (_snakeTask != null)
+            {
+                await _snakeTask.ConfigureAwait(true);
+                _snakeTask = null;
+            }
 
             if (_appleSource != null)
             {
@@ -221,9 +221,14 @@ namespace MvvmScarletToolkit
                 _appleSource = null;
             }
 
-            _appleTask = null;
+            if (_appleTask != null)
+            {
+                await _appleTask.ConfigureAwait(true);
+                _appleTask = null;
+            }
 
             _boardPieces.Clear();
+            _apples.Clear();
 
             Snake = new Snake(_options, _log);
             UpdateBoardPieces();
@@ -232,13 +237,11 @@ namespace MvvmScarletToolkit
         private void Pause()
         {
             State = GameState.Paused;
-            // pause timer
         }
 
         private void Resume()
         {
             State = GameState.Running;
-            // pause timer
         }
 
         private void SetDirectionNorth()
@@ -393,7 +396,6 @@ namespace MvvmScarletToolkit
                 {
                     // game loop was cancellled, nothing to see here...move on
                 }
-
             }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
@@ -408,13 +410,8 @@ namespace MvvmScarletToolkit
                         if (State == GameState.Fail)
                             return;
 
-                        if (_options.IsDebug)
-                            _apples.TryAdd(new Apple(Snake.Head.CurrentPosition.X, _random.Next(LowerBoundY, UpperBoundY), _options));
-                        else
-                        {
-                            if (Direction != Direction.None && _options.MaxFoodCount > _apples.Count) // start generating apples, as soon as the snake moves
-                                _apples.TryAdd(new Apple(_random.Next(LowerBoundX, UpperBoundX), _random.Next(LowerBoundY, UpperBoundY), _options));
-                        }
+                        if (Direction != Direction.None && _options.MaxFoodCount > _apples.Count)
+                            _apples.TryAdd(CreateApple(_options, _random, Snake));
 
                         if (_appleSource?.Token == null || _appleSource.Token.IsCancellationRequested)
                             return;
@@ -426,8 +423,29 @@ namespace MvvmScarletToolkit
                 {
                     // game loop was cancellled, nothing to see here...move on
                 }
-
             }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        }
+
+        private static Apple CreateApple(SnakeOption option, Random random, Snake snake)
+        {
+            var result = new PositionDTO(snake.Head);
+            var snakeParts = default(List<SnakeBase>);
+
+            do
+            {
+                snakeParts = new List<SnakeBase>(snake.Body)
+                {
+                    snake.Head
+                };
+
+                if (option.IsDebug)
+                    result.CurrentPosition = new Position(snake.Head.CurrentPosition.X, random.Next(option.MinHeight, option.MaxHeight));
+                else
+                    result.CurrentPosition = new Position(random.Next(option.MinWidth, option.MaxWidth), random.Next(option.MinHeight, option.MaxHeight));
+            }
+            while (snakeParts.Any(p => result.Intersect(p)));
+
+            return new Apple(result);
         }
 
         public void Refresh()
@@ -444,10 +462,8 @@ namespace MvvmScarletToolkit
 
         private void Dispose(bool disposing)
         {
-            // Check to see if Dispose has already been called.
             if (!_disposed)
             {
-                // If disposing equals true, dispose all managed and unmanaged resources.
                 if (disposing)
                 {
                     if (_appleSource != null)
@@ -471,7 +487,6 @@ namespace MvvmScarletToolkit
                     Reset().Wait();
                 }
 
-                // Note disposing has been done.
                 _disposed = true;
             }
         }

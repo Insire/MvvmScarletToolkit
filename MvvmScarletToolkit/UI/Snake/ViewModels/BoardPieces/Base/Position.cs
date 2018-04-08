@@ -19,12 +19,12 @@ namespace MvvmScarletToolkit
             set { SetValue(ref _y, value); }
         }
 
-
         public Position()
         {
         }
 
         public Position(int x, int y)
+            : this()
         {
             X = x;
             Y = y;

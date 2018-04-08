@@ -130,7 +130,7 @@ namespace MvvmScarletToolkit
                 return false;
 
             // simple calculation if an apple intersects with the snake head, which will consume the
-            // apple by default and a new Snake segment
+            // apple by default and add new Snake segment
 
             if (Head.Intersect(boardPiece))
             {

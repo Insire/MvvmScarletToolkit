@@ -8,7 +8,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:DesignHeight="450"
              d:DesignWidth="800"
-             Loaded="UserControl_Loaded"
+             Focusable="True"
              Unloaded="SnakeView_Unloaded"
              mc:Ignorable="d">
 
@@ -26,6 +26,7 @@
 
         <KeyBinding Key="{Binding SnakeViewModel.KeyMapViewModel.PlayKey, Mode=OneWay}" Command="{Binding Manager.PlayCommand, Mode=OneWay}" />
 
+        <KeyBinding Key="Backspace" Command="{Binding ShowStartCommand, Mode=OneWay}" />
         <KeyBinding Key="Esc" Command="{Binding Manager.ResetCommand, Mode=OneWay}" />
     </UserControl.InputBindings>
 
@@ -38,56 +39,55 @@
         </Style>
 
         <!--  Debug View  -->
-        <StackPanel x:Key="DebugView" Orientation="Horizontal">
+        <DockPanel x:Key="DebugView" Background="{StaticResource ViewBackGround}">
             <TextBlock>
                 <Run Text="{Binding FramesPerSecond, StringFormat={}FPS: {0}, Mode=OneWay}" />
                 <Run Text=" " />
                 <Run Text="{Binding Manager.Snake.Body.Count, StringFormat={}Tail length: {0}, Mode=OneWay}" />
             </TextBlock>
-        </StackPanel>
+        </DockPanel>
 
         <!--  Options View  -->
-        <DockPanel x:Key="OptionsView"
-                   Background="{StaticResource ViewBackGround}"
-                   DataContext="{Binding SnakeViewModel}">
-            <TextBlock DockPanel.Dock="Top" Text="Options" />
-            <ComboBox DockPanel.Dock="Top"
-                      ItemsSource="{Binding Options}"
-                      SelectedItem="{Binding SelectedOption}">
-                <ComboBox.Resources>
-                    <DataTemplate DataType="{x:Type local:SnakeOption}">
-                        <TextBlock Text="{Binding Name}" />
-                    </DataTemplate>
-                </ComboBox.Resources>
-            </ComboBox>
+        <DockPanel x:Key="OptionsView" Width="300">
+            <TextBlock HorizontalAlignment="Center"
+                       DockPanel.Dock="Top"
+                       Text="Options" />
 
-            <CheckBox Content="IsDebug"
-                      DockPanel.Dock="Top"
-                      IsChecked="{Binding SelectedOption.IsDebug}" />
-            <CheckBox Content="IsDefault"
-                      DockPanel.Dock="Top"
-                      IsChecked="{Binding SelectedOption.IsDefault, Mode=OneWay}"
-                      IsEnabled="False" />
+            <UniformGrid Columns="2"
+                         DataContext="{Binding SnakeViewModel}"
+                         DockPanel.Dock="Top">
+                <TextBlock Text="Presets" />
+                <ComboBox ItemsSource="{Binding Options}" SelectedItem="{Binding SelectedOption}">
+                    <ComboBox.Resources>
+                        <DataTemplate DataType="{x:Type local:SnakeOption}">
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.Resources>
+                </ComboBox>
 
-            <ComboBox DockPanel.Dock="Top"
-                      ItemsSource="{Binding KeyMapViewModel.Keys}"
-                      SelectedItem="{Binding KeyMapViewModel.MoveNorthKey}" />
+                <TextBlock Text="IsDebug" />
+                <CheckBox IsChecked="{Binding SelectedOption.IsDebug}" />
 
-            <ComboBox DockPanel.Dock="Top"
-                      ItemsSource="{Binding KeyMapViewModel.Keys}"
-                      SelectedItem="{Binding KeyMapViewModel.MoveSouthKey}" />
+                <TextBlock Text="IsDefault" />
+                <CheckBox IsChecked="{Binding SelectedOption.IsDefault, Mode=OneWay}" IsEnabled="False" />
 
-            <ComboBox DockPanel.Dock="Top"
-                      ItemsSource="{Binding KeyMapViewModel.Keys}"
-                      SelectedItem="{Binding KeyMapViewModel.MoveWestKey}" />
+                <TextBlock Text="Move Up" />
+                <ComboBox ItemsSource="{Binding KeyMapViewModel.Keys}" SelectedItem="{Binding KeyMapViewModel.MoveNorthKey}" />
 
-            <ComboBox DockPanel.Dock="Top"
-                      ItemsSource="{Binding KeyMapViewModel.Keys}"
-                      SelectedItem="{Binding KeyMapViewModel.MoveEastKey}" />
+                <TextBlock Text="Move Down" />
+                <ComboBox ItemsSource="{Binding KeyMapViewModel.Keys}" SelectedItem="{Binding KeyMapViewModel.MoveSouthKey}" />
 
-            <ComboBox DockPanel.Dock="Top"
-                      ItemsSource="{Binding KeyMapViewModel.Keys}"
-                      SelectedItem="{Binding KeyMapViewModel.PlayKey}" />
+                <TextBlock Text="Move Right" />
+                <ComboBox ItemsSource="{Binding KeyMapViewModel.Keys}" SelectedItem="{Binding KeyMapViewModel.MoveWestKey}" />
+
+                <TextBlock Text="Move Left" />
+                <ComboBox ItemsSource="{Binding KeyMapViewModel.Keys}" SelectedItem="{Binding KeyMapViewModel.MoveEastKey}" />
+
+                <TextBlock Text="Play/Pause" />
+                <ComboBox ItemsSource="{Binding KeyMapViewModel.Keys}" SelectedItem="{Binding KeyMapViewModel.PlayKey}" />
+            </UniformGrid>
+
+            <Button Command="{Binding ShowStartCommand}" Content="Back" />
         </DockPanel>
 
         <!--  Debug Controls  -->
@@ -174,35 +174,22 @@
         </Grid>
 
         <!--  StartView  -->
-        <Grid x:Key="StartView" Background="{StaticResource ViewBackGround}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
+        <Grid x:Key="StartView">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="5" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="5" />
                 <RowDefinition Height="Auto" />
-
-                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Button Grid.Row="1"
-                    Grid.Column="1"
+            <Button Grid.Row="0"
                     Command="{Binding ShowGameCommand}"
                     Content="Start" />
-            <Button Grid.Row="3"
-                    Grid.Column="1"
+            <Button Grid.Row="2"
                     Command="{Binding ShowOptionsCommand}"
                     Content="Options" />
-            <Button Grid.Row="5"
-                    Grid.Column="1"
+            <Button Grid.Row="4"
                     Command="{Binding ExitCommand}"
                     Content="Exit" />
         </Grid>
@@ -247,32 +234,66 @@
             </ItemsControl>
         </Viewbox>
 
-        <ContentControl>
-
+        <ContentControl HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Content="{StaticResource DebugView}">
             <ContentControl.Style>
                 <Style TargetType="{x:Type ContentControl}">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding View}" Value="Start">
-                            <Setter Property="Content" Value="{StaticResource StartView}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding View}" Value="Options">
-                            <Setter Property="Content" Value="{StaticResource OptionsView}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding View}" Value="Game">
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding SnakeViewModel.SelectedOption.IsDebug}" Value="True" />
+                                <Condition Binding="{Binding View}" Value="Game" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding SnakeViewModel.SelectedOption.IsDebug}" Value="False">
                             <Setter Property="Visibility" Value="Hidden" />
                         </DataTrigger>
-
-                        <!--
-                        <DataTrigger Binding="{Binding Manager.State}" Value="Fail" >
-                            <Setter Property="Content" Value="{StaticResource StartView}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Manager.State}" Value="Paused" >
-                            <Setter Property="Content" Value="{StaticResource StartView}" />
-                        </DataTrigger>
--->
                     </Style.Triggers>
                 </Style>
             </ContentControl.Style>
         </ContentControl>
+
+        <Grid>
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Background" Value="{StaticResource ViewBackGround}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding View}" Value="Game">
+                            <Setter Property="Background" Value="Transparent" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <ContentControl Grid.Row="1" Grid.Column="1">
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding View}" Value="Start">
+                                <Setter Property="Content" Value="{StaticResource StartView}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding View}" Value="Options">
+                                <Setter Property="Content" Value="{StaticResource OptionsView}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding View}" Value="Game">
+                                <Setter Property="Visibility" Value="Hidden" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+        </Grid>
     </Grid>
 </UserControl>

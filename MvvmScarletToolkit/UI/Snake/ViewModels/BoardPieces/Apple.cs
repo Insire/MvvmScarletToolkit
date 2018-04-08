@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Diagnostics;
 
 namespace MvvmScarletToolkit
@@ -29,6 +28,11 @@ namespace MvvmScarletToolkit
 
         public Apple(int x, int y, SnakeOption options)
             : this(new Position { X = x, Y = y, }, new Size(options.BoardPieceSize, options.BoardPieceSize))
+        {
+        }
+
+        public Apple(IPositionable positionable)
+            : this(positionable?.CurrentPosition, positionable?.Size)
         {
         }
     }

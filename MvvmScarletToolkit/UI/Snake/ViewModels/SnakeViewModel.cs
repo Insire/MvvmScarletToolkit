@@ -43,18 +43,16 @@ namespace MvvmScarletToolkit
         // filter invalid keys, or provide valid subset from enum collection
 
         // [screen management]
-        // add general screen management
-        // add fail screen/state
-        // add options screen
-        // update game screen
-        // add debug screen (virtualized log?)
+        // - add fail screen/state
+        // - update game screen
+        // - add debug screen (virtualized log?)
 
         // [logging]
-        // provide a visual log
-        // virtualize the log
+        // - provide a visual log
+        // - virtualize the log
 
         // [customization]
-        // load images displaying board pieces
-        // provide custom images
+        // - load images displaying board pieces
+        // - provide custom images
     }
 }

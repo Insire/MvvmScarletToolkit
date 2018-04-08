@@ -1,4 +1,6 @@
-﻿namespace MvvmScarletToolkit
+﻿using System.Collections.Concurrent;
+
+namespace MvvmScarletToolkit
 {
     public static class Extensions
     {
@@ -21,6 +23,24 @@
             var YA2 = right.CurrentPosition.Y + right.Size.Height;
 
             return (XA2 >= XH1 && XA1 <= XH2) && (YA2 >= YH1 && YA1 <= YH2);
+        }
+
+        public static void Play(this ISnakeManager manager)
+        {
+            if (manager?.PlayCommand?.CanExecute(null) ?? false)
+                manager.PlayCommand.Execute(null);
+        }
+
+        public static void Reset(this ISnakeManager manager)
+        {
+            if (manager?.ResetCommand?.CanExecute(null) ?? false)
+                manager.ResetCommand.Execute(null);
+        }
+
+        public static void Clear<T>(this IProducerConsumerCollection<T> collection)
+        {
+            while (collection.Count > 0)
+                collection.TryTake(out _);
         }
     }
 }

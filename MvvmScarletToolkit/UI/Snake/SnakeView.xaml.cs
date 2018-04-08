@@ -123,6 +123,7 @@ namespace MvvmScarletToolkit
 
         private void ShowStart()
         {
+            Manager.Reset();
             View = View.Start;
         }
 
@@ -133,6 +134,7 @@ namespace MvvmScarletToolkit
 
         private void ShowOptions()
         {
+            Manager.Reset();
             View = View.Options;
         }
 
@@ -143,8 +145,12 @@ namespace MvvmScarletToolkit
 
         private void ShowGame()
         {
+            Manager.Reset();
             View = View.Game;
             Manager = new SnakeManager(SnakeViewModel.SelectedOption, _dispatcher, _log);
+
+            Keyboard.Focus(this);
+            Manager.Play();
 
             Initialize();
         }
@@ -213,11 +219,6 @@ namespace MvvmScarletToolkit
                 {
                     FramesPerSecond = fps;
                 }), (int)state);
-        }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            // hm still useful?
         }
 
         private void SnakeView_Unloaded(object sender, RoutedEventArgs e)
