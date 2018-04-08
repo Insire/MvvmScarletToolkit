@@ -55,11 +55,11 @@
                 <Run Text=" " />
                 <Run Text="{Binding Manager.Snake.Body.Count, StringFormat={}Tail length: {0}, Mode=OneWay}" />
                 <Run Text=" " />
-                <Run Text="{Binding View,Mode=OneWay}" />
+                <Run Text="{Binding View, Mode=OneWay}" />
                 <Run Text=" " />
-                <Run Text="{Binding Manager.State,Mode=OneWay}" />
+                <Run Text="{Binding Manager.State, Mode=OneWay}" />
                 <Run Text=" " />
-                <Run Text="{Binding Manager.Direction,Mode=OneWay}" />
+                <Run Text="{Binding Manager.Direction, Mode=OneWay}" />
             </TextBlock>
         </DockPanel>
 
@@ -209,13 +209,61 @@
                     Command="{Binding ExitCommand}"
                     Content="Exit" />
         </Grid>
+
+        <DataTemplate DataType="{x:Type local:PositionUpdatedMessage}">
+            <TextBlock>
+                <Run Text="UPDATED (" />
+                <Run Text="{Binding From.X, Mode=OneWay}" />
+                <Run Text="{Binding From.Y, Mode=OneWay}" />
+                <Run Text=") -&gt; (" />
+                <Run Text="{Binding To.X, Mode=OneWay}" />
+                <Run Text="{Binding To.Y, Mode=OneWay}" />
+                <Run Text=")" />
+            </TextBlock>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:SnakeSegmentCreatedMessage}">
+            <TextBlock>
+                <Run Text="ADDED @ (" />
+                <Run Text="{Binding Content.CurrentPosition.X, Mode=OneWay}" />
+                <Run Text="{Binding Content.CurrentPosition.Y, Mode=OneWay}" />
+                <Run Text=") #" />
+                <Run Text="{Binding Content.Sequence, Mode=OneWay}" />
+            </TextBlock>
+        </DataTemplate>
+
     </UserControl.Resources>
 
     <Grid>
+        <ItemsControl ItemsSource="{Binding SnakeViewModel.SnakeLogViewModel.Messages}"
+                      ScrollViewer.CanContentScroll="True"
+                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.VirtualizationMode="Recycling">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.Template>
+                <ControlTemplate>
+                    <Border Padding="{TemplateBinding Control.Padding}"
+                            Background="{TemplateBinding Panel.Background}"
+                            BorderBrush="{TemplateBinding Border.BorderBrush}"
+                            BorderThickness="{TemplateBinding Border.BorderThickness}"
+                            SnapsToDevicePixels="True">
+                        <ScrollViewer Padding="{TemplateBinding Control.Padding}" Focusable="False">
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </ItemsControl.Template>
+        </ItemsControl>
+
         <Viewbox>
             <ItemsControl Width="{Binding Manager.UpperBoundX}"
                           Height="{Binding Manager.UpperBoundY}"
-                          Background="LightGray"
+                          Background="#C1C1C1C1"
                           ItemsSource="{Binding Manager.BoardPieces}">
                 <ItemsControl.Resources>
                     <DataTemplate DataType="{x:Type local:SnakeHead}">

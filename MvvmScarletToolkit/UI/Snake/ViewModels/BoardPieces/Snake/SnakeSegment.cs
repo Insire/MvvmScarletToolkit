@@ -7,7 +7,7 @@ namespace MvvmScarletToolkit
     {
         public int Sequence { get; }
 
-        public SnakeSegment(SnakeOption options, IPositionable positionable, ILogger log, int sequence)
+        public SnakeSegment(SnakeOption options, IPositionable positionable, IMessenger log, int sequence)
             : base(options, log)
         {
             CurrentPosition = positionable.CurrentPosition;

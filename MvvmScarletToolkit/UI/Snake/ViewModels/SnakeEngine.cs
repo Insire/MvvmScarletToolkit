@@ -10,13 +10,13 @@ using System.Windows.Threading;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class SnakeManager : ObservableObject, ISnakeManager
+    internal sealed class SnakeEngine : ObservableObject, ISnakeManager
     {
         private readonly Dispatcher _dispatcher;
         private readonly SnakeOption _options;
         private readonly IProducerConsumerCollection<Apple> _apples;
         private readonly Random _random;
-        private readonly ILogger _log;
+        private readonly IMessenger _messenger;
 
         private bool _isLoaded = false;
         private bool _disposed = false;
@@ -124,9 +124,9 @@ namespace MvvmScarletToolkit
             }
         }
 
-        public SnakeManager(SnakeOption options, Dispatcher dispatcher, ILogger log)
+        public SnakeEngine(SnakeOption options, Dispatcher dispatcher, IMessenger messenger)
         {
-            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _apples = new ConcurrentQueue<Apple>();
@@ -141,7 +141,7 @@ namespace MvvmScarletToolkit
             UpperBoundY = _options.MaxHeight;
             UpperBoundX = _options.MaxWidth;
 
-            Snake = new Snake(_options, _log);
+            Snake = new Snake(_options, _messenger);
             BoardPieces = new ObservableCollection<IPositionable>();
 
             PlayCommand = AsyncCommand.Create(Play);
@@ -232,7 +232,7 @@ namespace MvvmScarletToolkit
             _boardPieces.Clear();
             _apples.Clear();
 
-            Snake = new Snake(_options, _log);
+            Snake = new Snake(_options, _messenger);
             UpdateBoardPieces();
         }
 
@@ -440,10 +440,7 @@ namespace MvvmScarletToolkit
                     snake.Head
                 };
 
-                if (option.IsDebug)
-                    result.CurrentPosition = new Position(snake.Head.CurrentPosition.X, random.Next(option.MinHeight, option.MaxHeight));
-                else
-                    result.CurrentPosition = new Position(random.Next(option.MinWidth, option.MaxWidth), random.Next(option.MinHeight, option.MaxHeight));
+                result.CurrentPosition = new Position(random.Next(option.MinWidth, option.MaxWidth), random.Next(option.MinHeight, option.MaxHeight));
             }
             while (snakeParts.Any(p => result.Intersect(p)));
 

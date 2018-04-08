@@ -4,9 +4,8 @@ namespace MvvmScarletToolkit
 {
     public abstract class SnakeBase : ObservableObject, IPositionable
     {
-        private readonly ILogger _log;
+        private readonly IMessenger _messenger;
         private readonly SnakeOption _options;
-        private readonly string _debugName;
 
         private Position _currentPosition;
         public Position CurrentPosition
@@ -22,16 +21,14 @@ namespace MvvmScarletToolkit
             protected set { SetValue(ref _size, value); }
         }
 
-        public SnakeBase(SnakeOption options, Size size, ILogger log)
+        public SnakeBase(SnakeOption options, Size size, IMessenger messenger)
         {
-            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             Size = size ?? throw new ArgumentNullException(nameof(size));
-
-            _debugName = $"DEBUG: {GetType().Name}".PadRight(35);
         }
 
-        public SnakeBase(SnakeOption options, ILogger log)
+        public SnakeBase(SnakeOption options, IMessenger log)
             : this(options, new Size(options.BoardPieceSize, options.BoardPieceSize), log)
         {
         }
@@ -87,21 +84,23 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// move to absolute position
         /// </summary>
-        internal void Move(Position position)
+        internal void Move(Position newPosition)
         {
-            if (position.X > _options.MaxWidth)
-                position.X = 0;
-            if (position.X < 0)
-                position.X = _options.MaxWidth;
+            if (newPosition.X > _options.MaxWidth)
+                newPosition.X = 0;
+            if (newPosition.X < 0)
+                newPosition.X = _options.MaxWidth;
 
-            if (position.Y > _options.MaxHeight)
-                position.Y = 0;
-            if (position.Y < 0)
-                position.Y = _options.MaxHeight;
+            if (newPosition.Y > _options.MaxHeight)
+                newPosition.Y = 0;
+            if (newPosition.Y < 0)
+                newPosition.Y = _options.MaxHeight;
 
-            _log.Log($"{_debugName} {CurrentPosition.X};{CurrentPosition.Y} -> {position.X};{position.Y}");
+            var message = new PositionUpdatedMessage(this, CurrentPosition, newPosition);
 
-            CurrentPosition = position;
+            CurrentPosition = newPosition;
+
+            _messenger.Publish(message);
         }
     }
 }

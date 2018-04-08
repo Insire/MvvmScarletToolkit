@@ -7,10 +7,10 @@ using System.Windows.Threading;
 
 namespace MvvmScarletToolkit
 {
-    public partial class SnakeView
+    public partial class SnakeView : ISnakeView
     {
         private readonly Dispatcher _dispatcher;
-        private readonly ILogger _log;
+        private readonly IMessenger _messenger;
 
         private FrameCounter _frameCounter;
 
@@ -122,6 +122,25 @@ namespace MvvmScarletToolkit
             typeof(SnakeView),
             new PropertyMetadata(default(IAsyncCommand)));
 
+        public SnakeView()
+        {
+            _dispatcher = Application.Current.Dispatcher;
+            _messenger = new ScarletMessenger(new InternalLogger(), new DefaultMessageProxy());
+
+            View = View.Start;
+            ShowStartCommand = AsyncCommand.Create(ShowStart, CanShowStart);
+            ShowOptionsCommand = AsyncCommand.Create(ShowOptions, CanShowOptions);
+            ShowGameCommand = AsyncCommand.Create(ShowGame, CanShowGame);
+            ExitCommand = new RelayCommand(Exit, CanExit);
+
+            DataContext = this;
+
+            if (SnakeViewModel == null)
+                SnakeViewModel = new SnakeViewModel(new SnakeLogViewModel(_messenger));
+
+            InitializeComponent();
+        }
+
         private async Task ShowStart()
         {
             await Manager.Reset();
@@ -150,7 +169,7 @@ namespace MvvmScarletToolkit
                 await Manager.Reset();
 
             View = View.Game;
-            Manager = new SnakeManager(SnakeViewModel.SelectedOption, _dispatcher, _log);
+            Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _dispatcher, _messenger);
 
             Keyboard.Focus(this);
             var play = Manager.Play();
@@ -163,25 +182,6 @@ namespace MvvmScarletToolkit
         private bool CanShowGame()
         {
             return View != View.Game;
-        }
-
-        public SnakeView()
-        {
-            _dispatcher = Application.Current.Dispatcher;
-            _log = new InternalLogger();
-
-            View = View.Start;
-            ShowStartCommand = AsyncCommand.Create(ShowStart, CanShowStart);
-            ShowOptionsCommand = AsyncCommand.Create(ShowOptions, CanShowOptions);
-            ShowGameCommand = AsyncCommand.Create(ShowGame, CanShowGame);
-            ExitCommand = new RelayCommand(Exit, CanExit);
-
-            DataContext = this;
-
-            if (SnakeViewModel == null)
-                SnakeViewModel = new SnakeViewModel();
-
-            InitializeComponent();
         }
 
         private void Initialize()

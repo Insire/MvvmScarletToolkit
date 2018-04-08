@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace MvvmScarletToolkit
@@ -26,8 +27,17 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _keyMapViewModel, value); }
         }
 
-        public SnakeViewModel()
+        private SnakeLogViewModel _snakeLogViewModel;
+        public SnakeLogViewModel SnakeLogViewModel
         {
+            get { return _snakeLogViewModel; }
+            private set { SetValue(ref _snakeLogViewModel, value); }
+        }
+
+        public SnakeViewModel(SnakeLogViewModel snakeLogViewModel)
+        {
+            SnakeLogViewModel = snakeLogViewModel ?? throw new ArgumentNullException(nameof(snakeLogViewModel));
+
             KeyMapViewModel = new KeyMapViewModel();
             Options = new ObservableCollection<SnakeOption>()
             {

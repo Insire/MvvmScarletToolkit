@@ -7,7 +7,7 @@ namespace MvvmScarletToolkit
     public sealed class Snake : ObservableObject
     {
         private readonly SnakeOption _options;
-        private readonly ILogger _log;
+        private readonly IMessenger _messenger;
 
         private SnakeHead _head;
         public SnakeHead Head
@@ -23,13 +23,13 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _body, value); }
         }
 
-        public Snake(SnakeOption options, ILogger log)
+        public Snake(SnakeOption options, IMessenger messenger)
         {
-            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _options = options ?? throw new ArgumentNullException(nameof(options));
 
             Body = new ObservableCollection<SnakeSegment>();
-            Head = new SnakeHead(options, log);
+            Head = new SnakeHead(options, messenger);
         }
 
         public bool MoveNorth()
@@ -134,16 +134,15 @@ namespace MvvmScarletToolkit
 
             if (Head.Intersect(boardPiece))
             {
-                _log.Log($"EAT: {_head.CurrentPosition.X};{_head.CurrentPosition.Y}");
-
                 var segment = Body.LastOrDefault();
                 if (segment != null)
-                    segment = new SnakeSegment(_options, segment, _log, Body.Count);
+                    segment = new SnakeSegment(_options, segment, _messenger, Body.Count);
                 else
-                    segment = new SnakeSegment(_options, Head, _log, Body.Count);
+                    segment = new SnakeSegment(_options, Head, _messenger, Body.Count);
 
                 Body.Add(segment);
 
+                _messenger.Publish(new SnakeSegmentCreatedMessage(this, segment));
                 return true;
             }
 

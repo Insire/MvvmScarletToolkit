@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MvvmScarletToolkit</RootNamespace>
     <AssemblyName>MvvmScarletToolkit</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Expression.Blend.Sdk" Version="1.0.2" />
-    <PackageReference Include="GraphicsMagick.NET-Q8-AnyCPU" Version="1.3.25.0" />
+    <PackageReference Include="GraphicsMagick.NET-Q8-AnyCPU" Version="1.3.26.1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -95,13 +95,17 @@
     <Compile Include="UI\Navigation\Scene.cs" />
     <Compile Include="UI\Overlay.cs" />
     <Compile Include="UI\SelectedTreeViewItemBehavior.cs" />
+    <Compile Include="UI\Snake\ISnakeView.cs" />
     <Compile Include="UI\Snake\Models\PositionDTO.cs" />
+    <Compile Include="UI\Snake\Models\PositionUpdatedMessage.cs" />
+    <Compile Include="UI\Snake\Models\SnakeSegmentCreatedMessage.cs" />
     <Compile Include="UI\Snake\Types\View.cs" />
     <Compile Include="UI\Snake\Util\Extensions.cs" />
     <Compile Include="UI\Snake\Util\FrameCounter.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="UI\Snake\Interfaces\ISnakeManager.cs" />
     <Compile Include="UI\Snake\Util\InternalLogger.cs" />
+    <Compile Include="Observables\ObservableCircularBuffer.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Apple.cs" />
     <Compile Include="UI\Snake\Types\Direction.cs" />
     <Compile Include="UI\Snake\Types\GameState.cs" />
@@ -109,16 +113,20 @@
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Base\Position.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Base\Size.cs" />
     <Compile Include="UI\Snake\ViewModels\KeyMapViewModel.cs" />
+    <Compile Include="UI\Snake\ViewModels\SnakeEngine.cs" />
+    <Compile Include="UI\Snake\ViewModels\SnakeLogViewModel.cs" />
     <Compile Include="UI\Snake\ViewModels\SnakeOption.cs" />
     <Compile Include="UI\Snake\ViewModels\SnakeViewModel.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Snake\Snake.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Snake\Base\SnakeBase.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Snake\SnakeHead.cs" />
-    <Compile Include="UI\Snake\ViewModels\SnakeManager.cs" />
     <Compile Include="UI\Snake\ViewModels\BoardPieces\Snake\SnakeSegment.cs" />
     <Compile Include="UI\Snake\SnakeView.xaml.cs">
       <DependentUpon>SnakeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Virtualization\IVirtualizedListViewModel.cs" />
+    <Compile Include="Virtualization\VirtualizationViewModelState.cs" />
+    <Compile Include="Virtualization\VirtualizingCollectionViewSource.cs" />
     <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
