@@ -38,12 +38,28 @@
             <Setter Property="MinWidth" Value="100" />
         </Style>
 
+        <!--  Win View  -->
+        <DockPanel x:Key="WinView">
+            <TextBlock Text="You win!" />
+        </DockPanel>
+
+        <!--  Fail View  -->
+        <DockPanel x:Key="FailView">
+            <TextBlock Text="You loose!" />
+        </DockPanel>
+
         <!--  Debug View  -->
         <DockPanel x:Key="DebugView" Background="{StaticResource ViewBackGround}">
             <TextBlock>
                 <Run Text="{Binding FramesPerSecond, StringFormat={}FPS: {0}, Mode=OneWay}" />
                 <Run Text=" " />
                 <Run Text="{Binding Manager.Snake.Body.Count, StringFormat={}Tail length: {0}, Mode=OneWay}" />
+                <Run Text=" " />
+                <Run Text="{Binding View,Mode=OneWay}" />
+                <Run Text=" " />
+                <Run Text="{Binding Manager.State,Mode=OneWay}" />
+                <Run Text=" " />
+                <Run Text="{Binding Manager.Direction,Mode=OneWay}" />
             </TextBlock>
         </DockPanel>
 
@@ -286,6 +302,12 @@
                             </DataTrigger>
                             <DataTrigger Binding="{Binding View}" Value="Options">
                                 <Setter Property="Content" Value="{StaticResource OptionsView}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding View}" Value="Win">
+                                <Setter Property="Content" Value="{StaticResource WinView}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding View}" Value="Fail">
+                                <Setter Property="Content" Value="{StaticResource FailView}" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding View}" Value="Game">
                                 <Setter Property="Visibility" Value="Hidden" />

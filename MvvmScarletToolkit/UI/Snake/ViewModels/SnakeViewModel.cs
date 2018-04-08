@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace MvvmScarletToolkit
 {
@@ -36,19 +37,22 @@ namespace MvvmScarletToolkit
                 new SnakeOption(),
             };
 
-            SelectedOption = Options[1];
+            if (Debugger.IsAttached)
+                SelectedOption = Options[3];
+            else
+                SelectedOption = Options[1];
         }
 
         // [Keyboard support]
         // filter invalid keys, or provide valid subset from enum collection
 
         // [screen management]
-        // - add fail screen/state
         // - update game screen
         // - add debug screen (virtualized log?)
 
-        // [logging]
-        // - provide a visual log
+        // [optimization, clean code, logging]
+        // switch from property checks to event pipeline
+        // - provide a visual log of events
         // - virtualize the log
 
         // [customization]

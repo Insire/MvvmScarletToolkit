@@ -5,5 +5,7 @@
         Start,
         Options,
         Game,
+        Fail,
+        Win,
     }
 }

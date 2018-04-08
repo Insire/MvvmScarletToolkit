@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
     public interface ISnakeManager : IDisposable
     {
+        GameState State { get; }
+
         /// <summary>
         /// Updates boardpieces
         /// </summary>
@@ -13,11 +14,11 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// Starts a game
         /// </summary>
-        ICommand PlayCommand { get; }
+        IAsyncCommand PlayCommand { get; }
 
         /// <summary>
         /// Cancels and resets a game
         /// </summary>
-        ICommand ResetCommand { get; }
+        IAsyncCommand ResetCommand { get; }
     }
 }

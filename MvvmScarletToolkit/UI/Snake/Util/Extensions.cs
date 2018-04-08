@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit
 {
@@ -25,16 +26,20 @@ namespace MvvmScarletToolkit
             return (XA2 >= XH1 && XA1 <= XH2) && (YA2 >= YH1 && YA1 <= YH2);
         }
 
-        public static void Play(this ISnakeManager manager)
+        public static Task Play(this ISnakeManager manager)
         {
             if (manager?.PlayCommand?.CanExecute(null) ?? false)
-                manager.PlayCommand.Execute(null);
+                return manager.PlayCommand.ExecuteAsync(null);
+
+            return Task.CompletedTask;
         }
 
-        public static void Reset(this ISnakeManager manager)
+        public static Task Reset(this ISnakeManager manager)
         {
             if (manager?.ResetCommand?.CanExecute(null) ?? false)
-                manager.ResetCommand.Execute(null);
+                return manager.ResetCommand.ExecuteAsync(null);
+
+            return Task.CompletedTask;
         }
 
         public static void Clear<T>(this IProducerConsumerCollection<T> collection)

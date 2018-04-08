@@ -47,15 +47,15 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _boardPieces, value); }
         }
 
-        private ICommand _playCommand;
-        public ICommand PlayCommand
+        private IAsyncCommand _playCommand;
+        public IAsyncCommand PlayCommand
         {
             get { return _playCommand; }
             private set { SetValue(ref _playCommand, value); }
         }
 
-        private ICommand _resetCommand;
-        public ICommand ResetCommand
+        private IAsyncCommand _resetCommand;
+        public IAsyncCommand ResetCommand
         {
             get { return _resetCommand; }
             private set { SetValue(ref _resetCommand, value); }
@@ -144,7 +144,7 @@ namespace MvvmScarletToolkit
             Snake = new Snake(_options, _log);
             BoardPieces = new ObservableCollection<IPositionable>();
 
-            PlayCommand = new RelayCommand(Play);
+            PlayCommand = AsyncCommand.Create(Play);
             ResetCommand = AsyncCommand.Create(Reset);
 
             LoadCommand = new RelayCommand(Load, CanLoad);
@@ -155,12 +155,12 @@ namespace MvvmScarletToolkit
             MoveEastCommand = new RelayCommand(SetDirectionEast, CanMoveEast);
         }
 
-        private void Play()
+        private async Task Play()
         {
             switch (State)
             {
                 case GameState.None:
-                    Start();
+                    await Start();
                     break;
 
                 case GameState.Running:
@@ -185,7 +185,7 @@ namespace MvvmScarletToolkit
             _isLoaded = true;
         }
 
-        private void Start()
+        private Task Start()
         {
             State = GameState.Running;
             UpdateBoardPieces();
@@ -195,6 +195,8 @@ namespace MvvmScarletToolkit
 
             _appleSource = new CancellationTokenSource();
             _appleTask = CreateAppleLoop(_appleSource.Token);
+
+            return _snakeTask;
         }
 
         private async Task Reset()

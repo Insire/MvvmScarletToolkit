@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -85,45 +86,45 @@ namespace MvvmScarletToolkit
             typeof(SnakeView),
             new PropertyMetadata(default(ICommand)));
 
-        public ICommand ShowStartCommand
+        public IAsyncCommand ShowStartCommand
         {
-            get { return (ICommand)GetValue(ShowStartCommandProperty); }
+            get { return (IAsyncCommand)GetValue(ShowStartCommandProperty); }
             set { SetValue(ShowStartCommandProperty, value); }
         }
 
         public static readonly DependencyProperty ShowStartCommandProperty = DependencyProperty.Register(
             "ShowStartCommand",
-            typeof(ICommand),
+            typeof(IAsyncCommand),
             typeof(SnakeView),
-            new PropertyMetadata(default(ICommand)));
+            new PropertyMetadata(default(IAsyncCommand)));
 
-        public ICommand ShowOptionsCommand
+        public IAsyncCommand ShowOptionsCommand
         {
-            get { return (ICommand)GetValue(ShowOptionsCommandProperty); }
+            get { return (IAsyncCommand)GetValue(ShowOptionsCommandProperty); }
             set { SetValue(ShowOptionsCommandProperty, value); }
         }
 
         public static readonly DependencyProperty ShowOptionsCommandProperty = DependencyProperty.Register(
             "ShowOptionsCommand",
-            typeof(ICommand),
+            typeof(IAsyncCommand),
             typeof(SnakeView),
-            new PropertyMetadata(default(ICommand)));
+            new PropertyMetadata(default(IAsyncCommand)));
 
-        public ICommand ShowGameCommand
+        public IAsyncCommand ShowGameCommand
         {
-            get { return (ICommand)GetValue(ShowGameCommandProperty); }
+            get { return (IAsyncCommand)GetValue(ShowGameCommandProperty); }
             set { SetValue(ShowGameCommandProperty, value); }
         }
 
         public static readonly DependencyProperty ShowGameCommandProperty = DependencyProperty.Register(
             "ShowGameCommand",
-            typeof(ICommand),
+            typeof(IAsyncCommand),
             typeof(SnakeView),
-            new PropertyMetadata(default(ICommand)));
+            new PropertyMetadata(default(IAsyncCommand)));
 
-        private void ShowStart()
+        private async Task ShowStart()
         {
-            Manager.Reset();
+            await Manager.Reset();
             View = View.Start;
         }
 
@@ -132,9 +133,9 @@ namespace MvvmScarletToolkit
             return View != View.Start;
         }
 
-        private void ShowOptions()
+        private async Task ShowOptions()
         {
-            Manager.Reset();
+            await Manager.Reset();
             View = View.Options;
         }
 
@@ -143,16 +144,20 @@ namespace MvvmScarletToolkit
             return View != View.Options;
         }
 
-        private void ShowGame()
+        private async Task ShowGame()
         {
-            Manager.Reset();
+            if (Manager != null)
+                await Manager.Reset();
+
             View = View.Game;
             Manager = new SnakeManager(SnakeViewModel.SelectedOption, _dispatcher, _log);
 
             Keyboard.Focus(this);
-            Manager.Play();
+            var play = Manager.Play();
 
             Initialize();
+
+            await play;
         }
 
         private bool CanShowGame()
@@ -166,9 +171,9 @@ namespace MvvmScarletToolkit
             _log = new InternalLogger();
 
             View = View.Start;
-            ShowStartCommand = new RelayCommand(ShowStart, CanShowStart);
-            ShowOptionsCommand = new RelayCommand(ShowOptions, CanShowOptions);
-            ShowGameCommand = new RelayCommand(ShowGame, CanShowGame);
+            ShowStartCommand = AsyncCommand.Create(ShowStart, CanShowStart);
+            ShowOptionsCommand = AsyncCommand.Create(ShowOptions, CanShowOptions);
+            ShowGameCommand = AsyncCommand.Create(ShowGame, CanShowGame);
             ExitCommand = new RelayCommand(Exit, CanExit);
 
             DataContext = this;
