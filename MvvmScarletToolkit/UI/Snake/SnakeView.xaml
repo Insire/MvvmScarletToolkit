@@ -212,35 +212,54 @@
                     Content="Exit" />
         </Grid>
 
-        <DataTemplate DataType="{x:Type local:PositionUpdatedMessage}">
+        <DataTemplate x:Key="SourceTemplate">
+            <ContentControl Content="{Binding}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:Position}">
             <TextBlock>
-                <Run Text="UPDATED (" />
-                <Run Text="{Binding From.X, Mode=OneWay}" />
-                <Run Text="{Binding From.Y, Mode=OneWay}" />
-                <Run Text=") -&gt; (" />
-                <Run Text="{Binding To.X, Mode=OneWay}" />
-                <Run Text="{Binding To.Y, Mode=OneWay}" />
-                <Run Text=")" />
+                <Run Text="{Binding X, Mode=OneWay}" />
+                <Run Text="{Binding Y, Mode=OneWay}" />
             </TextBlock>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type local:PositionUpdatedMessage}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="UPDATED (" />
+                <ContentControl Content="{Binding From}" />
+                <TextBlock Text=") -&gt; (" />
+                <ContentControl Content="{Binding To}" />
+                <TextBlock Text=")" />
+            </StackPanel>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type local:SnakeSegmentCreatedMessage}">
-            <TextBlock>
-                <Run Text="ADDED @ (" />
-                <Run Text="{Binding Content.CurrentPosition.X, Mode=OneWay}" />
-                <Run Text="{Binding Content.CurrentPosition.Y, Mode=OneWay}" />
-                <Run Text=") #" />
-                <Run Text="{Binding Content.Sequence, Mode=OneWay}" />
-            </TextBlock>
+            <StackPanel Orientation="Horizontal" Background="LightCoral">
+                <TextBlock Text="ADDED @ (" />
+                <ContentControl Content="{Binding Content.CurrentPosition}" />
+                <TextBlock>
+                    <Run Text=") #" />
+                    <Run Text="{Binding Content.Sequence, Mode=OneWay}" />
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:SnakeDirectionChanged}">
+            <StackPanel Orientation="Horizontal" Background="LightBlue">
+                <TextBlock>
+                    <Run Text="CHANGED => " />
+                    <Run Text="{Binding Content, Mode=OneWay}" />
+                </TextBlock>
+            </StackPanel>
         </DataTemplate>
 
     </UserControl.Resources>
 
     <Grid>
         <ItemsControl ItemsSource="{Binding SnakeViewModel.SnakeLogViewModel.Messages}"
-                      ScrollViewer.CanContentScroll="True"
-                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                      VirtualizingStackPanel.IsVirtualizing="True"
+                      ScrollViewer.CanContentScroll="True" HorizontalAlignment="Right"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      VirtualizingStackPanel.IsVirtualizing="True" ItemTemplate="{StaticResource SourceTemplate}"
                       VirtualizingStackPanel.VirtualizationMode="Recycling">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -255,7 +274,7 @@
                             BorderThickness="{TemplateBinding Border.BorderThickness}"
                             SnapsToDevicePixels="True">
                         <ScrollViewer Padding="{TemplateBinding Control.Padding}" Focusable="False">
-                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"  />
                         </ScrollViewer>
                     </Border>
                 </ControlTemplate>

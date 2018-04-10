@@ -121,6 +121,7 @@ namespace MvvmScarletToolkit
 
                 _direction = value;
                 OnPropertyChanged(nameof(Direction));
+                _messenger.Publish(new SnakeDirectionChanged(this, value));
             }
         }
 

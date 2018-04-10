@@ -26,25 +26,31 @@ namespace MvvmScarletToolkit
             _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             Messages = new ObservableCircularBuffer<ScarletMessageBase>(100);
 
-            _messenger.Subscribe<PositionUpdatedMessage>(PositionUpdatedMessageSubscription);
-            _messenger.Subscribe<SnakeSegmentCreatedMessage>(SnakeSegmentCreatedMessageSubscription);
+            _messenger.Subscribe<PositionUpdatedMessage>(MessageSubscription);
+            _messenger.Subscribe<SnakeSegmentCreatedMessage>(MessageSubscription);
+            _messenger.Subscribe<SnakeDirectionChanged>(MessageSubscription);
 
             _nextUpdate = DateTime.UtcNow.AddSeconds(1);
         }
 
-        private void SnakeSegmentCreatedMessageSubscription(SnakeSegmentCreatedMessage message)
+        private void MessageSubscription(SnakeSegmentCreatedMessage message)
         {
             PushMessage(message);
         }
 
-        private void PositionUpdatedMessageSubscription(PositionUpdatedMessage message)
+        private void MessageSubscription(PositionUpdatedMessage message)
+        {
+            PushMessage(message);
+        }
+
+        private void MessageSubscription(SnakeDirectionChanged message)
         {
             PushMessage(message);
         }
 
         private void PushMessage(ScarletMessageBase message)
         {
-            Messages.PushFront(message);
+            Messages.Push(message);
             _messagesPerSecond++;
 
             if (_nextUpdate > DateTime.UtcNow)

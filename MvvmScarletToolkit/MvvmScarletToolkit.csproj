@@ -100,6 +100,7 @@
     <Compile Include="UI\Snake\ISnakeView.cs" />
     <Compile Include="UI\Snake\Models\PositionDTO.cs" />
     <Compile Include="UI\Snake\Models\PositionUpdatedMessage.cs" />
+    <Compile Include="UI\Snake\Models\SnakeDirectionChanged.cs" />
     <Compile Include="UI\Snake\Models\SnakeSegmentCreatedMessage.cs" />
     <Compile Include="UI\Snake\Types\View.cs" />
     <Compile Include="UI\Snake\Util\Extensions.cs" />
