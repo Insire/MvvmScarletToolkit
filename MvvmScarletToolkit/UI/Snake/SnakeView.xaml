@@ -60,6 +60,8 @@
                 <Run Text="{Binding Manager.State, Mode=OneWay}" />
                 <Run Text=" " />
                 <Run Text="{Binding Manager.Direction, Mode=OneWay}" />
+                <Run Text=" " />
+                <Run Text="{Binding SnakeViewModel.SnakeLogViewModel.MessagesPerSecond, Mode=OneWay}" />
             </TextBlock>
         </DockPanel>
 

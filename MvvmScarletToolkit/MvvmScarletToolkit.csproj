@@ -55,6 +55,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CircularBuffer.cs" />
     <Compile Include="Commands\Async\AsyncCommand.cs" />
     <Compile Include="Commands\Async\AsyncCommandBase.cs" />
     <Compile Include="Commands\Async\IAsyncCommand.cs" />

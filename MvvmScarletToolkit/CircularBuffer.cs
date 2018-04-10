@@ -1,37 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-// License: ---------------------------------------------------------------------------- "THE
-// BEER-WARE LICENSE" (Revision 42): Joao Portela wrote this file.As long as you retain this notice
-// you can do whatever you want with this stuff.If we meet some day, and you think this stuff is
-// worth it, you can buy me a beer in return. Joao Portela ----------------------------------------------------------------------------
-
-// based on source: https://github.com/joaoportela/CircullarBuffer-CSharp
 
 namespace MvvmScarletToolkit
 {
-    /// <summary>
-    /// Circular buffer.
-    ///
-    /// When writting to a full buffer: PushBack -&gt; removes this[0] / Front() PushFront -&gt;
-    /// removes this[Size-1] / Back()
-    ///
-    /// this implementation is inspired by
-    /// http://www.boost.org/doc/libs/1_53_0/libs/circular_buffer/doc/circular_buffer.html because I
-    /// liked their interface.
-    /// </summary>
-    public sealed class ObservableCircularBuffer<T> : IEnumerable<T>, INotifyCollectionChanged, INotifyPropertyChanged
+    public sealed class CircularBuffer<T> : IEnumerable<T>
     {
-        private readonly ObservableCollection<T> _buffer;
+        private readonly T[] _buffer;
+
         private int _start;
         private int _end;
 
-        public ObservableCircularBuffer(int capacity)
+        public CircularBuffer(int capacity)
             : this(capacity, new T[] { })
         {
         }
@@ -44,7 +24,7 @@ namespace MvvmScarletToolkit
         /// Items to fill buffer with. Items length must be less than capacity.
         /// Sugestion: use Skip(x).Take(y).ToArray() to build this argument from any enumerable.
         /// </param>
-        public ObservableCircularBuffer(int capacity, T[] items)
+        public CircularBuffer(int capacity, T[] items)
         {
             if (capacity < 1)
                 throw new ArgumentException("Circular buffer cannot have negative or zero capacity.", "capacity");
@@ -55,10 +35,9 @@ namespace MvvmScarletToolkit
             if (items.Length > capacity)
                 throw new ArgumentException("Too many items to fit circular buffer", "items");
 
-            _buffer = new ObservableCollection<T>(items);
-            _buffer.CollectionChanged += (o, e) => OnCollectionChanged(e);
+            _buffer = new T[capacity];
 
-            Capacity = capacity;
+            Array.Copy(items, _buffer, items.Length);
             Size = items.Length;
 
             _start = 0;
@@ -69,7 +48,7 @@ namespace MvvmScarletToolkit
         /// Maximum capacity of the buffer. Elements pushed into the buffer after maximum capacity is
         /// reached (IsFull = true), will remove an element.
         /// </summary>
-        public int Capacity { get; }
+        public int Capacity => _buffer.Length;
 
         public bool IsFull => Size == Capacity;
 
@@ -135,13 +114,33 @@ namespace MvvmScarletToolkit
         /// new element to fit.
         /// </summary>
         /// <param name="item">Item to push to the back of the buffer</param>
+        public void PushBack(T item)
+        {
+            if (IsFull)
+            {
+                _buffer[_end] = item;
+                Increment(ref _end);
+                _start = _end;
+            }
+            else
+            {
+                _buffer[_end] = item;
+                Increment(ref _end);
+                ++Size;
+            }
+        }
+
+        /// <summary>
+        /// Pushes a new element to the front of the buffer. Front()/this[0] will now return this element.
+        ///
+        /// When the buffer is full, the element at Back()/this[Size-1] will be popped to allow for
+        /// this new element to fit.
+        /// </summary>
+        /// <param name="item">Item to push to the front of the buffer</param>
         public void PushFront(T item)
         {
             if (IsFull)
             {
-                for (var i = 1; i < Capacity - 1; i++)
-                    _buffer.Move(i, i + 1);
-
                 Decrement(ref _start);
                 _end = _start;
                 _buffer[_start] = item;
@@ -149,7 +148,7 @@ namespace MvvmScarletToolkit
             else
             {
                 Decrement(ref _start);
-                _buffer.Add(item);
+                _buffer[_start] = item;
                 ++Size;
             }
         }
@@ -164,9 +163,6 @@ namespace MvvmScarletToolkit
             Decrement(ref _end);
             _buffer[_end] = default;
             --Size;
-
-            OnPropertyChanged(nameof(IsFull));
-            OnPropertyChanged(nameof(IsEmpty));
         }
 
         /// <summary>
@@ -179,14 +175,39 @@ namespace MvvmScarletToolkit
             _buffer[_start] = default;
             Increment(ref _start);
             --Size;
+        }
 
-            OnPropertyChanged(nameof(IsFull));
-            OnPropertyChanged(nameof(IsEmpty));
+        /// <summary>
+        /// Copies the buffer contents to an array, acording to the logical contents of the buffer
+        /// (i.e. independent of the internal order/contents)
+        /// </summary>
+        /// <returns>A new array with a copy of the buffer contents.</returns>
+        public T[] ToArray()
+        {
+            var newArray = new T[Size];
+            var newArrayOffset = 0;
+            var segments = new ArraySegment<T>[2] { ArrayOne(), ArrayTwo() };
+
+            foreach (ArraySegment<T> segment in segments)
+            {
+                Array.Copy(segment.Array, segment.Offset, newArray, newArrayOffset, segment.Count);
+                newArrayOffset += segment.Count;
+            }
+
+            return newArray;
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            return _buffer.GetEnumerator();
+            var segments = new ArraySegment<T>[2] { ArrayOne(), ArrayTwo() };
+
+            foreach (ArraySegment<T> segment in segments)
+            {
+                for (int i = 0; i < segment.Count; i++)
+                {
+                    yield return segment.Array[segment.Offset + i];
+                }
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -240,22 +261,20 @@ namespace MvvmScarletToolkit
         // The array is composed by at most two non-contiguous segments, the next two methods allow
         // easy access to those.
 
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        private ArraySegment<T> ArrayOne()
         {
-            CollectionChanged?.Invoke(this, e);
+            if (_start < _end)
+                return new ArraySegment<T>(_buffer, _start, _end - _start);
+            else
+                return new ArraySegment<T>(_buffer, _start, _buffer.Length - _start);
         }
 
-        private void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        private ArraySegment<T> ArrayTwo()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (_start < _end)
+                return new ArraySegment<T>(_buffer, _end, 0);
+            else
+                return new ArraySegment<T>(_buffer, 0, _end);
         }
-
-        private void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, e);
-        }
-
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
