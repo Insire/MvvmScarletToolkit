@@ -18,15 +18,18 @@ namespace MvvmScarletToolkit
             _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             Messages = new ObservableCircularBuffer<ScarletMessageBase>(100);
 
-            _messenger.Subscribe<PositionUpdatedMessage>((message) =>
-            {
-                Messages.PushBack(message);
-            });
+            _messenger.Subscribe<PositionUpdatedMessage>(PositionUpdatedMessageSubscription);
+            _messenger.Subscribe<SnakeSegmentCreatedMessage>(SnakeSegmentCreatedMessageSubscription);
+        }
 
-            _messenger.Subscribe<SnakeSegmentCreatedMessage>((message) =>
-            {
-                Messages.PushBack(message);
-            });
+        private void SnakeSegmentCreatedMessageSubscription(SnakeSegmentCreatedMessage message)
+        {
+            Messages.PushFront(message);
+        }
+
+        private void PositionUpdatedMessageSubscription(PositionUpdatedMessage message)
+        {
+            Messages.PushFront(message);
         }
     }
 }

@@ -2,15 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-// License:
-// ----------------------------------------------------------------------------
-// "THE BEER-WARE LICENSE" (Revision 42):
-// Joao Portela wrote this file.As long as you retain this notice you
-// can do whatever you want with this stuff.If we meet some day, and you think
-// this stuff is worth it, you can buy me a beer in return.
-// Joao Portela
-// ----------------------------------------------------------------------------
+// License: ---------------------------------------------------------------------------- "THE
+// BEER-WARE LICENSE" (Revision 42): Joao Portela wrote this file.As long as you retain this notice
+// you can do whatever you want with this stuff.If we meet some day, and you think this stuff is
+// worth it, you can buy me a beer in return. Joao Portela ----------------------------------------------------------------------------
 
 // based on source: https://github.com/joaoportela/CircullarBuffer-CSharp
 
@@ -26,7 +24,7 @@ namespace MvvmScarletToolkit
     /// http://www.boost.org/doc/libs/1_53_0/libs/circular_buffer/doc/circular_buffer.html because I
     /// liked their interface.
     /// </summary>
-    public sealed class ObservableCircularBuffer<T> : IEnumerable<T>, INotifyCollectionChanged
+    public sealed class ObservableCircularBuffer<T> : IEnumerable<T>, INotifyCollectionChanged, INotifyPropertyChanged
     {
         private readonly T[] _buffer;
 
@@ -64,7 +62,6 @@ namespace MvvmScarletToolkit
             if (items.Length > capacity)
                 throw new ArgumentException("Too many items to fit circular buffer", "items");
 
-
             _buffer = new T[capacity];
 
             Array.Copy(items, _buffer, items.Length);
@@ -78,7 +75,7 @@ namespace MvvmScarletToolkit
         /// Maximum capacity of the buffer. Elements pushed into the buffer after maximum capacity is
         /// reached (IsFull = true), will remove an element.
         /// </summary>
-        public int Capacity { get { return _buffer.Length; } }
+        public int Capacity => _buffer.Length;
 
         public bool IsFull => Size == Capacity;
 
@@ -144,7 +141,11 @@ namespace MvvmScarletToolkit
         /// <param name="item">Item to push to the back of the buffer</param>
         public void PushBack(T item)
         {
-            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, _buffer[_end], _end);
+            var args = default(NotifyCollectionChangedEventArgs);
+            var previousEntry = IsEmpty ? default : Back();
+
+            if (_buffer[_end] == null)
+                args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, _end);
 
             if (IsFull)
             {
@@ -157,9 +158,15 @@ namespace MvvmScarletToolkit
                 _buffer[_end] = item;
                 Increment(ref _end);
                 ++Size;
+
+                OnPropertyChanged(nameof(IsFull));
+                OnPropertyChanged(nameof(IsEmpty));
             }
 
-            OnCollectionChanged(args);
+            if (args != null)
+                OnCollectionChanged(args);
+            else
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, new object[] { item }, new object[] { previousEntry }, _end));
         }
 
         /// <summary>
@@ -171,7 +178,11 @@ namespace MvvmScarletToolkit
         /// <param name="item">Item to push to the front of the buffer</param>
         public void PushFront(T item)
         {
-            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, _buffer[_start], _start);
+            var args = default(NotifyCollectionChangedEventArgs);
+            var previousEntry = IsEmpty ? default : Front();
+
+            if (_buffer[_end] == null)
+                args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, _end);
 
             if (IsFull)
             {
@@ -184,9 +195,15 @@ namespace MvvmScarletToolkit
                 Decrement(ref _start);
                 _buffer[_start] = item;
                 ++Size;
+
+                OnPropertyChanged(nameof(IsFull));
+                OnPropertyChanged(nameof(IsEmpty));
             }
 
-            OnCollectionChanged(args);
+            if (args != null)
+                OnCollectionChanged(args);
+            else
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, new object[] { item }, new object[] { previousEntry }, _end));
         }
 
         /// <summary>
@@ -195,12 +212,17 @@ namespace MvvmScarletToolkit
         public void PopBack()
         {
             ThrowIfEmpty("Cannot take elements from an empty buffer.");
-            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, _buffer[_end], _end);
+
+            var removeArgs = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, _buffer[_end], _end);
+
             Decrement(ref _end);
-            _buffer[_end] = default(T);
+            _buffer[_end] = default;
             --Size;
 
-            OnCollectionChanged(args);
+            OnCollectionChanged(removeArgs);
+
+            OnPropertyChanged(nameof(IsFull));
+            OnPropertyChanged(nameof(IsEmpty));
         }
 
         /// <summary>
@@ -209,12 +231,17 @@ namespace MvvmScarletToolkit
         public void PopFront()
         {
             ThrowIfEmpty("Cannot take elements from an empty buffer.");
-            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, _buffer[_start], _start);
-            _buffer[_start] = default(T);
+
+            var removeArgs = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, _buffer[_start], _start);
+
+            _buffer[_start] = default;
             Increment(ref _start);
             --Size;
 
-            OnCollectionChanged(args);
+            OnCollectionChanged(removeArgs);
+
+            OnPropertyChanged(nameof(IsFull));
+            OnPropertyChanged(nameof(IsEmpty));
         }
 
         /// <summary>
@@ -224,8 +251,8 @@ namespace MvvmScarletToolkit
         /// <returns>A new array with a copy of the buffer contents.</returns>
         public T[] ToArray()
         {
-            T[] newArray = new T[Size];
-            int newArrayOffset = 0;
+            var newArray = new T[Size];
+            var newArrayOffset = 0;
             var segments = new ArraySegment<T>[2] { ArrayOne(), ArrayTwo() };
 
             foreach (ArraySegment<T> segment in segments)
@@ -284,10 +311,7 @@ namespace MvvmScarletToolkit
         }
 
         /// <summary>
-        /// Converts the index in the argument to an index in
-        /// <code>
-        /// _buffer
-        /// </code>
+        /// Converts the index in the argument to an index in _buffer
         /// </summary>
         /// <returns>The transformed index.</returns>
         /// <param name="index">External index.</param>
@@ -322,9 +346,27 @@ namespace MvvmScarletToolkit
 
         private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
+            if (IsFull)
+            {
+                for (var i = 0; i < this.Capacity; i++)
+                {
+                    if (this[i].Equals(e.NewItems))
+                    {
+                        Console.WriteLine(i);
+                        break;
+                    }
+                }
+            }
+
             CollectionChanged?.Invoke(this, e);
         }
 
+        private void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

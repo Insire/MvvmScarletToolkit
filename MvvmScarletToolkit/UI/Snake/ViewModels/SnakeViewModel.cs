@@ -53,8 +53,6 @@ namespace MvvmScarletToolkit
                 SelectedOption = Options[1];
         }
 
-        // - steal eventaggregator from maple
-
         // [screen management]
         // - update game screen
         // - add debug screen (virtualized log?)

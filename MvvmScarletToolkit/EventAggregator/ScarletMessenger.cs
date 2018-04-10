@@ -150,14 +150,14 @@ namespace MvvmScarletToolkit
 
             currentlySubscribed.ForEach(sub =>
             {
-                try
-                {
+                //try
+                //{
                     sub.Proxy.Deliver(message, sub.Subscription);
-                }
-                catch (Exception exception)
-                {
-                    _log.Log(exception);
-                }
+                //}
+                //catch (Exception exception)
+                //{
+                //    _log.Log(exception);
+                //}
             });
         }
 
