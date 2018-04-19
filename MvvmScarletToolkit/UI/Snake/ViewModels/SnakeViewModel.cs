@@ -54,13 +54,11 @@ namespace MvvmScarletToolkit
         }
 
         // [screen management]
-        // - update game screen
-        // - add debug screen (virtualized log?)
+        // - fix gamestate change not beeing recognized, when running the game more than once
+        // - fix processing of input not being fast enough, so that you can fail the game unexpectedly
 
         // [optimization, clean code, logging]
         // switch from property checks to event pipeline
-        // - provide a visual log of events
-        // - virtualize the log
 
         // [Keyboard support]
         // filter invalid keys, or provide valid subset from enum collection
