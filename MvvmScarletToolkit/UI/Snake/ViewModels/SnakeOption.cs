@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace MvvmScarletToolkit
 {
@@ -11,7 +10,6 @@ namespace MvvmScarletToolkit
             {
                 SpeedMultiplier = 0.1,
                 IsDefault = true,
-                IsDebug = false,
                 Name = "Easy",
             };
         }
@@ -22,7 +20,6 @@ namespace MvvmScarletToolkit
             {
                 SpeedMultiplier = 0.075,
                 IsDefault = true,
-                IsDebug = false,
                 Name = "Normal",
             };
         }
@@ -33,7 +30,6 @@ namespace MvvmScarletToolkit
             {
                 SpeedMultiplier = 0.035,
                 IsDefault = true,
-                IsDebug = false,
                 Name = "Hard",
             };
         }
@@ -44,13 +40,6 @@ namespace MvvmScarletToolkit
         public bool IsDefault { get; private set; }
 
         public string Name { get; private set; }
-
-        private bool _isDebug;
-        public bool IsDebug
-        {
-            get { return _isDebug; }
-            set { SetValue(ref _isDebug, value); }
-        }
 
         private int _fieldSize;
         /// <summary>
@@ -144,7 +133,6 @@ namespace MvvmScarletToolkit
             FoodInterval = 3;
             MaxFoodCount = 5;
 
-            IsDebug = Debugger.IsAttached;
             IsDefault = false;
             Name = "Custom";
         }

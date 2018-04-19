@@ -7,7 +7,7 @@ using System.Windows.Threading;
 
 namespace MvvmScarletToolkit
 {
-    public partial class SnakeView : ISnakeView
+    public sealed partial class SnakeView : ISnakeView
     {
         private readonly Dispatcher _dispatcher;
         private readonly IMessenger _messenger;
@@ -17,11 +17,11 @@ namespace MvvmScarletToolkit
 
         public ISnakeManager Manager
         {
-            get { return (ISnakeManager)GetValue(ManagerhProperty); }
-            set { SetValue(ManagerhProperty, value); }
+            get { return (ISnakeManager)GetValue(ManagerProperty); }
+            set { SetValue(ManagerProperty, value); }
         }
 
-        public static readonly DependencyProperty ManagerhProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ManagerProperty = DependencyProperty.Register(
             "Manager",
             typeof(ISnakeManager),
             typeof(SnakeView),
@@ -39,6 +39,17 @@ namespace MvvmScarletToolkit
             typeof(SnakeView),
             new PropertyMetadata(0));
 
+        public bool IsDebug
+        {
+            get { return (bool)GetValue(IsDebugProperty); }
+            set { SetValue(IsDebugProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsDebugProperty = DependencyProperty.Register(
+            "IsDebug",
+            typeof(bool),
+            typeof(SnakeView), new PropertyMetadata(false));
+
         public bool IsFpsEnabled
         {
             get { return (bool)GetValue(IsFpsEnabledProperty); }
@@ -49,7 +60,7 @@ namespace MvvmScarletToolkit
             "IsFpsEnabled",
             typeof(bool),
             typeof(SnakeView),
-            new PropertyMetadata(false));
+            new PropertyMetadata(false, new PropertyChangedCallback(OnIsFpsEnabledChanged)));
 
         public SnakeViewModel SnakeViewModel
         {
@@ -123,6 +134,20 @@ namespace MvvmScarletToolkit
             typeof(SnakeView),
             new PropertyMetadata(default(IAsyncCommand)));
 
+        private static void OnIsFpsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is SnakeView snakeView))
+                return;
+
+            if (!(e.NewValue is bool enableFps))
+                return;
+
+            if (enableFps)
+                snakeView.SetupFpsCounter();
+            else
+                snakeView.DisposeFpsCounter();
+        }
+
         public SnakeView()
         {
             _dispatcher = Application.Current.Dispatcher;
@@ -169,7 +194,6 @@ namespace MvvmScarletToolkit
             if (Manager != null)
                 await Manager.Reset();
 
-            View = View.Game;
             Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _dispatcher, _messenger);
             SetupObserver();
 
@@ -183,29 +207,11 @@ namespace MvvmScarletToolkit
 
         private void SetupObserver()
         {
+            if (_propertyObserver != null)
+                return;
+
             _propertyObserver = new PropertyObserver<ISnakeManager>(Manager);
             _propertyObserver.RegisterHandler((o) => o.State, OnStateChanged);
-        }
-
-        private void OnStateChanged(ISnakeManager manager)
-        {
-            switch (manager.State)
-            {
-                case GameState.Fail:
-                    View = View.Fail;
-                    break;
-
-                case GameState.None:
-                    View = View.Start;
-                    break;
-
-                case GameState.Paused:
-                case GameState.Running:
-                    break;
-
-                default:
-                    throw new NotImplementedException(View + " is not implemented yet");
-            }
         }
 
         private void DisposeObserver()
@@ -215,7 +221,46 @@ namespace MvvmScarletToolkit
 
             _propertyObserver.UnregisterHandler((o) => o.State);
             _propertyObserver = null;
+        }
 
+        private void OnStateChanged(ISnakeManager manager)
+        {
+            switch (manager.State)
+            {
+                case GameState.Fail:
+                    View = View.Fail;
+                    //DisposeObserver();
+                    break;
+
+                case GameState.None:
+                    View = View.Start;
+                    break;
+
+                case GameState.Paused:
+                case GameState.Running:
+                    View = View.Game;
+                    break;
+
+                default:
+                    throw new NotImplementedException(View + " is not implemented yet");
+            }
+        }
+
+        private void SetupFpsCounter()
+        {
+            if (_frameCounter != null)
+                return;
+
+            _frameCounter = new FrameCounter(RenderNotification);
+        }
+
+        private void DisposeFpsCounter()
+        {
+            if (_frameCounter == null)
+                return;
+
+            _frameCounter.Dispose();
+            _frameCounter = null;
         }
 
         private bool CanShowGame()
@@ -225,8 +270,6 @@ namespace MvvmScarletToolkit
 
         private void Initialize()
         {
-            _frameCounter = new FrameCounter(RenderNotification); // TODO enable + disable
-
             CompositionTarget.Rendering += CompositionTarget_Rendering;
         }
 
@@ -242,17 +285,13 @@ namespace MvvmScarletToolkit
                 Manager = null;
             }
 
-            if (_frameCounter != null)
-            {
-                _frameCounter.Dispose();
-                _frameCounter = null;
-            }
+            DisposeFpsCounter();
         }
 
         private void CompositionTarget_Rendering(object sender, EventArgs e)
         {
             Manager.Refresh();
-            _frameCounter.UpdateCounter();
+            _frameCounter?.UpdateCounter();
         }
 
         private void RenderNotification(object state)
