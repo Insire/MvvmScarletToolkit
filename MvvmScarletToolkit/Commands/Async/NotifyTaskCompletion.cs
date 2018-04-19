@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit
 
         public Task<TResult> Task { get; private set; }
         public Task TaskCompletion { get; private set; }
-        public TResult Result => (Task.Status == TaskStatus.RanToCompletion) ? Task.Result : default(TResult);
+        public TResult Result => (Task.Status == TaskStatus.RanToCompletion) ? Task.Result : default;
 
         public TaskStatus Status { get { return Task.Status; } }
         public bool IsCompleted { get { return Task.IsCompleted; } }

@@ -1,8 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace MvvmScarletToolkit
 {
-    public interface ISnakeManager : IDisposable
+    public interface ISnakeManager : INotifyPropertyChanged, IDisposable
     {
         GameState State { get; }
 

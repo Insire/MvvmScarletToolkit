@@ -81,9 +81,7 @@ namespace MvvmScarletToolkit
 
         public void SetSelectedItem(IFileSystemInfo item)
         {
-            var value = item as ScarletFileSystemContainerBase;
-
-            if (value == null)
+            if (!(item is ScarletFileSystemContainerBase value))
                 return;
 
             SelectedItem = value;
@@ -93,9 +91,7 @@ namespace MvvmScarletToolkit
 
         private bool CanSetSelectedItem(IFileSystemInfo item)
         {
-            var value = item as ScarletFileSystemContainerBase;
-
-            return value != null && value != SelectedItem;
+            return item is ScarletFileSystemContainerBase value && value != SelectedItem;
         }
     }
 }

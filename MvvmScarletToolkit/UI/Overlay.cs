@@ -49,8 +49,7 @@ namespace MvvmScarletToolkit
 
         private static void OnOverlayContentChanged(DependencyObject dp, DependencyPropertyChangedEventArgs e)
         {
-            var overlay = dp as Overlay;
-            if (overlay == null)
+            if (!(dp is Overlay overlay))
                 return;
 
             if (!overlay.IsOverlayContentVisible)
@@ -62,8 +61,7 @@ namespace MvvmScarletToolkit
 
         private static void OnIsOverlayContentVisibleChanged(DependencyObject dp, DependencyPropertyChangedEventArgs e)
         {
-            var overlay = dp as Overlay;
-            if (overlay == null)
+            if (!(dp is Overlay overlay))
                 return;
 
             if ((bool)e.NewValue)

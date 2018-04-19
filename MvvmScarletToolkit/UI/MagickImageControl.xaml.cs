@@ -1,4 +1,5 @@
 ﻿using GraphicsMagick;
+
 using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
@@ -92,7 +93,7 @@ namespace MvvmScarletToolkit
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    Image = default(BitmapSource);
+                    Image = default;
 
                     // this exception should be logged, instead of being ignored
                 }
@@ -162,8 +163,10 @@ namespace MvvmScarletToolkit
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 var settings = MagickReadSettingsFactory.GetSettings(stream);
-                var bounds = new MagickGeometry(Screen.PrimaryScreen.Bounds);
-                bounds.IgnoreAspectRatio = false;
+                var bounds = new MagickGeometry(Screen.PrimaryScreen.Bounds)
+                {
+                    IgnoreAspectRatio = false
+                };
 
                 using (var image = new MagickImage(stream, settings))
                 {

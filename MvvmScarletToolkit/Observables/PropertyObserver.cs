@@ -135,7 +135,7 @@ namespace MvvmScarletToolkit
             }
             catch
             {
-                return default(TPropertySource);
+                return default;
             }
         }
 

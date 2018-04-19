@@ -6,7 +6,7 @@ namespace MvvmScarletToolkit
 {
     public sealed partial class ScarletMessenger : IMessenger
     {
-        private readonly object _SubscriptionsPadlock = new object();
+        private readonly object _subscriptionsPadlock = new object();
         private readonly List<SubscriptionItem> _subscriptions = new List<SubscriptionItem>();
 
         private readonly IScarletMessageProxy _messageProxy;
@@ -102,7 +102,7 @@ namespace MvvmScarletToolkit
             if (proxy == null)
                 throw new ArgumentNullException(nameof(proxy));
 
-            lock (_SubscriptionsPadlock)
+            lock (_subscriptionsPadlock)
             {
                 var subscriptionToken = new SubscriptionToken(this, typeof(TMessage));
 
@@ -124,7 +124,7 @@ namespace MvvmScarletToolkit
             if (subscriptionToken == null)
                 throw new ArgumentNullException(nameof(subscriptionToken));
 
-            lock (_SubscriptionsPadlock)
+            lock (_subscriptionsPadlock)
             {
                 var currentlySubscribed = (from sub in _subscriptions
                                            where ReferenceEquals(sub.Subscription.SubscriptionToken, subscriptionToken)
@@ -141,7 +141,7 @@ namespace MvvmScarletToolkit
                 throw new ArgumentNullException(nameof(message));
 
             List<SubscriptionItem> currentlySubscribed;
-            lock (_SubscriptionsPadlock)
+            lock (_subscriptionsPadlock)
             {
                 currentlySubscribed = (from sub in _subscriptions
                                        where sub.Subscription.ShouldAttemptDelivery(message)
@@ -152,7 +152,7 @@ namespace MvvmScarletToolkit
             {
                 //try
                 //{
-                    sub.Proxy.Deliver(message, sub.Subscription);
+                sub.Proxy.Deliver(message, sub.Subscription);
                 //}
                 //catch (Exception exception)
                 //{

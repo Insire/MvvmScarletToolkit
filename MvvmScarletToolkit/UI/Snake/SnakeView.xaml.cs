@@ -12,6 +12,7 @@ namespace MvvmScarletToolkit
         private readonly Dispatcher _dispatcher;
         private readonly IMessenger _messenger;
 
+        private PropertyObserver<ISnakeManager> _propertyObserver;
         private FrameCounter _frameCounter;
 
         public ISnakeManager Manager
@@ -170,6 +171,7 @@ namespace MvvmScarletToolkit
 
             View = View.Game;
             Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _dispatcher, _messenger);
+            SetupObserver();
 
             Keyboard.Focus(this);
             var play = Manager.Play();
@@ -177,6 +179,43 @@ namespace MvvmScarletToolkit
             Initialize();
 
             await play;
+        }
+
+        private void SetupObserver()
+        {
+            _propertyObserver = new PropertyObserver<ISnakeManager>(Manager);
+            _propertyObserver.RegisterHandler((o) => o.State, OnStateChanged);
+        }
+
+        private void OnStateChanged(ISnakeManager manager)
+        {
+            switch (manager.State)
+            {
+                case GameState.Fail:
+                    View = View.Fail;
+                    break;
+
+                case GameState.None:
+                    View = View.Start;
+                    break;
+
+                case GameState.Paused:
+                case GameState.Running:
+                    break;
+
+                default:
+                    throw new NotImplementedException(View + " is not implemented yet");
+            }
+        }
+
+        private void DisposeObserver()
+        {
+            if (_propertyObserver == null)
+                return;
+
+            _propertyObserver.UnregisterHandler((o) => o.State);
+            _propertyObserver = null;
+
         }
 
         private bool CanShowGame()
@@ -194,6 +233,8 @@ namespace MvvmScarletToolkit
         private void Dispose()
         {
             CompositionTarget.Rendering -= CompositionTarget_Rendering;
+
+            DisposeObserver();
 
             if (Manager != null)
             {

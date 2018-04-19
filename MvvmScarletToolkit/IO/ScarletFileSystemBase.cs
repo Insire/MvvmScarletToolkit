@@ -17,9 +17,7 @@ namespace MvvmScarletToolkit
 
         public static bool SearchFilter(object obj)
         {
-            var info = obj as IFileSystemInfo;
-
-            if (info == null)
+            if (!(obj is IFileSystemInfo info))
                 return false;
 
             if (info.IsHidden || info.IsBusy)
