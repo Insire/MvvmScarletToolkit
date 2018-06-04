@@ -110,7 +110,7 @@ namespace MvvmScarletToolkit
         /// </summary>
         /// <typeparam name="TMessage">Type of message</typeparam>
         /// <param name="subscriptionToken">Subscription token received from Subscribe</param>
-        void Unsubscribe<TMessage>(SubscriptionToken subscriptionToken) where TMessage : class, IScarletMessage;
+        void Unsubscribe(SubscriptionToken subscriptionToken);
 
         /// <summary>
         /// Publish a message to any subscribers

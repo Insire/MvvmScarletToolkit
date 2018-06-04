@@ -5,17 +5,14 @@ using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
-    public class NullValueConverter : IValueConverter
+    public sealed class NullValueConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
                 return DependencyProperty.UnsetValue;
 
-            if (value is string && string.IsNullOrEmpty((string)value))
-                return DependencyProperty.UnsetValue;
-
-            return value;
+            return string.IsNullOrEmpty(value as string) ? DependencyProperty.UnsetValue : value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -25,8 +22,6 @@ namespace MvvmScarletToolkit
             // back you should return a Binding.DoNothing or a
             // DependencyProperty.UnsetValue
             return Binding.DoNothing;
-            // Original code:
-            // throw new NotImplementedException();
         }
     }
 }

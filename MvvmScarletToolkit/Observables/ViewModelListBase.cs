@@ -10,31 +10,12 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
-    /*
-     * Usage:
-     *
-     * public class SomeViewModel : ViewModelBase<SomeModel>
-     * {
-     *      public SomeViewModel()
-     *      {
-     *          using (BusyStack.GetToken())
-     *          {
-     *              using (View.DeferRefresh())
-     *              {
-     *                  View.SortDescriptions.Add(new SortDescription(nameof(SomeModel.SomeProperty), ListSortDirection.Ascending));
-     *                  View.SortDescriptions.Add(new SortDescription(nameof(SomeModel.SomeOtherProperty), ListSortDirection.Ascending));
-     *              }
-     *          }
-     *      }
-     * }
-     *
-     */
-
     /// <summary>
     /// A base class for abstracting away all the fundamental functionality for list based ViewModels
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class ViewModelListBase<T> : ObservableObject where T : INotifyPropertyChanged
+    public abstract class ViewModelListBase<T> : ObservableObject
+        where T : INotifyPropertyChanged
     {
         protected object _itemsLock;
         protected bool IsInDesignMode = DesignerProperties.GetIsInDesignMode(new DependencyObject());
@@ -114,7 +95,7 @@ namespace MvvmScarletToolkit
         public ICommand RemoveCommand { get; private set; }
         public ICommand ClearCommand { get; private set; }
 
-        public ViewModelListBase()
+        protected ViewModelListBase()
         {
             InitializeProperties();
             InitializeCommands();
@@ -122,12 +103,14 @@ namespace MvvmScarletToolkit
             BindingOperations.EnableCollectionSynchronization(Items, _itemsLock);
         }
 
-        public ViewModelListBase(IList<T> items) : this()
+        protected ViewModelListBase(IList<T> items)
+            : this()
         {
             Items.AddRange(items);
         }
 
-        public ViewModelListBase(IEnumerable<T> items) : this()
+        protected ViewModelListBase(IEnumerable<T> items)
+            : this()
         {
             Items.AddRange(items);
         }
@@ -209,7 +192,9 @@ namespace MvvmScarletToolkit
 
         protected virtual bool CanRemove(T item)
         {
-            return CanClear() && item != null && Items.Contains(item);
+            return CanClear()
+                && item != null
+                && Items.Contains(item);
         }
 
         /// <summary>
@@ -219,12 +204,14 @@ namespace MvvmScarletToolkit
         /// <returns></returns>
         protected virtual bool CanRemoveRange(IEnumerable<T> items)
         {
-            return CanClear() && items != null && items.Any(p => Items.Contains(p));
+            return CanClear()
+                && items != null
+                && items.Any(p => Items.Contains(p));
         }
 
         protected virtual bool CanRemoveRange(IList items)
         {
-            return items == null ? false : CanRemoveRange(items.Cast<T>());
+            return items != null && CanRemoveRange(items.Cast<T>());
         }
 
         public virtual void Clear()

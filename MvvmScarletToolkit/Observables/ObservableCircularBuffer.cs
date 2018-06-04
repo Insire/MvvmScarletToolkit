@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class ObservableCircularBuffer<T> : ObservableObject, IEnumerable<T>, INotifyCollectionChanged, INotifyPropertyChanged
+    public sealed class ObservableCircularBuffer<T> : ObservableObject, IEnumerable<T>, INotifyCollectionChanged
     {
         private readonly ObservableCollection<T> _buffer;
         private int _start;

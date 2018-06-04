@@ -12,13 +12,9 @@ namespace MvvmScarletToolkit
 
         public bool ShouldAttemptDelivery(IScarletMessage message)
         {
-            if (message == null)
-                return false;
-
-            if (!(typeof(TMessage).IsAssignableFrom(message.GetType())))
-                return false;
-
-            return MessageFilter.Invoke(message as TMessage);
+            return (message != null)
+                && (message is TMessage)
+                && MessageFilter.Invoke(message as TMessage);
         }
 
         public void Deliver(IScarletMessage message)

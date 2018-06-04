@@ -66,10 +66,9 @@ namespace MvvmScarletToolkit
             return AddSubscriptionInternal(deliveryAction, messageFilter, useStrongReferences, proxy);
         }
 
-        public void Unsubscribe<TMessage>(SubscriptionToken subscriptionToken)
-            where TMessage : class, IScarletMessage
+        public void Unsubscribe(SubscriptionToken subscriptionToken)
         {
-            RemoveSubscriptionInternal<TMessage>(subscriptionToken);
+            RemoveSubscriptionInternal(subscriptionToken);
         }
 
         public void Publish<TMessage>(TMessage message)
@@ -118,8 +117,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private void RemoveSubscriptionInternal<TMessage>(SubscriptionToken subscriptionToken)
-                where TMessage : class, IScarletMessage
+        private void RemoveSubscriptionInternal(SubscriptionToken subscriptionToken)
         {
             if (subscriptionToken == null)
                 throw new ArgumentNullException(nameof(subscriptionToken));
@@ -150,14 +148,7 @@ namespace MvvmScarletToolkit
 
             currentlySubscribed.ForEach(sub =>
             {
-                //try
-                //{
                 sub.Proxy.Deliver(message, sub.Subscription);
-                //}
-                //catch (Exception exception)
-                //{
-                //    _log.Log(exception);
-                //}
             });
         }
 

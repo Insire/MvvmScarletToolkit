@@ -21,14 +21,14 @@ namespace MvvmScarletToolkit
             protected set { SetValue(ref _size, value); }
         }
 
-        public SnakeBase(SnakeOption options, Size size, IMessenger messenger)
+        protected SnakeBase(SnakeOption options, Size size, IMessenger messenger)
         {
             _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             Size = size ?? throw new ArgumentNullException(nameof(size));
         }
 
-        public SnakeBase(SnakeOption options, IMessenger log)
+        protected SnakeBase(SnakeOption options, IMessenger log)
             : this(options, new Size(options.BoardPieceSize, options.BoardPieceSize), log)
         {
         }

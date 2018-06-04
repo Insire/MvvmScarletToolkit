@@ -369,7 +369,7 @@ namespace MvvmScarletToolkit
                     BoardPieces.Add(part);
             }
 
-            if (BoardPieces.Where(p => p is Apple).Count() < _options.MaxFoodCount && _apples.TryTake(out var apple))
+            if (BoardPieces.Count(p => p is Apple) < _options.MaxFoodCount && _apples.TryTake(out var apple))
                 BoardPieces.Add(apple);
         }
 

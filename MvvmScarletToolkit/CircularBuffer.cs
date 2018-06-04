@@ -264,9 +264,13 @@ namespace MvvmScarletToolkit
         private ArraySegment<T> ArrayOne()
         {
             if (_start < _end)
+            {
                 return new ArraySegment<T>(_buffer, _start, _end - _start);
+            }
             else
+            {
                 return new ArraySegment<T>(_buffer, _start, _buffer.Length - _start);
+            }
         }
 
         private ArraySegment<T> ArrayTwo()

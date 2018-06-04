@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -9,35 +7,29 @@ namespace MvvmScarletToolkit
 {
     // source: https://msdn.microsoft.com/en-us/magazine/dn630647.aspx?f=255&MSPPError=-2147217396
     // Async Programming : Patterns for Asynchronous MVVM Applications: Commands by Stephen Cleary
-    public class AsyncCommand<TResult> : AsyncCommandBase, INotifyPropertyChanged
+    public sealed class AsyncCommand<TArgument, TResult> : AsyncCommandBase, IExtendedAsyncCommand
     {
-        private readonly Func<CancellationToken, Task<TResult>> _command;
+        private readonly Func<TArgument, CancellationToken, Task<TResult>> _command;
         private readonly CancelAsyncCommand _cancelCommand;
-        private readonly Func<bool> _canExecute = null;
+        private readonly Func<TArgument, bool> _canExecute = null;
 
         private NotifyTaskCompletion<TResult> _execution;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public ICommand CancelCommand => _cancelCommand;
 
         public NotifyTaskCompletion<TResult> Execution
         {
             get { return _execution; }
-            private set
-            {
-                _execution = value;
-                OnPropertyChanged();
-            }
+            private set { SetValue(ref _execution, value); }
         }
 
-        public AsyncCommand(Func<CancellationToken, Task<TResult>> command)
+        public AsyncCommand(Func<TArgument, CancellationToken, Task<TResult>> command)
         {
             _command = command ?? throw new ArgumentNullException(nameof(command));
             _cancelCommand = new CancelAsyncCommand();
         }
 
-        public AsyncCommand(Func<CancellationToken, Task<TResult>> command, Func<bool> canExecuteEvaluator)
+        public AsyncCommand(Func<TArgument, CancellationToken, Task<TResult>> command, Func<TArgument, bool> canExecuteEvaluator)
             : this(command)
         {
             _canExecute = canExecuteEvaluator ?? throw new ArgumentNullException(nameof(canExecuteEvaluator));
@@ -45,25 +37,37 @@ namespace MvvmScarletToolkit
 
         public override bool CanExecute(object parameter)
         {
-            return (Execution == null || Execution.IsCompleted)
-                && (_canExecute?.Invoke() ?? true);
+            return !IsBusy
+                && (Execution == null || Execution.IsCompleted)
+                && parameter is TArgument arg
+                && (_canExecute?.Invoke(arg) ?? true);
+        }
+
+        public override async void Execute(object parameter)
+        {
+            IsBusy = true;
+            try
+            {
+                await ExecuteAsync(parameter).ConfigureAwait(true);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         public override async Task ExecuteAsync(object parameter)
         {
             _cancelCommand.NotifyCommandStarting();
-
-            Execution = new NotifyTaskCompletion<TResult>(_command(_cancelCommand.Token));
+            var arg = parameter is TArgument
+                        ? (TArgument)parameter
+                        : default;
+            Execution = new NotifyTaskCompletion<TResult>(_command(arg, _cancelCommand.Token));
             RaiseCanExecuteChanged();
 
             await Execution.TaskCompletion.ConfigureAwait(true);
             _cancelCommand.NotifyCommandFinished();
             RaiseCanExecuteChanged();
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private sealed class CancelAsyncCommand : ICommand
@@ -115,41 +119,64 @@ namespace MvvmScarletToolkit
 
     public static class AsyncCommand
     {
-        public static AsyncCommand<object> Create(Func<Task> command)
+        public static AsyncCommand<object, object> Create(Func<Task> command)
         {
-            return new AsyncCommand<object>(async _ =>
+            return new AsyncCommand<object, object>(async (_, token) =>
             {
                 await command().ConfigureAwait(true);
                 return null;
             });
         }
 
-        public static AsyncCommand<object> Create(Func<Task> command, Func<bool> canExecute)
+        public static AsyncCommand<object, object> Create(Func<Task> command, Func<bool> canExecute)
         {
-            return new AsyncCommand<object>(async _ =>
+            return new AsyncCommand<object, object>(async (_, token) =>
             {
                 await command().ConfigureAwait(true);
                 return null;
-            }, canExecute);
+            }, _ => canExecute());
         }
 
-        public static AsyncCommand<TResult> Create<TResult>(Func<Task<TResult>> command, Func<bool> canExecute)
+        public static AsyncCommand<object, object> Create(Func<object, Task> command, Func<bool> canExecute)
         {
-            return new AsyncCommand<TResult>(_ => command(), canExecute);
-        }
-
-        public static AsyncCommand<object> Create(Func<CancellationToken, Task> command, Func<bool> canExecute)
-        {
-            return new AsyncCommand<object>(async token =>
+            return new AsyncCommand<object, object>(async (_, token) =>
             {
                 await command(token).ConfigureAwait(true);
                 return null;
-            }, canExecute);
+            }, _ => canExecute());
         }
 
-        public static AsyncCommand<TResult> Create<TResult>(Func<CancellationToken, Task<TResult>> command, Func<bool> canExecute)
+        public static AsyncCommand<object, object> Create(Func<CancellationToken, Task> command, Func<bool> canExecute)
         {
-            return new AsyncCommand<TResult>(command, canExecute);
+            return new AsyncCommand<object, object>((_, token) =>
+            {
+                command(token);
+                return null;
+            }, _ => canExecute());
+        }
+
+        public static AsyncCommand<TArgument, object> Create<TArgument>(Func<TArgument, CancellationToken, Task> command, Func<TArgument, bool> canExecute)
+        {
+            return new AsyncCommand<TArgument, object>((arg, token) =>
+            {
+                command(arg, token);
+                return null;
+            }, (arg) => canExecute(arg));
+        }
+
+        public static AsyncCommand<object, TResult> Create<TResult>(Func<Task<TResult>> command, Func<bool> canExecute)
+        {
+            return new AsyncCommand<object, TResult>((_, token) => command(), _ => canExecute());
+        }
+
+        public static AsyncCommand<object, TResult> Create<TResult>(Func<CancellationToken, Task<TResult>> command, Func<bool> canExecute)
+        {
+            return new AsyncCommand<object, TResult>((_, token) => command(token), _ => canExecute());
+        }
+
+        public static AsyncCommand<TArgument, TResult> Create<TArgument, TResult>(Func<TArgument, CancellationToken, Task<TResult>> command, Func<TArgument, bool> canExecute)
+        {
+            return new AsyncCommand<TArgument, TResult>(command, arg => canExecute(arg));
         }
     }
 }

@@ -30,7 +30,7 @@ namespace DemoApp
                     DisplayName = "Test " + i,
                 });
 
-            };
+            }
 
             SelectedItem = new AsyncDemoItem
             {

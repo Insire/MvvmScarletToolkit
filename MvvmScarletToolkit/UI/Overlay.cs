@@ -98,7 +98,7 @@ namespace MvvmScarletToolkit
         private class UIElementAdorner : Adorner
         {
             private List<UIElement> _logicalChildren;
-            private UIElement _uiElement;
+            private readonly UIElement _uiElement;
 
             public UIElementAdorner(UIElement adornedElement, UIElement element)
                 : base(adornedElement)

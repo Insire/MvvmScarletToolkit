@@ -9,19 +9,21 @@ using System.Windows;
 
 namespace MvvmScarletToolkit
 {
+#pragma warning disable S125 // Sections of code should not be "commented out"
     // Josh Smiths PropertyObserver https://joshsmithonwpf.wordpress.com/2009/07/11/one-way-to-avoid-messy-propertychanged-event-handling/
-    /*
-     * Sample:
-     *
-     * PropertyObserver<T> _observer;
-     *
-     * public T()
-     * {
-     *      _observer= new PropertyObserver<T>(this T)
-     *      .RegisterHandler(n=>n.Property1, n=> someAction)
-     *      .RegisterHandler(n=>n.Property2, n=> anotherAction)
-     *
-     */
+
+    //* Sample:
+    //*
+
+    //* PropertyObserver<T> _observer;
+    //*
+    //* public T()
+    //* {
+    //* _observer = new PropertyObserver<T>(this T)
+    //*      .RegisterHandler(n => n.Property1, n => someAction)
+    //*      .RegisterHandler(n => n.Property2, n => anotherAction)
+    //*
+#pragma warning restore S125 // Sections of code should not be "commented out"
 
     /// <summary>
     /// Monitors the PropertyChanged event of an object that implements INotifyPropertyChanged,
@@ -90,13 +92,11 @@ namespace MvvmScarletToolkit
                 throw new ArgumentException("'expression' did not provide a property name.");
 
             TPropertySource propertySource = GetPropertySource();
-            if (propertySource != null)
+            if (propertySource != null && _propertyNameToHandlerMap.ContainsKey(propertyName))
             {
-                if (_propertyNameToHandlerMap.ContainsKey(propertyName))
-                {
-                    _propertyNameToHandlerMap.Remove(propertyName);
-                    PropertyChangedEventManager.RemoveListener(propertySource, this, propertyName);
-                }
+                _propertyNameToHandlerMap.Remove(propertyName);
+                PropertyChangedEventManager.RemoveListener(propertySource, this, propertyName);
+
             }
 
             return this;

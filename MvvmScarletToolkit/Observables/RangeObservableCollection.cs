@@ -10,34 +10,29 @@ using System.Threading;
 
 namespace MvvmScarletToolkit
 {
-    public class RangeObservableCollection<T> : ObservableCollection<T>, INotifyPropertyChanged
+    public class RangeObservableCollection<T> : ObservableCollection<T>
     {
-        private SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
+        private readonly SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
 
         private bool _suppressNotification = false;
 
-        public RangeObservableCollection() : base()
+        public RangeObservableCollection()
+            : base()
         {
         }
-
-        public RangeObservableCollection(IEnumerable<T> items) : this()
-        {
-            AddRange(items);
-        }
-
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             if (!_suppressNotification)
                 if (SynchronizationContext.Current == _synchronizationContext)
-            {
-                // Execute the CollectionChanged event on the current thread
-                RaiseCollectionChanged(e);
-            }
-            else
-            {
-                // Raises the CollectionChanged event on the creator thread
-                _synchronizationContext.Send(RaiseCollectionChanged, e);
-            }
+                {
+                    // Execute the CollectionChanged event on the current thread
+                    RaiseCollectionChanged(e);
+                }
+                else
+                {
+                    // Raises the CollectionChanged event on the creator thread
+                    _synchronizationContext.Send(RaiseCollectionChanged, e);
+                }
         }
 
         private void RaiseCollectionChanged(object param)

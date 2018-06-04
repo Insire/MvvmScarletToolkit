@@ -5,45 +5,43 @@ using System.Windows.Threading;
 
 namespace MvvmScarletToolkit
 {
-    /* Josh Smiths ConfigurableWindow (https://joshsmithonwpf.wordpress.com/2007/12/27/a-configurable-window-for-wpf/)
+    //Josh Smiths ConfigurableWindow (https://joshsmithonwpf.wordpress.com/2007/12/27/a-configurable-window-for-wpf/)
 
-     Sample:
+    //Sample:
 
-     public partial class DemoWindow : ConfigurableWindow
+    //public partial class DemoWindow : ConfigurableWindow
+    //  ...
+    //   protected override IConfigurableWindowSettings CreateSettings()
+    //   {
+    //       return new DemoWindowConfigSettings(this);
+    //   }
 
-        ...
+    //   private class DemoWindowConfigSettings : ConfigurableWindowSettings
+    //   {
+    //       const string IS_FIRST_RUN = "IsFirstRun";
+    //       const string WINDOW_LOCATION = "DemoWindowLocation";
+    //       const string WINDOW_SIZE = "DemoWindowSize";
+    //       const string WINDOW_STATE = "DemoWindowState";
 
-        protected override IConfigurableWindowSettings CreateSettings()
-        {
-            return new DemoWindowConfigSettings(this);
-        }
+    //       public DemoWindowConfigSettings(DemoWindow window)
+    //           : base(
+    //           Settings.Default,
+    //           IS_FIRST_RUN,
+    //           WINDOW_LOCATION,
+    //           WINDOW_SIZE,
+    //           WINDOW_STATE)
+    //       {
+    //           // Note: You only want to have this code
+    //           // in the application's main Window, not
+    //           // in dialog boxes or other child Windows.
+    //           window.Closed += delegate
+    //           {
+    //               if (this.IsFirstRun)
+    //                   this.IsFirstRun = false;
+    //           };
+    //       }
+    //   }
 
-        private class DemoWindowConfigSettings : ConfigurableWindowSettings
-        {
-            const string IS_FIRST_RUN = "IsFirstRun";
-            const string WINDOW_LOCATION = "DemoWindowLocation";
-            const string WINDOW_SIZE = "DemoWindowSize";
-            const string WINDOW_STATE = "DemoWindowState";
-
-            public DemoWindowConfigSettings(DemoWindow window)
-                : base(
-                Settings.Default,
-                IS_FIRST_RUN,
-                WINDOW_LOCATION,
-                WINDOW_SIZE,
-                WINDOW_STATE)
-            {
-                // Note: You only want to have this code
-                // in the application's main Window, not
-                // in dialog boxes or other child Windows.
-                window.Closed += delegate
-                {
-                    if (this.IsFirstRun)
-                        this.IsFirstRun = false;
-                };
-            }
-        }
-     */
 
     public abstract class ConfigurableWindow : Window
     {

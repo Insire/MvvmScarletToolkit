@@ -15,7 +15,7 @@ namespace MvvmScarletToolkit
             if (message == null)
                 return false;
 
-            if (!(typeof(TMessage).IsAssignableFrom(message.GetType())))
+            if (!(message is TMessage))
                 return false;
 
             if (!DeliveryAction.IsAlive)

@@ -112,7 +112,7 @@ namespace MvvmScarletToolkit
         private void MoveTail(Position initialPosition)
         {
             var previousPosition = initialPosition;
-            foreach (var part in _body.Where(p => p is SnakeSegment))
+            foreach (var part in _body.Where(p => (p != null)))
             {
                 var temp = part.CurrentPosition;
 

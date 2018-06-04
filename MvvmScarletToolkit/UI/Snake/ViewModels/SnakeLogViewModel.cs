@@ -4,7 +4,6 @@ namespace MvvmScarletToolkit
 {
     public sealed class SnakeLogViewModel : ObservableObject
     {
-        private readonly IMessenger _messenger;
         private DateTime _nextUpdate;
 
         private ObservableCircularBuffer<ScarletMessageBase> _messages;
@@ -23,12 +22,14 @@ namespace MvvmScarletToolkit
 
         public SnakeLogViewModel(IMessenger messenger)
         {
-            _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             Messages = new ObservableCircularBuffer<ScarletMessageBase>(100);
 
-            _messenger.Subscribe<PositionUpdatedMessage>(MessageSubscription);
-            _messenger.Subscribe<SnakeSegmentCreatedMessage>(MessageSubscription);
-            _messenger.Subscribe<SnakeDirectionChanged>(MessageSubscription);
+            if(messenger ==null)
+                throw new ArgumentNullException(nameof(messenger));
+
+            messenger.Subscribe<PositionUpdatedMessage>(MessageSubscription);
+            messenger.Subscribe<SnakeSegmentCreatedMessage>(MessageSubscription);
+            messenger.Subscribe<SnakeDirectionChanged>(MessageSubscription);
 
             _nextUpdate = DateTime.UtcNow.AddSeconds(1);
         }

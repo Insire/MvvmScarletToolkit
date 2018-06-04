@@ -1,23 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Windows;
 
 namespace MvvmScarletToolkit
 {
-    /*
-     * Usage:
-     *
-     * ctor:
-     * BusyStack = new BusyStack();
-     * BusyStack.OnChanged = (hasItems) => IsBusy = hasItems;
-
-     *
-     * using (var token = BusyStack.GetToken())
-     * {
-     *      run your operation here
-     * }
-     *
-     *
-     */
     /// <summary>
     /// BusyStack will handle notifying a viewmodel on if actions are pending
     /// </summary>
@@ -82,7 +68,7 @@ namespace MvvmScarletToolkit
 
         private void InvokeOnChanged()
         {
-            DispatcherFactory.Invoke(OnChanged, HasItems());
+            Application.Current.Dispatcher.Invoke(OnChanged, HasItems());
         }
     }
 }

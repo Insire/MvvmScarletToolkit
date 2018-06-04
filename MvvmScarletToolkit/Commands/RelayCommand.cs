@@ -26,7 +26,7 @@ namespace MvvmScarletToolkit
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute == null ? true : _canExecute();
+            return _canExecute == null || _canExecute();
         }
 
         public void Execute(object parameter)
@@ -59,8 +59,12 @@ namespace MvvmScarletToolkit
             if (parameter == null && typeof(T).IsValueType)
                 return _canExecute(default);
 
-            if (parameter == null || parameter is T)
-                return (_canExecute.Invoke((T)parameter));
+            switch (parameter)
+            {
+                case null:
+                case T _:
+                    return (_canExecute.Invoke((T)parameter));
+            }
 
             return false;
         }

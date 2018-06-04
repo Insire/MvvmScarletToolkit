@@ -139,19 +139,20 @@ namespace MvvmScarletToolkit
             HasContainers = false;
         }
 
-        protected ScarletFileSystemBase(string name, string fullName, IDepth depth, IFileSystemDirectory parent) : this()
+        protected ScarletFileSystemBase(string name, string fullName, IDepth depth, IFileSystemDirectory parent)
+            : this()
         {
             if (string.IsNullOrEmpty(name))
-                throw new ArgumentException($"{nameof(Name)} can't be empty.", nameof(Name));
+                throw new ArgumentException($"{nameof(name)} can't be empty.", nameof(name));
 
             if (string.IsNullOrEmpty(fullName))
-                throw new ArgumentException($"{nameof(FullName)} can't be empty.", nameof(FullName));
+                throw new ArgumentException($"{nameof(fullName)} can't be empty.", nameof(fullName));
 
             if (depth == null)
-                throw new ArgumentException($"{nameof(Depth)} can't be empty.", nameof(Depth));
+                throw new ArgumentException($"{nameof(depth)} can't be empty.", nameof(depth));
 
             if (!(this is IFileSystemDrive) && parent == null)
-                throw new ArgumentException($"{nameof(Parent)} can't be empty.", nameof(Parent));
+                throw new ArgumentException($"{nameof(parent)} can't be empty.", nameof(parent));
 
             using (_busyStack.GetToken())
             {

@@ -2,22 +2,17 @@
 
 namespace MvvmScarletToolkit
 {
-    [Serializable]
-    public class BusyToken : WeakReference, IDisposable
+    public sealed class BusyToken : WeakReference, IDisposable
     {
-        public bool Disposing { get; private set; }
-
-        public BusyToken(BusyStack stack) : base(stack)
+       public BusyToken(BusyStack stack)
+            : base(stack)
         {
-            stack.Push(this);
+            stack?.Push(this);
         }
-
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
-            if (!Disposing)
+            if (!disposing)
             {
-                Disposing = true;
-
                 var stack = Target as BusyStack;
                 stack?.Pull();
             }
