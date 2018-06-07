@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace MvvmScarletToolkit
@@ -68,7 +69,10 @@ namespace MvvmScarletToolkit
 
         private void InvokeOnChanged()
         {
-            Application.Current.Dispatcher.Invoke(OnChanged, HasItems());
+            if (OnChanged == null)
+                return;
+
+            OnChanged(HasItems());
         }
     }
 }

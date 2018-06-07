@@ -4,23 +4,20 @@ namespace MvvmScarletToolkit
 {
     public sealed class BusyToken : WeakReference, IDisposable
     {
-       public BusyToken(BusyStack stack)
-            : base(stack)
+        public BusyToken(BusyStack stack)
+             : base(stack)
         {
             stack?.Push(this);
         }
-        private void Dispose(bool disposing)
+        private void DisposeInternal()
         {
-            if (!disposing)
-            {
-                var stack = Target as BusyStack;
-                stack?.Pull();
-            }
+            var stack = Target as BusyStack;
+            stack?.Pull();
         }
 
         public void Dispose()
         {
-            Dispose(true);
+            DisposeInternal();
             GC.SuppressFinalize(this);
         }
     }

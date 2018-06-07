@@ -78,7 +78,7 @@ namespace DemoApp
         {
             using (_busyStack.GetToken())
             {
-                await Task.Delay(10000).ConfigureAwait(true);
+                await Task.Delay(2000).ConfigureAwait(true);
             }
         }
 

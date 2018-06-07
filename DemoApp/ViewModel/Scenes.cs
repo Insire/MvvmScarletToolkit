@@ -15,7 +15,7 @@ namespace DemoApp
                     Content = new Default(),
                     DisplayName = "Loading a ParentViewModel",
                     GetDataContext = ()=> new ParentViewModel(),
-                    IsSelected = false,
+                    IsSelected = true,
                 },
                 new DemoApp.Scene
                 {
@@ -44,7 +44,7 @@ namespace DemoApp
                 {
                     GetDataContext = ()=> new DataContextSchenanigansViewModel(),
                     Content = new DataContextSchenanigans(),
-                    DisplayName = "Stuff with content controls and datatemplates",
+                    DisplayName = "Stuff with content controls and datatemplates + lazy loading i guess",
 
                     IsSelected = false,
                 },

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -37,37 +38,59 @@ namespace MvvmScarletToolkit
 
         public override bool CanExecute(object parameter)
         {
-            return !IsBusy
-                && (Execution == null || Execution.IsCompleted)
-                && parameter is TArgument arg
-                && (_canExecute?.Invoke(arg) ?? true);
+            var result = CanExecuteInternal(parameter);
+
+            Debug.WriteLine("CanExecute " + result);
+
+            return result;
         }
 
+        private bool CanExecuteInternal(object parameter)
+        {
+            if (IsBusy)
+                return false;
+            if (Execution != null && !Execution.IsCompleted)
+                return false;
+
+            if (_canExecute == null)
+                return true;
+
+            if (parameter is null)
+                return _canExecute.Invoke(default);
+
+            if (parameter is TArgument arg)
+                return _canExecute.Invoke(arg);
+
+            return false;
+        }
+
+        [DebuggerStepThrough]
         public override async void Execute(object parameter)
         {
-            IsBusy = true;
-            try
-            {
-                await ExecuteAsync(parameter).ConfigureAwait(true);
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+            await ExecuteAsync(parameter).ConfigureAwait(false);
         }
 
         public override async Task ExecuteAsync(object parameter)
         {
-            _cancelCommand.NotifyCommandStarting();
             var arg = parameter is TArgument
-                        ? (TArgument)parameter
-                        : default;
-            Execution = new NotifyTaskCompletion<TResult>(_command(arg, _cancelCommand.Token));
-            RaiseCanExecuteChanged();
+                ? (TArgument)parameter
+                : default;
 
-            await Execution.TaskCompletion.ConfigureAwait(true);
-            _cancelCommand.NotifyCommandFinished();
-            RaiseCanExecuteChanged();
+            IsBusy = true;
+            _cancelCommand.NotifyCommandStarting();
+
+            try
+            {
+                Execution = new NotifyTaskCompletion<TResult>(_command(arg, _cancelCommand.Token));
+                await Execution.TaskCompletion.ConfigureAwait(true);
+            }
+            finally
+            {
+                IsBusy = false;
+                _cancelCommand.NotifyCommandFinished();
+
+                RaiseCanExecuteChanged();
+            }
         }
 
         private sealed class CancelAsyncCommand : ICommand
@@ -123,7 +146,7 @@ namespace MvvmScarletToolkit
         {
             return new AsyncCommand<object, object>(async (_, token) =>
             {
-                await command().ConfigureAwait(true);
+                await command().ConfigureAwait(false);
                 return null;
             });
         }
@@ -132,7 +155,7 @@ namespace MvvmScarletToolkit
         {
             return new AsyncCommand<object, object>(async (_, token) =>
             {
-                await command().ConfigureAwait(true);
+                await command().ConfigureAwait(false);
                 return null;
             }, _ => canExecute());
         }
@@ -141,37 +164,37 @@ namespace MvvmScarletToolkit
         {
             return new AsyncCommand<object, object>(async (_, token) =>
             {
-                await command(token).ConfigureAwait(true);
+                await command(token).ConfigureAwait(false);
                 return null;
             }, _ => canExecute());
         }
 
         public static AsyncCommand<object, object> Create(Func<CancellationToken, Task> command, Func<bool> canExecute)
         {
-            return new AsyncCommand<object, object>((_, token) =>
+            return new AsyncCommand<object, object>(async (_, token) =>
             {
-                command(token);
+                await command(token);
                 return null;
             }, _ => canExecute());
         }
 
         public static AsyncCommand<TArgument, object> Create<TArgument>(Func<TArgument, CancellationToken, Task> command, Func<TArgument, bool> canExecute)
         {
-            return new AsyncCommand<TArgument, object>((arg, token) =>
+            return new AsyncCommand<TArgument, object>(async (arg, token) =>
             {
-                command(arg, token);
+                await command(arg, token).ConfigureAwait(false);
                 return null;
             }, (arg) => canExecute(arg));
         }
 
         public static AsyncCommand<object, TResult> Create<TResult>(Func<Task<TResult>> command, Func<bool> canExecute)
         {
-            return new AsyncCommand<object, TResult>((_, token) => command(), _ => canExecute());
+            return new AsyncCommand<object, TResult>(async (_, token) => await command().ConfigureAwait(false), _ => canExecute());
         }
 
         public static AsyncCommand<object, TResult> Create<TResult>(Func<CancellationToken, Task<TResult>> command, Func<bool> canExecute)
         {
-            return new AsyncCommand<object, TResult>((_, token) => command(token), _ => canExecute());
+            return new AsyncCommand<object, TResult>(async (_, token) => await command(token).ConfigureAwait(false), _ => canExecute());
         }
 
         public static AsyncCommand<TArgument, TResult> Create<TArgument, TResult>(Func<TArgument, CancellationToken, Task<TResult>> command, Func<TArgument, bool> canExecute)
