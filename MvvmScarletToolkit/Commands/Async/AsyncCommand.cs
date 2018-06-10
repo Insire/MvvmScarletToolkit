@@ -40,8 +40,6 @@ namespace MvvmScarletToolkit
         {
             var result = CanExecuteInternal(parameter);
 
-            Debug.WriteLine("CanExecute " + result);
-
             return result;
         }
 

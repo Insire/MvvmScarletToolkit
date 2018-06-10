@@ -54,7 +54,7 @@ namespace DemoApp
                     GetDataContext = ()=> new AsyncCommandViewModelStuff(),
                     Content = new AsyncCommands(),
                     DisplayName = "Async Commands",
-                    IsSelected = true,
+                    IsSelected = false,
                 },
 
                 new DemoApp.Scene
@@ -63,6 +63,15 @@ namespace DemoApp
                     Content = new SnakeView(),
                     DisplayName = "Snake",
                     IsSelected = true,
+                },
+
+                new DemoApp.Scene
+                {
+
+                    Content = new DataGrids(),
+                    DisplayName = "DataGrids",
+                    IsSelected = false,
+                    GetDataContext = ()=> new ParentsViewModel(),
                 }
             };
 

@@ -69,6 +69,9 @@
     <Compile Include="Controls\DataContextSchenanigans.xaml.cs">
       <DependentUpon>DataContextSchenanigans.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DataGrids.xaml.cs">
+      <DependentUpon>DataGrids.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Default.xaml.cs">
       <DependentUpon>Default.xaml</DependentUpon>
     </Compile>
@@ -93,6 +96,7 @@
     <Compile Include="ViewModel\Images.cs" />
     <Compile Include="ViewModel\LogItem.cs" />
     <Compile Include="ViewModel\LogItems.cs" />
+    <Compile Include="ViewModel\ParentsViewModel.cs" />
     <Compile Include="ViewModel\ParentViewModel.cs" />
     <Compile Include="ViewModel\ProcessingImagesViewModel.cs" />
     <Compile Include="ViewModel\Scenes.cs" />
@@ -105,6 +109,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\DataContextSchenanigans.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DataGrids.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
