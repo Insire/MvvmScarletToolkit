@@ -20,7 +20,7 @@
             <progress:ProgressControl HorizontalAlignment="Center"
                                       VerticalAlignment="Center"
                                       Percentage="{Binding Percentage}"
-                                      SegmentColor="#726873"
+                                      SegmentColor="Green"
                                       StrokeThickness="10">
                 <progress:ProgressControl.Style>
                     <Style TargetType="{x:Type progress:ProgressControl}">
@@ -28,9 +28,6 @@
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsBusy}" Value="True">
                                 <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsBusy}" Value="False">
-                                <Setter Property="Visibility" Value="Hidden" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

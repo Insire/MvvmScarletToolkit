@@ -139,23 +139,21 @@ namespace MvvmScarletToolkit.UI.Progress
             if (startPoint.X == Math.Round(endPoint.X) && startPoint.Y == Math.Round(endPoint.Y))
                 endPoint.X -= 0.01;
 
-            if (Percentage == 0)
+            var pointAnimation = new PointAnimation()
             {
-                ArcSegment.Point = endPoint;
-                ArcSegment.Size = outerArcSize;
-                ArcSegment.IsLargeArc = Angle > 180.0;
+                Duration = TimeSpan.FromMilliseconds(250),
+                From = ArcSegment.Point,
+                To = endPoint,
+            };
 
-                PathRoot.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                ArcSegment.Size = outerArcSize;
-                ArcSegment.IsLargeArc = Angle > 180.0;
-                var animation = GetAnimation(ArcSegment.Point, endPoint);
-                animation.Begin(this);
+            Storyboard.SetTargetName(pointAnimation, nameof(ArcSegment));
+            Storyboard.SetTargetProperty(pointAnimation, new PropertyPath(ArcSegment.PointProperty));
 
-                PathRoot.Visibility = Visibility.Visible;
-            }
+            var ellipseStoryboard = new Storyboard();
+            ellipseStoryboard.Children.Add(pointAnimation);
+            ellipseStoryboard.Begin(this);
+            ArcSegment.Size = outerArcSize;
+            ArcSegment.IsLargeArc = Angle > 180.0;
         }
 
         private Storyboard GetAnimation(Point from, Point to)
