@@ -84,6 +84,9 @@
     <Compile Include="Controls\ImagesView.xaml.cs">
       <DependentUpon>ImagesView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Progress.xaml.cs">
+      <DependentUpon>Progress.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImageFactory.cs" />
     <Compile Include="MainWindowSettings.cs" />
     <Compile Include="Scene.cs" />
@@ -99,6 +102,7 @@
     <Compile Include="ViewModel\ParentsViewModel.cs" />
     <Compile Include="ViewModel\ParentViewModel.cs" />
     <Compile Include="ViewModel\ProcessingImagesViewModel.cs" />
+    <Compile Include="ViewModel\ProgressViewModel.cs" />
     <Compile Include="ViewModel\Scenes.cs" />
     <Page Include="Controls\AnotherImageControl.xaml">
       <SubType>Designer</SubType>
@@ -129,6 +133,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ImagesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Progress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

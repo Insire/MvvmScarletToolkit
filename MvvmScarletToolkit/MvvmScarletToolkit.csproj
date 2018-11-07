@@ -100,6 +100,9 @@
     <Compile Include="Extensions\EventExtension.cs" />
     <Compile Include="UI\Navigation\Scene.cs" />
     <Compile Include="UI\Overlay.cs" />
+    <Compile Include="UI\Progress\ProgressControl.xaml.cs">
+      <DependentUpon>ProgressControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\SelectedTreeViewItemBehavior.cs" />
     <Compile Include="UI\Snake\ISnakeView.cs" />
     <Compile Include="UI\Snake\Models\PositionDTO.cs" />
@@ -154,6 +157,10 @@
       <DependentUpon>MagickImageControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\StringExtention.cs" />
+    <Page Include="UI\Progress\ProgressControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Snake\SnakeView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

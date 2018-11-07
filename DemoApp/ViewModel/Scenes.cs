@@ -1,6 +1,7 @@
-﻿using MvvmScarletToolkit;
-
+﻿using DemoApp.ViewModel;
+using MvvmScarletToolkit;
 using System.ComponentModel;
+using System.Linq;
 
 namespace DemoApp
 {
@@ -59,25 +60,33 @@ namespace DemoApp
 
                 new DemoApp.Scene
                 {
-
                     Content = new SnakeView(),
                     DisplayName = "Snake",
-                    IsSelected = true,
+                    IsSelected = false,
                 },
 
                 new DemoApp.Scene
                 {
-
                     Content = new DataGrids(),
                     DisplayName = "DataGrids",
                     IsSelected = false,
                     GetDataContext = ()=> new ParentsViewModel(),
+                },
+
+                new DemoApp.Scene
+                {
+                    Content = new DemoApp.Controls.Progress(),
+                    DisplayName = "Progress",
+                    GetDataContext = ()=> new ProgressViewModel(),
+                    IsSelected = true,
                 }
             };
 
             using (BusyStack.GetToken())
             {
                 AddRange(content);
+
+                SelectedItem = Items.First(p => p.IsSelected);
 
                 using (View.DeferRefresh())
                 {

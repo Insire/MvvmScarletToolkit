@@ -62,7 +62,7 @@ namespace DemoApp
         // maybe blocking collection + cancellationtokensource
         private void UpdateDataContext()
         {
-            if (Content == null || !IsSelected || GetDataContext == null)
+            if (Content is null || !IsSelected || GetDataContext is null)
                 return;
 
             // while fetching the dataconext, we will switch IsBusy accordingly
