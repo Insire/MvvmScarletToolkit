@@ -6,13 +6,7 @@ namespace DemoApp
     public class ParentsViewModel : ViewModelListBase<ParentViewModel>
     {
         public ParentsViewModel(IScarletDispatcher dispatcher)
-            : base(new[]
-            {
-                new ParentViewModel(),
-                    new ParentViewModel(),
-                    new ParentViewModel(),
-                    new ParentViewModel(),
-            }, dispatcher)
+            : base(dispatcher)
         {
         }
     }

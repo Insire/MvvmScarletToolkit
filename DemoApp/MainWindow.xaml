@@ -6,16 +6,13 @@
                                        xmlns:local="clr-namespace:DemoApp"
                                        xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
                                        xmlns:controls="clr-namespace:DemoApp.Controls"
-                                       Title="MainWindow"
+                                       Title="DemoApp"
                                        Width="1025"
                                        Height="350">
-    <configurablewindow:ConfigurableWindow.Resources>
-        <!--  create an instance of Scenes which we can use as datacontext. its filled on creation with static data  -->
-        <local:NavigationViewModel x:Key="ScenesViewModel" />
-    </configurablewindow:ConfigurableWindow.Resources>
 
-    <!--  set the datacontext to the ScenesViewModel  -->
-    <Grid DataContext="{StaticResource ScenesViewModel}">
+    <!--DataContext: NavigationViewModel-->
+
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
@@ -23,14 +20,11 @@
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Column="0" LastChildFill="True">
             <TextBlock DockPanel.Dock="Top">Navigation</TextBlock>
-
-            <!--  display the Scenes inside the ScenesViewModel in a ListBox  -->
             <ListBox x:Name="Scenes"
                      ItemsSource="{Binding Items}"
                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      SelectionMode="Single">
-                <!--  sync the IsSelected property of the ListBoxItem to the SceneViewModel.IsSelected  -->
                 <ListBox.ItemContainerStyle>
                     <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
                         <Setter Property="IsSelected" Value="{Binding IsSelected}" />

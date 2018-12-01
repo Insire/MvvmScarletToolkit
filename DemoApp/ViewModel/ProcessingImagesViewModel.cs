@@ -1,4 +1,5 @@
-﻿using MvvmScarletToolkit.Observables;
+﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit.Observables;
 
 namespace DemoApp
 {
@@ -20,8 +21,8 @@ namespace DemoApp
 
         public ProcessingImagesViewModel()
         {
-            Source = Images.Filled;
-            Target = Images.Empty;
+            Source = new Images(new ScarletDispatcher());
+            Target = new Images(new ScarletDispatcher());
         }
     }
 }

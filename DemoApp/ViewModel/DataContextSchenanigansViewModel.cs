@@ -15,11 +15,6 @@ namespace DemoApp
                     DisplayName = "Test X",
                 });
             }
-
-            SelectedItem = new AsyncDemoItem
-            {
-                DisplayName = "Test X",
-            };
         }
     }
 }

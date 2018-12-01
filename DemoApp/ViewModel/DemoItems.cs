@@ -19,8 +19,6 @@ namespace DemoApp
         {
             var item = new DemoItem();
             await Add(item).ConfigureAwait(false);
-
-            SelectedItem = item;
         }
 
         public bool CanAddNew()

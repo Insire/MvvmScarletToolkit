@@ -59,15 +59,6 @@ namespace MvvmScarletToolkit.Observables
             ClearCommand = new RelayCommand(Clear, CanClear);
         }
 
-        protected ViewModelListBase(IEnumerable<T> items, IScarletDispatcher dispatcher)
-            : this(dispatcher)
-        {
-            _ = AddRange(items)
-                // initial Notification, so that the UI recognizes the value
-                .ContinueWith(async _ => await dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false))
-                .ConfigureAwait(false);
-        }
-
         public virtual async Task Add(T item)
         {
             if (item is null)

@@ -20,8 +20,6 @@ namespace DemoApp
         {
             var item = new LogItem();
             await Add(item).ConfigureAwait(false);
-
-            SelectedItem = item;
         }
 
         public bool CanAddNew()
