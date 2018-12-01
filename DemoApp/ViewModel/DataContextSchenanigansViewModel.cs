@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit;
+﻿using MvvmScarletToolkit.Observables;
 using System.Collections.ObjectModel;
 
 namespace DemoApp
@@ -24,7 +24,6 @@ namespace DemoApp
             Items = new ObservableCollection<AsyncDemoItem>();
             for (var i = 0; i < 10; i++)
             {
-
                 Items.Add(new AsyncDemoItem
                 {
                     DisplayName = "Test X",

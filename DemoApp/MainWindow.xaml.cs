@@ -1,10 +1,11 @@
-﻿using MvvmScarletToolkit;
+﻿using MvvmScarletToolkit.ConfigurableWindow;
 
 namespace DemoApp
 {
     public partial class MainWindow : ConfigurableWindow
     {
         private IConfigurableWindowSettings _settings;
+
         public MainWindow()
         {
             InitializeComponent();

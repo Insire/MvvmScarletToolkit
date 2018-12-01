@@ -1,7 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using MvvmScarletToolkit.UnitTests.Mocks;
-
 using System.Collections.Generic;
 
 namespace MvvmScarletToolkit.UnitTests.UI.Snake.Util

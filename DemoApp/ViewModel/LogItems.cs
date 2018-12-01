@@ -1,11 +1,12 @@
-﻿using System.Windows.Input;
-using MvvmScarletToolkit;
+﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit.Commands;
+using System.Windows.Input;
 
 namespace DemoApp
 {
     public class LogItems : ViewModelListBase<LogItem>
     {
-        public ICommand AddCommand { get; private set; }
+        public ICommand AddCommand { get; }
 
         public LogItems()
         {
@@ -15,7 +16,7 @@ namespace DemoApp
         public void AddNew()
         {
             var item = new LogItem();
-            Items.Add(item);
+            Add(item);
 
             SelectedItem = item;
         }

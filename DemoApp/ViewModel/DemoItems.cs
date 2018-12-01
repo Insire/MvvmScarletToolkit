@@ -1,11 +1,12 @@
-﻿using System.Windows.Input;
-using MvvmScarletToolkit;
+﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit.Commands;
+using System.Windows.Input;
 
 namespace DemoApp
 {
     public class DemoItems : ViewModelListBase<DemoItem>
     {
-        public ICommand AddCommand { get; private set; }
+        public ICommand AddCommand { get; }
 
         public DemoItems()
         {
@@ -15,7 +16,7 @@ namespace DemoApp
         public void AddNew()
         {
             var item = new DemoItem();
-            Items.Add(item);
+            Add(item);
 
             SelectedItem = item;
         }

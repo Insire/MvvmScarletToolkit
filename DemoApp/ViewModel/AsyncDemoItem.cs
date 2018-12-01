@@ -1,4 +1,5 @@
-﻿using MvvmScarletToolkit;
+﻿using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Observables;
 using System.Threading.Tasks;
 
 namespace DemoApp

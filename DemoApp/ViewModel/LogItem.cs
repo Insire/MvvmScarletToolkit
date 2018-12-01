@@ -1,5 +1,5 @@
-﻿using System;
-using MvvmScarletToolkit;
+﻿using MvvmScarletToolkit.Observables;
+using System;
 
 namespace DemoApp
 {
@@ -32,7 +32,7 @@ namespace DemoApp
             Message = "unknown";
         }
 
-        public LogItem(string message):this()
+        public LogItem(string message) : this()
         {
             Message = message;
         }

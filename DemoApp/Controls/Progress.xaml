@@ -24,7 +24,7 @@
                                       StrokeThickness="10">
                 <progress:ProgressControl.Style>
                     <Style TargetType="{x:Type progress:ProgressControl}">
-                        <Setter Property="Visibility" Value="Hidden" />
+                        <!--<Setter Property="Visibility" Value="Hidden" />-->
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsBusy}" Value="True">
                                 <Setter Property="Visibility" Value="Visible" />

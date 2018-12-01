@@ -32,10 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Expression.Blend.Sdk" Version="1.0.2" />
-    <PackageReference Include="GraphicsMagick.NET-Q8-AnyCPU" Version="1.3.26.1" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -55,123 +51,27 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CircularBuffer.cs" />
-    <Compile Include="Commands\Async\AsyncCommand.cs" />
-    <Compile Include="Commands\Async\AsyncCommandBase.cs" />
-    <Compile Include="Commands\Async\AsyncContext.cs" />
-    <Compile Include="Commands\Async\IAsyncCommand.cs" />
-    <Compile Include="Commands\Async\IBusy.cs" />
-    <Compile Include="Commands\Async\IExtendedAsyncCommand.cs" />
-    <Compile Include="Commands\Async\NotifyTaskCompletion.cs" />
+    <Compile Include="BindingProxy.cs" />
     <Compile Include="Converters\NullValueConverter.cs" />
-    <Compile Include="EventAggregator\DefaultMessageProxy.cs" />
-    <Compile Include="EventAggregator\Interfaces\IMessenger.cs" />
-    <Compile Include="EventAggregator\Interfaces\IScarletMessage.cs" />
-    <Compile Include="EventAggregator\Interfaces\IScarletMessageProxy.cs" />
-    <Compile Include="EventAggregator\Interfaces\IScarletMessageSubscription.cs" />
-    <Compile Include="EventAggregator\Interfaces\ISubscriberErrorHandler.cs" />
-    <Compile Include="EventAggregator\Messages\CancellableGenericScarletMessage.cs" />
-    <Compile Include="EventAggregator\Messages\GenericScarletMessage.cs" />
-    <Compile Include="EventAggregator\Messages\ScarletMessageBase.cs" />
-    <Compile Include="EventAggregator\ScarletMessenger.cs" />
-    <Compile Include="EventAggregator\ScarletMessengerSubscriptionException.cs" />
-    <Compile Include="EventAggregator\Subscriptions\StrongScarletMessageSubscription.cs" />
-    <Compile Include="EventAggregator\Subscriptions\SubscriptionItem.cs" />
-    <Compile Include="EventAggregator\Subscriptions\WeakScarletMessageSubscription.cs" />
-    <Compile Include="EventAggregator\SubscriptionToken.cs" />
     <Compile Include="Extensions\EnumBindingSourceExtension.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="IO\FileSystemDepth.cs" />
-    <Compile Include="IO\FileSystemBrowser.cs" />
-    <Compile Include="IO\FileSystemViewModel.cs" />
-    <Compile Include="IO\Interfaces\IDepth.cs" />
-    <Compile Include="IO\Interfaces\IFileSystemDirectory.cs" />
-    <Compile Include="IO\Interfaces\IFileSystemDrive.cs" />
-    <Compile Include="IO\Interfaces\IFileSystemFile.cs" />
-    <Compile Include="IO\Interfaces\IFileSystemInfo.cs" />
-    <Compile Include="Extensions\FileSystemExtensions.cs" />
-    <Compile Include="IO\ScarletDirectory.cs" />
-    <Compile Include="IO\ScarletFile.cs" />
-    <Compile Include="IO\ScarletFileSystemBase.cs" />
-    <Compile Include="IO\ScarletDrive.cs" />
-    <Compile Include="IO\ScarletFileSystemContainerBase.cs" />
-    <Compile Include="MagickReadSettingsFactory.cs" />
-    <Compile Include="Observables\PropertyObserver.cs" />
     <Compile Include="Extensions\EventExtension.cs" />
-    <Compile Include="UI\Navigation\Scene.cs" />
-    <Compile Include="UI\Overlay.cs" />
-    <Compile Include="UI\Progress\ProgressControl.xaml.cs">
-      <DependentUpon>ProgressControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\SelectedTreeViewItemBehavior.cs" />
-    <Compile Include="UI\Snake\ISnakeView.cs" />
-    <Compile Include="UI\Snake\Models\PositionDTO.cs" />
-    <Compile Include="UI\Snake\Models\PositionUpdatedMessage.cs" />
-    <Compile Include="UI\Snake\Models\SnakeDirectionChanged.cs" />
-    <Compile Include="UI\Snake\Models\SnakeSegmentCreatedMessage.cs" />
-    <Compile Include="UI\Snake\Types\View.cs" />
-    <Compile Include="UI\Snake\Util\Extensions.cs" />
-    <Compile Include="UI\Snake\Util\FrameCounter.cs" />
-    <Compile Include="ILogger.cs" />
-    <Compile Include="UI\Snake\Interfaces\ISnakeManager.cs" />
-    <Compile Include="UI\Snake\Util\InternalLogger.cs" />
-    <Compile Include="Observables\ObservableCircularBuffer.cs" />
-    <Compile Include="UI\Snake\ViewModels\BoardPieces\Apple.cs" />
-    <Compile Include="UI\Snake\Types\Direction.cs" />
-    <Compile Include="UI\Snake\Types\GameState.cs" />
-    <Compile Include="UI\Snake\Interfaces\IPositionable.cs" />
-    <Compile Include="UI\Snake\ViewModels\BoardPieces\Base\Position.cs" />
-    <Compile Include="UI\Snake\ViewModels\BoardPieces\Base\Size.cs" />
-    <Compile Include="UI\Snake\ViewModels\KeyMapViewModel.cs" />
-    <Compile Include="UI\Snake\ViewModels\SnakeEngine.cs" />
-    <Compile Include="UI\Snake\ViewModels\SnakeLogViewModel.cs" />
-    <Compile Include="UI\Snake\ViewModels\SnakeOption.cs" />
-    <Compile Include="UI\Snake\ViewModels\SnakeViewModel.cs" />
-    <Compile Include="UI\Snake\ViewModels\BoardPieces\Snake\Snake.cs" />
-    <Compile Include="UI\Snake\ViewModels\BoardPieces\Snake\Base\SnakeBase.cs" />
-    <Compile Include="UI\Snake\ViewModels\BoardPieces\Snake\SnakeHead.cs" />
-    <Compile Include="UI\Snake\ViewModels\BoardPieces\Snake\SnakeSegment.cs" />
-    <Compile Include="UI\Snake\SnakeView.xaml.cs">
-      <DependentUpon>SnakeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Virtualization\IVirtualizedListViewModel.cs" />
-    <Compile Include="Virtualization\VirtualizationViewModelState.cs" />
-    <Compile Include="Virtualization\VirtualizingCollectionViewSource.cs" />
-    <Page Include="Themes\Generic.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Compile Include="UI\BindingProxy.cs" />
-    <Compile Include="Observables\BusyStack.cs" />
-    <Compile Include="Observables\BusyToken.cs" />
-    <Compile Include="UI\ConfigurableWindow\ConfigurableWindow.cs" />
-    <Compile Include="UI\ConfigurableWindow\ConfigurableWindowSettings.cs" />
-    <Compile Include="UI\ConfigurableWindow\IConfigurableWindowSettings.cs" />
-    <Compile Include="Converters\DebugConverter.cs" />
-    <Compile Include="Observables\ObservableObject.cs" />
+    <Compile Include="ScarletDispatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Observables\RangeObservableCollection.cs" />
-    <Compile Include="Commands\RelayCommand.cs" />
-    <Compile Include="Observables\ViewModelListBase.cs" />
-    <Compile Include="UI\MagickImageControl.xaml.cs">
-      <DependentUpon>MagickImageControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Extensions\StringExtention.cs" />
-    <Page Include="UI\Progress\ProgressControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Snake\SnakeView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UI\MagickImageControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj">
+      <Project>{4d4558e2-878f-48c8-bbe2-e22db20e9a55}</Project>
+      <Name>MvvmScarletToolkit.Abstractions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj">
+      <Project>{A85ECF94-F42D-43B2-9C65-C27E2963CF08}</Project>
+      <Name>MvvmScarletToolkit.Commands</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj">
+      <Project>{3D7BBED6-6056-488D-AE6A-65DF15D3D046}</Project>
+      <Name>MvvmScarletToolkit.Observables</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

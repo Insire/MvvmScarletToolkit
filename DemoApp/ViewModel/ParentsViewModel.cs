@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit;
+﻿using MvvmScarletToolkit.Observables;
 using System.Collections.ObjectModel;
 
 namespace DemoApp

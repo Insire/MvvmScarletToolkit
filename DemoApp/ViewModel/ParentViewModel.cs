@@ -1,4 +1,5 @@
-﻿using MvvmScarletToolkit;
+﻿using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace DemoApp
 {
     public class ParentViewModel : ObservableObject
     {
-        public ICommand AddLinkedCommand { get; private set; }
-        public ICommand AddRangeCommand { get; private set; }
+        public ICommand AddLinkedCommand { get; }
+        public ICommand AddRangeCommand { get; }
 
         private DemoItems _demoItems;
         public DemoItems DemoItems
@@ -55,13 +56,10 @@ namespace DemoApp
         {
             using (BusyStack.GetToken())
             {
-                var result = await Task.Run(() =>
-                {
-                    return DateTime.UtcNow.ToLongTimeString();
-                });
+                var result = await Task.Run(() => DateTime.UtcNow.ToLongTimeString()).ConfigureAwait(false);
 
-                DemoItems.Items.Add(new DemoItem(result));
-                LogItems.Items.Add(new LogItem(result));
+                DemoItems.Add(new DemoItem(result));
+                LogItems.Add(new LogItem(result));
             }
         }
 
@@ -84,7 +82,7 @@ namespace DemoApp
                     }
 
                     return items;
-                });
+                }).ConfigureAwait(false);
 
                 LogItems.AddRange(result.Select(p => new LogItem(p)));
                 DemoItems.AddRange(result.Select(p => new DemoItem(p)));

@@ -28,6 +28,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,6 +37,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -58,6 +60,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj">
+      <Project>{67e41cb4-774b-455b-b0fc-86ef13677fb7}</Project>
+      <Name>MvvmScarletToolkit.Incubator</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj">
       <Project>{d555c0fd-335d-4c64-b80b-8999e66402b8}</Project>
       <Name>MvvmScarletToolkit</Name>

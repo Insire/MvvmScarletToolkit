@@ -26,6 +26,7 @@
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,6 +36,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Expression.Blend.Sdk" Version="1.0.2" />
@@ -89,7 +91,34 @@
     </Compile>
     <Compile Include="ImageFactory.cs" />
     <Compile Include="MainWindowSettings.cs" />
-    <Compile Include="Scene.cs" />
+    <Compile Include="Snake\Interfaces\IPositionable.cs" />
+    <Compile Include="Snake\Interfaces\ISnakeManager.cs" />
+    <Compile Include="Snake\ISnakeView.cs" />
+    <Compile Include="Snake\Models\PositionDTO.cs" />
+    <Compile Include="Snake\Models\PositionUpdatedMessage.cs" />
+    <Compile Include="Snake\Models\SnakeDirectionChanged.cs" />
+    <Compile Include="Snake\Models\SnakeSegmentCreatedMessage.cs" />
+    <Compile Include="Snake\SnakeView.xaml.cs">
+      <DependentUpon>SnakeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Snake\Types\Direction.cs" />
+    <Compile Include="Snake\Types\GameState.cs" />
+    <Compile Include="Snake\Types\View.cs" />
+    <Compile Include="Snake\Util\Extensions.cs" />
+    <Compile Include="Snake\Util\FrameCounter.cs" />
+    <Compile Include="Snake\Util\InternalLogger.cs" />
+    <Compile Include="Snake\ViewModels\BoardPieces\Apple.cs" />
+    <Compile Include="Snake\ViewModels\BoardPieces\Base\Position.cs" />
+    <Compile Include="Snake\ViewModels\BoardPieces\Base\Size.cs" />
+    <Compile Include="Snake\ViewModels\BoardPieces\Snake\Base\SnakeBase.cs" />
+    <Compile Include="Snake\ViewModels\BoardPieces\Snake\Snake.cs" />
+    <Compile Include="Snake\ViewModels\BoardPieces\Snake\SnakeHead.cs" />
+    <Compile Include="Snake\ViewModels\BoardPieces\Snake\SnakeSegment.cs" />
+    <Compile Include="Snake\ViewModels\KeyMapViewModel.cs" />
+    <Compile Include="Snake\ViewModels\SnakeEngine.cs" />
+    <Compile Include="Snake\ViewModels\SnakeLogViewModel.cs" />
+    <Compile Include="Snake\ViewModels\SnakeOption.cs" />
+    <Compile Include="Snake\ViewModels\SnakeViewModel.cs" />
     <Compile Include="ViewModel\AsyncCommandViewModelStuff.cs" />
     <Compile Include="ViewModel\AsyncDemoItem.cs" />
     <Compile Include="ViewModel\DataContextSchenanigansViewModel.cs" />
@@ -103,7 +132,6 @@
     <Compile Include="ViewModel\ParentViewModel.cs" />
     <Compile Include="ViewModel\ProcessingImagesViewModel.cs" />
     <Compile Include="ViewModel\ProgressViewModel.cs" />
-    <Compile Include="ViewModel\Scenes.cs" />
     <Page Include="Controls\AnotherImageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -152,6 +180,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Snake\SnakeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -183,6 +215,22 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj">
+      <Project>{A85ECF94-F42D-43B2-9C65-C27E2963CF08}</Project>
+      <Name>MvvmScarletToolkit.Commands</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MvvmScarletToolkit.ConfigurableWindow\MvvmScarletToolkit.ConfigurableWindow.csproj">
+      <Project>{C714F171-8BE1-427A-BC98-C923EA3BAA30}</Project>
+      <Name>MvvmScarletToolkit.ConfigurableWindow</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj">
+      <Project>{67e41cb4-774b-455b-b0fc-86ef13677fb7}</Project>
+      <Name>MvvmScarletToolkit.Incubator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj">
+      <Project>{3D7BBED6-6056-488D-AE6A-65DF15D3D046}</Project>
+      <Name>MvvmScarletToolkit.Observables</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj">
       <Project>{d555c0fd-335d-4c64-b80b-8999e66402b8}</Project>
       <Name>MvvmScarletToolkit</Name>
