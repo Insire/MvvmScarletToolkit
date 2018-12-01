@@ -76,8 +76,7 @@ namespace MvvmScarletToolkit
         {
             InitializeComponent();
 
-            BusyStack = new BusyStack();
-            BusyStack.OnChanged += (hasItems) => IsBusy = hasItems;
+            BusyStack = new BusyStack((hasItems) => IsBusy = hasItems);
         }
 
         private async void MagickImageControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
