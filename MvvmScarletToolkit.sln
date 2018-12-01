@@ -5,24 +5,26 @@ VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit", "MvvmScarletToolkit\MvvmScarletToolkit.csproj", "{D555C0FD-335D-4C64-B80B-8999E66402B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApp", "DemoApp\DemoApp.csproj", "{66BE74B3-937A-45AF-8F44-8024E930FAA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemoApp", "DemoApp\DemoApp.csproj", "{66BE74B3-937A-45AF-8F44-8024E930FAA7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE94110B-58A4-473C-819C-C331D83C14ED}"
 	ProjectSection(SolutionItems) = preProject
+		MvvmScarletToolkit\MvvmScarletToolkit.nuspec = MvvmScarletToolkit\MvvmScarletToolkit.nuspec
 		README.md = README.md
+		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Incubator", "MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj", "{67E41CB4-774B-455B-B0FC-86EF13677FB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Commands", "MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj", "{A85ECF94-F42D-43B2-9C65-C27E2963CF08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Commands", "MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj", "{A85ECF94-F42D-43B2-9C65-C27E2963CF08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Observables", "MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj", "{3D7BBED6-6056-488D-AE6A-65DF15D3D046}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Observables", "MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj", "{3D7BBED6-6056-488D-AE6A-65DF15D3D046}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Abstractions", "MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj", "{4D4558E2-878F-48C8-BBE2-E22DB20E9A55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Abstractions", "MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj", "{4D4558E2-878F-48C8-BBE2-E22DB20E9A55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.FileSystemBrowser", "MvvmScarletToolkit.FileSystemBrowser\MvvmScarletToolkit.FileSystemBrowser.csproj", "{F7C72545-4D60-4A85-8778-9886EBD48616}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.FileSystemBrowser", "MvvmScarletToolkit.FileSystemBrowser\MvvmScarletToolkit.FileSystemBrowser.csproj", "{F7C72545-4D60-4A85-8778-9886EBD48616}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.ConfigurableWindow", "MvvmScarletToolkit.ConfigurableWindow\MvvmScarletToolkit.ConfigurableWindow.csproj", "{C714F171-8BE1-427A-BC98-C923EA3BAA30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.ConfigurableWindow", "MvvmScarletToolkit.ConfigurableWindow\MvvmScarletToolkit.ConfigurableWindow.csproj", "{C714F171-8BE1-427A-BC98-C923EA3BAA30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
