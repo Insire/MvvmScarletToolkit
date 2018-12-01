@@ -54,8 +54,7 @@ namespace MvvmScarletToolkit
 
         public FileSystemViewModel()
         {
-            _busyStack = new BusyStack();
-            _busyStack.OnChanged += (hasItems) => IsBusy = hasItems;
+            _busyStack = new BusyStack((hasItems) => IsBusy = hasItems);
             SelectCommand = new RelayCommand<IFileSystemInfo>(SetSelectedItem, CanSetSelectedItem);
 
             using (_busyStack.GetToken())

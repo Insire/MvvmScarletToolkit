@@ -42,11 +42,7 @@ namespace DemoApp
 
         public ParentViewModel()
         {
-            BusyStack = new BusyStack();
-            BusyStack.OnChanged += (hasItems) =>
-              {
-                  IsBusy = hasItems;
-              };
+            BusyStack = new BusyStack((hasItems) => IsBusy = hasItems);
 
             DemoItems = new DemoItems();
             LogItems = new LogItems();

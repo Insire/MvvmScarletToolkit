@@ -55,8 +55,7 @@ namespace DemoApp
             LoadCommand = AsyncCommand.Create(Load, () => !IsLoaded && !IsBusy);
             DoStuffCommand = AsyncCommand.Create(DoStuff, CanDoStuff);
 
-            _busyStack = new BusyStack();
-            _busyStack.OnChanged += (hasItems) => IsBusy = hasItems;
+            _busyStack = new BusyStack((hasItems) => IsBusy = hasItems);
         }
 
         public AsyncDemoItem(string displayName) : this()

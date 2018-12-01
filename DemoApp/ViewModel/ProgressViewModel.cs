@@ -53,10 +53,10 @@ namespace DemoApp.ViewModel
             await dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => Percentage = 0));
             await Task.Delay(250).ConfigureAwait(false);
 
-            for (var i = 0; i <= 100; i++)
+            for (var i = 0; i <= 50; i++)
             {
                 await dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => Percentage = i));
-                await Task.Delay(150).ConfigureAwait(false);
+                await Task.Delay(50).ConfigureAwait(false);
             }
         }
 

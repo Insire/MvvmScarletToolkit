@@ -126,8 +126,7 @@ namespace MvvmScarletToolkit
 
         private ScarletFileSystemBase()
         {
-            _busyStack = new BusyStack();
-            _busyStack.OnChanged += (hasItems) => IsBusy = hasItems;
+            _busyStack = new BusyStack((hasItems) => IsBusy = hasItems);
 
             LoadCommand = new RelayCommand(Load, CanLoad);
             RefreshCommand = new RelayCommand(Refresh, CanRefresh);
@@ -174,9 +173,13 @@ namespace MvvmScarletToolkit
         }
 
         public abstract void Refresh();
+
         public abstract void LoadMetaData();
+
         public abstract void OnFilterChanged(string filter);
+
         public abstract void Delete();
+
         public abstract bool CanDelete();
 
         protected bool CanLoad()

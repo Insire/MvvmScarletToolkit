@@ -53,8 +53,7 @@ namespace MvvmScarletToolkit
 
         public Scene()
         {
-            BusyStack = new BusyStack();
-            BusyStack.OnChanged += (hasItems) => IsBusy = hasItems;
+            BusyStack = new BusyStack((hasItems) => IsBusy = hasItems);
         }
 
         private void UpdateDataContext()

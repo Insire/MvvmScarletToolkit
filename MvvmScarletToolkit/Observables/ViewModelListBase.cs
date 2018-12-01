@@ -122,8 +122,7 @@ namespace MvvmScarletToolkit
             Items = new RangeObservableCollection<T>();
             Items.CollectionChanged += ItemsCollectionChanged;
 
-            BusyStack = new BusyStack();
-            BusyStack.OnChanged += (hasItems) => IsBusy = hasItems;
+            BusyStack = new BusyStack((hasItems) => IsBusy = hasItems);
 
             View = CollectionViewSource.GetDefaultView(Items); // requires viewmodel to be created on the UI thread
 
