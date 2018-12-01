@@ -16,7 +16,7 @@ namespace DemoApp
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 // Package the data.
-                DataObject data = new DataObject();
+                var data = new DataObject();
                 data.SetData((sender as FrameworkElement)?.DataContext);
 
                 // Inititate the drag-and-drop operation.
@@ -29,11 +29,11 @@ namespace DemoApp
             base.OnGiveFeedback(e);
             // These Effects values are set in the drop target's
             // DragOver event handler.
-            if (e.Effects.HasFlag(DragDropEffects.Copy))
+            if ((e.Effects & DragDropEffects.Copy) != 0)
             {
                 Mouse.SetCursor(Cursors.Cross);
             }
-            else if (e.Effects.HasFlag(DragDropEffects.Move))
+            else if ((e.Effects & DragDropEffects.Move) != 0)
             {
                 Mouse.SetCursor(Cursors.Pen);
             }
@@ -58,7 +58,7 @@ namespace DemoApp
                     // Set Effects to notify the drag source what effect
                     // the drag-and-drop operation had.
                     // (Copy if CTRL is pressed; otherwise, move.)
-                    if (e.KeyStates.HasFlag(DragDropKeyStates.ControlKey))
+                    if ((e.KeyStates & DragDropKeyStates.ControlKey) != 0)
                     {
                         e.Effects = DragDropEffects.Copy;
                         vm.Target.Add(image);
@@ -89,7 +89,7 @@ namespace DemoApp
                     // Set Effects to notify the drag source what effect
                     // the drag-and-drop operation had.
                     // (Copy if CTRL is pressed; otherwise, move.)
-                    if (e.KeyStates.HasFlag(DragDropKeyStates.ControlKey))
+                    if ((e.KeyStates & DragDropKeyStates.ControlKey) != 0)
                     {
                         e.Effects = DragDropEffects.Copy;
                         vm.Source.Add(image);

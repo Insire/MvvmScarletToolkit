@@ -142,8 +142,8 @@ namespace DemoApp
         {
             return new Position()
             {
-                X = Convert.ToInt32(Math.Round(((double)MaxWidth / 2), MidpointRounding.AwayFromZero)),
-                Y = Convert.ToInt32(Math.Round(((double)MaxHeight / 2), MidpointRounding.AwayFromZero)),
+                X = Convert.ToInt32(Math.Round((double)MaxWidth / 2, MidpointRounding.AwayFromZero)),
+                Y = Convert.ToInt32(Math.Round((double)MaxHeight / 2, MidpointRounding.AwayFromZero)),
             };
         }
     }

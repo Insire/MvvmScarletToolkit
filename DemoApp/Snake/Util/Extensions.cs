@@ -23,7 +23,7 @@ namespace DemoApp
             var XA2 = right.CurrentPosition.X + right.Size.Width;
             var YA2 = right.CurrentPosition.Y + right.Size.Height;
 
-            return (XA2 >= XH1 && XA1 <= XH2) && (YA2 >= YH1 && YA1 <= YH2);
+            return XA2 >= XH1 && XA1 <= XH2 && (YA2 >= YH1 && YA1 <= YH2);
         }
 
         public static Task Play(this ISnakeManager manager)

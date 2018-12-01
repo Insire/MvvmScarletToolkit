@@ -36,7 +36,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             var info = new FileInfo(FullName);
 
             Exists = info.Exists;
-            IsHidden = info.Attributes.HasFlag(FileAttributes.Hidden);
+            IsHidden = (info.Attributes & FileAttributes.Hidden) != 0;
         }
 
         public override void Delete()

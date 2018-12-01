@@ -1,6 +1,7 @@
 ﻿using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -50,13 +51,14 @@ namespace MvvmScarletToolkit
             ExpandCommand = AsyncCommand.Create(Expand, CanExpand);
         }
 
-        public async Task Expand()
+        public Task Expand()
         {
-            if (ViewModel != null)
-                return;
+            throw new NotImplementedException();
+            //if (ViewModel != null)
+            //    return;
 
             //ViewModel = await _dataProvider.Get(Id).ConfigureAwait(true);
-            IsExpanded = true;
+            //IsExpanded = true;
         }
 
         public bool CanExpand()

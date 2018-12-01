@@ -27,13 +27,13 @@ namespace MvvmScarletToolkit
         public CircularBuffer(int capacity, T[] items)
         {
             if (capacity < 1)
-                throw new ArgumentException("Circular buffer cannot have negative or zero capacity.", "capacity");
+                throw new ArgumentException("Circular buffer cannot have negative or zero capacity.", nameof(capacity));
 
             if (items == null)
-                throw new ArgumentNullException("items");
+                throw new ArgumentNullException(nameof(items));
 
             if (items.Length > capacity)
-                throw new ArgumentException("Too many items to fit circular buffer", "items");
+                throw new ArgumentException("Too many items to fit circular buffer", nameof(items));
 
             _buffer = new T[capacity];
 
@@ -58,6 +58,7 @@ namespace MvvmScarletToolkit
         /// Current buffer size (the number of elements that the buffer has).
         /// </summary>
         public int Size { get; private set; }
+
         public int Count { get; }
         public bool IsReadOnly { get; }
 
@@ -91,7 +92,7 @@ namespace MvvmScarletToolkit
                 if (index >= Size)
                     throw new IndexOutOfRangeException(string.Format("Cannot access index {0}. Buffer size is {1}", index, Size));
 
-                int actualIndex = InternalIndex(index);
+                var actualIndex = InternalIndex(index);
                 return _buffer[actualIndex];
             }
             set
@@ -102,16 +103,17 @@ namespace MvvmScarletToolkit
                 if (index >= Size)
                     throw new IndexOutOfRangeException(string.Format("Cannot access index {0}. Buffer size is {1}", index, Size));
 
-                int actualIndex = InternalIndex(index);
+                var actualIndex = InternalIndex(index);
                 _buffer[actualIndex] = value;
             }
         }
 
         /// <summary>
-        /// Pushes a new element to the back of the buffer. Back()/this[Size-1] will now return this element.
-        ///
+        /// <para>Pushes a new element to the back of the buffer. Back()/this[Size-1] will now return this element.</para>
+        /// <para>
         /// When the buffer is full, the element at Front()/this[0] will be popped to allow for this
         /// new element to fit.
+        /// </para>
         /// </summary>
         /// <param name="item">Item to push to the back of the buffer</param>
         public void PushBack(T item)
@@ -131,10 +133,11 @@ namespace MvvmScarletToolkit
         }
 
         /// <summary>
-        /// Pushes a new element to the front of the buffer. Front()/this[0] will now return this element.
-        ///
+        /// <para>Pushes a new element to the front of the buffer. Front()/this[0] will now return this element.</para>
+        /// <para>
         /// When the buffer is full, the element at Back()/this[Size-1] will be popped to allow for
         /// this new element to fit.
+        /// </para>
         /// </summary>
         /// <param name="item">Item to push to the front of the buffer</param>
         public void PushFront(T item)
@@ -188,7 +191,7 @@ namespace MvvmScarletToolkit
             var newArrayOffset = 0;
             var segments = new ArraySegment<T>[2] { ArrayOne(), ArrayTwo() };
 
-            foreach (ArraySegment<T> segment in segments)
+            foreach (var segment in segments)
             {
                 Array.Copy(segment.Array, segment.Offset, newArray, newArrayOffset, segment.Count);
                 newArrayOffset += segment.Count;
@@ -201,9 +204,9 @@ namespace MvvmScarletToolkit
         {
             var segments = new ArraySegment<T>[2] { ArrayOne(), ArrayTwo() };
 
-            foreach (ArraySegment<T> segment in segments)
+            foreach (var segment in segments)
             {
-                for (int i = 0; i < segment.Count; i++)
+                for (var i = 0; i < segment.Count; i++)
                 {
                     yield return segment.Array[segment.Offset + i];
                 }

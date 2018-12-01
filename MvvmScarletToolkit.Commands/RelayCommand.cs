@@ -63,7 +63,7 @@ namespace MvvmScarletToolkit.Commands
             {
                 case null:
                 case T _:
-                    return (_canExecute.Invoke((T)parameter));
+                    return _canExecute.Invoke((T)parameter);
             }
 
             return false;

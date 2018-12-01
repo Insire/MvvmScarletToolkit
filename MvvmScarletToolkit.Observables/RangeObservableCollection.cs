@@ -20,9 +20,11 @@ namespace MvvmScarletToolkit
             : base()
         {
         }
+
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             if (!_suppressNotification)
+            {
                 if (SynchronizationContext.Current == _synchronizationContext)
                 {
                     // Execute the CollectionChanged event on the current thread
@@ -33,6 +35,7 @@ namespace MvvmScarletToolkit
                     // Raises the CollectionChanged event on the creator thread
                     _synchronizationContext.Send(RaiseCollectionChanged, e);
                 }
+            }
         }
 
         private void RaiseCollectionChanged(object param)

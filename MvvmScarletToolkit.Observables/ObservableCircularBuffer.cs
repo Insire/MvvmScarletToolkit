@@ -44,15 +44,15 @@ namespace MvvmScarletToolkit.Observables
         public ObservableCircularBuffer(int capacity, IEnumerable<T> items)
         {
             if (capacity < 1)
-                throw new ArgumentException("Circular buffer cannot have negative or zero capacity.", "capacity");
+                throw new ArgumentException("Circular buffer cannot have negative or zero capacity.", nameof(capacity));
 
             if (items == null)
-                throw new ArgumentNullException("items");
+                throw new ArgumentNullException(nameof(items));
 
             Size = items.Count();
 
             if (Size > capacity)
-                throw new ArgumentException("Too many items to fit circular buffer", "items");
+                throw new ArgumentException("Too many items to fit circular buffer", nameof(items));
 
             _start = 0;
             _buffer = new ObservableCollection<T>(items);

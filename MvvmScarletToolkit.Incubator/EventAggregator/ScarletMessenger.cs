@@ -21,25 +21,25 @@ namespace MvvmScarletToolkit
         public SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction)
             where TMessage : class, IScarletMessage
         {
-            return AddSubscriptionInternal(deliveryAction, (m) => true, true, _messageProxy);
+            return AddSubscriptionInternal(deliveryAction, (_) => true, true, _messageProxy);
         }
 
         public SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, IScarletMessageProxy proxy)
             where TMessage : class, IScarletMessage
         {
-            return AddSubscriptionInternal(deliveryAction, (m) => true, true, proxy);
+            return AddSubscriptionInternal(deliveryAction, (_) => true, true, proxy);
         }
 
         public SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, bool useStrongReferences)
             where TMessage : class, IScarletMessage
         {
-            return AddSubscriptionInternal(deliveryAction, (m) => true, useStrongReferences, _messageProxy);
+            return AddSubscriptionInternal(deliveryAction, (_) => true, useStrongReferences, _messageProxy);
         }
 
         public SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, bool useStrongReferences, IScarletMessageProxy proxy)
             where TMessage : class, IScarletMessage
         {
-            return AddSubscriptionInternal(deliveryAction, (m) => true, useStrongReferences, proxy);
+            return AddSubscriptionInternal(deliveryAction, (_) => true, useStrongReferences, proxy);
         }
 
         public SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter)
@@ -77,17 +77,33 @@ namespace MvvmScarletToolkit
             PublishInternal(message);
         }
 
+#pragma warning disable RCS1047 // Non-asynchronous method name should not end with 'Async'.
+
+        /// <summary>
+        /// Publish a message to any subscribers asynchronously
+        /// </summary>
+        /// <typeparam name="TMessage">Type of message</typeparam>
+        /// <param name="message">Message to deliver</param>
         public void PublishAsync<TMessage>(TMessage message)
+
             where TMessage : class, IScarletMessage
         {
             PublishAsyncInternal(message, null);
         }
 
+        /// <summary>
+        /// Publish a message to any subscribers asynchronously
+        /// </summary>
+        /// <typeparam name="TMessage">Type of message</typeparam>
+        /// <param name="message"> Message to deliver</param>
+        /// <param name="callback">AsyncCallback called on completion</param>
         public void PublishAsync<TMessage>(TMessage message, AsyncCallback callback)
             where TMessage : class, IScarletMessage
         {
             PublishAsyncInternal(message, callback);
         }
+
+#pragma warning restore RCS1047 // Non-asynchronous method name should not end with 'Async'.
 
         private SubscriptionToken AddSubscriptionInternal<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter, bool strongReference, IScarletMessageProxy proxy)
                 where TMessage : class, IScarletMessage
@@ -146,16 +162,13 @@ namespace MvvmScarletToolkit
                                        select sub).ToList();
             }
 
-            currentlySubscribed.ForEach(sub =>
-            {
-                sub.Proxy.Deliver(message, sub.Subscription);
-            });
+            currentlySubscribed.ForEach(sub => sub.Proxy.Deliver(message, sub.Subscription));
         }
 
         private void PublishAsyncInternal<TMessage>(TMessage message, AsyncCallback callback)
             where TMessage : class, IScarletMessage
         {
-            ((Action)(() => { PublishInternal(message); })).BeginInvoke(callback, null);
+            ((Action)(() => PublishInternal(message))).BeginInvoke(callback, null);
         }
     }
 }

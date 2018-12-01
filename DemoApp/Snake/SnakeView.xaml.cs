@@ -173,7 +173,7 @@ namespace DemoApp
 
         private async Task ShowStart()
         {
-            await Manager.Reset();
+            await Manager.Reset().ConfigureAwait(false);
             View = View.Start;
         }
 
@@ -184,7 +184,7 @@ namespace DemoApp
 
         private async Task ShowOptions()
         {
-            await Manager.Reset();
+            await Manager.Reset().ConfigureAwait(false);
             View = View.Options;
         }
 
@@ -196,7 +196,7 @@ namespace DemoApp
         private async Task ShowGame()
         {
             if (Manager != null)
-                await Manager.Reset();
+                await Manager.Reset().ConfigureAwait(false);
 
             Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _dispatcher, _messenger);
             SetupObserver();
@@ -304,10 +304,7 @@ namespace DemoApp
                 return;
 
             _dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                new Action<int>(fps =>
-                {
-                    FramesPerSecond = fps;
-                }), (int)state);
+                new Action<int>(fps => FramesPerSecond = fps), (int)state);
         }
 
         private void SnakeView_Unloaded(object sender, RoutedEventArgs e)
@@ -322,7 +319,7 @@ namespace DemoApp
 
         private static bool CanExit()
         {
-            return Application.Current != null && Application.Current.MainWindow != null;
+            return Application.Current?.MainWindow != null;
         }
     }
 }

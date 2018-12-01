@@ -9,11 +9,9 @@ using System.Windows.Media;
 
 namespace MvvmScarletToolkit
 {
-
     [TemplatePart(Name = "PART_OverlayAdorner", Type = typeof(AdornerDecorator))]
     public class Overlay : ContentControl
     {
-
         public static readonly DependencyProperty OverlayContentProperty = DependencyProperty.Register(
                                                     nameof(OverlayContent),
                                                     typeof(UIElement),
@@ -78,7 +76,7 @@ namespace MvvmScarletToolkit
             _uiElementAdorner = new UIElementAdorner(this, OverlayContent);
             _uiElementAdorner.Add();
 
-            AdornerLayer parentAdorner = AdornerLayer.GetAdornerLayer(this);
+            var parentAdorner = AdornerLayer.GetAdornerLayer(this);
             parentAdorner.Add(_uiElementAdorner);
         }
 
@@ -93,7 +91,6 @@ namespace MvvmScarletToolkit
             _uiElementAdorner.Remove();
             _uiElementAdorner = null;
         }
-
 
         private class UIElementAdorner : Adorner
         {

@@ -1,9 +1,8 @@
 ﻿namespace MvvmScarletToolkit
 {
     /// <summary>
-    /// Default "pass through" proxy.
-    ///
-    /// Does nothing other than deliver the message.
+    /// <para>Default "pass through" proxy.</para>
+    /// <para>Does nothing other than deliver the message.</para>
     /// </summary>
     public sealed class DefaultMessageProxy : IScarletMessageProxy
     {

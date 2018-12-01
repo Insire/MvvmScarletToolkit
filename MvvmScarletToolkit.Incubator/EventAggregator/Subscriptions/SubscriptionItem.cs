@@ -2,8 +2,8 @@
 {
     internal class SubscriptionItem
     {
-        public IScarletMessageProxy Proxy { get; private set; }
-        public IScarletMessageSubscription Subscription { get; private set; }
+        public IScarletMessageProxy Proxy { get; }
+        public IScarletMessageSubscription Subscription { get; }
 
         public SubscriptionItem(IScarletMessageProxy proxy, IScarletMessageSubscription subscription)
         {

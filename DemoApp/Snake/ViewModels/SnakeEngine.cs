@@ -165,7 +165,7 @@ namespace DemoApp
             switch (State)
             {
                 case GameState.None:
-                    await Start();
+                    await Start().ConfigureAwait(false);
                     break;
 
                 case GameState.Running:
@@ -273,28 +273,28 @@ namespace DemoApp
 
         private bool CanMoveNorth()
         {
-            return State.HasFlag(GameState.Running)
+            return (State & GameState.Running) != 0
                 && Direction != Direction.South
                 && Direction != Direction.North;
         }
 
         private bool CanMoveSouth()
         {
-            return State.HasFlag(GameState.Running)
+            return (State & GameState.Running) != 0
                 && Direction != Direction.North
                 && Direction != Direction.South;
         }
 
         private bool CanMoveWest()
         {
-            return State.HasFlag(GameState.Running)
+            return (State & GameState.Running) != 0
                 && Direction != Direction.East
                 && Direction != Direction.West;
         }
 
         private bool CanMoveEast()
         {
-            return State.HasFlag(GameState.Running)
+            return (State & GameState.Running) != 0
                 && Direction != Direction.West
                 && Direction != Direction.East;
         }
@@ -423,7 +423,7 @@ namespace DemoApp
                         if (_appleSource?.Token == null || _appleSource.Token.IsCancellationRequested)
                             return;
 
-                        await Task.Delay(_options.FoodTickRate);
+                        await Task.Delay(_options.FoodTickRate).ConfigureAwait(false);
                     }
                 }
                 catch (TaskCanceledException)

@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit
             {
                 if (value != _enumType)
                 {
-                    if (null != value)
+                    if (value != null)
                     {
                         var enumType = Nullable.GetUnderlyingType(value) ?? value;
 
@@ -36,16 +36,16 @@ namespace MvvmScarletToolkit
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            if (null == this._enumType)
+            if (_enumType is null)
                 throw new InvalidOperationException("The EnumType must be specified.");
 
-            Type actualEnumType = Nullable.GetUnderlyingType(this._enumType) ?? this._enumType;
-            Array enumValues = Enum.GetValues(actualEnumType);
+            var actualEnumType = Nullable.GetUnderlyingType(_enumType) ?? _enumType;
+            var enumValues = Enum.GetValues(actualEnumType);
 
-            if (actualEnumType == this._enumType)
+            if (actualEnumType == _enumType)
                 return enumValues;
 
-            Array tempArray = Array.CreateInstance(actualEnumType, enumValues.Length + 1);
+            var tempArray = Array.CreateInstance(actualEnumType, enumValues.Length + 1);
             enumValues.CopyTo(tempArray, 1);
             return tempArray;
         }

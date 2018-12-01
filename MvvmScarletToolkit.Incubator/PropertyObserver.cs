@@ -113,7 +113,9 @@ namespace MvvmScarletToolkit.Observables
                 memberExpression = unaryExpression.Operand as MemberExpression;
             }
             else
+            {
                 memberExpression = lambda.Body as MemberExpression;
+            }
 
             Debug.Assert(memberExpression != null, "Please provide a lambda expression like 'n => n.PropertyName'");
 
