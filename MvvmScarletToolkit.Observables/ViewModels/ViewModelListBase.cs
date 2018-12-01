@@ -60,7 +60,7 @@ namespace MvvmScarletToolkit.Observables
         {
             AddRange(items);
 
-            // initial Notification, so that UI recognizes the value
+            // initial Notification, so that the UI recognizes the value
             OnPropertyChanged(nameof(Count));
         }
 

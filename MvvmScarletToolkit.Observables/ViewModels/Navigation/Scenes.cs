@@ -5,6 +5,10 @@ namespace MvvmScarletToolkit.Observables
 {
     public abstract class Scenes : ViewModelListBase<Scene>
     {
+        protected Scenes()
+        {
+        }
+
         protected Scenes(IEnumerable<Scene> content)
         {
             using (BusyStack.GetToken())

@@ -35,7 +35,7 @@ namespace MvvmScarletToolkit.Observables
 
             LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad);
             RefreshCommand = AsyncCommand.Create(RefreshInternal, CanRefresh);
-            UnloadCommand = AsyncCommand.Create(UnloadInternal, CanUnload);
+            UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload);
         }
 
         protected virtual Task LoadInternal(CancellationToken token)
@@ -52,7 +52,7 @@ namespace MvvmScarletToolkit.Observables
             return !IsLoaded;
         }
 
-        protected virtual Task UnloadInternal()
+        protected virtual Task UnloadInternalAsync()
         {
             using (BusyStack.GetToken())
             {
