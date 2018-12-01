@@ -5,6 +5,7 @@
                                        xmlns:configurablewindow="clr-namespace:MvvmScarletToolkit.ConfigurableWindow;assembly=MvvmScarletToolkit.ConfigurableWindow"
                                        xmlns:local="clr-namespace:DemoApp"
                                        xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
+                                       xmlns:controls="clr-namespace:DemoApp.Controls"
                                        Title="MainWindow"
                                        Width="1025"
                                        Height="350">
@@ -46,19 +47,22 @@
                         <TextBlock>DataContextSchenanigansViewModel</TextBlock>
                     </DataTemplate>
                     <DataTemplate DataType="{x:Type local:ParentsViewModel}">
-                        <TextBlock>ParentsViewModel</TextBlock>
+                        <TextBlock>Datagrid</TextBlock>
                     </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:SnakeView}">
+                    <DataTemplate DataType="{x:Type local:DummySnakeViewModel}">
                         <TextBlock>Snake</TextBlock>
                     </DataTemplate>
                     <DataTemplate DataType="{x:Type local:AsyncCommandViewModelStuff}">
                         <TextBlock>AsyncCommands</TextBlock>
                     </DataTemplate>
                     <DataTemplate DataType="{x:Type browser:FileSystemViewModel}">
-                        <TextBlock>FileSystem</TextBlock>
+                        <TextBlock>FileSystemBrowser</TextBlock>
                     </DataTemplate>
                     <DataTemplate DataType="{x:Type local:Images}">
-                        <TextBlock>Images</TextBlock>
+                        <TextBlock>Image loading</TextBlock>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:ProgressViewModel}">
+                        <TextBlock>Progress</TextBlock>
                     </DataTemplate>
                 </ListBox.Resources>
                 <ListBox.ItemTemplate>
@@ -97,6 +101,12 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type local:Images}">
                     <local:ImagesView />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:DummySnakeViewModel}">
+                    <local:SnakeView />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:ProgressViewModel}">
+                    <controls:ProgressView />
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>

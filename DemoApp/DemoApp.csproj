@@ -83,8 +83,12 @@
     <Compile Include="Controls\ImagesView.xaml.cs">
       <DependentUpon>ImagesView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ProgressView.xaml.cs">
+      <DependentUpon>ProgressView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImageFactory.cs" />
     <Compile Include="MainWindowSettings.cs" />
+    <Compile Include="Snake\DummySnakeViewModel.cs" />
     <Compile Include="Snake\Interfaces\IPositionable.cs" />
     <Compile Include="Snake\Interfaces\ISnakeManager.cs" />
     <Compile Include="Snake\ISnakeView.cs" />
@@ -154,6 +158,10 @@
     <Page Include="Controls\ImagesView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\ProgressView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

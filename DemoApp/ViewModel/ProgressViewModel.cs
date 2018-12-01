@@ -19,11 +19,17 @@ namespace DemoApp
         }
 
         private double _percentage;
-
         public double Percentage
         {
             get { return _percentage; }
             private set { SetValue(ref _percentage, value); }
+        }
+
+        private double _maximum;
+        public double Maximum
+        {
+            get { return _maximum; }
+            private set { SetValue(ref _maximum, value); }
         }
 
         private IAsyncCommand _loadCommand;
@@ -38,6 +44,7 @@ namespace DemoApp
             _loadCommand = AsyncCommand.Create(Load, CanLoad);
 
             _busyStack = new BusyStack(hasItems => IsBusy = hasItems);
+            Maximum = 100;
         }
 
         private async Task Load(CancellationToken token)
@@ -55,7 +62,7 @@ namespace DemoApp
             await dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => Percentage = 0));
             await Task.Delay(250).ConfigureAwait(false);
 
-            for (var i = 0; i <= 50; i++)
+            for (var i = 0; i <= _maximum; i++)
             {
                 await dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => Percentage = i));
                 await Task.Delay(50).ConfigureAwait(false);

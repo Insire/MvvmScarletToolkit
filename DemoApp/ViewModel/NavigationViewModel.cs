@@ -45,7 +45,7 @@ namespace DemoApp
                 },
                 new Scene()
                 {
-                    Content = new SnakeView(),
+                    Content = new DummySnakeViewModel(),
                     IsSelected = false,
                 },
                 new Scene()
