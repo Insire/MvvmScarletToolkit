@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Commands;
+﻿using MvvmScarletToolkit.Abstractions;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit

@@ -1,5 +1,5 @@
-﻿using MvvmScarletToolkit;
-using MvvmScarletToolkit.Commands;
+﻿using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Observables;
 using System.Windows.Input;
 
 namespace DemoApp

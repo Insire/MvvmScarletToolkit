@@ -215,6 +215,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj">
+      <Project>{4D4558E2-878F-48C8-BBE2-E22DB20E9A55}</Project>
+      <Name>MvvmScarletToolkit.Abstractions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj">
       <Project>{A85ECF94-F42D-43B2-9C65-C27E2963CF08}</Project>
       <Name>MvvmScarletToolkit.Commands</Name>

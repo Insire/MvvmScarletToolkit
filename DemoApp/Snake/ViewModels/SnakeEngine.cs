@@ -1,4 +1,5 @@
-﻿using MvvmScarletToolkit.Commands;
+﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.Concurrent;
