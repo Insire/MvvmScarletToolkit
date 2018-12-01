@@ -9,29 +9,18 @@ namespace MvvmScarletToolkit
     /// </summary>
     public class BusyStack : ObservableObject
     {
-        private ConcurrentBag<BusyToken> _items;
-        protected ConcurrentBag<BusyToken> Items
-        {
-            get { return _items; }
-            set { SetValue(ref _items, value, InvokeOnChanged); }
-        }
-
-        private Action<bool> _onChanged;
-        public Action<bool> OnChanged
-        {
-            get { return _onChanged; }
-            set { SetValue(ref _onChanged, value); }
-        }
+        private readonly ConcurrentBag<BusyToken> _items;
+        private readonly Action<bool> _onChanged;
 
         public BusyStack()
         {
-            Items = new ConcurrentBag<BusyToken>();
+            _items = new ConcurrentBag<BusyToken>();
         }
 
         public BusyStack(Action<bool> onChanged)
             : this()
         {
-            OnChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
+            _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
         }
 
         /// <summary>
@@ -41,7 +30,7 @@ namespace MvvmScarletToolkit
         [DebuggerStepThrough]
         public bool Pull()
         {
-            var result = Items.TryTake(out var token);
+            var result = _items.TryTake(out var token);
 
             if (result)
             {
@@ -57,7 +46,7 @@ namespace MvvmScarletToolkit
         [DebuggerStepThrough]
         public void Push(BusyToken token)
         {
-            Items.Add(token);
+            _items.Add(token);
 
             InvokeOnChanged();
         }
@@ -65,7 +54,7 @@ namespace MvvmScarletToolkit
         [DebuggerStepThrough]
         public bool HasItems()
         {
-            return Items?.TryPeek(out var token) ?? false;
+            return _items.TryPeek(out var token);
         }
 
         /// <summary>
@@ -80,12 +69,7 @@ namespace MvvmScarletToolkit
 
         private void InvokeOnChanged()
         {
-            if (OnChanged == null)
-            {
-                return;
-            }
-
-            OnChanged(HasItems());
+            _onChanged(HasItems());
         }
     }
 }

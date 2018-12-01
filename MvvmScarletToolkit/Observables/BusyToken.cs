@@ -1,27 +1,20 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class BusyToken : WeakReference, IDisposable
+    public struct BusyToken : IDisposable
     {
-        [DebuggerStepThrough]
-        public BusyToken(BusyStack stack)
-             : base(stack)
-        {
-            stack?.Push(this);
-        }
+        private readonly BusyStack _busyStack;
 
-        private void DisposeInternal()
+        public BusyToken(BusyStack busyStack)
         {
-            var stack = Target as BusyStack;
-            stack?.Pull();
+            _busyStack = busyStack ?? throw new ArgumentNullException(nameof(busyStack));
+            busyStack.Push(this);
         }
 
         public void Dispose()
         {
-            DisposeInternal();
-            GC.SuppressFinalize(this);
+            _busyStack.Pull();
         }
     }
 }
