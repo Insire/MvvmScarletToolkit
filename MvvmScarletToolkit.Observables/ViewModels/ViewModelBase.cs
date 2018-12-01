@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Observables
 {
-    public abstract class ViewModelBase<T> : ObservableObject
+    public abstract class ViewModelBase : ObservableObject
     {
         protected readonly BusyStack BusyStack;
 

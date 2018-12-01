@@ -46,7 +46,7 @@ namespace MvvmScarletToolkit.Observables
         {
             _items = new ObservableCollection<T>();
 
-            Items = new ReadOnlyCollection<T>(_items);
+            Items = new ReadOnlyObservableCollection<T>(_items);
 
             BusyStack = new BusyStack((hasItems) => IsBusy = hasItems);
 

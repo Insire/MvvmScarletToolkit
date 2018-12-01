@@ -1,35 +1,19 @@
 ﻿using MvvmScarletToolkit.Observables;
-using System.Collections.ObjectModel;
 
 namespace DemoApp
 {
-    public class ParentsViewModel : ObservableObject
+    public class ParentsViewModel : ViewModelListBase<ParentViewModel>
     {
-        private ObservableCollection<ParentViewModel> _items;
-        public ObservableCollection<ParentViewModel> Items
-        {
-            get { return _items; }
-            set { SetValue(ref _items, value); }
-        }
-
-        private ParentViewModel _selectedItem;
-        public ParentViewModel SelectedItem
-        {
-            get { return _selectedItem; }
-            set { SetValue(ref _selectedItem, value); }
-        }
-
         public ParentsViewModel()
-        {
-            Items = new ObservableCollection<ParentViewModel>
+            : base(new[]
             {
                 new ParentViewModel(),
-                new ParentViewModel(),
-                new ParentViewModel(),
-                new ParentViewModel(),
-            };
-
-            SelectedItem = Items[0];
+                    new ParentViewModel(),
+                    new ParentViewModel(),
+                    new ParentViewModel(),
+            })
+        {
+            SelectedItem = this[0];
         }
     }
 }

@@ -7,14 +7,18 @@
         <DataTemplate x:Key="DemoItemTemplate" DataType="{x:Type local:AsyncDemoItem}">
             <StackPanel Orientation="Horizontal">
                 <Button Margin="5"
-                        Command="{Binding DoStuffCommand}"
-                        Content="DoStuff"
-                        ToolTip="DoStuff" />
+                        Command="{Binding LoadCommand}"
+                        Content="Load"
+                        ToolTip="Load" />
                 <Button Margin="5"
-                        Command="{Binding DoStuffCommand.CancelCommand}"
+                        Command="{Binding RefreshCommand}"
+                        Content="Refresh"
+                        ToolTip="Refresh" />
+                <Button Margin="5"
+                        Command="{Binding RefreshCommand.CancelCommand}"
                         Content="Cancel"
                         ToolTip="Cancel" />
-                <TextBlock VerticalAlignment="Center" Text="{Binding DisplayName}" >
+                <TextBlock VerticalAlignment="Center" Text="{Binding DisplayName}">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Style.Triggers>

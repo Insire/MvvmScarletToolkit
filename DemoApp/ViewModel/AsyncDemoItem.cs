@@ -1,14 +1,11 @@
-﻿using MvvmScarletToolkit.Abstractions;
-using MvvmScarletToolkit.Commands;
-using MvvmScarletToolkit.Observables;
+﻿using MvvmScarletToolkit.Observables;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DemoApp
 {
-    public class AsyncDemoItem : ObservableObject
+    public class AsyncDemoItem : ViewModelBase
     {
-        private readonly BusyStack _busyStack;
-
         private string _displayName;
         public string DisplayName
         {
@@ -23,41 +20,9 @@ namespace DemoApp
             set { SetValue(ref _isSelected, value); }
         }
 
-        private bool _isLoaded;
-        public bool IsLoaded
-        {
-            get { return _isLoaded; }
-            private set { SetValue(ref _isLoaded, value); }
-        }
-
-        private bool _isBusy;
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            private set { SetValue(ref _isBusy, value); }
-        }
-
-        private IAsyncCommand _loadCommand;
-        public IAsyncCommand LoadCommand
-        {
-            get { return _loadCommand; }
-            private set { SetValue(ref _loadCommand, value); }
-        }
-
-        private IAsyncCommand _doStuffCommand;
-        public IAsyncCommand DoStuffCommand
-        {
-            get { return _doStuffCommand; }
-            private set { SetValue(ref _doStuffCommand, value); }
-        }
-
         public AsyncDemoItem()
         {
             DisplayName = "unknown";
-            LoadCommand = AsyncCommand.Create(Load, () => !IsLoaded && !IsBusy);
-            DoStuffCommand = AsyncCommand.Create(DoStuff, CanDoStuff);
-
-            _busyStack = new BusyStack((hasItems) => IsBusy = hasItems);
         }
 
         public AsyncDemoItem(string displayName) : this()
@@ -65,29 +30,23 @@ namespace DemoApp
             DisplayName = displayName;
         }
 
-        private async Task Load()
+        protected override async Task LoadInternal(CancellationToken token)
         {
-            using (_busyStack.GetToken())
+            using (BusyStack.GetToken())
             {
-                await Task.Delay(2000).ConfigureAwait(true);
+                await Task.Delay(2000, token).ConfigureAwait(true);
 
-                IsLoaded = true;
+                await base.LoadInternal(token).ConfigureAwait(false);
             }
         }
 
-        private async Task DoStuff()
+        protected override async Task RefreshInternal(CancellationToken token)
         {
-            using (_busyStack.GetToken())
+            using (BusyStack.GetToken())
             {
                 await Task.Delay(2000).ConfigureAwait(true);
+                await base.RefreshInternal(token).ConfigureAwait(false);
             }
-        }
-
-        private bool CanDoStuff()
-        {
-            var result = !IsBusy;
-
-            return result;
         }
     }
 }

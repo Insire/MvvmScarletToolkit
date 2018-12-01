@@ -46,6 +46,7 @@
             </StackPanel>
 
             <ListBox x:Name="TargetList"
+                     Margin="5,0"
                      AllowDrop="True"
                      Drop="TargetList_Drop"
                      ItemsSource="{Binding Target.Items}"
@@ -65,7 +66,10 @@
                                    GiveFeedback="Element_GiveFeedback"
                                    LastChildFill="True"
                                    MouseMove="Element_MouseMove">
-                            <Image Source="{Binding Path}" />
+                            <TextBlock HorizontalAlignment="Center"
+                                       DockPanel.Dock="Top"
+                                       Text="{Binding DisplayName}" />
+                            <Image Source="{Binding Path=Path}" />
                         </DockPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

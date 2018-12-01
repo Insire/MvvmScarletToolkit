@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace DemoApp
 {
-    public class ParentViewModel : ObservableObject
+    public class ParentViewModel : ViewModelBase
     {
         public ICommand AddLinkedCommand { get; }
         public ICommand AddRangeCommand { get; }
@@ -27,24 +27,8 @@ namespace DemoApp
             set { SetValue(ref _logItems, value); }
         }
 
-        private BusyStack _busyStack;
-        public BusyStack BusyStack
-        {
-            get { return _busyStack; }
-            private set { SetValue(ref _busyStack, value); }
-        }
-
-        private bool _isBusy;
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            private set { SetValue(ref _isBusy, value); }
-        }
-
         public ParentViewModel()
         {
-            BusyStack = new BusyStack((hasItems) => IsBusy = hasItems);
-
             DemoItems = new DemoItems();
             LogItems = new LogItems();
 
