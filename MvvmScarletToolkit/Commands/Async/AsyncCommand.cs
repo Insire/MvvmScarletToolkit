@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit
     {
         private readonly Func<TArgument, CancellationToken, Task<TResult>> _command;
         private readonly CancelAsyncCommand _cancelCommand;
-        private readonly Func<TArgument, bool> _canExecute = null;
+        private readonly Func<TArgument, bool> _canExecute;
 
         private NotifyTaskCompletion<TResult> _execution;
 
@@ -38,19 +38,17 @@ namespace MvvmScarletToolkit
 
         public override bool CanExecute(object parameter)
         {
-            var result = CanExecuteInternal(parameter);
-
-            return result;
+            return CanExecuteInternal(parameter);
         }
 
         private bool CanExecuteInternal(object parameter)
         {
             if (IsBusy)
                 return false;
-            if (Execution != null && !Execution.IsCompleted)
+            if (Execution?.IsCompleted == false)
                 return false;
 
-            if (_canExecute == null)
+            if (_canExecute is null)
                 return true;
 
             if (parameter is null)
@@ -142,7 +140,7 @@ namespace MvvmScarletToolkit
     {
         public static AsyncCommand<object, object> Create(Func<Task> command)
         {
-            return new AsyncCommand<object, object>(async (_, token) =>
+            return new AsyncCommand<object, object>(async (_, __) =>
             {
                 await command().ConfigureAwait(false);
                 return null;
@@ -151,7 +149,7 @@ namespace MvvmScarletToolkit
 
         public static AsyncCommand<object, object> Create(Func<Task> command, Func<bool> canExecute)
         {
-            return new AsyncCommand<object, object>(async (_, token) =>
+            return new AsyncCommand<object, object>(async (_, __) =>
             {
                 await command().ConfigureAwait(false);
                 return null;
@@ -171,7 +169,7 @@ namespace MvvmScarletToolkit
         {
             return new AsyncCommand<object, object>(async (_, token) =>
             {
-                await command(token);
+                await command(token).ConfigureAwait(false);
                 return null;
             }, _ => canExecute());
         }
@@ -187,7 +185,7 @@ namespace MvvmScarletToolkit
 
         public static AsyncCommand<object, TResult> Create<TResult>(Func<Task<TResult>> command, Func<bool> canExecute)
         {
-            return new AsyncCommand<object, TResult>(async (_, token) => await command().ConfigureAwait(false), _ => canExecute());
+            return new AsyncCommand<object, TResult>(async (_, __) => await command().ConfigureAwait(false), _ => canExecute());
         }
 
         public static AsyncCommand<object, TResult> Create<TResult>(Func<CancellationToken, Task<TResult>> command, Func<bool> canExecute)

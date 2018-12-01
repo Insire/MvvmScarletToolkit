@@ -12,7 +12,9 @@ namespace MvvmScarletToolkit
         public event PropertyChangedEventHandler PropertyChanged;
 
         public abstract void Execute(object parameter);
+
         public abstract bool CanExecute(object parameter);
+
         public abstract Task ExecuteAsync(object parameter);
 
         private bool _isBusy;
