@@ -1,7 +1,7 @@
 ﻿using MvvmScarletToolkit.Abstractions;
 using System.Windows.Input;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     public interface ISnakeView
     {

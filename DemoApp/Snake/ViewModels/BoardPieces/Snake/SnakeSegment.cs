@@ -1,6 +1,7 @@
-﻿using System.Diagnostics;
+﻿using MvvmScarletToolkit;
+using System.Diagnostics;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     [DebuggerDisplay("Segment {Sequence},{CurrentPosition.X};{CurrentPosition.Y}")]
     public sealed class SnakeSegment : SnakeBase

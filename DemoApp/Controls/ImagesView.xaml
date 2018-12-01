@@ -50,22 +50,21 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <toolkit:MagickImageControl Grid.Row="0"
-                                        Grid.Column="0"
-                                        DataContext="{Binding ElementName=Images, Path=SelectedItem.Path, UpdateSourceTrigger=PropertyChanged}" />
+            <Image Grid.Row="0"
+                   Grid.Column="0"
+                   Source="{Binding ElementName=Images, Path=SelectedItem.Path, UpdateSourceTrigger=PropertyChanged}" />
 
-            <toolkit:MagickImageControl Grid.Row="2"
-                                        Grid.Column="2"
-                                        Width="100"
-                                        Height="100"
-                                        DataContext="{Binding ElementName=Images, Path=SelectedItem.Path, UpdateSourceTrigger=PropertyChanged}" />
+            <Image Grid.Row="2"
+                   Grid.Column="2"
+                   Width="100"
+                   Height="100"
+                   Source="{Binding ElementName=Images, Path=SelectedItem.Path, UpdateSourceTrigger=PropertyChanged}" />
 
             <local:AnotherImageControl Grid.Row="2"
-                   Grid.Column="0"
-                   Width="50"
-                   Height="50"
-                   ImagePath="{Binding SelectedItem.Path}" />
+                                       Grid.Column="0"
+                                       Width="50"
+                                       Height="50"
+                                       ImagePath="{Binding SelectedItem.Path}" />
         </Grid>
-
     </Grid>
 </UserControl>

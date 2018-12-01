@@ -1,7 +1,8 @@
-﻿using MvvmScarletToolkit.Observables;
+﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit.Observables;
 using System;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     public abstract class SnakeBase : ObservableObject, IPositionable
     {

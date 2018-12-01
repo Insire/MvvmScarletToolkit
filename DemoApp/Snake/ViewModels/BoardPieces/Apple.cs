@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     [DebuggerDisplay("Apple {CurrentPosition.X};{CurrentPosition.Y}")]
     public sealed class Apple : ObservableObject, IPositionable

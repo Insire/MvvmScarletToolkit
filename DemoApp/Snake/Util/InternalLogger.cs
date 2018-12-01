@@ -1,7 +1,8 @@
-﻿using System;
+﻿using MvvmScarletToolkit;
+using System;
 using System.Diagnostics;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     internal sealed class InternalLogger : ILogger
     {

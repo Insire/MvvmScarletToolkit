@@ -1,15 +1,17 @@
-﻿<toolkit:ConfigurableWindow x:Class="DemoApp.MainWindow"
-                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                            xmlns:local="clr-namespace:DemoApp"
-                            xmlns:toolkit="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit"
-                            Title="MainWindow"
-                            Width="1025"
-                            Height="350">
-    <toolkit:ConfigurableWindow.Resources>
+﻿<configurablewindow:ConfigurableWindow x:Class="DemoApp.MainWindow"
+                                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                       xmlns:browser="clr-namespace:MvvmScarletToolkit.FileSystemBrowser;assembly=MvvmScarletToolkit.FileSystemBrowser"
+                                       xmlns:configurablewindow="clr-namespace:MvvmScarletToolkit.ConfigurableWindow;assembly=MvvmScarletToolkit.ConfigurableWindow"
+                                       xmlns:local="clr-namespace:DemoApp"
+                                       xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
+                                       Title="MainWindow"
+                                       Width="1025"
+                                       Height="350">
+    <configurablewindow:ConfigurableWindow.Resources>
         <!--  create an instance of Scenes which we can use as datacontext. its filled on creation with static data  -->
-        <local:Scenes x:Key="ScenesViewModel" />
-    </toolkit:ConfigurableWindow.Resources>
+        <local:NavigationViewModel x:Key="ScenesViewModel" />
+    </configurablewindow:ConfigurableWindow.Resources>
 
     <!--  set the datacontext to the ScenesViewModel  -->
     <Grid DataContext="{StaticResource ScenesViewModel}">
@@ -33,11 +35,35 @@
                         <Setter Property="IsSelected" Value="{Binding IsSelected}" />
                     </Style>
                 </ListBox.ItemContainerStyle>
+                <ListBox.Resources>
+                    <DataTemplate DataType="{x:Type local:ParentViewModel}">
+                        <TextBlock>ParentViewModel</TextBlock>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:ProcessingImagesViewModel}">
+                        <TextBlock>Drag and Drop</TextBlock>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:DataContextSchenanigansViewModel}">
+                        <TextBlock>DataContextSchenanigansViewModel</TextBlock>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:ParentsViewModel}">
+                        <TextBlock>ParentsViewModel</TextBlock>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:SnakeView}">
+                        <TextBlock>Snake</TextBlock>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:AsyncCommandViewModelStuff}">
+                        <TextBlock>AsyncCommands</TextBlock>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type browser:FileSystemViewModel}">
+                        <TextBlock>FileSystem</TextBlock>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:Images}">
+                        <TextBlock>Images</TextBlock>
+                    </DataTemplate>
+                </ListBox.Resources>
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="Scene">
-                        <TextBlock HorizontalAlignment="Stretch"
-                                   VerticalAlignment="Center"
-                                   Text="{Binding DisplayName}" />
+                    <DataTemplate DataType="{x:Type observables:Scene}">
+                        <ContentControl Content="{Binding Content}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
@@ -49,7 +75,30 @@
                       VerticalAlignment="Stretch" />
 
         <!--  fill a contentcontrol with the content from the selected scene  -->
-        <ContentControl Grid.Column="2" Content="{Binding ElementName=Scenes, Path=SelectedItem.Content}" />
+        <ContentControl Grid.Column="2" Content="{Binding ElementName=Scenes, Path=SelectedItem.Content}">
+            <ContentControl.Resources>
+                <DataTemplate DataType="{x:Type local:ParentViewModel}">
+                    <local:Default />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:ParentsViewModel}">
+                    <local:DataGrids />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:AsyncCommandViewModelStuff}">
+                    <local:AsyncCommands />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:DataContextSchenanigansViewModel}">
+                    <local:DataContextSchenanigans />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:ProcessingImagesViewModel}">
+                    <local:DragAndDrop />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type browser:FileSystemViewModel}">
+                    <browser:FileSystemBrowser />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:Images}">
+                    <local:ImagesView />
+                </DataTemplate>
+            </ContentControl.Resources>
+        </ContentControl>
     </Grid>
-
-</toolkit:ConfigurableWindow>
+</configurablewindow:ConfigurableWindow>

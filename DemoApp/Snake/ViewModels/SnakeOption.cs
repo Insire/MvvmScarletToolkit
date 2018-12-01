@@ -1,7 +1,7 @@
 ﻿using MvvmScarletToolkit.Observables;
 using System;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     public sealed class SnakeOption : ObservableObject
     {

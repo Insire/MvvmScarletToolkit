@@ -1,6 +1,7 @@
-﻿using System.Diagnostics;
+﻿using MvvmScarletToolkit;
+using System.Diagnostics;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     [DebuggerDisplay("Head {CurrentPosition.X};{CurrentPosition.Y}")]
     public sealed class SnakeHead : SnakeBase

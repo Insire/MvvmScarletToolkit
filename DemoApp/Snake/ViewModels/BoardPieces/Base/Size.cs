@@ -1,7 +1,7 @@
 ﻿using MvvmScarletToolkit.Observables;
 using System.Diagnostics;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     [DebuggerDisplay("Size {Width};{Height}")]
     public sealed class Size : ObservableObject

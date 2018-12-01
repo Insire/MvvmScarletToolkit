@@ -1,9 +1,10 @@
-﻿using MvvmScarletToolkit.Observables;
+﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     public sealed class Snake : ObservableObject
     {

@@ -1,8 +1,6 @@
 ﻿<UserControl x:Class="DemoApp.DragAndDrop"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:DemoApp"
-             xmlns:toolkit="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -25,7 +23,7 @@
                                GiveFeedback="Element_GiveFeedback"
                                LastChildFill="True"
                                MouseMove="Element_MouseMove">
-                        <toolkit:MagickImageControl DataContext="{Binding Path}" />
+                        <Image Source="{Binding Path}" />
                     </DockPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -67,12 +65,11 @@
                                    GiveFeedback="Element_GiveFeedback"
                                    LastChildFill="True"
                                    MouseMove="Element_MouseMove">
-                            <toolkit:MagickImageControl DataContext="{Binding Path}" />
+                            <Image Source="{Binding Path}" />
                         </DockPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </DockPanel>
-
     </Grid>
 </UserControl>

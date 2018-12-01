@@ -1,4 +1,5 @@
-﻿using MvvmScarletToolkit.Abstractions;
+﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     internal sealed class SnakeEngine : ObservableObject, ISnakeManager
     {

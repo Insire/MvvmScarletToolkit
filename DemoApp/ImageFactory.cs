@@ -8,7 +8,7 @@ namespace DemoApp
         public static IEnumerable<Image> GetImageList()
         {
             var absolutePath = Path.GetFullPath(".");
-            var resourcesFolder = "Resources";
+            const string resourcesFolder = "Resources";
 
             yield return new Image()
             {
@@ -57,13 +57,6 @@ namespace DemoApp
                 Path = Path.Combine(absolutePath, resourcesFolder, "Death_to_Stock_Photography_RideorDie_8.jpg"),
                 Sequence = 5,
             };
-        }
-
-        public static Images GetImages()
-        {
-            var result = new Images();
-            result.AddRange(GetImageList());
-            return result;
         }
     }
 }

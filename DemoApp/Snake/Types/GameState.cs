@@ -1,4 +1,4 @@
-﻿namespace MvvmScarletToolkit
+﻿namespace DemoApp
 {
     public enum GameState
     {

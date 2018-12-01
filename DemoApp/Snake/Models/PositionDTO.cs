@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     [DebuggerDisplay("PositionModel {CurrentPosition.X};{CurrentPosition.Y}")]
     internal class PositionDTO : IPositionable

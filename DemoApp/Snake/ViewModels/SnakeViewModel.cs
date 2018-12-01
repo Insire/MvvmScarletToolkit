@@ -3,7 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     public sealed class SnakeViewModel : ObservableObject
     {

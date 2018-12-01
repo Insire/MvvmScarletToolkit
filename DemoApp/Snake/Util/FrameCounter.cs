@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     internal sealed class FrameCounter : IDisposable
     {

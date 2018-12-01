@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     public static class Extensions
     {

@@ -1,11 +1,9 @@
-﻿using System.ComponentModel;
-
-namespace MvvmScarletToolkit.Observables
+﻿namespace MvvmScarletToolkit.Observables
 {
     public class Scene : ObservableObject
     {
-        private INotifyPropertyChanged _content;
-        public INotifyPropertyChanged Content
+        private object _content;
+        public object Content
         {
             get { return _content; }
             set { SetValue(ref _content, value); }

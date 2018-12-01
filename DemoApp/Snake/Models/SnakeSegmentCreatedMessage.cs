@@ -1,4 +1,6 @@
-﻿namespace MvvmScarletToolkit
+﻿using MvvmScarletToolkit;
+
+namespace DemoApp
 {
     public sealed class SnakeSegmentCreatedMessage : GenericScarletMessage<SnakeSegment>
     {

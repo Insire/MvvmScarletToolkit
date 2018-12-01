@@ -1,4 +1,5 @@
-﻿using MvvmScarletToolkit.Abstractions;
+﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -8,7 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     public sealed partial class SnakeView : ISnakeView
     {

@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     public interface ISnakeManager : INotifyPropertyChanged, IDisposable
     {

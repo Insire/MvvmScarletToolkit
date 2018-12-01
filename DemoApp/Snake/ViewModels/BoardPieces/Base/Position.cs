@@ -1,7 +1,7 @@
 ﻿using MvvmScarletToolkit.Observables;
 using System.Diagnostics;
 
-namespace MvvmScarletToolkit
+namespace DemoApp
 {
     [DebuggerDisplay("Position {X};{Y}")]
     public sealed class Position : ObservableObject

@@ -80,14 +80,8 @@
     <Compile Include="Controls\DragAndDrop.xaml.cs">
       <DependentUpon>DragAndDrop.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Empty.xaml.cs">
-      <DependentUpon>Empty.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\ImagesView.xaml.cs">
       <DependentUpon>ImagesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Progress.xaml.cs">
-      <DependentUpon>Progress.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImageFactory.cs" />
     <Compile Include="MainWindowSettings.cs" />
@@ -128,6 +122,7 @@
     <Compile Include="ViewModel\Images.cs" />
     <Compile Include="ViewModel\LogItem.cs" />
     <Compile Include="ViewModel\LogItems.cs" />
+    <Compile Include="ViewModel\NavigationViewModel.cs" />
     <Compile Include="ViewModel\ParentsViewModel.cs" />
     <Compile Include="ViewModel\ParentViewModel.cs" />
     <Compile Include="ViewModel\ProcessingImagesViewModel.cs" />
@@ -156,17 +151,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Empty.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\ImagesView.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Progress.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -226,6 +213,10 @@
     <ProjectReference Include="..\MvvmScarletToolkit.ConfigurableWindow\MvvmScarletToolkit.ConfigurableWindow.csproj">
       <Project>{C714F171-8BE1-427A-BC98-C923EA3BAA30}</Project>
       <Name>MvvmScarletToolkit.ConfigurableWindow</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MvvmScarletToolkit.FileSystemBrowser\MvvmScarletToolkit.FileSystemBrowser.csproj">
+      <Project>{f7c72545-4d60-4a85-8778-9886ebd48616}</Project>
+      <Name>MvvmScarletToolkit.FileSystemBrowser</Name>
     </ProjectReference>
     <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj">
       <Project>{67e41cb4-774b-455b-b0fc-86ef13677fb7}</Project>
