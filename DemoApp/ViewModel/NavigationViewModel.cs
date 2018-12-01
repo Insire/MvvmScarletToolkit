@@ -1,4 +1,5 @@
-﻿using MvvmScarletToolkit.FileSystemBrowser;
+﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit.FileSystemBrowser;
 using MvvmScarletToolkit.Observables;
 
 namespace DemoApp
@@ -25,7 +26,7 @@ namespace DemoApp
                 },
                 new Scene()
                 {
-                    Content = new DataContextSchenanigansViewModel(),
+                    Content = new DataContextSchenanigansViewModel(new ScarletDispatcher()),
                     IsSelected = false,
                 },
                 new Scene()
@@ -35,7 +36,7 @@ namespace DemoApp
                 },
                 new Scene()
                 {
-                    Content = new ParentsViewModel(),
+                    Content = new ParentsViewModel(new ScarletDispatcher()),
                     IsSelected = false,
                 },
                 new Scene()
@@ -53,7 +54,7 @@ namespace DemoApp
                     Content = new FileSystemViewModel(),
                     IsSelected = false,
                 },
-            })
+            }, new ScarletDispatcher())
         {
         }
     }

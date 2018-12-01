@@ -1,10 +1,12 @@
-﻿using MvvmScarletToolkit.Commands;
+﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Observables
@@ -14,6 +16,7 @@ namespace MvvmScarletToolkit.Observables
     {
         private readonly ObservableCollection<T> _items;
         protected readonly BusyStack BusyStack;
+        protected readonly IScarletDispatcher Dispatcher;
 
         private bool _isBusy;
         public bool IsBusy
@@ -42,8 +45,9 @@ namespace MvvmScarletToolkit.Observables
 
         public int Count => Items.Count;
 
-        protected ViewModelListBase()
+        protected ViewModelListBase(IScarletDispatcher dispatcher)
         {
+            Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _items = new ObservableCollection<T>();
 
             Items = new ReadOnlyObservableCollection<T>(_items);
@@ -55,27 +59,27 @@ namespace MvvmScarletToolkit.Observables
             ClearCommand = new RelayCommand(Clear, CanClear);
         }
 
-        protected ViewModelListBase(IEnumerable<T> items)
-            : this()
+        protected ViewModelListBase(IEnumerable<T> items, IScarletDispatcher dispatcher)
+            : this(dispatcher)
         {
-            AddRange(items);
-
-            // initial Notification, so that the UI recognizes the value
-            OnPropertyChanged(nameof(Count));
+            _ = AddRange(items)
+                // initial Notification, so that the UI recognizes the value
+                .ContinueWith(async _ => await dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false))
+                .ConfigureAwait(false);
         }
 
-        public virtual void Add(T item)
+        public virtual async Task Add(T item)
         {
             if (item is null)
                 throw new ArgumentNullException(nameof(item));
 
             using (BusyStack.GetToken())
-                _items.Add(item);
+                await Dispatcher.Invoke(() => _items.Add(item)).ConfigureAwait(false);
 
             OnPropertyChanged(nameof(Count));
         }
 
-        public virtual void AddRange(IEnumerable<T> items)
+        public virtual async Task AddRange(IEnumerable<T> items)
         {
             if (items is null)
                 throw new ArgumentNullException(nameof(items));
@@ -83,7 +87,7 @@ namespace MvvmScarletToolkit.Observables
             using (BusyStack.GetToken())
             {
                 foreach (var item in items)
-                    Add(item);
+                    await Add(item).ConfigureAwait(false);
             }
         }
 

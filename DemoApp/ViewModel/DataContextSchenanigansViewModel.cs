@@ -1,14 +1,16 @@
-﻿using MvvmScarletToolkit.Observables;
+﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Observables;
 
 namespace DemoApp
 {
     public class DataContextSchenanigansViewModel : ViewModelListBase<AsyncDemoItem>
     {
-        public DataContextSchenanigansViewModel()
+        public DataContextSchenanigansViewModel(IScarletDispatcher dispatcher)
+            : base(dispatcher)
         {
             for (var i = 0; i < 10; i++)
             {
-                Add(new AsyncDemoItem
+                _ = Add(new AsyncDemoItem
                 {
                     DisplayName = "Test X",
                 });

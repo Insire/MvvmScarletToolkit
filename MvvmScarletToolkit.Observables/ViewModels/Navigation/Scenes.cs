@@ -1,21 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using MvvmScarletToolkit.Abstractions;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MvvmScarletToolkit.Observables
 {
     public abstract class Scenes : ViewModelListBase<Scene>
     {
-        protected Scenes()
+        protected Scenes(IScarletDispatcher dispatcher)
+            : base(dispatcher)
         {
         }
 
-        protected Scenes(IEnumerable<Scene> content)
+        protected Scenes(IEnumerable<Scene> content, IScarletDispatcher dispatcher)
+            : this(dispatcher)
         {
             using (BusyStack.GetToken())
             {
-                AddRange(content);
-
-                SelectedItem = Items.First((p) => p.IsSelected);
+                _ = base.AddRange(content).ContinueWith(_ => base.SelectedItem = Items.First((p) => p.IsSelected));
             }
         }
     }

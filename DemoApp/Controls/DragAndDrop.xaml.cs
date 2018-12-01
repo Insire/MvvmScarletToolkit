@@ -44,7 +44,7 @@ namespace DemoApp
             e.Handled = true;
         }
 
-        private void TargetList_Drop(object sender, DragEventArgs e)
+        private async void TargetList_Drop(object sender, DragEventArgs e)
         {
             base.OnDrop(e);
 
@@ -61,13 +61,13 @@ namespace DemoApp
                     if ((e.KeyStates & DragDropKeyStates.ControlKey) != 0)
                     {
                         e.Effects = DragDropEffects.Copy;
-                        vm.Target.Add(image);
+                        await vm.Target.Add(image).ConfigureAwait(false);
                     }
                     else
                     {
                         e.Effects = DragDropEffects.Move;
                         vm.Source.Remove(image);
-                        vm.Target.Add(image);
+                        await vm.Target.Add(image).ConfigureAwait(false);
                     }
                 }
             }
@@ -75,7 +75,7 @@ namespace DemoApp
             e.Handled = true;
         }
 
-        private void SourceList_Drop(object sender, DragEventArgs e)
+        private async void SourceList_Drop(object sender, DragEventArgs e)
         {
             base.OnDrop(e);
 
@@ -92,13 +92,13 @@ namespace DemoApp
                     if ((e.KeyStates & DragDropKeyStates.ControlKey) != 0)
                     {
                         e.Effects = DragDropEffects.Copy;
-                        vm.Source.Add(image);
+                        await vm.Source.Add(image).ConfigureAwait(false);
                     }
                     else
                     {
                         e.Effects = DragDropEffects.Move;
                         vm.Target.Remove(image);
-                        vm.Source.Add(image);
+                        await vm.Source.Add(image).ConfigureAwait(false);
                     }
                 }
             }

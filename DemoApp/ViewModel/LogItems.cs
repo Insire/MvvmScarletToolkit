@@ -1,5 +1,7 @@
-﻿using MvvmScarletToolkit.Commands;
+﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace DemoApp
@@ -8,15 +10,16 @@ namespace DemoApp
     {
         public ICommand AddCommand { get; }
 
-        public LogItems()
+        public LogItems(IScarletDispatcher dispatcher)
+            : base(dispatcher)
         {
-            AddCommand = new RelayCommand(AddNew, CanAddNew);
+            AddCommand = AsyncCommand.Create(AddNew, CanAddNew);
         }
 
-        public void AddNew()
+        public async Task AddNew()
         {
             var item = new LogItem();
-            Add(item);
+            await Add(item).ConfigureAwait(false);
 
             SelectedItem = item;
         }

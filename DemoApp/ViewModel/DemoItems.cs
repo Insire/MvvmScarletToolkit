@@ -1,22 +1,24 @@
-﻿using MvvmScarletToolkit.Commands;
+﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
-using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace DemoApp
 {
     public class DemoItems : ViewModelListBase<DemoItem>
     {
-        public ICommand AddCommand { get; }
+        public IExtendedAsyncCommand AddCommand { get; }
 
-        public DemoItems()
+        public DemoItems(IScarletDispatcher dispatcher)
+            : base(dispatcher)
         {
-            AddCommand = new RelayCommand(AddNew, CanAddNew);
+            AddCommand = AsyncCommand.Create(AddNew, CanAddNew);
         }
 
-        public void AddNew()
+        public async Task AddNew()
         {
             var item = new DemoItem();
-            Add(item);
+            await Add(item).ConfigureAwait(false);
 
             SelectedItem = item;
         }
