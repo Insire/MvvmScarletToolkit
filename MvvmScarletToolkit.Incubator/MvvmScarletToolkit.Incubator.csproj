@@ -67,6 +67,7 @@
     <Compile Include="ObservableBusyStack.cs" />
     <Compile Include="Overlay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyObserver.cs" />
     <Compile Include="Virtualization\IVirtualizedListViewModel.cs" />
     <Compile Include="Virtualization\VirtualizationViewModel.cs" />
     <Compile Include="Virtualization\VirtualizationViewModelState.cs" />

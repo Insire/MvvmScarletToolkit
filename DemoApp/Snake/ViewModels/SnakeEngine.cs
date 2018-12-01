@@ -22,8 +22,8 @@ namespace DemoApp
         private readonly Random _random;
         private readonly IMessenger _messenger;
 
-        private bool _isLoaded = false;
-        private bool _disposed = false;
+        private bool _isLoaded;
+        private bool _disposed;
 
         private Task _snakeTask;
         private CancellationTokenSource _snakeSource;

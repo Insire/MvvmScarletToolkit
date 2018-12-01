@@ -8,8 +8,8 @@ namespace MvvmScarletToolkit.Commands
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Task<TResult> Task { get; private set; }
-        public Task TaskCompletion { get; private set; }
+        public Task<TResult> Task { get; }
+        public Task TaskCompletion { get; }
         public TResult Result => (Task.Status == TaskStatus.RanToCompletion) ? Task.Result : default;
 
         public TaskStatus Status { get { return Task.Status; } }

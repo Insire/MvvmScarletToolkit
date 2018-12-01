@@ -30,7 +30,8 @@ namespace MvvmScarletToolkit.Observables
     /// and executes callback methods (i.e. handlers) registered for properties of that object.
     /// </summary>
     /// <typeparam name="TPropertySource">The type of object to monitor for property changes.</typeparam>
-    public class PropertyObserver<TPropertySource> : IWeakEventListener where TPropertySource : INotifyPropertyChanged
+    public class PropertyObserver<TPropertySource> : IWeakEventListener
+        where TPropertySource : INotifyPropertyChanged
     {
         private readonly Dictionary<string, Action<TPropertySource>> _propertyNameToHandlerMap;
         private readonly WeakReference _propertySourceRef;

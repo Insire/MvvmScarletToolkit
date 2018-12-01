@@ -1,270 +1,52 @@
-﻿<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{66BE74B3-937A-45AF-8F44-8024E930FAA7}</ProjectGuid>
+    <LanguageTargets>$(MSBuildExtensionsPath)\$(VisualStudioVersion)\Bin\Microsoft.CSharp.targets</LanguageTargets>
+    <TargetFramework>net471</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DemoApp</RootNamespace>
-    <AssemblyName>DemoApp</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <StartupObject />
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-    <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>7.1</LangVersion>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>7.1</LangVersion>
-  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Expression.Blend.Sdk" Version="1.0.2" />
+    <!-- App.xaml -->
+    <ApplicationDefinition Include="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </ApplicationDefinition>
+
+    <!-- XAML elements -->
+    <Page Include="**\*.xaml" Exclude="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </Page>
+    <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.ConfigurableWindow\MvvmScarletToolkit.ConfigurableWindow.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.FileSystemBrowser\MvvmScarletToolkit.FileSystemBrowser.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
+    <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
+
+    <!-- Resources -->
+    <EmbeddedResource Update="Properties\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
+    <Compile Update="Properties\Resources.Designer.cs" AutoGen="True" DependentUpon="Resources.resx" DesignTime="True" />
+
+    <!-- Settings -->
+    <None Update="Properties\Settings.settings" Generator="SettingsSingleFileGenerator" LastGenOutput="Settings.Designer.cs" />
+    <Compile Update="Properties\Settings.Designer.cs" AutoGen="True" DependentUpon="Settings.settings" />
+
   </ItemGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="Controls\AnotherImageControl.xaml.cs">
-      <DependentUpon>AnotherImageControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\AsyncCommands.xaml.cs">
-      <DependentUpon>AsyncCommands.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DataContextSchenanigans.xaml.cs">
-      <DependentUpon>DataContextSchenanigans.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DataGrids.xaml.cs">
-      <DependentUpon>DataGrids.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Default.xaml.cs">
-      <DependentUpon>Default.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DragAndDrop.xaml.cs">
-      <DependentUpon>DragAndDrop.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ImagesView.xaml.cs">
-      <DependentUpon>ImagesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ProgressView.xaml.cs">
-      <DependentUpon>ProgressView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ImageFactory.cs" />
-    <Compile Include="MainWindowSettings.cs" />
-    <Compile Include="Snake\DummySnakeViewModel.cs" />
-    <Compile Include="Snake\Interfaces\IPositionable.cs" />
-    <Compile Include="Snake\Interfaces\ISnakeManager.cs" />
-    <Compile Include="Snake\ISnakeView.cs" />
-    <Compile Include="Snake\Models\PositionDTO.cs" />
-    <Compile Include="Snake\Models\PositionUpdatedMessage.cs" />
-    <Compile Include="Snake\Models\SnakeDirectionChanged.cs" />
-    <Compile Include="Snake\Models\SnakeSegmentCreatedMessage.cs" />
-    <Compile Include="Snake\SnakeView.xaml.cs">
-      <DependentUpon>SnakeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Snake\Types\Direction.cs" />
-    <Compile Include="Snake\Types\GameState.cs" />
-    <Compile Include="Snake\Types\View.cs" />
-    <Compile Include="Snake\Util\Extensions.cs" />
-    <Compile Include="Snake\Util\FrameCounter.cs" />
-    <Compile Include="Snake\Util\InternalLogger.cs" />
-    <Compile Include="Snake\ViewModels\BoardPieces\Apple.cs" />
-    <Compile Include="Snake\ViewModels\BoardPieces\Base\Position.cs" />
-    <Compile Include="Snake\ViewModels\BoardPieces\Base\Size.cs" />
-    <Compile Include="Snake\ViewModels\BoardPieces\Snake\Base\SnakeBase.cs" />
-    <Compile Include="Snake\ViewModels\BoardPieces\Snake\Snake.cs" />
-    <Compile Include="Snake\ViewModels\BoardPieces\Snake\SnakeHead.cs" />
-    <Compile Include="Snake\ViewModels\BoardPieces\Snake\SnakeSegment.cs" />
-    <Compile Include="Snake\ViewModels\KeyMapViewModel.cs" />
-    <Compile Include="Snake\ViewModels\SnakeEngine.cs" />
-    <Compile Include="Snake\ViewModels\SnakeLogViewModel.cs" />
-    <Compile Include="Snake\ViewModels\SnakeOption.cs" />
-    <Compile Include="Snake\ViewModels\SnakeViewModel.cs" />
-    <Compile Include="ViewModel\AsyncCommandViewModelStuff.cs" />
-    <Compile Include="ViewModel\AsyncDemoItem.cs" />
-    <Compile Include="ViewModel\DataContextSchenanigansViewModel.cs" />
-    <Compile Include="ViewModel\DemoItem.cs" />
-    <Compile Include="ViewModel\DemoItems.cs" />
-    <Compile Include="ViewModel\Image.cs" />
-    <Compile Include="ViewModel\Images.cs" />
-    <Compile Include="ViewModel\LogItem.cs" />
-    <Compile Include="ViewModel\LogItems.cs" />
-    <Compile Include="ViewModel\NavigationViewModel.cs" />
-    <Compile Include="ViewModel\ParentsViewModel.cs" />
-    <Compile Include="ViewModel\ParentViewModel.cs" />
-    <Compile Include="ViewModel\ProcessingImagesViewModel.cs" />
-    <Compile Include="ViewModel\ProgressViewModel.cs" />
-    <Page Include="Controls\AnotherImageControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\AsyncCommands.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\DataContextSchenanigans.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\DataGrids.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Default.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\DragAndDrop.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\ImagesView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\ProgressView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="Snake\SnakeView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj">
-      <Project>{4D4558E2-878F-48C8-BBE2-E22DB20E9A55}</Project>
-      <Name>MvvmScarletToolkit.Abstractions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj">
-      <Project>{A85ECF94-F42D-43B2-9C65-C27E2963CF08}</Project>
-      <Name>MvvmScarletToolkit.Commands</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvvmScarletToolkit.ConfigurableWindow\MvvmScarletToolkit.ConfigurableWindow.csproj">
-      <Project>{C714F171-8BE1-427A-BC98-C923EA3BAA30}</Project>
-      <Name>MvvmScarletToolkit.ConfigurableWindow</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvvmScarletToolkit.FileSystemBrowser\MvvmScarletToolkit.FileSystemBrowser.csproj">
-      <Project>{f7c72545-4d60-4a85-8778-9886ebd48616}</Project>
-      <Name>MvvmScarletToolkit.FileSystemBrowser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj">
-      <Project>{67e41cb4-774b-455b-b0fc-86ef13677fb7}</Project>
-      <Name>MvvmScarletToolkit.Incubator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj">
-      <Project>{3D7BBED6-6056-488D-AE6A-65DF15D3D046}</Project>
-      <Name>MvvmScarletToolkit.Observables</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj">
-      <Project>{d555c0fd-335d-4c64-b80b-8999e66402b8}</Project>
-      <Name>MvvmScarletToolkit</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\Death_to_Stock_Photography_RideorDie_8.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Moon_Color_Hypersaturated_Stars_900.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\wallhaven-245035.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\wallhaven-319605.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\wallhaven-401406.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\wallhaven-75354.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

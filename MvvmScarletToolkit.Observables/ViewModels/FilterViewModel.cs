@@ -121,7 +121,7 @@ namespace MvvmScarletToolkit.Observables
                             break;
                     }
 
-                    _items.Insert
+                    //_items.Insert
                 }
                 //await _dispatcher.Invoke(() => _items.Add(item));
             }
