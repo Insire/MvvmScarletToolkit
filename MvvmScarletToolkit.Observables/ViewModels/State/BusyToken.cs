@@ -4,9 +4,9 @@ namespace MvvmScarletToolkit.Observables
 {
     public struct BusyToken : IDisposable
     {
-        private readonly BusyStack _busyStack;
+        private readonly IBusyStack _busyStack;
 
-        public BusyToken(BusyStack busyStack)
+        public BusyToken(IBusyStack busyStack)
         {
             _busyStack = busyStack ?? throw new ArgumentNullException(nameof(busyStack));
             busyStack.Push(this);

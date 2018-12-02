@@ -2,44 +2,46 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class ObservableBusyStack : BusyStack, IObservable<bool>, IDisposable
+    public sealed class ObservableBusyStack : IObservable<bool>, IBusyStack, IDisposable
     {
-        private readonly ConcurrentBag<BusyToken> _stack;
+        private readonly ConcurrentBag<BusyToken> _items;
         private readonly List<IObserver<bool>> _observers;
         private readonly ReaderWriterLockSlim _syncRoot;
+        private readonly Action<bool> _onChanged;
 
         public ObservableBusyStack(Action<bool> onChanged)
-            : base(onChanged)
         {
-            _stack = new ConcurrentBag<BusyToken>();
+            _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
+            _items = new ConcurrentBag<BusyToken>();
             _observers = new List<IObserver<bool>>();
             _syncRoot = new ReaderWriterLockSlim();
         }
 
-        public override bool Pull()
+        public bool Pull()
         {
-            var result = base.Pull() || this.Pull();
+            var result = _items.TryTake(out var token);
             if (result)
                 Notify();
 
             return result;
         }
 
-        public override void Push(BusyToken token)
+        [DebuggerStepThrough]
+        public void Push(BusyToken token)
         {
-            base.Push(token);
-            this.Push(token);
+            _items.Add(token);
 
             Notify();
         }
 
         private void Notify()
         {
-            var changedValue = _stack.TryPeek(out _);
+            var changedValue = _items.TryPeek(out _);
 
             NotifyOwner(changedValue);
             NotifySubscribers(changedValue);
@@ -48,7 +50,7 @@ namespace MvvmScarletToolkit
         private void NotifySubscribers(bool changedValue)
         {
             _syncRoot.EnterReadLock();
-            for (var i = _observers.Count; i >= 0; i--)
+            for (var i = _observers.Count - 1; i >= 0; i--)
             {
                 var observer = _observers[i];
                 observer.OnNext(changedValue);
@@ -56,9 +58,10 @@ namespace MvvmScarletToolkit
             _syncRoot.ExitReadLock();
         }
 
+        [DebuggerStepThrough]
         private void NotifyOwner(bool changedValue)
         {
-            OnChanged.Invoke(changedValue);
+            _onChanged.Invoke(changedValue);
         }
 
         public IDisposable Subscribe(IObserver<bool> observer)
@@ -68,6 +71,22 @@ namespace MvvmScarletToolkit
             _syncRoot.ExitWriteLock();
 
             return result;
+        }
+
+        /// <summary>
+        /// Returns a new <see cref="BusyToken"/> thats associated with <see cref="this"/> instance of a <see cref="BusyStack"/>
+        /// </summary>
+        /// <returns>a new <see cref="BusyToken"/></returns>
+        [DebuggerStepThrough]
+        public BusyToken GetToken()
+        {
+            return new BusyToken(this);
+        }
+
+        [DebuggerStepThrough]
+        private bool HasItems()
+        {
+            return _items.TryPeek(out var token);
         }
 
         public void Dispose()

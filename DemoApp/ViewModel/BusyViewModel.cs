@@ -36,7 +36,7 @@ namespace DemoApp
                 _disposables.Add(viewModel, viewModel.Subscribe(this));
 
                 await Add(viewModel).ConfigureAwait(false);
-                await Task.Delay(1500).ConfigureAwait(false);
+                await Task.Delay(250).ConfigureAwait(false);
             }
         }
 
@@ -48,7 +48,7 @@ namespace DemoApp
                 _disposables.Add(viewModel, viewModel.Subscribe(this));
 
                 await Add(viewModel).ConfigureAwait(false);
-                await Task.Delay(1500).ConfigureAwait(false);
+                await Task.Delay(250).ConfigureAwait(false);
             }
         }
 
@@ -118,7 +118,7 @@ namespace DemoApp
         {
             using (_observableBusyStack.GetToken())
             {
-                await Task.Delay(1500, token).ConfigureAwait(false);
+                await Task.Delay(250, token).ConfigureAwait(false);
             }
         }
 

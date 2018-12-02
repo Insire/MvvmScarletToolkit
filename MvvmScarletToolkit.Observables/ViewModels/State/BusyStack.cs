@@ -7,19 +7,19 @@ namespace MvvmScarletToolkit.Observables
     /// <summary>
     /// BusyStack will handle notifying a viewmodel on if actions are pending
     /// </summary>
-    public class BusyStack
+    public sealed class BusyStack : IBusyStack
     {
         private readonly ConcurrentBag<BusyToken> _items;
-        protected readonly Action<bool> OnChanged;
+        private readonly Action<bool> _onChanged;
 
         public BusyStack(Action<bool> onChanged)
         {
-            OnChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
+            _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
             _items = new ConcurrentBag<BusyToken>();
         }
 
         [DebuggerStepThrough]
-        public virtual bool Pull()
+        public bool Pull()
         {
             var result = _items.TryTake(out var token);
 
@@ -30,7 +30,7 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [DebuggerStepThrough]
-        public virtual void Push(BusyToken token)
+        public void Push(BusyToken token)
         {
             _items.Add(token);
 
@@ -38,7 +38,7 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [DebuggerStepThrough]
-        public bool HasItems()
+        private bool HasItems()
         {
             return _items.TryPeek(out var token);
         }
@@ -55,7 +55,7 @@ namespace MvvmScarletToolkit.Observables
 
         private void InvokeOnChanged()
         {
-            OnChanged(HasItems());
+            _onChanged(HasItems());
         }
     }
 }
