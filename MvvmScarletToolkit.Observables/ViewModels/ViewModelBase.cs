@@ -7,7 +7,7 @@ namespace MvvmScarletToolkit.Observables
 {
     public abstract class ViewModelBase : ObservableObject
     {
-        protected readonly BusyStack BusyStack;
+        protected readonly ObservableBusyStack BusyStack;
 
         private bool _isBusy;
         public bool IsBusy
@@ -31,7 +31,7 @@ namespace MvvmScarletToolkit.Observables
 
         protected ViewModelBase()
         {
-            BusyStack = new BusyStack((hasItems) => IsBusy = hasItems);
+            BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
 
             LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad);
             RefreshCommand = AsyncCommand.Create(RefreshInternal, CanRefresh);

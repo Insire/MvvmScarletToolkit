@@ -1,11 +1,10 @@
-﻿using MvvmScarletToolkit.Observables;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Observables
 {
     public sealed class ObservableBusyStack : IObservable<bool>, IBusyStack, IDisposable
     {
@@ -22,38 +21,41 @@ namespace MvvmScarletToolkit
             _syncRoot = new ReaderWriterLockSlim();
         }
 
-        public bool Pull()
+        [DebuggerStepThrough]
+        public void Pull()
         {
+            var oldValue = _items.TryPeek(out _);
             var result = _items.TryTake(out var token);
-            if (result)
-                Notify();
+            var newValue = _items.TryPeek(out _);
 
-            return result;
+            if (oldValue.Equals(newValue))
+                return;
+
+            NotifyOwner(newValue);
+            NotifySubscribers(newValue);
         }
 
         [DebuggerStepThrough]
         public void Push(BusyToken token)
         {
+            var oldValue = _items.TryPeek(out _);
             _items.Add(token);
+            var newValue = _items.TryPeek(out _);
 
-            Notify();
+            if (oldValue.Equals(newValue))
+                return;
+
+            NotifyOwner(newValue);
+            NotifySubscribers(newValue);
         }
 
-        private void Notify()
-        {
-            var changedValue = _items.TryPeek(out _);
-
-            NotifyOwner(changedValue);
-            NotifySubscribers(changedValue);
-        }
-
-        private void NotifySubscribers(bool changedValue)
+        private void NotifySubscribers(bool newValue)
         {
             _syncRoot.EnterReadLock();
             for (var i = _observers.Count - 1; i >= 0; i--)
             {
                 var observer = _observers[i];
-                observer.OnNext(changedValue);
+                observer.OnNext(newValue);
             }
             _syncRoot.ExitReadLock();
         }

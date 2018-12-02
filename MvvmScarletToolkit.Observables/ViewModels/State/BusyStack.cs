@@ -19,14 +19,12 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [DebuggerStepThrough]
-        public bool Pull()
+        public void Pull()
         {
             var result = _items.TryTake(out var token);
 
             if (result)
                 InvokeOnChanged();
-
-            return result;
         }
 
         [DebuggerStepThrough]

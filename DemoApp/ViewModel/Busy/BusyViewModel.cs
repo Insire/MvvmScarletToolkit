@@ -1,5 +1,4 @@
-﻿using MvvmScarletToolkit;
-using MvvmScarletToolkit.Abstractions;
+﻿using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -13,7 +12,6 @@ namespace DemoApp
     public sealed class BusyViewModel : ViewModelListBase<ObservableObject>, IObserver<bool>, IObservable<bool>, IDisposable
     {
         private readonly IDictionary<ObservableObject, IDisposable> _disposables;
-        private readonly ObservableBusyStack _observableBusyStack;
 
         public IExtendedAsyncCommand AddContainerCommand { get; }
         public IExtendedAsyncCommand AddChildCommand { get; }
@@ -21,7 +19,6 @@ namespace DemoApp
         public BusyViewModel(IScarletDispatcher dispatcher)
             : base(dispatcher)
         {
-            _observableBusyStack = new ObservableBusyStack(hasItems => IsBusy = hasItems);
             _disposables = new Dictionary<ObservableObject, IDisposable>();
 
             AddChildCommand = AsyncCommand.Create(InternalAddChildAsync, CanAddChild);
@@ -36,7 +33,7 @@ namespace DemoApp
                 _disposables.Add(viewModel, viewModel.Subscribe(this));
 
                 await Add(viewModel).ConfigureAwait(false);
-                await Task.Delay(250).ConfigureAwait(false);
+                await Task.Delay(450).ConfigureAwait(false);
             }
         }
 
@@ -48,7 +45,7 @@ namespace DemoApp
                 _disposables.Add(viewModel, viewModel.Subscribe(this));
 
                 await Add(viewModel).ConfigureAwait(false);
-                await Task.Delay(250).ConfigureAwait(false);
+                await Task.Delay(450).ConfigureAwait(false);
             }
         }
 
@@ -78,7 +75,7 @@ namespace DemoApp
 
         public void OnCompleted()
         {
-            //hm, what to do here?
+            //hm, what to do here? I guess nothing right now...
         }
 
         public void Dispose()
@@ -91,40 +88,7 @@ namespace DemoApp
 
         public IDisposable Subscribe(IObserver<bool> observer)
         {
-            return _observableBusyStack.Subscribe(observer);
-        }
-    }
-
-    public sealed class ObservableBusyViewModel : ObservableObject, IObservable<bool>
-    {
-        private readonly ObservableBusyStack _observableBusyStack;
-
-        private bool _isBusy;
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            private set { SetValue(ref _isBusy, value); }
-        }
-
-        public IExtendedAsyncCommand BeBusyCommand { get; }
-
-        public ObservableBusyViewModel()
-        {
-            _observableBusyStack = new ObservableBusyStack(hasItems => IsBusy = hasItems);
-            BeBusyCommand = AsyncCommand.Create(BeBusyInternal, () => !IsBusy);
-        }
-
-        private async Task BeBusyInternal(CancellationToken token)
-        {
-            using (_observableBusyStack.GetToken())
-            {
-                await Task.Delay(250, token).ConfigureAwait(false);
-            }
-        }
-
-        public IDisposable Subscribe(IObserver<bool> observer)
-        {
-            return _observableBusyStack.Subscribe(observer);
+            return BusyStack.Subscribe(observer);
         }
     }
 }

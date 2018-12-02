@@ -17,7 +17,7 @@ namespace MvvmScarletToolkit.Observables
     {
         private readonly ObservableCollection<T> _items;
 
-        protected readonly BusyStack BusyStack;
+        protected readonly ObservableBusyStack BusyStack;
         protected readonly IScarletDispatcher Dispatcher;
 
         private bool _isBusy;
@@ -67,7 +67,7 @@ namespace MvvmScarletToolkit.Observables
 
             Items = new ReadOnlyObservableCollection<T>(_items);
 
-            BusyStack = new BusyStack((hasItems) => IsBusy = hasItems);
+            BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
 
             RemoveCommand = new RelayCommand<T>(Remove, CanRemove);
             RemoveRangeCommand = new RelayCommand<IList>(RemoveRange, CanRemoveRange);
@@ -84,9 +84,11 @@ namespace MvvmScarletToolkit.Observables
                 throw new ArgumentNullException(nameof(item));
 
             using (BusyStack.GetToken())
+            {
                 await Dispatcher.Invoke(() => _items.Add(item)).ConfigureAwait(false);
 
-            OnPropertyChanged(nameof(Count));
+                OnPropertyChanged(nameof(Count));
+            }
         }
 
         public virtual async Task AddRange(IEnumerable<T> items)

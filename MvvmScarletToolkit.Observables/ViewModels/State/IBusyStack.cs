@@ -4,7 +4,7 @@
     {
         BusyToken GetToken();
 
-        bool Pull();
+        void Pull();
 
         void Push(BusyToken token);
     }
