@@ -58,6 +58,9 @@
                     <DataTemplate DataType="{x:Type local:ProgressViewModel}">
                         <TextBlock>Progress</TextBlock>
                     </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:BusyViewModel}">
+                        <TextBlock>Busy tree</TextBlock>
+                    </DataTemplate>
                 </ListBox.Resources>
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type observables:Scene}">
@@ -101,6 +104,9 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type local:ProgressViewModel}">
                     <controls:ProgressView />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:BusyViewModel}">
+                    <controls:BusyTree />
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>

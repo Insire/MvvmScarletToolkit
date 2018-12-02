@@ -59,6 +59,11 @@ namespace DemoApp
                     Content = new FileSystemViewModel(),
                     IsSelected = false,
                 },
+                new Scene()
+                {
+                    Content = new BusyViewModel(dispatcher),
+                    IsSelected = false,
+                }
             };
 
             var navigation = new NavigationViewModel();

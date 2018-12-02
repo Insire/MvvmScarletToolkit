@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -15,6 +16,7 @@ namespace MvvmScarletToolkit.Observables
         where T : class, INotifyPropertyChanged
     {
         private readonly ObservableCollection<T> _items;
+
         protected readonly BusyStack BusyStack;
         protected readonly IScarletDispatcher Dispatcher;
 
@@ -22,7 +24,14 @@ namespace MvvmScarletToolkit.Observables
         public bool IsBusy
         {
             get { return _isBusy; }
-            private set { SetValue(ref _isBusy, value); }
+            protected set { SetValue(ref _isBusy, value); }
+        }
+
+        private bool _isLoaded;
+        public bool IsLoaded
+        {
+            get { return _isLoaded; }
+            protected set { SetValue(ref _isLoaded, value); }
         }
 
         private T _selectedItem;
@@ -41,6 +50,12 @@ namespace MvvmScarletToolkit.Observables
         public virtual ICommand RemoveCommand { get; }
         public virtual ICommand ClearCommand { get; }
 
+        public virtual IExtendedAsyncCommand LoadCommand { get; }
+
+        public virtual IExtendedAsyncCommand RefreshCommand { get; }
+
+        public virtual IExtendedAsyncCommand UnloadCommand { get; }
+
         public IReadOnlyCollection<T> Items { get; }
 
         public int Count => Items.Count;
@@ -57,6 +72,10 @@ namespace MvvmScarletToolkit.Observables
             RemoveCommand = new RelayCommand<T>(Remove, CanRemove);
             RemoveRangeCommand = new RelayCommand<IList>(RemoveRange, CanRemoveRange);
             ClearCommand = new RelayCommand(Clear, CanClear);
+
+            LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad);
+            RefreshCommand = AsyncCommand.Create(RefreshInternal, CanRefresh);
+            UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload);
         }
 
         public virtual async Task Add(T item)
@@ -80,11 +99,6 @@ namespace MvvmScarletToolkit.Observables
                 foreach (var item in items)
                     await Add(item).ConfigureAwait(false);
             }
-        }
-
-        protected virtual bool CanAdd()
-        {
-            return !(_items is null);
         }
 
         public virtual void Remove(T item)
@@ -141,6 +155,45 @@ namespace MvvmScarletToolkit.Observables
         protected bool CanClear()
         {
             return _items.Count > 0;
+        }
+
+        protected virtual Task LoadInternal(CancellationToken token)
+        {
+            using (BusyStack.GetToken())
+            {
+                IsLoaded = true;
+                return Task.CompletedTask;
+            }
+        }
+
+        protected virtual bool CanLoad()
+        {
+            return !IsLoaded;
+        }
+
+        protected virtual Task UnloadInternalAsync()
+        {
+            using (BusyStack.GetToken())
+            {
+                IsLoaded = false;
+                return Task.CompletedTask;
+            }
+        }
+
+        protected virtual bool CanUnload()
+        {
+            return IsLoaded;
+        }
+
+        protected virtual Task RefreshInternal(CancellationToken token)
+        {
+            using (BusyStack.GetToken())
+                return Task.CompletedTask;
+        }
+
+        protected virtual bool CanRefresh()
+        {
+            return IsLoaded;
         }
     }
 }

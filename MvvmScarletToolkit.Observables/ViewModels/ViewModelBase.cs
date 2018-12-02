@@ -13,14 +13,14 @@ namespace MvvmScarletToolkit.Observables
         public bool IsBusy
         {
             get { return _isBusy; }
-            private set { SetValue(ref _isBusy, value); }
+            protected set { SetValue(ref _isBusy, value); }
         }
 
         private bool _isLoaded;
         public bool IsLoaded
         {
             get { return _isLoaded; }
-            private set { SetValue(ref _isLoaded, value); }
+            protected set { SetValue(ref _isLoaded, value); }
         }
 
         public virtual IExtendedAsyncCommand LoadCommand { get; }

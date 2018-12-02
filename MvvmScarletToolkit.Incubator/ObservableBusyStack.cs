@@ -6,39 +6,41 @@ using System.Threading;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class ObservableBusyStack : IObservable<bool>, IDisposable
+    public sealed class ObservableBusyStack : BusyStack, IObservable<bool>, IDisposable
     {
         private readonly ConcurrentBag<BusyToken> _stack;
-        private readonly Action<bool> _onChanged;
         private readonly List<IObserver<bool>> _observers;
         private readonly ReaderWriterLockSlim _syncRoot;
 
         public ObservableBusyStack(Action<bool> onChanged)
+            : base(onChanged)
         {
-            _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
-
             _stack = new ConcurrentBag<BusyToken>();
             _observers = new List<IObserver<bool>>();
             _syncRoot = new ReaderWriterLockSlim();
         }
 
-        public void Pull()
+        public override bool Pull()
         {
-            if (!_stack.TryTake(out _))
-                return;
+            var result = base.Pull() || this.Pull();
+            if (result)
+                Notify();
 
-            Notify();
+            return result;
         }
 
-        public void Push(BusyToken token)
+        public override void Push(BusyToken token)
         {
-            _stack.Add(token);
+            base.Push(token);
+            this.Push(token);
+
             Notify();
         }
 
         private void Notify()
         {
             var changedValue = _stack.TryPeek(out _);
+
             NotifyOwner(changedValue);
             NotifySubscribers(changedValue);
         }
@@ -56,7 +58,7 @@ namespace MvvmScarletToolkit
 
         private void NotifyOwner(bool changedValue)
         {
-            _onChanged.Invoke(changedValue);
+            OnChanged.Invoke(changedValue);
         }
 
         public IDisposable Subscribe(IObserver<bool> observer)
