@@ -4,7 +4,7 @@
 ![NuGet](https://img.shields.io/nuget/v/:MvvmScarletToolkit.svg)
 ![AppVeyor](https://img.shields.io/appveyor/ci/:insire/:mvvmscarlettoolkit.svg)
 
-MvvmScarletToolkit provides classes to speedup the MVVM development process
+MvvmScarletToolkit provides classes to speedup the MVVM development process primarily for WPF applications
 
 |||||||
 |---|---|---|---|---|---|
@@ -30,5 +30,4 @@ TODO:
 - improve documentation
 - setup CI with appveyor
 - add a nice icon for this lib
-- add some fancy badges
 - add Contribution guidelines
