@@ -1,5 +1,7 @@
 # MvvmScarletToolkit
 
+![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg)
+
 MvvmScarletToolkit provides classes to speedup the MVVM development process
 
 The included DemoApp contains examples for:
@@ -9,11 +11,11 @@ The included DemoApp contains examples for:
 - async(background) image loading
 - simple file/folder browser
 - a snake game
-- drag and drop example
-
-[Nuget](https://www.nuget.org/packages/InsireCorp.MvvmScarletToolkit/)
+- barebones drag and drop example
 
 TODO:
-- automated CI builds and nuget package updates (via Cake)
-- finish snake game
-- ...probably some other stuff
+- improve performance of the snake game and provide it as nuget package
+- improve documentation
+- setup CI with appveyor
+- add a nice icon for this lib
+- add some fancy badges

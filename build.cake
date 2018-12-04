@@ -94,7 +94,7 @@ Setup(ctx =>
    foreach(var folder in folders)
    {
       EnsureDirectoryExists(folder);
-      CleanDirectory(folder);
+      CleanDirectory(folder,(file) => !file.Path.Segments.Last().Contains(".gitignore"));
    }
 });
 
@@ -217,54 +217,13 @@ Task("Pack")
             version = assemblyInfoParseResult.AssemblyVersion;
          }
 
-         var settings = GetDefaultSettings("MvvmScarletToolkit","MvvmScarletToolkit is a personal project and framework to speed up the development process of WPF applications.", new DirectoryPath(".\\MvvmScarletToolkit\\bin\\Release\\net471\\"));
-         settings.Files = new[]
-         {
-            new NuSpecContent{ Source="*",Target="lib\\net471"},
-         };
-         NuGetPack(settings);
-
-         settings = GetDefaultSettings("MvvmScarletToolkit.Abstractions","MvvmScarletToolkit.Abstractions ", new DirectoryPath(".\\MvvmScarletToolkit.Abstractions\\bin\\Release\\net471\\"));
-         settings.Files = new[]
-         {
-            new NuSpecContent{ Source="*",Target="lib\\net471"},
-         };
-         NuGetPack(settings);
-
-         settings = GetDefaultSettings("MvvmScarletToolkit.Observables","MvvmScarletToolkit.Observables ", new DirectoryPath(".\\MvvmScarletToolkit.Observables\\bin\\Release\\net471\\"));
-         settings.Files = new[]
-         {
-            new NuSpecContent{ Source="*",Target="lib\\net471"},
-         };
-         NuGetPack(settings);
-
-         settings = GetDefaultSettings("MvvmScarletToolkit.Commands","MvvmScarletToolkit.Commands ", new DirectoryPath(".\\MvvmScarletToolkit.Commands\\bin\\Release\\net471\\"));
-         settings.Files = new[]
-         {
-            new NuSpecContent{ Source="*",Target="lib\\net471"},
-         };
-         NuGetPack(settings);
-
-         settings = GetDefaultSettings("MvvmScarletToolkit.FileSystemBrowser","MvvmScarletToolkit.FileSystemBrowser ", new DirectoryPath(".\\MvvmScarletToolkit.FileSystemBrowser\\bin\\Release\\net471\\"));
-         settings.Files = new[]
-         {
-            new NuSpecContent{ Source="*",Target="lib\\net471"},
-         };
-         NuGetPack(settings);
-
-         settings = GetDefaultSettings("MvvmScarletToolkit.ConfigurableWindow","MvvmScarletToolkit.ConfigurableWindow ", new DirectoryPath(".\\MvvmScarletToolkit.ConfigurableWindow\\bin\\Release\\net471\\"));
-         settings.Files = new[]
-         {
-            new NuSpecContent{ Source="*",Target="lib\\net471"},
-         };
-         NuGetPack(settings);
-
-         settings = GetDefaultSettings("MvvmScarletToolkit.Incubator","MvvmScarletToolkit.Incubator ", new DirectoryPath(".\\MvvmScarletToolkit.Incubator\\bin\\Release\\net471\\"));
-         settings.Files = new[]
-         {
-            new NuSpecContent{ Source="*",Target="lib\\net471"},
-         };
-         NuGetPack(settings);
+         NuGetPack(GetDefaultSettings("MvvmScarletToolkit","MvvmScarletToolkit is a personal project and framework to speed up the development process of WPF applications.", new DirectoryPath(".\\MvvmScarletToolkit\\bin\\Release\\")));
+         NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Abstractions","MvvmScarletToolkit.Abstractions ", new DirectoryPath(".\\MvvmScarletToolkit.Abstractions\\bin\\Release\\")));
+         NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Observables","MvvmScarletToolkit.Observables ", new DirectoryPath(".\\MvvmScarletToolkit.Observables\\bin\\Release\\")));
+         NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Commands","MvvmScarletToolkit.Commands ", new DirectoryPath(".\\MvvmScarletToolkit.Commands\\bin\\Release\\")));
+         NuGetPack(GetDefaultSettings("MvvmScarletToolkit.FileSystemBrowser","MvvmScarletToolkit.FileSystemBrowser ", new DirectoryPath(".\\MvvmScarletToolkit.FileSystemBrowser\\bin\\Release\\")));
+         NuGetPack(GetDefaultSettings("MvvmScarletToolkit.ConfigurableWindow","MvvmScarletToolkit.ConfigurableWindow ", new DirectoryPath(".\\MvvmScarletToolkit.ConfigurableWindow\\bin\\Release\\")));
+         NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Incubator","MvvmScarletToolkit.Incubator ", new DirectoryPath(".\\MvvmScarletToolkit.Incubator\\bin\\Release\\")));
 
          NuGetPackSettings GetDefaultSettings(string name, string summary, DirectoryPath basePath)
          {
@@ -288,6 +247,13 @@ Task("Pack")
                BasePath                    = basePath,
                OutputDirectory             = new DirectoryPath(PackagePath),
                KeepTemporaryNuSpecFile     = false,
+               Files = new[]
+               {
+                  new NuSpecContent{ Source="net471\\*",Target="lib\\net471"},
+                  new NuSpecContent{ Source="net47\\*",Target="lib\\net47"},
+                  new NuSpecContent{ Source="net462\\*",Target="lib\\net462"},
+                  new NuSpecContent{ Source="net461\\*",Target="lib\\net461"},
+               }
             };
          }
 });
