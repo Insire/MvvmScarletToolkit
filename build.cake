@@ -223,7 +223,8 @@ Task("Pack")
          NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Commands","MvvmScarletToolkit.Commands ", new DirectoryPath(".\\MvvmScarletToolkit.Commands\\bin\\Release\\")));
          NuGetPack(GetDefaultSettings("MvvmScarletToolkit.FileSystemBrowser","MvvmScarletToolkit.FileSystemBrowser ", new DirectoryPath(".\\MvvmScarletToolkit.FileSystemBrowser\\bin\\Release\\")));
          NuGetPack(GetDefaultSettings("MvvmScarletToolkit.ConfigurableWindow","MvvmScarletToolkit.ConfigurableWindow ", new DirectoryPath(".\\MvvmScarletToolkit.ConfigurableWindow\\bin\\Release\\")));
-         NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Incubator","MvvmScarletToolkit.Incubator ", new DirectoryPath(".\\MvvmScarletToolkit.Incubator\\bin\\Release\\")));
+         // dont provide a nuget package for incubator, because its not intended to be released
+         // NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Incubator","MvvmScarletToolkit.Incubator ", new DirectoryPath(".\\MvvmScarletToolkit.Incubator\\bin\\Release\\")));
 
          NuGetPackSettings GetDefaultSettings(string name, string summary, DirectoryPath basePath)
          {
@@ -256,7 +257,7 @@ Task("Pack")
                }
             };
          }
-});
+   });
 
 Task("Default")
    .IsDependentOn("CleanSolution")
