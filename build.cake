@@ -120,19 +120,6 @@ Task("CleanSolution")
         }
 });
 
-Task("RestoreNugetPackages")
-    .Does(() =>
-    {
-        var settings = new NuGetRestoreSettings()
-        {
-            DisableParallelProcessing = false,
-            Verbosity = NuGetVerbosity.Quiet,
-            NoCache = false,
-        };
-
-        NuGetRestore(SolutionPath, settings);
-});
-
 Task("UpdateAssemblyInfo")
     .Does(() =>
     {
@@ -161,6 +148,20 @@ Task("UpdateAssemblyInfo")
             // ComVisible           = assemblyInfoParseResult.ComVisible,
             // CustomAttributes     = assemblyInfoParseResult.CustomAttributes,
             // CLSCompliant         = assemblyInfoParseResult.CLSCompliant,
+
+            MetaDataAttributes = new []
+            {
+               new AssemblyInfoMetadataAttribute()
+               {
+                  Key = "Platform",
+                  Value = Platform,
+               },
+               new AssemblyInfoMetadataAttribute()
+               {
+                  Key = "Compiled on:",
+                  Value = "[UTC]" + DateTime.UtcNow.ToString(),
+               },
+            }
         };
 
         if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
@@ -181,21 +182,23 @@ Task("Build")
     .Does(() =>
     {
         var msBuildPath = Context.Tools.Resolve("msbuild.exe");
-
         var settings = new MSBuildSettings()
         {
             Verbosity = Verbosity.Quiet,
+            Restore = true,
+            NodeReuse = false,
         };
+
+        settings = settings
+               .SetConfiguration(Configuration)
+               .SetDetailedSummary(false)
+               .SetMaxCpuCount(0)
+               .SetMSBuildPlatform(MSBuildPlatform.Automatic);
 
         if(msBuildPath != null)
             settings.ToolPath = msBuildPath;
         else
             settings.ToolVersion = MSBuildToolVersion.VS2017;
-
-        settings.SetConfiguration(Configuration)
-                .SetDetailedSummary(false)
-                .SetMaxCpuCount(0)
-                .SetMSBuildPlatform(MSBuildPlatform.Automatic);
 
         MSBuild(SolutionPath, settings);
 });
@@ -214,38 +217,83 @@ Task("Pack")
             version = assemblyInfoParseResult.AssemblyVersion;
          }
 
-         var settings = new NuGetPackSettings()
+         var settings = GetDefaultSettings("MvvmScarletToolkit","MvvmScarletToolkit is a personal project and framework to speed up the development process of WPF applications.", new DirectoryPath(".\\MvvmScarletToolkit\\bin\\Release\\net471\\"));
+         settings.Files = new[]
          {
-            Id                          = "MvvmScarletToolkit",
-            Version                     = version,
-            Authors                     = new[] {"Insire"},
-            Owners                      = new[] {"Insire"},
-            Description                 = $"MvvmScarletToolkit v{version}",
-            Summary                     = "MvvmScarletToolkit is a personal project and framework to speed up the development process of WPF applications.",
-            ProjectUrl                  = new Uri(@"https://github.com/Insire/MvvmScarletToolkit"),
-            // IconUrl                      = new Uri(new FilePath("..\\src\\Resources\\Images\\logo.ico").MakeAbsolute(Context.Environment).FullPath, UriKind.Absolute),
-            LicenseUrl                  = new Uri(@"https://github.com/Insire/MvvmScarletToolkit/blob/master/LICENSE.md"),
-            Copyright                   = $"© {DateTime.Today.Year} Insire",
-            ReleaseNotes                = new[]{""},
-            Tags                        = new[]{"MvvmScarletToolkit", "MVVM", "C#", "WPF", "Windows", "Csharp", "ScarletToolkit"},
-            RequireLicenseAcceptance    = true,
-            Symbols                     = true,
-            NoPackageAnalysis           = false,
-            Files                       = new[]
-            {
-                  new NuSpecContent{ Source="*",Target="lib\\net471"},
-            },
-            BasePath                    = new DirectoryPath(".\\MvvmScarletToolkit\\bin\\Release\\"),
-            OutputDirectory             = new DirectoryPath(PackagePath),
-            KeepTemporaryNuSpecFile     = false,
+            new NuSpecContent{ Source="*",Target="lib\\net471"},
          };
-
          NuGetPack(settings);
+
+         settings = GetDefaultSettings("MvvmScarletToolkit.Abstractions","MvvmScarletToolkit.Abstractions ", new DirectoryPath(".\\MvvmScarletToolkit.Abstractions\\bin\\Release\\net471\\"));
+         settings.Files = new[]
+         {
+            new NuSpecContent{ Source="*",Target="lib\\net471"},
+         };
+         NuGetPack(settings);
+
+         settings = GetDefaultSettings("MvvmScarletToolkit.Observables","MvvmScarletToolkit.Observables ", new DirectoryPath(".\\MvvmScarletToolkit.Observables\\bin\\Release\\net471\\"));
+         settings.Files = new[]
+         {
+            new NuSpecContent{ Source="*",Target="lib\\net471"},
+         };
+         NuGetPack(settings);
+
+         settings = GetDefaultSettings("MvvmScarletToolkit.Commands","MvvmScarletToolkit.Commands ", new DirectoryPath(".\\MvvmScarletToolkit.Commands\\bin\\Release\\net471\\"));
+         settings.Files = new[]
+         {
+            new NuSpecContent{ Source="*",Target="lib\\net471"},
+         };
+         NuGetPack(settings);
+
+         settings = GetDefaultSettings("MvvmScarletToolkit.FileSystemBrowser","MvvmScarletToolkit.FileSystemBrowser ", new DirectoryPath(".\\MvvmScarletToolkit.FileSystemBrowser\\bin\\Release\\net471\\"));
+         settings.Files = new[]
+         {
+            new NuSpecContent{ Source="*",Target="lib\\net471"},
+         };
+         NuGetPack(settings);
+
+         settings = GetDefaultSettings("MvvmScarletToolkit.ConfigurableWindow","MvvmScarletToolkit.ConfigurableWindow ", new DirectoryPath(".\\MvvmScarletToolkit.ConfigurableWindow\\bin\\Release\\net471\\"));
+         settings.Files = new[]
+         {
+            new NuSpecContent{ Source="*",Target="lib\\net471"},
+         };
+         NuGetPack(settings);
+
+         settings = GetDefaultSettings("MvvmScarletToolkit.Incubator","MvvmScarletToolkit.Incubator ", new DirectoryPath(".\\MvvmScarletToolkit.Incubator\\bin\\Release\\net471\\"));
+         settings.Files = new[]
+         {
+            new NuSpecContent{ Source="*",Target="lib\\net471"},
+         };
+         NuGetPack(settings);
+
+         NuGetPackSettings GetDefaultSettings(string name, string summary, DirectoryPath basePath)
+         {
+            return new NuGetPackSettings()
+            {
+               Id                          = name,
+               Version                     = version,
+               Authors                     = new[] {"Insire"},
+               Owners                      = new[] {"Insire"},
+               Description                 = $"{name} v{version}",
+               Summary                     = summary,
+               ProjectUrl                  = new Uri(@"https://github.com/Insire/MvvmScarletToolkit"),
+               // IconUrl                      = new Uri(new FilePath("..\\src\\Resources\\Images\\logo.ico").MakeAbsolute(Context.Environment).FullPath, UriKind.Absolute),
+               LicenseUrl                  = new Uri(@"https://github.com/Insire/MvvmScarletToolkit/blob/master/LICENSE.md"),
+               Copyright                   = $"© {DateTime.Today.Year} Insire",
+               ReleaseNotes                = new[]{""},
+               Tags                        = new[]{"MvvmScarletToolkit", "MVVM", "C#", "WPF", "Windows", "Csharp", "ScarletToolkit"},
+               RequireLicenseAcceptance    = true,
+               Symbols                     = true,
+               NoPackageAnalysis           = false,
+               BasePath                    = basePath,
+               OutputDirectory             = new DirectoryPath(PackagePath),
+               KeepTemporaryNuSpecFile     = false,
+            };
+         }
 });
 
 Task("Default")
    .IsDependentOn("CleanSolution")
-   .IsDependentOn("RestoreNugetPackages")
    .IsDependentOn("UpdateAssemblyInfo")
    .IsDependentOn("Build")
    .IsDependentOn("Pack")

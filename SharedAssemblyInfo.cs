@@ -13,3 +13,6 @@ using System.Reflection;
 [assembly: AssemblyCopyright("© 2018 Insire")]
 [assembly: AssemblyTrademark("")]
 
+// Metadata Attributes
+[assembly: AssemblyMetadata("Platform", "AnyCPU")]
+[assembly: AssemblyMetadata("Compiled on:", "[UTC]04.12.2018 19:53:47")]
