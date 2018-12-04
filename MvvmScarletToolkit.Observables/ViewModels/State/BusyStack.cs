@@ -23,8 +23,7 @@ namespace MvvmScarletToolkit.Observables
         {
             var result = _items.TryTake(out var token);
 
-            if (result)
-                InvokeOnChanged();
+            InvokeOnChanged(result); // could be improved to only be called, when the internal state changes
         }
 
         [DebuggerStepThrough]
@@ -32,7 +31,7 @@ namespace MvvmScarletToolkit.Observables
         {
             _items.Add(token);
 
-            InvokeOnChanged();
+            InvokeOnChanged(true); // could be improved to only be called, when the internal state changes
         }
 
         [DebuggerStepThrough]
@@ -51,9 +50,9 @@ namespace MvvmScarletToolkit.Observables
             return new BusyToken(this);
         }
 
-        private void InvokeOnChanged()
+        private void InvokeOnChanged(bool hasItems)
         {
-            _onChanged(HasItems());
+            _onChanged(hasItems);
         }
     }
 }
