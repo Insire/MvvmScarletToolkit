@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Windows.Input;
@@ -12,7 +12,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         public static bool NoFilesFilter(object obj)
         {
             if (obj is IFileSystemFile)
+            {
                 return false;
+            }
 
             return SearchFilter(obj);
         }
@@ -20,13 +22,19 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         public static bool SearchFilter(object obj)
         {
             if (!(obj is IFileSystemInfo info))
+            {
                 return false;
+            }
 
             if (info.IsHidden || info.IsBusy)
+            {
                 return false;
+            }
 
             if (string.IsNullOrWhiteSpace(info.Filter))
+            {
                 return true;
+            }
 
             return info.Name.IndexOf(info.Filter, StringComparison.InvariantCultureIgnoreCase) >= 0;
         }
@@ -144,16 +152,24 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             : this()
         {
             if (string.IsNullOrEmpty(name))
+            {
                 throw new ArgumentException($"{nameof(name)} can't be empty.", nameof(name));
+            }
 
             if (string.IsNullOrEmpty(fullName))
+            {
                 throw new ArgumentException($"{nameof(fullName)} can't be empty.", nameof(fullName));
+            }
 
             if (depth == null)
+            {
                 throw new ArgumentException($"{nameof(depth)} can't be empty.", nameof(depth));
+            }
 
             if (!(this is IFileSystemDrive) && parent == null)
+            {
                 throw new ArgumentException($"{nameof(parent)} can't be empty.", nameof(parent));
+            }
 
             using (_busyStack.GetToken())
             {
@@ -169,7 +185,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         public void Load()
         {
             if (IsLoaded)
+            {
                 return;
+            }
 
             Refresh();
         }

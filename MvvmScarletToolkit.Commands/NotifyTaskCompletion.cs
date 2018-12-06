@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -42,7 +42,9 @@ namespace MvvmScarletToolkit.Commands
 
             var propertyChanged = PropertyChanged;
             if (propertyChanged == null)
+            {
                 return;
+            }
 
             propertyChanged(this, new PropertyChangedEventArgs(nameof(Status)));
             propertyChanged(this, new PropertyChangedEventArgs(nameof(IsCompleted)));

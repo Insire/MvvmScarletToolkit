@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -10,7 +10,9 @@ namespace MvvmScarletToolkit
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
+            {
                 return DependencyProperty.UnsetValue;
+            }
 
             return string.IsNullOrEmpty(value as string) ? DependencyProperty.UnsetValue : value;
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -44,15 +44,21 @@ namespace MvvmScarletToolkit.Observables
         public ObservableCircularBuffer(int capacity, IEnumerable<T> items)
         {
             if (capacity < 1)
+            {
                 throw new ArgumentException("Circular buffer cannot have negative or zero capacity.", nameof(capacity));
+            }
 
             if (items == null)
+            {
                 throw new ArgumentNullException(nameof(items));
+            }
 
             Size = items.Count();
 
             if (Size > capacity)
+            {
                 throw new ArgumentException("Too many items to fit circular buffer", nameof(items));
+            }
 
             _start = 0;
             _buffer = new ObservableCollection<T>(items);
@@ -66,7 +72,9 @@ namespace MvvmScarletToolkit.Observables
             if (IsFull)
             {
                 for (var i = 1; i < Capacity - 1; i++)
+                {
                     _buffer.Move(i, i + 1);
+                }
 
                 Decrement(ref _start);
                 _buffer[_start] = item;
@@ -78,14 +86,18 @@ namespace MvvmScarletToolkit.Observables
                 ++Size;
 
                 if (IsFull)
+                {
                     OnPropertyChanged(nameof(IsFull));
+                }
             }
         }
 
         private void Decrement(ref int index)
         {
             if (index == 0)
+            {
                 index = Capacity;
+            }
 
             index--;
         }

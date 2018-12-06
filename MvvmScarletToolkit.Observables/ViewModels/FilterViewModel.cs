@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -140,7 +140,9 @@ namespace MvvmScarletToolkit.Observables
                     var predicate = _predicates[i];
 
                     if (!predicate(item))
+                    {
                         result.Add(item);
+                    }
                 }
             }
 
@@ -160,7 +162,9 @@ namespace MvvmScarletToolkit.Observables
                     var predicate = _predicates[i];
 
                     if (predicate(item))
+                    {
                         result.Add(item);
+                    }
                 }
             }
 

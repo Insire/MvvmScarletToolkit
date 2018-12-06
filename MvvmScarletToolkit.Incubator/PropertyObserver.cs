@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -44,7 +44,9 @@ namespace MvvmScarletToolkit.Observables
         public PropertyObserver(TPropertySource propertySource)
         {
             if (propertySource == null)
+            {
                 throw new ArgumentNullException(nameof(propertySource));
+            }
 
             _propertySourceRef = new WeakReference(propertySource);
             _propertyNameToHandlerMap = new Dictionary<string, Action<TPropertySource>>();
@@ -59,14 +61,20 @@ namespace MvvmScarletToolkit.Observables
         public PropertyObserver<TPropertySource> RegisterHandler(Expression<Func<TPropertySource, object>> expression, Action<TPropertySource> handler)
         {
             if (expression == null)
+            {
                 throw new ArgumentNullException(nameof(expression));
+            }
 
             var propertyName = GetPropertyName(expression);
             if (string.IsNullOrEmpty(propertyName))
+            {
                 throw new ArgumentException("'expression' did not provide a property name.");
+            }
 
             if (handler == null)
+            {
                 throw new ArgumentNullException(nameof(handler));
+            }
 
             var propertySource = GetPropertySource();
             if (propertySource != null)
@@ -86,11 +94,15 @@ namespace MvvmScarletToolkit.Observables
         public PropertyObserver<TPropertySource> UnregisterHandler(Expression<Func<TPropertySource, object>> expression)
         {
             if (expression == null)
+            {
                 throw new ArgumentNullException(nameof(expression), "can't be null");
+            }
 
             var propertyName = GetPropertyName(expression);
             if (string.IsNullOrEmpty(propertyName))
+            {
                 throw new ArgumentException("'expression' did not provide a property name.");
+            }
 
             var propertySource = GetPropertySource();
             if (propertySource != null && _propertyNameToHandlerMap.ContainsKey(propertyName))
@@ -153,7 +165,9 @@ namespace MvvmScarletToolkit.Observables
                     // When the property name is empty, all properties are considered to be invalidated.
                     // Iterate over a copy of the list of handlers, in case a handler is registered by a callback.
                     foreach (var handler in _propertyNameToHandlerMap.Values.ToArray())
+                    {
                         handler(propertySource);
+                    }
 
                     return true;
                 }

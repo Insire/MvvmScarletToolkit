@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -47,12 +47,16 @@ namespace MvvmScarletToolkit
         public virtual void AddRange(IEnumerable<T> items)
         {
             if (items == null)
+            {
                 throw new ArgumentNullException(nameof(items));
+            }
 
             _suppressNotification = true;
 
             foreach (var item in items)
+            {
                 Add(item);
+            }
 
             _suppressNotification = false;
 
@@ -62,12 +66,16 @@ namespace MvvmScarletToolkit
         public virtual void RemoveRange(IEnumerable<T> items)
         {
             if (items == null)
+            {
                 throw new ArgumentNullException(nameof(items));
+            }
 
             _suppressNotification = true;
 
             foreach (var item in items)
+            {
                 Remove(item);
+            }
 
             _suppressNotification = false;
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
@@ -76,12 +84,16 @@ namespace MvvmScarletToolkit
         public virtual void RemoveRange(IList items)
         {
             if (items == null)
+            {
                 throw new ArgumentNullException(nameof(items));
+            }
 
             _suppressNotification = true;
 
             foreach (var item in items.Cast<T>())
+            {
                 Remove(item);
+            }
 
             _suppressNotification = false;
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
@@ -90,12 +102,16 @@ namespace MvvmScarletToolkit
         public virtual void RemoveRange(IList<T> items)
         {
             if (items == null)
+            {
                 throw new ArgumentNullException(nameof(items));
+            }
 
             _suppressNotification = true;
 
             foreach (var item in items)
+            {
                 Remove(item);
+            }
 
             _suppressNotification = false;
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));

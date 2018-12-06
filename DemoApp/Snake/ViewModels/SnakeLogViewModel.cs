@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit;
 using MvvmScarletToolkit.Observables;
 using System;
 
@@ -27,7 +27,9 @@ namespace DemoApp
             Messages = new ObservableCircularBuffer<ScarletMessageBase>(100);
 
             if (messenger == null)
+            {
                 throw new ArgumentNullException(nameof(messenger));
+            }
 
             messenger.Subscribe<PositionUpdatedMessage>(MessageSubscription);
             messenger.Subscribe<SnakeSegmentCreatedMessage>(MessageSubscription);
@@ -57,7 +59,9 @@ namespace DemoApp
             _messagesPerSecond++;
 
             if (_nextUpdate > DateTime.UtcNow)
+            {
                 return;
+            }
 
             OnPropertyChanged(nameof(MessagesPerSecond));
             _messagesPerSecond = 0;

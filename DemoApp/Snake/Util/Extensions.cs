@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
 namespace DemoApp
@@ -29,7 +29,9 @@ namespace DemoApp
         public static Task Play(this ISnakeManager manager)
         {
             if (manager?.PlayCommand?.CanExecute(null) ?? false)
+            {
                 return manager.PlayCommand.ExecuteAsync(null);
+            }
 
             return Task.CompletedTask;
         }
@@ -37,7 +39,9 @@ namespace DemoApp
         public static Task Reset(this ISnakeManager manager)
         {
             if (manager?.ResetCommand?.CanExecute(null) ?? false)
+            {
                 return manager.ResetCommand.ExecuteAsync(null);
+            }
 
             return Task.CompletedTask;
         }
@@ -45,7 +49,9 @@ namespace DemoApp
         public static void Clear<T>(this IProducerConsumerCollection<T> collection)
         {
             while (collection.Count > 0)
+            {
                 collection.TryTake(out _);
+            }
         }
     }
 }

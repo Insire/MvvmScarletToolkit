@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,10 +48,14 @@ namespace MvvmScarletToolkit
         private static void OnOverlayContentChanged(DependencyObject dp, DependencyPropertyChangedEventArgs e)
         {
             if (!(dp is Overlay overlay))
+            {
                 return;
+            }
 
             if (!overlay.IsOverlayContentVisible)
+            {
                 return;
+            }
 
             overlay.RemoveOverlayContent();
             overlay.AddOverlayContent();
@@ -60,18 +64,26 @@ namespace MvvmScarletToolkit
         private static void OnIsOverlayContentVisibleChanged(DependencyObject dp, DependencyPropertyChangedEventArgs e)
         {
             if (!(dp is Overlay overlay))
+            {
                 return;
+            }
 
             if ((bool)e.NewValue)
+            {
                 overlay.AddOverlayContent();
+            }
             else
+            {
                 overlay.RemoveOverlayContent();
+            }
         }
 
         private void AddOverlayContent()
         {
             if (OverlayContent == null)
+            {
                 return;
+            }
 
             _uiElementAdorner = new UIElementAdorner(this, OverlayContent);
             _uiElementAdorner.Add();
@@ -83,7 +95,9 @@ namespace MvvmScarletToolkit
         private void RemoveOverlayContent()
         {
             if (_uiElementAdorner == null)
+            {
                 return;
+            }
 
             var parentAdorner = AdornerLayer.GetAdornerLayer(this);
             parentAdorner.Remove(_uiElementAdorner);
@@ -139,7 +153,9 @@ namespace MvvmScarletToolkit
             protected override Visual GetVisualChild(int index)
             {
                 if (index != 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(index));
+                }
 
                 return _uiElement;
             }

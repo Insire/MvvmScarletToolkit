@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -109,13 +109,19 @@ namespace MvvmScarletToolkit
                 where TMessage : class, IScarletMessage
         {
             if (deliveryAction == null)
+            {
                 throw new ArgumentNullException(nameof(deliveryAction));
+            }
 
             if (messageFilter == null)
+            {
                 throw new ArgumentNullException(nameof(messageFilter));
+            }
 
             if (proxy == null)
+            {
                 throw new ArgumentNullException(nameof(proxy));
+            }
 
             lock (_subscriptionsPadlock)
             {
@@ -123,9 +129,13 @@ namespace MvvmScarletToolkit
 
                 IScarletMessageSubscription subscription;
                 if (strongReference)
+                {
                     subscription = new StrongScarletMessageSubscription<TMessage>(subscriptionToken, deliveryAction, messageFilter);
+                }
                 else
+                {
                     subscription = new WeakScarletMessageSubscription<TMessage>(subscriptionToken, deliveryAction, messageFilter);
+                }
 
                 _subscriptions.Add(new SubscriptionItem(proxy, subscription));
 
@@ -136,7 +146,9 @@ namespace MvvmScarletToolkit
         private void RemoveSubscriptionInternal(SubscriptionToken subscriptionToken)
         {
             if (subscriptionToken == null)
+            {
                 throw new ArgumentNullException(nameof(subscriptionToken));
+            }
 
             lock (_subscriptionsPadlock)
             {
@@ -152,7 +164,9 @@ namespace MvvmScarletToolkit
                 where TMessage : class, IScarletMessage
         {
             if (message == null)
+            {
                 throw new ArgumentNullException(nameof(message));
+            }
 
             List<SubscriptionItem> currentlySubscribed;
             lock (_subscriptionsPadlock)

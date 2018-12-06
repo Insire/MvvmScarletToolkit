@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -49,9 +49,13 @@ namespace DemoApp
             };
 
             if (Debugger.IsAttached)
+            {
                 SelectedOption = Options[3];
+            }
             else
+            {
                 SelectedOption = Options[1];
+            }
         }
 
         // [screen management]

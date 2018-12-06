@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.IO;
 using System.Linq;
@@ -83,7 +83,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         public void SetSelectedItem(IFileSystemInfo item)
         {
             if (!(item is ScarletFileSystemContainerBase value))
+            {
                 return;
+            }
 
             SelectedItem = value;
             SelectedItem.ExpandPath();

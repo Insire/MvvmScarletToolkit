@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using System.Threading;
 using System.Threading.Tasks;
@@ -69,7 +69,9 @@ namespace MvvmScarletToolkit.Observables
         protected virtual Task RefreshInternal(CancellationToken token)
         {
             using (BusyStack.GetToken())
+            {
                 return Task.CompletedTask;
+            }
         }
 
         protected virtual bool CanRefresh()

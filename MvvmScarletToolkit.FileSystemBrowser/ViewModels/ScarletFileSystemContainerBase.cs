@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 
@@ -40,10 +40,14 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 DefaultCollectionView = CollectionViewSource.GetDefaultView(Children);
 
                 using (NoFilesCollectionView.DeferRefresh())
+                {
                     NoFilesCollectionView.Filter = NoFilesFilter;
+                }
 
                 using (DefaultCollectionView.DeferRefresh())
+                {
                     DefaultCollectionView.Filter = SearchFilter;
+                }
             }
         }
 
@@ -56,7 +60,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 Children.ToList().ForEach(p => p.Filter = filter);
 
                 using (DefaultCollectionView.DeferRefresh())
+                {
                     DefaultCollectionView.Filter = SearchFilter;
+                }
             }
         }
 

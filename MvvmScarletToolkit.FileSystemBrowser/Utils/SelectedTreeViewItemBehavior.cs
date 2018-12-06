@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -56,7 +56,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             item = GetTreeViewItem(treeView, e.NewValue);
             if (item is null)
+            {
                 return;
+            }
 
             item.IsSelected = true;
         }
@@ -73,7 +75,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             base.OnDetaching();
 
             if (AssociatedObject is null)
+            {
                 return;
+            }
 
             AssociatedObject.SelectedItemChanged -= OnTreeViewSelectedItemChanged;
         }
@@ -86,7 +90,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         private static Action<int> GetBringIndexIntoView(Panel itemsHostPanel)
         {
             if (!(itemsHostPanel is VirtualizingStackPanel virtualizingPanel))
+            {
                 return null;
+            }
 
             var method = virtualizingPanel.GetType().GetMethod(
                 "BringIndexIntoView",
@@ -96,7 +102,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 null);
 
             if (method is null)
+            {
                 return null;
+            }
 
             return i => method.Invoke(virtualizingPanel, new object[] { i });
         }
@@ -116,14 +124,20 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         private static TreeViewItem GetTreeViewItem(ItemsControl container, object item)
         {
             if (container is null)
+            {
                 return null;
+            }
 
             if (container.DataContext == item)
+            {
                 return container as TreeViewItem;
+            }
 
             // Expand the current container
             if (container is TreeViewItem treeViewItem && !treeViewItem.IsExpanded)
+            {
                 container.SetValue(TreeViewItem.IsExpandedProperty, true);
+            }
 
             // Try to generate the ItemsPresenter and the ItemsPanel.
             // by calling ApplyTemplate.  Note that in the
@@ -176,12 +190,16 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 }
 
                 if (subContainer is null)
+                {
                     continue;
+                }
 
                 // Search the next level for the object.
                 var resultContainer = GetTreeViewItem(subContainer, item);
                 if (resultContainer != null)
+                {
                     return resultContainer;
+                }
 
                 // The object is not under this TreeViewItem
                 // so collapse it.
@@ -216,7 +234,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         public static IEnumerable<DependencyObject> GetVisualDescendants(this DependencyObject visual)
         {
             if (visual is null)
+            {
                 yield break;
+            }
 
             for (var i = 0; i < VisualTreeHelper.GetChildrenCount(visual); i++)
             {

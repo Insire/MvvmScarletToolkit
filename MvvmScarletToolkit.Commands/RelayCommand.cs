@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Commands
@@ -54,10 +54,14 @@ namespace MvvmScarletToolkit.Commands
         public bool CanExecute(object parameter)
         {
             if (_canExecute == null)
+            {
                 return true;
+            }
 
             if (parameter == null && typeof(T).IsValueType)
+            {
                 return _canExecute(default);
+            }
 
             switch (parameter)
             {

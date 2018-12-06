@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -15,7 +15,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             var result = new List<IFileSystemInfo>();
 
             if (!CanAccess(directory.FullName) && directory.DirectoryIsEmpty())
+            {
                 return result;
+            }
 
             result.AddRange(GetDirectories(directory.FullName, depth, directory));
             result.AddRange(GetFiles(directory.FullName, depth, directory));
@@ -93,7 +95,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         public static bool DirectoryIsEmpty(this ScarletFileSystemContainerBase info)
         {
             if (!Directory.Exists(info.FullName))
+            {
                 return false;
+            }
 
             return DirectoryIsEmpty(info.FullName);
         }

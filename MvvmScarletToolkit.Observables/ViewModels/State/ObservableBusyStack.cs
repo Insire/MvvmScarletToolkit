@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,7 +29,9 @@ namespace MvvmScarletToolkit.Observables
             var newValue = _items.TryPeek(out _);
 
             if (oldValue.Equals(newValue))
+            {
                 return;
+            }
 
             NotifyOwner(newValue);
             NotifySubscribers(newValue);
@@ -43,7 +45,9 @@ namespace MvvmScarletToolkit.Observables
             var newValue = _items.TryPeek(out _);
 
             if (oldValue.Equals(newValue))
+            {
                 return;
+            }
 
             NotifyOwner(newValue);
             NotifySubscribers(newValue);

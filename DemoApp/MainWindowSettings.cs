@@ -1,4 +1,4 @@
-﻿using DemoApp.Properties;
+using DemoApp.Properties;
 using MvvmScarletToolkit.ConfigurableWindow;
 
 namespace DemoApp
@@ -27,7 +27,9 @@ namespace DemoApp
             window.Closed += delegate
             {
                 if (IsFirstRun)
+                {
                     IsFirstRun = false;
+                }
             };
         }
     }

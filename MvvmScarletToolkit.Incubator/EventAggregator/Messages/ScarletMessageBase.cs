@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace MvvmScarletToolkit
 {
@@ -24,7 +24,9 @@ namespace MvvmScarletToolkit
         protected ScarletMessageBase(object sender)
         {
             if (sender == null)
+            {
                 throw new ArgumentNullException(nameof(sender));
+            }
 
             _sender = new WeakReference(sender);
         }

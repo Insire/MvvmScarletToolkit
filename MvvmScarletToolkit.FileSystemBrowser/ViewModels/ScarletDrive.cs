@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
@@ -11,7 +11,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             using (_busyStack.GetToken())
             {
                 if (!Depth.IsMaxReached)
+                {
                     Refresh();
+                }
             }
         }
 

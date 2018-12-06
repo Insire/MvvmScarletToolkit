@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit;
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
@@ -141,15 +141,23 @@ namespace DemoApp
         private static void OnIsFpsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is SnakeView snakeView))
+            {
                 return;
+            }
 
             if (!(e.NewValue is bool enableFps))
+            {
                 return;
+            }
 
             if (enableFps)
+            {
                 snakeView.SetupFpsCounter();
+            }
             else
+            {
                 snakeView.DisposeFpsCounter();
+            }
         }
 
         public SnakeView()
@@ -166,7 +174,9 @@ namespace DemoApp
             DataContext = this;
 
             if (SnakeViewModel == null)
+            {
                 SnakeViewModel = new SnakeViewModel(new SnakeLogViewModel(_messenger));
+            }
 
             InitializeComponent();
         }
@@ -196,7 +206,9 @@ namespace DemoApp
         private async Task ShowGame()
         {
             if (Manager != null)
+            {
                 await Manager.Reset().ConfigureAwait(false);
+            }
 
             Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _dispatcher, _messenger);
             SetupObserver();
@@ -212,7 +224,9 @@ namespace DemoApp
         private void SetupObserver()
         {
             if (_propertyObserver != null)
+            {
                 return;
+            }
 
             _propertyObserver = new PropertyObserver<ISnakeManager>(Manager);
             _propertyObserver.RegisterHandler((o) => o.State, OnStateChanged);
@@ -221,7 +235,9 @@ namespace DemoApp
         private void DisposeObserver()
         {
             if (_propertyObserver == null)
+            {
                 return;
+            }
 
             _propertyObserver.UnregisterHandler((o) => o.State);
             _propertyObserver = null;
@@ -253,7 +269,9 @@ namespace DemoApp
         private void SetupFpsCounter()
         {
             if (_frameCounter != null)
+            {
                 return;
+            }
 
             _frameCounter = new FrameCounter(RenderNotification);
         }
@@ -261,7 +279,9 @@ namespace DemoApp
         private void DisposeFpsCounter()
         {
             if (_frameCounter == null)
+            {
                 return;
+            }
 
             _frameCounter.Dispose();
             _frameCounter = null;
@@ -301,7 +321,9 @@ namespace DemoApp
         private void RenderNotification(object state)
         {
             if (!(state is int))
+            {
                 return;
+            }
 
             _dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 new Action<int>(fps => FramesPerSecond = fps), (int)state);

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DemoApp.DataGrids"
+<UserControl x:Class="DemoApp.DataGrids"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,17 +8,17 @@
     <!-- DataContext: ParentsViewModel-->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <DataGrid Grid.Row="0" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" Name="SourceGrid"/>
+        <DataGrid Grid.Row="0" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" Name="SourceGrid" />
 
-        <DataGrid Grid.Row="2" ItemsSource="{Binding SelectedItem.LogItems.Items}"/>
+        <DataGrid Grid.Row="2" ItemsSource="{Binding SelectedItem.LogItems.Items}" />
 
-        <Button Grid.Row="4" Command="{Binding SelectedItem.AddRangeCommand}" Content="Add"/>
+        <Button Grid.Row="4" Command="{Binding SelectedItem.AddRangeCommand}" Content="Add" />
     </Grid>
 </UserControl>

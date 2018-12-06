@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace MvvmScarletToolkit
 {
@@ -20,7 +20,9 @@ namespace MvvmScarletToolkit
         public void Deliver(IScarletMessage message)
         {
             if (!(message is TMessage))
+            {
                 throw new ArgumentException("Message is not the correct type");
+            }
 
             DeliveryAction.Invoke(message as TMessage);
         }

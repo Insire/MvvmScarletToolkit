@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -27,13 +27,19 @@ namespace MvvmScarletToolkit
         public CircularBuffer(int capacity, T[] items)
         {
             if (capacity < 1)
+            {
                 throw new ArgumentException("Circular buffer cannot have negative or zero capacity.", nameof(capacity));
+            }
 
             if (items == null)
+            {
                 throw new ArgumentNullException(nameof(items));
+            }
 
             if (items.Length > capacity)
+            {
                 throw new ArgumentException("Too many items to fit circular buffer", nameof(items));
+            }
 
             _buffer = new T[capacity];
 
@@ -87,10 +93,14 @@ namespace MvvmScarletToolkit
             get
             {
                 if (IsEmpty)
+                {
                     throw new IndexOutOfRangeException(string.Format("Cannot access index {0}. Buffer is empty", index));
+                }
 
                 if (index >= Size)
+                {
                     throw new IndexOutOfRangeException(string.Format("Cannot access index {0}. Buffer size is {1}", index, Size));
+                }
 
                 var actualIndex = InternalIndex(index);
                 return _buffer[actualIndex];
@@ -98,10 +108,14 @@ namespace MvvmScarletToolkit
             set
             {
                 if (IsEmpty)
+                {
                     throw new IndexOutOfRangeException(string.Format("Cannot access index {0}. Buffer is empty", index));
+                }
 
                 if (index >= Size)
+                {
                     throw new IndexOutOfRangeException(string.Format("Cannot access index {0}. Buffer size is {1}", index, Size));
+                }
 
                 var actualIndex = InternalIndex(index);
                 _buffer[actualIndex] = value;
@@ -221,7 +235,9 @@ namespace MvvmScarletToolkit
         private void ThrowIfEmpty(string message = "Cannot access an empty buffer.")
         {
             if (IsEmpty)
+            {
                 throw new InvalidOperationException(message);
+            }
         }
 
         /// <summary>
@@ -231,7 +247,9 @@ namespace MvvmScarletToolkit
         private void Increment(ref int index)
         {
             if (++index == Capacity)
+            {
                 index = 0;
+            }
         }
 
         /// <summary>
@@ -241,7 +259,9 @@ namespace MvvmScarletToolkit
         private void Decrement(ref int index)
         {
             if (index == 0)
+            {
                 index = Capacity;
+            }
 
             index--;
         }
@@ -279,9 +299,13 @@ namespace MvvmScarletToolkit
         private ArraySegment<T> ArrayTwo()
         {
             if (_start < _end)
+            {
                 return new ArraySegment<T>(_buffer, _end, 0);
+            }
             else
+            {
                 return new ArraySegment<T>(_buffer, 0, _end);
+            }
         }
     }
 }

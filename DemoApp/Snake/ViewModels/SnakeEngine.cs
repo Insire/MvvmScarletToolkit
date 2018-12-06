@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit;
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
@@ -107,7 +107,9 @@ namespace DemoApp
             private set
             {
                 if (_state == value)
+                {
                     return;
+                }
 
                 _state = value;
                 OnPropertyChanged(nameof(State));
@@ -121,7 +123,9 @@ namespace DemoApp
             private set
             {
                 if (_direction == value)
+                {
                     return;
+                }
 
                 _direction = value;
                 OnPropertyChanged(nameof(Direction));
@@ -307,7 +311,9 @@ namespace DemoApp
                 await _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<Direction>((d) =>
                 {
                     if (!InternalMove(d))
+                    {
                         State = GameState.Fail;
+                    }
 
                     error = false;
                 }), _direction);
@@ -319,7 +325,9 @@ namespace DemoApp
             finally
             {
                 if (error)
+                {
                     State = GameState.Fail;
+                }
             }
         }
 
@@ -350,7 +358,9 @@ namespace DemoApp
 
             var tastyApple = IsSnakeEatingApple();
             if (tastyApple == null)
+            {
                 return result;
+            }
 
             BoardPieces.Remove(tastyApple);
 
@@ -365,16 +375,22 @@ namespace DemoApp
         private void UpdateBoardPieces()
         {
             if (!_boardPieces.Contains(Snake.Head))
+            {
                 BoardPieces.Add(Snake.Head);
+            }
 
             foreach (var part in Snake.Body)
             {
                 if (!_boardPieces.Contains(part))
+                {
                     BoardPieces.Add(part);
+                }
             }
 
             if (BoardPieces.Count(p => p is Apple) < _options.MaxFoodCount && _apples.TryTake(out var apple))
+            {
                 BoardPieces.Add(apple);
+            }
         }
 
         private Task CreateSnakeLoop(CancellationToken token)
@@ -388,13 +404,19 @@ namespace DemoApp
                     while (State != GameState.None)
                     {
                         if (State == GameState.Fail)
+                        {
                             return;
+                        }
 
                         if (State != GameState.Paused)
+                        {
                             await InternalMoveAsync().ConfigureAwait(false);
+                        }
 
                         if (_snakeSource?.Token == null || _snakeSource.Token.IsCancellationRequested)
+                        {
                             return;
+                        }
 
                         await Task.Delay(_options.GlobalTickRate, _snakeSource.Token).ConfigureAwait(false);
                     }
@@ -415,13 +437,19 @@ namespace DemoApp
                     while (State != GameState.None)
                     {
                         if (State == GameState.Fail)
+                        {
                             return;
+                        }
 
                         if (Direction != Direction.None && _options.MaxFoodCount > _apples.Count)
+                        {
                             _apples.TryAdd(CreateApple(_options, _random, Snake));
+                        }
 
                         if (_appleSource?.Token == null || _appleSource.Token.IsCancellationRequested)
+                        {
                             return;
+                        }
 
                         await Task.Delay(_options.FoodTickRate).ConfigureAwait(false);
                     }
@@ -455,7 +483,9 @@ namespace DemoApp
         public void Refresh()
         {
             if (State == GameState.Running)
+            {
                 UpdateBoardPieces();
+            }
         }
 
         public void Dispose()

@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -63,9 +63,13 @@ namespace DemoApp
         public void OnNext(bool value)
         {
             if (value)
+            {
                 BusyStack.GetToken();
+            }
             else
+            {
                 BusyStack.Pull();
+            }
         }
 
         public void OnError(Exception error)

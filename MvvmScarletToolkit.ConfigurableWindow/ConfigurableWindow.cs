@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -52,9 +52,12 @@ namespace MvvmScarletToolkit.ConfigurableWindow
             _settings = CreateSettings();
 
             if (_settings == null)
+            {
                 throw new ArgumentNullException(nameof(_settings), "Cannot be null.");
+            }
 
-            Loaded += delegate { _isLoaded = true; };
+            Loaded += delegate
+            { _isLoaded = true; };
 
             ApplySettings();
         }
@@ -105,9 +108,13 @@ namespace MvvmScarletToolkit.ConfigurableWindow
                 // We don't want the Window to open in the
                 // minimized state, so ignore that value.
                 if (WindowState != WindowState.Minimized)
+                {
                     _settings.WindowState = WindowState;
+                }
                 else
+                {
                     _settings.WindowState = WindowState.Normal;
+                }
             }
         }
 

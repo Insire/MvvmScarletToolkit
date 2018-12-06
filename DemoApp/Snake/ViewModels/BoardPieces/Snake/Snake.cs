@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.ObjectModel;
@@ -40,9 +40,13 @@ namespace DemoApp
             var position = Head.MoveNorth();
 
             if (CanMove(position))
+            {
                 Head.Move(position);
+            }
             else
+            {
                 return false;
+            }
 
             MoveTail(head);
 
@@ -55,9 +59,13 @@ namespace DemoApp
             var position = Head.MoveSouth();
 
             if (CanMove(position))
+            {
                 Head.Move(position);
+            }
             else
+            {
                 return false;
+            }
 
             MoveTail(head);
 
@@ -70,9 +78,13 @@ namespace DemoApp
             var position = Head.MoveWest();
 
             if (CanMove(position))
+            {
                 Head.Move(position);
+            }
             else
+            {
                 return false;
+            }
 
             MoveTail(head);
 
@@ -85,9 +97,13 @@ namespace DemoApp
             var position = Head.MoveEast();
 
             if (CanMove(position))
+            {
                 Head.Move(position);
+            }
             else
+            {
                 return false;
+            }
 
             MoveTail(head);
 
@@ -97,7 +113,9 @@ namespace DemoApp
         private bool CanMove(Position position)
         {
             if (Body.Count < 4) // snake is not long enough to bite itself
+            {
                 return true;
+            }
 
             var model = new PositionDTO(Head)
             {
@@ -119,7 +137,9 @@ namespace DemoApp
                 var temp = part.CurrentPosition;
 
                 if (previousPosition == temp)
+                {
                     continue;
+                }
 
                 part.Move(previousPosition);
                 previousPosition = temp;
@@ -129,7 +149,9 @@ namespace DemoApp
         public bool IsEating(IPositionable boardPiece)
         {
             if (!(boardPiece is Apple))
+            {
                 return false;
+            }
 
             // simple calculation if an apple intersects with the snake head, which will consume the
             // apple by default and add new Snake segment
@@ -138,9 +160,13 @@ namespace DemoApp
             {
                 var segment = Body.LastOrDefault();
                 if (segment != null)
+                {
                     segment = new SnakeSegment(_options, segment, _messenger, Body.Count);
+                }
                 else
+                {
                     segment = new SnakeSegment(_options, Head, _messenger, Body.Count);
+                }
 
                 Body.Add(segment);
 

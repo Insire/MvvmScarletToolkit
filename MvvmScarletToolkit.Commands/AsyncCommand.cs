@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -45,18 +45,29 @@ namespace MvvmScarletToolkit.Commands
         private bool CanExecuteInternal(object parameter)
         {
             if (IsBusy)
+            {
                 return false;
+            }
+
             if (Execution?.IsCompleted == false)
+            {
                 return false;
+            }
 
             if (_canExecute is null)
+            {
                 return true;
+            }
 
             if (parameter is null)
+            {
                 return _canExecute.Invoke(default);
+            }
 
             if (parameter is TArgument arg)
+            {
                 return _canExecute.Invoke(arg);
+            }
 
             return false;
         }
@@ -101,7 +112,9 @@ namespace MvvmScarletToolkit.Commands
             {
                 _commandExecuting = true;
                 if (!_cts.IsCancellationRequested)
+                {
                     return;
+                }
 
                 _cts = new CancellationTokenSource();
                 RaiseCanExecuteChanged();

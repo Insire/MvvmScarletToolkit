@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace MvvmScarletToolkit
 {
@@ -13,10 +13,14 @@ namespace MvvmScarletToolkit
         public SubscriptionToken(IMessenger hub, Type messageType)
         {
             if (hub == null)
+            {
                 throw new ArgumentNullException(nameof(hub));
+            }
 
             if (!typeof(IScarletMessage).IsAssignableFrom(messageType))
+            {
                 throw new ArgumentOutOfRangeException(nameof(messageType));
+            }
 
             _hub = new WeakReference(hub);
             _messageType = messageType;

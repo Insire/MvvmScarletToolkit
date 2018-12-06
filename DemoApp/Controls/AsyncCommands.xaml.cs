@@ -1,6 +1,4 @@
-﻿using System.Windows.Controls;
-
-namespace DemoApp
+﻿namespace DemoApp
 {
     public partial class AsyncCommands
     {

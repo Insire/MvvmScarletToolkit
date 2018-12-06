@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using System;
 using System.Collections;
@@ -81,7 +81,9 @@ namespace MvvmScarletToolkit.Observables
         public virtual async Task Add(T item)
         {
             if (item is null)
+            {
                 throw new ArgumentNullException(nameof(item));
+            }
 
             using (BusyStack.GetToken())
             {
@@ -94,19 +96,25 @@ namespace MvvmScarletToolkit.Observables
         public virtual async Task AddRange(IEnumerable<T> items)
         {
             if (items is null)
+            {
                 throw new ArgumentNullException(nameof(items));
+            }
 
             using (BusyStack.GetToken())
             {
                 foreach (var item in items)
+                {
                     await Add(item).ConfigureAwait(false);
+                }
             }
         }
 
         public virtual void Remove(T item)
         {
             using (BusyStack.GetToken())
+            {
                 _items.Remove(item);
+            }
 
             OnPropertyChanged(nameof(Count));
         }
@@ -114,12 +122,16 @@ namespace MvvmScarletToolkit.Observables
         public virtual void RemoveRange(IEnumerable<T> items)
         {
             if (items is null)
+            {
                 throw new ArgumentNullException(nameof(items));
+            }
 
             using (BusyStack.GetToken())
             {
                 foreach (var item in items)
+                {
                     Remove(item);
+                }
             }
         }
 
@@ -149,7 +161,9 @@ namespace MvvmScarletToolkit.Observables
         public void Clear()
         {
             using (BusyStack.GetToken())
+            {
                 _items.Clear();
+            }
 
             OnPropertyChanged(nameof(Count));
         }
@@ -190,7 +204,9 @@ namespace MvvmScarletToolkit.Observables
         protected virtual Task RefreshInternal(CancellationToken token)
         {
             using (BusyStack.GetToken())
+            {
                 return Task.CompletedTask;
+            }
         }
 
         protected virtual bool CanRefresh()
