@@ -10,19 +10,12 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 {
     public static class FileSystemExtensions
     {
-        public static List<IFileSystemInfo> GetChildren(this ScarletFileSystemContainerBase directory, IDepth depth)
+        public static IEnumerable<IFileSystemInfo> GetChildren(this ScarletFileSystemContainerBase directory, IDepth depth)
         {
-            var result = new List<IFileSystemInfo>();
-
-            if (!CanAccess(directory.FullName) && directory.DirectoryIsEmpty())
-            {
-                return result;
-            }
-
-            result.AddRange(GetDirectories(directory.FullName, depth, directory));
-            result.AddRange(GetFiles(directory.FullName, depth, directory));
-
-            return result;
+            return !CanAccess(directory.FullName) && directory.DirectoryIsEmpty()
+                ? Enumerable.Empty<IFileSystemInfo>()
+                : GetDirectories(directory.FullName, depth, directory)
+                    .Concat(GetFiles(directory.FullName, depth, directory));
         }
 
         private static bool CanAccess(string path)
@@ -38,16 +31,16 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 Debug.WriteLine($"{nameof(UnauthorizedAccessException)} occured during reading off {path}");
                 Debug.WriteLine(ex.Message);
+
                 return false;
             }
         }
 
-        private static List<IFileSystemInfo> GetDirectories(string path, IDepth depth, IFileSystemDirectory parent)
+        private static IEnumerable<IFileSystemInfo> GetDirectories(string path, IDepth depth, IFileSystemDirectory parent)
         {
-            var result = new List<IFileSystemInfo>();
             try
             {
-                var directories = Directory.GetDirectories(path)
+                return Directory.GetDirectories(path)
                                             .Select(p => new DirectoryInfo(p))
                                             .Where(p => (p.Attributes & FileAttributes.Directory) != 0
                                                         && (p.Attributes & FileAttributes.Hidden) == 0
@@ -55,51 +48,45 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                                                         && (p.Attributes & FileAttributes.Offline) == 0
                                                         && (p.Attributes & FileAttributes.Encrypted) == 0)
                                             .Select(p => new ScarletDirectory(p, depth, parent))
-                                            .ToList();
-
-                result.AddRange(directories);
+                                            .ToArray();
             }
             catch (UnauthorizedAccessException ex)
             {
                 Debug.WriteLine($"{nameof(UnauthorizedAccessException)} occured during reading off {path}");
                 Debug.WriteLine(ex.Message);
             }
-            return result;
+
+            return Enumerable.Empty<IFileSystemInfo>();
         }
 
-        private static List<IFileSystemInfo> GetFiles(string path, IDepth depth, IFileSystemDirectory parent)
+        private static IEnumerable<IFileSystemInfo> GetFiles(string path, IDepth depth, IFileSystemDirectory parent)
         {
-            var result = new List<IFileSystemInfo>();
             try
             {
-                var files = Directory.GetFiles(path)
-                                        .Select(p => new FileInfo(p))
-                                        .Where(p => (p.Attributes & FileAttributes.Directory) == 0
-                                                    && (p.Attributes & FileAttributes.Hidden) == 0
-                                                    && (p.Attributes & FileAttributes.System) == 0
-                                                    && (p.Attributes & FileAttributes.Offline) == 0
-                                                    && (p.Attributes & FileAttributes.Encrypted) == 0)
-                                        .Select(p => new ScarletFile(p, depth, parent))
-                                        .ToList();
-
-                result.AddRange(files);
+                return Directory.GetFiles(path)
+                        .Select(p => new FileInfo(p))
+                        .Where(p => (p.Attributes & FileAttributes.Directory) == 0
+                                    && (p.Attributes & FileAttributes.Hidden) == 0
+                                    && (p.Attributes & FileAttributes.System) == 0
+                                    && (p.Attributes & FileAttributes.Offline) == 0
+                                    && (p.Attributes & FileAttributes.Encrypted) == 0)
+                        .Select(p => new ScarletFile(p, depth, parent))
+                        .ToArray();
             }
             catch (UnauthorizedAccessException ex)
             {
                 Debug.WriteLine($"{nameof(UnauthorizedAccessException)} occured during reading off {path}");
                 Debug.WriteLine(ex.Message);
             }
-            return result;
+
+            return Enumerable.Empty<IFileSystemInfo>();
         }
 
         public static bool DirectoryIsEmpty(this ScarletFileSystemContainerBase info)
         {
-            if (!Directory.Exists(info.FullName))
-            {
-                return false;
-            }
-
-            return DirectoryIsEmpty(info.FullName);
+            return !Directory.Exists(info.FullName)
+                ? false
+                : DirectoryIsEmpty(info.FullName);
         }
 
         public static bool DirectoryIsEmpty(this string path)
@@ -112,7 +99,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             item.IsExpanded = true;
             var parent = item.Parent;
 
-            while (parent != null)
+            while (!(parent is null))
             {
                 parent.IsExpanded = true;
                 parent = parent.Parent;

@@ -6,9 +6,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     [DebuggerDisplay("Directory: {Name} IsContainer: {IsContainer}")]
     public class ScarletDirectory : ScarletFileSystemContainerBase
     {
-        public ScarletDirectory(DirectoryInfo info, IDepth depth, IFileSystemDirectory parent) : base(info.Name, info.FullName, depth, parent)
+        public ScarletDirectory(DirectoryInfo info, IDepth depth, IFileSystemDirectory parent)
+            : base(info.Name, info.FullName, depth, parent)
         {
-            using (_busyStack.GetToken())
+            using (BusyStack.GetToken())
             {
                 if (!Depth.IsMaxReached)
                 {

@@ -51,13 +51,12 @@ namespace MvvmScarletToolkit.ConfigurableWindow
         {
             _settings = CreateSettings();
 
-            if (_settings == null)
+            if (_settings is null)
             {
                 throw new ArgumentNullException(nameof(_settings), "Cannot be null.");
             }
 
-            Loaded += delegate
-            { _isLoaded = true; };
+            Loaded += (o, e) => _isLoaded = true;
 
             ApplySettings();
         }
@@ -83,8 +82,7 @@ namespace MvvmScarletToolkit.ConfigurableWindow
                                                                  {
                                                                      if (_isLoaded && WindowState == WindowState.Normal)
                                                                      {
-                                                                         var loc = new Point(Left, Top);
-                                                                         _settings.WindowLocation = loc;
+                                                                         _settings.WindowLocation = new Point(Left, Top);
                                                                      }
                                                                  }));
         }
@@ -107,14 +105,9 @@ namespace MvvmScarletToolkit.ConfigurableWindow
             {
                 // We don't want the Window to open in the
                 // minimized state, so ignore that value.
-                if (WindowState != WindowState.Minimized)
-                {
-                    _settings.WindowState = WindowState;
-                }
-                else
-                {
-                    _settings.WindowState = WindowState.Normal;
-                }
+                _settings.WindowState = WindowState != WindowState.Minimized
+                    ? WindowState
+                    : WindowState.Normal;
             }
         }
 
@@ -148,10 +141,7 @@ namespace MvvmScarletToolkit.ConfigurableWindow
                 // We need to wait until the HWND window is initialized before
                 // setting the state, to ensure that this works correctly on
                 // a multi-monitor system.  Thanks to Andrew Smith for this fix.
-                SourceInitialized += delegate
-                {
-                    WindowState = _settings.WindowState;
-                };
+                SourceInitialized += (o, e) => WindowState = _settings.WindowState;
             }
         }
     }

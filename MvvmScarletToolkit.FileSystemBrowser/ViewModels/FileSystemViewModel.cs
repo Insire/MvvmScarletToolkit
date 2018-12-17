@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
@@ -10,9 +11,11 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     {
         protected readonly BusyStack _busyStack;
 
+        [Bindable(true, BindingDirection.OneWay)]
         public ICommand SelectCommand { get; }
 
         private RangeObservableCollection<IFileSystemInfo> _selectedItems;
+        [Bindable(true, BindingDirection.OneWay)]
         public RangeObservableCollection<IFileSystemInfo> SelectedItems
         {
             get { return _selectedItems; }
@@ -20,6 +23,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private RangeObservableCollection<ScarletDrive> _drives;
+        [Bindable(true, BindingDirection.OneWay)]
         public RangeObservableCollection<ScarletDrive> Drives
         {
             get { return _drives; }
@@ -27,6 +31,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private ScarletFileSystemContainerBase _selectedItem;
+        [Bindable(true, BindingDirection.TwoWay)]
         public ScarletFileSystemContainerBase SelectedItem
         {
             get { return _selectedItem; }
@@ -34,6 +39,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private bool _isBusy;
+        [Bindable(true, BindingDirection.OneWay)]
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -41,6 +47,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private string _filter;
+        [Bindable(true, BindingDirection.TwoWay)]
         public string Filter
         {
             get { return _filter; }
@@ -48,6 +55,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private bool _displayListView;
+        [Bindable(true, BindingDirection.TwoWay)]
         public bool DisplayListView
         {
             get { return _displayListView; }
@@ -63,14 +71,11 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 DisplayListView = false;
 
-                Drives = new RangeObservableCollection<ScarletDrive>();
                 SelectedItems = new RangeObservableCollection<IFileSystemInfo>();
-
-                var drives = DriveInfo.GetDrives()
-                                        .Where(p => p.IsReady && p.DriveType != DriveType.CDRom && p.DriveType != DriveType.Unknown)
-                                        .Select(p => new ScarletDrive(p, new FileSystemDepth(0)))
-                                        .ToList();
-                Drives.AddRange(drives);
+                Drives = new RangeObservableCollection<ScarletDrive>(
+                                DriveInfo.GetDrives()
+                                    .Where(p => p.IsReady && p.DriveType != DriveType.CDRom && p.DriveType != DriveType.Unknown)
+                                    .Select(p => new ScarletDrive(p, new FileSystemDepth(0))));
             }
         }
 

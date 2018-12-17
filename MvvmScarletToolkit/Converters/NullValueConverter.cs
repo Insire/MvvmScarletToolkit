@@ -9,12 +9,11 @@ namespace MvvmScarletToolkit
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
-            {
-                return DependencyProperty.UnsetValue;
-            }
-
-            return string.IsNullOrEmpty(value as string) ? DependencyProperty.UnsetValue : value;
+            return value is null
+                ? DependencyProperty.UnsetValue
+                : string.IsNullOrEmpty(value as string)
+                    ? DependencyProperty.UnsetValue
+                    : value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
@@ -6,9 +6,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     [DebuggerDisplay("File: {Name} IsContainer: {IsContainer}")]
     public class ScarletFile : ScarletFileSystemBase, IFileSystemFile
     {
-        public ScarletFile(FileInfo info, IDepth depth, IFileSystemDirectory parent) : base(info.Name, info.FullName, depth, parent)
+        public ScarletFile(FileInfo info, IDepth depth, IFileSystemDirectory parent)
+            : base(info.Name, info.FullName, depth, parent)
         {
-            using (_busyStack.GetToken())
+            using (BusyStack.GetToken())
             {
                 if (!Depth.IsMaxReached)
                 {
@@ -20,7 +21,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         public override void Refresh()
         {
-            using (_busyStack.GetToken())
+            using (BusyStack.GetToken())
             {
                 OnFilterChanged(string.Empty);
             }

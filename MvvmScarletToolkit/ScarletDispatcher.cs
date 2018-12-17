@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,8 +11,13 @@ namespace MvvmScarletToolkit
         private readonly Dispatcher _dispatcherObject;
 
         public ScarletDispatcher()
+            : this(Application.Current.Dispatcher)
         {
-            _dispatcherObject = Application.Current.Dispatcher;
+        }
+
+        public ScarletDispatcher(Dispatcher dispatcher)
+        {
+            _dispatcherObject = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         }
 
         public async Task Invoke(Action action)
@@ -22,7 +27,7 @@ namespace MvvmScarletToolkit
 
         public async Task<T> Invoke<T>(Func<T> action)
         {
-            return await _dispatcherObject.InvokeAsync<T>(action);
+            return await _dispatcherObject.InvokeAsync(action);
         }
     }
 }

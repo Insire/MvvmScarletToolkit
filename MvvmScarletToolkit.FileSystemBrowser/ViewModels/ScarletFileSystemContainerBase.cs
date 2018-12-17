@@ -7,6 +7,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     public abstract class ScarletFileSystemContainerBase : ScarletFileSystemBase, IFileSystemDirectory
     {
         private ICollectionView _noFilesCollectionView;
+        [Bindable(true, BindingDirection.OneWay)]
         public ICollectionView NoFilesCollectionView
         {
             get { return _noFilesCollectionView; }
@@ -14,6 +15,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private ICollectionView _defaultCollectionView;
+        [Bindable(true, BindingDirection.OneWay)]
         public ICollectionView DefaultCollectionView
         {
             get { return _defaultCollectionView; }
@@ -21,6 +23,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private RangeObservableCollection<IFileSystemInfo> _children;
+        [Bindable(true, BindingDirection.OneWay)]
         public RangeObservableCollection<IFileSystemInfo> Children
         {
             get { return _children; }
@@ -30,7 +33,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         protected ScarletFileSystemContainerBase(string name, string fullName, IDepth depth, IFileSystemDirectory parent)
             : base(name, fullName, depth, parent)
         {
-            using (_busyStack.GetToken())
+            using (BusyStack.GetToken())
             {
                 IsContainer = true;
 
@@ -53,7 +56,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         public override void OnFilterChanged(string filter)
         {
-            using (_busyStack.GetToken())
+            using (BusyStack.GetToken())
             {
                 Filter = filter;
                 Children.ToList().ForEach(p => p.LoadMetaData());
@@ -68,7 +71,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         public override void Refresh()
         {
-            using (_busyStack.GetToken())
+            using (BusyStack.GetToken())
             {
                 Children.Clear();
                 Children.AddRange(FileSystemExtensions.GetChildren(this, Depth));

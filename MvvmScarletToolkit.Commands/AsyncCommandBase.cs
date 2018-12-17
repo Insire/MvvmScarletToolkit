@@ -19,6 +19,7 @@ namespace MvvmScarletToolkit.Commands
         public abstract Task ExecuteAsync(object parameter);
 
         private bool _isBusy;
+        [Bindable(true, BindingDirection.OneWay)]
         public bool IsBusy
         {
             get { return _isBusy; }

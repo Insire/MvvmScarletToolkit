@@ -6,9 +6,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     [DebuggerDisplay("Drive: {Name} IsContainer: {IsContainer}")]
     public class ScarletDrive : ScarletFileSystemContainerBase, IFileSystemDrive
     {
-        public ScarletDrive(DriveInfo info, IDepth depth) : base(info.Name, info.Name, depth, null)
+        public ScarletDrive(DriveInfo info, IDepth depth)
+            : base(info.Name, info.Name, depth, null)
         {
-            using (_busyStack.GetToken())
+            using (BusyStack.GetToken())
             {
                 if (!Depth.IsMaxReached)
                 {

@@ -1,9 +1,9 @@
-﻿using System.Configuration;
+using System.Configuration;
 using System.Windows;
 
 namespace MvvmScarletToolkit.ConfigurableWindow
 {
-    public class ConfigurableWindowSettings : IConfigurableWindowSettings
+    public abstract class ConfigurableWindowSettings : IConfigurableWindowSettings
     {
         private readonly ApplicationSettingsBase _settings;
 
@@ -24,9 +24,9 @@ namespace MvvmScarletToolkit.ConfigurableWindow
             set { SetValue(_windowLocationProp, value); }
         }
 
-        public System.Windows.Size WindowSize
+        public Size WindowSize
         {
-            get { return GetValue<System.Windows.Size>(_windowSizeProp); }
+            get { return GetValue<Size>(_windowSizeProp); }
             set { SetValue(_windowSizeProp, value); }
         }
 
@@ -36,7 +36,7 @@ namespace MvvmScarletToolkit.ConfigurableWindow
             set { SetValue(_windowStateProp, value); }
         }
 
-        public ConfigurableWindowSettings(ApplicationSettingsBase settings, string isFirstRunProp, string windowLocationProp, string windowSizeProp, string windowStateProp)
+        protected ConfigurableWindowSettings(ApplicationSettingsBase settings, string isFirstRunProp, string windowLocationProp, string windowSizeProp, string windowStateProp)
         {
             _settings = settings;
 

@@ -14,27 +14,41 @@ namespace MvvmScarletToolkit
     {
         private readonly SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
 
-        private bool _suppressNotification = false;
+        private bool _suppressNotification;
 
         public RangeObservableCollection()
             : base()
         {
         }
 
+        public RangeObservableCollection(IEnumerable<T> items)
+            : base(items)
+
+        {
+        }
+
+        public RangeObservableCollection(List<T> items)
+            : base(items)
+
+        {
+        }
+
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            if (!_suppressNotification)
+            if (_suppressNotification)
             {
-                if (SynchronizationContext.Current == _synchronizationContext)
-                {
-                    // Execute the CollectionChanged event on the current thread
-                    RaiseCollectionChanged(e);
-                }
-                else
-                {
-                    // Raises the CollectionChanged event on the creator thread
-                    _synchronizationContext.Send(RaiseCollectionChanged, e);
-                }
+                return;
+            }
+
+            if (SynchronizationContext.Current.Equals(_synchronizationContext))
+            {
+                // Execute the CollectionChanged event on the current thread
+                RaiseCollectionChanged(e);
+            }
+            else
+            {
+                // Raises the CollectionChanged event on the creator thread
+                _synchronizationContext.Send(RaiseCollectionChanged, e);
             }
         }
 
@@ -46,7 +60,7 @@ namespace MvvmScarletToolkit
 
         public virtual void AddRange(IEnumerable<T> items)
         {
-            if (items == null)
+            if (items is null)
             {
                 throw new ArgumentNullException(nameof(items));
             }
@@ -65,7 +79,7 @@ namespace MvvmScarletToolkit
 
         public virtual void RemoveRange(IEnumerable<T> items)
         {
-            if (items == null)
+            if (items is null)
             {
                 throw new ArgumentNullException(nameof(items));
             }
@@ -83,7 +97,7 @@ namespace MvvmScarletToolkit
 
         public virtual void RemoveRange(IList items)
         {
-            if (items == null)
+            if (items is null)
             {
                 throw new ArgumentNullException(nameof(items));
             }
@@ -101,7 +115,7 @@ namespace MvvmScarletToolkit
 
         public virtual void RemoveRange(IList<T> items)
         {
-            if (items == null)
+            if (items is null)
             {
                 throw new ArgumentNullException(nameof(items));
             }
@@ -117,29 +131,23 @@ namespace MvvmScarletToolkit
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
-        public void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        public virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
             OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            if (SynchronizationContext.Current == _synchronizationContext)
+            if (SynchronizationContext.Current.Equals(_synchronizationContext))
             {
                 // Execute the PropertyChanged event on the current thread
-                RaisePropertyChanged(e);
+                OnPropertyChanged(e);
             }
             else
             {
                 // Raises the PropertyChanged event on the creator thread
-                _synchronizationContext.Send(RaisePropertyChanged, e);
+                _synchronizationContext.Send(new SendOrPostCallback((object _) => OnPropertyChanged(e)), e);
             }
-        }
-
-        private void RaisePropertyChanged(object param)
-        {
-            // We are in the creator thread, call the base implementation directly
-            base.OnPropertyChanged((PropertyChangedEventArgs)param);
         }
     }
 }

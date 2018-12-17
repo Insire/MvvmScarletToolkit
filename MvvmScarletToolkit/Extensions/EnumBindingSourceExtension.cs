@@ -29,9 +29,11 @@ namespace MvvmScarletToolkit
         }
 
         public EnumBindingSourceExtension()
-        { }
+        {
+        }
 
         public EnumBindingSourceExtension(Type enumType)
+            : this()
         {
             EnumType = enumType;
         }

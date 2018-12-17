@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,10 +16,11 @@ namespace MvvmScarletToolkit.Commands
         private readonly CancelAsyncCommand _cancelCommand;
         private readonly Func<TArgument, bool> _canExecute;
 
-        private NotifyTaskCompletion<TResult> _execution;
-
+        [Bindable(true, BindingDirection.OneWay)]
         public ICommand CancelCommand => _cancelCommand;
 
+        private NotifyTaskCompletion<TResult> _execution;
+        [Bindable(true, BindingDirection.OneWay)]
         public NotifyTaskCompletion<TResult> Execution
         {
             get { return _execution; }
@@ -64,12 +66,8 @@ namespace MvvmScarletToolkit.Commands
                 return _canExecute.Invoke(default);
             }
 
-            if (parameter is TArgument arg)
-            {
-                return _canExecute.Invoke(arg);
-            }
-
-            return false;
+            return parameter is TArgument arg
+                && _canExecute.Invoke(arg);
         }
 
         [DebuggerStepThrough]
@@ -106,7 +104,7 @@ namespace MvvmScarletToolkit.Commands
             private CancellationTokenSource _cts = new CancellationTokenSource();
             private bool _commandExecuting;
 
-            public CancellationToken Token { get { return _cts.Token; } }
+            public CancellationToken Token => _cts.Token;
 
             public void NotifyCommandStarting()
             {

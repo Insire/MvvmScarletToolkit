@@ -1,22 +1,20 @@
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
     public abstract class ScarletFileSystemBase : ObservableObject, IFileSystemInfo
     {
-        protected readonly BusyStack _busyStack;
+        protected readonly BusyStack BusyStack;
 
         public static bool NoFilesFilter(object obj)
         {
-            if (obj is IFileSystemFile)
-            {
-                return false;
-            }
-
-            return SearchFilter(obj);
+            return obj is IFileSystemFile
+                ? false
+                : SearchFilter(obj);
         }
 
         public static bool SearchFilter(object obj)
@@ -39,11 +37,17 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return info.Name.IndexOf(info.Filter, StringComparison.InvariantCultureIgnoreCase) >= 0;
         }
 
+        [Bindable(true, BindingDirection.OneWay)]
         public ICommand LoadCommand { get; protected set; }
+
+        [Bindable(true, BindingDirection.OneWay)]
         public ICommand RefreshCommand { get; protected set; }
+
+        [Bindable(true, BindingDirection.OneWay)]
         public ICommand DeleteCommand { get; protected set; }
 
         private IFileSystemDirectory _parent;
+        [Bindable(true, BindingDirection.OneWay)]
         public IFileSystemDirectory Parent
         {
             get { return _parent; }
@@ -51,6 +55,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private string _name;
+        [Bindable(true, BindingDirection.OneWay)]
         public string Name
         {
             get { return _name; }
@@ -58,6 +63,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private string _fullName;
+        [Bindable(true, BindingDirection.OneWay)]
         public string FullName
         {
             get { return _fullName; }
@@ -65,6 +71,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private string _filter;
+        [Bindable(true, BindingDirection.TwoWay)]
         public string Filter
         {
             get { return _filter; }
@@ -72,6 +79,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private bool _exists;
+        [Bindable(true, BindingDirection.OneWay)]
         public bool Exists
         {
             get { return _exists; }
@@ -79,6 +87,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private bool _isBusy;
+        [Bindable(true, BindingDirection.OneWay)]
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -86,6 +95,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private bool _isLoaded;
+        [Bindable(true, BindingDirection.OneWay)]
         public bool IsLoaded
         {
             get { return _isLoaded; }
@@ -93,6 +103,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private bool _isExpanded;
+        [Bindable(true, BindingDirection.TwoWay)]
         public bool IsExpanded
         {
             get { return _isExpanded; }
@@ -100,6 +111,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private bool _isSelected;
+        [Bindable(true, BindingDirection.TwoWay)]
         public bool IsSelected
         {
             get { return _isSelected; }
@@ -107,6 +119,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private bool _isHidden;
+        [Bindable(true, BindingDirection.OneWay)]
         public bool IsHidden
         {
             get { return _isHidden; }
@@ -114,6 +127,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private bool _isContainer;
+        [Bindable(true, BindingDirection.OneWay)]
         public bool IsContainer
         {
             get { return _isContainer; }
@@ -121,6 +135,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private bool _hasContainers;
+        [Bindable(true, BindingDirection.OneWay)]
         public bool HasContainers
         {
             get { return _hasContainers; }
@@ -128,6 +143,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private IDepth _depth;
+        [Bindable(true, BindingDirection.OneWay)]
         public IDepth Depth
         {
             get { return _depth; }
@@ -136,7 +152,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         private ScarletFileSystemBase()
         {
-            _busyStack = new BusyStack((hasItems) => IsBusy = hasItems);
+            BusyStack = new BusyStack((hasItems) => IsBusy = hasItems);
 
             LoadCommand = new RelayCommand(Load, CanLoad);
             RefreshCommand = new RelayCommand(Refresh, CanRefresh);
@@ -166,12 +182,12 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 throw new ArgumentException($"{nameof(depth)} can't be empty.", nameof(depth));
             }
 
-            if (!(this is IFileSystemDrive) && parent == null)
+            if (!(this is IFileSystemDrive) && parent is null)
             {
                 throw new ArgumentException($"{nameof(parent)} can't be empty.", nameof(parent));
             }
 
-            using (_busyStack.GetToken())
+            using (BusyStack.GetToken())
             {
                 Depth = depth;
                 Depth.Current++;

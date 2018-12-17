@@ -1,4 +1,5 @@
-﻿using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Observables;
+using System.ComponentModel;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
@@ -6,23 +7,25 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     {
         public bool IsMaxReached => Current > Maximum;
 
-        private int _maxDepth;
+        private int _maximum;
+        [Bindable(true, BindingDirection.OneWay)]
         public int Maximum
         {
-            get { return _maxDepth; }
-            private set { SetValue(ref _maxDepth, value, OnChanged: OnIsMaxReachedChanged); }
+            get { return _maximum; }
+            private set { SetValue(ref _maximum, value, OnChanged: OnIsMaxReachedChanged); }
         }
 
-        private int _depth;
+        private int _current;
+        [Bindable(true, BindingDirection.OneWay)]
         public int Current
         {
-            get { return _depth; }
-            set { SetValue(ref _depth, value, OnChanged: OnIsMaxReachedChanged); }
+            get { return _current; }
+            set { SetValue(ref _current, value, OnChanged: OnIsMaxReachedChanged); }
         }
 
-        public FileSystemDepth(int maxDepth)
+        public FileSystemDepth(int maximum)
         {
-            Maximum = maxDepth;
+            Maximum = maximum;
             Current = 0;
         }
 
