@@ -27,7 +27,8 @@ The included DemoApp contains examples for:
 
 TODO:
 - improve performance of the snake game and provide it as nuget package
-- implement Async Commands and async loading for FileSystemBrowser
+- improve Async Commands
+- finalize basic FileSystemBrowser
 - improve documentation
 - setup CI with appveyor
 - add a nice icon for this lib

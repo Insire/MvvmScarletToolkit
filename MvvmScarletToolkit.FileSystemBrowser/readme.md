@@ -2,7 +2,15 @@
 
 ## Goals
 
+This library aims to provide an easy to use and extend browser control for FileSystemAccess.
+
 ## Contents
+
+|class|summary|code|
+|---|---|---|
+|FileSystemBrowser|TODO|TODO|
+|FileSystemViewModel|TODO|TODO|
+|Generic.xaml|TODO|TODO|
 
 ## Licensing
 
