@@ -1,16 +1,17 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
-    public class FileSystemViewModel : ObservableObject
+    public class FileSystemViewModel : ViewModelListBase<IFileSystemInfo>
     {
-        protected readonly BusyStack _busyStack;
-
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand SelectCommand { get; }
 
@@ -22,36 +23,12 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             private set { SetValue(ref _selectedItems, value); }
         }
 
-        private RangeObservableCollection<ScarletDrive> _drives;
-        [Bindable(true, BindingDirection.OneWay)]
-        public RangeObservableCollection<ScarletDrive> Drives
-        {
-            get { return _drives; }
-            private set { SetValue(ref _drives, value); }
-        }
-
-        private ScarletFileSystemContainerBase _selectedItem;
-        [Bindable(true, BindingDirection.TwoWay)]
-        public ScarletFileSystemContainerBase SelectedItem
-        {
-            get { return _selectedItem; }
-            set { SetValue(ref _selectedItem, value, OnChanged: OnSelectedItemChanged); }
-        }
-
-        private bool _isBusy;
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            private set { SetValue(ref _isBusy, value); }
-        }
-
         private string _filter;
         [Bindable(true, BindingDirection.TwoWay)]
         public string Filter
         {
             get { return _filter; }
-            set { SetValue(ref _filter, value, OnChanged: () => SelectedItem.OnFilterChanged(Filter)); }
+            set { SetValue(ref _filter, value, OnChanged: () => SelectedItem.OnFilterChanged(Filter, CancellationToken.None)); }
         }
 
         private bool _displayListView;
@@ -62,44 +39,76 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             set { SetValue(ref _displayListView, value); }
         }
 
-        public FileSystemViewModel()
+        public FileSystemViewModel(IScarletDispatcher dispatcher)
+            : base(dispatcher)
         {
-            _busyStack = new BusyStack((hasItems) => IsBusy = hasItems);
-            SelectCommand = new RelayCommand<IFileSystemInfo>(SetSelectedItem, CanSetSelectedItem);
+            SelectCommand = AsyncCommand.Create<IFileSystemInfo>(SetSelectedItem, CanSetSelectedItem);
+            SelectedItems = new RangeObservableCollection<IFileSystemInfo>();
+        }
 
-            using (_busyStack.GetToken())
+        protected override async void OnSelectedItemChanged()
+        {
+            using (BusyStack.GetToken())
             {
-                DisplayListView = false;
-
-                SelectedItems = new RangeObservableCollection<IFileSystemInfo>();
-                Drives = new RangeObservableCollection<ScarletDrive>(
-                                DriveInfo.GetDrives()
-                                    .Where(p => p.IsReady && p.DriveType != DriveType.CDRom && p.DriveType != DriveType.Unknown)
-                                    .Select(p => new ScarletDrive(p, new FileSystemDepth(0))));
+                await SelectedItem.LoadCommand.ExecuteAsync(null).ConfigureAwait(false);
+                await SelectedItem.LoadMetaData(CancellationToken.None).ConfigureAwait(false);
             }
         }
 
-        private void OnSelectedItemChanged()
-        {
-            SelectedItem.Load();
-            SelectedItem.LoadMetaData();
-        }
-
-        public void SetSelectedItem(IFileSystemInfo item)
+        public async Task SetSelectedItem(IFileSystemInfo item)
         {
             if (!(item is ScarletFileSystemContainerBase value))
             {
                 return;
             }
 
-            SelectedItem = value;
-            SelectedItem.ExpandPath();
-            SelectedItem.Parent.IsSelected = true;
+            using (BusyStack.GetToken())
+            {
+                SelectedItem = value;
+                await SelectedItem.ExpandPath().ConfigureAwait(false);
+                SelectedItem.Parent.IsSelected = true;
+            }
         }
 
         private bool CanSetSelectedItem(IFileSystemInfo item)
         {
             return item is ScarletFileSystemContainerBase value && value != SelectedItem;
+        }
+
+        protected override async Task LoadInternal(CancellationToken token)
+        {
+            using (BusyStack.GetToken())
+            {
+                await AddRange(DriveInfo.GetDrives()
+                    .Where(p => p.IsReady && p.DriveType != DriveType.CDRom && p.DriveType != DriveType.Unknown)
+                    .Select(p => new ScarletDrive(p, new FileSystemDepth(0), Dispatcher)))
+                    .ConfigureAwait(false);
+
+                IsLoaded = true;
+            }
+        }
+
+        protected override async Task RefreshInternal(CancellationToken token)
+        {
+            using (BusyStack.GetToken())
+            {
+                Clear();
+
+                await AddRange(DriveInfo.GetDrives()
+                    .Where(p => p.IsReady && p.DriveType != DriveType.CDRom && p.DriveType != DriveType.Unknown)
+                    .Select(p => new ScarletDrive(p, new FileSystemDepth(0), Dispatcher)))
+                    .ConfigureAwait(false);
+            }
+        }
+
+        protected override Task UnloadInternalAsync()
+        {
+            using (BusyStack.GetToken())
+            {
+                Clear();
+                IsLoaded = false;
+                return Task.CompletedTask;
+            }
         }
     }
 }

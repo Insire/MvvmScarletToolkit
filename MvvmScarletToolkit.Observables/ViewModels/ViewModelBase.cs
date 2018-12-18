@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly ObservableBusyStack BusyStack;
 
         private bool _isBusy;
+        [Bindable(true, BindingDirection.OneWay)]
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -17,16 +19,20 @@ namespace MvvmScarletToolkit.Observables
         }
 
         private bool _isLoaded;
+        [Bindable(true, BindingDirection.OneWay)]
         public bool IsLoaded
         {
             get { return _isLoaded; }
             protected set { SetValue(ref _isLoaded, value); }
         }
 
+        [Bindable(true, BindingDirection.OneWay)]
         public virtual IExtendedAsyncCommand LoadCommand { get; }
 
+        [Bindable(true, BindingDirection.OneWay)]
         public virtual IExtendedAsyncCommand RefreshCommand { get; }
 
+        [Bindable(true, BindingDirection.OneWay)]
         public virtual IExtendedAsyncCommand UnloadCommand { get; }
 
         protected ViewModelBase()
@@ -38,41 +44,21 @@ namespace MvvmScarletToolkit.Observables
             UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload);
         }
 
-        protected virtual Task LoadInternal(CancellationToken token)
-        {
-            using (BusyStack.GetToken())
-            {
-                IsLoaded = true;
-                return Task.CompletedTask;
-            }
-        }
+        protected abstract Task LoadInternal(CancellationToken token);
 
         protected virtual bool CanLoad()
         {
             return !IsLoaded;
         }
 
-        protected virtual Task UnloadInternalAsync()
-        {
-            using (BusyStack.GetToken())
-            {
-                IsLoaded = false;
-                return Task.CompletedTask;
-            }
-        }
+        protected abstract Task UnloadInternalAsync();
 
         protected virtual bool CanUnload()
         {
             return IsLoaded;
         }
 
-        protected virtual Task RefreshInternal(CancellationToken token)
-        {
-            using (BusyStack.GetToken())
-            {
-                return Task.CompletedTask;
-            }
-        }
+        protected abstract Task RefreshInternal(CancellationToken token);
 
         protected virtual bool CanRefresh()
         {

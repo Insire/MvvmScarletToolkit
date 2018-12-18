@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -5,16 +6,17 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Permissions;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
     public static class FileSystemExtensions
     {
-        public static IEnumerable<IFileSystemInfo> GetChildren(this ScarletFileSystemContainerBase directory, IDepth depth)
+        public static IEnumerable<IFileSystemInfo> GetChildren(this ScarletFileSystemContainerBase directory, IDepth depth, IScarletDispatcher dispatcher)
         {
             return !CanAccess(directory.FullName) && directory.DirectoryIsEmpty()
                 ? Enumerable.Empty<IFileSystemInfo>()
-                : GetDirectories(directory.FullName, depth, directory)
+                : GetDirectories(directory.FullName, depth, directory, dispatcher)
                     .Concat(GetFiles(directory.FullName, depth, directory));
         }
 
@@ -36,7 +38,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        private static IEnumerable<IFileSystemInfo> GetDirectories(string path, IDepth depth, IFileSystemDirectory parent)
+        private static IEnumerable<IFileSystemInfo> GetDirectories(string path, IDepth depth, IFileSystemDirectory parent, IScarletDispatcher dispatcher)
         {
             try
             {
@@ -47,7 +49,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                                                         && (p.Attributes & FileAttributes.System) == 0
                                                         && (p.Attributes & FileAttributes.Offline) == 0
                                                         && (p.Attributes & FileAttributes.Encrypted) == 0)
-                                            .Select(p => new ScarletDirectory(p, depth, parent))
+                                            .Select(p => new ScarletDirectory(p, depth, parent, dispatcher))
                                             .ToArray();
             }
             catch (UnauthorizedAccessException ex)
@@ -94,14 +96,22 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return !Directory.EnumerateFileSystemEntries(path).Any();
         }
 
-        public static void ExpandPath(this IFileSystemInfo item)
+        public static async Task ExpandPath(this IFileSystemInfo item)
         {
-            item.IsExpanded = true;
+            if (!item.IsExpanded)
+            {
+                await item.ToggleExpandCommand.ExecuteAsync(null).ConfigureAwait(false);
+            }
+
             var parent = item.Parent;
 
             while (!(parent is null))
             {
-                parent.IsExpanded = true;
+                if (!parent.IsExpanded)
+                {
+                    await parent.ToggleExpandCommand.ExecuteAsync(null).ConfigureAwait(false);
+                }
+
                 parent = parent.Parent;
             }
         }

@@ -1,5 +1,7 @@
-﻿using System.ComponentModel;
-using System.Windows.Input;
+using MvvmScarletToolkit.Abstractions;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
@@ -8,17 +10,19 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         /// <summary>
         /// conditional refresh
         /// </summary>
-        ICommand LoadCommand { get; }
+        IExtendedAsyncCommand LoadCommand { get; }
 
         /// <summary>
-        /// explicit refresh
+        /// explicit refresh, updates filtering and the current children
         /// </summary>
-        ICommand RefreshCommand { get; }
+        IExtendedAsyncCommand RefreshCommand { get; }
 
         /// <summary>
         /// delete an object from the filesystem
         /// </summary>
-        ICommand DeleteCommand { get; }
+        IExtendedAsyncCommand DeleteCommand { get; }
+
+        IExtendedAsyncCommand ToggleExpandCommand { get; }
 
         /// <summary>
         /// the logical parent
@@ -29,7 +33,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         string FullName { get; }
         string Filter { get; set; }
 
-        bool IsExpanded { get; set; }
+        bool IsExpanded { get; }
         bool IsSelected { get; set; }
 
         bool Exists { get; }
@@ -41,22 +45,17 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         bool HasContainers { get; }
 
         /// <summary>
-        /// updates filtering and the current children
-        /// </summary>
-        void Refresh();
-
-        /// <summary>
         /// Loads attributes and checks if the object still exists on file system
         /// </summary>
-        void LoadMetaData();
+        Task LoadMetaData(CancellationToken token);
 
         /// <summary>
         /// updates the filtering
         /// </summary>
         /// <param name="filter"></param>
-        void OnFilterChanged(string filter);
+        Task OnFilterChanged(string filter, CancellationToken token);
 
-        void Delete();
+        Task Delete(CancellationToken token);
 
         bool CanDelete();
     }

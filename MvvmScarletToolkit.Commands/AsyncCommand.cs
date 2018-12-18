@@ -195,6 +195,15 @@ namespace MvvmScarletToolkit.Commands
             }, (arg) => canExecute(arg));
         }
 
+        public static AsyncCommand<TArgument, object> Create<TArgument>(Func<TArgument, Task> command, Func<TArgument, bool> canExecute)
+        {
+            return new AsyncCommand<TArgument, object>(async (arg, _) =>
+            {
+                await command(arg).ConfigureAwait(false);
+                return null;
+            }, (arg) => canExecute(arg));
+        }
+
         public static AsyncCommand<object, TResult> Create<TResult>(Func<Task<TResult>> command, Func<bool> canExecute)
         {
             return new AsyncCommand<object, TResult>(async (_, __) => await command().ConfigureAwait(false), _ => canExecute());

@@ -1,15 +1,15 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.ComponentModel;
-using System.Windows.Input;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
-    public abstract class ScarletFileSystemBase : ObservableObject, IFileSystemInfo
+    public abstract class ScarletFileSystemBase : ViewModelBase, IFileSystemInfo
     {
-        protected readonly BusyStack BusyStack;
-
         public static bool NoFilesFilter(object obj)
         {
             return obj is IFileSystemFile
@@ -38,13 +38,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public ICommand LoadCommand { get; protected set; }
+        public IExtendedAsyncCommand DeleteCommand { get; protected set; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public ICommand RefreshCommand { get; protected set; }
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public ICommand DeleteCommand { get; protected set; }
+        public IExtendedAsyncCommand ToggleExpandCommand { get; protected set; }
 
         private IFileSystemDirectory _parent;
         [Bindable(true, BindingDirection.OneWay)]
@@ -86,28 +83,12 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             protected set { SetValue(ref _exists, value); }
         }
 
-        private bool _isBusy;
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            private set { SetValue(ref _isBusy, value); }
-        }
-
-        private bool _isLoaded;
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsLoaded
-        {
-            get { return _isLoaded; }
-            protected set { SetValue(ref _isLoaded, value); }
-        }
-
         private bool _isExpanded;
-        [Bindable(true, BindingDirection.TwoWay)]
+        [Bindable(true, BindingDirection.OneWay)]
         public bool IsExpanded
         {
             get { return _isExpanded; }
-            set { SetValue(ref _isExpanded, value, OnChanged: OnExpandedChanged); }
+            protected set { SetValue(ref _isExpanded, value); }
         }
 
         private bool _isSelected;
@@ -152,12 +133,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         private ScarletFileSystemBase()
         {
-            BusyStack = new BusyStack((hasItems) => IsBusy = hasItems);
-
-            LoadCommand = new RelayCommand(Load, CanLoad);
-            RefreshCommand = new RelayCommand(Refresh, CanRefresh);
-            DeleteCommand = new RelayCommand(Delete, CanDelete);
-
+            DeleteCommand = AsyncCommand.Create(Delete, CanDelete);
+            ToggleExpandCommand = AsyncCommand.Create(Toggle, CanToggle);
             Exists = true;
             IsHidden = false;
             IsContainer = false;
@@ -198,43 +175,42 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        public void Load()
+        public async Task Load(CancellationToken token)
         {
             if (IsLoaded)
             {
                 return;
             }
 
-            Refresh();
+            await RefreshInternal(token).ConfigureAwait(false);
         }
 
-        public abstract void Refresh();
+        public abstract Task LoadMetaData(CancellationToken token);
 
-        public abstract void LoadMetaData();
+        public abstract Task OnFilterChanged(string filter, CancellationToken token);
 
-        public abstract void OnFilterChanged(string filter);
-
-        public abstract void Delete();
+        public abstract Task Delete(CancellationToken token);
 
         public abstract bool CanDelete();
 
-        protected bool CanLoad()
+        private async Task Toggle(CancellationToken token)
         {
-            return !IsBusy && !IsLoaded;
+            if (IsBusy)
+            {
+                return;
+            }
+
+            if (!IsExpanded)
+            {
+                await RefreshInternal(token).ConfigureAwait(false);
+            }
+
+            IsExpanded = !IsExpanded;
         }
 
-        protected bool CanRefresh()
+        private bool CanToggle()
         {
             return !IsBusy;
-        }
-
-        private void OnExpandedChanged()
-        {
-            if (!IsBusy && !IsLoaded)
-            {
-                Load();
-                IsLoaded = true;
-            }
         }
     }
 }

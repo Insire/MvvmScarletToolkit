@@ -21,6 +21,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly IScarletDispatcher Dispatcher;
 
         private bool _isBusy;
+        [Bindable(true, BindingDirection.OneWay)]
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -28,6 +29,7 @@ namespace MvvmScarletToolkit.Observables
         }
 
         private bool _isLoaded;
+        [Bindable(true, BindingDirection.OneWay)]
         public bool IsLoaded
         {
             get { return _isLoaded; }
@@ -35,10 +37,11 @@ namespace MvvmScarletToolkit.Observables
         }
 
         private T _selectedItem;
+        [Bindable(true, BindingDirection.OneWay)]
         public virtual T SelectedItem
         {
             get { return _selectedItem; }
-            set { SetValue(ref _selectedItem, value); }
+            set { SetValue(ref _selectedItem, value, OnChanged: OnSelectedItemChanged); }
         }
 
         public T this[int index]
@@ -46,18 +49,28 @@ namespace MvvmScarletToolkit.Observables
             get { return _items[index]; }
         }
 
+        [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand RemoveRangeCommand { get; }
+
+        [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand RemoveCommand { get; }
+
+        [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand ClearCommand { get; }
 
+        [Bindable(true, BindingDirection.OneWay)]
         public virtual IExtendedAsyncCommand LoadCommand { get; }
 
+        [Bindable(true, BindingDirection.OneWay)]
         public virtual IExtendedAsyncCommand RefreshCommand { get; }
 
+        [Bindable(true, BindingDirection.OneWay)]
         public virtual IExtendedAsyncCommand UnloadCommand { get; }
 
+        [Bindable(true, BindingDirection.OneWay)]
         public IReadOnlyCollection<T> Items { get; }
 
+        [Bindable(true, BindingDirection.OneWay)]
         public int Count => Items.Count;
 
         protected ViewModelListBase(IScarletDispatcher dispatcher)
@@ -173,45 +186,29 @@ namespace MvvmScarletToolkit.Observables
             return _items.Count > 0;
         }
 
-        protected virtual Task LoadInternal(CancellationToken token)
-        {
-            using (BusyStack.GetToken())
-            {
-                IsLoaded = true;
-                return Task.CompletedTask;
-            }
-        }
+        protected abstract Task LoadInternal(CancellationToken token);
 
         protected virtual bool CanLoad()
         {
             return !IsLoaded;
         }
 
-        protected virtual Task UnloadInternalAsync()
-        {
-            using (BusyStack.GetToken())
-            {
-                IsLoaded = false;
-                return Task.CompletedTask;
-            }
-        }
+        protected abstract Task UnloadInternalAsync();
 
         protected virtual bool CanUnload()
         {
             return IsLoaded;
         }
 
-        protected virtual Task RefreshInternal(CancellationToken token)
-        {
-            using (BusyStack.GetToken())
-            {
-                return Task.CompletedTask;
-            }
-        }
+        protected abstract Task RefreshInternal(CancellationToken token);
 
         protected virtual bool CanRefresh()
         {
             return IsLoaded;
+        }
+
+        protected virtual void OnSelectedItemChanged()
+        {
         }
     }
 }

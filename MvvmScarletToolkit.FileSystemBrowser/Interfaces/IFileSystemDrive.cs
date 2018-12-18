@@ -1,7 +1,9 @@
-﻿namespace MvvmScarletToolkit.FileSystemBrowser
+using System.Collections.Generic;
+
+namespace MvvmScarletToolkit.FileSystemBrowser
 {
     public interface IFileSystemDrive : IFileSystemInfo
     {
-        RangeObservableCollection<IFileSystemInfo> Children { get; }
+        IReadOnlyCollection<IFileSystemInfo> Children { get; }
     }
 }
