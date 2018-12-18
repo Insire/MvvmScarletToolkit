@@ -6,14 +6,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
     public class FileSystemViewModel : ViewModelListBase<IFileSystemInfo>
     {
         [Bindable(true, BindingDirection.OneWay)]
-        public ICommand SelectCommand { get; }
+        public IExtendedAsyncCommand SelectCommand { get; }
 
         private RangeObservableCollection<IFileSystemInfo> _selectedItems;
         [Bindable(true, BindingDirection.OneWay)]
@@ -46,15 +45,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             SelectedItems = new RangeObservableCollection<IFileSystemInfo>();
         }
 
-        protected override async void OnSelectedItemChanged()
-        {
-            using (BusyStack.GetToken())
-            {
-                await SelectedItem.LoadCommand.ExecuteAsync(null).ConfigureAwait(false);
-                await SelectedItem.LoadMetaData(CancellationToken.None).ConfigureAwait(false);
-            }
-        }
-
         public async Task SetSelectedItem(IFileSystemInfo item)
         {
             if (!(item is ScarletFileSystemContainerBase value))
@@ -66,7 +56,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 SelectedItem = value;
                 await SelectedItem.ExpandPath().ConfigureAwait(false);
-                SelectedItem.Parent.IsSelected = true;
+                await SelectedItem.LoadCommand.ExecuteAsync(null).ConfigureAwait(false);
+                await SelectedItem.LoadMetaData(CancellationToken.None).ConfigureAwait(false);
             }
         }
 

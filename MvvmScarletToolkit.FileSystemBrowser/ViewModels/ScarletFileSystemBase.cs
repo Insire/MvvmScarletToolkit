@@ -190,6 +190,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             await RefreshInternal(token).ConfigureAwait(false);
 
             IsExpanded = true;
+            IsLoaded = true;
         }
 
         public abstract Task LoadMetaData(CancellationToken token);

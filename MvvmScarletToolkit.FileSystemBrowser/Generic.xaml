@@ -73,7 +73,8 @@
 
                                 <!--  Toggle  -->
                                 <ToggleButton x:Name="PART_Expander"
-                                              ClickMode="Press" Command="{Binding ToggleExpandCommand}"
+                                              ClickMode="Press"
+                                              Command="{Binding ToggleExpandCommand}"
                                               IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
                                               Style="{StaticResource ExpandCollapseToggleStyle}" />
 
@@ -209,7 +210,13 @@
                                   Grid.Column="0"
                                   ItemsSource="{Binding FileSystemViewModel.Items, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
                                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                  VirtualizingStackPanel.IsVirtualizing="True">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectedItemChanged">
+                                    <i:InvokeCommandAction Command="{Binding SelectCommand}" CommandParameter="{Binding ElementName=PART_TreeView, Path=SelectedItem}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
                             <TreeView.Resources>
                                 <HierarchicalDataTemplate DataType="{x:Type local:ScarletDirectory}" ItemsSource="{Binding Children}">
                                     <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis">
@@ -219,6 +226,16 @@
                                                 <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
                                             </ContextMenu>
                                         </TextBlock.ContextMenu>
+                                        <TextBlock.ToolTip>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="{Binding IsLoaded, StringFormat={}IsLoaded: {0}, Mode=OneWay}" />
+                                                <TextBlock Text="{Binding Depth.Current, StringFormat={}Depth: {0}, Mode=OneWay}" />
+                                                <TextBlock Text="{Binding HasContainers, StringFormat={}HasContainers: {0}, Mode=OneWay}" />
+                                                <TextBlock Text="{Binding IsContainer, StringFormat={}IsContainer: {0}, Mode=OneWay}" />
+                                                <TextBlock Text="{Binding IsExpanded, StringFormat={}IsExpanded: {0}, Mode=OneWay}" />
+                                                <TextBlock Text="{Binding IsSelected, StringFormat={}IsSelected: {0}, Mode=OneWay}" />
+                                            </StackPanel>
+                                        </TextBlock.ToolTip>
                                     </TextBlock>
                                 </HierarchicalDataTemplate>
 
@@ -230,12 +247,24 @@
                                                 <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
                                             </ContextMenu>
                                         </TextBlock.ContextMenu>
+                                        <TextBlock.ToolTip>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="{Binding IsLoaded, StringFormat={}IsLoaded: {0}, Mode=OneWay}" />
+                                                <TextBlock Text="{Binding Depth.Current, StringFormat={}Depth: {0}, Mode=OneWay}" />
+                                                <TextBlock Text="{Binding HasContainers, StringFormat={}HasContainers: {0}, Mode=OneWay}" />
+                                                <TextBlock Text="{Binding IsContainer, StringFormat={}IsContainer: {0}, Mode=OneWay}" />
+                                                <TextBlock Text="{Binding IsExpanded, StringFormat={}IsExpanded: {0}, Mode=OneWay}" />
+                                                <TextBlock Text="{Binding IsSelected, StringFormat={}IsSelected: {0}, Mode=OneWay}" />
+                                            </StackPanel>
+                                        </TextBlock.ToolTip>
                                     </TextBlock>
                                 </HierarchicalDataTemplate>
                             </TreeView.Resources>
-                            <i:Interaction.Behaviors>
-                                <local:SelectedTreeViewItemBehavior SelectedItem="{Binding FileSystemViewModel.SelectedItem, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, Mode=TwoWay}" />
-                            </i:Interaction.Behaviors>
+                            <TreeView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel />
+                                </ItemsPanelTemplate>
+                            </TreeView.ItemsPanel>
                         </TreeView>
 
                         <!--  Splitter  -->
@@ -256,7 +285,7 @@
                         <DockPanel Grid.Row="0"
                                    Grid.Column="2"
                                    LastChildFill="True">
-                            <Grid DockPanel.Dock="Top">
+                            <Grid Margin="5,0" DockPanel.Dock="Top">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="5" />
@@ -267,10 +296,10 @@
 
                                 <!--  Nav and Filter  -->
                                 <TextBlock Grid.Column="0" Text="Filter" />
-                                <TextBox Grid.Column="1"
-                                         Grid.ColumnSpan="2"
-                                         Text="{Binding FileSystemViewModel.Filter, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, UpdateSourceTrigger=PropertyChanged, Delay=500, Mode=TwoWay}" />
-                                <ToggleButton Grid.Column="4" IsChecked="{Binding FileSystemViewModel.DisplayListView, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}">
+                                <TextBox Grid.Column="2" Text="{Binding FileSystemViewModel.Filter, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, UpdateSourceTrigger=PropertyChanged, Delay=500, Mode=TwoWay}" />
+                                <ToggleButton Grid.Column="4"
+                                              Width="30"
+                                              IsChecked="{Binding FileSystemViewModel.DisplayListView, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}">
                                     <ToggleButton.Style>
                                         <Style TargetType="{x:Type ToggleButton}">
                                             <Style.Triggers>

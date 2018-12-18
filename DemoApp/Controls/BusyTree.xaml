@@ -17,7 +17,7 @@
 
     <!--  DataContext: BusyViewModel  -->
 
-    <TreeView ItemsSource="{Binding Items}" Margin="5">
+    <TreeView Margin="5" ItemsSource="{Binding Items}">
         <TreeView.ContextMenu>
             <ContextMenu>
                 <MenuItem Command="{Binding LoadCommand}" Header="Load" />
@@ -32,7 +32,7 @@
             <browser:SelectedTreeViewItemBehavior SelectedItem="{Binding Data.SelectedItem, Source={StaticResource DataContextProxy}}" />
         </i:Interaction.Behaviors>
         <TreeView.Resources>
-            <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+            <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
                 <Setter Property="Margin" Value="2" />
             </Style>
             <DataTemplate DataType="{x:Type local:ObservableBusyViewModel}">

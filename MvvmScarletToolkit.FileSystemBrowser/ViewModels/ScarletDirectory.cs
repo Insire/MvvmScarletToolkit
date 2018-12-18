@@ -27,23 +27,16 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         public override async Task Delete(CancellationToken token)
         {
-            Directory.Delete(FullName);
-            await Parent.RefreshCommand.ExecuteAsync(token).ConfigureAwait(false);
+            using (BusyStack.GetToken())
+            {
+                Directory.Delete(FullName);
+                await Parent.RefreshCommand.ExecuteAsync(token).ConfigureAwait(false);
+            }
         }
 
         public override bool CanDelete()
         {
             return !IsBusy && Directory.Exists(FullName);
-        }
-
-        protected override Task UnloadInternalAsync()
-        {
-            using (BusyStack.GetToken())
-            {
-                Clear();
-                IsLoaded = false;
-                return Task.CompletedTask;
-            }
         }
     }
 }

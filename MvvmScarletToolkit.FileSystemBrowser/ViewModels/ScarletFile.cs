@@ -32,18 +32,22 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         public override async Task Delete(CancellationToken token)
         {
-            File.Delete(FullName);
-            await Parent.RefreshCommand.ExecuteAsync(token).ConfigureAwait(false);
+            using (BusyStack.GetToken())
+            {
+                File.Delete(FullName);
+                await Parent.RefreshCommand.ExecuteAsync(token).ConfigureAwait(false);
+            }
         }
 
         public override bool CanDelete()
         {
-            return File.Exists(FullName);
+            return !IsBusy && File.Exists(FullName);
         }
 
         protected override Task UnloadInternalAsync()
         {
-            // TODO
+            // hm, not sure what to add here,
+            // maybe this is useful as an extension point for expensive operations later on
             return Task.CompletedTask;
         }
 

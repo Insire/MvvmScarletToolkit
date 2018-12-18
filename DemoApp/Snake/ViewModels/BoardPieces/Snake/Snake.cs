@@ -132,7 +132,7 @@ namespace DemoApp
         private void MoveTail(Position initialPosition)
         {
             var previousPosition = initialPosition;
-            foreach (var part in _body.Where(p => (p != null)))
+            foreach (var part in _body.Where(p => !(p is null)))
             {
                 var temp = part.CurrentPosition;
 

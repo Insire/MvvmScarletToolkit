@@ -41,7 +41,7 @@ namespace MvvmScarletToolkit.Observables
         public virtual T SelectedItem
         {
             get { return _selectedItem; }
-            set { SetValue(ref _selectedItem, value, OnChanged: OnSelectedItemChanged); } // TODO replace with command call
+            set { SetValue(ref _selectedItem, value); }
         }
 
         public T this[int index]
@@ -205,10 +205,6 @@ namespace MvvmScarletToolkit.Observables
         protected virtual bool CanRefresh()
         {
             return IsLoaded;
-        }
-
-        protected virtual void OnSelectedItemChanged()
-        {
         }
     }
 }

@@ -78,27 +78,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        protected override Task UnloadInternalAsync()
-        {
-            using (BusyStack.GetToken())
-            {
-                Clear();
-                IsLoaded = false;
-                return Task.CompletedTask;
-            }
-        }
-
-        protected override async Task RefreshInternal(CancellationToken token)
-        {
-            using (BusyStack.GetToken())
-            {
-                await AddRange(this.GetChildren(Depth, Dispatcher)).ConfigureAwait(false);
-            }
-        }
-
         public override Task Delete(CancellationToken token)
         {
-            return Task.CompletedTask;
+            return Task.CompletedTask; // i dont think i want to implement this
         }
 
         public override bool CanDelete()

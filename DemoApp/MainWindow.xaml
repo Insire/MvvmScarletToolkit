@@ -3,14 +3,14 @@
                                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                        xmlns:browser="clr-namespace:MvvmScarletToolkit.FileSystemBrowser;assembly=MvvmScarletToolkit.FileSystemBrowser"
                                        xmlns:configurablewindow="clr-namespace:MvvmScarletToolkit.ConfigurableWindow;assembly=MvvmScarletToolkit.ConfigurableWindow"
+                                       xmlns:controls="clr-namespace:DemoApp.Controls"
                                        xmlns:local="clr-namespace:DemoApp"
                                        xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
-                                       xmlns:controls="clr-namespace:DemoApp.Controls"
                                        Title="DemoApp"
                                        Width="1025"
                                        Height="350">
 
-    <!--DataContext: NavigationViewModel-->
+    <!--  DataContext: NavigationViewModel  -->
 
     <Grid>
         <Grid.ColumnDefinitions>

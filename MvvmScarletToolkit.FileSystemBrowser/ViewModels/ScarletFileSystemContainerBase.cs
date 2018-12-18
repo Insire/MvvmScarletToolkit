@@ -179,5 +179,15 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             OnPropertyChanged(nameof(Count));
         }
+
+        protected override Task UnloadInternalAsync()
+        {
+            using (BusyStack.GetToken())
+            {
+                Clear();
+                IsLoaded = false;
+                return Task.CompletedTask;
+            }
+        }
     }
 }
