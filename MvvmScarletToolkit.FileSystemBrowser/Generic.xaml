@@ -237,9 +237,6 @@
                                                          Height="39.5"
                                                          Visibility="Hidden" />
                                             </Canvas>
-                                            <TextBlock HorizontalAlignment="Center"
-                                                       VerticalAlignment="Center"
-                                                       Text="{Binding Text}" />
                                         </Grid>
                                     </Border>
                                 </ControlTemplate>
@@ -254,6 +251,31 @@
             <PathGeometry x:Key="FilePath">M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48z</PathGeometry>
             <PathGeometry x:Key="FolderPath">M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z</PathGeometry>
             <PathGeometry x:Key="DrivePath">M567.403 235.642L462.323 84.589A48 48 0 0 0 422.919 64H153.081a48 48 0 0 0-39.404 20.589L8.597 235.642A48.001 48.001 0 0 0 0 263.054V400c0 26.51 21.49 48 48 48h480c26.51 0 48-21.49 48-48V263.054c0-9.801-3-19.366-8.597-27.412zM153.081 112h269.838l77.913 112H75.168l77.913-112zM528 400H48V272h480v128zm-32-64c0 17.673-14.327 32-32 32s-32-14.327-32-32 14.327-32 32-32 32 14.327 32 32zm-96 0c0 17.673-14.327 32-32 32s-32-14.327-32-32 14.327-32 32-32 32 14.327 32 32z</PathGeometry>
+
+            <DataTemplate x:Key="FolderIconPath" DataType="{x:Type local:ScarletDirectory}">
+                <Path Width="16"
+                      Height="16"
+                      Data="{StaticResource FolderPath}"
+                      Stretch="Uniform"
+                      Stroke="#777"
+                      StrokeThickness="1" />
+            </DataTemplate>
+            <DataTemplate x:Key="FileIconPath" DataType="{x:Type local:ScarletFile}">
+                <Path Width="16"
+                      Height="16"
+                      Data="{StaticResource FilePath}"
+                      Stretch="Uniform"
+                      Stroke="#777"
+                      StrokeThickness="1" />
+            </DataTemplate>
+            <DataTemplate x:Key="DriveIconPath" DataType="{x:Type local:ScarletDrive}">
+                <Path Width="16"
+                      Height="16"
+                      Data="{StaticResource DrivePath}"
+                      Stretch="Uniform"
+                      Stroke="#777"
+                      StrokeThickness="1" />
+            </DataTemplate>
 
             <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
                 <Setter Property="Focusable" Value="False" />
@@ -521,25 +543,31 @@
 
                             <TreeView.Resources>
                                 <HierarchicalDataTemplate DataType="{x:Type local:ScarletDirectory}" ItemsSource="{Binding Children}">
-                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis">
-                                        <TextBlock.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
-                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                            </ContextMenu>
-                                        </TextBlock.ContextMenu>
-                                    </TextBlock>
+                                    <DockPanel>
+                                        <ContentControl ContentTemplate="{StaticResource FolderIconPath}" DockPanel.Dock="Left" />
+                                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Margin="5 0 0 0">
+                                            <TextBlock.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                    <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                </ContextMenu>
+                                            </TextBlock.ContextMenu>
+                                        </TextBlock>
+                                    </DockPanel>
                                 </HierarchicalDataTemplate>
 
                                 <HierarchicalDataTemplate DataType="{x:Type local:ScarletDrive}" ItemsSource="{Binding Children}">
-                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis">
-                                        <TextBlock.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
-                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                            </ContextMenu>
-                                        </TextBlock.ContextMenu>
-                                    </TextBlock>
+                                    <DockPanel>
+                                        <ContentControl ContentTemplate="{StaticResource DriveIconPath}" DockPanel.Dock="Left" />
+                                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Margin="5 0 0 0">
+                                            <TextBlock.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                    <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                </ContextMenu>
+                                            </TextBlock.ContextMenu>
+                                        </TextBlock>
+                                    </DockPanel>
                                 </HierarchicalDataTemplate>
                             </TreeView.Resources>
                             <TreeView.ItemsPanel>
@@ -622,89 +650,38 @@
                                                         <ControlTemplate TargetType="{x:Type ContentControl}">
                                                             <ContentPresenter Content="{Binding FileSystemViewModel.SelectedItem, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, Mode=TwoWay}">
                                                                 <ContentPresenter.Resources>
-                                                                    <DataTemplate DataType="{x:Type local:ScarletFile}">
-                                                                        <Grid>
-                                                                            <Grid.ContextMenu>
-                                                                                <ContextMenu>
-                                                                                    <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
-                                                                                </ContextMenu>
-                                                                            </Grid.ContextMenu>
-                                                                            <Grid.ColumnDefinitions>
-                                                                                <ColumnDefinition Width="Auto" />
-                                                                                <ColumnDefinition Width="5" />
-                                                                                <ColumnDefinition Width="*" />
-                                                                                <ColumnDefinition Width="5" />
-                                                                                <ColumnDefinition Width="Auto" SharedSizeGroup="CreationTimeGroup" />
-                                                                                <ColumnDefinition Width="5" />
-                                                                                <ColumnDefinition Width="Auto" SharedSizeGroup="AccessTimeGroup" />
-                                                                                <ColumnDefinition Width="5" />
-                                                                                <ColumnDefinition Width="Auto" SharedSizeGroup="WriteTimeGroup" />
-                                                                            </Grid.ColumnDefinitions>
-
-                                                                            <Path Width="16"
-                                                                                  Height="16"
-                                                                                  Data="{StaticResource FilePath}"
-                                                                                  Stretch="Uniform"
-                                                                                  Stroke="#777"
-                                                                                  StrokeThickness="1" />
-
-                                                                            <TextBlock Grid.Column="2" Text="{Binding Name}" />
-                                                                            <TextBlock Grid.Column="4" Text="{Binding CreationTimeUtc}" />
-                                                                            <TextBlock Grid.Column="6" Text="{Binding LastAccessTimeUtc}" />
-                                                                            <TextBlock Grid.Column="8" Text="{Binding LastWriteTimeUtc}" />
-                                                                        </Grid>
-                                                                    </DataTemplate>
+                                                                    <local:TypeDataTemplateSelector x:Key="TypeDataTemplateSelector">
+                                                                        <local:TypeDataTemplateSelector.Templates>
+                                                                            <local:DataTemplateCollection>
+                                                                                <local:DataTemplateContainer DataTemplate="{StaticResource FolderIconPath}" />
+                                                                                <local:DataTemplateContainer DataTemplate="{StaticResource DriveIconPath}" />
+                                                                                <local:DataTemplateContainer DataTemplate="{StaticResource FileIconPath}" />
+                                                                            </local:DataTemplateCollection>
+                                                                        </local:TypeDataTemplateSelector.Templates>
+                                                                    </local:TypeDataTemplateSelector>
 
                                                                     <DataTemplate DataType="{x:Type local:ScarletDirectory}">
-                                                                        <ListBox ItemsSource="{Binding DefaultCollectionView}" SelectionMode="Extended">
-                                                                            <ListBox.ContextMenu>
+                                                                        <ListView local:GridViewColumnResize.Enabled="True" ItemsSource="{Binding DefaultCollectionView}">
+                                                                            <ListView.ContextMenu>
                                                                                 <ContextMenu>
+                                                                                    <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
                                                                                     <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
                                                                                 </ContextMenu>
-                                                                            </ListBox.ContextMenu>
-                                                                            <ListBox.Resources>
-                                                                                <DataTemplate DataType="{x:Type local:ScarletDirectory}">
-                                                                                    <Grid>
-                                                                                        <Grid.ContextMenu>
-                                                                                            <ContextMenu>
-                                                                                                <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
-                                                                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                                                                            </ContextMenu>
-                                                                                        </Grid.ContextMenu>
-                                                                                        <Grid.ColumnDefinitions>
-                                                                                            <ColumnDefinition Width="Auto" />
-                                                                                            <ColumnDefinition Width="5" />
-                                                                                            <ColumnDefinition Width="*" />
-                                                                                            <ColumnDefinition Width="5" />
-                                                                                            <ColumnDefinition Width="Auto" SharedSizeGroup="CreationTimeGroup" />
-                                                                                            <ColumnDefinition Width="5" />
-                                                                                            <ColumnDefinition Width="Auto" SharedSizeGroup="AccessTimeGroup" />
-                                                                                            <ColumnDefinition Width="5" />
-                                                                                            <ColumnDefinition Width="Auto" SharedSizeGroup="WriteTimeGroup" />
-                                                                                        </Grid.ColumnDefinitions>
-
-                                                                                        <Path Width="16"
-                                                                                              Height="16"
-                                                                                              Data="{StaticResource FolderPath}"
-                                                                                              Stretch="Uniform"
-                                                                                              Stroke="#777"
-                                                                                              StrokeThickness="1" />
-
-                                                                                        <TextBlock Grid.Column="2" Text="{Binding Name}">
-                                                                                            <TextBlock.InputBindings>
-                                                                                                <MouseBinding Command="{Binding FileSystemViewModel.SelectCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
-                                                                                                              CommandParameter="{Binding .}"
-                                                                                                              Gesture="LeftDoubleClick" />
-                                                                                            </TextBlock.InputBindings>
-                                                                                        </TextBlock>
-
-                                                                                        <TextBlock Grid.Column="4" Text="{Binding CreationTimeUtc}" />
-                                                                                        <TextBlock Grid.Column="6" Text="{Binding LastAccessTimeUtc}" />
-                                                                                        <TextBlock Grid.Column="8" Text="{Binding LastWriteTimeUtc}" />
-                                                                                    </Grid>
-                                                                                </DataTemplate>
-                                                                            </ListBox.Resources>
-                                                                        </ListBox>
+                                                                            </ListView.ContextMenu>
+                                                                            <ListView.View>
+                                                                                <GridView>
+                                                                                    <GridView.Columns>
+                                                                                        <GridViewColumn CellTemplateSelector="{StaticResource TypeDataTemplateSelector}" />
+                                                                                        <GridViewColumn local:GridViewColumnResize.Width="*"
+                                                                                                        DisplayMemberBinding="{Binding Name}"
+                                                                                                        Header="Name" />
+                                                                                        <GridViewColumn DisplayMemberBinding="{Binding CreationTimeUtc}" Header="CreationTimeUtc" />
+                                                                                        <GridViewColumn DisplayMemberBinding="{Binding LastAccessTimeUtc}" Header="LastAccessTimeUtc" />
+                                                                                        <GridViewColumn DisplayMemberBinding="{Binding LastWriteTimeUtc}" Header="LastWriteTimeUtc" />
+                                                                                    </GridView.Columns>
+                                                                                </GridView>
+                                                                            </ListView.View>
+                                                                        </ListView>
                                                                     </DataTemplate>
 
                                                                     <DataTemplate DataType="{x:Type local:ScarletDrive}">
