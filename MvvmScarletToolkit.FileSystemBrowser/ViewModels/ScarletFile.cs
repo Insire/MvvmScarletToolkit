@@ -27,6 +27,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
                 Exists = info.Exists;
                 IsHidden = (info.Attributes & FileAttributes.Hidden) != 0;
+                CreationTimeUtc = info.CreationTimeUtc;
+                LastAccessTimeUtc = info.LastAccessTimeUtc;
+                LastWriteTimeUtc = info.LastWriteTimeUtc;
             }
         }
 
@@ -34,7 +37,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
-                File.Delete(FullName);
+                await Task.Run(() => File.Delete(FullName)).ConfigureAwait(false);
                 await Parent.RefreshCommand.ExecuteAsync(token).ConfigureAwait(false);
             }
         }

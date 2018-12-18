@@ -22,6 +22,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
                 Exists = info.Exists;
                 IsHidden = (info.Attributes & FileAttributes.Hidden) != 0;
+                CreationTimeUtc = info.CreationTimeUtc;
+                LastAccessTimeUtc = info.LastAccessTimeUtc;
+                LastWriteTimeUtc = info.LastWriteTimeUtc;
             }
         }
 

@@ -116,6 +116,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         private bool _hasContainers;
+
         [Bindable(true, BindingDirection.OneWay)]
         public bool HasContainers
         {
@@ -123,10 +124,35 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             protected set { SetValue(ref _hasContainers, value); }
         }
 
+        private DateTime _creationTimeUtc;
+        [Bindable(true, BindingDirection.OneWay)]
+        public DateTime CreationTimeUtc
+        {
+            get { return _creationTimeUtc; }
+            protected set { SetValue(ref _creationTimeUtc, value); }
+        }
+
+        private DateTime _lastAccessTimeUtc;
+        [Bindable(true, BindingDirection.OneWay)]
+        public DateTime LastAccessTimeUtc
+        {
+            get { return _lastAccessTimeUtc; }
+            protected set { SetValue(ref _lastAccessTimeUtc, value); }
+        }
+
+        private DateTime _lastWriteTimeUtc;
+        [Bindable(true, BindingDirection.OneWay)]
+        public DateTime LastWriteTimeUtc
+        {
+            get { return _lastWriteTimeUtc; }
+            protected set { SetValue(ref _lastWriteTimeUtc, value); }
+        }
+
         private ScarletFileSystemBase()
         {
             DeleteCommand = AsyncCommand.Create(Delete, CanDelete);
             ToggleExpandCommand = AsyncCommand.Create(Toggle, CanToggle);
+
             Exists = true;
             IsHidden = false;
             IsContainer = false;
@@ -166,10 +192,13 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 return;
             }
 
-            await RefreshInternal(token).ConfigureAwait(false);
+            using (BusyStack.GetToken())
+            {
+                await Task.WhenAll(Task.Delay(0), RefreshInternal(token)).ConfigureAwait(false);
 
-            IsExpanded = true;
-            IsLoaded = true;
+                IsExpanded = true;
+                IsLoaded = true;
+            }
         }
 
         public abstract Task LoadMetaData(CancellationToken token);
@@ -187,12 +216,15 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 return;
             }
 
-            if (!IsExpanded)
+            using (BusyStack.GetToken())
             {
-                await RefreshInternal(token).ConfigureAwait(false);
-            }
+                if (!IsExpanded)
+                {
+                    await Task.WhenAll(Task.Delay(0), RefreshInternal(token)).ConfigureAwait(false);
+                }
 
-            IsExpanded = !IsExpanded;
+                IsExpanded = !IsExpanded;
+            }
         }
 
         private bool CanToggle()
