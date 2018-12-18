@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
-                Directory.Delete(FullName, true);
+                await Task.Run(() => Directory.Delete(FullName, true)).ConfigureAwait(false);
                 await Parent.RefreshCommand.ExecuteAsync(token).ConfigureAwait(false);
             }
         }
