@@ -1,4 +1,6 @@
-﻿using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Observables;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DemoApp
 {
@@ -26,6 +28,22 @@ namespace DemoApp
         public DemoItem(string displayName) : this()
         {
             DisplayName = displayName;
+        }
+
+        protected override Task LoadInternal(CancellationToken token)
+        {
+            IsLoaded = true;
+            return Task.CompletedTask;
+        }
+
+        protected override Task UnloadInternalAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        protected override Task RefreshInternal(CancellationToken token)
+        {
+            return Task.CompletedTask;
         }
     }
 }

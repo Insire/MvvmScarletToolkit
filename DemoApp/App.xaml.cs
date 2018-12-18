@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit;
 using MvvmScarletToolkit.FileSystemBrowser;
 using MvvmScarletToolkit.Observables;
 using System.Windows;
@@ -21,7 +21,7 @@ namespace DemoApp
                 },
                 new Scene()
                 {
-                    Content = await Images.FilledAsync().ConfigureAwait(false),
+                    Content = new Images(dispatcher),
                     IsSelected = false,
                 },
                 new Scene()
@@ -56,7 +56,7 @@ namespace DemoApp
                 },
                 new Scene()
                 {
-                    Content = new FileSystemViewModel(),
+                    Content = new FileSystemViewModel(dispatcher),
                     IsSelected = false,
                 },
                 new Scene()

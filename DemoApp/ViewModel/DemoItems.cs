@@ -1,6 +1,7 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DemoApp
@@ -24,6 +25,24 @@ namespace DemoApp
         public bool CanAddNew()
         {
             return Items != null;
+        }
+
+        protected override Task LoadInternal(CancellationToken token)
+        {
+            IsLoaded = true;
+            return Task.CompletedTask;
+        }
+
+        protected override Task UnloadInternalAsync()
+        {
+            Clear();
+            IsLoaded = false;
+            return Task.CompletedTask;
+        }
+
+        protected override Task RefreshInternal(CancellationToken token)
+        {
+            return Task.CompletedTask;
         }
     }
 }

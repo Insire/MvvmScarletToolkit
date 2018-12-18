@@ -175,14 +175,21 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        public async Task Load(CancellationToken token)
+        protected override async Task LoadInternal(CancellationToken token)
         {
             if (IsLoaded)
             {
                 return;
             }
 
+            if (Depth.IsMaxReached)
+            {
+                return;
+            }
+
             await RefreshInternal(token).ConfigureAwait(false);
+
+            IsExpanded = true;
         }
 
         public abstract Task LoadMetaData(CancellationToken token);
@@ -193,7 +200,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         public abstract bool CanDelete();
 
-        private async Task Toggle(CancellationToken token)
+        protected async Task Toggle(CancellationToken token)
         {
             if (IsBusy)
             {

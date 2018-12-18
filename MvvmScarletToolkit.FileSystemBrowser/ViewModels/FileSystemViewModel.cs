@@ -28,7 +28,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         public string Filter
         {
             get { return _filter; }
-            set { SetValue(ref _filter, value, OnChanged: () => SelectedItem.OnFilterChanged(Filter, CancellationToken.None)); }
+            set { SetValue(ref _filter, value, OnChanged: () => SelectedItem.OnFilterChanged(Filter, CancellationToken.None)); } // TODO replace with command call
         }
 
         private bool _displayListView;
@@ -94,10 +94,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 Clear();
 
-                await AddRange(DriveInfo.GetDrives()
-                    .Where(p => p.IsReady && p.DriveType != DriveType.CDRom && p.DriveType != DriveType.Unknown)
-                    .Select(p => new ScarletDrive(p, new FileSystemDepth(0), Dispatcher)))
-                    .ConfigureAwait(false);
+                await LoadInternal(token).ConfigureAwait(false);
             }
         }
 

@@ -1,5 +1,7 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DemoApp
 {
@@ -8,13 +10,31 @@ namespace DemoApp
         public DataContextSchenanigansViewModel(IScarletDispatcher dispatcher)
             : base(dispatcher)
         {
+        }
+
+        protected override async Task LoadInternal(CancellationToken token)
+        {
             for (var i = 0; i < 10; i++)
             {
-                _ = Add(new AsyncDemoItem
+                await Add(new AsyncDemoItem
                 {
                     DisplayName = "Test X",
-                });
+                }).ConfigureAwait(false);
             }
+
+            IsLoaded = true;
+        }
+
+        protected override Task RefreshInternal(CancellationToken token)
+        {
+            return Task.CompletedTask;
+        }
+
+        protected override Task UnloadInternalAsync()
+        {
+            Clear();
+            IsLoaded = false;
+            return Task.CompletedTask;
         }
     }
 }

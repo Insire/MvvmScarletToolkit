@@ -5,8 +5,6 @@
 
     <Style x:Key="{x:Type local:FileSystemBrowser}" TargetType="{x:Type local:FileSystemBrowser}">
         <Style.Resources>
-            <local:FileSystemViewModel x:Key="FileSystemViewModel" />
-
             <SolidColorBrush x:Key="GlyphBrush" Color="#444" />
 
             <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
@@ -57,7 +55,7 @@
                 <Setter Property="Padding" Value="1,0,0,0" />
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
                 <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}" />
-                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=OneWay}" />
                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                 <Setter Property="Template">
                     <Setter.Value>
@@ -75,8 +73,8 @@
 
                                 <!--  Toggle  -->
                                 <ToggleButton x:Name="PART_Expander"
-                                              ClickMode="Press"
-                                              IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                              ClickMode="Press" Command="{Binding ToggleExpandCommand}"
+                                              IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
                                               Style="{StaticResource ExpandCollapseToggleStyle}" />
 
                                 <!--  Toggle Title  -->
@@ -181,6 +179,7 @@
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Background" Value="Transparent" />
+        <Setter Property="FileSystemViewModel" Value="{Binding DataContext, RelativeSource={RelativeSource Self}}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:FileSystemBrowser}">
@@ -195,11 +194,20 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Unloaded">
+                                <i:InvokeCommandAction Command="{Binding UnloadCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
                         <!--  Tree  -->
                         <TreeView x:Name="PART_TreeView"
                                   Grid.Row="0"
                                   Grid.Column="0"
-                                  ItemsSource="{Binding Drives, Source={StaticResource FileSystemViewModel}}"
+                                  ItemsSource="{Binding FileSystemViewModel.Items, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
                                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                   ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <TreeView.Resources>
@@ -226,7 +234,7 @@
                                 </HierarchicalDataTemplate>
                             </TreeView.Resources>
                             <i:Interaction.Behaviors>
-                                <local:SelectedTreeViewItemBehavior SelectedItem="{Binding SelectedItem, Source={StaticResource FileSystemViewModel}, Mode=TwoWay}" />
+                                <local:SelectedTreeViewItemBehavior SelectedItem="{Binding FileSystemViewModel.SelectedItem, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, Mode=TwoWay}" />
                             </i:Interaction.Behaviors>
                         </TreeView>
 
@@ -261,8 +269,8 @@
                                 <TextBlock Grid.Column="0" Text="Filter" />
                                 <TextBox Grid.Column="1"
                                          Grid.ColumnSpan="2"
-                                         Text="{Binding Filter, Source={StaticResource FileSystemViewModel}, UpdateSourceTrigger=PropertyChanged, Delay=500, Mode=TwoWay}" />
-                                <ToggleButton Grid.Column="4" IsChecked="{Binding DisplayListView, Source={StaticResource FileSystemViewModel}}">
+                                         Text="{Binding FileSystemViewModel.Filter, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, UpdateSourceTrigger=PropertyChanged, Delay=500, Mode=TwoWay}" />
+                                <ToggleButton Grid.Column="4" IsChecked="{Binding FileSystemViewModel.DisplayListView, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}">
                                     <ToggleButton.Style>
                                         <Style TargetType="{x:Type ToggleButton}">
                                             <Style.Triggers>
@@ -287,10 +295,10 @@
                                 </ToggleButton>
                             </Grid>
 
-                            <TextBlock DockPanel.Dock="Bottom" Text="{Binding SelectedItem.FullName, Source={StaticResource FileSystemViewModel}}" />
+                            <TextBlock DockPanel.Dock="Bottom" Text="{Binding FileSystemViewModel.SelectedItem.FullName, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}" />
 
                             <!--  DetailView  -->
-                            <ContentControl Content="{Binding DisplayListView, Source={StaticResource FileSystemViewModel}}" DataContext="{StaticResource FileSystemViewModel}">
+                            <ContentControl Content="{Binding FileSystemViewModel.DisplayListView, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}" DataContext="{Binding FileSystemViewModel, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}">
                                 <ContentControl.Style>
                                     <Style TargetType="{x:Type ContentControl}">
                                         <Style.Triggers>
@@ -298,7 +306,7 @@
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="{x:Type ContentControl}">
-                                                            <ContentPresenter Content="{Binding SelectedItem, Source={StaticResource FileSystemViewModel}, Mode=TwoWay}">
+                                                            <ContentPresenter Content="{Binding FileSystemViewModel.SelectedItem, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, Mode=TwoWay}">
                                                                 <ContentPresenter.Resources>
 
                                                                     <DataTemplate DataType="{x:Type local:ScarletFile}">
@@ -322,7 +330,7 @@
                                                                                 <DataTemplate DataType="{x:Type local:ScarletDirectory}">
                                                                                     <TextBlock Text="{Binding Name}">
                                                                                         <TextBlock.InputBindings>
-                                                                                            <MouseBinding Command="{Binding SelectCommand, Source={StaticResource FileSystemViewModel}}"
+                                                                                            <MouseBinding Command="{Binding FileSystemViewModel.SelectCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
                                                                                                           CommandParameter="{Binding .}"
                                                                                                           Gesture="LeftDoubleClick" />
                                                                                         </TextBlock.InputBindings>
@@ -349,7 +357,7 @@
                                                                                 <DataTemplate DataType="{x:Type local:ScarletDirectory}">
                                                                                     <TextBlock Text="{Binding Name}">
                                                                                         <TextBlock.InputBindings>
-                                                                                            <MouseBinding Command="{Binding SelectCommand, Source={StaticResource FileSystemViewModel}}"
+                                                                                            <MouseBinding Command="{Binding FileSystemViewModel.SelectCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
                                                                                                           CommandParameter="{Binding .}"
                                                                                                           Gesture="LeftDoubleClick" />
                                                                                         </TextBlock.InputBindings>
@@ -375,7 +383,7 @@
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="{x:Type ContentControl}">
-                                                            <ContentPresenter Content="{Binding SelectedItem, Source={StaticResource FileSystemViewModel}, Mode=TwoWay}">
+                                                            <ContentPresenter Content="{Binding FileSystemViewModel.SelectedItem, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, Mode=TwoWay}">
                                                                 <ContentPresenter.Resources>
 
                                                                     <DataTemplate DataType="{x:Type local:ScarletFile}">
@@ -419,7 +427,7 @@
                                                                                             </ContextMenu>
                                                                                         </DockPanel.ContextMenu>
                                                                                         <DockPanel.InputBindings>
-                                                                                            <MouseBinding Command="{Binding SelectCommand, Source={StaticResource FileSystemViewModel}}"
+                                                                                            <MouseBinding Command="{Binding FileSystemViewModel.SelectCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
                                                                                                           CommandParameter="{Binding .}"
                                                                                                           Gesture="LeftDoubleClick" />
                                                                                         </DockPanel.InputBindings>
@@ -460,7 +468,7 @@
                                                                                             </ContextMenu>
                                                                                         </DockPanel.ContextMenu>
                                                                                         <DockPanel.InputBindings>
-                                                                                            <MouseBinding Command="{Binding SelectCommand, Source={StaticResource FileSystemViewModel}}"
+                                                                                            <MouseBinding Command="{Binding FileSystemViewModel.SelectCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
                                                                                                           CommandParameter="{Binding .}"
                                                                                                           Gesture="LeftDoubleClick" />
                                                                                         </DockPanel.InputBindings>

@@ -19,14 +19,15 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return Task.CompletedTask;
         }
 
-        public override Task LoadMetaData(CancellationToken token)
+        public override async Task LoadMetaData(CancellationToken token)
         {
-            var info = new FileInfo(FullName);
+            using (BusyStack.GetToken())
+            {
+                var info = await Task.Run(() => new FileInfo(FullName), token).ConfigureAwait(false);
 
-            Exists = info.Exists;
-            IsHidden = (info.Attributes & FileAttributes.Hidden) != 0;
-
-            return Task.CompletedTask;
+                Exists = info.Exists;
+                IsHidden = (info.Attributes & FileAttributes.Hidden) != 0;
+            }
         }
 
         public override async Task Delete(CancellationToken token)
@@ -40,21 +41,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return File.Exists(FullName);
         }
 
-        protected override async Task LoadInternal(CancellationToken token)
-        {
-            using (BusyStack.GetToken())
-            {
-                if (!Depth.IsMaxReached)
-                {
-                    await RefreshInternal(token).ConfigureAwait(false);
-                    IsExpanded = true;
-                }
-            }
-        }
-
         protected override Task UnloadInternalAsync()
         {
-            throw new System.NotImplementedException();
+            // TODO
+            return Task.CompletedTask;
         }
 
         protected override async Task RefreshInternal(CancellationToken token)

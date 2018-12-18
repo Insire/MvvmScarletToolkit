@@ -12,6 +12,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         /// </summary>
         IExtendedAsyncCommand LoadCommand { get; }
 
+        IExtendedAsyncCommand UnloadCommand { get; }
         /// <summary>
         /// explicit refresh, updates filtering and the current children
         /// </summary>

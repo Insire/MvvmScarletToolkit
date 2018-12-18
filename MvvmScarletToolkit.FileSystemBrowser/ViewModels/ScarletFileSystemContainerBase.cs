@@ -1,6 +1,5 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -50,24 +49,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             using (BusyStack.GetToken())
             {
-                IsContainer = true;
-
                 _children = new ObservableCollection<IFileSystemInfo>();
 
                 Children = new ReadOnlyObservableCollection<IFileSystemInfo>(_children);
-
-                NoFilesCollectionView = CollectionViewSource.GetDefaultView(Children); // meh, this keeps any child class from being created on an other thread than the "UI thread"
-                DefaultCollectionView = CollectionViewSource.GetDefaultView(Children);
-
-                using (NoFilesCollectionView.DeferRefresh())
-                {
-                    NoFilesCollectionView.Filter = NoFilesFilter;
-                }
-
-                using (DefaultCollectionView.DeferRefresh())
-                {
-                    DefaultCollectionView.Filter = SearchFilter;
-                }
+                IsContainer = true;
             }
         }
 
@@ -82,10 +67,13 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                     child.Filter = filter;
                 }).ConfigureAwait(false);
 
-                using (DefaultCollectionView.DeferRefresh()) // TODO invoke via dispatcher
-                {
-                    DefaultCollectionView.Filter = SearchFilter;
-                }
+                await Dispatcher.Invoke(() =>
+                 {
+                     using (DefaultCollectionView.DeferRefresh())
+                     {
+                         DefaultCollectionView.Filter = SearchFilter;
+                     }
+                 }).ConfigureAwait(false);
             }
         }
 
@@ -94,6 +82,30 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             using (BusyStack.GetToken())
             {
                 Clear();
+
+                await Dispatcher.Invoke(() =>
+                {
+                    if (NoFilesCollectionView is null)
+                    {
+                        NoFilesCollectionView = CollectionViewSource.GetDefaultView(Children);
+                    }
+
+                    if (DefaultCollectionView is null)
+                    {
+                        DefaultCollectionView = CollectionViewSource.GetDefaultView(Children);
+                    }
+
+                    using (NoFilesCollectionView.DeferRefresh())
+                    {
+                        NoFilesCollectionView.Filter = NoFilesFilter;
+                    }
+
+                    using (DefaultCollectionView.DeferRefresh())
+                    {
+                        DefaultCollectionView.Filter = SearchFilter;
+                    }
+                }).ConfigureAwait(false);
+
                 await AddRange(FileSystemExtensions.GetChildren(this, Depth, Dispatcher)).ConfigureAwait(false);
                 HasContainers = Children.Any(p => p is ScarletFileSystemContainerBase);
 
@@ -156,34 +168,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                     Remove(item);
                 }
             }
-        }
-
-        private void RemoveRange(IList items)
-        {
-            RemoveRange(items?.Cast<IFileSystemInfo>());
-        }
-
-        protected virtual bool CanRemove(IFileSystemInfo item)
-        {
-            return CanClear()
-                && !(item is null)
-                && _children.Contains(item);
-        }
-
-        protected virtual bool CanRemoveRange(IEnumerable<IFileSystemInfo> items)
-        {
-            return CanClear()
-                && items?.Any(p => _children.Contains(p)) == true;
-        }
-
-        protected virtual bool CanRemoveRange(IList items)
-        {
-            return CanRemoveRange(items?.Cast<IFileSystemInfo>());
-        }
-
-        protected bool CanClear()
-        {
-            return _children.Count > 0;
         }
 
         public void Clear()

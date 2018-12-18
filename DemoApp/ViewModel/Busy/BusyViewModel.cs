@@ -94,5 +94,23 @@ namespace DemoApp
         {
             return BusyStack.Subscribe(observer);
         }
+
+        protected override Task LoadInternal(CancellationToken token)
+        {
+            IsLoaded = true;
+            return Task.CompletedTask;
+        }
+
+        protected override Task UnloadInternalAsync()
+        {
+            Clear();
+            IsLoaded = false;
+            return Task.CompletedTask;
+        }
+
+        protected override Task RefreshInternal(CancellationToken token)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

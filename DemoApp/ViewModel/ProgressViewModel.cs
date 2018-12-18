@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Observables;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,11 +46,24 @@ namespace DemoApp
                 await dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => Percentage = i));
                 await Task.Delay(50).ConfigureAwait(false);
             }
+
+            IsLoaded = true;
         }
 
         protected override bool CanLoad()
         {
             return !IsBusy && base.CanLoad();
+        }
+
+        protected override Task UnloadInternalAsync()
+        {
+            IsLoaded = false;
+            return Task.CompletedTask;
+        }
+
+        protected override Task RefreshInternal(CancellationToken token)
+        {
+            return Task.CompletedTask;
         }
     }
 }

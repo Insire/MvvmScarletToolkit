@@ -78,27 +78,22 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        protected override async Task LoadInternal(CancellationToken token)
+        protected override Task UnloadInternalAsync()
         {
             using (BusyStack.GetToken())
             {
-                if (!Depth.IsMaxReached)
-                {
-                    await RefreshInternal(token).ConfigureAwait(false);
-                }
+                Clear();
+                IsLoaded = false;
+                return Task.CompletedTask;
             }
         }
 
-        protected override Task UnloadInternalAsync()
+        protected override async Task RefreshInternal(CancellationToken token)
         {
-            // TODO
-            return Task.CompletedTask;
-        }
-
-        protected override Task RefreshInternal(CancellationToken token)
-        {
-            // TODO
-            return Task.CompletedTask;
+            using (BusyStack.GetToken())
+            {
+                await AddRange(this.GetChildren(Depth, Dispatcher)).ConfigureAwait(false);
+            }
         }
 
         public override Task Delete(CancellationToken token)

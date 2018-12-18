@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Observables;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,7 +25,8 @@ namespace DemoApp
             DisplayName = "unknown";
         }
 
-        public AsyncDemoItem(string displayName) : this()
+        public AsyncDemoItem(string displayName)
+            : this()
         {
             DisplayName = displayName;
         }
@@ -36,7 +37,7 @@ namespace DemoApp
             {
                 await Task.Delay(2000, token).ConfigureAwait(true);
 
-                await base.LoadInternal(token).ConfigureAwait(false);
+                IsLoaded = true;
             }
         }
 
@@ -45,8 +46,13 @@ namespace DemoApp
             using (BusyStack.GetToken())
             {
                 await Task.Delay(2000).ConfigureAwait(true);
-                await base.RefreshInternal(token).ConfigureAwait(false);
             }
+        }
+
+        protected override Task UnloadInternalAsync()
+        {
+            IsLoaded = false;
+            return Task.CompletedTask;
         }
     }
 }

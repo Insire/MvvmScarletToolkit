@@ -33,18 +33,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         public override bool CanDelete()
         {
-            return Directory.Exists(FullName);
-        }
-
-        protected override async Task LoadInternal(CancellationToken token)
-        {
-            using (BusyStack.GetToken())
-            {
-                if (!Depth.IsMaxReached)
-                {
-                    await RefreshInternal(token).ConfigureAwait(false);
-                }
-            }
+            return !IsBusy && Directory.Exists(FullName);
         }
 
         protected override Task UnloadInternalAsync()
