@@ -123,14 +123,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             protected set { SetValue(ref _hasContainers, value); }
         }
 
-        private IDepth _depth;
-        [Bindable(true, BindingDirection.OneWay)]
-        public IDepth Depth
-        {
-            get { return _depth; }
-            protected set { SetValue(ref _depth, value); }
-        }
-
         private ScarletFileSystemBase()
         {
             DeleteCommand = AsyncCommand.Create(Delete, CanDelete);
@@ -141,7 +133,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             HasContainers = false;
         }
 
-        protected ScarletFileSystemBase(string name, string fullName, IDepth depth, IFileSystemDirectory parent)
+        protected ScarletFileSystemBase(string name, string fullName, IFileSystemDirectory parent)
             : this()
         {
             if (string.IsNullOrEmpty(name))
@@ -154,11 +146,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 throw new ArgumentException($"{nameof(fullName)} can't be empty.", nameof(fullName));
             }
 
-            if (depth == null)
-            {
-                throw new ArgumentException($"{nameof(depth)} can't be empty.", nameof(depth));
-            }
-
             if (!(this is IFileSystemDrive) && parent is null)
             {
                 throw new ArgumentException($"{nameof(parent)} can't be empty.", nameof(parent));
@@ -166,9 +153,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             using (BusyStack.GetToken())
             {
-                Depth = depth;
-                Depth.Current++;
-
                 Name = name;
                 FullName = fullName;
                 Parent = parent;
@@ -178,11 +162,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         protected override async Task LoadInternal(CancellationToken token)
         {
             if (IsLoaded)
-            {
-                return;
-            }
-
-            if (Depth.IsMaxReached)
             {
                 return;
             }

@@ -8,8 +8,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     [DebuggerDisplay("File: {Name} IsContainer: {IsContainer}")]
     public class ScarletFile : ScarletFileSystemBase, IFileSystemFile
     {
-        public ScarletFile(FileInfo info, IDepth depth, IFileSystemDirectory parent)
-            : base(info.Name, info.FullName, depth, parent)
+        public ScarletFile(FileInfo info, IFileSystemDirectory parent)
+            : base(info.Name, info.FullName, parent)
         {
         }
 

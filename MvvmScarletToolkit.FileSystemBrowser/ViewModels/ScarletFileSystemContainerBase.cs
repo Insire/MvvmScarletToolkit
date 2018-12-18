@@ -42,8 +42,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             get { return _children[index]; }
         }
 
-        protected ScarletFileSystemContainerBase(string name, string fullName, IDepth depth, IFileSystemDirectory parent, IScarletDispatcher dispatcher)
-            : base(name, fullName, depth, parent)
+        protected ScarletFileSystemContainerBase(string name, string fullName, IFileSystemDirectory parent, IScarletDispatcher dispatcher)
+            : base(name, fullName, parent)
         {
             Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
@@ -81,7 +81,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
-                Clear();
+                await Clear().ConfigureAwait(false);
 
                 await Dispatcher.Invoke(() =>
                 {
@@ -106,7 +106,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                     }
                 }).ConfigureAwait(false);
 
-                await AddRange(FileSystemExtensions.GetChildren(this, Depth, Dispatcher)).ConfigureAwait(false);
+                await AddRange(FileSystemExtensions.GetChildren(this, Dispatcher)).ConfigureAwait(false);
                 HasContainers = Children.Any(p => p is ScarletFileSystemContainerBase);
 
                 await OnFilterChanged(string.Empty, token).ConfigureAwait(false);
@@ -170,23 +170,22 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        public void Clear()
+        public async Task Clear()
         {
             using (BusyStack.GetToken())
             {
-                _children.Clear();
+                await Dispatcher.Invoke(() => _children.Clear());
             }
 
             OnPropertyChanged(nameof(Count));
         }
 
-        protected override Task UnloadInternalAsync()
+        protected override async Task UnloadInternalAsync()
         {
             using (BusyStack.GetToken())
             {
-                Clear();
+                await Clear().ConfigureAwait(false);
                 IsLoaded = false;
-                return Task.CompletedTask;
             }
         }
     }

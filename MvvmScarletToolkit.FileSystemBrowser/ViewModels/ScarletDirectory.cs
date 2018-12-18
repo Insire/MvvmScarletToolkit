@@ -9,8 +9,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     [DebuggerDisplay("Directory: {Name} IsContainer: {IsContainer}")]
     public class ScarletDirectory : ScarletFileSystemContainerBase
     {
-        public ScarletDirectory(DirectoryInfo info, IDepth depth, IFileSystemDirectory parent, IScarletDispatcher dispatcher)
-            : base(info.Name, info.FullName, depth, parent, dispatcher)
+        public ScarletDirectory(DirectoryInfo info, IFileSystemDirectory parent, IScarletDispatcher dispatcher)
+            : base(info.Name, info.FullName, parent, dispatcher)
         {
         }
 
@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
-                Directory.Delete(FullName);
+                Directory.Delete(FullName, true);
                 await Parent.RefreshCommand.ExecuteAsync(token).ConfigureAwait(false);
             }
         }

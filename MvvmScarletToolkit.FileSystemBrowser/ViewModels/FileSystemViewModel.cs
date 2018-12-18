@@ -72,7 +72,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 await AddRange(DriveInfo.GetDrives()
                     .Where(p => p.IsReady && p.DriveType != DriveType.CDRom && p.DriveType != DriveType.Unknown)
-                    .Select(p => new ScarletDrive(p, new FileSystemDepth(0), Dispatcher)))
+                    .Select(p => new ScarletDrive(p, Dispatcher)))
                     .ConfigureAwait(false);
 
                 IsLoaded = true;

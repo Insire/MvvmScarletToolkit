@@ -87,7 +87,29 @@
                                         BorderThickness="{TemplateBinding BorderThickness}">
                                     <ContentPresenter x:Name="PART_Header"
                                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                      ContentSource="Header" />
+                                                      ContentSource="Header">
+                                        <ContentPresenter.Style>
+                                            <Style TargetType="{x:Type ContentPresenter}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsLoaded}" Value="True">
+                                                        <Setter Property="ToolTip">
+                                                            <Setter.Value>
+                                                                <ToolTip>
+                                                                    <StackPanel Orientation="Vertical">
+                                                                        <TextBlock Text="{Binding Name, StringFormat={}Name: {0}, Mode=OneWay}" />
+                                                                        <TextBlock Text="{Binding Count, StringFormat={}Children: {0}, Mode=OneWay}" />
+                                                                        <TextBlock Text="{Binding IsExpanded, StringFormat={}IsExpanded: {0}, Mode=OneWay}" />
+                                                                        <TextBlock Text="{Binding IsSelected, StringFormat={}IsSelected: {0}, Mode=OneWay}" />
+                                                                        <TextBlock Text="{Binding HasContainers, StringFormat={}HasContainers: {0}, Mode=OneWay}" />
+                                                                    </StackPanel>
+                                                                </ToolTip>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ContentPresenter.Style>
+                                    </ContentPresenter>
                                 </Border>
 
                                 <!--  Children  -->
@@ -226,16 +248,6 @@
                                                 <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
                                             </ContextMenu>
                                         </TextBlock.ContextMenu>
-                                        <TextBlock.ToolTip>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="{Binding IsLoaded, StringFormat={}IsLoaded: {0}, Mode=OneWay}" />
-                                                <TextBlock Text="{Binding Depth.Current, StringFormat={}Depth: {0}, Mode=OneWay}" />
-                                                <TextBlock Text="{Binding HasContainers, StringFormat={}HasContainers: {0}, Mode=OneWay}" />
-                                                <TextBlock Text="{Binding IsContainer, StringFormat={}IsContainer: {0}, Mode=OneWay}" />
-                                                <TextBlock Text="{Binding IsExpanded, StringFormat={}IsExpanded: {0}, Mode=OneWay}" />
-                                                <TextBlock Text="{Binding IsSelected, StringFormat={}IsSelected: {0}, Mode=OneWay}" />
-                                            </StackPanel>
-                                        </TextBlock.ToolTip>
                                     </TextBlock>
                                 </HierarchicalDataTemplate>
 
@@ -247,16 +259,6 @@
                                                 <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
                                             </ContextMenu>
                                         </TextBlock.ContextMenu>
-                                        <TextBlock.ToolTip>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="{Binding IsLoaded, StringFormat={}IsLoaded: {0}, Mode=OneWay}" />
-                                                <TextBlock Text="{Binding Depth.Current, StringFormat={}Depth: {0}, Mode=OneWay}" />
-                                                <TextBlock Text="{Binding HasContainers, StringFormat={}HasContainers: {0}, Mode=OneWay}" />
-                                                <TextBlock Text="{Binding IsContainer, StringFormat={}IsContainer: {0}, Mode=OneWay}" />
-                                                <TextBlock Text="{Binding IsExpanded, StringFormat={}IsExpanded: {0}, Mode=OneWay}" />
-                                                <TextBlock Text="{Binding IsSelected, StringFormat={}IsSelected: {0}, Mode=OneWay}" />
-                                            </StackPanel>
-                                        </TextBlock.ToolTip>
                                     </TextBlock>
                                 </HierarchicalDataTemplate>
                             </TreeView.Resources>
@@ -270,7 +272,6 @@
                         <!--  Splitter  -->
                         <GridSplitter x:Name="PART_GridSplitter"
                                       Grid.Row="0"
-                                      Grid.RowSpan="2"
                                       Grid.Column="1"
                                       Width="5"
                                       HorizontalAlignment="Center"
@@ -280,7 +281,9 @@
                         <StackPanel x:Name="PART_StatusBar"
                                     Grid.Row="1"
                                     Grid.Column="0"
-                                    Grid.ColumnSpan="2" />
+                                    Grid.ColumnSpan="2">
+                            <TextBlock Text="{Binding FileSystemViewModel.SelectedItem.FullName, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}" />
+                        </StackPanel>
 
                         <DockPanel Grid.Row="0"
                                    Grid.Column="2"
@@ -323,8 +326,6 @@
                                     </ToggleButton.Style>
                                 </ToggleButton>
                             </Grid>
-
-                            <TextBlock DockPanel.Dock="Bottom" Text="{Binding FileSystemViewModel.SelectedItem.FullName, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}" />
 
                             <!--  DetailView  -->
                             <ContentControl Content="{Binding FileSystemViewModel.DisplayListView, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}" DataContext="{Binding FileSystemViewModel, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}">
