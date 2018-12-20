@@ -30,6 +30,7 @@ TODO:
 - improve Async Commands
 - finalize basic FileSystemBrowser
 - improve documentation
+- improve readme with screenshots of properly working features
 - setup CI with appveyor
 - add a nice icon for this lib
 - add Contribution guidelines

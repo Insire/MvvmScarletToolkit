@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Abstractions
 {
-    public static class Extensions
+    public static class EnumerableExtensions
     {
         public static Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody)
         {
@@ -31,6 +31,16 @@ namespace MvvmScarletToolkit.Abstractions
                     .Create(source)
                     .GetPartitions(maxDoP)
                     .Select(AwaitPartition));
+        }
+
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> collection, Action<T> action)
+        {
+            foreach (var item in collection)
+            {
+                action(item);
+            }
+
+            return collection;
         }
     }
 }
