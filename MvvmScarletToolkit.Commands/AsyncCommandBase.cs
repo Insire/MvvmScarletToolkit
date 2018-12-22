@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Commands
 {
-    public abstract class AsyncCommandBase : IAsyncCommand, INotifyPropertyChanged
+    internal abstract class AsyncCommandBase : IAsyncCommand, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

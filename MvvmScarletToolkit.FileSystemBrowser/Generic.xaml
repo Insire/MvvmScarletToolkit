@@ -333,15 +333,18 @@
                 </Setter>
             </Style>
 
-            <Style x:Key="{x:Type TreeViewItem}" TargetType="{x:Type TreeViewItem}">
-                <Setter Property="HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-                <Setter Property="VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
+            <Style x:Key="{x:Type TreeViewItem}"
+                   BasedOn="{StaticResource {x:Type TreeViewItem}}"
+                   TargetType="{x:Type TreeViewItem}">
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="Padding" Value="1 0 0 0" />
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
                 <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}" />
                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=OneWay}" />
                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="OverridesDefaultStyle" Value="True" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type TreeViewItem}">
@@ -522,11 +525,52 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
+                        <!--  Breadcrumbs TODO  -->
                         <TextBox Grid.Row="0"
                                  Grid.Column="0"
                                  Text="BreadCrumbs" />
 
-                        <TextBox Grid.Column="2" Text="{Binding FileSystemViewModel.Filter, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, UpdateSourceTrigger=PropertyChanged, Delay=500, Mode=TwoWay}" />
+                        <!--  Filter  -->
+                        <Grid Grid.Column="2">
+                            <TextBox x:Name="SearchTermTextBox"
+                                     VerticalAlignment="Center"
+                                     AcceptsReturn="True"
+                                     Text="{Binding FileSystemViewModel.Filter, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, UpdateSourceTrigger=PropertyChanged, Delay=500, Mode=TwoWay}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Return" Command="{Binding RefreshFilterCommand}" />
+                                </TextBox.InputBindings>
+                                <TextBox.Style>
+                                    <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RefreshFilterCommand.IsBusy}" Value="True">
+                                                <Setter Property="IsEnabled" Value="True" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding RefreshFilterCommand.IsBusy}" Value="False">
+                                                <Setter Property="IsEnabled" Value="True" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+
+                            <TextBlock Margin="5 0 0 0"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       Foreground="DarkGray"
+                                       IsHitTestVisible="False"
+                                       Text="Filter">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=SearchTermTextBox}" Value="">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
 
                         <!--  Tree  -->
                         <TreeView x:Name="PART_TreeView"
