@@ -14,6 +14,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     {
         [Bindable(true, BindingDirection.OneWay)]
         public IExtendedAsyncCommand SelectCommand { get; }
+        [Bindable(true, BindingDirection.OneWay)]
+        public IExtendedAsyncCommand RefreshFilterCommand { get; }
 
         private RangeObservableCollection<IFileSystemInfo> _selectedItems;
         [Bindable(true, BindingDirection.OneWay)]
@@ -36,7 +38,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         public string Filter
         {
             get { return _filter; }
-            set { SetValue(ref _filter, value, OnChanged: () => SelectedItem.OnFilterChanged(Filter, CancellationToken.None)); } // TODO replace with command call
+            set { SetValue(ref _filter, value); }
         }
 
         public FileSystemViewModel(IScarletDispatcher dispatcher, FileSystemOptionsViewModel options)
@@ -45,7 +47,21 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             Options = options ?? throw new ArgumentNullException(nameof(options));
 
             SelectCommand = AsyncCommand.Create<IFileSystemInfo>(SetSelectedItem, CanSetSelectedItem);
+            RefreshFilterCommand = AsyncCommand.Create(RefreshFilterInternal, CanRefreshFilter);
             SelectedItems = new RangeObservableCollection<IFileSystemInfo>();
+        }
+
+        private async Task RefreshFilterInternal(CancellationToken token)
+        {
+            using (BusyStack.GetToken())
+            {
+                await SelectedItem.OnFilterChanged(Filter, token).ConfigureAwait(false);
+            }
+        }
+
+        private bool CanRefreshFilter()
+        {
+            return !IsBusy && !(SelectedItem is null) && !(Filter is null);
         }
 
         public async Task SetSelectedItem(IFileSystemInfo item)

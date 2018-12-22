@@ -95,7 +95,7 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type browser:FileSystemViewModel}">
                     <DockPanel>
-                        <Menu DataContext="{Binding Options}" DockPanel.Dock="Top">
+                        <Menu DockPanel.Dock="Top">
                             <MenuItem Header="File">
                                 <MenuItem Header="Open" />
                                 <MenuItem Header="Delete" />
@@ -107,8 +107,8 @@
                                 <MenuItem Header="Move" />
                             </MenuItem>
                             <MenuItem Header="View">
-                                <MenuItem Command="{Binding DisplayDetailsAsListCommand}" Header="List" />
-                                <MenuItem Command="{Binding DisplayDetailsAsIconsCommand}" Header="Icons" />
+                                <MenuItem Command="{Binding Options.DisplayDetailsAsListCommand}" Header="As List" />
+                                <MenuItem Command="{Binding Options.DisplayDetailsAsIconsCommand}" Header="As Icons" />
                             </MenuItem>
                             <MenuItem Header="Options" />
                             <MenuItem Header="Help">
