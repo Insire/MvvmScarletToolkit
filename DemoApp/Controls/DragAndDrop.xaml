@@ -40,13 +40,13 @@
                         Command="{Binding Target.RemoveRangeCommand}"
                         CommandParameter="{Binding ElementName=TargetList, Path=SelectedItems}"
                         Content="Remove" />
-                <Button Margin="0,4"
+                <Button Margin="0 4"
                         Command="{Binding Target.ClearCommand}"
                         Content="Clear" />
             </StackPanel>
 
             <ListBox x:Name="TargetList"
-                     Margin="5,0"
+                     Margin="5 0"
                      AllowDrop="True"
                      Drop="TargetList_Drop"
                      ItemsSource="{Binding Target.Items}"

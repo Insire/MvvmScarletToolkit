@@ -40,14 +40,14 @@
                 </ListBox>
             </DockPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Button Margin="0,4"
+                <Button Margin="0 4"
                         Command="{Binding DemoItems.AddCommand}"
                         Content="New" />
                 <Button Margin="4"
                         Command="{Binding DemoItems.RemoveRangeCommand}"
                         CommandParameter="{Binding ElementName=DemoItems, Path=SelectedItems}"
                         Content="Remove" />
-                <Button Margin="0,4"
+                <Button Margin="0 4"
                         Command="{Binding DemoItems.ClearCommand}"
                         Content="Clear" />
             </StackPanel>
@@ -87,14 +87,14 @@
             </DockPanel>
 
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Button Margin="0,4"
+                <Button Margin="0 4"
                         Command="{Binding LogItems.AddCommand}"
                         Content="New" />
                 <Button Margin="4"
                         Command="{Binding LogItems.RemoveRangeCommand}"
                         CommandParameter="{Binding ElementName=LogItems, Path=SelectedItems}"
                         Content="Remove" />
-                <Button Margin="0,4"
+                <Button Margin="0 4"
                         Command="{Binding LogItems.ClearCommand}"
                         Content="Clear" />
             </StackPanel>
