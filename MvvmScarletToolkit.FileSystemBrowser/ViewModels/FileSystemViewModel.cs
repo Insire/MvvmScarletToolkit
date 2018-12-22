@@ -3,6 +3,7 @@ using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -14,6 +15,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     {
         [Bindable(true, BindingDirection.OneWay)]
         public IExtendedAsyncCommand SelectCommand { get; }
+
         [Bindable(true, BindingDirection.OneWay)]
         public IExtendedAsyncCommand RefreshFilterCommand { get; }
 
@@ -47,21 +49,24 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             Options = options ?? throw new ArgumentNullException(nameof(options));
 
             SelectCommand = AsyncCommand.Create<IFileSystemInfo>(SetSelectedItem, CanSetSelectedItem);
-            RefreshFilterCommand = AsyncCommand.Create(RefreshFilterInternal, CanRefreshFilter);
             SelectedItems = new RangeObservableCollection<IFileSystemInfo>();
+            RefreshFilterCommand = AsyncCommand.Create(RefreshFilterInternal, CanRefreshFilter);
         }
 
         private async Task RefreshFilterInternal(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
+                Debug.WriteLine("waiting...");
+                await Task.Delay(5000, token);
+                Debug.WriteLine("running...");
                 await SelectedItem.OnFilterChanged(Filter, token).ConfigureAwait(false);
             }
         }
 
         private bool CanRefreshFilter()
         {
-            return !IsBusy && !(SelectedItem is null) && !(Filter is null);
+            return !(SelectedItem is null) && !(Filter is null);
         }
 
         public async Task SetSelectedItem(IFileSystemInfo item)

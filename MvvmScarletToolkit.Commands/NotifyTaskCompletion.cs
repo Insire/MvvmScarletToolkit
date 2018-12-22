@@ -12,14 +12,14 @@ namespace MvvmScarletToolkit.Commands
         public Task TaskCompletion { get; }
         public TResult Result => (Task.Status == TaskStatus.RanToCompletion) ? Task.Result : default;
 
-        public TaskStatus Status { get { return Task.Status; } }
-        public bool IsCompleted { get { return Task.IsCompleted; } }
-        public bool IsNotCompleted { get { return !Task.IsCompleted; } }
+        public TaskStatus Status => Task.Status;
+        public bool IsCompleted => Task.IsCompleted;
+        public bool IsNotCompleted => !Task.IsCompleted;
         public bool IsSuccessfullyCompleted => Task.Status == TaskStatus.RanToCompletion;
 
-        public bool IsCanceled { get { return Task.IsCanceled; } }
-        public bool IsFaulted { get { return Task.IsFaulted; } }
-        public AggregateException Exception { get { return Task.Exception; } }
+        public bool IsCanceled => Task.IsCanceled;
+        public bool IsFaulted => Task.IsFaulted;
+        public AggregateException Exception => Task.Exception;
         public Exception InnerException => Exception?.InnerException;
         public string ErrorMessage => InnerException?.Message;
 
