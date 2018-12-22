@@ -1,6 +1,7 @@
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,14 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             private set { SetValue(ref _selectedItems, value); }
         }
 
+        private FileSystemOptionsViewModel _options;
+        [Bindable(true, BindingDirection.OneWay)]
+        public FileSystemOptionsViewModel Options
+        {
+            get { return _options; }
+            private set { SetValue(ref _options, value); }
+        }
+
         private string _filter;
         [Bindable(true, BindingDirection.TwoWay)]
         public string Filter
@@ -30,17 +39,11 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             set { SetValue(ref _filter, value, OnChanged: () => SelectedItem.OnFilterChanged(Filter, CancellationToken.None)); } // TODO replace with command call
         }
 
-        private bool _displayListView;
-        [Bindable(true, BindingDirection.TwoWay)]
-        public bool DisplayListView
-        {
-            get { return _displayListView; }
-            set { SetValue(ref _displayListView, value); }
-        }
-
-        public FileSystemViewModel(IScarletDispatcher dispatcher)
+        public FileSystemViewModel(IScarletDispatcher dispatcher, FileSystemOptionsViewModel options)
             : base(dispatcher)
         {
+            Options = options ?? throw new ArgumentNullException(nameof(options));
+
             SelectCommand = AsyncCommand.Create<IFileSystemInfo>(SetSelectedItem, CanSetSelectedItem);
             SelectedItems = new RangeObservableCollection<IFileSystemInfo>();
         }

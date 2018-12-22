@@ -56,7 +56,7 @@ namespace DemoApp
                 },
                 new Scene()
                 {
-                    Content = new FileSystemViewModel(dispatcher),
+                    Content = new FileSystemViewModel(dispatcher, new FileSystemOptionsViewModel(dispatcher)),
                     IsSelected = false,
                 },
                 new Scene()

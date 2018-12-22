@@ -1,4 +1,4 @@
-﻿<configurablewindow:ConfigurableWindow x:Class="DemoApp.MainWindow"
+<configurablewindow:ConfigurableWindow x:Class="DemoApp.MainWindow"
                                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                        xmlns:browser="clr-namespace:MvvmScarletToolkit.FileSystemBrowser;assembly=MvvmScarletToolkit.FileSystemBrowser"
@@ -94,7 +94,30 @@
                     <local:DragAndDrop />
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type browser:FileSystemViewModel}">
-                    <browser:FileSystemBrowser />
+                    <DockPanel>
+                        <Menu DataContext="{Binding Options}" DockPanel.Dock="Top">
+                            <MenuItem Header="File">
+                                <MenuItem Header="Open" />
+                                <MenuItem Header="Delete" />
+                                <MenuItem Header="Refresh" />
+                                <MenuItem Header="Copy">
+                                    <MenuItem Header="As File" />
+                                    <MenuItem Header="As Path" />
+                                </MenuItem>
+                                <MenuItem Header="Move" />
+                            </MenuItem>
+                            <MenuItem Header="View">
+                                <MenuItem Command="{Binding DisplayDetailsAsListCommand}" Header="List" />
+                                <MenuItem Command="{Binding DisplayDetailsAsIconsCommand}" Header="Icons" />
+                            </MenuItem>
+                            <MenuItem Header="Options" />
+                            <MenuItem Header="Help">
+                                <MenuItem Header="License" />
+                                <MenuItem Header="Credits" />
+                            </MenuItem>
+                        </Menu>
+                        <browser:FileSystemBrowser />
+                    </DockPanel>
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type local:Images}">
                     <local:ImagesView />

@@ -288,7 +288,7 @@
                                           Height="13"
                                           Background="Transparent">
                                         <Path x:Name="ExpandPath"
-                                              Margin="1,1,1,1"
+                                              Margin="1 1 1 1"
                                               HorizontalAlignment="Left"
                                               VerticalAlignment="Center"
                                               Data="M 4 0 L 8 4 L 4 8 Z"
@@ -322,7 +322,7 @@
                     <Setter.Value>
                         <ControlTemplate>
                             <Border>
-                                <Rectangle Margin="0,0,0,0"
+                                <Rectangle Margin="0 0 0 0"
                                            Opacity="0"
                                            Stroke="Black"
                                            StrokeDashArray="1 2"
@@ -337,7 +337,7 @@
                 <Setter Property="HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
                 <Setter Property="VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
                 <Setter Property="Background" Value="Transparent" />
-                <Setter Property="Padding" Value="1,0,0,0" />
+                <Setter Property="Padding" Value="1 0 0 0" />
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
                 <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}" />
                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=OneWay}" />
@@ -507,6 +507,8 @@
                             <ColumnDefinition Width="*" MinWidth="150" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="5" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
@@ -520,9 +522,15 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
+                        <TextBox Grid.Row="0"
+                                 Grid.Column="0"
+                                 Text="BreadCrumbs" />
+
+                        <TextBox Grid.Column="2" Text="{Binding FileSystemViewModel.Filter, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, UpdateSourceTrigger=PropertyChanged, Delay=500, Mode=TwoWay}" />
+
                         <!--  Tree  -->
                         <TreeView x:Name="PART_TreeView"
-                                  Grid.Row="0"
+                                  Grid.Row="2"
                                   Grid.Column="0"
                                   ItemsSource="{Binding FileSystemViewModel.Items, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
                                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
@@ -545,7 +553,9 @@
                                 <HierarchicalDataTemplate DataType="{x:Type local:ScarletDirectory}" ItemsSource="{Binding Children}">
                                     <DockPanel>
                                         <ContentControl ContentTemplate="{StaticResource FolderIconPath}" DockPanel.Dock="Left" />
-                                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Margin="5 0 0 0">
+                                        <TextBlock Margin="5 0 0 0"
+                                                   Text="{Binding Name}"
+                                                   TextTrimming="CharacterEllipsis">
                                             <TextBlock.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
@@ -559,7 +569,9 @@
                                 <HierarchicalDataTemplate DataType="{x:Type local:ScarletDrive}" ItemsSource="{Binding Children}">
                                     <DockPanel>
                                         <ContentControl ContentTemplate="{StaticResource DriveIconPath}" DockPanel.Dock="Left" />
-                                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Margin="5 0 0 0">
+                                        <TextBlock Margin="5 0 0 0"
+                                                   Text="{Binding Name}"
+                                                   TextTrimming="CharacterEllipsis">
                                             <TextBlock.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
@@ -579,284 +591,241 @@
 
                         <!--  Splitter  -->
                         <GridSplitter x:Name="PART_GridSplitter"
-                                      Grid.Row="0"
+                                      Grid.Row="2"
                                       Grid.Column="1"
                                       Width="5"
-                                      Margin="5,0"
+                                      Margin="5 0"
                                       HorizontalAlignment="Center"
                                       VerticalAlignment="Stretch" />
 
                         <!--  StatusBar  -->
                         <StackPanel x:Name="PART_StatusBar"
-                                    Grid.Row="1"
+                                    Grid.Row="3"
                                     Grid.Column="0"
                                     Grid.ColumnSpan="2">
                             <TextBlock Text="{Binding FileSystemViewModel.SelectedItem.FullName, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}" />
                         </StackPanel>
 
-                        <DockPanel Grid.Row="0"
-                                   Grid.Column="2"
-                                   LastChildFill="True">
-                            <Grid Margin="0,0,0,5" DockPanel.Dock="Top">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="5" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="5" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                        <!--  DetailView  -->
+                        <ContentControl Grid.Row="2"
+                                        Grid.Column="2"
+                                        DataContext="{Binding FileSystemViewModel, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}">
+                            <ContentControl.Style>
+                                <Style TargetType="{x:Type ContentControl}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Options.DisplayListView}" Value="True">
+                                            <Setter Property="Grid.IsSharedSizeScope" Value="True" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ContentControl}">
+                                                        <ContentPresenter Content="{Binding FileSystemViewModel.SelectedItem, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, Mode=TwoWay}">
+                                                            <ContentPresenter.Resources>
+                                                                <local:TypeDataTemplateSelector x:Key="TypeDataTemplateSelector">
+                                                                    <local:TypeDataTemplateSelector.Templates>
+                                                                        <local:DataTemplateCollection>
+                                                                            <local:DataTemplateContainer DataTemplate="{StaticResource FolderIconPath}" />
+                                                                            <local:DataTemplateContainer DataTemplate="{StaticResource DriveIconPath}" />
+                                                                            <local:DataTemplateContainer DataTemplate="{StaticResource FileIconPath}" />
+                                                                        </local:DataTemplateCollection>
+                                                                    </local:TypeDataTemplateSelector.Templates>
+                                                                </local:TypeDataTemplateSelector>
 
-                                <!--  Nav and Filter  -->
-                                <TextBlock Grid.Column="0"
-                                           VerticalAlignment="Center"
-                                           Text="Filter" />
-                                <TextBox Grid.Column="2" Text="{Binding FileSystemViewModel.Filter, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, UpdateSourceTrigger=PropertyChanged, Delay=500, Mode=TwoWay}" />
-                                <ToggleButton Grid.Column="4"
-                                              Width="30"
-                                              IsChecked="{Binding FileSystemViewModel.DisplayListView, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}">
-                                    <ToggleButton.Style>
-                                        <Style TargetType="{x:Type ToggleButton}">
-                                            <Style.Triggers>
-                                                <Trigger Property="IsChecked" Value="true">
-                                                    <Setter Property="Content">
-                                                        <Setter.Value>
-                                                            <TextBlock Text="Tiles" />
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Trigger>
+                                                                <DataTemplate DataType="{x:Type local:ScarletDirectory}">
+                                                                    <ListView local:GridViewColumnResize.Enabled="True" ItemsSource="{Binding DefaultCollectionView}">
+                                                                        <ListView.ContextMenu>
+                                                                            <ContextMenu>
+                                                                                <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                            </ContextMenu>
+                                                                        </ListView.ContextMenu>
+                                                                        <ListView.View>
+                                                                            <GridView>
+                                                                                <GridView.Columns>
+                                                                                    <GridViewColumn CellTemplateSelector="{StaticResource TypeDataTemplateSelector}" />
+                                                                                    <GridViewColumn local:GridViewColumnResize.Width="*"
+                                                                                                    DisplayMemberBinding="{Binding Name}"
+                                                                                                    Header="Name" />
+                                                                                    <GridViewColumn DisplayMemberBinding="{Binding CreationTimeUtc}" Header="CreationTimeUtc" />
+                                                                                    <GridViewColumn DisplayMemberBinding="{Binding LastAccessTimeUtc}" Header="LastAccessTimeUtc" />
+                                                                                    <GridViewColumn DisplayMemberBinding="{Binding LastWriteTimeUtc}" Header="LastWriteTimeUtc" />
+                                                                                </GridView.Columns>
+                                                                            </GridView>
+                                                                        </ListView.View>
+                                                                    </ListView>
+                                                                </DataTemplate>
 
-                                                <Trigger Property="IsChecked" Value="false">
-                                                    <Setter Property="Content">
-                                                        <Setter.Value>
-                                                            <TextBlock Text="List" />
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ToggleButton.Style>
-                                </ToggleButton>
-                            </Grid>
+                                                                <DataTemplate DataType="{x:Type local:ScarletDrive}">
+                                                                    <ListBox ItemsSource="{Binding DefaultCollectionView}" SelectionMode="Extended">
+                                                                        <ListBox.ContextMenu>
+                                                                            <ContextMenu>
+                                                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                            </ContextMenu>
+                                                                        </ListBox.ContextMenu>
+                                                                        <ListBox.Resources>
+                                                                            <DataTemplate DataType="{x:Type local:ScarletDirectory}">
+                                                                                <Grid>
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition Width="Auto" />
+                                                                                        <ColumnDefinition Width="5" />
+                                                                                        <ColumnDefinition Width="*" />
+                                                                                    </Grid.ColumnDefinitions>
 
-                            <!--  DetailView  -->
-                            <ContentControl Content="{Binding FileSystemViewModel.DisplayListView, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}" DataContext="{Binding FileSystemViewModel, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}">
-                                <ContentControl.Style>
-                                    <Style TargetType="{x:Type ContentControl}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding DisplayListView}" Value="True">
-                                                <Setter Property="Grid.IsSharedSizeScope" Value="True" />
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type ContentControl}">
-                                                            <ContentPresenter Content="{Binding FileSystemViewModel.SelectedItem, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, Mode=TwoWay}">
-                                                                <ContentPresenter.Resources>
-                                                                    <local:TypeDataTemplateSelector x:Key="TypeDataTemplateSelector">
-                                                                        <local:TypeDataTemplateSelector.Templates>
-                                                                            <local:DataTemplateCollection>
-                                                                                <local:DataTemplateContainer DataTemplate="{StaticResource FolderIconPath}" />
-                                                                                <local:DataTemplateContainer DataTemplate="{StaticResource DriveIconPath}" />
-                                                                                <local:DataTemplateContainer DataTemplate="{StaticResource FileIconPath}" />
-                                                                            </local:DataTemplateCollection>
-                                                                        </local:TypeDataTemplateSelector.Templates>
-                                                                    </local:TypeDataTemplateSelector>
+                                                                                    <Path Width="16"
+                                                                                          Height="16"
+                                                                                          Data="{StaticResource FolderPath}"
+                                                                                          Stretch="Uniform"
+                                                                                          Stroke="#777"
+                                                                                          StrokeThickness="1" />
 
-                                                                    <DataTemplate DataType="{x:Type local:ScarletDirectory}">
-                                                                        <ListView local:GridViewColumnResize.Enabled="True" ItemsSource="{Binding DefaultCollectionView}">
-                                                                            <ListView.ContextMenu>
-                                                                                <ContextMenu>
-                                                                                    <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
-                                                                                    <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                                                                </ContextMenu>
-                                                                            </ListView.ContextMenu>
-                                                                            <ListView.View>
-                                                                                <GridView>
-                                                                                    <GridView.Columns>
-                                                                                        <GridViewColumn CellTemplateSelector="{StaticResource TypeDataTemplateSelector}" />
-                                                                                        <GridViewColumn local:GridViewColumnResize.Width="*"
-                                                                                                        DisplayMemberBinding="{Binding Name}"
-                                                                                                        Header="Name" />
-                                                                                        <GridViewColumn DisplayMemberBinding="{Binding CreationTimeUtc}" Header="CreationTimeUtc" />
-                                                                                        <GridViewColumn DisplayMemberBinding="{Binding LastAccessTimeUtc}" Header="LastAccessTimeUtc" />
-                                                                                        <GridViewColumn DisplayMemberBinding="{Binding LastWriteTimeUtc}" Header="LastWriteTimeUtc" />
-                                                                                    </GridView.Columns>
-                                                                                </GridView>
-                                                                            </ListView.View>
-                                                                        </ListView>
-                                                                    </DataTemplate>
-
-                                                                    <DataTemplate DataType="{x:Type local:ScarletDrive}">
-                                                                        <ListBox ItemsSource="{Binding DefaultCollectionView}" SelectionMode="Extended">
-                                                                            <ListBox.ContextMenu>
-                                                                                <ContextMenu>
-                                                                                    <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                                                                </ContextMenu>
-                                                                            </ListBox.ContextMenu>
-                                                                            <ListBox.Resources>
-                                                                                <DataTemplate DataType="{x:Type local:ScarletDirectory}">
-                                                                                    <Grid>
-                                                                                        <Grid.ColumnDefinitions>
-                                                                                            <ColumnDefinition Width="Auto" />
-                                                                                            <ColumnDefinition Width="5" />
-                                                                                            <ColumnDefinition Width="*" />
-                                                                                        </Grid.ColumnDefinitions>
-
-                                                                                        <Path Width="16"
-                                                                                              Height="16"
-                                                                                              Data="{StaticResource FolderPath}"
-                                                                                              Stretch="Uniform"
-                                                                                              Stroke="#777"
-                                                                                              StrokeThickness="1" />
-
-                                                                                        <TextBlock Grid.Column="2" Text="{Binding Name}">
-                                                                                            <TextBlock.InputBindings>
-                                                                                                <MouseBinding Command="{Binding FileSystemViewModel.SelectCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
-                                                                                                              CommandParameter="{Binding .}"
-                                                                                                              Gesture="LeftDoubleClick" />
-                                                                                            </TextBlock.InputBindings>
-                                                                                            <TextBlock.ContextMenu>
-                                                                                                <ContextMenu>
-                                                                                                    <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
-                                                                                                    <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                                                                                </ContextMenu>
-                                                                                            </TextBlock.ContextMenu>
-                                                                                        </TextBlock>
-                                                                                    </Grid>
-                                                                                </DataTemplate>
-                                                                            </ListBox.Resources>
-                                                                        </ListBox>
-                                                                    </DataTemplate>
-                                                                </ContentPresenter.Resources>
-                                                            </ContentPresenter>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-
-                                            <DataTrigger Binding="{Binding DisplayListView}" Value="False">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type ContentControl}">
-                                                            <ContentPresenter Content="{Binding FileSystemViewModel.SelectedItem, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, Mode=TwoWay}">
-                                                                <ContentPresenter.Resources>
-                                                                    <DataTemplate DataType="{x:Type local:ScarletFile}">
-                                                                        <DockPanel Width="100">
-                                                                            <DockPanel.ContextMenu>
-                                                                                <ContextMenu>
-                                                                                    <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
-                                                                                </ContextMenu>
-                                                                            </DockPanel.ContextMenu>
-                                                                            <TextBlock HorizontalAlignment="Center"
-                                                                                       DockPanel.Dock="Bottom"
-                                                                                       Text="{Binding Name}"
-                                                                                       TextTrimming="CharacterEllipsis" />
-                                                                            <Path Width="66"
-                                                                                  Height="66"
-                                                                                  Data="{StaticResource FilePath}"
-                                                                                  Stretch="Uniform"
-                                                                                  Stroke="#777"
-                                                                                  StrokeThickness="1" />
-                                                                        </DockPanel>
-                                                                    </DataTemplate>
-
-                                                                    <DataTemplate DataType="{x:Type local:ScarletDirectory}">
-                                                                        <ListBox ItemsSource="{Binding DefaultCollectionView}"
-                                                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                                                 SelectionMode="Extended">
-                                                                            <ListBox.ContextMenu>
-                                                                                <ContextMenu>
-                                                                                    <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                                                                </ContextMenu>
-                                                                            </ListBox.ContextMenu>
-                                                                            <ListBox.ItemsPanel>
-                                                                                <ItemsPanelTemplate>
-                                                                                    <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
-                                                                                </ItemsPanelTemplate>
-                                                                            </ListBox.ItemsPanel>
-                                                                            <ListBox.Resources>
-                                                                                <DataTemplate DataType="{x:Type local:ScarletDirectory}">
-                                                                                    <DockPanel Width="100">
-                                                                                        <DockPanel.ContextMenu>
+                                                                                    <TextBlock Grid.Column="2" Text="{Binding Name}">
+                                                                                        <TextBlock.InputBindings>
+                                                                                            <MouseBinding Command="{Binding FileSystemViewModel.SelectCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
+                                                                                                          CommandParameter="{Binding .}"
+                                                                                                          Gesture="LeftDoubleClick" />
+                                                                                        </TextBlock.InputBindings>
+                                                                                        <TextBlock.ContextMenu>
                                                                                             <ContextMenu>
                                                                                                 <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
                                                                                                 <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
                                                                                             </ContextMenu>
-                                                                                        </DockPanel.ContextMenu>
-                                                                                        <DockPanel.InputBindings>
-                                                                                            <MouseBinding Command="{Binding FileSystemViewModel.SelectCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
-                                                                                                          CommandParameter="{Binding .}"
-                                                                                                          Gesture="LeftDoubleClick" />
-                                                                                        </DockPanel.InputBindings>
-                                                                                        <TextBlock HorizontalAlignment="Center"
-                                                                                                   DockPanel.Dock="Bottom"
-                                                                                                   Text="{Binding Name}"
-                                                                                                   TextTrimming="CharacterEllipsis" />
-                                                                                        <Path Width="66"
-                                                                                              Height="66"
-                                                                                              Data="{StaticResource FolderPath}"
-                                                                                              Stretch="Uniform"
-                                                                                              Stroke="#777"
-                                                                                              StrokeThickness="1" />
-                                                                                    </DockPanel>
-                                                                                </DataTemplate>
-                                                                            </ListBox.Resources>
-                                                                        </ListBox>
-                                                                    </DataTemplate>
+                                                                                        </TextBlock.ContextMenu>
+                                                                                    </TextBlock>
+                                                                                </Grid>
+                                                                            </DataTemplate>
+                                                                        </ListBox.Resources>
+                                                                    </ListBox>
+                                                                </DataTemplate>
+                                                            </ContentPresenter.Resources>
+                                                        </ContentPresenter>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
 
-                                                                    <DataTemplate DataType="{x:Type local:ScarletDrive}">
-                                                                        <ListBox ItemsSource="{Binding DefaultCollectionView}"
-                                                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                                                 SelectionMode="Extended">
-                                                                            <ListBox.ContextMenu>
-                                                                                <ContextMenu>
-                                                                                    <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                                                                </ContextMenu>
-                                                                            </ListBox.ContextMenu>
-                                                                            <ListBox.ItemsPanel>
-                                                                                <ItemsPanelTemplate>
-                                                                                    <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
-                                                                                </ItemsPanelTemplate>
-                                                                            </ListBox.ItemsPanel>
-                                                                            <ListBox.Resources>
-                                                                                <DataTemplate DataType="{x:Type local:ScarletDirectory}">
-                                                                                    <DockPanel Width="100">
-                                                                                        <DockPanel.ContextMenu>
-                                                                                            <ContextMenu>
-                                                                                                <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
-                                                                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                                                                            </ContextMenu>
-                                                                                        </DockPanel.ContextMenu>
-                                                                                        <DockPanel.InputBindings>
-                                                                                            <MouseBinding Command="{Binding FileSystemViewModel.SelectCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
-                                                                                                          CommandParameter="{Binding .}"
-                                                                                                          Gesture="LeftDoubleClick" />
-                                                                                        </DockPanel.InputBindings>
-                                                                                        <TextBlock HorizontalAlignment="Center"
-                                                                                                   DockPanel.Dock="Bottom"
-                                                                                                   Text="{Binding Name}"
-                                                                                                   TextTrimming="CharacterEllipsis" />
-                                                                                        <Path Width="66"
-                                                                                              Height="66"
-                                                                                              Data="{StaticResource FolderPath}"
-                                                                                              Fill="#777"
-                                                                                              Stretch="Uniform"
-                                                                                              Stroke="#777"
-                                                                                              StrokeThickness="1" />
-                                                                                    </DockPanel>
-                                                                                </DataTemplate>
-                                                                            </ListBox.Resources>
-                                                                        </ListBox>
-                                                                    </DataTemplate>
-                                                                </ContentPresenter.Resources>
-                                                            </ContentPresenter>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ContentControl.Style>
-                            </ContentControl>
-                        </DockPanel>
+                                        <DataTrigger Binding="{Binding Options.DisplayListView}" Value="False">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ContentControl}">
+                                                        <ContentPresenter Content="{Binding FileSystemViewModel.SelectedItem, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}, Mode=TwoWay}">
+                                                            <ContentPresenter.Resources>
+                                                                <DataTemplate DataType="{x:Type local:ScarletFile}">
+                                                                    <DockPanel Width="100">
+                                                                        <DockPanel.ContextMenu>
+                                                                            <ContextMenu>
+                                                                                <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                                            </ContextMenu>
+                                                                        </DockPanel.ContextMenu>
+                                                                        <TextBlock HorizontalAlignment="Center"
+                                                                                   DockPanel.Dock="Bottom"
+                                                                                   Text="{Binding Name}"
+                                                                                   TextTrimming="CharacterEllipsis" />
+                                                                        <Path Width="66"
+                                                                              Height="66"
+                                                                              Data="{StaticResource FilePath}"
+                                                                              Stretch="Uniform"
+                                                                              Stroke="#777"
+                                                                              StrokeThickness="1" />
+                                                                    </DockPanel>
+                                                                </DataTemplate>
+
+                                                                <DataTemplate DataType="{x:Type local:ScarletDirectory}">
+                                                                    <ListBox ItemsSource="{Binding DefaultCollectionView}"
+                                                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                                             SelectionMode="Extended">
+                                                                        <ListBox.ContextMenu>
+                                                                            <ContextMenu>
+                                                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                            </ContextMenu>
+                                                                        </ListBox.ContextMenu>
+                                                                        <ListBox.ItemsPanel>
+                                                                            <ItemsPanelTemplate>
+                                                                                <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                                                                            </ItemsPanelTemplate>
+                                                                        </ListBox.ItemsPanel>
+                                                                        <ListBox.Resources>
+                                                                            <DataTemplate DataType="{x:Type local:ScarletDirectory}">
+                                                                                <DockPanel Width="100">
+                                                                                    <DockPanel.ContextMenu>
+                                                                                        <ContextMenu>
+                                                                                            <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                                                            <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                                        </ContextMenu>
+                                                                                    </DockPanel.ContextMenu>
+                                                                                    <DockPanel.InputBindings>
+                                                                                        <MouseBinding Command="{Binding FileSystemViewModel.SelectCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
+                                                                                                      CommandParameter="{Binding .}"
+                                                                                                      Gesture="LeftDoubleClick" />
+                                                                                    </DockPanel.InputBindings>
+                                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                                               DockPanel.Dock="Bottom"
+                                                                                               Text="{Binding Name}"
+                                                                                               TextTrimming="CharacterEllipsis" />
+                                                                                    <Path Width="66"
+                                                                                          Height="66"
+                                                                                          Data="{StaticResource FolderPath}"
+                                                                                          Stretch="Uniform"
+                                                                                          Stroke="#777"
+                                                                                          StrokeThickness="1" />
+                                                                                </DockPanel>
+                                                                            </DataTemplate>
+                                                                        </ListBox.Resources>
+                                                                    </ListBox>
+                                                                </DataTemplate>
+
+                                                                <DataTemplate DataType="{x:Type local:ScarletDrive}">
+                                                                    <ListBox ItemsSource="{Binding DefaultCollectionView}"
+                                                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                                             SelectionMode="Extended">
+                                                                        <ListBox.ContextMenu>
+                                                                            <ContextMenu>
+                                                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                            </ContextMenu>
+                                                                        </ListBox.ContextMenu>
+                                                                        <ListBox.ItemsPanel>
+                                                                            <ItemsPanelTemplate>
+                                                                                <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                                                                            </ItemsPanelTemplate>
+                                                                        </ListBox.ItemsPanel>
+                                                                        <ListBox.Resources>
+                                                                            <DataTemplate DataType="{x:Type local:ScarletDirectory}">
+                                                                                <DockPanel Width="100">
+                                                                                    <DockPanel.ContextMenu>
+                                                                                        <ContextMenu>
+                                                                                            <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                                                                                            <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                                        </ContextMenu>
+                                                                                    </DockPanel.ContextMenu>
+                                                                                    <DockPanel.InputBindings>
+                                                                                        <MouseBinding Command="{Binding FileSystemViewModel.SelectCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
+                                                                                                      CommandParameter="{Binding .}"
+                                                                                                      Gesture="LeftDoubleClick" />
+                                                                                    </DockPanel.InputBindings>
+                                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                                               DockPanel.Dock="Bottom"
+                                                                                               Text="{Binding Name}"
+                                                                                               TextTrimming="CharacterEllipsis" />
+                                                                                    <Path Width="66"
+                                                                                          Height="66"
+                                                                                          Data="{StaticResource FolderPath}"
+                                                                                          Fill="#777"
+                                                                                          Stretch="Uniform"
+                                                                                          Stroke="#777"
+                                                                                          StrokeThickness="1" />
+                                                                                </DockPanel>
+                                                                            </DataTemplate>
+                                                                        </ListBox.Resources>
+                                                                    </ListBox>
+                                                                </DataTemplate>
+                                                            </ContentPresenter.Resources>
+                                                        </ContentPresenter>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
