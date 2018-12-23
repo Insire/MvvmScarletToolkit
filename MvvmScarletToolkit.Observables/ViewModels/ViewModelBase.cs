@@ -39,9 +39,9 @@ namespace MvvmScarletToolkit.Observables
         {
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
 
-            LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad);
+            LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad).AsSequential();
             RefreshCommand = AsyncCommand.Create(RefreshInternal, CanRefresh);
-            UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload);
+            UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload).AsSequential();
         }
 
         protected abstract Task LoadInternal(CancellationToken token);

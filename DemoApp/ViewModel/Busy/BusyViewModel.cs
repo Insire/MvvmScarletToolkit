@@ -49,10 +49,10 @@ namespace DemoApp
             }
         }
 
-        public override void Remove(ObservableObject item)
+        public override async Task Remove(ObservableObject item)
         {
             _disposables[item].Dispose();
-            base.Remove(item);
+            await base.Remove(item);
         }
 
         private bool CanAddChild()
@@ -101,11 +101,10 @@ namespace DemoApp
             return Task.CompletedTask;
         }
 
-        protected override Task UnloadInternalAsync()
+        protected override async Task UnloadInternalAsync()
         {
-            Clear();
+            await Clear().ConfigureAwait(false);
             IsLoaded = false;
-            return Task.CompletedTask;
         }
 
         protected override Task RefreshInternal(CancellationToken token)

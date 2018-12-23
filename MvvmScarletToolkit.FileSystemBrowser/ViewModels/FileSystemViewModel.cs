@@ -107,19 +107,18 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
-                Clear();
+                await Clear().ConfigureAwait(false);
 
                 await LoadInternal(token).ConfigureAwait(false);
             }
         }
 
-        protected override Task UnloadInternalAsync()
+        protected override async Task UnloadInternalAsync()
         {
             using (BusyStack.GetToken())
             {
-                Clear();
+                await Clear().ConfigureAwait(false);
                 IsLoaded = false;
-                return Task.CompletedTask;
             }
         }
     }

@@ -23,11 +23,10 @@ namespace DemoApp
             return Task.CompletedTask;
         }
 
-        protected override Task UnloadInternalAsync()
+        protected override async Task UnloadInternalAsync()
         {
-            Clear();
+            await Clear().ConfigureAwait(false);
             IsLoaded = false;
-            return Task.CompletedTask;
         }
     }
 }

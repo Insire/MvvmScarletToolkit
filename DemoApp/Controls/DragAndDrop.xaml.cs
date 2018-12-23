@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -66,7 +66,7 @@ namespace DemoApp
                     else
                     {
                         e.Effects = DragDropEffects.Move;
-                        vm.Source.Remove(image);
+                        await vm.Source.Remove(image).ConfigureAwait(false);
                         await vm.Target.Add(image).ConfigureAwait(false);
                     }
                 }
@@ -97,7 +97,7 @@ namespace DemoApp
                     else
                     {
                         e.Effects = DragDropEffects.Move;
-                        vm.Target.Remove(image);
+                        await vm.Target.Remove(image).ConfigureAwait(false);
                         await vm.Source.Add(image).ConfigureAwait(false);
                     }
                 }

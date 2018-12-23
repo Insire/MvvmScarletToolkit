@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     public abstract class ScarletFileSystemContainerBase : ScarletFileSystemBase, IFileSystemDirectory
     {
         private readonly ObservableCollection<IFileSystemInfo> _children;
-        protected readonly IScarletDispatcher Dispatcher;
 
         private ICollectionView _noFilesCollectionView;
         [Bindable(true, BindingDirection.OneWay)]
@@ -43,10 +43,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         protected ScarletFileSystemContainerBase(string name, string fullName, IFileSystemDirectory parent, IScarletDispatcher dispatcher)
-            : base(name, fullName, parent)
+            : base(name, fullName, parent, dispatcher)
         {
-            Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-
             using (BusyStack.GetToken())
             {
                 _children = new ObservableCollection<IFileSystemInfo>();
@@ -79,6 +77,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         protected override async Task RefreshInternal(CancellationToken token)
         {
+            Debug.WriteLine("Refresh " + GetType().Name);
             using (BusyStack.GetToken())
             {
                 await Clear().ConfigureAwait(false);
@@ -144,17 +143,16 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        public virtual void Remove(IFileSystemInfo item)
+        public virtual async Task Remove(IFileSystemInfo item)
         {
             using (BusyStack.GetToken())
             {
-                _children.Remove(item);
+                await Dispatcher.Invoke(() => _children.Remove(item)).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
             }
-
-            OnPropertyChanged(nameof(Count));
         }
 
-        public virtual void RemoveRange(IEnumerable<IFileSystemInfo> items)
+        public virtual async Task RemoveRange(IEnumerable<IFileSystemInfo> items)
         {
             if (items is null)
             {
@@ -165,7 +163,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 foreach (var item in items)
                 {
-                    Remove(item);
+                    await Remove(item).ConfigureAwait(false);
                 }
             }
         }
@@ -174,10 +172,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => _children.Clear());
+                await Dispatcher.Invoke(() => _children.Clear()).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
             }
-
-            OnPropertyChanged(nameof(Count));
         }
 
         protected override async Task UnloadInternalAsync()

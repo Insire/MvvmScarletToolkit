@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -50,13 +49,13 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual ICommand RemoveRangeCommand { get; }
+        public virtual IExtendedAsyncCommand RemoveRangeCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual ICommand RemoveCommand { get; }
+        public virtual IExtendedAsyncCommand RemoveCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual ICommand ClearCommand { get; }
+        public virtual IExtendedAsyncCommand ClearCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
         public virtual IExtendedAsyncCommand LoadCommand { get; }
@@ -82,13 +81,13 @@ namespace MvvmScarletToolkit.Observables
 
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
 
-            RemoveCommand = new RelayCommand<T>(Remove, CanRemove);
-            RemoveRangeCommand = new RelayCommand<IList>(RemoveRange, CanRemoveRange);
-            ClearCommand = new RelayCommand(Clear, CanClear);
+            RemoveCommand = AsyncCommand.Create<T>(Remove, CanRemove).AsSequential();
+            RemoveRangeCommand = AsyncCommand.Create<IList>(RemoveRange, CanRemoveRange).AsSequential();
+            ClearCommand = AsyncCommand.Create(Clear, CanClear).AsSequential();
 
-            LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad);
+            LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad).AsSequential();
             RefreshCommand = AsyncCommand.Create(RefreshInternal, CanRefresh);
-            UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload);
+            UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload).AsSequential();
         }
 
         public virtual async Task Add(T item)
@@ -101,8 +100,7 @@ namespace MvvmScarletToolkit.Observables
             using (BusyStack.GetToken())
             {
                 await Dispatcher.Invoke(() => _items.Add(item)).ConfigureAwait(false);
-
-                OnPropertyChanged(nameof(Count));
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
             }
         }
 
@@ -122,17 +120,16 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        public virtual void Remove(T item)
+        public virtual async Task Remove(T item)
         {
             using (BusyStack.GetToken())
             {
-                _items.Remove(item);
+                await Dispatcher.Invoke(() => _items.Remove(item)).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
             }
-
-            OnPropertyChanged(nameof(Count));
         }
 
-        public virtual void RemoveRange(IEnumerable<T> items)
+        public virtual async Task RemoveRange(IEnumerable<T> items)
         {
             if (items is null)
             {
@@ -143,14 +140,14 @@ namespace MvvmScarletToolkit.Observables
             {
                 foreach (var item in items)
                 {
-                    Remove(item);
+                    await Remove(item).ConfigureAwait(false);
                 }
             }
         }
 
-        private void RemoveRange(IList items)
+        private async Task RemoveRange(IList items)
         {
-            RemoveRange(items?.Cast<T>());
+            await RemoveRange(items?.Cast<T>()).ConfigureAwait(false);
         }
 
         protected virtual bool CanRemove(T item)
@@ -171,14 +168,13 @@ namespace MvvmScarletToolkit.Observables
             return CanRemoveRange(items?.Cast<T>());
         }
 
-        public void Clear()
+        public async Task Clear()
         {
             using (BusyStack.GetToken())
             {
-                _items.Clear();
+                await Dispatcher.Invoke(() => _items.Clear()).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
             }
-
-            OnPropertyChanged(nameof(Count));
         }
 
         protected bool CanClear()

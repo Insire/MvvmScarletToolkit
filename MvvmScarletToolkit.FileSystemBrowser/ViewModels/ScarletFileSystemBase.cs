@@ -37,6 +37,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return info.Name.IndexOf(info.Filter, StringComparison.InvariantCultureIgnoreCase) >= 0;
         }
 
+        protected IScarletDispatcher Dispatcher { get; }
+
         [Bindable(true, BindingDirection.OneWay)]
         public IExtendedAsyncCommand DeleteCommand { get; protected set; }
 
@@ -159,7 +161,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             HasContainers = false;
         }
 
-        protected ScarletFileSystemBase(string name, string fullName, IFileSystemDirectory parent)
+        protected ScarletFileSystemBase(string name, string fullName, IFileSystemDirectory parent, IScarletDispatcher dispatcher)
             : this()
         {
             if (string.IsNullOrEmpty(name))
@@ -176,6 +178,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 throw new ArgumentException($"{nameof(parent)} can't be empty.", nameof(parent));
             }
+
+            Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
             using (BusyStack.GetToken())
             {
@@ -220,10 +224,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 if (!IsExpanded)
                 {
-                    await Task.WhenAll(Task.Delay(0), RefreshInternal(token)).ConfigureAwait(false);
+                    await LoadInternal(token).ConfigureAwait(false);
                 }
 
-                IsExpanded = !IsExpanded;
+                await Dispatcher.Invoke(() => IsExpanded = !IsExpanded);
             }
         }
 
