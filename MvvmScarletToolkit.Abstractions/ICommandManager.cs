@@ -1,6 +1,6 @@
 using System;
 
-namespace MvvmScarletToolkit.Commands
+namespace MvvmScarletToolkit.Abstractions
 {
     public interface ICommandManager
     {
