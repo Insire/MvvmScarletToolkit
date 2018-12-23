@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
-    public sealed class NotifyTaskCompletion<TResult> : INotifyPropertyChanged
+    internal sealed class NotifyTaskCompletion<TResult> : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -13,12 +13,13 @@ namespace MvvmScarletToolkit.Commands
         public TResult Result => (Task.Status == TaskStatus.RanToCompletion) ? Task.Result : default;
 
         public TaskStatus Status => Task.Status;
+
         public bool IsCompleted => Task.IsCompleted;
         public bool IsNotCompleted => !Task.IsCompleted;
-        public bool IsSuccessfullyCompleted => Task.Status == TaskStatus.RanToCompletion;
-
         public bool IsCanceled => Task.IsCanceled;
         public bool IsFaulted => Task.IsFaulted;
+        public bool IsSuccessfullyCompleted => Task.Status == TaskStatus.RanToCompletion;
+
         public AggregateException Exception => Task.Exception;
         public Exception InnerException => Exception?.InnerException;
         public string ErrorMessage => InnerException?.Message;

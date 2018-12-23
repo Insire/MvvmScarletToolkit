@@ -14,20 +14,22 @@ namespace MvvmScarletToolkit.Commands
         private readonly CancelAsyncCommand _cancelCommand;
         private readonly Func<TArgument, bool> _canExecute;
 
-        internal ConcurrentAsyncCommand(Func<TArgument, CancellationToken, Task<TResult>> command)
+        internal ConcurrentAsyncCommand(ICommandManager commandManager, Func<TArgument, CancellationToken, Task<TResult>> command)
+            : base(commandManager)
         {
             _command = command ?? throw new ArgumentNullException(nameof(command));
-            _cancelCommand = new CancelAsyncCommand();
+            _cancelCommand = new CancelAsyncCommand(CommandManager);
 
             CancelCommand = _cancelCommand;
         }
 
-        internal ConcurrentAsyncCommand(Func<TArgument, CancellationToken, Task<TResult>> command, Func<TArgument, bool> canExecuteEvaluator)
-            : this(command)
+        internal ConcurrentAsyncCommand(ICommandManager commandManager, Func<TArgument, CancellationToken, Task<TResult>> command, Func<TArgument, bool> canExecuteEvaluator)
+            : this(commandManager, command)
         {
             _canExecute = canExecuteEvaluator ?? throw new ArgumentNullException(nameof(canExecuteEvaluator));
         }
 
+        [DebuggerStepThrough]
         public override bool CanExecute(object parameter)
         {
             return CanExecuteInternal(parameter);

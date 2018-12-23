@@ -5,6 +5,10 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Commands
 {
+    /// <summary>
+    /// Base implementation providing interface members for cancellation support and exposing current execution
+    /// </summary>
+    /// <typeparam name="TResult"></typeparam>
     internal abstract class GenericAsyncCommandBase<TResult> : AsyncCommandBase, IExtendedAsyncCommand
     {
         [Bindable(true, BindingDirection.OneWay)]
@@ -19,5 +23,10 @@ namespace MvvmScarletToolkit.Commands
         }
 
         public Task Completion => Execution?.TaskCompletion ?? Task.CompletedTask;
+
+        protected GenericAsyncCommandBase(ICommandManager commandManager)
+            : base(commandManager)
+        {
+        }
     }
 }

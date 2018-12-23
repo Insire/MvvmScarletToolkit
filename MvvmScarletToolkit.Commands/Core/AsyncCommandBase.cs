@@ -4,12 +4,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Commands
 {
+    /// <summary>
+    /// base implementation for running commands in an async fashion and providing UI notifications
+    /// </summary>
     internal abstract class AsyncCommandBase : IAsyncCommand, INotifyPropertyChanged
     {
+        protected readonly ICommandManager CommandManager;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public abstract void Execute(object parameter);
@@ -30,6 +34,11 @@ namespace MvvmScarletToolkit.Commands
         {
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
+        }
+
+        protected AsyncCommandBase(ICommandManager commandManager)
+        {
+            CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
         }
 
         protected void RaiseCanExecuteChanged()

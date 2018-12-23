@@ -6,10 +6,17 @@ namespace MvvmScarletToolkit.Commands
 {
     internal sealed class CancelAsyncCommand : ICommand
     {
+        private readonly ICommandManager _commandManager;
+
         private CancellationTokenSource _cts = new CancellationTokenSource();
         private bool _commandExecuting;
 
         public CancellationToken Token => _cts.Token;
+
+        public CancelAsyncCommand(ICommandManager commandManager)
+        {
+            _commandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
+        }
 
         public void NotifyCommandStarting()
         {
@@ -42,13 +49,13 @@ namespace MvvmScarletToolkit.Commands
 
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add { _commandManager.RequerySuggested += value; }
+            remove { _commandManager.RequerySuggested -= value; }
         }
 
         private void RaiseCanExecuteChanged()
         {
-            CommandManager.InvalidateRequerySuggested();
+            _commandManager.InvalidateRequerySuggested();
         }
     }
 }

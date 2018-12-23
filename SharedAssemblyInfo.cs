@@ -15,4 +15,4 @@ using System.Reflection;
 
 // Metadata Attributes
 [assembly: AssemblyMetadata("Platform", "AnyCPU")]
-[assembly: AssemblyMetadata("Compiled on:", "[UTC]04.12.2018 20:18:18")]
+[assembly: AssemblyMetadata("Compiled on:", "[UTC]20.12.2018 22:35:30")]
