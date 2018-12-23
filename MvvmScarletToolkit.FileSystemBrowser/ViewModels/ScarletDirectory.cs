@@ -19,12 +19,14 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             using (BusyStack.GetToken())
             {
                 var info = await Task.Run(() => new DirectoryInfo(FullName), token).ConfigureAwait(false);
-
-                Exists = info.Exists;
-                IsHidden = (info.Attributes & FileAttributes.Hidden) != 0;
-                CreationTimeUtc = info.CreationTimeUtc;
-                LastAccessTimeUtc = info.LastAccessTimeUtc;
-                LastWriteTimeUtc = info.LastWriteTimeUtc;
+                await Dispatcher.Invoke(() =>
+                {
+                    Exists = info.Exists;
+                    IsHidden = (info.Attributes & FileAttributes.Hidden) != 0;
+                    CreationTimeUtc = info.CreationTimeUtc;
+                    LastAccessTimeUtc = info.LastAccessTimeUtc;
+                    LastWriteTimeUtc = info.LastWriteTimeUtc;
+                }).ConfigureAwait(false);
             }
         }
 

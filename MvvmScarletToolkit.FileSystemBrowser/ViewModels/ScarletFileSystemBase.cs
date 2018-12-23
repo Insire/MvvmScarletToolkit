@@ -152,8 +152,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         private ScarletFileSystemBase()
         {
-            DeleteCommand = AsyncCommand.Create(Delete, CanDelete);
-            ToggleExpandCommand = AsyncCommand.Create(Toggle, CanToggle);
+            DeleteCommand = AsyncCommand.Create(Delete, CanDelete).AsSequential();
+            ToggleExpandCommand = AsyncCommand.Create(Toggle, CanToggle).AsSequential();
 
             Exists = true;
             IsHidden = false;
@@ -198,10 +198,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             using (BusyStack.GetToken())
             {
-                await Task.WhenAll(Task.Delay(0), RefreshInternal(token)).ConfigureAwait(false);
-
-                IsExpanded = true;
-                IsLoaded = true;
+                await RefreshInternal(token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => IsLoaded = true).ConfigureAwait(false);
             }
         }
 
@@ -225,9 +223,12 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 if (!IsExpanded)
                 {
                     await LoadInternal(token).ConfigureAwait(false);
+                    await Dispatcher.Invoke(() => IsExpanded = true);
                 }
-
-                await Dispatcher.Invoke(() => IsExpanded = !IsExpanded);
+                else
+                {
+                    await Dispatcher.Invoke(() => IsExpanded = !IsExpanded);
+                }
             }
         }
 

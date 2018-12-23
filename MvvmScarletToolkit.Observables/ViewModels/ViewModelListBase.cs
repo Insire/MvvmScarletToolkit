@@ -113,10 +113,7 @@ namespace MvvmScarletToolkit.Observables
 
             using (BusyStack.GetToken())
             {
-                foreach (var item in items)
-                {
-                    await Add(item).ConfigureAwait(false);
-                }
+                await items.ForEachAsync(Add).ConfigureAwait(false);
             }
         }
 
@@ -138,10 +135,7 @@ namespace MvvmScarletToolkit.Observables
 
             using (BusyStack.GetToken())
             {
-                foreach (var item in items)
-                {
-                    await Remove(item).ConfigureAwait(false);
-                }
+                await items.ForEachAsync(Remove).ConfigureAwait(false);
             }
         }
 

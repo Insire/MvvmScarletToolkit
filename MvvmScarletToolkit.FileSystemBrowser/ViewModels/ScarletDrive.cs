@@ -68,13 +68,15 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             using (BusyStack.GetToken())
             {
                 var info = await Task.Run(() => new DriveInfo(FullName), token).ConfigureAwait(false);
-
-                DriveFormat = info.DriveFormat;
-                DriveType = info.DriveType;
-                IsReady = info.IsReady;
-                AvailableFreeSpace = info.AvailableFreeSpace;
-                TotalFreeSpace = info.TotalFreeSpace;
-                TotalSize = info.TotalSize;
+                await Dispatcher.Invoke(() =>
+                {
+                    DriveFormat = info.DriveFormat;
+                    DriveType = info.DriveType;
+                    IsReady = info.IsReady;
+                    AvailableFreeSpace = info.AvailableFreeSpace;
+                    TotalFreeSpace = info.TotalFreeSpace;
+                    TotalSize = info.TotalSize;
+                }).ConfigureAwait(false);
             }
         }
 

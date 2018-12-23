@@ -3,7 +3,6 @@ using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -57,9 +56,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
-                Debug.WriteLine("waiting...");
-                await Task.Delay(5000, token);
-                Debug.WriteLine("running...");
                 await SelectedItem.OnFilterChanged(Filter, token).ConfigureAwait(false);
             }
         }
@@ -80,7 +76,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 SelectedItem = value;
                 await SelectedItem.ExpandPath().ConfigureAwait(false);
-                await SelectedItem.LoadCommand.ExecuteAsync(null).ConfigureAwait(false);
                 await SelectedItem.LoadMetaData(CancellationToken.None).ConfigureAwait(false);
             }
         }
@@ -99,7 +94,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                     .Select(p => new ScarletDrive(p, Dispatcher)))
                     .ConfigureAwait(false);
 
-                IsLoaded = true;
+                await Dispatcher.Invoke(() => IsLoaded = true).ConfigureAwait(false);
             }
         }
 
@@ -118,7 +113,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             using (BusyStack.GetToken())
             {
                 await Clear().ConfigureAwait(false);
-                IsLoaded = false;
+                await Dispatcher.Invoke(() => IsLoaded = false).ConfigureAwait(false);
             }
         }
     }

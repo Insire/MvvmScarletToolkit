@@ -420,6 +420,9 @@
                                 <DataTrigger Binding="{Binding IsExpanded}" Value="false">
                                     <Setter TargetName="PART_ItemsHost" Property="Visibility" Value="Collapsed" />
                                 </DataTrigger>
+                                <Trigger Property="IsExpanded" Value="false">
+                                    <Setter TargetName="PART_ItemsHost" Property="Visibility" Value="Collapsed" />
+                                </Trigger>
                                 <MultiTrigger>
                                     <MultiTrigger.Conditions>
                                         <Condition Property="HasHeader" Value="false" />
@@ -570,6 +573,28 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
+
+                            <!--<Button Width="{Binding Height, ElementName=SearchTermTextBox}"
+                                    Height="{Binding Height, ElementName=SearchTermTextBox}"
+                                    Margin="0 0 5 0"
+                                    HorizontalAlignment="Right"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Command="{Binding FileSystemViewModel.RefreshFilterCommand.CancelCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
+                                    Content="X">
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RefreshFilterCommand.IsBusy}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding RefreshFilterCommand.IsBusy}" Value="False">
+                                                <Setter Property="Visibility" Value="Hidden" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>-->
                         </Grid>
 
                         <!--  Tree  -->
@@ -589,7 +614,7 @@
 
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="SelectedItemChanged">
-                                    <i:InvokeCommandAction Command="{Binding SelectCommand}" CommandParameter="{Binding ElementName=PART_TreeView, Path=SelectedItem}" />
+                                    <i:InvokeCommandAction Command="{Binding SelectCommand}" CommandParameter="{Binding SelectedItem, ElementName=PART_TreeView}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
 
@@ -717,6 +742,7 @@
                                                                                     <Path Width="16"
                                                                                           Height="16"
                                                                                           Data="{StaticResource FolderPath}"
+                                                                                          Fill="#777"
                                                                                           Stretch="Uniform"
                                                                                           Stroke="#777"
                                                                                           StrokeThickness="1" />
@@ -766,6 +792,7 @@
                                                                         <Path Width="66"
                                                                               Height="66"
                                                                               Data="{StaticResource FilePath}"
+                                                                              Fill="#777"
                                                                               Stretch="Uniform"
                                                                               Stroke="#777"
                                                                               StrokeThickness="1" />
@@ -807,6 +834,7 @@
                                                                                     <Path Width="66"
                                                                                           Height="66"
                                                                                           Data="{StaticResource FolderPath}"
+                                                                                          Fill="#777"
                                                                                           Stretch="Uniform"
                                                                                           Stroke="#777"
                                                                                           StrokeThickness="1" />

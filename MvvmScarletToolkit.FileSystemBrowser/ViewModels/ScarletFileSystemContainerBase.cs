@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,7 +76,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         protected override async Task RefreshInternal(CancellationToken token)
         {
-            Debug.WriteLine("Refresh " + GetType().Name);
             using (BusyStack.GetToken())
             {
                 await Clear().ConfigureAwait(false);
@@ -136,10 +134,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             using (BusyStack.GetToken())
             {
-                foreach (var item in items)
-                {
-                    await Add(item).ConfigureAwait(false);
-                }
+                await items.ForEachAsync(Add).ConfigureAwait(false);
             }
         }
 
@@ -161,10 +156,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             using (BusyStack.GetToken())
             {
-                foreach (var item in items)
-                {
-                    await Remove(item).ConfigureAwait(false);
-                }
+                await items.ForEachAsync(Remove).ConfigureAwait(false);
             }
         }
 
