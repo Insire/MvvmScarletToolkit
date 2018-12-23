@@ -122,7 +122,7 @@ namespace MvvmScarletToolkit.Commands
         }
 
         /// <summary>
-        ///
+        ///Configure a command as to not automatically cancel and rerun when executed again
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
