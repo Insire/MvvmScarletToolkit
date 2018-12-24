@@ -27,6 +27,7 @@
     <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.ConfigurableWindow\MvvmScarletToolkit.ConfigurableWindow.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.FileSystemBrowser\MvvmScarletToolkit.FileSystemBrowser.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
     <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
 

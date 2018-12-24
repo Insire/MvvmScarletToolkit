@@ -2,7 +2,7 @@ using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Windows.Input;
 
-namespace MvvmScarletToolkit.Commands
+namespace MvvmScarletToolkit.Implementations
 {
     /// <summary>
     /// simple wrapper around <see cref="System.Windows.Input.CommandManager"/>

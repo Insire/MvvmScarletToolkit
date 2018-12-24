@@ -1,5 +1,5 @@
 using MvvmScarletToolkit.Abstractions;
-using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Implementations;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;

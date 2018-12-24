@@ -16,11 +16,6 @@ namespace MvvmScarletToolkit.Commands
              });
         }
 
-        public static IExtendedAsyncCommand Create(Func<Task> command)
-        {
-            return Create(command, ScarletCommandManager.Default);
-        }
-
         public static IExtendedAsyncCommand Create(Func<Task> command, Func<bool> canExecute, ICommandManager commandManager)
         {
             return new ConcurrentAsyncCommand<object, object>(commandManager, async (_, __) =>
@@ -28,11 +23,6 @@ namespace MvvmScarletToolkit.Commands
                  await command().ConfigureAwait(false);
                  return default;
              }, _ => canExecute());
-        }
-
-        public static IExtendedAsyncCommand Create(Func<Task> command, Func<bool> canExecute)
-        {
-            return Create(command, canExecute, ScarletCommandManager.Default);
         }
 
         public static IExtendedAsyncCommand Create(Func<object, Task> command, Func<bool> canExecute, ICommandManager commandManager)
@@ -44,11 +34,6 @@ namespace MvvmScarletToolkit.Commands
              }, _ => canExecute());
         }
 
-        public static IExtendedAsyncCommand Create(Func<object, Task> command, Func<bool> canExecute)
-        {
-            return Create(command, canExecute, ScarletCommandManager.Default);
-        }
-
         public static IExtendedAsyncCommand Create(Func<CancellationToken, Task> command, Func<bool> canExecute, ICommandManager commandManager)
         {
             return new ConcurrentAsyncCommand<object, object>(commandManager, async (_, token) =>
@@ -56,11 +41,6 @@ namespace MvvmScarletToolkit.Commands
                  await command(token).ConfigureAwait(false);
                  return default;
              }, _ => canExecute());
-        }
-
-        public static IExtendedAsyncCommand Create(Func<CancellationToken, Task> command, Func<bool> canExecute)
-        {
-            return Create(command, canExecute, ScarletCommandManager.Default);
         }
 
         public static IExtendedAsyncCommand Create<TArgument>(Func<TArgument, CancellationToken, Task> command, Func<TArgument, bool> canExecute, ICommandManager commandManager)
@@ -72,11 +52,6 @@ namespace MvvmScarletToolkit.Commands
              }, (arg) => canExecute(arg));
         }
 
-        public static IExtendedAsyncCommand Create<TArgument>(Func<TArgument, CancellationToken, Task> command, Func<TArgument, bool> canExecute)
-        {
-            return Create(command, canExecute, ScarletCommandManager.Default);
-        }
-
         public static IExtendedAsyncCommand Create<TArgument>(Func<TArgument, Task> command, Func<TArgument, bool> canExecute, ICommandManager commandManager)
         {
             return new ConcurrentAsyncCommand<TArgument, object>(commandManager, async (arg, _) =>
@@ -86,19 +61,9 @@ namespace MvvmScarletToolkit.Commands
              }, (arg) => canExecute(arg));
         }
 
-        public static IExtendedAsyncCommand Create<TArgument>(Func<TArgument, Task> command, Func<TArgument, bool> canExecute)
-        {
-            return Create(command, canExecute, ScarletCommandManager.Default);
-        }
-
         public static IExtendedAsyncCommand Create<TResult>(Func<Task<TResult>> command, Func<bool> canExecute, ICommandManager commandManager)
         {
             return new ConcurrentAsyncCommand<object, TResult>(commandManager, async (_, __) => await command().ConfigureAwait(false), _ => canExecute());
-        }
-
-        public static IExtendedAsyncCommand Create<TResult>(Func<Task<TResult>> command, Func<bool> canExecute)
-        {
-            return Create(command, canExecute, ScarletCommandManager.Default);
         }
 
         public static IExtendedAsyncCommand Create<TResult>(Func<CancellationToken, Task<TResult>> command, Func<bool> canExecute, ICommandManager commandManager)
@@ -106,19 +71,9 @@ namespace MvvmScarletToolkit.Commands
             return new ConcurrentAsyncCommand<object, TResult>(commandManager, async (_, token) => await command(token).ConfigureAwait(false), _ => canExecute());
         }
 
-        public static IExtendedAsyncCommand Create<TResult>(Func<CancellationToken, Task<TResult>> command, Func<bool> canExecute)
-        {
-            return Create(command, canExecute, ScarletCommandManager.Default);
-        }
-
         public static IExtendedAsyncCommand Create<TArgument, TResult>(Func<TArgument, CancellationToken, Task<TResult>> command, Func<TArgument, bool> canExecute, ICommandManager commandManager)
         {
             return new ConcurrentAsyncCommand<TArgument, TResult>(commandManager, command, arg => canExecute(arg));
-        }
-
-        public static IExtendedAsyncCommand Create<TArgument, TResult>(Func<TArgument, CancellationToken, Task<TResult>> command, Func<TArgument, bool> canExecute)
-        {
-            return Create(command, canExecute, ScarletCommandManager.Default);
         }
 
         /// <summary>

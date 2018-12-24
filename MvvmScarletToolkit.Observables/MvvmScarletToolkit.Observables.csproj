@@ -23,6 +23,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
     <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj" />
     <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
 
     <!-- Resources -->
