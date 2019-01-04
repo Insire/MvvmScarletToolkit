@@ -1,6 +1,7 @@
 using MvvmScarletToolkit;
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Implementations;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace DemoApp
     {
         private readonly Dispatcher _dispatcher;
         private readonly IMessenger _messenger;
+        private readonly ICommandManager _commandManager;
 
         private PropertyObserver<ISnakeManager> _propertyObserver;
         private FrameCounter _frameCounter;
@@ -162,13 +164,14 @@ namespace DemoApp
 
         public SnakeView()
         {
+            _commandManager = new ScarletCommandManager();
             _dispatcher = Application.Current.Dispatcher;
             _messenger = new ScarletMessenger(new InternalLogger(), new DefaultMessageProxy());
 
             View = View.Start;
-            ShowStartCommand = AsyncCommand.Create(ShowStart, CanShowStart);
-            ShowOptionsCommand = AsyncCommand.Create(ShowOptions, CanShowOptions);
-            ShowGameCommand = AsyncCommand.Create(ShowGame, CanShowGame);
+            ShowStartCommand = AsyncCommand.Create(ShowStart, CanShowStart, _commandManager);
+            ShowOptionsCommand = AsyncCommand.Create(ShowOptions, CanShowOptions, _commandManager);
+            ShowGameCommand = AsyncCommand.Create(ShowGame, CanShowGame, _commandManager);
             ExitCommand = new RelayCommand(Exit, CanExit);
 
             DataContext = this;
@@ -210,7 +213,7 @@ namespace DemoApp
                 await Manager.Reset().ConfigureAwait(false);
             }
 
-            Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _dispatcher, _messenger);
+            Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _dispatcher, _messenger, _commandManager);
             SetupObserver();
 
             Keyboard.Focus(this);

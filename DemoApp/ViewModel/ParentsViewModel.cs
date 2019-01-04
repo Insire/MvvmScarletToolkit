@@ -7,8 +7,8 @@ namespace DemoApp
 {
     public class ParentsViewModel : ViewModelListBase<ParentViewModel>
     {
-        public ParentsViewModel(IScarletDispatcher dispatcher)
-            : base(dispatcher)
+        public ParentsViewModel(IScarletDispatcher dispatcher, ICommandManager commandManager)
+            : base(dispatcher, commandManager)
         {
         }
 

@@ -7,8 +7,8 @@ namespace DemoApp
 {
     public class DataContextSchenanigansViewModel : ViewModelListBase<AsyncDemoItem>
     {
-        public DataContextSchenanigansViewModel(IScarletDispatcher dispatcher)
-            : base(dispatcher)
+        public DataContextSchenanigansViewModel(IScarletDispatcher dispatcher, ICommandManager commandManager)
+            : base(dispatcher, commandManager)
         {
         }
 
@@ -16,7 +16,7 @@ namespace DemoApp
         {
             for (var i = 0; i < 10; i++)
             {
-                await Add(new AsyncDemoItem
+                await Add(new AsyncDemoItem(CommandManager)
                 {
                     DisplayName = "Test X",
                 }).ConfigureAwait(false);

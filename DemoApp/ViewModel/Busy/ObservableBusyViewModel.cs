@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -21,10 +21,10 @@ namespace DemoApp
 
         public IExtendedAsyncCommand BeBusyCommand { get; }
 
-        public ObservableBusyViewModel()
+        public ObservableBusyViewModel(ICommandManager commandManager)
         {
             _observableBusyStack = new ObservableBusyStack(hasItems => { IsBusy = hasItems; Debug.WriteLine("ObservableBusyViewModel is busy: " + hasItems); });
-            BeBusyCommand = AsyncCommand.Create(BeBusyInternal, () => !IsBusy);
+            BeBusyCommand = AsyncCommand.Create(BeBusyInternal, () => !IsBusy, commandManager);
         }
 
         private async Task BeBusyInternal(CancellationToken token)

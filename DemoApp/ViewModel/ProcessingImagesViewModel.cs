@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
 
 namespace DemoApp
@@ -19,10 +19,10 @@ namespace DemoApp
             private set { SetValue(ref _target, value); }
         }
 
-        public ProcessingImagesViewModel()
+        public ProcessingImagesViewModel(IScarletDispatcher dispatcher, ICommandManager commandManager)
         {
-            Source = new Images(new ScarletDispatcher());
-            Target = new Images(new ScarletDispatcher());
+            Source = new Images(dispatcher, commandManager);
+            Target = new Images(dispatcher, commandManager);
         }
     }
 }

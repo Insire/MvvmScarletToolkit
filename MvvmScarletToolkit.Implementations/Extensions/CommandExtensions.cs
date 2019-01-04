@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Implementations
 {
-    public static class AsyncCommand
+    internal static class AsyncCommand
     {
         public static IExtendedAsyncCommand Create(Func<Task> command)
         {

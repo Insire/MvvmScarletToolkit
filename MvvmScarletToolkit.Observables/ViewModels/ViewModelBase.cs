@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
-using MvvmScarletToolkit.Implementations;
+using MvvmScarletToolkit.Commands;
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace MvvmScarletToolkit.Observables
     public abstract class ViewModelBase : ObservableObject
     {
         protected readonly ObservableBusyStack BusyStack;
+        protected readonly ICommandManager CommandManager;
 
         private bool _isBusy;
         [Bindable(true, BindingDirection.OneWay)]
@@ -35,13 +37,14 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public virtual IExtendedAsyncCommand UnloadCommand { get; }
 
-        protected ViewModelBase()
+        protected ViewModelBase(ICommandManager commandManager)
         {
+            CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
 
-            LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad).AsSequential();
-            RefreshCommand = AsyncCommand.Create(RefreshInternal, CanRefresh);
-            UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload).AsSequential();
+            LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad, commandManager).AsSequential();
+            RefreshCommand = AsyncCommand.Create(RefreshInternal, CanRefresh, commandManager);
+            UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload, commandManager).AsSequential();
         }
 
         protected abstract Task LoadInternal(CancellationToken token);

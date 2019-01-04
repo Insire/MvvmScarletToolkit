@@ -11,10 +11,10 @@ namespace DemoApp
     {
         public ICommand AddCommand { get; }
 
-        public LogItems(IScarletDispatcher dispatcher)
-            : base(dispatcher)
+        public LogItems(IScarletDispatcher dispatcher, ICommandManager commandManager)
+            : base(dispatcher, commandManager)
         {
-            AddCommand = AsyncCommand.Create(AddNew, CanAddNew);
+            AddCommand = AsyncCommand.Create(AddNew, CanAddNew, commandManager);
         }
 
         public async Task AddNew()

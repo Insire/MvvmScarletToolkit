@@ -21,7 +21,8 @@ namespace MvvmScarletToolkit.Observables
 
         public IReadOnlyCollection<T> Items { get; }
 
-        public FilterViewModel(IScarletDispatcher dispatcher, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates, IEqualityComparer<T> equalityComparer, IComparer<T> comparer)
+        public FilterViewModel(IScarletDispatcher dispatcher, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates, IEqualityComparer<T> equalityComparer, IComparer<T> comparer, ICommandManager commandManager)
+            : base(commandManager)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
             _comparer = comparer ?? throw new ArgumentNullException(nameof(comparer));
@@ -39,8 +40,8 @@ namespace MvvmScarletToolkit.Observables
             Items = new ReadOnlyObservableCollection<T>(_items);
         }
 
-        public FilterViewModel(IScarletDispatcher dispatcher, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates)
-            : this(dispatcher, source, predicates, null, null) // TODO
+        public FilterViewModel(IScarletDispatcher dispatcher, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates, ICommandManager commandManager)
+            : this(dispatcher, source, predicates, null, null, commandManager) // TODO
         {
         }
 

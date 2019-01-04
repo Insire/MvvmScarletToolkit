@@ -1,4 +1,4 @@
-using MvvmScarletToolkit;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,8 +7,8 @@ namespace DemoApp
 {
     public sealed class NavigationViewModel : Scenes
     {
-        public NavigationViewModel()
-            : base(new ScarletDispatcher())
+        public NavigationViewModel(IScarletDispatcher dispatcher, ICommandManager commandManager)
+            : base(dispatcher, commandManager)
         {
         }
 

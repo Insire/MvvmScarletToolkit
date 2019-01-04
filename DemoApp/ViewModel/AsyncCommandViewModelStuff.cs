@@ -1,4 +1,5 @@
-﻿using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Observables;
 using System.Collections.ObjectModel;
 
 namespace DemoApp
@@ -19,18 +20,18 @@ namespace DemoApp
             set { SetValue(ref _items, value); }
         }
 
-        public AsyncCommandViewModelStuff()
+        public AsyncCommandViewModelStuff(ICommandManager commandManager)
         {
             Items = new ObservableCollection<AsyncDemoItem>();
             for (var i = 0; i < 10; i++)
             {
-                Items.Add(new AsyncDemoItem
+                Items.Add(new AsyncDemoItem(commandManager)
                 {
                     DisplayName = "Test " + i,
                 });
             }
 
-            SelectedItem = new AsyncDemoItem
+            SelectedItem = new AsyncDemoItem(commandManager)
             {
                 DisplayName = "Test X",
             };

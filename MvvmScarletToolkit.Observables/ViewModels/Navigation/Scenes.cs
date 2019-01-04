@@ -1,11 +1,11 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 
 namespace MvvmScarletToolkit.Observables
 {
     public abstract class Scenes : ViewModelListBase<Scene>
     {
-        protected Scenes(IScarletDispatcher dispatcher)
-            : base(dispatcher)
+        protected Scenes(IScarletDispatcher dispatcher, ICommandManager commandManager)
+            : base(dispatcher, commandManager)
         {
         }
     }

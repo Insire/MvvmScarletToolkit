@@ -150,10 +150,11 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             protected set { SetValue(ref _lastWriteTimeUtc, value); }
         }
 
-        private ScarletFileSystemBase()
+        private ScarletFileSystemBase(ICommandManager commandManager)
+            : base(commandManager)
         {
-            DeleteCommand = AsyncCommand.Create(Delete, CanDelete).AsSequential();
-            ToggleExpandCommand = AsyncCommand.Create(Toggle, CanToggle).AsSequential();
+            DeleteCommand = AsyncCommand.Create(Delete, CanDelete, commandManager).AsSequential();
+            ToggleExpandCommand = AsyncCommand.Create(Toggle, CanToggle, commandManager).AsSequential();
 
             Exists = true;
             IsHidden = false;
@@ -161,8 +162,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             HasContainers = false;
         }
 
-        protected ScarletFileSystemBase(string name, string fullName, IFileSystemDirectory parent, IScarletDispatcher dispatcher)
-            : this()
+        protected ScarletFileSystemBase(string name, string fullName, IFileSystemDirectory parent, IScarletDispatcher dispatcher, ICommandManager commandManager)
+            : this(commandManager)
         {
             if (string.IsNullOrEmpty(name))
             {

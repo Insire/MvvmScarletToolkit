@@ -7,8 +7,8 @@ namespace DemoApp
 {
     public class Images : ViewModelListBase<Image>
     {
-        public Images(IScarletDispatcher dispatcher)
-            : base(dispatcher)
+        public Images(IScarletDispatcher dispatcher, ICommandManager commandManager)
+            : base(dispatcher, commandManager)
         {
         }
 

@@ -1,4 +1,4 @@
-using MvvmScarletToolkit;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -29,13 +29,14 @@ namespace DemoApp
             set { SetValue(ref _logItems, value); }
         }
 
-        public ParentViewModel()
+        public ParentViewModel(IScarletDispatcher dispatcher, ICommandManager commandManager)
+            : base(commandManager)
         {
-            DemoItems = new DemoItems(new ScarletDispatcher());
-            LogItems = new LogItems(new ScarletDispatcher());
+            DemoItems = new DemoItems(dispatcher, commandManager);
+            LogItems = new LogItems(dispatcher, commandManager);
 
-            AddLinkedCommand = AsyncCommand.Create(AddLinked, CanAddLink);
-            AddRangeCommand = AsyncCommand.Create(AddRange, CanAddRange);
+            AddLinkedCommand = AsyncCommand.Create(AddLinked, CanAddLink, commandManager);
+            AddRangeCommand = AsyncCommand.Create(AddRange, CanAddRange, commandManager);
         }
 
         public async Task AddLinked()
@@ -44,7 +45,7 @@ namespace DemoApp
             {
                 var result = await Task.Run(() => DateTime.UtcNow.ToLongTimeString()).ConfigureAwait(false);
 
-                await DemoItems.Add(new DemoItem(result)).ConfigureAwait(false);
+                await DemoItems.Add(new DemoItem(CommandManager, result)).ConfigureAwait(false);
                 await LogItems.Add(new LogItem(result)).ConfigureAwait(false);
             }
         }
@@ -71,7 +72,7 @@ namespace DemoApp
                 }).ConfigureAwait(false);
 
                 await LogItems.AddRange(result.Select(p => new LogItem(p))).ConfigureAwait(false);
-                await DemoItems.AddRange(result.Select(p => new DemoItem(p))).ConfigureAwait(false);
+                await DemoItems.AddRange(result.Select(p => new DemoItem(CommandManager, p))).ConfigureAwait(false);
             }
         }
 

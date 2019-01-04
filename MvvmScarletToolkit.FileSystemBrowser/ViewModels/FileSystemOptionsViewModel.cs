@@ -26,12 +26,13 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         [Bindable(true, BindingDirection.OneWay)]
         public IExtendedAsyncCommand DisplayDetailsAsIconsCommand { get; }
 
-        public FileSystemOptionsViewModel(IScarletDispatcher dispatcher)
+        public FileSystemOptionsViewModel(IScarletDispatcher dispatcher, ICommandManager commandManager)
+            : base(commandManager)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
-            DisplayDetailsAsListCommand = AsyncCommand.Create(() => ToggleAsListViewInternal(CancellationToken.None), () => !IsBusy && !DisplayListView);
-            DisplayDetailsAsIconsCommand = AsyncCommand.Create(() => ToggleAsIconsInternal(CancellationToken.None), () => !IsBusy && DisplayListView);
+            DisplayDetailsAsListCommand = AsyncCommand.Create(() => ToggleAsListViewInternal(CancellationToken.None), () => !IsBusy && !DisplayListView, commandManager);
+            DisplayDetailsAsIconsCommand = AsyncCommand.Create(() => ToggleAsIconsInternal(CancellationToken.None), () => !IsBusy && DisplayListView, commandManager);
         }
 
         private async Task ToggleAsListViewInternal(CancellationToken token)

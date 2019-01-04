@@ -58,8 +58,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             private set { SetValue(ref _totalSize, value); }
         }
 
-        public ScarletDrive(DriveInfo info, IScarletDispatcher dispatcher)
-            : base(info.Name, info.Name, null, dispatcher)
+        public ScarletDrive(DriveInfo info, IScarletDispatcher dispatcher, ICommandManager commandManager)
+            : base(info.Name, info.Name, null, dispatcher, commandManager)
         {
         }
 

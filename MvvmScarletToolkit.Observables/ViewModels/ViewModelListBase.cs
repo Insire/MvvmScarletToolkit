@@ -18,6 +18,7 @@ namespace MvvmScarletToolkit.Observables
 
         protected readonly ObservableBusyStack BusyStack;
         protected readonly IScarletDispatcher Dispatcher;
+        protected readonly ICommandManager CommandManager;
 
         private bool _isBusy;
         [Bindable(true, BindingDirection.OneWay)]
@@ -72,22 +73,24 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public int Count => Items.Count;
 
-        protected ViewModelListBase(IScarletDispatcher dispatcher)
+        protected ViewModelListBase(IScarletDispatcher dispatcher, ICommandManager commandManager)
         {
             Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+            CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
+
             _items = new ObservableCollection<T>();
 
             Items = new ReadOnlyObservableCollection<T>(_items);
 
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
 
-            RemoveCommand = AsyncCommand.Create<T>(Remove, CanRemove).AsSequential();
-            RemoveRangeCommand = AsyncCommand.Create<IList>(RemoveRange, CanRemoveRange).AsSequential();
-            ClearCommand = AsyncCommand.Create(Clear, CanClear).AsSequential();
+            RemoveCommand = AsyncCommand.Create<T>(Remove, CanRemove, commandManager).AsSequential();
+            RemoveRangeCommand = AsyncCommand.Create<IList>(RemoveRange, CanRemoveRange, commandManager).AsSequential();
+            ClearCommand = AsyncCommand.Create(Clear, CanClear, commandManager).AsSequential();
 
-            LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad).AsSequential();
-            RefreshCommand = AsyncCommand.Create(RefreshInternal, CanRefresh);
-            UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload).AsSequential();
+            LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad, commandManager).AsSequential();
+            RefreshCommand = AsyncCommand.Create(RefreshInternal, CanRefresh, commandManager);
+            UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload, commandManager).AsSequential();
         }
 
         public virtual async Task Add(T item)

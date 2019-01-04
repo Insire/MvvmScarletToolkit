@@ -9,8 +9,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     [DebuggerDisplay("Directory: {Name} IsContainer: {IsContainer}")]
     public class ScarletDirectory : ScarletFileSystemContainerBase
     {
-        public ScarletDirectory(DirectoryInfo info, IFileSystemDirectory parent, IScarletDispatcher dispatcher)
-            : base(info.Name, info.FullName, parent, dispatcher)
+        public ScarletDirectory(DirectoryInfo info, IFileSystemDirectory parent, IScarletDispatcher dispatcher, ICommandManager commandManager)
+            : base(info.Name, info.FullName, parent, dispatcher, commandManager)
         {
         }
 

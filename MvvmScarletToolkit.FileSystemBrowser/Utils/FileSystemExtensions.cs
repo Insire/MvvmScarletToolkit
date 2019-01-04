@@ -12,12 +12,12 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 {
     public static class FileSystemExtensions
     {
-        public static IEnumerable<IFileSystemInfo> GetChildren(this ScarletFileSystemContainerBase directory, IScarletDispatcher dispatcher)
+        public static IEnumerable<IFileSystemInfo> GetChildren(this ScarletFileSystemContainerBase directory, IScarletDispatcher dispatcher, ICommandManager commandManager)
         {
             return !CanAccess(directory.FullName) && directory.DirectoryIsEmpty()
                 ? Enumerable.Empty<IFileSystemInfo>()
-                : GetDirectories(directory.FullName, directory, dispatcher)
-                    .Concat(GetFiles(directory.FullName, directory, dispatcher));
+                : GetDirectories(directory.FullName, directory, dispatcher, commandManager)
+                    .Concat(GetFiles(directory.FullName, directory, dispatcher, commandManager));
         }
 
         private static bool CanAccess(string path)
@@ -38,7 +38,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        private static IEnumerable<IFileSystemInfo> GetDirectories(string path, IFileSystemDirectory parent, IScarletDispatcher dispatcher)
+        private static IEnumerable<IFileSystemInfo> GetDirectories(string path, IFileSystemDirectory parent, IScarletDispatcher dispatcher, ICommandManager commandManager)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                                                         && (p.Attributes & FileAttributes.System) == 0
                                                         && (p.Attributes & FileAttributes.Offline) == 0
                                                         && (p.Attributes & FileAttributes.Encrypted) == 0)
-                                            .Select(p => new ScarletDirectory(p, parent, dispatcher))
+                                            .Select(p => new ScarletDirectory(p, parent, dispatcher, commandManager))
                                             .ToArray();
             }
             catch (UnauthorizedAccessException ex)
@@ -61,7 +61,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return Enumerable.Empty<IFileSystemInfo>();
         }
 
-        private static IEnumerable<IFileSystemInfo> GetFiles(string path, IFileSystemDirectory parent, IScarletDispatcher dispatcher)
+        private static IEnumerable<IFileSystemInfo> GetFiles(string path, IFileSystemDirectory parent, IScarletDispatcher dispatcher, ICommandManager commandManager)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                                     && (p.Attributes & FileAttributes.System) == 0
                                     && (p.Attributes & FileAttributes.Offline) == 0
                                     && (p.Attributes & FileAttributes.Encrypted) == 0)
-                        .Select(p => new ScarletFile(p, parent, dispatcher))
+                        .Select(p => new ScarletFile(p, parent, dispatcher, commandManager))
                         .ToArray();
             }
             catch (UnauthorizedAccessException ex)
