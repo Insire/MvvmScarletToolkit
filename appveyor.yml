@@ -1,0 +1,76 @@
+version: 0.0.{build}
+platform: Any CPU
+configuration: Release
+
+image:
+  - Visual Studio 2017
+
+skip_commits:
+  files:
+    - README.md
+    - LICENSE.md
+    - .editorconfig
+    - .gitignore
+    - .gitattributes
+    - cale.config
+
+environment:
+  APPVEYOR_REPO_TAG: true
+
+#---------------------------------#
+#        Branches to build        #
+#---------------------------------#
+branches:
+  only:
+    - master
+
+#---------------------------------#
+#  Build Cache                    #
+#---------------------------------#
+cache:
+  - .\packages -> .\**\packages.config
+
+#---------------------------------#
+#  Build Script                   #
+#---------------------------------#
+build_script:
+  - ps: powershell -ExecutionPolicy ByPass -File ".\build.ps1" -Script ".\build.cake"
+
+#---------------------------------#
+#  Build Artifacts                #
+#---------------------------------#
+#artifacts:
+#  - path: './src/Maple/bin/$(configuration)'
+#    name: 'Binaries'
+#  - path: './Cake/Archive/'
+#    name: 'Archive'
+#  - path: './Cake/Releases/Maple-$(appveyor_build_version)-full.nupkg'
+#    type: NuGetPackage
+#    name: 'NuGetPackage'
+#  - path: './Cake/Releases/Setup.exe'
+#    type: File
+#    name: 'Installer'
+#  - path: './Cake/Releases/RELEASES'
+#    type: File
+#    name: 'Release'
+
+#---------------------------------#
+#  Unit Tests                     #
+#---------------------------------#
+test: off
+
+#---------------------------------#
+#  Deploy to GitHub Releases      #
+#---------------------------------#
+#deploy:
+#  description: 'Auto generated build' # required to be set
+#  provider: GitHub
+#  auth_token:
+#    secure: Yo5d5V9sj0vLGZl6XQ1N4aNajAja6FTmPkRyr1Ft3Vg5fhPTFCPuh4d0LqcQvNZy # your encrypted token from GitHub
+#  artifact: Binaries,Archive,Installer,NuGetPackage,Release
+#  draft: true
+#  prerelease: true
+#  force_update: true
+#  on:
+#    branch: master                # release from these branches only
+#    APPVEYOR_REPO_TAG: true       # deploy on tag push only

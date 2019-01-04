@@ -810,7 +810,7 @@
                                                                         </ListBox.ContextMenu>
                                                                         <ListBox.ItemsPanel>
                                                                             <ItemsPanelTemplate>
-                                                                                <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                                                                                <local:VirtualizingWrapPanel IsItemsHost="True" Orientation="Horizontal" />
                                                                             </ItemsPanelTemplate>
                                                                         </ListBox.ItemsPanel>
                                                                         <ListBox.Resources>
@@ -855,7 +855,7 @@
                                                                         </ListBox.ContextMenu>
                                                                         <ListBox.ItemsPanel>
                                                                             <ItemsPanelTemplate>
-                                                                                <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                                                                                <local:VirtualizingWrapPanel IsItemsHost="True" Orientation="Horizontal" />
                                                                             </ItemsPanelTemplate>
                                                                         </ListBox.ItemsPanel>
                                                                         <ListBox.Resources>
