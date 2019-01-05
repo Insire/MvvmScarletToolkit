@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
-    internal sealed class NotifyTaskCompletion<TResult> : INotifyPropertyChanged
+    public sealed class NotifyTaskCompletion<TResult> : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

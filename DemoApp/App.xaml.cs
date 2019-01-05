@@ -1,4 +1,5 @@
 using MvvmScarletToolkit;
+using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.FileSystemBrowser;
 using MvvmScarletToolkit.Implementations;
 using MvvmScarletToolkit.Observables;
@@ -13,41 +14,43 @@ namespace DemoApp
             base.OnStartup(e);
             var commandManager = new ScarletCommandManager();
             var dispatcher = new ScarletDispatcher();
+            var commandBuilder = new CommandBuilder(dispatcher, commandManager);
+
             var scenes = new[]
             {
                 new Scene()
                 {
-                    Content = new ParentViewModel(dispatcher,commandManager),
+                    Content = new ParentViewModel(commandBuilder),
                     IsSelected = true,
                 },
                 new Scene()
                 {
-                    Content = new Images(dispatcher,commandManager),
+                    Content = new Images(commandBuilder),
                     IsSelected = false,
                 },
                 new Scene()
                 {
-                    Content = new ProcessingImagesViewModel(dispatcher,commandManager),
+                    Content = new ProcessingImagesViewModel(commandBuilder),
                     IsSelected = false,
                 },
                 new Scene()
                 {
-                    Content = new DataContextSchenanigansViewModel(dispatcher,commandManager),
+                    Content = new DataContextSchenanigansViewModel(commandBuilder),
                     IsSelected = false,
                 },
                 new Scene()
                 {
-                    Content = new AsyncCommandViewModelStuff(commandManager),
+                    Content = new AsyncCommandViewModelStuff(commandBuilder),
                     IsSelected = false,
                 },
                 new Scene()
                 {
-                    Content = new ParentsViewModel(dispatcher,commandManager),
+                    Content = new ParentsViewModel(commandBuilder),
                     IsSelected = false,
                 },
                 new Scene()
                 {
-                    Content = new ProgressViewModel(commandManager),
+                    Content = new ProgressViewModel(commandBuilder),
                     IsSelected = false,
                 },
                 new Scene()
@@ -57,17 +60,17 @@ namespace DemoApp
                 },
                 new Scene()
                 {
-                    Content = new FileSystemViewModel(dispatcher,commandManager, new FileSystemOptionsViewModel(dispatcher,commandManager)),
+                    Content = new FileSystemViewModel(commandBuilder, new FileSystemOptionsViewModel(commandBuilder)),
                     IsSelected = false,
                 },
                 new Scene()
                 {
-                    Content = new BusyViewModel(dispatcher,commandManager),
+                    Content = new BusyViewModel(commandBuilder),
                     IsSelected = false,
                 }
             };
 
-            var navigation = new NavigationViewModel(dispatcher, commandManager);
+            var navigation = new NavigationViewModel(commandBuilder);
             await navigation.AddRange(scenes).ConfigureAwait(false);
 
             await dispatcher.Invoke(() =>

@@ -5,54 +5,52 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
-    public class CommandBuilder<TArgument, TResult>
+    public sealed class CommandBuilder
     {
-        public Func<TArgument, CancellationToken, Task<TResult>> Execute { get; set; }
-        public Func<TArgument, bool> CanExcute { get; set; }
+        public IScarletDispatcher Dispatcher { get; }
+        public IScarletCommandManager CommandManager { get; }
 
-        public Func<IExtendedAsyncCommand, IExtendedAsyncCommand> Decorators { get; set; }
-        public Func<IExtendedAsyncCommand> Use { get; set; }
-
-        public IScarletDispatcher Dispatcher { get; set; }
-        public ICommandManager CommandManager { get; set; }
-
-        private CommandBuilder()
-        {
-            Execute = DefaultExecute;
-            CanExcute = DefaultCanExecute;
-            Use = DefaultUse;
-        }
-
-        public CommandBuilder(IScarletDispatcher dispatcher, ICommandManager commandManager)
-            : this()
+        public CommandBuilder(IScarletDispatcher dispatcher, IScarletCommandManager commandManager)
         {
             Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
         }
 
-        private IExtendedAsyncCommand DefaultUse()
+        [Obsolete]
+        public ICommandBuilderContext Create<TArgument, TResult>()
         {
-            return new ConcurrentAsyncCommand<TArgument, TResult>(CommandManager, Execute, CanExcute);
+            return Create<TArgument, TResult>(DefaultExecute<TArgument, TResult>, DefaultCanExecute);
         }
 
-        private static Task<TResult> DefaultExecute(TArgument parameter, CancellationToken token)
+        public CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(Func<TArgument, CancellationToken, Task<TResult>> execute)
+        {
+            return Create(execute, DefaultCanExecute);
+        }
+
+        [Obsolete]
+        public CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(Func<TArgument, bool> canExecute)
+        {
+            return Create(DefaultExecute<TArgument, TResult>, canExecute);
+        }
+
+        public CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(Func<TArgument, CancellationToken, Task<TResult>> execute, Func<TArgument, bool> canExecute)
+        {
+            return new CommandBuilderContext<TArgument, TResult>(Dispatcher, CommandManager, execute, canExecute);
+        }
+
+        internal static Task<TResult> DefaultExecute<TArgument, TResult>(TArgument parameter, CancellationToken token)
         {
             if (token.IsCancellationRequested)
             {
-                throw new TaskCanceledException();
+                throw new TaskCanceledException(); // not sure, maybe there is a better thing to do instead
             }
 
-            return default;
+            return Task.FromResult<TResult>(default);
         }
 
-        private static bool DefaultCanExecute(TArgument parameter)
+        internal static bool DefaultCanExecute<TArgument>(TArgument parameter)
         {
             return true;
         }
-
-        // register decorator
-        // provide custom cancellation action
-        // optionally enable async cancellation?
-        // validation, providing notifications on why can execute returned false
     }
 }

@@ -10,9 +10,9 @@ namespace MvvmScarletToolkit.Commands
     /// <summary>
     /// base implementation for running commands in an async fashion and providing UI notifications
     /// </summary>
-    internal abstract class AsyncCommandBase : IAsyncCommand, INotifyPropertyChanged
+    public abstract class ConcurrentCommandBase : IAsyncCommand, INotifyPropertyChanged
     {
-        protected readonly ICommandManager CommandManager;
+        protected readonly IScarletCommandManager CommandManager;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -22,21 +22,13 @@ namespace MvvmScarletToolkit.Commands
 
         public abstract Task ExecuteAsync(object parameter);
 
-        private bool _isBusy;
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            protected set { SetValue(ref _isBusy, value); }
-        }
-
         public event EventHandler CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
         }
 
-        protected AsyncCommandBase(ICommandManager commandManager)
+        protected ConcurrentCommandBase(IScarletCommandManager commandManager)
         {
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
         }
@@ -46,7 +38,7 @@ namespace MvvmScarletToolkit.Commands
             CommandManager.InvalidateRequerySuggested();
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

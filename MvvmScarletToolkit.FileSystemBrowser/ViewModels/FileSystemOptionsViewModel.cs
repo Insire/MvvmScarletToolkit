@@ -1,7 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
-using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,8 +9,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 {
     public class FileSystemOptionsViewModel : ViewModelBase
     {
-        private readonly IScarletDispatcher _dispatcher;
-
         private bool _displayListView;
         [Bindable(true, BindingDirection.TwoWay)]
         public bool DisplayListView
@@ -26,20 +23,18 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         [Bindable(true, BindingDirection.OneWay)]
         public IExtendedAsyncCommand DisplayDetailsAsIconsCommand { get; }
 
-        public FileSystemOptionsViewModel(IScarletDispatcher dispatcher, ICommandManager commandManager)
-            : base(commandManager)
+        public FileSystemOptionsViewModel(CommandBuilder commandBuilder)
+            : base(commandBuilder)
         {
-            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-
-            DisplayDetailsAsListCommand = AsyncCommand.Create(() => ToggleAsListViewInternal(CancellationToken.None), () => !IsBusy && !DisplayListView, commandManager);
-            DisplayDetailsAsIconsCommand = AsyncCommand.Create(() => ToggleAsIconsInternal(CancellationToken.None), () => !IsBusy && DisplayListView, commandManager);
+            DisplayDetailsAsListCommand = commandBuilder.Create(() => ToggleAsListViewInternal(CancellationToken.None), () => !IsBusy && !DisplayListView).Build();
+            DisplayDetailsAsIconsCommand = commandBuilder.Create(() => ToggleAsIconsInternal(CancellationToken.None), () => !IsBusy && DisplayListView).Build();
         }
 
         private async Task ToggleAsListViewInternal(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
-                await _dispatcher.Invoke(() => DisplayListView = true).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => DisplayListView = true).ConfigureAwait(false);
             }
         }
 
@@ -47,7 +42,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
-                await _dispatcher.Invoke(() => DisplayListView = false).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => DisplayListView = false).ConfigureAwait(false);
             }
         }
 

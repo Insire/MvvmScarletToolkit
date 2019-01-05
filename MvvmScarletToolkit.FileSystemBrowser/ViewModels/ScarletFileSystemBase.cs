@@ -37,8 +37,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return info.Name.IndexOf(info.Filter, StringComparison.InvariantCultureIgnoreCase) >= 0;
         }
 
-        protected IScarletDispatcher Dispatcher { get; }
-
         [Bindable(true, BindingDirection.OneWay)]
         public IExtendedAsyncCommand DeleteCommand { get; protected set; }
 
@@ -150,11 +148,11 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             protected set { SetValue(ref _lastWriteTimeUtc, value); }
         }
 
-        private ScarletFileSystemBase(ICommandManager commandManager)
-            : base(commandManager)
+        private ScarletFileSystemBase(CommandBuilder commandBuilder)
+            : base(commandBuilder)
         {
-            DeleteCommand = AsyncCommand.Create(Delete, CanDelete, commandManager).AsSequential();
-            ToggleExpandCommand = AsyncCommand.Create(Toggle, CanToggle, commandManager).AsSequential();
+            DeleteCommand = commandBuilder.Create(Delete, CanDelete).WithSingleExecution().Build();
+            ToggleExpandCommand = commandBuilder.Create(Toggle, CanToggle).WithSingleExecution().Build();
 
             Exists = true;
             IsHidden = false;
@@ -162,8 +160,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             HasContainers = false;
         }
 
-        protected ScarletFileSystemBase(string name, string fullName, IFileSystemDirectory parent, IScarletDispatcher dispatcher, ICommandManager commandManager)
-            : this(commandManager)
+        protected ScarletFileSystemBase(string name, string fullName, IFileSystemDirectory parent, CommandBuilder commandBuilder)
+            : this(commandBuilder)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -179,8 +177,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 throw new ArgumentException($"{nameof(parent)} can't be empty.", nameof(parent));
             }
-
-            Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
             using (BusyStack.GetToken())
             {

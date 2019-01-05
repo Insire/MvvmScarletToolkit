@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -58,8 +58,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             private set { SetValue(ref _totalSize, value); }
         }
 
-        public ScarletDrive(DriveInfo info, IScarletDispatcher dispatcher, ICommandManager commandManager)
-            : base(info.Name, info.Name, null, dispatcher, commandManager)
+        public ScarletDrive(DriveInfo info, CommandBuilder commandBuilder)
+            : base(info.Name, info.Name, null, commandBuilder)
         {
         }
 

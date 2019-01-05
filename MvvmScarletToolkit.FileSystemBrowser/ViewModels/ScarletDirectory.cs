@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -9,8 +9,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     [DebuggerDisplay("Directory: {Name} IsContainer: {IsContainer}")]
     public class ScarletDirectory : ScarletFileSystemContainerBase
     {
-        public ScarletDirectory(DirectoryInfo info, IFileSystemDirectory parent, IScarletDispatcher dispatcher, ICommandManager commandManager)
-            : base(info.Name, info.FullName, parent, dispatcher, commandManager)
+        public ScarletDirectory(DirectoryInfo info, IFileSystemDirectory parent, CommandBuilder commandBuilder)
+            : base(info.Name, info.FullName, parent, commandBuilder)
         {
         }
 

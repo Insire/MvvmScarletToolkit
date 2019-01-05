@@ -42,14 +42,14 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             set { SetValue(ref _filter, value); }
         }
 
-        public FileSystemViewModel(IScarletDispatcher dispatcher, ICommandManager commandManager, FileSystemOptionsViewModel options)
-            : base(dispatcher, commandManager)
+        public FileSystemViewModel(CommandBuilder commandBuilder, FileSystemOptionsViewModel options)
+            : base(commandBuilder)
         {
             Options = options ?? throw new ArgumentNullException(nameof(options));
 
-            SelectCommand = AsyncCommand.Create<IFileSystemInfo>(SetSelectedItem, CanSetSelectedItem, commandManager);
+            RefreshFilterCommand = commandBuilder.Create(RefreshFilterInternal, CanRefreshFilter).Build();
+            SelectCommand = commandBuilder.Create<IFileSystemInfo>(SetSelectedItem, CanSetSelectedItem).Build();
             SelectedItems = new RangeObservableCollection<IFileSystemInfo>();
-            RefreshFilterCommand = AsyncCommand.Create(RefreshFilterInternal, CanRefreshFilter, commandManager);
         }
 
         private async Task RefreshFilterInternal(CancellationToken token)
@@ -91,7 +91,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 await AddRange(DriveInfo.GetDrives()
                     .Where(p => p.IsReady && p.DriveType != DriveType.CDRom && p.DriveType != DriveType.Unknown)
-                    .Select(p => new ScarletDrive(p, Dispatcher, CommandManager)))
+                    .Select(p => new ScarletDrive(p, CommandBuilder)))
                     .ConfigureAwait(false);
 
                 await Dispatcher.Invoke(() => IsLoaded = true).ConfigureAwait(false);

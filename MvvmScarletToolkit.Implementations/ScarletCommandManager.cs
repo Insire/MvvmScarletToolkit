@@ -7,9 +7,9 @@ namespace MvvmScarletToolkit.Implementations
     /// <summary>
     /// simple wrapper around <see cref="System.Windows.Input.CommandManager"/>
     /// </summary>
-    public sealed class ScarletCommandManager : ICommandManager
+    public sealed class ScarletCommandManager : IScarletCommandManager
     {
-        public static ICommandManager Default { get; } = new ScarletCommandManager();
+        public static IScarletCommandManager Default { get; } = new ScarletCommandManager();
 
         public event EventHandler RequerySuggested
         {

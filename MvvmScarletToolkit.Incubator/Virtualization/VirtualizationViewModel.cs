@@ -45,10 +45,10 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _expandCommand, value); }
         }
 
-        public VirtualizationViewModel(ICommandManager commandManager)
+        public VirtualizationViewModel(IScarletCommandManager commandManager)
         {
             DeflateCommand = new RelayCommand(Deflate, CanDeflate);
-            ExpandCommand = AsyncCommand.Create(Expand, CanExpand, commandManager);
+            //ExpandCommand = AsyncCommand.Create(Expand, CanExpand, commandManager);
         }
 
         public Task Expand()

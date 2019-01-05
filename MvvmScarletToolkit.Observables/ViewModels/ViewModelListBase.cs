@@ -17,8 +17,9 @@ namespace MvvmScarletToolkit.Observables
         private readonly ObservableCollection<T> _items;
 
         protected readonly ObservableBusyStack BusyStack;
+        protected readonly CommandBuilder CommandBuilder;
         protected readonly IScarletDispatcher Dispatcher;
-        protected readonly ICommandManager CommandManager;
+        protected readonly IScarletCommandManager CommandManager;
 
         private bool _isBusy;
         [Bindable(true, BindingDirection.OneWay)]
@@ -73,24 +74,39 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public int Count => Items.Count;
 
-        protected ViewModelListBase(IScarletDispatcher dispatcher, ICommandManager commandManager)
+        protected ViewModelListBase(CommandBuilder commandBuilder)
         {
-            Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-            CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
+            CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
+            Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.Dispatcher));
+            CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.CommandManager));
 
             _items = new ObservableCollection<T>();
 
             Items = new ReadOnlyObservableCollection<T>(_items);
-
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
 
-            RemoveCommand = AsyncCommand.Create<T>(Remove, CanRemove, commandManager).AsSequential();
-            RemoveRangeCommand = AsyncCommand.Create<IList>(RemoveRange, CanRemoveRange, commandManager).AsSequential();
-            ClearCommand = AsyncCommand.Create(Clear, CanClear, commandManager).AsSequential();
+            RemoveCommand = commandBuilder.Create<T>(Remove, CanRemove)
+                                          .WithSingleExecution()
+                                          .Build();
 
-            LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad, commandManager).AsSequential();
-            RefreshCommand = AsyncCommand.Create(RefreshInternal, CanRefresh, commandManager);
-            UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload, commandManager).AsSequential();
+            RemoveRangeCommand = commandBuilder.Create<IList>(RemoveRange, CanRemoveRange)
+                                               .WithSingleExecution()
+                                               .Build();
+
+            ClearCommand = commandBuilder.Create(Clear, CanClear)
+                                         .WithSingleExecution()
+                                         .Build();
+
+            LoadCommand = commandBuilder.Create(LoadInternal, CanLoad)
+                                        .WithSingleExecution()
+                                        .Build();
+
+            RefreshCommand = commandBuilder.Create(RefreshInternal, CanRefresh)
+                                           .Build();
+
+            UnloadCommand = commandBuilder.Create(UnloadInternalAsync, CanUnload)
+                                          .WithSingleExecution()
+                                          .Build();
         }
 
         public virtual async Task Add(T item)

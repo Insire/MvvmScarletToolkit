@@ -9,10 +9,21 @@ namespace MvvmScarletToolkit.Commands
     /// Base implementation providing interface members for cancellation support and exposing current execution
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    internal abstract class GenericAsyncCommandBase<TResult> : AsyncCommandBase, IExtendedAsyncCommand
+    public abstract class GenericConcurrentCommandBase<TResult> : ConcurrentCommandBase, IExtendedAsyncCommand
     {
         [Bindable(true, BindingDirection.OneWay)]
+        public Task Completion => Execution?.TaskCompletion ?? Task.CompletedTask;
+
+        [Bindable(true, BindingDirection.OneWay)]
         public ICommand CancelCommand { get; protected set; }
+
+        private bool _isBusy;
+        [Bindable(true, BindingDirection.OneWay)]
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            protected set { SetValue(ref _isBusy, value); }
+        }
 
         private NotifyTaskCompletion<TResult> _execution;
         [Bindable(true, BindingDirection.OneWay)]
@@ -22,9 +33,7 @@ namespace MvvmScarletToolkit.Commands
             protected set { SetValue(ref _execution, value); }
         }
 
-        public Task Completion => Execution?.TaskCompletion ?? Task.CompletedTask;
-
-        protected GenericAsyncCommandBase(ICommandManager commandManager)
+        protected GenericConcurrentCommandBase(IScarletCommandManager commandManager)
             : base(commandManager)
         {
         }

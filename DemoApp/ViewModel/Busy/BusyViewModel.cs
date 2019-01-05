@@ -16,20 +16,20 @@ namespace DemoApp
         public IExtendedAsyncCommand AddContainerCommand { get; }
         public IExtendedAsyncCommand AddChildCommand { get; }
 
-        public BusyViewModel(IScarletDispatcher dispatcher, ICommandManager commandManager)
-            : base(dispatcher, commandManager)
+        public BusyViewModel(CommandBuilder commandBuilder)
+            : base(commandBuilder)
         {
             _disposables = new Dictionary<ObservableObject, IDisposable>();
 
-            AddChildCommand = AsyncCommand.Create(InternalAddChildAsync, CanAddChild, commandManager);
-            AddContainerCommand = AsyncCommand.Create(InternalAddContainerAsync, CanAddChild, commandManager);
+            AddChildCommand = CommandBuilder.Create(InternalAddChildAsync, CanAddChild).Build();
+            AddContainerCommand = CommandBuilder.Create(InternalAddContainerAsync, CanAddChild).Build();
         }
 
         private async Task InternalAddContainerAsync(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
-                var viewModel = new BusyViewModel(Dispatcher, CommandManager);
+                var viewModel = new BusyViewModel(CommandBuilder);
                 _disposables.Add(viewModel, viewModel.Subscribe(this));
 
                 await Add(viewModel).ConfigureAwait(false);
@@ -41,7 +41,7 @@ namespace DemoApp
         {
             using (BusyStack.GetToken())
             {
-                var viewModel = new ObservableBusyViewModel(CommandManager);
+                var viewModel = new ObservableBusyViewModel(CommandBuilder);
                 _disposables.Add(viewModel, viewModel.Subscribe(this));
 
                 await Add(viewModel).ConfigureAwait(false);

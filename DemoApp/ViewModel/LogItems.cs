@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
@@ -11,10 +10,10 @@ namespace DemoApp
     {
         public ICommand AddCommand { get; }
 
-        public LogItems(IScarletDispatcher dispatcher, ICommandManager commandManager)
-            : base(dispatcher, commandManager)
+        public LogItems(CommandBuilder commandBuilder)
+            : base(commandBuilder)
         {
-            AddCommand = AsyncCommand.Create(AddNew, CanAddNew, commandManager);
+            AddCommand = CommandBuilder.Create(AddNew, CanAddNew).Build();
         }
 
         public async Task AddNew()

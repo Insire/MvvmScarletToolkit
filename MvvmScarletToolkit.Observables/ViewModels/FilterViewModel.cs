@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit.Observables
     {
         private readonly IComparer<T> _comparer;
         private readonly IEqualityComparer<T> _equalityComparer;
-        private readonly IScarletDispatcher _dispatcher;
+
         private readonly IEnumerable<T> _source;
         private readonly ObservableCollection<T> _items;
         private readonly ReadOnlyCollection<Func<T, bool>> _predicates;
@@ -21,12 +21,12 @@ namespace MvvmScarletToolkit.Observables
 
         public IReadOnlyCollection<T> Items { get; }
 
-        public FilterViewModel(IScarletDispatcher dispatcher, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates, IEqualityComparer<T> equalityComparer, IComparer<T> comparer, ICommandManager commandManager)
-            : base(commandManager)
+        public FilterViewModel(CommandBuilder commandBuilder, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates, IEqualityComparer<T> equalityComparer, IComparer<T> comparer)
+            : base(commandBuilder)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
             _comparer = comparer ?? throw new ArgumentNullException(nameof(comparer));
-            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+
             _equalityComparer = equalityComparer ?? EqualityComparer<T>.Default;
             _items = new ObservableCollection<T>(source); // copies every item from the enumeration into the collection (no projection)
             _predicates = new ReadOnlyCollection<Func<T, bool>>(
@@ -40,8 +40,8 @@ namespace MvvmScarletToolkit.Observables
             Items = new ReadOnlyObservableCollection<T>(_items);
         }
 
-        public FilterViewModel(IScarletDispatcher dispatcher, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates, ICommandManager commandManager)
-            : this(dispatcher, source, predicates, null, null, commandManager) // TODO
+        public FilterViewModel(CommandBuilder commandBuilder, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates)
+            : this(commandBuilder, source, predicates, null, null) // TODO
         {
         }
 
@@ -100,7 +100,7 @@ namespace MvvmScarletToolkit.Observables
 
             foreach (var item in removed)
             {
-                var task = _dispatcher.Invoke(() => _items.Remove(item));
+                var task = Dispatcher.Invoke(() => _items.Remove(item));
                 tasks.Add(task);
             }
 

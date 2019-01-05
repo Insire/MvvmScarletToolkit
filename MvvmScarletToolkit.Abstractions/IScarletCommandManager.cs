@@ -2,7 +2,7 @@ using System;
 
 namespace MvvmScarletToolkit.Abstractions
 {
-    public interface ICommandManager
+    public interface IScarletCommandManager
     {
         void InvalidateRequerySuggested();
 

@@ -21,10 +21,10 @@ namespace DemoApp
 
         public IExtendedAsyncCommand BeBusyCommand { get; }
 
-        public ObservableBusyViewModel(ICommandManager commandManager)
+        public ObservableBusyViewModel(CommandBuilder commandBuilder)
         {
             _observableBusyStack = new ObservableBusyStack(hasItems => { IsBusy = hasItems; Debug.WriteLine("ObservableBusyViewModel is busy: " + hasItems); });
-            BeBusyCommand = AsyncCommand.Create(BeBusyInternal, () => !IsBusy, commandManager);
+            BeBusyCommand = commandBuilder.Create(BeBusyInternal, () => !IsBusy).Build();
         }
 
         private async Task BeBusyInternal(CancellationToken token)

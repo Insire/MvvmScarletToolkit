@@ -133,7 +133,7 @@ namespace DemoApp
             }
         }
 
-        public SnakeEngine(SnakeOption options, Dispatcher dispatcher, IMessenger messenger, ICommandManager commandManager)
+        public SnakeEngine(SnakeOption options, Dispatcher dispatcher, IMessenger messenger, CommandBuilder commandBuilder)
         {
             _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
@@ -153,8 +153,8 @@ namespace DemoApp
             Snake = new Snake(_options, _messenger);
             BoardPieces = new ObservableCollection<IPositionable>();
 
-            PlayCommand = AsyncCommand.Create(Play, commandManager);
-            ResetCommand = AsyncCommand.Create(Reset, commandManager);
+            PlayCommand = commandBuilder.Create(Play).Build();
+            ResetCommand = commandBuilder.Create(Reset).Build();
 
             LoadCommand = new RelayCommand(Load, CanLoad);
 

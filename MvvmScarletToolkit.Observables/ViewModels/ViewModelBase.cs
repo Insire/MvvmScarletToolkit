@@ -10,7 +10,9 @@ namespace MvvmScarletToolkit.Observables
     public abstract class ViewModelBase : ObservableObject
     {
         protected readonly ObservableBusyStack BusyStack;
-        protected readonly ICommandManager CommandManager;
+        protected readonly CommandBuilder CommandBuilder;
+        protected readonly IScarletCommandManager CommandManager;
+        protected readonly IScarletDispatcher Dispatcher;
 
         private bool _isBusy;
         [Bindable(true, BindingDirection.OneWay)]
@@ -37,14 +39,21 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public virtual IExtendedAsyncCommand UnloadCommand { get; }
 
-        protected ViewModelBase(ICommandManager commandManager)
+        protected ViewModelBase(CommandBuilder commandBuilder)
         {
-            CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
+            CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
+            Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.Dispatcher));
+            CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.CommandManager));
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
 
-            LoadCommand = AsyncCommand.Create(LoadInternal, CanLoad, commandManager).AsSequential();
-            RefreshCommand = AsyncCommand.Create(RefreshInternal, CanRefresh, commandManager);
-            UnloadCommand = AsyncCommand.Create(UnloadInternalAsync, CanUnload, commandManager).AsSequential();
+            LoadCommand = commandBuilder.Create(LoadInternal, CanLoad)
+                                        .WithSingleExecution()
+                                        .Build();
+
+            RefreshCommand = commandBuilder.Create(RefreshInternal, CanRefresh).Build();
+            UnloadCommand = commandBuilder.Create(UnloadInternalAsync, CanUnload)
+                                          .WithSingleExecution()
+                                          .Build();
         }
 
         protected abstract Task LoadInternal(CancellationToken token);

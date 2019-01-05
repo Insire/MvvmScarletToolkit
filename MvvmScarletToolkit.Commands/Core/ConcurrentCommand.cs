@@ -9,23 +9,23 @@ namespace MvvmScarletToolkit.Commands
     /// <summary>
     /// provides a command that can cancel an already running command to start a new one
     /// </summary>
-    internal sealed class ConcurrentAsyncCommand<TArgument, TResult> : GenericAsyncCommandBase<TResult>
+    public sealed class ConcurrentCommand<TArgument, TResult> : GenericConcurrentCommandBase<TResult>
     {
         private readonly Func<TArgument, CancellationToken, Task<TResult>> _command;
-        private readonly CancelAsyncCommand _cancelCommand;
+        private readonly ICancelCommand _cancelCommand;
         private readonly Func<TArgument, bool> _canExecute;
 
-        internal ConcurrentAsyncCommand(ICommandManager commandManager, Func<TArgument, CancellationToken, Task<TResult>> command)
+        internal ConcurrentCommand(IScarletCommandManager commandManager, ICancelCommand cancelCommand, Func<TArgument, CancellationToken, Task<TResult>> command)
             : base(commandManager)
         {
             _command = command ?? throw new ArgumentNullException(nameof(command));
-            _cancelCommand = new CancelAsyncCommand(CommandManager);
+            _cancelCommand = cancelCommand ?? throw new ArgumentNullException(nameof(cancelCommand));
 
             CancelCommand = _cancelCommand;
         }
 
-        internal ConcurrentAsyncCommand(ICommandManager commandManager, Func<TArgument, CancellationToken, Task<TResult>> command, Func<TArgument, bool> canExecuteEvaluator)
-            : this(commandManager, command)
+        internal ConcurrentCommand(IScarletCommandManager commandManager, ICancelCommand cancelCommand, Func<TArgument, CancellationToken, Task<TResult>> command, Func<TArgument, bool> canExecuteEvaluator)
+            : this(commandManager, cancelCommand, command)
         {
             _canExecute = canExecuteEvaluator ?? throw new ArgumentNullException(nameof(canExecuteEvaluator));
         }

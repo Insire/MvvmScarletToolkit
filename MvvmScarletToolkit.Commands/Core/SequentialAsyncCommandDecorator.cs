@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
-    internal sealed class SequentialAsyncCommandDecorator : AsyncCommandDecoratorBase
+    internal sealed class SequentialAsyncCommandDecorator : ConcurrentCommandDecoratorBase
     {
         public SequentialAsyncCommandDecorator(IExtendedAsyncCommand command)
             : base(command)

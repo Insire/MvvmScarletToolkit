@@ -5,16 +5,16 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Commands
 {
-    internal sealed class CancelAsyncCommand : ICommand
+    internal sealed class CancelCommand : ICancelCommand
     {
-        private readonly ICommandManager _commandManager;
+        private readonly IScarletCommandManager _commandManager;
 
         private CancellationTokenSource _cts = new CancellationTokenSource();
         private bool _commandExecuting;
 
         public CancellationToken Token => _cts.Token;
 
-        public CancelAsyncCommand(ICommandManager commandManager)
+        public CancelCommand(IScarletCommandManager commandManager)
         {
             _commandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
         }

@@ -1,4 +1,5 @@
 using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,8 +42,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             get { return _children[index]; }
         }
 
-        protected ScarletFileSystemContainerBase(string name, string fullName, IFileSystemDirectory parent, IScarletDispatcher dispatcher, ICommandManager commandManager)
-            : base(name, fullName, parent, dispatcher, commandManager)
+        protected ScarletFileSystemContainerBase(string name, string fullName, IFileSystemDirectory parent, CommandBuilder commandBuilder)
+            : base(name, fullName, parent, commandBuilder)
         {
             using (BusyStack.GetToken())
             {
@@ -103,7 +104,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                     }
                 }).ConfigureAwait(false);
 
-                await AddRange(FileSystemExtensions.GetChildren(this, Dispatcher, CommandManager)).ConfigureAwait(false);
+                await AddRange(FileSystemExtensions.GetChildren(this, CommandBuilder)).ConfigureAwait(false);
                 HasContainers = Children.Any(p => p is ScarletFileSystemContainerBase);
 
                 await OnFilterChanged(string.Empty, token).ConfigureAwait(false);

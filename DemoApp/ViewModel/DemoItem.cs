@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,14 +21,14 @@ namespace DemoApp
             set { SetValue(ref _isSelected, value); }
         }
 
-        public DemoItem(ICommandManager commandManager)
-            : base(commandManager)
+        public DemoItem(CommandBuilder commandBuilder)
+            : base(commandBuilder)
         {
             DisplayName = "unknown";
         }
 
-        public DemoItem(ICommandManager commandManager, string displayName)
-            : this(commandManager)
+        public DemoItem(CommandBuilder commandBuilder, string displayName)
+            : this(commandBuilder)
         {
             DisplayName = displayName;
         }

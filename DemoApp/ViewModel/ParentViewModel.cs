@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -29,14 +28,14 @@ namespace DemoApp
             set { SetValue(ref _logItems, value); }
         }
 
-        public ParentViewModel(IScarletDispatcher dispatcher, ICommandManager commandManager)
-            : base(commandManager)
+        public ParentViewModel(CommandBuilder commandBuilder)
+            : base(commandBuilder)
         {
-            DemoItems = new DemoItems(dispatcher, commandManager);
-            LogItems = new LogItems(dispatcher, commandManager);
+            DemoItems = new DemoItems(commandBuilder);
+            LogItems = new LogItems(commandBuilder);
 
-            AddLinkedCommand = AsyncCommand.Create(AddLinked, CanAddLink, commandManager);
-            AddRangeCommand = AsyncCommand.Create(AddRange, CanAddRange, commandManager);
+            AddLinkedCommand = CommandBuilder.Create(AddLinked, CanAddLink).Build();
+            AddRangeCommand = CommandBuilder.Create(AddRange, CanAddRange).Build();
         }
 
         public async Task AddLinked()
@@ -45,7 +44,7 @@ namespace DemoApp
             {
                 var result = await Task.Run(() => DateTime.UtcNow.ToLongTimeString()).ConfigureAwait(false);
 
-                await DemoItems.Add(new DemoItem(CommandManager, result)).ConfigureAwait(false);
+                await DemoItems.Add(new DemoItem(CommandBuilder, result)).ConfigureAwait(false);
                 await LogItems.Add(new LogItem(result)).ConfigureAwait(false);
             }
         }
@@ -72,7 +71,7 @@ namespace DemoApp
                 }).ConfigureAwait(false);
 
                 await LogItems.AddRange(result.Select(p => new LogItem(p))).ConfigureAwait(false);
-                await DemoItems.AddRange(result.Select(p => new DemoItem(CommandManager, p))).ConfigureAwait(false);
+                await DemoItems.AddRange(result.Select(p => new DemoItem(CommandBuilder, p))).ConfigureAwait(false);
             }
         }
 

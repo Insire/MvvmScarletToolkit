@@ -10,15 +10,15 @@ namespace DemoApp
     {
         public IExtendedAsyncCommand AddCommand { get; }
 
-        public DemoItems(IScarletDispatcher dispatcher, ICommandManager commandManager)
-            : base(dispatcher, commandManager)
+        public DemoItems(CommandBuilder commandBuilder)
+            : base(commandBuilder)
         {
-            AddCommand = AsyncCommand.Create(AddNew, CanAddNew, commandManager);
+            AddCommand = CommandBuilder.Create(AddNew, CanAddNew).Build();
         }
 
         public async Task AddNew()
         {
-            var item = new DemoItem(CommandManager);
+            var item = new DemoItem(CommandBuilder);
             await Add(item).ConfigureAwait(false);
         }
 

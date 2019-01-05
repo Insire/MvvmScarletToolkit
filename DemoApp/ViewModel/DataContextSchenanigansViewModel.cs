@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,8 +7,8 @@ namespace DemoApp
 {
     public class DataContextSchenanigansViewModel : ViewModelListBase<AsyncDemoItem>
     {
-        public DataContextSchenanigansViewModel(IScarletDispatcher dispatcher, ICommandManager commandManager)
-            : base(dispatcher, commandManager)
+        public DataContextSchenanigansViewModel(CommandBuilder commandBuilder)
+            : base(commandBuilder)
         {
         }
 
@@ -16,7 +16,7 @@ namespace DemoApp
         {
             for (var i = 0; i < 10; i++)
             {
-                await Add(new AsyncDemoItem(CommandManager)
+                await Add(new AsyncDemoItem(CommandBuilder)
                 {
                     DisplayName = "Test X",
                 }).ConfigureAwait(false);

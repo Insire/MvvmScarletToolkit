@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Threading;
@@ -22,8 +22,8 @@ namespace DemoApp
             private set { SetValue(ref _maximum, value); }
         }
 
-        public ProgressViewModel(ICommandManager commandManager)
-            : base(commandManager)
+        public ProgressViewModel(CommandBuilder commandBuilder)
+            : base(commandBuilder)
         {
             Maximum = 100;
         }

@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Commands
 {
-    internal abstract class AsyncCommandDecoratorBase : IExtendedAsyncCommand
+    public abstract class ConcurrentCommandDecoratorBase : IExtendedAsyncCommand
     {
         protected readonly IExtendedAsyncCommand Command;
 
@@ -23,7 +23,7 @@ namespace MvvmScarletToolkit.Commands
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public AsyncCommandDecoratorBase(IExtendedAsyncCommand command)
+        protected ConcurrentCommandDecoratorBase(IExtendedAsyncCommand command)
         {
             Command = command ?? throw new ArgumentNullException(nameof(command));
             Command.CanExecuteChanged += Command_CanExecuteChanged;
