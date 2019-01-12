@@ -4,17 +4,32 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Commands
 {
     /// <summary>
     /// base implementation for running commands in an async fashion and providing UI notifications
     /// </summary>
-    public abstract class ConcurrentCommandBase : IAsyncCommand, INotifyPropertyChanged
+    public abstract class ConcurrentCommandBase : IConcurrentCommand, INotifyPropertyChanged
     {
         protected readonly IScarletCommandManager CommandManager;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        [Bindable(true, BindingDirection.OneWay)]
+        public abstract Task Completion { get; }
+
+        [Bindable(true, BindingDirection.OneWay)]
+        public virtual ICommand CancelCommand { get; protected set; }
+
+        private bool _isBusy;
+        [Bindable(true, BindingDirection.OneWay)]
+        public virtual bool IsBusy
+        {
+            get { return _isBusy; }
+            protected set { SetValue(ref _isBusy, value); }
+        }
 
         public abstract void Execute(object parameter);
 

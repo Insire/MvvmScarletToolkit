@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -13,16 +12,16 @@ namespace DemoApp
     {
         private readonly IDictionary<ObservableObject, IDisposable> _disposables;
 
-        public IExtendedAsyncCommand AddContainerCommand { get; }
-        public IExtendedAsyncCommand AddChildCommand { get; }
+        public ConcurrentCommandBase AddContainerCommand { get; }
+        public ConcurrentCommandBase AddChildCommand { get; }
 
         public BusyViewModel(CommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             _disposables = new Dictionary<ObservableObject, IDisposable>();
 
-            AddChildCommand = CommandBuilder.Create(InternalAddChildAsync, CanAddChild).Build();
-            AddContainerCommand = CommandBuilder.Create(InternalAddContainerAsync, CanAddChild).Build();
+            AddChildCommand = CommandBuilder.Create(InternalAddChildAsync, CanAddChild);
+            AddContainerCommand = CommandBuilder.Create(InternalAddContainerAsync, CanAddChild);
         }
 
         private async Task InternalAddContainerAsync(CancellationToken token)
@@ -52,7 +51,7 @@ namespace DemoApp
         public override async Task Remove(ObservableObject item)
         {
             _disposables[item].Dispose();
-            await base.Remove(item);
+            await base.Remove(item).ConfigureAwait(false);
         }
 
         private bool CanAddChild()

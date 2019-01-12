@@ -55,20 +55,22 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         private void SetFirstRowViewItemIndex(int index)
         {
-            SetVerticalOffset((index) / Math.Floor((_viewport.Width) / childSize.Width));
-            SetHorizontalOffset((index) / Math.Floor((_viewport.Height) / childSize.Height));
+            SetVerticalOffset(index / Math.Floor(_viewport.Width / childSize.Width));
+            SetHorizontalOffset(index / Math.Floor(_viewport.Height / childSize.Height));
         }
 
         public void Resizing(object sender, EventArgs e)
         {
-            if (_viewport.Width != 0)
+            if (_viewport.Width == 0)
             {
-                var firstIndexCache = firstIndex;
-                _abstractPanel = null;
-                MeasureOverride(_viewport);
-                SetFirstRowViewItemIndex(firstIndex);
-                firstIndex = firstIndexCache;
+                return;
             }
+
+            var firstIndexCache = firstIndex;
+            _abstractPanel = null;
+            MeasureOverride(_viewport);
+            SetFirstRowViewItemIndex(firstIndex);
+            firstIndex = firstIndexCache;
         }
 
         public int GetFirstVisibleSection()
@@ -104,7 +106,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             if (_abstractPanel != null)
             {
-                var item = _abstractPanel.Where(x => x.Section == section).FirstOrDefault();
+                var item = _abstractPanel.FirstOrDefault(x => x.Section == section);
                 if (item != null)
                 {
                     return item.Index;
@@ -854,7 +856,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                             _currentSetSection = section;
                             if (section > 0)
                             {
-                                AverageItemsPerSection = (index) / (section);
+                                AverageItemsPerSection = index / section;
                             }
                             _itemsInCurrentSecction = 1;
                         }

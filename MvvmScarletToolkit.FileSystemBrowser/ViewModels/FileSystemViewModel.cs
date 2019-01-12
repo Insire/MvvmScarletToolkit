@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -13,10 +12,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     public class FileSystemViewModel : ViewModelListBase<IFileSystemInfo>
     {
         [Bindable(true, BindingDirection.OneWay)]
-        public IExtendedAsyncCommand SelectCommand { get; }
+        public ConcurrentCommandBase SelectCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public IExtendedAsyncCommand RefreshFilterCommand { get; }
+        public ConcurrentCommandBase RefreshFilterCommand { get; }
 
         private RangeObservableCollection<IFileSystemInfo> _selectedItems;
         [Bindable(true, BindingDirection.OneWay)]
@@ -47,8 +46,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             Options = options ?? throw new ArgumentNullException(nameof(options));
 
-            RefreshFilterCommand = commandBuilder.Create(RefreshFilterInternal, CanRefreshFilter).Build();
-            SelectCommand = commandBuilder.Create<IFileSystemInfo>(SetSelectedItem, CanSetSelectedItem).Build();
+            RefreshFilterCommand = commandBuilder.Create(RefreshFilterInternal, CanRefreshFilter);
+            SelectCommand = commandBuilder.Create<IFileSystemInfo>(SetSelectedItem, CanSetSelectedItem);
             SelectedItems = new RangeObservableCollection<IFileSystemInfo>();
         }
 

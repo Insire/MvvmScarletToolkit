@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,20 +10,20 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         /// <summary>
         /// conditional refresh
         /// </summary>
-        IExtendedAsyncCommand LoadCommand { get; }
+        ConcurrentCommandBase LoadCommand { get; }
 
-        IExtendedAsyncCommand UnloadCommand { get; }
+        ConcurrentCommandBase UnloadCommand { get; }
         /// <summary>
         /// explicit refresh, updates filtering and the current children
         /// </summary>
-        IExtendedAsyncCommand RefreshCommand { get; }
+        ConcurrentCommandBase RefreshCommand { get; }
 
         /// <summary>
         /// delete an object from the filesystem
         /// </summary>
-        IExtendedAsyncCommand DeleteCommand { get; }
+        ConcurrentCommandBase DeleteCommand { get; }
 
-        IExtendedAsyncCommand ToggleExpandCommand { get; }
+        ConcurrentCommandBase ToggleExpandCommand { get; }
 
         /// <summary>
         /// the logical parent

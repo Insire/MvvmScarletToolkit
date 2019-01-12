@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -38,10 +37,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public IExtendedAsyncCommand DeleteCommand { get; protected set; }
+        public ConcurrentCommandBase DeleteCommand { get; protected set; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public IExtendedAsyncCommand ToggleExpandCommand { get; protected set; }
+        public ConcurrentCommandBase ToggleExpandCommand { get; protected set; }
 
         private IFileSystemDirectory _parent;
         [Bindable(true, BindingDirection.OneWay)]
@@ -151,8 +150,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         private ScarletFileSystemBase(CommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            DeleteCommand = commandBuilder.Create(Delete, CanDelete).WithSingleExecution().Build();
-            ToggleExpandCommand = commandBuilder.Create(Toggle, CanToggle).WithSingleExecution().Build();
+            DeleteCommand = commandBuilder.Create(Delete, CanDelete)
+                                        .WithSingleExecution(CommandManager);
+            ToggleExpandCommand = commandBuilder.Create(Toggle, CanToggle)
+                                        .WithSingleExecution(CommandManager);
 
             Exists = true;
             IsHidden = false;
@@ -220,11 +221,11 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 if (!IsExpanded)
                 {
                     await LoadInternal(token).ConfigureAwait(false);
-                    await Dispatcher.Invoke(() => IsExpanded = true);
+                    await Dispatcher.Invoke(() => IsExpanded = true).ConfigureAwait(false);
                 }
                 else
                 {
-                    await Dispatcher.Invoke(() => IsExpanded = !IsExpanded);
+                    await Dispatcher.Invoke(() => IsExpanded = !IsExpanded).ConfigureAwait(false);
                 }
             }
         }

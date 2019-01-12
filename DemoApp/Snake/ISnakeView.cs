@@ -9,9 +9,9 @@ namespace DemoApp
         int FramesPerSecond { get; set; }
         bool IsFpsEnabled { get; set; }
         ISnakeManager Manager { get; set; }
-        IAsyncCommand ShowGameCommand { get; set; }
-        IAsyncCommand ShowOptionsCommand { get; set; }
-        IAsyncCommand ShowStartCommand { get; set; }
+        IConcurrentCommand ShowGameCommand { get; set; }
+        IConcurrentCommand ShowOptionsCommand { get; set; }
+        IConcurrentCommand ShowStartCommand { get; set; }
         SnakeViewModel SnakeViewModel { get; set; }
         View View { get; set; }
 

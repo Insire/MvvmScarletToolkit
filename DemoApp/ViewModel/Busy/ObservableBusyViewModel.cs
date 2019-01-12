@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -19,12 +18,12 @@ namespace DemoApp
             private set { SetValue(ref _isBusy, value); }
         }
 
-        public IExtendedAsyncCommand BeBusyCommand { get; }
+        public ConcurrentCommandBase BeBusyCommand { get; }
 
         public ObservableBusyViewModel(CommandBuilder commandBuilder)
         {
             _observableBusyStack = new ObservableBusyStack(hasItems => { IsBusy = hasItems; Debug.WriteLine("ObservableBusyViewModel is busy: " + hasItems); });
-            BeBusyCommand = commandBuilder.Create(BeBusyInternal, () => !IsBusy).Build();
+            BeBusyCommand = commandBuilder.Create(BeBusyInternal, () => !IsBusy);
         }
 
         private async Task BeBusyInternal(CancellationToken token)

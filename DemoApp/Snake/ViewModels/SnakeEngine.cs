@@ -51,15 +51,15 @@ namespace DemoApp
             private set { SetValue(ref _boardPieces, value); }
         }
 
-        private IAsyncCommand _playCommand;
-        public IAsyncCommand PlayCommand
+        private IConcurrentCommand _playCommand;
+        public IConcurrentCommand PlayCommand
         {
             get { return _playCommand; }
             private set { SetValue(ref _playCommand, value); }
         }
 
-        private IAsyncCommand _resetCommand;
-        public IAsyncCommand ResetCommand
+        private IConcurrentCommand _resetCommand;
+        public IConcurrentCommand ResetCommand
         {
             get { return _resetCommand; }
             private set { SetValue(ref _resetCommand, value); }

@@ -5,8 +5,8 @@ namespace MvvmScarletToolkit.Commands
 {
     internal sealed class SequentialAsyncCommandDecorator : ConcurrentCommandDecoratorBase
     {
-        public SequentialAsyncCommandDecorator(IExtendedAsyncCommand command)
-            : base(command)
+        public SequentialAsyncCommandDecorator(IScarletCommandManager commandManager, ConcurrentCommandBase command)
+            : base(commandManager, command)
         {
         }
 

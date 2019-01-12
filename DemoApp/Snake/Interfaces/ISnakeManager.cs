@@ -16,11 +16,11 @@ namespace DemoApp
         /// <summary>
         /// Starts a game
         /// </summary>
-        IAsyncCommand PlayCommand { get; }
+        IConcurrentCommand PlayCommand { get; }
 
         /// <summary>
         /// Cancels and resets a game
         /// </summary>
-        IAsyncCommand ResetCommand { get; }
+        IConcurrentCommand ResetCommand { get; }
     }
 }

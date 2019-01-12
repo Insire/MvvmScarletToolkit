@@ -51,22 +51,22 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual IExtendedAsyncCommand RemoveRangeCommand { get; }
+        public virtual ConcurrentCommandBase RemoveRangeCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual IExtendedAsyncCommand RemoveCommand { get; }
+        public virtual ConcurrentCommandBase RemoveCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual IExtendedAsyncCommand ClearCommand { get; }
+        public virtual ConcurrentCommandBase ClearCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual IExtendedAsyncCommand LoadCommand { get; }
+        public virtual ConcurrentCommandBase LoadCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual IExtendedAsyncCommand RefreshCommand { get; }
+        public virtual ConcurrentCommandBase RefreshCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual IExtendedAsyncCommand UnloadCommand { get; }
+        public virtual ConcurrentCommandBase UnloadCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
         public IReadOnlyCollection<T> Items { get; }
@@ -86,27 +86,21 @@ namespace MvvmScarletToolkit.Observables
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
 
             RemoveCommand = commandBuilder.Create<T>(Remove, CanRemove)
-                                          .WithSingleExecution()
-                                          .Build();
+                                          .WithSingleExecution(CommandManager);
 
             RemoveRangeCommand = commandBuilder.Create<IList>(RemoveRange, CanRemoveRange)
-                                               .WithSingleExecution()
-                                               .Build();
+                                               .WithSingleExecution(CommandManager);
 
             ClearCommand = commandBuilder.Create(Clear, CanClear)
-                                         .WithSingleExecution()
-                                         .Build();
+                                         .WithSingleExecution(CommandManager);
 
             LoadCommand = commandBuilder.Create(LoadInternal, CanLoad)
-                                        .WithSingleExecution()
-                                        .Build();
+                                        .WithSingleExecution(CommandManager);
 
-            RefreshCommand = commandBuilder.Create(RefreshInternal, CanRefresh)
-                                           .Build();
+            RefreshCommand = commandBuilder.Create(RefreshInternal, CanRefresh);
 
             UnloadCommand = commandBuilder.Create(UnloadInternalAsync, CanUnload)
-                                          .WithSingleExecution()
-                                          .Build();
+                                          .WithSingleExecution(CommandManager);
         }
 
         public virtual async Task Add(T item)

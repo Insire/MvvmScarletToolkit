@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
@@ -8,12 +7,12 @@ namespace DemoApp
 {
     public class DemoItems : ViewModelListBase<DemoItem>
     {
-        public IExtendedAsyncCommand AddCommand { get; }
+        public ConcurrentCommandBase AddCommand { get; }
 
         public DemoItems(CommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            AddCommand = CommandBuilder.Create(AddNew, CanAddNew).Build();
+            AddCommand = CommandBuilder.Create(AddNew, CanAddNew);
         }
 
         public async Task AddNew()

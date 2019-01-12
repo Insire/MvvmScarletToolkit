@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Abstractions
 {
-    public interface IAsyncCommand : ICommand
+    public interface IConcurrentCommand : ICommand
     {
         Task ExecuteAsync(object parameter);
     }

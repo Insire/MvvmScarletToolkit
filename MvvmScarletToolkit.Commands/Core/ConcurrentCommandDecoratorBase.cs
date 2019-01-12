@@ -7,23 +7,21 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Commands
 {
-    public abstract class ConcurrentCommandDecoratorBase : IExtendedAsyncCommand
+    public abstract class ConcurrentCommandDecoratorBase : ConcurrentCommandBase
     {
-        protected readonly IExtendedAsyncCommand Command;
+        protected readonly ConcurrentCommandBase Command;
 
         [Bindable(true, BindingDirection.OneWay)]
-        public ICommand CancelCommand => Command.CancelCommand;
+        public override ICommand CancelCommand => Command.CancelCommand;
 
         [Bindable(true, BindingDirection.OneWay)]
-        public bool IsBusy => Command.IsBusy;
+        public override bool IsBusy => Command.IsBusy;
 
-        public Task Completion => Command.Completion;
+        [Bindable(true, BindingDirection.OneWay)]
+        public override Task Completion => Command.Completion;
 
-        public event EventHandler CanExecuteChanged;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected ConcurrentCommandDecoratorBase(IExtendedAsyncCommand command)
+        protected ConcurrentCommandDecoratorBase(IScarletCommandManager commandManager, ConcurrentCommandBase command)
+            : base(commandManager)
         {
             Command = command ?? throw new ArgumentNullException(nameof(command));
             Command.CanExecuteChanged += Command_CanExecuteChanged;
@@ -32,22 +30,18 @@ namespace MvvmScarletToolkit.Commands
 
         private void Command_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, e);
+            OnPropertyChanged(e.PropertyName);
         }
 
         private void Command_CanExecuteChanged(object sender, EventArgs e)
         {
-            CanExecuteChanged?.Invoke(this, e);
+            RaiseCanExecuteChanged();
         }
 
         [DebuggerStepThrough]
-        public async void Execute(object parameter)
+        public override async void Execute(object parameter)
         {
             await ExecuteAsync(parameter).ConfigureAwait(false);
         }
-
-        public abstract Task ExecuteAsync(object parameter);
-
-        public abstract bool CanExecute(object parameter);
     }
 }

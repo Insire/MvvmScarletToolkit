@@ -105,41 +105,41 @@ namespace DemoApp
             typeof(SnakeView),
             new PropertyMetadata(default(ICommand)));
 
-        public IAsyncCommand ShowStartCommand
+        public IConcurrentCommand ShowStartCommand
         {
-            get { return (IAsyncCommand)GetValue(ShowStartCommandProperty); }
+            get { return (IConcurrentCommand)GetValue(ShowStartCommandProperty); }
             set { SetValue(ShowStartCommandProperty, value); }
         }
 
         public static readonly DependencyProperty ShowStartCommandProperty = DependencyProperty.Register(
             "ShowStartCommand",
-            typeof(IAsyncCommand),
+            typeof(IConcurrentCommand),
             typeof(SnakeView),
-            new PropertyMetadata(default(IAsyncCommand)));
+            new PropertyMetadata(default(IConcurrentCommand)));
 
-        public IAsyncCommand ShowOptionsCommand
+        public IConcurrentCommand ShowOptionsCommand
         {
-            get { return (IAsyncCommand)GetValue(ShowOptionsCommandProperty); }
+            get { return (IConcurrentCommand)GetValue(ShowOptionsCommandProperty); }
             set { SetValue(ShowOptionsCommandProperty, value); }
         }
 
         public static readonly DependencyProperty ShowOptionsCommandProperty = DependencyProperty.Register(
             "ShowOptionsCommand",
-            typeof(IAsyncCommand),
+            typeof(IConcurrentCommand),
             typeof(SnakeView),
-            new PropertyMetadata(default(IAsyncCommand)));
+            new PropertyMetadata(default(IConcurrentCommand)));
 
-        public IAsyncCommand ShowGameCommand
+        public IConcurrentCommand ShowGameCommand
         {
-            get { return (IAsyncCommand)GetValue(ShowGameCommandProperty); }
+            get { return (IConcurrentCommand)GetValue(ShowGameCommandProperty); }
             set { SetValue(ShowGameCommandProperty, value); }
         }
 
         public static readonly DependencyProperty ShowGameCommandProperty = DependencyProperty.Register(
             "ShowGameCommand",
-            typeof(IAsyncCommand),
+            typeof(IConcurrentCommand),
             typeof(SnakeView),
-            new PropertyMetadata(default(IAsyncCommand)));
+            new PropertyMetadata(default(IConcurrentCommand)));
 
         private static void OnIsFpsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

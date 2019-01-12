@@ -38,8 +38,8 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _deflateCommand, value); }
         }
 
-        private IAsyncCommand _expandCommand;
-        public IAsyncCommand ExpandCommand
+        private IConcurrentCommand _expandCommand;
+        public IConcurrentCommand ExpandCommand
         {
             get { return _expandCommand; }
             private set { SetValue(ref _expandCommand, value); }

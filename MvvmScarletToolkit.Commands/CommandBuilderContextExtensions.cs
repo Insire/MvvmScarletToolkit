@@ -39,11 +39,11 @@ namespace MvvmScarletToolkit.Commands
         /// </summary>
         /// <param name="commandBuilder"></param>
         /// <returns></returns>
-        public static ICommandBuilderContext WithSingleExecution(this ICommandBuilderContext commandBuilder)
+        public static CommandBuilderContext<TArgument, TResult> WithSingleExecution<TArgument, TResult>(this CommandBuilderContext<TArgument, TResult> commandBuilder, IScarletCommandManager commandManager)
         {
-            IExtendedAsyncCommand DecoratorFactory(IExtendedAsyncCommand command)
+            ConcurrentCommandBase DecoratorFactory(ConcurrentCommandBase command)
             {
-                return new SequentialAsyncCommandDecorator(command);
+                return new SequentialAsyncCommandDecorator(commandManager, command);
             }
 
             commandBuilder.AddDecorator(DecoratorFactory);

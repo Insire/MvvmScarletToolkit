@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
-    public class CommandBuilderContext<TArgument, TResult> : AbstractBuilder<IExtendedAsyncCommand>, ICommandBuilderContext
+    public class CommandBuilderContext<TArgument, TResult> : AbstractBuilder<ConcurrentCommandBase>, ICommandBuilderContext
     {
-        private readonly Queue<Func<IExtendedAsyncCommand, IExtendedAsyncCommand>> _decorators;
+        private readonly Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>> _decorators;
         private readonly Func<TArgument, CancellationToken, Task<TResult>> _execute;
         private readonly Func<TArgument, bool> _canExcute;
 
@@ -27,7 +27,7 @@ namespace MvvmScarletToolkit.Commands
 
             CancelCommand = new CancelCommand(commandManager);
 
-            _decorators = new Queue<Func<IExtendedAsyncCommand, IExtendedAsyncCommand>>();
+            _decorators = new Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>>();
         }
 
         public CommandBuilderContext(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, Func<TArgument, CancellationToken, Task<TResult>> execute, Func<TArgument, bool> canExecute)
@@ -37,12 +37,12 @@ namespace MvvmScarletToolkit.Commands
             _canExcute = canExecute ?? throw new ArgumentNullException(nameof(canExecute));
         }
 
-        public void AddDecorator(Func<IExtendedAsyncCommand, IExtendedAsyncCommand> decoratorFactory)
+        public void AddDecorator(Func<ConcurrentCommandBase, ConcurrentCommandBase> decoratorFactory)
         {
             _decorators.Enqueue(decoratorFactory);
         }
 
-        public override IExtendedAsyncCommand Build()
+        public override ConcurrentCommandBase Build()
         {
             var result = default(ConcurrentCommand<TArgument, TResult>);
             if (_canExcute is null)
@@ -59,7 +59,7 @@ namespace MvvmScarletToolkit.Commands
             return CreateDecoratorsOn(result);
         }
 
-        private IExtendedAsyncCommand CreateDecoratorsOn(IExtendedAsyncCommand command)
+        private ConcurrentCommandBase CreateDecoratorsOn(ConcurrentCommandBase command)
         {
             var decorator = command;
             while (_decorators.Count > 0)

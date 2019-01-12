@@ -1,7 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Commands
 {
@@ -9,21 +8,10 @@ namespace MvvmScarletToolkit.Commands
     /// Base implementation providing interface members for cancellation support and exposing current execution
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class GenericConcurrentCommandBase<TResult> : ConcurrentCommandBase, IExtendedAsyncCommand
+    public abstract class GenericConcurrentCommandBase<TResult> : ConcurrentCommandBase
     {
         [Bindable(true, BindingDirection.OneWay)]
-        public Task Completion => Execution?.TaskCompletion ?? Task.CompletedTask;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public ICommand CancelCommand { get; protected set; }
-
-        private bool _isBusy;
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            protected set { SetValue(ref _isBusy, value); }
-        }
+        public override Task Completion => Execution?.TaskCompletion ?? Task.CompletedTask;
 
         private NotifyTaskCompletion<TResult> _execution;
         [Bindable(true, BindingDirection.OneWay)]

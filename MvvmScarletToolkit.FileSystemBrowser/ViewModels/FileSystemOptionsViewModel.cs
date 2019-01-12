@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.ComponentModel;
@@ -18,16 +17,16 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public IExtendedAsyncCommand DisplayDetailsAsListCommand { get; }
+        public ConcurrentCommandBase DisplayDetailsAsListCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public IExtendedAsyncCommand DisplayDetailsAsIconsCommand { get; }
+        public ConcurrentCommandBase DisplayDetailsAsIconsCommand { get; }
 
         public FileSystemOptionsViewModel(CommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            DisplayDetailsAsListCommand = commandBuilder.Create(() => ToggleAsListViewInternal(CancellationToken.None), () => !IsBusy && !DisplayListView).Build();
-            DisplayDetailsAsIconsCommand = commandBuilder.Create(() => ToggleAsIconsInternal(CancellationToken.None), () => !IsBusy && DisplayListView).Build();
+            DisplayDetailsAsListCommand = commandBuilder.Create(() => ToggleAsListViewInternal(CancellationToken.None), () => !IsBusy && !DisplayListView);
+            DisplayDetailsAsIconsCommand = commandBuilder.Create(() => ToggleAsIconsInternal(CancellationToken.None), () => !IsBusy && DisplayListView);
         }
 
         private async Task ToggleAsListViewInternal(CancellationToken token)
