@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit.Commands
     /// <summary>
     /// base implementation for running commands in an async fashion and providing UI notifications
     /// </summary>
-    public abstract class ConcurrentCommandBase : IConcurrentCommand, INotifyPropertyChanged
+    public abstract class ConcurrentCommandBase : IConcurrentCommand
     {
         protected readonly IScarletCommandManager CommandManager;
 

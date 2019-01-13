@@ -2,6 +2,7 @@ using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,6 +53,14 @@ namespace MvvmScarletToolkit.Observables
             RefreshCommand = commandBuilder.Create(RefreshInternal, CanRefresh);
             UnloadCommand = commandBuilder.Create(UnloadInternalAsync, CanUnload)
                                           .WithSingleExecution(CommandManager);
+        }
+
+        // overriding here, instead of adding Dispatcher call to base class,
+        // since the ObservableObject class, doesnt know anything about the concurrent usecases,
+        // that i introduce here and higher up the inheritance tree
+        protected override async void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            await Dispatcher.Invoke(() => base.OnPropertyChanged(propertyName)).ConfigureAwait(false);
         }
 
         protected abstract Task LoadInternal(CancellationToken token);

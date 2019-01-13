@@ -14,11 +14,11 @@ namespace MvvmScarletToolkit.Commands
 
         public IScarletDispatcher Dispatcher { get; }
         public IScarletCommandManager CommandManager { get; }
+
         public ICancelCommand CancelCommand { get; set; }
 
         // TODO add validation, providing notifications on why can execute returned false
-
-        // TODO decide whether this should be reuseable
+        // TODO decide whether this should be reuseable (aka whether to allow subclassing)
 
         private CommandBuilderContext(IScarletDispatcher dispatcher, IScarletCommandManager commandManager)
         {

@@ -573,28 +573,6 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
-
-                            <!--<Button Width="{Binding Height, ElementName=SearchTermTextBox}"
-                                    Height="{Binding Height, ElementName=SearchTermTextBox}"
-                                    Margin="0 0 5 0"
-                                    HorizontalAlignment="Right"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    Command="{Binding FileSystemViewModel.RefreshFilterCommand.CancelCommand, RelativeSource={RelativeSource AncestorType=local:FileSystemBrowser}}"
-                                    Content="X">
-                                <Button.Style>
-                                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding RefreshFilterCommand.IsBusy}" Value="True">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding RefreshFilterCommand.IsBusy}" Value="False">
-                                                <Setter Property="Visibility" Value="Hidden" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>-->
                         </Grid>
 
                         <!--  Tree  -->
@@ -619,7 +597,7 @@
                             </i:Interaction.Triggers>
 
                             <TreeView.Resources>
-                                <HierarchicalDataTemplate DataType="{x:Type local:ScarletDirectory}" ItemsSource="{Binding Children}">
+                                <HierarchicalDataTemplate DataType="{x:Type local:ScarletDirectory}" ItemsSource="{Binding NoFilesCollectionView}">
                                     <DockPanel>
                                         <ContentControl ContentTemplate="{StaticResource FolderIconPath}" DockPanel.Dock="Left" />
                                         <TextBlock Margin="5 0 0 0"
@@ -635,7 +613,7 @@
                                     </DockPanel>
                                 </HierarchicalDataTemplate>
 
-                                <HierarchicalDataTemplate DataType="{x:Type local:ScarletDrive}" ItemsSource="{Binding Children}">
+                                <HierarchicalDataTemplate DataType="{x:Type local:ScarletDrive}" ItemsSource="{Binding NoFilesCollectionView}">
                                     <DockPanel>
                                         <ContentControl ContentTemplate="{StaticResource DriveIconPath}" DockPanel.Dock="Left" />
                                         <TextBlock Margin="5 0 0 0"
