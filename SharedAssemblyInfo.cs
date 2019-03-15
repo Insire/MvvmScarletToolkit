@@ -10,9 +10,9 @@ using System.Reflection;
 [assembly: AssemblyVersion("2.0.0.0")]
 [assembly: AssemblyFileVersion("2.0.0.0")]
 [assembly: AssemblyInformationalVersion("2.0.0.0")]
-[assembly: AssemblyCopyright("© 2018 Insire")]
+[assembly: AssemblyCopyright("© 2019 Insire")]
 [assembly: AssemblyTrademark("")]
 
 // Metadata Attributes
 [assembly: AssemblyMetadata("Platform", "AnyCPU")]
-[assembly: AssemblyMetadata("Compiled on:", "[UTC]20.12.2018 22:35:30")]
+[assembly: AssemblyMetadata("Compiled on:", "[UTC]15.03.2019 18:06:33")]
