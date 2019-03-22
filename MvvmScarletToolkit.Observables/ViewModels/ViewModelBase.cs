@@ -45,7 +45,7 @@ namespace MvvmScarletToolkit.Observables
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
             Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.Dispatcher));
             CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.CommandManager));
-            BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
+            BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
 
             LoadCommand = commandBuilder.Create(LoadInternal, CanLoad)
                                         .WithSingleExecution(CommandManager);

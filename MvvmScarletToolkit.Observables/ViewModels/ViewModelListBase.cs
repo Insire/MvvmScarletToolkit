@@ -83,7 +83,7 @@ namespace MvvmScarletToolkit.Observables
             _items = new ObservableCollection<T>();
 
             Items = new ReadOnlyObservableCollection<T>(_items);
-            BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
+            BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
 
             RemoveCommand = commandBuilder.Create<T>(Remove, CanRemove)
                                           .WithSingleExecution(CommandManager);
@@ -99,7 +99,7 @@ namespace MvvmScarletToolkit.Observables
 
             RefreshCommand = commandBuilder.Create(RefreshInternal, CanRefresh);
 
-            UnloadCommand = commandBuilder.Create(UnloadInternalAsync, CanUnload)
+            UnloadCommand = commandBuilder.Create(UnloadInternal, CanUnload)
                                           .WithSingleExecution(CommandManager);
         }
 
@@ -189,21 +189,38 @@ namespace MvvmScarletToolkit.Observables
             return _items.Count > 0;
         }
 
-        protected abstract Task LoadInternal(CancellationToken token);
+        protected abstract Task Load(CancellationToken token);
+
+        protected virtual async Task LoadInternal(CancellationToken token)
+        {
+            await Load(token).ConfigureAwait(false);
+
+            IsLoaded = true;
+        }
 
         protected virtual bool CanLoad()
         {
             return !IsLoaded;
         }
 
-        protected abstract Task UnloadInternalAsync();
+        protected abstract Task Unload(CancellationToken token);
+
+        protected virtual Task UnloadInternal(CancellationToken token)
+        {
+            return Unload(token);
+        }
 
         protected virtual bool CanUnload()
         {
             return IsLoaded;
         }
 
-        protected abstract Task RefreshInternal(CancellationToken token);
+        protected abstract Task Refresh(CancellationToken token);
+
+        protected virtual Task RefreshInternal(CancellationToken token)
+        {
+            return Refresh(token);
+        }
 
         protected virtual bool CanRefresh()
         {

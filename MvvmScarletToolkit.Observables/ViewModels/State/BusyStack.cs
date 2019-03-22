@@ -1,6 +1,8 @@
-﻿using System;
+using MvvmScarletToolkit.Abstractions;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -11,33 +13,29 @@ namespace MvvmScarletToolkit.Observables
     {
         private readonly ConcurrentBag<BusyToken> _items;
         private readonly Action<bool> _onChanged;
+        private readonly IScarletDispatcher _dispatcher;
 
-        public BusyStack(Action<bool> onChanged)
+        public BusyStack(Action<bool> onChanged, IScarletDispatcher dispatcher)
         {
+            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
             _items = new ConcurrentBag<BusyToken>();
         }
 
         [DebuggerStepThrough]
-        public void Pull()
+        public Task Pull()
         {
-            var result = _items.TryTake(out var token);
+            var result = _items.TryTake(out _);
 
-            InvokeOnChanged(result); // could be improved to only be called, when the internal state changes
+            return InvokeOnChanged(result); // could be improved to only be called, when the internal state changes
         }
 
         [DebuggerStepThrough]
-        public void Push(BusyToken token)
+        public Task Push(BusyToken token)
         {
             _items.Add(token);
 
-            InvokeOnChanged(true); // could be improved to only be called, when the internal state changes
-        }
-
-        [DebuggerStepThrough]
-        private bool HasItems()
-        {
-            return _items.TryPeek(out var token);
+            return InvokeOnChanged(true); // could be improved to only be called, when the internal state changes
         }
 
         /// <summary>
@@ -50,9 +48,9 @@ namespace MvvmScarletToolkit.Observables
             return new BusyToken(this);
         }
 
-        private void InvokeOnChanged(bool hasItems)
+        private Task InvokeOnChanged(bool hasItems)
         {
-            _onChanged(hasItems);
+            return _dispatcher.Invoke(() => _onChanged(hasItems));
         }
     }
 }

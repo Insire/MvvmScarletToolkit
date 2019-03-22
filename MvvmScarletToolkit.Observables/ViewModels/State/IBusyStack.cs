@@ -1,11 +1,13 @@
-﻿namespace MvvmScarletToolkit.Observables
+using System.Threading.Tasks;
+
+namespace MvvmScarletToolkit.Observables
 {
     public interface IBusyStack
     {
         BusyToken GetToken();
 
-        void Pull();
+        Task Pull();
 
-        void Push(BusyToken token);
+        Task Push(BusyToken token);
     }
 }

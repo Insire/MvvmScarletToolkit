@@ -1,8 +1,10 @@
+using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -12,9 +14,12 @@ namespace MvvmScarletToolkit.Observables
         private readonly List<IObserver<bool>> _observers;
         private readonly ReaderWriterLockSlim _syncRoot;
         private readonly Action<bool> _onChanged;
+        private readonly IScarletDispatcher _dispatcher;
 
-        public ObservableBusyStack(Action<bool> onChanged)
+        public ObservableBusyStack(Action<bool> onChanged, IScarletDispatcher dispatcher)
         {
+            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
             _items = new ConcurrentBag<BusyToken>();
             _observers = new List<IObserver<bool>>();
@@ -22,10 +27,10 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [DebuggerStepThrough]
-        public void Pull()
+        public async Task Pull()
         {
             var oldValue = _items.TryPeek(out _);
-            var result = _items.TryTake(out var token);
+            _ = _items.TryTake(out _);
             var newValue = _items.TryPeek(out _);
 
             if (oldValue.Equals(newValue))
@@ -33,12 +38,12 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-            NotifyOwner(newValue);
+            await NotifyOwner(newValue).ConfigureAwait(false);
             NotifySubscribers(newValue);
         }
 
         [DebuggerStepThrough]
-        public void Push(BusyToken token)
+        public async Task Push(BusyToken token)
         {
             var oldValue = _items.TryPeek(out _);
             _items.Add(token);
@@ -49,7 +54,7 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-            NotifyOwner(newValue);
+            await NotifyOwner(newValue).ConfigureAwait(false);
             NotifySubscribers(newValue);
         }
 
@@ -65,9 +70,9 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [DebuggerStepThrough]
-        private void NotifyOwner(bool changedValue)
+        private Task NotifyOwner(bool changedValue)
         {
-            _onChanged.Invoke(changedValue);
+            return _dispatcher.Invoke(() => _onChanged.Invoke(changedValue));
         }
 
         public IDisposable Subscribe(IObserver<bool> observer)
@@ -87,12 +92,6 @@ namespace MvvmScarletToolkit.Observables
         public BusyToken GetToken()
         {
             return new BusyToken(this);
-        }
-
-        [DebuggerStepThrough]
-        private bool HasItems()
-        {
-            return _items.TryPeek(out var token);
         }
 
         public void Dispose()
