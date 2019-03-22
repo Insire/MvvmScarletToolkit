@@ -21,7 +21,7 @@ namespace DemoApp
                 new Scene()
                 {
                     Content = new ParentViewModel(commandBuilder),
-                    IsSelected = true,
+                    IsSelected = false,
                 },
                 new Scene()
                 {
@@ -67,6 +67,11 @@ namespace DemoApp
                 {
                     Content = new BusyViewModel(commandBuilder),
                     IsSelected = false,
+                },
+                new Scene()
+                {
+                    Content= new TextDisplayViewModel(commandBuilder),
+                    IsSelected = true,
                 }
             };
 

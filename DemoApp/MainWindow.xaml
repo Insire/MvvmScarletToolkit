@@ -61,6 +61,9 @@
                     <DataTemplate DataType="{x:Type local:BusyViewModel}">
                         <TextBlock>Busy tree</TextBlock>
                     </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:TextDisplayViewModel}">
+                        <TextBlock>Text rendering</TextBlock>
+                    </DataTemplate>
                 </ListBox.Resources>
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type observables:Scene}">
@@ -130,6 +133,9 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type local:BusyViewModel}">
                     <controls:BusyTree />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:TextDisplayViewModel}">
+                    <local:TextDisplay />
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>

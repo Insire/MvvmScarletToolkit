@@ -5,6 +5,9 @@
         <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
         <UseWPF>true</UseWPF>
     </PropertyGroup>
+    <ItemGroup>
+      <None Remove="Controls\TextDisplay.xaml" />
+    </ItemGroup>
 
     <ItemGroup>
         <Compile Include="..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
@@ -18,6 +21,9 @@
         <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
+        <Compile Update="Controls\TextDisplay.xaml.cs">
+          <SubType>Code</SubType>
+        </Compile>
         <Compile Update="Properties\Settings.Designer.cs">
           <DesignTimeSharedInput>True</DesignTimeSharedInput>
           <AutoGen>True</AutoGen>
