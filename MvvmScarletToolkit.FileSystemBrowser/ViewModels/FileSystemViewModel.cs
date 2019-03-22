@@ -84,7 +84,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return item is ScarletFileSystemContainerBase value && value != SelectedItem;
         }
 
-        protected override async Task LoadInternal(CancellationToken token)
+        protected override async Task Load(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -97,7 +97,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        protected override async Task RefreshInternal(CancellationToken token)
+        protected override async Task Refresh(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -107,7 +107,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        protected override async Task UnloadInternalAsync()
+        protected override async Task Unload(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {

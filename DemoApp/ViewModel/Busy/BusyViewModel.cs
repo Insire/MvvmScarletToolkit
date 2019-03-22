@@ -40,7 +40,7 @@ namespace DemoApp
         {
             using (BusyStack.GetToken())
             {
-                var viewModel = new ObservableBusyViewModel(CommandBuilder);
+                var viewModel = new ObservableBusyViewModel(CommandBuilder, Dispatcher);
                 _disposables.Add(viewModel, viewModel.Subscribe(this));
 
                 await Add(viewModel).ConfigureAwait(false);
@@ -59,7 +59,7 @@ namespace DemoApp
             return !IsBusy;
         }
 
-        public void OnNext(bool value)
+        public async void OnNext(bool value)
         {
             if (value)
             {
@@ -67,13 +67,13 @@ namespace DemoApp
             }
             else
             {
-                BusyStack.Pull();
+                await BusyStack.Pull();
             }
         }
 
-        public void OnError(Exception error)
+        public async void OnError(Exception error)
         {
-            BusyStack.Pull();
+            await BusyStack.Pull();
         }
 
         public void OnCompleted()
@@ -94,19 +94,19 @@ namespace DemoApp
             return BusyStack.Subscribe(observer);
         }
 
-        protected override Task LoadInternal(CancellationToken token)
+        protected override Task Load(CancellationToken token)
         {
             IsLoaded = true;
             return Task.CompletedTask;
         }
 
-        protected override async Task UnloadInternalAsync()
+        protected override async Task Unload(CancellationToken token)
         {
             await Clear().ConfigureAwait(false);
             IsLoaded = false;
         }
 
-        protected override Task RefreshInternal(CancellationToken token)
+        protected override Task Refresh(CancellationToken token)
         {
             return Task.CompletedTask;
         }

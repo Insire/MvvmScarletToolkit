@@ -12,18 +12,18 @@ namespace DemoApp
         {
         }
 
-        protected override Task LoadInternal(CancellationToken token)
+        protected override Task Load(CancellationToken token)
         {
             IsLoaded = true;
             return Task.CompletedTask;
         }
 
-        protected override Task RefreshInternal(CancellationToken token)
+        protected override Task Refresh(CancellationToken token)
         {
             return Task.CompletedTask;
         }
 
-        protected override async Task UnloadInternalAsync()
+        protected override async Task Unload(CancellationToken token)
         {
             await Clear().ConfigureAwait(false);
             IsLoaded = false;
