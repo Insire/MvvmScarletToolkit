@@ -75,12 +75,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        protected override async Task RefreshInternal(CancellationToken token)
+        protected override async Task Refresh(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
-                await Clear().ConfigureAwait(false);
-
                 await Dispatcher.Invoke(() =>
                 {
                     if (NoFilesCollectionView is null)
@@ -158,24 +156,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             using (BusyStack.GetToken())
             {
                 await items.ForEachAsync(Remove).ConfigureAwait(false);
-            }
-        }
-
-        public async Task Clear()
-        {
-            using (BusyStack.GetToken())
-            {
-                await Dispatcher.Invoke(() => _children.Clear()).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
-            }
-        }
-
-        protected override async Task UnloadInternalAsync()
-        {
-            using (BusyStack.GetToken())
-            {
-                await Clear().ConfigureAwait(false);
-                IsLoaded = false;
             }
         }
     }

@@ -28,7 +28,7 @@ namespace DemoApp
             Maximum = 100;
         }
 
-        protected override async Task LoadInternal(CancellationToken token)
+        protected override async Task Load(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -57,13 +57,13 @@ namespace DemoApp
             return !IsBusy && base.CanLoad();
         }
 
-        protected override Task UnloadInternalAsync()
+        protected override Task Unload(CancellationToken token)
         {
             IsLoaded = false;
             return Task.CompletedTask;
         }
 
-        protected override Task RefreshInternal(CancellationToken token)
+        protected override Task Refresh(CancellationToken token)
         {
             return Task.CompletedTask;
         }

@@ -81,19 +81,19 @@ namespace DemoApp
                 && DemoItems.Items != null;
         }
 
-        protected override Task LoadInternal(CancellationToken token)
+        protected override Task Load(CancellationToken token)
         {
             IsLoaded = true;
             return Task.CompletedTask;
         }
 
-        protected override Task UnloadInternalAsync()
+        protected override Task Unload(CancellationToken token)
         {
             IsLoaded = false;
             return Task.CompletedTask;
         }
 
-        protected override Task RefreshInternal(CancellationToken token)
+        protected override Task Refresh(CancellationToken token)
         {
             return Task.CompletedTask;
         }

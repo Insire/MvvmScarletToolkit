@@ -48,14 +48,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return !IsBusy && File.Exists(FullName);
         }
 
-        protected override Task UnloadInternalAsync()
-        {
-            // hm, not sure what to add here,
-            // maybe this is useful as an extension point for expensive operations later on
-            return Task.CompletedTask;
-        }
-
-        protected override async Task RefreshInternal(CancellationToken token)
+        protected override async Task Refresh(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {

@@ -45,17 +45,17 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        protected override Task LoadInternal(CancellationToken token)
+        protected override Task Load(CancellationToken token)
         {
             throw new System.NotImplementedException();
         }
 
-        protected override Task RefreshInternal(CancellationToken token)
+        protected override Task Refresh(CancellationToken token)
         {
             throw new System.NotImplementedException();
         }
 
-        protected override Task UnloadInternalAsync()
+        protected override Task Unload(CancellationToken token)
         {
             throw new System.NotImplementedException();
         }

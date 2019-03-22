@@ -33,7 +33,7 @@ namespace DemoApp
             DisplayName = displayName;
         }
 
-        protected override async Task LoadInternal(CancellationToken token)
+        protected override async Task Load(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -43,7 +43,7 @@ namespace DemoApp
             }
         }
 
-        protected override async Task RefreshInternal(CancellationToken token)
+        protected override async Task Refresh(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -51,7 +51,7 @@ namespace DemoApp
             }
         }
 
-        protected override Task UnloadInternalAsync()
+        protected override Task Unload(CancellationToken token)
         {
             IsLoaded = false;
             return Task.CompletedTask;

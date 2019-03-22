@@ -101,18 +101,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
-                await Clear().ConfigureAwait(false);
-
                 await LoadInternal(token).ConfigureAwait(false);
-            }
-        }
-
-        protected override async Task Unload(CancellationToken token)
-        {
-            using (BusyStack.GetToken())
-            {
-                await Clear().ConfigureAwait(false);
-                await Dispatcher.Invoke(() => IsLoaded = false).ConfigureAwait(false);
             }
         }
     }

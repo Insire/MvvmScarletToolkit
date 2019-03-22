@@ -45,7 +45,7 @@ namespace MvvmScarletToolkit.Observables
         {
         }
 
-        protected override async Task LoadInternal(CancellationToken token)
+        protected override async Task Load(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -59,7 +59,7 @@ namespace MvvmScarletToolkit.Observables
             return !IsBusy && base.CanLoad();
         }
 
-        protected override async Task UnloadInternalAsync()
+        protected override async Task Unload(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -73,7 +73,7 @@ namespace MvvmScarletToolkit.Observables
             return !IsBusy && base.CanUnload();
         }
 
-        protected override async Task RefreshInternal(CancellationToken token)
+        protected override async Task Refresh(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {

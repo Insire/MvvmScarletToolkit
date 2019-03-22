@@ -51,7 +51,7 @@ namespace MvvmScarletToolkit.Observables
                                         .WithSingleExecution(CommandManager);
 
             RefreshCommand = commandBuilder.Create(RefreshInternal, CanRefresh);
-            UnloadCommand = commandBuilder.Create(UnloadInternalAsync, CanUnload)
+            UnloadCommand = commandBuilder.Create(UnloadInternal, CanUnload)
                                           .WithSingleExecution(CommandManager);
         }
 
@@ -63,21 +63,38 @@ namespace MvvmScarletToolkit.Observables
             await Dispatcher.Invoke(() => base.OnPropertyChanged(propertyName)).ConfigureAwait(false);
         }
 
-        protected abstract Task LoadInternal(CancellationToken token);
+        protected abstract Task Load(CancellationToken token);
+
+        protected virtual async Task LoadInternal(CancellationToken token)
+        {
+            await Load(token).ConfigureAwait(false);
+
+            IsLoaded = true;
+        }
 
         protected virtual bool CanLoad()
         {
             return !IsLoaded;
         }
 
-        protected abstract Task UnloadInternalAsync();
+        protected abstract Task Unload(CancellationToken token);
+
+        protected virtual Task UnloadInternal(CancellationToken token)
+        {
+            return Unload(token);
+        }
 
         protected virtual bool CanUnload()
         {
             return IsLoaded;
         }
 
-        protected abstract Task RefreshInternal(CancellationToken token);
+        protected abstract Task Refresh(CancellationToken token);
+
+        protected virtual Task RefreshInternal(CancellationToken token)
+        {
+            return Refresh(token);
+        }
 
         protected virtual bool CanRefresh()
         {

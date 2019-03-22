@@ -154,7 +154,10 @@ namespace MvvmScarletToolkit.Observables
 
         private async Task RemoveRange(IList items)
         {
-            await RemoveRange(items?.Cast<T>()).ConfigureAwait(false);
+            using (BusyStack.GetToken())
+            {
+                await RemoveRange(items?.Cast<T>()).ConfigureAwait(false);
+            }
         }
 
         protected virtual bool CanRemove(T item)
@@ -175,7 +178,7 @@ namespace MvvmScarletToolkit.Observables
             return CanRemoveRange(items?.Cast<T>());
         }
 
-        public async Task Clear()
+        public async Task Clear(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -186,45 +189,61 @@ namespace MvvmScarletToolkit.Observables
 
         protected bool CanClear()
         {
-            return _items.Count > 0;
+            return _items.Count > 0 && !IsBusy;
         }
 
         protected abstract Task Load(CancellationToken token);
 
         protected virtual async Task LoadInternal(CancellationToken token)
         {
-            await Load(token).ConfigureAwait(false);
-
-            IsLoaded = true;
+            using (BusyStack.GetToken())
+            {
+                await Load(token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => IsLoaded = true).ConfigureAwait(false);
+            }
         }
 
         protected virtual bool CanLoad()
         {
-            return !IsLoaded;
+            return !IsLoaded && !IsBusy;
         }
 
-        protected abstract Task Unload(CancellationToken token);
-
-        protected virtual Task UnloadInternal(CancellationToken token)
+        protected virtual async Task Unload(CancellationToken token)
         {
-            return Unload(token);
+            using (BusyStack.GetToken())
+            {
+                await Clear(token).ConfigureAwait(false);
+            }
+        }
+
+        protected virtual async Task UnloadInternal(CancellationToken token)
+        {
+            using (BusyStack.GetToken())
+            {
+                await Unload(token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => IsLoaded = false).ConfigureAwait(false);
+            }
         }
 
         protected virtual bool CanUnload()
         {
-            return IsLoaded;
+            return IsLoaded && !IsBusy;
         }
 
         protected abstract Task Refresh(CancellationToken token);
 
-        protected virtual Task RefreshInternal(CancellationToken token)
+        protected virtual async Task RefreshInternal(CancellationToken token)
         {
-            return Refresh(token);
+            using (BusyStack.GetToken())
+            {
+                await Clear(token).ConfigureAwait(false);
+                await Refresh(token).ConfigureAwait(false);
+            }
         }
 
         protected virtual bool CanRefresh()
         {
-            return IsLoaded;
+            return IsLoaded && !IsBusy;
         }
     }
 }

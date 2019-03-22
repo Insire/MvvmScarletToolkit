@@ -187,7 +187,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        protected override async Task LoadInternal(CancellationToken token)
+        protected override async Task Load(CancellationToken token)
         {
             if (IsLoaded)
             {
@@ -233,6 +233,13 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         private bool CanToggle()
         {
             return !IsBusy;
+        }
+
+        protected override Task Unload(CancellationToken token)
+        {
+            // hm, not sure what to add here,
+            // maybe this is useful as an extension point for expensive operations later on
+            return Task.CompletedTask;
         }
     }
 }

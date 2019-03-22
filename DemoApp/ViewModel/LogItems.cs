@@ -35,7 +35,7 @@ namespace DemoApp
 
         protected override async Task Unload(CancellationToken token)
         {
-            await Clear().ConfigureAwait(false);
+            await Clear(token).ConfigureAwait(false);
             IsLoaded = false;
         }
 
