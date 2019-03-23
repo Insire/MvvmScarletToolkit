@@ -28,9 +28,10 @@ namespace MvvmScarletToolkit.Commands
             throw new NotImplementedException(); // TODO add implementation
         }
 
-        public static ICommandBuilderContext WithBusyNotification(this ICommandBuilderContext commandBuilder)
+        public static CommandBuilderContext<TArgument, TResult> WithBusyNotification<TArgument, TResult>(this CommandBuilderContext<TArgument, TResult> commandBuilder, IBusyStack busyStack)
         {
-            throw new NotImplementedException(); // TODO add implementation
+            commandBuilder.BusyStack = busyStack;
+            return commandBuilder;
         }
 
         /// <summary>

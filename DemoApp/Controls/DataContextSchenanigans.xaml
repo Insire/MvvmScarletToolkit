@@ -13,7 +13,7 @@
     </i:Interaction.Triggers>
 
     <UserControl.Resources>
-        <DataTemplate x:Key="DemoItemTemplate" DataType="{x:Type local:DemoItem}">
+        <DataTemplate DataType="{x:Type local:AsyncDemoItem}">
             <StackPanel Orientation="Horizontal">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Loaded">
@@ -21,14 +21,18 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
-                <Button Command="{Binding RefreshCommand}" Content="Refresh" />
+                <Button Command="{Binding RefreshCommand}" Content="Refresh" Margin="4 0" />
+
+                <Button Command="{Binding LoadCommand}" Content="Load" />
+
+                <Button Command="{Binding UnloadCommand}" Content="Unload" Margin="4 0" />
 
                 <TextBlock Text="{Binding DisplayName}">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Setter Property="Foreground" Value="Gray" />
+                            <Setter Property="Margin" Value="5 0" />
                             <Setter Property="VerticalAlignment" Value="Center" />
-                            <Setter Property="Margin" Value="5,0" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsLoaded}" Value="True">
                                     <Setter Property="Foreground" Value="Blue" />
@@ -45,20 +49,27 @@
     </UserControl.Resources>
 
     <Grid>
-
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="5" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ListBox Grid.Column="0"
-                 ItemTemplate="{StaticResource DemoItemTemplate}"
-                 ItemsSource="{Binding Items}" />
+        <ListBox Grid.Column="0" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" />
 
         <ContentControl Grid.Column="2"
                         VerticalAlignment="Top"
-                        Content="{Binding SelectedItem}"
-                        ContentTemplate="{StaticResource DemoItemTemplate}" />
+                        Content="{Binding SelectedItem}">
+            <ContentControl.ContentTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding IsBusy, StringFormat={}IsSelfBusy: {0}}" />
+                        <TextBlock Text="{Binding RefreshCommand.IsBusy, StringFormat={}IsRefreshCommandBusy: {0}}" />
+                        <TextBlock Text="{Binding LoadCommand.IsBusy, StringFormat={}IsLoadCommandBusy: {0}}" />
+                        <TextBlock Text="{Binding UnloadCommand.IsBusy, StringFormat={}IsUnloadCommandBusy: {0}}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ContentControl.ContentTemplate>
+        </ContentControl>
     </Grid>
 </UserControl>

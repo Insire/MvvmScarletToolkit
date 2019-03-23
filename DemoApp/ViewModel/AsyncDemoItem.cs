@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,24 +32,23 @@ namespace DemoApp
             : this(commandBuilder)
         {
             DisplayName = displayName;
+
+            RefreshCommand.PropertyChanged += RefreshCommand_PropertyChanged;
+        }
+
+        private void RefreshCommand_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Debug.WriteLine($"RefreshCommand of {DisplayName} updated (IsBusy: {RefreshCommand.IsBusy}");
         }
 
         protected override async Task Load(CancellationToken token)
         {
-            using (BusyStack.GetToken())
-            {
-                await Task.Delay(2000, token).ConfigureAwait(true);
-
-                IsLoaded = true;
-            }
+            await Task.Delay(2000, token).ConfigureAwait(true);
         }
 
         protected override async Task Refresh(CancellationToken token)
         {
-            using (BusyStack.GetToken())
-            {
-                await Task.Delay(2000).ConfigureAwait(true);
-            }
+            await Task.Delay(2000).ConfigureAwait(true);
         }
 
         protected override Task Unload(CancellationToken token)

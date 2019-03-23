@@ -16,24 +16,18 @@ namespace DemoApp
         {
             for (var i = 0; i < 10; i++)
             {
-                await Add(new AsyncDemoItem(CommandBuilder)
+                var item = new AsyncDemoItem(CommandBuilder)
                 {
-                    DisplayName = "Test X",
-                }).ConfigureAwait(false);
-            }
+                    DisplayName = "Test " + i,
+                };
 
-            IsLoaded = true;
+                await Add(item).ConfigureAwait(false);
+            }
         }
 
         protected override Task Refresh(CancellationToken token)
         {
             return Task.CompletedTask;
-        }
-
-        protected override async Task Unload(CancellationToken token)
-        {
-            await Clear(token).ConfigureAwait(false);
-            IsLoaded = false;
         }
     }
 }

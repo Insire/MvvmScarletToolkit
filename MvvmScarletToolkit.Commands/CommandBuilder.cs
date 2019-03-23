@@ -7,13 +7,17 @@ namespace MvvmScarletToolkit.Commands
 {
     public sealed class CommandBuilder
     {
+        private readonly Func<Action<bool>, IBusyStack> _busyStackFactory;
+
         public IScarletDispatcher Dispatcher { get; }
         public IScarletCommandManager CommandManager { get; }
 
-        public CommandBuilder(IScarletDispatcher dispatcher, IScarletCommandManager commandManager)
+        public CommandBuilder(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, Func<Action<bool>, IBusyStack> busyStackFactory)
         {
             Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
+
+            _busyStackFactory = busyStackFactory ?? throw new ArgumentNullException(nameof(busyStackFactory));
         }
 
         [Obsolete]
@@ -35,7 +39,7 @@ namespace MvvmScarletToolkit.Commands
 
         public CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(Func<TArgument, CancellationToken, Task<TResult>> execute, Func<TArgument, bool> canExecute)
         {
-            return new CommandBuilderContext<TArgument, TResult>(Dispatcher, CommandManager, execute, canExecute);
+            return new CommandBuilderContext<TArgument, TResult>(Dispatcher, CommandManager, _busyStackFactory, execute, canExecute);
         }
 
         internal static Task<TResult> DefaultExecute<TArgument, TResult>(TArgument parameter, CancellationToken token)

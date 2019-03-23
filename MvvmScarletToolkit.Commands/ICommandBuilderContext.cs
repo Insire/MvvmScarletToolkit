@@ -10,6 +10,8 @@ namespace MvvmScarletToolkit.Commands
 
         ICancelCommand CancelCommand { get; set; }
 
+        IBusyStack BusyStack { get; set; }
+
         void AddDecorator(Func<ConcurrentCommandBase, ConcurrentCommandBase> decoratorFactory);
     }
 }

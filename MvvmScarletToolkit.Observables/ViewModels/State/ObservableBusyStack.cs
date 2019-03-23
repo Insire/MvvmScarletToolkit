@@ -10,6 +10,8 @@ namespace MvvmScarletToolkit.Observables
 {
     public sealed class ObservableBusyStack : IObservable<bool>, IBusyStack, IDisposable
     {
+        private readonly Guid _id = Guid.NewGuid();
+
         private readonly ConcurrentBag<IDisposable> _items;
         private readonly List<IObserver<bool>> _observers;
         private readonly ReaderWriterLockSlim _syncRoot;
@@ -26,7 +28,6 @@ namespace MvvmScarletToolkit.Observables
             _syncRoot = new ReaderWriterLockSlim();
         }
 
-        [DebuggerStepThrough]
         public async Task Pull()
         {
             var oldValue = _items.TryPeek(out _);
@@ -39,10 +40,9 @@ namespace MvvmScarletToolkit.Observables
             }
 
             await NotifyOwner(newValue).ConfigureAwait(false);
-            NotifySubscribers(newValue);
+            await NotifySubscribers(newValue).ConfigureAwait(false);
         }
 
-        [DebuggerStepThrough]
         public async Task Push(IDisposable token)
         {
             var oldValue = _items.TryPeek(out _);
@@ -55,33 +55,50 @@ namespace MvvmScarletToolkit.Observables
             }
 
             await NotifyOwner(newValue).ConfigureAwait(false);
-            NotifySubscribers(newValue);
+            await NotifySubscribers(newValue).ConfigureAwait(false);
         }
 
-        private void NotifySubscribers(bool newValue)
+        [DebuggerStepThrough]
+        private async Task NotifySubscribers(bool newValue)
         {
             _syncRoot.EnterReadLock();
+
             for (var i = _observers.Count - 1; i >= 0; i--)
             {
                 var observer = _observers[i];
-                observer.OnNext(newValue);
+                await InvokeOnChanged(observer, newValue);
             }
+
             _syncRoot.ExitReadLock();
         }
 
         [DebuggerStepThrough]
-        private Task NotifyOwner(bool changedValue)
+        private Task NotifyOwner(bool newValue)
         {
-            return _dispatcher.Invoke(() => _onChanged.Invoke(changedValue));
+            return InvokeOnChanged(newValue);
         }
 
         public IDisposable Subscribe(IObserver<bool> observer)
         {
             _syncRoot.EnterWriteLock();
+
             var result = new DisposalToken(observer, _observers);
+
             _syncRoot.ExitWriteLock();
 
             return result;
+        }
+
+        private Task InvokeOnChanged(bool newValue)
+        {
+            Debug.WriteLine($"ObservableBusyStack({_id}): NotifyOwner {newValue}");
+            return _dispatcher.Invoke(() => _onChanged(newValue));
+        }
+
+        private Task InvokeOnChanged(IObserver<bool> observer, bool newValue)
+        {
+            Debug.WriteLine($"ObservableBusyStack({_id}): NotifySubscriber {newValue}");
+            return _dispatcher.Invoke(() => observer.OnNext(newValue));
         }
 
         /// <summary>

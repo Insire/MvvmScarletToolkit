@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Observables
 {
     public abstract class ViewModelBase : ObservableObject
     {
-        protected readonly ObservableBusyStack BusyStack;
+        protected readonly IBusyStack BusyStack;
         protected readonly CommandBuilder CommandBuilder;
         protected readonly IScarletCommandManager CommandManager;
         protected readonly IScarletDispatcher Dispatcher;
@@ -48,17 +48,22 @@ namespace MvvmScarletToolkit.Observables
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
 
             LoadCommand = commandBuilder.Create(LoadInternal, CanLoad)
-                                        .WithSingleExecution(CommandManager);
+                                        .WithSingleExecution(CommandManager)
+                                        .WithBusyNotification(BusyStack);
 
-            RefreshCommand = commandBuilder.Create(RefreshInternal, CanRefresh);
+            RefreshCommand = commandBuilder.Create(RefreshInternal, CanRefresh)
+                                            .WithSingleExecution(CommandManager)
+                                            .WithBusyNotification(BusyStack);
+
             UnloadCommand = commandBuilder.Create(UnloadInternal, CanUnload)
-                                          .WithSingleExecution(CommandManager);
+                                          .WithSingleExecution(CommandManager)
+                                          .WithBusyNotification(BusyStack);
         }
 
         // overriding here, instead of adding Dispatcher call to base class,
         // since the ObservableObject class, doesnt know anything about the concurrent usecases,
         // that i introduce here and higher up the inheritance tree
-        protected override async void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected sealed override async void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             await Dispatcher.Invoke(() => base.OnPropertyChanged(propertyName)).ConfigureAwait(false);
         }
@@ -74,19 +79,21 @@ namespace MvvmScarletToolkit.Observables
 
         protected virtual bool CanLoad()
         {
-            return !IsLoaded;
+            return !IsLoaded && !IsBusy;
         }
 
         protected abstract Task Unload(CancellationToken token);
 
-        protected virtual Task UnloadInternal(CancellationToken token)
+        protected virtual async Task UnloadInternal(CancellationToken token)
         {
-            return Unload(token);
+            await Unload(token).ConfigureAwait(false);
+
+            IsLoaded = false;
         }
 
         protected virtual bool CanUnload()
         {
-            return IsLoaded;
+            return IsLoaded && !IsBusy;
         }
 
         protected abstract Task Refresh(CancellationToken token);
@@ -98,7 +105,7 @@ namespace MvvmScarletToolkit.Observables
 
         protected virtual bool CanRefresh()
         {
-            return IsLoaded;
+            return IsLoaded && !IsBusy;
         }
     }
 }

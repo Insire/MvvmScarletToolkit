@@ -11,6 +11,7 @@ namespace MvvmScarletToolkit.Observables
     /// </summary>
     public sealed class BusyStack : IBusyStack
     {
+        private readonly Guid _id = Guid.NewGuid();
         private readonly ConcurrentBag<IDisposable> _items;
         private readonly Action<bool> _onChanged;
         private readonly IScarletDispatcher _dispatcher;
@@ -23,19 +24,33 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [DebuggerStepThrough]
-        public Task Pull()
+        public async Task Pull()
         {
-            var result = _items.TryTake(out _);
+            var oldValue = _items.TryPeek(out _);
+            _ = _items.TryTake(out _);
+            var newValue = _items.TryPeek(out _);
 
-            return InvokeOnChanged(result); // could be improved to only be called, when the internal state changes
+            if (oldValue.Equals(newValue))
+            {
+                return;
+            }
+
+            await InvokeOnChanged(newValue).ConfigureAwait(false);
         }
 
         [DebuggerStepThrough]
-        public Task Push(IDisposable token)
+        public async Task Push(IDisposable token)
         {
+            var oldValue = _items.TryPeek(out _);
             _items.Add(token);
+            var newValue = _items.TryPeek(out _);
 
-            return InvokeOnChanged(true); // could be improved to only be called, when the internal state changes
+            if (oldValue.Equals(newValue))
+            {
+                return;
+            }
+
+            await InvokeOnChanged(newValue).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -48,9 +63,10 @@ namespace MvvmScarletToolkit.Observables
             return new BusyToken(this);
         }
 
-        private Task InvokeOnChanged(bool hasItems)
+        private Task InvokeOnChanged(bool newValue)
         {
-            return _dispatcher.Invoke(() => _onChanged(hasItems));
+            Debug.WriteLine($"BusyStack({_id}): Changed {newValue}");
+            return _dispatcher.Invoke(() => _onChanged(newValue));
         }
     }
 }

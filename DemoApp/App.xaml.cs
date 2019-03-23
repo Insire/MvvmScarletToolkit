@@ -14,7 +14,7 @@ namespace DemoApp
             base.OnStartup(e);
             var commandManager = new ScarletCommandManager();
             var dispatcher = new ScarletDispatcher();
-            var commandBuilder = new CommandBuilder(dispatcher, commandManager);
+            var commandBuilder = new CommandBuilder(dispatcher, commandManager, (lambda) => new BusyStack(lambda, dispatcher));
 
             var scenes = new[]
             {
