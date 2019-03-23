@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit.Observables
     /// </summary>
     public sealed class BusyStack : IBusyStack
     {
-        private readonly ConcurrentBag<BusyToken> _items;
+        private readonly ConcurrentBag<IDisposable> _items;
         private readonly Action<bool> _onChanged;
         private readonly IScarletDispatcher _dispatcher;
 
@@ -19,7 +19,7 @@ namespace MvvmScarletToolkit.Observables
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
-            _items = new ConcurrentBag<BusyToken>();
+            _items = new ConcurrentBag<IDisposable>();
         }
 
         [DebuggerStepThrough]
@@ -31,7 +31,7 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [DebuggerStepThrough]
-        public Task Push(BusyToken token)
+        public Task Push(IDisposable token)
         {
             _items.Add(token);
 
@@ -39,11 +39,11 @@ namespace MvvmScarletToolkit.Observables
         }
 
         /// <summary>
-        /// Returns a new <see cref="BusyToken"/> thats associated with <see cref="this"/> instance of a <see cref="BusyStack"/>
+        /// Returns a new <see cref="IDisposable"/> thats associated with <see cref="this"/> instance of a <see cref="IDisposable"/>
         /// </summary>
-        /// <returns>a new <see cref="BusyToken"/></returns>
+        /// <returns>a new <see cref="IDisposable"/></returns>
         [DebuggerStepThrough]
-        public BusyToken GetToken()
+        public IDisposable GetToken()
         {
             return new BusyToken(this);
         }

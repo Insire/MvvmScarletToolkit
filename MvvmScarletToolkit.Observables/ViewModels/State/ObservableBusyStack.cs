@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Observables
 {
     public sealed class ObservableBusyStack : IObservable<bool>, IBusyStack, IDisposable
     {
-        private readonly ConcurrentBag<BusyToken> _items;
+        private readonly ConcurrentBag<IDisposable> _items;
         private readonly List<IObserver<bool>> _observers;
         private readonly ReaderWriterLockSlim _syncRoot;
         private readonly Action<bool> _onChanged;
@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit.Observables
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
-            _items = new ConcurrentBag<BusyToken>();
+            _items = new ConcurrentBag<IDisposable>();
             _observers = new List<IObserver<bool>>();
             _syncRoot = new ReaderWriterLockSlim();
         }
@@ -43,7 +43,7 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [DebuggerStepThrough]
-        public async Task Push(BusyToken token)
+        public async Task Push(IDisposable token)
         {
             var oldValue = _items.TryPeek(out _);
             _items.Add(token);
@@ -89,7 +89,7 @@ namespace MvvmScarletToolkit.Observables
         /// </summary>
         /// <returns>a new <see cref="BusyToken"/></returns>
         [DebuggerStepThrough]
-        public BusyToken GetToken()
+        public IDisposable GetToken()
         {
             return new BusyToken(this);
         }
