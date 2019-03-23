@@ -1,20 +1,21 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Observables
 {
+    /// <summary>
+    /// Will notify its owner and all subscribers via a provided action on if it contains more tokens
+    /// </summary>
     public sealed class ObservableBusyStack : IObservable<bool>, IBusyStack, IDisposable
     {
         private readonly Guid _id = Guid.NewGuid();
 
         private readonly ConcurrentBag<IDisposable> _items;
-        private readonly List<IObserver<bool>> _observers;
-        private readonly ReaderWriterLockSlim _syncRoot;
+        private readonly ConcurrentDictionary<IObserver<bool>, IObserver<bool>> _observers;
         private readonly Action<bool> _onChanged;
         private readonly IScarletDispatcher _dispatcher;
 
@@ -24,8 +25,7 @@ namespace MvvmScarletToolkit.Observables
 
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
             _items = new ConcurrentBag<IDisposable>();
-            _observers = new List<IObserver<bool>>();
-            _syncRoot = new ReaderWriterLockSlim();
+            _observers = new ConcurrentDictionary<IObserver<bool>, IObserver<bool>>();
         }
 
         public async Task Pull()
@@ -58,21 +58,14 @@ namespace MvvmScarletToolkit.Observables
             await NotifySubscribers(newValue).ConfigureAwait(false);
         }
 
-        [DebuggerStepThrough]
         private async Task NotifySubscribers(bool newValue)
         {
-            _syncRoot.EnterReadLock();
-
-            for (var i = _observers.Count - 1; i >= 0; i--)
+            foreach (var observer in _observers.Select(p => p.Key).ToArray())
             {
-                var observer = _observers[i];
                 await InvokeOnChanged(observer, newValue);
             }
-
-            _syncRoot.ExitReadLock();
         }
 
-        [DebuggerStepThrough]
         private Task NotifyOwner(bool newValue)
         {
             return InvokeOnChanged(newValue);
@@ -80,31 +73,33 @@ namespace MvvmScarletToolkit.Observables
 
         public IDisposable Subscribe(IObserver<bool> observer)
         {
-            _syncRoot.EnterWriteLock();
-
             var result = new DisposalToken(observer, _observers);
-
-            _syncRoot.ExitWriteLock();
 
             return result;
         }
 
+        [DebuggerStepThrough]
         private Task InvokeOnChanged(bool newValue)
         {
+#if DEBUG
             Debug.WriteLine($"ObservableBusyStack({_id}): NotifyOwner {newValue}");
+#endif
             return _dispatcher.Invoke(() => _onChanged(newValue));
         }
 
+        [DebuggerStepThrough]
         private Task InvokeOnChanged(IObserver<bool> observer, bool newValue)
         {
+#if DEBUG
             Debug.WriteLine($"ObservableBusyStack({_id}): NotifySubscriber {newValue}");
+#endif
             return _dispatcher.Invoke(() => observer.OnNext(newValue));
         }
 
         /// <summary>
-        /// Returns a new <see cref="BusyToken"/> thats associated with <see cref="this"/> instance of a <see cref="BusyStack"/>
+        /// Returns a new <see cref="IDisposable"/> thats associated with <see cref="this"/> instance of a <see cref="IDisposable"/>
         /// </summary>
-        /// <returns>a new <see cref="BusyToken"/></returns>
+        /// <returns>a new <see cref="IDisposable"/></returns>
         [DebuggerStepThrough]
         public IDisposable GetToken()
         {
@@ -113,25 +108,28 @@ namespace MvvmScarletToolkit.Observables
 
         public void Dispose()
         {
-            _syncRoot.Dispose();
+            foreach (var item in _items.ToArray())
+                _items.TryTake(out _);
+
+            _observers.Clear();
         }
 
         private sealed class DisposalToken : IDisposable
         {
-            private readonly ICollection<IObserver<bool>> _observerCollection;
+            private readonly ConcurrentDictionary<IObserver<bool>, IObserver<bool>> _observerCollection;
             private readonly IObserver<bool> _observer;
 
-            public DisposalToken(IObserver<bool> observer, ICollection<IObserver<bool>> observerCollection)
+            public DisposalToken(IObserver<bool> observer, ConcurrentDictionary<IObserver<bool>, IObserver<bool>> observerCollection)
             {
                 _observerCollection = observerCollection ?? throw new ArgumentNullException(nameof(observerCollection));
                 _observer = observer ?? throw new ArgumentNullException(nameof(observer));
 
-                _observerCollection.Add(observer);
+                _observerCollection.AddOrUpdate(observer, p => observer, (o, p) => observer);
             }
 
             public void Dispose()
             {
-                _observerCollection.Remove(_observer);
+                _observerCollection.TryRemove(_observer, out _);
             }
         }
     }

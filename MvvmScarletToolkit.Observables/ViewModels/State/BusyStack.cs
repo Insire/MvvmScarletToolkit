@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
-    /// BusyStack will handle notifying a viewmodel on if actions are pending
+    /// Will notify its owner via a provided action on if it contains more tokens
     /// </summary>
     public sealed class BusyStack : IBusyStack
     {
@@ -23,7 +23,6 @@ namespace MvvmScarletToolkit.Observables
             _items = new ConcurrentBag<IDisposable>();
         }
 
-        [DebuggerStepThrough]
         public async Task Pull()
         {
             var oldValue = _items.TryPeek(out _);
@@ -38,7 +37,6 @@ namespace MvvmScarletToolkit.Observables
             await InvokeOnChanged(newValue).ConfigureAwait(false);
         }
 
-        [DebuggerStepThrough]
         public async Task Push(IDisposable token)
         {
             var oldValue = _items.TryPeek(out _);
@@ -63,9 +61,12 @@ namespace MvvmScarletToolkit.Observables
             return new BusyToken(this);
         }
 
+        [DebuggerStepThrough]
         private Task InvokeOnChanged(bool newValue)
         {
+#if DEBUG
             Debug.WriteLine($"BusyStack({_id}): Changed {newValue}");
+#endif
             return _dispatcher.Invoke(() => _onChanged(newValue));
         }
     }
