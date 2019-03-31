@@ -116,7 +116,7 @@ namespace MvvmScarletToolkit.Commands
 
                 try
                 {
-                    Execution = new NotifyTaskCompletion<TResult>(_command(argument, _cancelCommand.Token));
+                    Execution = new NotifyTaskCompletion<TResult>(_command.Invoke(argument, _cancelCommand.Token));
                     await Execution.TaskCompletion.ConfigureAwait(true);
                 }
                 finally

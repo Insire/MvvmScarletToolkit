@@ -205,7 +205,10 @@ namespace MvvmScarletToolkit.Observables
 
         protected virtual bool CanLoad()
         {
-            return !IsLoaded && !IsBusy;
+            return !IsLoaded
+                && !UnloadCommand.IsBusy
+                && !LoadCommand.IsBusy
+                && !RefreshCommand.IsBusy;
         }
 
         protected virtual async Task Unload(CancellationToken token)
@@ -227,7 +230,10 @@ namespace MvvmScarletToolkit.Observables
 
         protected virtual bool CanUnload()
         {
-            return IsLoaded && !IsBusy;
+            return IsLoaded
+                && !UnloadCommand.IsBusy
+                && !LoadCommand.IsBusy
+                && !RefreshCommand.IsBusy;
         }
 
         protected abstract Task Refresh(CancellationToken token);
@@ -243,7 +249,10 @@ namespace MvvmScarletToolkit.Observables
 
         protected virtual bool CanRefresh()
         {
-            return IsLoaded && !IsBusy;
+            return IsLoaded
+                && !UnloadCommand.IsBusy
+                && !LoadCommand.IsBusy
+                && !RefreshCommand.IsBusy;
         }
     }
 }
