@@ -1,6 +1,7 @@
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -8,12 +9,37 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Observables
 {
-    public abstract class ViewModelBase : ObservableObject
+    public abstract class ViewModelBase<TModel> : ViewModelBase
+    {
+        private TModel _model;
+        [Bindable(true, BindingDirection.OneWay)]
+        public TModel Model
+        {
+            get { return _model; }
+            protected set { SetValue(ref _model, value); }
+        }
+
+        protected ViewModelBase(CommandBuilder commandBuilder, TModel model)
+            : base(commandBuilder)
+        {
+            Model = model;
+        }
+    }
+
+    public abstract class ViewModelBase
     {
         protected readonly IBusyStack BusyStack;
         protected readonly CommandBuilder CommandBuilder;
         protected readonly IScarletCommandManager CommandManager;
         protected readonly IScarletDispatcher Dispatcher;
+
+        protected ChangeTracker ChangeTracker { get; }
+        protected bool SkipChangeTracking { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [Bindable(true, BindingDirection.OneWay)]
+        public bool IsChanged => ChangeTracker.HasChanged;
 
         private bool _isBusy;
         [Bindable(true, BindingDirection.OneWay)]
@@ -60,12 +86,39 @@ namespace MvvmScarletToolkit.Observables
                                           .WithBusyNotification(BusyStack);
         }
 
-        // overriding here, instead of adding Dispatcher call to base class,
-        // since the ObservableObject class, doesnt know anything about the concurrent usecases,
-        // that i introduce here and higher up the inheritance tree
-        protected sealed override async void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected async void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
-            await Dispatcher.Invoke(() => base.OnPropertyChanged(propertyName)).ConfigureAwait(false);
+            await Dispatcher.Invoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName))).ConfigureAwait(false);
+        }
+
+        protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
+        {
+            return SetValue(ref field, value, null, null, propertyName);
+        }
+
+        protected bool SetValue<T>(ref T field, T value, Action OnChanged, [CallerMemberName]string propertyName = null)
+        {
+            return SetValue(ref field, value, null, OnChanged, propertyName);
+        }
+
+        protected virtual bool SetValue<T>(ref T field, T value, Action OnChanging, Action OnChanged, [CallerMemberName]string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+
+            OnChanging?.Invoke();
+
+            field = value;
+            OnPropertyChanged(propertyName);
+
+            OnChanged?.Invoke();
+
+            if (!SkipChangeTracking && ChangeTracker.Update(value, propertyName))
+                OnPropertyChanged(nameof(IsChanged));
+
+            return true;
         }
 
         protected abstract Task Load(CancellationToken token);

@@ -50,12 +50,12 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             throw new System.NotImplementedException();
         }
 
-        protected override Task Refresh(CancellationToken token)
+        protected override Task Unload(CancellationToken token)
         {
             throw new System.NotImplementedException();
         }
 
-        protected override Task Unload(CancellationToken token)
+        protected override Task Refresh(CancellationToken token)
         {
             throw new System.NotImplementedException();
         }
