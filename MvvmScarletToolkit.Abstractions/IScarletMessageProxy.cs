@@ -1,4 +1,4 @@
-﻿namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Abstractions
 {
     /// <summary>
     /// <para>Message proxy definition.</para>

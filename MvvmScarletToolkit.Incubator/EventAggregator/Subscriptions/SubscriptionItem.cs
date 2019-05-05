@@ -1,4 +1,6 @@
-﻿namespace MvvmScarletToolkit
+using MvvmScarletToolkit.Abstractions;
+
+namespace MvvmScarletToolkit
 {
     internal class SubscriptionItem
     {

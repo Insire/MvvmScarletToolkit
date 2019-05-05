@@ -1,4 +1,4 @@
-﻿namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Abstractions
 {
     /// <summary>
     /// A TinyMessage to be published/delivered by TinyMessenger

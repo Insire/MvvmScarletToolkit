@@ -11,11 +11,13 @@ namespace MvvmScarletToolkit.Commands
 
         public IScarletDispatcher Dispatcher { get; }
         public IScarletCommandManager CommandManager { get; }
+        public IMessenger Messenger { get; }
 
-        public CommandBuilder(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, Func<Action<bool>, IBusyStack> busyStackFactory)
+        public CommandBuilder(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, Func<Action<bool>, IBusyStack> busyStackFactory, IMessenger messenger)
         {
             Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
+            Messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
 
             _busyStackFactory = busyStackFactory ?? throw new ArgumentNullException(nameof(busyStackFactory));
         }

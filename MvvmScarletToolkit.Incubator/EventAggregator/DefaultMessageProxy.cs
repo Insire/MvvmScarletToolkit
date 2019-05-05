@@ -1,4 +1,6 @@
-﻿namespace MvvmScarletToolkit
+using MvvmScarletToolkit.Abstractions;
+
+namespace MvvmScarletToolkit
 {
     /// <summary>
     /// <para>Default "pass through" proxy.</para>

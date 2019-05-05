@@ -82,7 +82,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         private void OnTreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            SelectedItem = e.NewValue;
+            SetCurrentValue(SelectedItemProperty, e.NewValue);
         }
 
         private static Action<int> GetBringIndexIntoView(Panel itemsHostPanel)

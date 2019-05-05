@@ -1,4 +1,4 @@
-﻿namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Abstractions
 {
     /// <summary>
     /// Represents a message subscription

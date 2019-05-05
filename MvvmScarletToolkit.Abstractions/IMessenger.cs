@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Abstractions
 {
     /// <summary>
     /// Messenger hub responsible for taking subscriptions/publications and delivering of messages.

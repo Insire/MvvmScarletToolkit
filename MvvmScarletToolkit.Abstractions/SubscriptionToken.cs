@@ -1,6 +1,6 @@
 using System;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Abstractions
 {
     /// <summary>
     /// Represents an active subscription to a message
@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit
 
         public SubscriptionToken(IMessenger hub, Type messageType)
         {
-            if (hub == null)
+            if (hub is null)
             {
                 throw new ArgumentNullException(nameof(hub));
             }

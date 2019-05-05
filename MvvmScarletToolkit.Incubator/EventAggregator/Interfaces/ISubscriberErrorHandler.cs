@@ -1,4 +1,5 @@
-﻿using System;
+using MvvmScarletToolkit.Abstractions;
+using System;
 
 namespace MvvmScarletToolkit
 {
