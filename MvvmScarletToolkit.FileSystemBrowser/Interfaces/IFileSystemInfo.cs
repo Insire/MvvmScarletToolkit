@@ -2,6 +2,7 @@ using MvvmScarletToolkit.Commands;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
@@ -10,20 +11,20 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         /// <summary>
         /// conditional refresh
         /// </summary>
-        ConcurrentCommandBase LoadCommand { get; }
+        ICommand LoadCommand { get; }
 
-        ConcurrentCommandBase UnloadCommand { get; }
+        ICommand UnloadCommand { get; }
         /// <summary>
         /// explicit refresh, updates filtering and the current children
         /// </summary>
-        ConcurrentCommandBase RefreshCommand { get; }
+        ICommand RefreshCommand { get; }
 
         /// <summary>
         /// delete an object from the filesystem
         /// </summary>
-        ConcurrentCommandBase DeleteCommand { get; }
+        ICommand DeleteCommand { get; }
 
-        ConcurrentCommandBase ToggleExpandCommand { get; }
+        ICommand ToggleExpandCommand { get; }
 
         /// <summary>
         /// the logical parent

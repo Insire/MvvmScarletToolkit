@@ -5,19 +5,17 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
-    public sealed class CommandBuilder
+    public sealed class CommandBuilder : ICommandBuilder
     {
         private readonly Func<Action<bool>, IBusyStack> _busyStackFactory;
 
         public IScarletDispatcher Dispatcher { get; }
         public IScarletCommandManager CommandManager { get; }
-        public IMessenger Messenger { get; }
 
-        public CommandBuilder(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, Func<Action<bool>, IBusyStack> busyStackFactory, IMessenger messenger)
+        public CommandBuilder(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, Func<Action<bool>, IBusyStack> busyStackFactory)
         {
             Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
-            Messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
 
             _busyStackFactory = busyStackFactory ?? throw new ArgumentNullException(nameof(busyStackFactory));
         }

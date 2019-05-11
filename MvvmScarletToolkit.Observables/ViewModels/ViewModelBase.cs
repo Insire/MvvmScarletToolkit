@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -58,13 +59,13 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual ConcurrentCommandBase LoadCommand { get; }
+        public virtual ICommand LoadCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual ConcurrentCommandBase RefreshCommand { get; }
+        public virtual ICommand RefreshCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual ConcurrentCommandBase UnloadCommand { get; }
+        public virtual ICommand UnloadCommand { get; }
 
         protected ViewModelBase(CommandBuilder commandBuilder)
         {
@@ -75,20 +76,23 @@ namespace MvvmScarletToolkit.Observables
 
             LoadCommand = commandBuilder.Create(LoadInternal, CanLoad)
                                         .WithSingleExecution(CommandManager)
-                                        .WithBusyNotification(BusyStack);
+                                        .WithBusyNotification(BusyStack)
+                                        .Build();
 
             RefreshCommand = commandBuilder.Create(RefreshInternal, CanRefresh)
                                             .WithSingleExecution(CommandManager)
-                                            .WithBusyNotification(BusyStack);
+                                            .WithBusyNotification(BusyStack)
+                                            .Build();
 
             UnloadCommand = commandBuilder.Create(UnloadInternal, CanUnload)
                                           .WithSingleExecution(CommandManager)
-                                          .WithBusyNotification(BusyStack);
+                                          .WithBusyNotification(BusyStack)
+                                          .Build();
         }
 
-        protected async void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
-            await Dispatcher.Invoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName))).ConfigureAwait(false);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
@@ -121,7 +125,19 @@ namespace MvvmScarletToolkit.Observables
             return true;
         }
 
-        protected abstract Task Load(CancellationToken token);
+        protected virtual async Task Load(CancellationToken token)
+        {
+            if (IsLoaded)
+            {
+                return;
+            }
+
+            using (BusyStack.GetToken())
+            {
+                await RefreshInternal(token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => IsLoaded = true).ConfigureAwait(false);
+            }
+        }
 
         protected virtual async Task LoadInternal(CancellationToken token)
         {

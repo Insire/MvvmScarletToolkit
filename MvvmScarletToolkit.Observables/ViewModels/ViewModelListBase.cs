@@ -6,20 +6,25 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Observables
 {
-    public abstract class ViewModelListBase<T> : ObservableObject
-        where T : class, INotifyPropertyChanged
+    public abstract class ViewModelListBase<TViewModel>
+        where TViewModel : class, INotifyPropertyChanged
     {
-        private readonly ObservableCollection<T> _items;
+        private readonly ObservableCollection<TViewModel> _items;
 
         protected readonly ObservableBusyStack BusyStack;
         protected readonly CommandBuilder CommandBuilder;
         protected readonly IScarletDispatcher Dispatcher;
         protected readonly IScarletCommandManager CommandManager;
+
+        protected bool Disposed { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _isBusy;
         [Bindable(true, BindingDirection.OneWay)]
@@ -37,15 +42,15 @@ namespace MvvmScarletToolkit.Observables
             protected set { SetValue(ref _isLoaded, value); }
         }
 
-        private T _selectedItem;
+        private TViewModel _selectedItem;
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual T SelectedItem
+        public virtual TViewModel SelectedItem
         {
             get { return _selectedItem; }
             set { SetValue(ref _selectedItem, value); }
         }
 
-        public T this[int index]
+        public TViewModel this[int index]
         {
             get { return _items[index]; }
         }
@@ -69,7 +74,7 @@ namespace MvvmScarletToolkit.Observables
         public virtual ConcurrentCommandBase UnloadCommand { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public IReadOnlyCollection<T> Items { get; }
+        public IReadOnlyCollection<TViewModel> Items { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
         public int Count => Items.Count;
@@ -77,15 +82,15 @@ namespace MvvmScarletToolkit.Observables
         protected ViewModelListBase(CommandBuilder commandBuilder)
         {
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
-            Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.Dispatcher));
-            CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.CommandManager));
+            Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(CommandBuilder.Dispatcher));
+            CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(CommandBuilder.CommandManager));
 
-            _items = new ObservableCollection<T>();
+            _items = new ObservableCollection<TViewModel>();
 
-            Items = new ReadOnlyObservableCollection<T>(_items);
+            Items = new ReadOnlyObservableCollection<TViewModel>(_items);
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
 
-            RemoveCommand = commandBuilder.Create<T>(Remove, CanRemove)
+            RemoveCommand = commandBuilder.Create<TViewModel>(Remove, CanRemove)
                                           .WithSingleExecution(CommandManager);
 
             RemoveRangeCommand = commandBuilder.Create<IList>(RemoveRange, CanRemoveRange)
@@ -103,7 +108,7 @@ namespace MvvmScarletToolkit.Observables
                                           .WithSingleExecution(CommandManager);
         }
 
-        public virtual async Task Add(T item)
+        public virtual async Task Add(TViewModel item)
         {
             if (item is null)
             {
@@ -117,7 +122,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        public virtual async Task AddRange(IEnumerable<T> items)
+        public virtual async Task AddRange(IEnumerable<TViewModel> items)
         {
             if (items is null)
             {
@@ -130,7 +135,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        public virtual async Task Remove(T item)
+        public virtual async Task Remove(TViewModel item)
         {
             using (BusyStack.GetToken())
             {
@@ -139,7 +144,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        public virtual async Task RemoveRange(IEnumerable<T> items)
+        public virtual async Task RemoveRange(IEnumerable<TViewModel> items)
         {
             if (items is null)
             {
@@ -156,18 +161,18 @@ namespace MvvmScarletToolkit.Observables
         {
             using (BusyStack.GetToken())
             {
-                await RemoveRange(items?.Cast<T>()).ConfigureAwait(false);
+                await RemoveRange(items?.Cast<TViewModel>()).ConfigureAwait(false);
             }
         }
 
-        protected virtual bool CanRemove(T item)
+        protected virtual bool CanRemove(TViewModel item)
         {
             return CanClear()
                 && !(item is null)
                 && _items.Contains(item);
         }
 
-        protected virtual bool CanRemoveRange(IEnumerable<T> items)
+        protected virtual bool CanRemoveRange(IEnumerable<TViewModel> items)
         {
             return CanClear()
                 && items?.Any(p => _items.Contains(p)) == true;
@@ -175,7 +180,7 @@ namespace MvvmScarletToolkit.Observables
 
         protected virtual bool CanRemoveRange(IList items)
         {
-            return CanRemoveRange(items?.Cast<T>());
+            return CanRemoveRange(items?.Cast<TViewModel>());
         }
 
         public async Task Clear(CancellationToken token)
@@ -192,7 +197,10 @@ namespace MvvmScarletToolkit.Observables
             return _items.Count > 0 && !IsBusy;
         }
 
-        protected abstract Task Load(CancellationToken token);
+        protected virtual Task Load(CancellationToken token)
+        {
+            return Refresh(token);
+        }
 
         protected virtual async Task LoadInternal(CancellationToken token)
         {
@@ -253,6 +261,38 @@ namespace MvvmScarletToolkit.Observables
                 && !UnloadCommand.IsBusy
                 && !LoadCommand.IsBusy
                 && !RefreshCommand.IsBusy;
+        }
+
+        protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
+        {
+            return SetValue(ref field, value, null, null, propertyName);
+        }
+
+        protected bool SetValue<T>(ref T field, T value, Action OnChanged, [CallerMemberName]string propertyName = null)
+        {
+            return SetValue(ref field, value, null, OnChanged, propertyName);
+        }
+
+        protected virtual bool SetValue<T>(ref T field, T value, Action OnChanging, Action OnChanged, [CallerMemberName]string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+
+            OnChanging?.Invoke();
+
+            field = value;
+            OnPropertyChanged(propertyName);
+
+            OnChanged?.Invoke();
+
+            return true;
+        }
+
+        protected async void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        {
+            await Dispatcher.Invoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName))).ConfigureAwait(false);
         }
     }
 }

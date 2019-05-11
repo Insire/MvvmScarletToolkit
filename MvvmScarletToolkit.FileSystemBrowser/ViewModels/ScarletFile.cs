@@ -39,7 +39,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             using (BusyStack.GetToken())
             {
                 await Task.Run(() => File.Delete(FullName)).ConfigureAwait(false);
-                await Parent.RefreshCommand.ExecuteAsync(token).ConfigureAwait(false);
+                Parent.RefreshCommand.Execute(null);
             }
         }
 

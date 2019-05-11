@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
@@ -37,10 +38,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public ConcurrentCommandBase DeleteCommand { get; protected set; }
+        public ICommand DeleteCommand { get; protected set; }
 
         [Bindable(true, BindingDirection.OneWay)]
-        public ConcurrentCommandBase ToggleExpandCommand { get; protected set; }
+        public ICommand ToggleExpandCommand { get; protected set; }
 
         private IFileSystemDirectory _parent;
         [Bindable(true, BindingDirection.OneWay)]
@@ -150,10 +151,15 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         private ScarletFileSystemBase(CommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            DeleteCommand = commandBuilder.Create(Delete, CanDelete)
-                                        .WithSingleExecution(CommandManager);
-            ToggleExpandCommand = commandBuilder.Create(Toggle, CanToggle)
-                                        .WithSingleExecution(CommandManager);
+            DeleteCommand = commandBuilder
+                .Create(Delete, CanDelete)
+                .WithSingleExecution(CommandManager)
+                .Build();
+
+            ToggleExpandCommand = commandBuilder
+                .Create(Toggle, CanToggle)
+                .WithSingleExecution(CommandManager)
+                .Build();
 
             Exists = true;
             IsHidden = false;
@@ -184,20 +190,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 Name = name;
                 FullName = fullName;
                 Parent = parent;
-            }
-        }
-
-        protected override async Task Load(CancellationToken token)
-        {
-            if (IsLoaded)
-            {
-                return;
-            }
-
-            using (BusyStack.GetToken())
-            {
-                await RefreshInternal(token).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => IsLoaded = true).ConfigureAwait(false);
             }
         }
 

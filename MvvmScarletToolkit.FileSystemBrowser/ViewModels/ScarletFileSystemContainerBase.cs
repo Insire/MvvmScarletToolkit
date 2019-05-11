@@ -119,8 +119,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             using (BusyStack.GetToken())
             {
                 await Dispatcher.Invoke(() => _children.Add(item)).ConfigureAwait(false);
-
-                OnPropertyChanged(nameof(Count));
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
             }
         }
 

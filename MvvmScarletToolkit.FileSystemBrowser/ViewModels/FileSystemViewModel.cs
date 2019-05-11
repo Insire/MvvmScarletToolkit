@@ -74,7 +74,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             using (BusyStack.GetToken())
             {
                 SelectedItem = value;
-                await SelectedItem.ExpandPath().ConfigureAwait(false);
+                SelectedItem.ExpandPath();
                 await SelectedItem.LoadMetaData(CancellationToken.None).ConfigureAwait(false);
             }
         }

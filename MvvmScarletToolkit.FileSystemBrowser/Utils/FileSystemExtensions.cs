@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Permissions;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
@@ -96,11 +95,11 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return !Directory.EnumerateFileSystemEntries(path).Any();
         }
 
-        public static async Task ExpandPath(this IFileSystemInfo item)
+        public static void ExpandPath(this IFileSystemInfo item)
         {
             if (!item.IsExpanded)
             {
-                await item.ToggleExpandCommand.ExecuteAsync(null).ConfigureAwait(false);
+                item.ToggleExpandCommand.Execute(null);
             }
 
             var parent = item.Parent;
@@ -109,7 +108,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 if (!parent.IsExpanded)
                 {
-                    await parent.ToggleExpandCommand.ExecuteAsync(null).ConfigureAwait(false);
+                    parent.ToggleExpandCommand.Execute(null);
                 }
 
                 parent = parent.Parent;
