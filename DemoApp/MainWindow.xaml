@@ -3,8 +3,9 @@
                                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                        xmlns:browser="clr-namespace:MvvmScarletToolkit.FileSystemBrowser;assembly=MvvmScarletToolkit.FileSystemBrowser"
                                        xmlns:configurablewindow="clr-namespace:MvvmScarletToolkit.ConfigurableWindow;assembly=MvvmScarletToolkit.ConfigurableWindow"
-                                       xmlns:controls="clr-namespace:DemoApp.Controls"
+                                       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                                        xmlns:local="clr-namespace:DemoApp"
+                                       xmlns:mvvmscarlettoolkit="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit"
                                        xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
                                        Title="DemoApp"
                                        Width="1025"
@@ -13,6 +14,10 @@
     <!--  DataContext: NavigationViewModel  -->
 
     <Grid>
+        <Grid.Resources>
+            <mvvmscarlettoolkit:NullValueConverter x:Key="NullValueConverter" />
+        </Grid.Resources>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
@@ -81,21 +86,279 @@
         <!--  fill a contentcontrol with the content from the selected scene  -->
         <ContentControl Grid.Column="2" Content="{Binding ElementName=Scenes, Path=SelectedItem.Content}">
             <ContentControl.Resources>
+
                 <DataTemplate DataType="{x:Type local:ParentViewModel}">
-                    <local:Default />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="4" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="4" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <DockPanel Grid.Row="0" LastChildFill="True">
+                                <TextBlock DockPanel.Dock="Top">DemoItems</TextBlock>
+                                <ListBox x:Name="DemoItems"
+                                         ItemsSource="{Binding DemoItems.Items}"
+                                         SelectedItem="{Binding DemoItems.SelectedItem}"
+                                         SelectionMode="Extended">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                                            <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel>
+                                                <TextBlock Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </DockPanel>
+                            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                <Button Margin="0,4"
+                                        Command="{Binding DemoItems.AddCommand}"
+                                        Content="New" />
+                                <Button Margin="4"
+                                        Command="{Binding DemoItems.RemoveRangeCommand}"
+                                        CommandParameter="{Binding ElementName=DemoItems, Path=SelectedItems}"
+                                        Content="Remove" />
+                                <Button Margin="0,4"
+                                        Command="{Binding DemoItems.ClearCommand}"
+                                        Content="Clear" />
+                            </StackPanel>
+                        </Grid>
+                        <Grid Grid.Column="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="4" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <DockPanel Grid.Row="0" LastChildFill="True">
+                                <TextBlock DockPanel.Dock="Top">LogItems</TextBlock>
+                                <ListBox x:Name="LogItems"
+                                         DockPanel.Dock="Top"
+                                         ItemsSource="{Binding LogItems.Items}"
+                                         SelectedItem="{Binding LogItems.SelectedItem}"
+                                         SelectionMode="Extended">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                                            <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Grid.IsSharedSizeScope="True">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Col1" />
+                                                    <ColumnDefinition Width="*" MinWidth="4" />
+                                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Col2" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding CreatedOn, UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBlock Grid.Column="2" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </DockPanel>
+
+                            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                <Button Margin="0,4"
+                                        Command="{Binding LogItems.AddCommand}"
+                                        Content="New" />
+                                <Button Margin="4"
+                                        Command="{Binding LogItems.RemoveRangeCommand}"
+                                        CommandParameter="{Binding ElementName=LogItems, Path=SelectedItems}"
+                                        Content="Remove" />
+                                <Button Margin="0,4"
+                                        Command="{Binding LogItems.ClearCommand}"
+                                        Content="Clear" />
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Grid.Row="2"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="3"
+                                    Orientation="Horizontal">
+                            <Button Margin="4"
+                                    Command="{Binding AddLinkedCommand}"
+                                    Content="AddLinked" />
+
+                            <Button Margin="4"
+                                    Command="{Binding AddRangeCommand}"
+                                    Content="AddRange" />
+                        </StackPanel>
+                    </Grid>
                 </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:ParentsViewModel}">
-                    <local:DataGrids />
+                    <Grid>
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <DataGrid Name="SourceGrid"
+                                  Grid.Row="0"
+                                  ItemsSource="{Binding Items}"
+                                  SelectedItem="{Binding SelectedItem}" />
+
+                        <DataGrid Grid.Row="2" ItemsSource="{Binding SelectedItem.LogItems.Items}" />
+
+                        <Button Grid.Row="4"
+                                Command="{Binding SelectedItem.AddRangeCommand}"
+                                Content="Add" />
+                    </Grid>
                 </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:AsyncCommandViewModelStuff}">
-                    <local:AsyncCommands />
+                    <Grid>
+                        <Grid.Resources>
+                            <DataTemplate x:Key="DemoItemTemplate" DataType="{x:Type local:AsyncDemoItem}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Margin="5"
+                                            Command="{Binding LoadCommand}"
+                                            Content="Load"
+                                            ToolTip="Load" />
+                                    <Button Margin="5"
+                                            Command="{Binding RefreshCommand}"
+                                            Content="Refresh"
+                                            ToolTip="Refresh" />
+                                    <Button Margin="5"
+                                            Command="{Binding RefreshCommand.CancelCommand}"
+                                            Content="Cancel"
+                                            ToolTip="Cancel" />
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding DisplayName}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                                        <Setter Property="Foreground" Value="Red" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </Grid.Resources>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <ListBox Grid.Column="0"
+                                     ItemTemplate="{StaticResource DemoItemTemplate}"
+                                     ItemsSource="{Binding Items}" />
+
+                            <ContentControl Grid.Column="2"
+                                            VerticalAlignment="Top"
+                                            Content="{Binding SelectedItem}"
+                                            ContentTemplate="{StaticResource DemoItemTemplate}" />
+                        </Grid>
+                    </Grid>
                 </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:DataContextSchenanigansViewModel}">
-                    <local:DataContextSchenanigans />
+                    <Grid>
+                        <Grid.Resources>
+                            <DataTemplate DataType="{x:Type local:AsyncDemoItem}">
+                                <StackPanel Orientation="Horizontal">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Loaded">
+                                            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+
+                                    <Button Margin="4,0"
+                                            Command="{Binding RefreshCommand}"
+                                            Content="Refresh" />
+
+                                    <Button Command="{Binding LoadCommand}" Content="Load" />
+
+                                    <Button Margin="4,0"
+                                            Command="{Binding UnloadCommand}"
+                                            Content="Unload" />
+
+                                    <TextBlock Text="{Binding DisplayName}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="Margin" Value="5,0" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsLoaded}" Value="True">
+                                                        <Setter Property="Foreground" Value="Blue" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                                        <Setter Property="Foreground" Value="Red" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </Grid.Resources>
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <ListBox Grid.Column="0"
+                                 ItemsSource="{Binding Items}"
+                                 SelectedItem="{Binding SelectedItem}" />
+
+                        <ContentControl Grid.Column="2"
+                                        VerticalAlignment="Top"
+                                        Content="{Binding SelectedItem}">
+                            <ContentControl.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding IsBusy, StringFormat={}IsSelfBusy: {0}}" />
+                                        <TextBlock Text="{Binding RefreshCommand.IsBusy, StringFormat={}IsRefreshCommandBusy: {0}}" />
+                                        <TextBlock Text="{Binding LoadCommand.IsBusy, StringFormat={}IsLoadCommandBusy: {0}}" />
+                                        <TextBlock Text="{Binding UnloadCommand.IsBusy, StringFormat={}IsUnloadCommandBusy: {0}}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ContentControl.ContentTemplate>
+                        </ContentControl>
+                    </Grid>
                 </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:ProcessingImagesViewModel}">
                     <local:DragAndDrop />
                 </DataTemplate>
+
                 <DataTemplate DataType="{x:Type browser:FileSystemViewModel}">
                     <DockPanel>
                         <Menu DockPanel.Dock="Top">
@@ -122,20 +385,251 @@
                         <browser:FileSystemBrowser />
                     </DockPanel>
                 </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:Images}">
-                    <local:ImagesView />
+                    <Grid>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel Grid.Row="0"
+                                   Grid.Column="0"
+                                   LastChildFill="True">
+                            <TextBlock DockPanel.Dock="Top">Images</TextBlock>
+                            <ListBox x:Name="Images"
+                                     ItemsSource="{Binding Items}"
+                                     SelectedItem="{Binding SelectedItem}"
+                                     SelectionMode="Single">
+                                <ListBox.ItemContainerStyle>
+                                    <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                                        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel>
+                                            <TextBlock Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}" />
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DockPanel>
+
+                        <GridSplitter Grid.Column="1"
+                                      Width="5"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Stretch" />
+
+                        <Grid Grid.Column="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="5" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Image Grid.Row="0"
+                                   Grid.Column="0"
+                                   Source="{Binding ElementName=Images, Path=SelectedItem.Path, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Image Grid.Row="2"
+                                   Grid.Column="2"
+                                   Width="100"
+                                   Height="100"
+                                   Source="{Binding ElementName=Images, Path=SelectedItem.Path, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Image Grid.Row="2"
+                                   Grid.Column="0"
+                                   Width="50"
+                                   Height="50"
+                                   Source="{Binding SelectedItem.Path, ElementName=This, Converter={StaticResource NullValueConverter}}" />
+                        </Grid>
+                    </Grid>
                 </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:DummySnakeViewModel}">
                     <local:SnakeView />
                 </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:ProgressViewModel}">
-                    <controls:ProgressView />
+                    <DockPanel>
+                        <Button Command="{Binding LoadCommand}" DockPanel.Dock="Bottom">Start</Button>
+                        <ProgressBar Maximum="{Binding Maximum, Mode=OneWay}" Value="{Binding Percentage, Mode=OneWay}" />
+                    </DockPanel>
                 </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:BusyViewModel}">
-                    <controls:BusyTree />
+                    <TreeView Margin="5" ItemsSource="{Binding Items}">
+                        <TreeView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="{Binding LoadCommand}" Header="Load" />
+                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                <MenuItem Command="{Binding UnloadCommand}" Header="Unload" />
+                                <Separator />
+                                <MenuItem Command="{Binding AddChildCommand}" Header="Add Child" />
+                                <MenuItem Command="{Binding AddContainerCommand}" Header="Add Container" />
+                            </ContextMenu>
+                        </TreeView.ContextMenu>
+                        <i:Interaction.Behaviors>
+                            <browser:SelectedTreeViewItemBehavior SelectedItem="{Binding Data.SelectedItem, Source={StaticResource DataContextProxy}}" />
+                        </i:Interaction.Behaviors>
+                        <TreeView.Resources>
+                            <mvvmscarlettoolkit:BindingProxy x:Key="DataContextProxy" Data="{Binding Mode=TwoWay, Path=.}" />
+                            <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="Margin" Value="2" />
+                            </Style>
+                            <DataTemplate DataType="{x:Type local:ObservableBusyViewModel}">
+                                <Border>
+                                    <Border.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Command="{Binding BeBusyCommand}" Header="Be busy" />
+                                        </ContextMenu>
+                                    </Border.ContextMenu>
+                                    <Border.Style>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="BorderThickness" Value="2" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="Red" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsBusy}" Value="False">
+                                                    <Setter Property="BorderBrush" Value="Green" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock Text="{Binding}" />
+                                </Border>
+                            </DataTemplate>
+                            <HierarchicalDataTemplate DataType="{x:Type local:BusyViewModel}" ItemsSource="{Binding Items}">
+                                <Border>
+                                    <Border.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Command="{Binding LoadCommand}" Header="Load" />
+                                            <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                            <MenuItem Command="{Binding UnloadCommand}" Header="Unload" />
+                                            <Separator />
+                                            <MenuItem Command="{Binding AddChildCommand}" Header="Add Child" />
+                                            <MenuItem Command="{Binding AddContainerCommand}" Header="Add Container" />
+                                        </ContextMenu>
+                                    </Border.ContextMenu>
+                                    <Border.Style>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="BorderThickness" Value="2" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="Red" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsBusy}" Value="False">
+                                                    <Setter Property="BorderBrush" Value="Green" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock Text="{Binding}" />
+                                </Border>
+                            </HierarchicalDataTemplate>
+                        </TreeView.Resources>
+                    </TreeView>
                 </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:TextDisplayViewModel}">
-                    <local:TextDisplay />
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Button Command="{Binding LoadCommand}"
+                                Content="Test"
+                                DockPanel.Dock="Top" />
+
+                        <ListBox Grid.Row="1"
+                                 ItemsSource="{Binding Items}"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 VirtualizingStackPanel.IsVirtualizing="True"
+                                 VirtualizingStackPanel.VirtualizationMode="Recycling">
+
+                            <ListBox.Template>
+                                <ControlTemplate>
+                                    <ScrollViewer>
+                                        <ItemsPresenter />
+                                    </ScrollViewer>
+                                </ControlTemplate>
+                            </ListBox.Template>
+
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <mvvmscarlettoolkit:VirtualizingTilePanel CanHorizontallyScroll="False"
+                                                                              CanVerticallyScroll="True"
+                                                                              ChildSize="50" />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}">
+                                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                                    <Setter Property="Focusable" Value="False" />
+                                    <Setter Property="Height" Value="48" />
+                                    <Setter Property="Margin" Value="0" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Width" Value="48" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type local:GeometryContainer}">
+                                    <ContentControl>
+                                        <ContentControl.Resources>
+                                            <Path x:Key="PathTemplate"
+                                                  Width="48"
+                                                  Height="48"
+                                                  Data="{Binding Value}"
+                                                  Fill="Black"
+                                                  Focusable="False" />
+                                            <Button x:Key="ButtonTemplate"
+                                                    Width="48"
+                                                    Height="48"
+                                                    Background="White"
+                                                    BorderBrush="{x:Null}"
+                                                    BorderThickness="0">
+                                                <Path Width="48"
+                                                      Height="48"
+                                                      Data="{Binding Value}"
+                                                      Fill="Purple"
+                                                      Focusable="False" />
+                                            </Button>
+                                        </ContentControl.Resources>
+                                        <ContentControl.Style>
+                                            <Style TargetType="{x:Type ContentControl}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Content" Value="{StaticResource ButtonTemplate}" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsMouseOver" Value="False">
+                                                        <Setter Property="Content" Value="{StaticResource PathTemplate}" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ContentControl.Style>
+                                    </ContentControl>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
