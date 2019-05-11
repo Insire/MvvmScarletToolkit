@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -41,7 +42,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             set { SetValue(ref _filter, value); }
         }
 
-        public FileSystemViewModel(CommandBuilder commandBuilder, FileSystemOptionsViewModel options)
+        public FileSystemViewModel(ICommandBuilder commandBuilder, FileSystemOptionsViewModel options)
             : base(commandBuilder)
         {
             Options = options ?? throw new ArgumentNullException(nameof(options));

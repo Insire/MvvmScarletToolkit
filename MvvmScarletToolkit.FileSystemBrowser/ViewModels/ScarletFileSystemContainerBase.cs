@@ -42,7 +42,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             get { return _children[index]; }
         }
 
-        protected ScarletFileSystemContainerBase(string name, string fullName, IFileSystemDirectory parent, CommandBuilder commandBuilder)
+        protected ScarletFileSystemContainerBase(string name, string fullName, IFileSystemDirectory parent, ICommandBuilder commandBuilder)
             : base(name, fullName, parent, commandBuilder)
         {
             using (BusyStack.GetToken())

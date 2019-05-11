@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 {
     public static class FileSystemExtensions
     {
-        public static IEnumerable<IFileSystemInfo> GetChildren(this ScarletFileSystemContainerBase directory, CommandBuilder commandBuilder)
+        public static IEnumerable<IFileSystemInfo> GetChildren(this ScarletFileSystemContainerBase directory, ICommandBuilder commandBuilder)
         {
             return !CanAccess(directory.FullName) && directory.DirectoryIsEmpty()
                 ? Enumerable.Empty<IFileSystemInfo>()
@@ -37,7 +38,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        private static IEnumerable<IFileSystemInfo> GetDirectories(string path, IFileSystemDirectory parent, CommandBuilder commandBuilder)
+        private static IEnumerable<IFileSystemInfo> GetDirectories(string path, IFileSystemDirectory parent, ICommandBuilder commandBuilder)
         {
             try
             {
@@ -60,7 +61,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return Enumerable.Empty<IFileSystemInfo>();
         }
 
-        private static IEnumerable<IFileSystemInfo> GetFiles(string path, IFileSystemDirectory parent, CommandBuilder commandBuilder)
+        private static IEnumerable<IFileSystemInfo> GetFiles(string path, IFileSystemDirectory parent, ICommandBuilder commandBuilder)
         {
             try
             {

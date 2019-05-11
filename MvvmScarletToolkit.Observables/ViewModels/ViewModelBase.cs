@@ -20,7 +20,7 @@ namespace MvvmScarletToolkit.Observables
             protected set { SetValue(ref _model, value); }
         }
 
-        protected ViewModelBase(CommandBuilder commandBuilder, TModel model)
+        protected ViewModelBase(ICommandBuilder commandBuilder, TModel model)
             : base(commandBuilder)
         {
             Model = model;
@@ -30,7 +30,7 @@ namespace MvvmScarletToolkit.Observables
     public abstract class ViewModelBase
     {
         protected readonly IBusyStack BusyStack;
-        protected readonly CommandBuilder CommandBuilder;
+        protected readonly ICommandBuilder CommandBuilder;
         protected readonly IScarletCommandManager CommandManager;
         protected readonly IScarletDispatcher Dispatcher;
 
@@ -67,7 +67,7 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand UnloadCommand { get; }
 
-        protected ViewModelBase(CommandBuilder commandBuilder)
+        protected ViewModelBase(ICommandBuilder commandBuilder)
         {
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
             Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.Dispatcher));

@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -148,7 +149,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             protected set { SetValue(ref _lastWriteTimeUtc, value); }
         }
 
-        private ScarletFileSystemBase(CommandBuilder commandBuilder)
+        private ScarletFileSystemBase(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             DeleteCommand = commandBuilder
@@ -167,7 +168,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             HasContainers = false;
         }
 
-        protected ScarletFileSystemBase(string name, string fullName, IFileSystemDirectory parent, CommandBuilder commandBuilder)
+        protected ScarletFileSystemBase(string name, string fullName, IFileSystemDirectory parent, ICommandBuilder commandBuilder)
             : this(commandBuilder)
         {
             if (string.IsNullOrEmpty(name))

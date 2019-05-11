@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit.Observables
         private readonly ObservableCollection<TViewModel> _items;
 
         protected readonly ObservableBusyStack BusyStack;
-        protected readonly CommandBuilder CommandBuilder;
+        protected readonly ICommandBuilder CommandBuilder;
         protected readonly IScarletDispatcher Dispatcher;
         protected readonly IScarletCommandManager CommandManager;
 
@@ -79,7 +79,7 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public int Count => Items.Count;
 
-        protected ViewModelListBase(CommandBuilder commandBuilder)
+        protected ViewModelListBase(ICommandBuilder commandBuilder)
         {
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
             Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(CommandBuilder.Dispatcher));
