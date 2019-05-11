@@ -1,5 +1,4 @@
 using MvvmScarletToolkit.Abstractions;
-using MvvmScarletToolkit.Commands;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
