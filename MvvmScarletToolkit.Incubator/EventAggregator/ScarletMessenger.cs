@@ -11,11 +11,9 @@ namespace MvvmScarletToolkit
         private readonly List<SubscriptionItem> _subscriptions = new List<SubscriptionItem>();
 
         private readonly IScarletMessageProxy _messageProxy;
-        private readonly ILogger _log;
 
-        public ScarletMessenger(ILogger log, IScarletMessageProxy messageProxy)
+        public ScarletMessenger(IScarletMessageProxy messageProxy)
         {
-            _log = log ?? throw new ArgumentNullException(nameof(log));
             _messageProxy = messageProxy ?? throw new ArgumentNullException(nameof(messageProxy));
         }
 

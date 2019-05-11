@@ -1,6 +1,5 @@
-using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,23 +21,16 @@ namespace DemoApp
             set { SetValue(ref _isSelected, value); }
         }
 
-        public AsyncDemoItem(CommandBuilder commandBuilder)
+        public AsyncDemoItem(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             DisplayName = "unknown";
         }
 
-        public AsyncDemoItem(CommandBuilder commandBuilder, string displayName)
+        public AsyncDemoItem(ICommandBuilder commandBuilder, string displayName)
             : this(commandBuilder)
         {
             DisplayName = displayName;
-
-            RefreshCommand.PropertyChanged += RefreshCommand_PropertyChanged;
-        }
-
-        private void RefreshCommand_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            Debug.WriteLine($"RefreshCommand of {DisplayName} updated (IsBusy: {RefreshCommand.IsBusy}");
         }
 
         protected override async Task Load(CancellationToken token)

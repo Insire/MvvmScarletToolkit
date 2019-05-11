@@ -27,7 +27,7 @@ namespace MvvmScarletToolkit.Observables
         }
     }
 
-    public abstract class ViewModelBase
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
         protected readonly IBusyStack BusyStack;
         protected readonly ICommandBuilder CommandBuilder;

@@ -1,4 +1,3 @@
-using MvvmScarletToolkit;
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
@@ -133,7 +132,7 @@ namespace DemoApp
             }
         }
 
-        public SnakeEngine(SnakeOption options, Dispatcher dispatcher, IMessenger messenger, CommandBuilder commandBuilder)
+        public SnakeEngine(SnakeOption options, Dispatcher dispatcher, IMessenger messenger, ICommandBuilder commandBuilder)
         {
             _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));

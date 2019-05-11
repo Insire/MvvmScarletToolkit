@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit;
+using MvvmScarletToolkit.Abstractions;
 using System.Diagnostics;
 
 namespace DemoApp

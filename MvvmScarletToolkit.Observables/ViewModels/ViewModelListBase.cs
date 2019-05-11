@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Observables
 {
-    public abstract class ViewModelListBase<TViewModel>
+    public abstract class ViewModelListBase<TViewModel> : INotifyPropertyChanged
         where TViewModel : class, INotifyPropertyChanged
     {
         private readonly ObservableCollection<TViewModel> _items;

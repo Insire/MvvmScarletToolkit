@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
@@ -9,7 +10,7 @@ namespace DemoApp
     {
         public ConcurrentCommandBase AddCommand { get; }
 
-        public DemoItems(CommandBuilder commandBuilder)
+        public DemoItems(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             AddCommand = CommandBuilder.Create(AddNew, CanAddNew);

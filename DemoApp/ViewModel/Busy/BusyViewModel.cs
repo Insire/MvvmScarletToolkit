@@ -1,24 +1,26 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace DemoApp
 {
     // parent observer and child at the same time
-    public sealed class BusyViewModel : ViewModelListBase<ObservableObject>, IObserver<bool>, IObservable<bool>, IDisposable
+    public sealed class BusyViewModel : ViewModelListBase<INotifyPropertyChanged>, IObserver<bool>, IObservable<bool>, IDisposable
     {
-        private readonly IDictionary<ObservableObject, IDisposable> _disposables;
+        private readonly IDictionary<INotifyPropertyChanged, IDisposable> _disposables;
 
         public ConcurrentCommandBase AddContainerCommand { get; }
         public ConcurrentCommandBase AddChildCommand { get; }
 
-        public BusyViewModel(CommandBuilder commandBuilder)
+        public BusyViewModel(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            _disposables = new Dictionary<ObservableObject, IDisposable>();
+            _disposables = new Dictionary<INotifyPropertyChanged, IDisposable>();
 
             AddChildCommand = CommandBuilder.Create(InternalAddChildAsync, CanAddChild);
             AddContainerCommand = CommandBuilder.Create(InternalAddContainerAsync, CanAddChild);
@@ -48,7 +50,7 @@ namespace DemoApp
             }
         }
 
-        public override async Task Remove(ObservableObject item)
+        public override async Task Remove(INotifyPropertyChanged item)
         {
             _disposables[item].Dispose();
             await base.Remove(item).ConfigureAwait(false);
