@@ -23,6 +23,7 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+
         <DockPanel Grid.Column="0" LastChildFill="True">
             <TextBlock DockPanel.Dock="Top">Navigation</TextBlock>
             <ListBox x:Name="Scenes"
@@ -70,6 +71,7 @@
                         <TextBlock>Text rendering</TextBlock>
                     </DataTemplate>
                 </ListBox.Resources>
+
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type observables:Scene}">
                         <ContentControl Content="{Binding Content}" />
@@ -261,6 +263,7 @@
                                 </StackPanel>
                             </DataTemplate>
                         </Grid.Resources>
+
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -285,6 +288,7 @@
                         <Grid.Resources>
                             <DataTemplate DataType="{x:Type local:AsyncDemoItem}">
                                 <StackPanel Orientation="Horizontal">
+
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="Loaded">
                                             <i:InvokeCommandAction Command="{Binding LoadCommand}" />
@@ -482,14 +486,17 @@
                                 <MenuItem Command="{Binding AddContainerCommand}" Header="Add Container" />
                             </ContextMenu>
                         </TreeView.ContextMenu>
+
                         <i:Interaction.Behaviors>
-                            <browser:SelectedTreeViewItemBehavior SelectedItem="{Binding Data.SelectedItem, Source={StaticResource DataContextProxy}}" />
+                            <browser:SelectedTreeViewItemBehavior SelectedItem="{Binding SelectedItem}" />
                         </i:Interaction.Behaviors>
+
                         <TreeView.Resources>
-                            <mvvmscarlettoolkit:BindingProxy x:Key="DataContextProxy" Data="{Binding Mode=TwoWay, Path=.}" />
+
                             <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="Margin" Value="2" />
                             </Style>
+
                             <DataTemplate DataType="{x:Type local:ObservableBusyViewModel}">
                                 <Border>
                                     <Border.ContextMenu>
