@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
-    public abstract class ScarletFileSystemBase : ViewModelBase, IFileSystemInfo
+    public abstract class ScarletFileSystemBase : BusinessViewModelBase, IFileSystemInfo
     {
         public static bool NoFilesFilter(object obj)
         {
@@ -213,7 +213,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             {
                 if (!IsExpanded)
                 {
-                    await LoadInternal(token).ConfigureAwait(false);
+                    await Load(token).ConfigureAwait(false);
                     await Dispatcher.Invoke(() => IsExpanded = true).ConfigureAwait(false);
                 }
                 else
@@ -228,7 +228,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return !IsBusy;
         }
 
-        protected override Task Unload(CancellationToken token)
+        protected override Task UnloadInternal(CancellationToken token)
         {
             // hm, not sure what to add here,
             // maybe this is useful as an extension point for expensive operations later on

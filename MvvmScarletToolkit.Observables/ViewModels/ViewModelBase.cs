@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -50,23 +47,6 @@ namespace MvvmScarletToolkit.Observables
             protected set { SetValue(ref _isBusy, value); }
         }
 
-        private bool _isLoaded;
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsLoaded
-        {
-            get { return _isLoaded; }
-            protected set { SetValue(ref _isLoaded, value); }
-        }
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public virtual ICommand LoadCommand { get; }
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public virtual ICommand RefreshCommand { get; }
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public virtual ICommand UnloadCommand { get; }
-
         protected ViewModelBase(ICommandBuilder commandBuilder)
         {
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
@@ -74,21 +54,6 @@ namespace MvvmScarletToolkit.Observables
             CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.CommandManager));
             ChangeTracker = new ChangeTracker();
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
-
-            LoadCommand = commandBuilder.Create(LoadInternal, CanLoad)
-                                        .WithSingleExecution(CommandManager)
-                                        .WithBusyNotification(BusyStack)
-                                        .Build();
-
-            RefreshCommand = commandBuilder.Create(RefreshInternal, CanRefresh)
-                                            .WithSingleExecution(CommandManager)
-                                            .WithBusyNotification(BusyStack)
-                                            .Build();
-
-            UnloadCommand = commandBuilder.Create(UnloadInternal, CanUnload)
-                                          .WithSingleExecution(CommandManager)
-                                          .WithBusyNotification(BusyStack)
-                                          .Build();
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
@@ -124,58 +89,6 @@ namespace MvvmScarletToolkit.Observables
                 OnPropertyChanged(nameof(IsChanged));
 
             return true;
-        }
-
-        protected virtual async Task Load(CancellationToken token)
-        {
-            if (IsLoaded)
-            {
-                return;
-            }
-
-            using (BusyStack.GetToken())
-            {
-                await RefreshInternal(token).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => IsLoaded = true).ConfigureAwait(false);
-            }
-        }
-
-        protected virtual async Task LoadInternal(CancellationToken token)
-        {
-            await Load(token).ConfigureAwait(false);
-
-            IsLoaded = true;
-        }
-
-        protected virtual bool CanLoad()
-        {
-            return !IsLoaded && !IsBusy;
-        }
-
-        protected abstract Task Unload(CancellationToken token);
-
-        protected virtual async Task UnloadInternal(CancellationToken token)
-        {
-            await Unload(token).ConfigureAwait(false);
-
-            IsLoaded = false;
-        }
-
-        protected virtual bool CanUnload()
-        {
-            return IsLoaded && !IsBusy;
-        }
-
-        protected abstract Task Refresh(CancellationToken token);
-
-        protected virtual Task RefreshInternal(CancellationToken token)
-        {
-            return Refresh(token);
-        }
-
-        protected virtual bool CanRefresh()
-        {
-            return IsLoaded && !IsBusy;
         }
     }
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
-    public class FileSystemViewModel : ViewModelListBase<IFileSystemInfo>
+    public class FileSystemViewModel : BusinessViewModelListBase<IFileSystemInfo>
     {
         [Bindable(true, BindingDirection.OneWay)]
         public ConcurrentCommandBase SelectCommand { get; }
@@ -85,7 +85,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return item is ScarletFileSystemContainerBase value && value != SelectedItem;
         }
 
-        protected override async Task Load(CancellationToken token)
+        protected override async Task LoadInternal(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -98,11 +98,11 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        protected override async Task Refresh(CancellationToken token)
+        protected override async Task RefreshInternal(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
-                await LoadInternal(token).ConfigureAwait(false);
+                await Load(token).ConfigureAwait(false);
             }
         }
     }

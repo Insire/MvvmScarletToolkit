@@ -74,7 +74,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        protected override async Task Refresh(CancellationToken token)
+        protected override async Task RefreshInternal(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {

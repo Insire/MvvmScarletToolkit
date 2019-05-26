@@ -48,7 +48,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return !IsBusy && File.Exists(FullName);
         }
 
-        protected override async Task Refresh(CancellationToken token)
+        protected override async Task RefreshInternal(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {

@@ -44,20 +44,5 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 await Dispatcher.Invoke(() => DisplayListView = false).ConfigureAwait(false);
             }
         }
-
-        protected override Task Load(CancellationToken token)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override Task Unload(CancellationToken token)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override Task Refresh(CancellationToken token)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

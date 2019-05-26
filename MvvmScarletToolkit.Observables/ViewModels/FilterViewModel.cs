@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Observables
 {
-    public sealed class FilterViewModel<T> : ViewModelBase
+    public sealed class FilterViewModel<T> : BusinessViewModelBase
     {
         private readonly IComparer<T> _comparer;
         private readonly IEqualityComparer<T> _equalityComparer;
@@ -45,7 +45,7 @@ namespace MvvmScarletToolkit.Observables
         {
         }
 
-        protected override async Task Load(CancellationToken token)
+        public override async Task Load(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -59,7 +59,7 @@ namespace MvvmScarletToolkit.Observables
             return !IsBusy && base.CanLoad();
         }
 
-        protected override async Task Unload(CancellationToken token)
+        protected override async Task UnloadInternal(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -73,7 +73,7 @@ namespace MvvmScarletToolkit.Observables
             return !IsBusy && base.CanUnload();
         }
 
-        protected override async Task Refresh(CancellationToken token)
+        protected override async Task RefreshInternal(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
