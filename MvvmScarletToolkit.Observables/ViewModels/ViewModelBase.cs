@@ -7,6 +7,9 @@ using System.Runtime.CompilerServices;
 
 namespace MvvmScarletToolkit.Observables
 {
+    /// <summary>
+    /// Generic ViewModelBase that provides common services required for MVVM
+    /// </summary>
     public abstract class ViewModelBase<TModel> : ViewModelBase
     {
         private TModel _model;
@@ -17,13 +20,15 @@ namespace MvvmScarletToolkit.Observables
             protected set { SetValue(ref _model, value); }
         }
 
-        protected ViewModelBase(ICommandBuilder commandBuilder, TModel model)
+        protected ViewModelBase(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            Model = model;
         }
     }
 
+    /// <summary>
+    /// ViewModelBase that provides common services required for MVVM
+    /// </summary>
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
         protected readonly IBusyStack BusyStack;
@@ -31,13 +36,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly IScarletCommandManager CommandManager;
         protected readonly IScarletDispatcher Dispatcher;
 
-        protected ChangeTracker ChangeTracker { get; }
-        protected bool SkipChangeTracking { get; set; }
-
         public event PropertyChangedEventHandler PropertyChanged;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsChanged => ChangeTracker.HasChanged;
 
         private bool _isBusy;
         [Bindable(true, BindingDirection.OneWay)]
@@ -52,7 +51,7 @@ namespace MvvmScarletToolkit.Observables
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
             Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.Dispatcher));
             CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.CommandManager));
-            ChangeTracker = new ChangeTracker();
+
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
         }
 
@@ -84,9 +83,6 @@ namespace MvvmScarletToolkit.Observables
             OnPropertyChanged(propertyName);
 
             OnChanged?.Invoke();
-
-            if (!SkipChangeTracking && ChangeTracker.Update(value, propertyName))
-                OnPropertyChanged(nameof(IsChanged));
 
             return true;
         }

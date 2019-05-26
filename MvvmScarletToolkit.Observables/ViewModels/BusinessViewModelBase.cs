@@ -8,7 +8,7 @@ using System.Windows.Input;
 namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
-    /// Viewmodel that bootstraps loading, unloading and refreshing of its content
+    /// ViewModelBase that bootstraps loading, unloading and refreshing of its content
     /// </summary>
     /// <typeparam name="TModel"></typeparam>
     public abstract class BusinessViewModelBase<TModel> : BusinessViewModelBase
@@ -22,15 +22,14 @@ namespace MvvmScarletToolkit.Observables
             protected set { SetValue(ref _model, value); }
         }
 
-        protected BusinessViewModelBase(ICommandBuilder commandBuilder, TModel model)
+        protected BusinessViewModelBase(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            Model = model;
         }
     }
 
     /// <summary>
-    /// Viewmodel that bootstraps loading, unloading and refreshing of its content
+    /// ViewModelBase that bootstraps loading, unloading and refreshing of its content
     /// </summary>
     public abstract class BusinessViewModelBase : ViewModelBase
     {

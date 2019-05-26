@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Observables
 {
+    /// <summary>
+    /// Collection ViewModelBase that provides async modification
+    /// </summary>
     public abstract class ViewModelListBase<TViewModel> : INotifyPropertyChanged
         where TViewModel : class, INotifyPropertyChanged
     {
         protected readonly ObservableCollection<TViewModel> _items;
-
         protected readonly ObservableBusyStack BusyStack;
         protected readonly ICommandBuilder CommandBuilder;
         protected readonly IScarletDispatcher Dispatcher;
         protected readonly IScarletCommandManager CommandManager;
-
-        protected bool Disposed { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

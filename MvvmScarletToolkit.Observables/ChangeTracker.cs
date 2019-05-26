@@ -63,7 +63,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        private class ChangeGroup
+        private sealed class ChangeGroup
         {
             public object OriginalValue { get; set; }
             public object NewValue { get; set; }

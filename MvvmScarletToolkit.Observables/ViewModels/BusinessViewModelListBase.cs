@@ -11,7 +11,7 @@ using System.Windows.Input;
 namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
-    /// Collection Viewmodel that bootstraps loading, unloading and refreshing of its content
+    /// Collection ViewModelBase that bootstraps loading, unloading and refreshing of its content
     /// </summary>
     /// <typeparam name="TViewModel"></typeparam>
     public abstract class BusinessViewModelListBase<TViewModel> : ViewModelListBase<TViewModel>
