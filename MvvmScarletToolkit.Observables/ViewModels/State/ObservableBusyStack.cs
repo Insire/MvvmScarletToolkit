@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Observables
     /// <summary>
     /// Will notify its owner and all subscribers via a provided action on if it contains more tokens
     /// </summary>
-    public sealed class ObservableBusyStack : IObservable<bool>, IBusyStack, IDisposable
+    public sealed partial class ObservableBusyStack : IObservable<bool>, IBusyStack, IDisposable
     {
         private readonly Guid _id = Guid.NewGuid();
 
@@ -73,7 +73,7 @@ namespace MvvmScarletToolkit.Observables
 
         public IDisposable Subscribe(IObserver<bool> observer)
         {
-            var result = new DisposalToken(observer, _observers);
+            var result = new DisposalToken<bool>(observer, _observers);
 
             return result;
         }
@@ -112,25 +112,6 @@ namespace MvvmScarletToolkit.Observables
                 _items.TryTake(out _);
 
             _observers.Clear();
-        }
-
-        private sealed class DisposalToken : IDisposable
-        {
-            private readonly ConcurrentDictionary<IObserver<bool>, IObserver<bool>> _observerCollection;
-            private readonly IObserver<bool> _observer;
-
-            public DisposalToken(IObserver<bool> observer, ConcurrentDictionary<IObserver<bool>, IObserver<bool>> observerCollection)
-            {
-                _observerCollection = observerCollection ?? throw new ArgumentNullException(nameof(observerCollection));
-                _observer = observer ?? throw new ArgumentNullException(nameof(observer));
-
-                _observerCollection.AddOrUpdate(observer, p => observer, (o, p) => observer);
-            }
-
-            public void Dispose()
-            {
-                _observerCollection.TryRemove(_observer, out _);
-            }
         }
     }
 }
