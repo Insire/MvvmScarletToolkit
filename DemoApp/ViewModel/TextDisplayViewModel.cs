@@ -10,7 +10,7 @@ using System.Windows.Media;
 
 namespace DemoApp
 {
-    public sealed class TextDisplayViewModel : ViewModelListBase<GeometryContainer>
+    public sealed class TextDisplayViewModel : BusinessViewModelListBase<GeometryContainer>
     {
         private readonly Typeface _typeface;
         private readonly NumberSubstitution _numberSubstitution;
@@ -30,16 +30,6 @@ namespace DemoApp
                                     .ToArray();
         }
 
-        protected override async Task Load(CancellationToken token)
-        {
-            await AddRange(_geomtries).ConfigureAwait(false);
-        }
-
-        protected override async Task Refresh(CancellationToken token)
-        {
-            await AddRange(_geomtries).ConfigureAwait(false);
-        }
-
         private static Geometry BuildGeometry(string charachters, Typeface typeface, NumberSubstitution numberSubstitution)
         {
             var result = new FormattedText(charachters, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, 24, Brushes.Black, numberSubstitution, TextFormattingMode.Display)
@@ -48,6 +38,11 @@ namespace DemoApp
             result.Freeze();
 
             return result;
+        }
+
+        protected override Task RefreshInternal(CancellationToken token)
+        {
+            return AddRange(_geomtries);
         }
     }
 

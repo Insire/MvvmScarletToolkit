@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DemoApp
 {
-    public class DemoItems : ViewModelListBase<DemoItem>
+    public class DemoItems : BusinessViewModelListBase<DemoItem>
     {
         public ConcurrentCommandBase AddCommand { get; }
 
@@ -27,20 +27,9 @@ namespace DemoApp
             return Items != null;
         }
 
-        protected override Task Load(CancellationToken token)
+        protected override Task RefreshInternal(CancellationToken token)
         {
             IsLoaded = true;
-            return Task.CompletedTask;
-        }
-
-        protected override async Task Unload(CancellationToken token)
-        {
-            await Clear(token).ConfigureAwait(false);
-            IsLoaded = false;
-        }
-
-        protected override Task Refresh(CancellationToken token)
-        {
             return Task.CompletedTask;
         }
     }

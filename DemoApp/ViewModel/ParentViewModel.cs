@@ -3,7 +3,6 @@ using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -79,23 +78,6 @@ namespace DemoApp
         {
             return LogItems.Items != null
                 && DemoItems.Items != null;
-        }
-
-        protected override Task Load(CancellationToken token)
-        {
-            IsLoaded = true;
-            return Task.CompletedTask;
-        }
-
-        protected override Task Unload(CancellationToken token)
-        {
-            IsLoaded = false;
-            return Task.CompletedTask;
-        }
-
-        protected override Task Refresh(CancellationToken token)
-        {
-            return Task.CompletedTask;
         }
     }
 }

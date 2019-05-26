@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DemoApp
 {
-    public sealed class ProgressViewModel : ViewModelBase
+    public sealed class ProgressViewModel : BusinessViewModelBase
     {
         private double _percentage;
         public double Percentage
@@ -28,15 +28,12 @@ namespace DemoApp
             Maximum = 100;
         }
 
-        protected override async Task Load(CancellationToken token)
+        protected override Task UnloadInternal(CancellationToken token)
         {
-            using (BusyStack.GetToken())
-            {
-                await Task.Run(async () => await LoadInternal().ConfigureAwait(false), token).ConfigureAwait(false);
-            }
+            return Task.CompletedTask;
         }
 
-        private async Task LoadInternal()
+        protected override async Task RefreshInternal(CancellationToken token)
         {
             var dispatcher = System.Windows.Application.Current.Dispatcher;
 
@@ -48,24 +45,6 @@ namespace DemoApp
                 await dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => Percentage = i));
                 await Task.Delay(50).ConfigureAwait(false);
             }
-
-            IsLoaded = true;
-        }
-
-        protected override bool CanLoad()
-        {
-            return !IsBusy && base.CanLoad();
-        }
-
-        protected override Task Unload(CancellationToken token)
-        {
-            IsLoaded = false;
-            return Task.CompletedTask;
-        }
-
-        protected override Task Refresh(CancellationToken token)
-        {
-            return Task.CompletedTask;
         }
     }
 }

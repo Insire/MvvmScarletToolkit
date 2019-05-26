@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace DemoApp
 {
-    public class DataContextSchenanigansViewModel : ViewModelListBase<AsyncDemoItem>
+    public class DataContextSchenanigansViewModel : BusinessViewModelListBase<AsyncDemoItem>
     {
         public DataContextSchenanigansViewModel(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
         }
 
-        protected override async Task Load(CancellationToken token)
+        protected override async Task RefreshInternal(CancellationToken token)
         {
             for (var i = 0; i < 10; i++)
             {
@@ -23,11 +23,6 @@ namespace DemoApp
 
                 await Add(item).ConfigureAwait(false);
             }
-        }
-
-        protected override Task Refresh(CancellationToken token)
-        {
-            return Task.CompletedTask;
         }
     }
 }

@@ -5,29 +5,16 @@ using System.Threading.Tasks;
 
 namespace DemoApp
 {
-    public class Images : ViewModelListBase<Image>
+    public class Images : BusinessViewModelListBase<Image>
     {
         public Images(CommandBuilder commandBuilder)
             : base(commandBuilder)
         {
         }
 
-        protected override async Task Load(CancellationToken token)
+        protected override Task RefreshInternal(CancellationToken token)
         {
-            await AddRange(ImageFactory.GetImageList()).ConfigureAwait(false);
-
-            IsLoaded = true;
-        }
-
-        protected override async Task Unload(CancellationToken token)
-        {
-            await Clear(token).ConfigureAwait(false);
-            IsLoaded = false;
-        }
-
-        protected override Task Refresh(CancellationToken token)
-        {
-            return Task.CompletedTask;
+            return AddRange(ImageFactory.GetImageList());
         }
     }
 }

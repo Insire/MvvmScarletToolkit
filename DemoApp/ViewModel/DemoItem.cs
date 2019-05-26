@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DemoApp
 {
-    public class DemoItem : ViewModelBase
+    public class DemoItem : BusinessViewModelBase
     {
         private string _displayName;
         public string DisplayName
@@ -33,18 +33,18 @@ namespace DemoApp
             DisplayName = displayName;
         }
 
-        protected override Task Load(CancellationToken token)
+        protected override Task LoadInternal(CancellationToken token)
         {
             IsLoaded = true;
             return Task.CompletedTask;
         }
 
-        protected override Task Unload(CancellationToken token)
+        protected override Task UnloadInternal(CancellationToken token)
         {
             return Task.CompletedTask;
         }
 
-        protected override Task Refresh(CancellationToken token)
+        protected override Task RefreshInternal(CancellationToken token)
         {
             return Task.CompletedTask;
         }

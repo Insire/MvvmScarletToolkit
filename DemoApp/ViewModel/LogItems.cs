@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace DemoApp
 {
-    public class LogItems : ViewModelListBase<LogItem>
+    public class LogItems : BusinessViewModelListBase<LogItem>
     {
         public ICommand AddCommand { get; }
 
@@ -27,19 +27,7 @@ namespace DemoApp
             return Items != null;
         }
 
-        protected override Task Load(CancellationToken token)
-        {
-            IsLoaded = true;
-            return Task.CompletedTask;
-        }
-
-        protected override async Task Unload(CancellationToken token)
-        {
-            await Clear(token).ConfigureAwait(false);
-            IsLoaded = false;
-        }
-
-        protected override Task Refresh(CancellationToken token)
+        protected override Task RefreshInternal(CancellationToken token)
         {
             return Task.CompletedTask;
         }

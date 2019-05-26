@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DemoApp
 {
-    public class AsyncDemoItem : ViewModelBase
+    public class AsyncDemoItem : BusinessViewModelBase
     {
         private string _displayName;
         public string DisplayName
@@ -33,20 +33,14 @@ namespace DemoApp
             DisplayName = displayName;
         }
 
-        protected override async Task Load(CancellationToken token)
+        protected override Task UnloadInternal(CancellationToken token)
         {
-            await Task.Delay(2000, token).ConfigureAwait(true);
+            return Task.Delay(2000);
         }
 
-        protected override async Task Refresh(CancellationToken token)
+        protected override Task RefreshInternal(CancellationToken token)
         {
-            await Task.Delay(2000).ConfigureAwait(true);
-        }
-
-        protected override Task Unload(CancellationToken token)
-        {
-            IsLoaded = false;
-            return Task.CompletedTask;
+            return Task.Delay(2000);
         }
     }
 }
