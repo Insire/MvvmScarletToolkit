@@ -36,41 +36,6 @@
                         <Setter Property="IsSelected" Value="{Binding IsSelected}" />
                     </Style>
                 </ListBox.ItemContainerStyle>
-                <ListBox.Resources>
-                    <DataTemplate DataType="{x:Type local:ParentViewModel}">
-                        <TextBlock>ParentViewModel</TextBlock>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:ProcessingImagesViewModel}">
-                        <TextBlock>Drag and Drop</TextBlock>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:DataContextSchenanigansViewModel}">
-                        <TextBlock>DataContextSchenanigansViewModel</TextBlock>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:ParentsViewModel}">
-                        <TextBlock>Datagrid</TextBlock>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:DummySnakeViewModel}">
-                        <TextBlock>Snake</TextBlock>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:AsyncCommandViewModelStuff}">
-                        <TextBlock>AsyncCommands</TextBlock>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type browser:FileSystemViewModel}">
-                        <TextBlock>FileSystemBrowser</TextBlock>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:Images}">
-                        <TextBlock>Image loading</TextBlock>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:ProgressViewModel}">
-                        <TextBlock>Progress</TextBlock>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:BusyViewModel}">
-                        <TextBlock>Busy tree</TextBlock>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:TextDisplayViewModel}">
-                        <TextBlock>Text rendering</TextBlock>
-                    </DataTemplate>
-                </ListBox.Resources>
 
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type observables:Scene}">

@@ -78,6 +78,9 @@ namespace DemoApp
             await BusyStack.Pull();
         }
 
+        /// <summary>
+        /// Unused
+        /// </summary>
         public void OnCompleted()
         {
             //hm, what to do here? I guess nothing right now...

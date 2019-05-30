@@ -120,7 +120,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        protected bool CanClear()
+        public bool CanClear()
         {
             return _items.Count > 0 && !IsBusy;
         }

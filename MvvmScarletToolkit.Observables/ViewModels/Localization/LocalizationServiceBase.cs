@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Observables
 {
     public abstract class LocalizationServiceBase : ObservableObject, ILocalizationService
     {
-        public ITranslationProvider TranslationProvider { get; }
+        protected readonly ILocalizationProvider TranslationProvider;
 
         private CultureInfo _currentLanguage;
         public CultureInfo CurrentLanguage
@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit.Observables
 
         public IEnumerable<CultureInfo> Languages => TranslationProvider is null ? Enumerable.Empty<CultureInfo>() : TranslationProvider.Languages;
 
-        protected LocalizationServiceBase(ITranslationProvider provider)
+        protected LocalizationServiceBase(ILocalizationProvider provider)
         {
             TranslationProvider = provider ?? throw new ArgumentNullException(nameof(provider));
             _currentLanguage = Thread.CurrentThread.CurrentUICulture;

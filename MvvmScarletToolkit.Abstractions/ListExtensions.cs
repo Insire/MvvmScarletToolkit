@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit.Abstractions
     // {
     //  SantasBloggers.UpdateItems(updatedBloggers, modelToViewModelMatcher, MapBloggerToBloggerViewModel, viewModelUpdater);
     // });
-    public static class IListExtensions
+    public static class ListExtensions
     {
         public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, IList<T2> updateCollection, Func<T1, T2, bool> comparer, Func<T2, T1> mapper)
         {

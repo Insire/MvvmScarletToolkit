@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,6 +26,12 @@ namespace MvvmScarletToolkit.Observables
         protected BusinessViewModelBase(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
+        }
+
+        protected BusinessViewModelBase(ICommandBuilder commandBuilder, TModel model)
+            : base(commandBuilder)
+        {
+            Model = model ?? throw new ArgumentNullException(nameof(model));
         }
     }
 

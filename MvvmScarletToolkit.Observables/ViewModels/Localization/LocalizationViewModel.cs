@@ -5,14 +5,7 @@ using System.Windows;
 
 namespace MvvmScarletToolkit.Observables
 {
-    /// <summary>
-    /// Poco that holds localization data and supports changing it during runtime
-    /// </summary>
-    /// <seealso cref="Maple.Core.ObservableObject" />
-    /// <seealso cref="System.Windows.IWeakEventListener" />
-    /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
-    /// <seealso cref="System.IDisposable" />
-    public sealed class LocalizationViewModel : ObservableObject, IDisposable
+    public sealed class LocalizationViewModel : ObservableObject, IDisposable, ILocalizationViewModel
     {
         private readonly string _key;
         private readonly bool _toUpper;
@@ -25,6 +18,11 @@ namespace MvvmScarletToolkit.Observables
             _toUpper = toUpper;
 
             WeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs>.AddHandler(_service, "PropertyChanged", ValueChanged);
+        }
+
+        public LocalizationViewModel(ILocalizationService service, string key)
+            : this(service, key, false)
+        {
         }
 
         public void Dispose()

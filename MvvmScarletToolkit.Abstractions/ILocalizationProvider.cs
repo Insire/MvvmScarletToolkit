@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace MvvmScarletToolkit.Abstractions
 {
-    public interface ITranslationProvider
+    public interface ILocalizationProvider
     {
         /// <summary>
         /// Translates the key into a localized value
