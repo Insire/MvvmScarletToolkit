@@ -1,8 +1,8 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Abstractions
 {
-    public interface ILocalizationViewModel: INotifyPropertyChanged
+    public interface ILocalizationViewModel : INotifyPropertyChanged
     {
         object Value { get; }
     }

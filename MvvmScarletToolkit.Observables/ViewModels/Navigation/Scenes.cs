@@ -1,5 +1,4 @@
 using MvvmScarletToolkit.Abstractions;
-using MvvmScarletToolkit.Commands;
 
 namespace MvvmScarletToolkit.Observables
 {

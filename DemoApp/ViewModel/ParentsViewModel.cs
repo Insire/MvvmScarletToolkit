@@ -1,7 +1,5 @@
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace DemoApp
 {
