@@ -8,12 +8,9 @@ namespace MvvmScarletToolkit
 {
     public sealed class ScarletDispatcher : IScarletDispatcher
     {
-        private readonly Dispatcher _dispatcherObject;
+        public static IScarletDispatcher Default { get; } = new ScarletDispatcher(Application.Current.Dispatcher);
 
-        public ScarletDispatcher()
-            : this(Application.Current.Dispatcher)
-        {
-        }
+        private readonly Dispatcher _dispatcherObject;
 
         public ScarletDispatcher(Dispatcher dispatcher)
         {

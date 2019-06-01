@@ -8,7 +8,7 @@ namespace DemoApp
     {
         public int Sequence { get; }
 
-        public SnakeSegment(SnakeOption options, IPositionable positionable, IMessenger log, int sequence)
+        public SnakeSegment(SnakeOption options, IPositionable positionable, IScarletMessenger log, int sequence)
             : base(options, log)
         {
             CurrentPosition = positionable.CurrentPosition;

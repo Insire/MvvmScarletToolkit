@@ -19,7 +19,7 @@ namespace DemoApp
         private readonly SnakeOption _options;
         private readonly IProducerConsumerCollection<Apple> _apples;
         private readonly Random _random;
-        private readonly IMessenger _messenger;
+        private readonly IScarletMessenger _messenger;
 
         private bool _isLoaded;
         private bool _disposed;
@@ -132,7 +132,7 @@ namespace DemoApp
             }
         }
 
-        public SnakeEngine(SnakeOption options, Dispatcher dispatcher, IMessenger messenger, ICommandBuilder commandBuilder)
+        public SnakeEngine(SnakeOption options, Dispatcher dispatcher, IScarletMessenger messenger, ICommandBuilder commandBuilder)
         {
             _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));

@@ -5,6 +5,9 @@ using System.Windows;
 
 namespace MvvmScarletToolkit.Observables
 {
+    /// <summary>
+    /// Provides binding support for a localized string
+    /// </summary>
     public sealed class LocalizationViewModel : ObservableObject, IDisposable, ILocalizationViewModel
     {
         private readonly string _key;

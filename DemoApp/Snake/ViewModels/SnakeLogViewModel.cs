@@ -23,7 +23,7 @@ namespace DemoApp
             private set { SetValue(ref _messagesPerSecond, value); }
         }
 
-        public SnakeLogViewModel(IMessenger messenger)
+        public SnakeLogViewModel(IScarletMessenger messenger)
         {
             Messages = new ObservableCircularBuffer<ScarletMessageBase>(100);
 

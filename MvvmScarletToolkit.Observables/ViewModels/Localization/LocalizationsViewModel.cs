@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Observables
 {
-    public abstract class LocalizationServiceBase : ObservableObject, ILocalizationService
+    public class LocalizationsViewModel : ObservableObject, ILocalizationService
     {
         protected readonly ILocalizationProvider TranslationProvider;
 
@@ -19,9 +18,11 @@ namespace MvvmScarletToolkit.Observables
             set { SetValue(ref _currentLanguage, value, () => Thread.CurrentThread.CurrentUICulture = value); }
         }
 
-        public IEnumerable<CultureInfo> Languages => TranslationProvider is null ? Enumerable.Empty<CultureInfo>() : TranslationProvider.Languages;
+        public IEnumerable<CultureInfo> Languages => TranslationProvider is null
+            ? Enumerable.Empty<CultureInfo>()
+            : TranslationProvider.Languages;
 
-        protected LocalizationServiceBase(ILocalizationProvider provider)
+        public LocalizationsViewModel(ILocalizationProvider provider)
         {
             TranslationProvider = provider ?? throw new ArgumentNullException(nameof(provider));
             _currentLanguage = Thread.CurrentThread.CurrentUICulture;
@@ -41,9 +42,5 @@ namespace MvvmScarletToolkit.Observables
 
             return $"!{key}!";
         }
-
-        public abstract Task Save();
-
-        public abstract Task Load();
     }
 }

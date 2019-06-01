@@ -9,7 +9,7 @@ namespace DemoApp
     public sealed class Snake : ObservableObject
     {
         private readonly SnakeOption _options;
-        private readonly IMessenger _messenger;
+        private readonly IScarletMessenger _messenger;
 
         private SnakeHead _head;
         public SnakeHead Head
@@ -25,7 +25,7 @@ namespace DemoApp
             private set { SetValue(ref _body, value); }
         }
 
-        public Snake(SnakeOption options, IMessenger messenger)
+        public Snake(SnakeOption options, IScarletMessenger messenger)
         {
             _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _options = options ?? throw new ArgumentNullException(nameof(options));

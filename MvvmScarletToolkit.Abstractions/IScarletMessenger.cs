@@ -5,7 +5,7 @@ namespace MvvmScarletToolkit.Abstractions
     /// <summary>
     /// Messenger hub responsible for taking subscriptions/publications and delivering of messages.
     /// </summary>
-    public interface IMessenger
+    public interface IScarletMessenger
     {
         /// <summary>
         /// <para>

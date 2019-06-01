@@ -1,7 +1,6 @@
 using MvvmScarletToolkit;
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
-using MvvmScarletToolkit.Implementations;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace DemoApp
     public sealed partial class SnakeView : ISnakeView
     {
         private readonly Dispatcher _dispatcher;
-        private readonly IMessenger _messenger;
+        private readonly IScarletMessenger _messenger;
         private readonly IScarletCommandManager _commandManager;
         private readonly CommandBuilder _commandBuilder;
 
@@ -166,8 +165,7 @@ namespace DemoApp
         public SnakeView()
         {
             _commandManager = new ScarletCommandManager();
-            _dispatcher = Application.Current.Dispatcher;
-            var scarletDispatcher = new ScarletDispatcher(_dispatcher);
+            var scarletDispatcher = ScarletDispatcher.Default;
             _messenger = new ScarletMessenger(new DefaultMessageProxy());
             _commandBuilder = new CommandBuilder(scarletDispatcher, _commandManager, (lambda) => new BusyStack(lambda, scarletDispatcher));
 

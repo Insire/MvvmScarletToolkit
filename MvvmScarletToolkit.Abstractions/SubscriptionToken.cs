@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Abstractions
         private readonly WeakReference _hub;
         private readonly Type _messageType;
 
-        public SubscriptionToken(IMessenger hub, Type messageType)
+        public SubscriptionToken(IScarletMessenger hub, Type messageType)
         {
             if (hub is null)
             {
@@ -37,9 +37,9 @@ namespace MvvmScarletToolkit.Abstractions
             if (disposing)
             {
                 // free managed resources
-                if (_hub.IsAlive && _hub.Target is IMessenger hub)
+                if (_hub.IsAlive && _hub.Target is IScarletMessenger hub)
                 {
-                    var unsubscribeMethod = typeof(IMessenger).GetMethod("Unsubscribe", new Type[] { typeof(SubscriptionToken) });
+                    var unsubscribeMethod = typeof(IScarletMessenger).GetMethod("Unsubscribe", new Type[] { typeof(SubscriptionToken) });
                     unsubscribeMethod = unsubscribeMethod.MakeGenericMethod(_messageType);
                     unsubscribeMethod.Invoke(hub, new object[] { this });
                 }

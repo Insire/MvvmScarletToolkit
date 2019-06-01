@@ -6,7 +6,7 @@ namespace DemoApp
 {
     public abstract class SnakeBase : ObservableObject, IPositionable
     {
-        private readonly IMessenger _messenger;
+        private readonly IScarletMessenger _messenger;
         private readonly SnakeOption _options;
 
         private Position _currentPosition;
@@ -23,14 +23,14 @@ namespace DemoApp
             protected set { SetValue(ref _size, value); }
         }
 
-        protected SnakeBase(SnakeOption options, Size size, IMessenger messenger)
+        protected SnakeBase(SnakeOption options, Size size, IScarletMessenger messenger)
         {
             _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             Size = size ?? throw new ArgumentNullException(nameof(size));
         }
 
-        protected SnakeBase(SnakeOption options, IMessenger log)
+        protected SnakeBase(SnakeOption options, IScarletMessenger log)
             : this(options, new Size(options.BoardPieceSize, options.BoardPieceSize), log)
         {
         }

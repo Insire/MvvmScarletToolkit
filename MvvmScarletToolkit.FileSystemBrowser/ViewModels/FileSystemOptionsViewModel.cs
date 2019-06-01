@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.ComponentModel;
@@ -22,7 +23,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         [Bindable(true, BindingDirection.OneWay)]
         public ConcurrentCommandBase DisplayDetailsAsIconsCommand { get; }
 
-        public FileSystemOptionsViewModel(CommandBuilder commandBuilder)
+        public FileSystemOptionsViewModel(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             DisplayDetailsAsListCommand = commandBuilder.Create(() => ToggleAsListViewInternal(CancellationToken.None), () => !IsBusy && !DisplayListView);

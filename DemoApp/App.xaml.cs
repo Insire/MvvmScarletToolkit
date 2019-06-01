@@ -2,7 +2,6 @@ using MvvmScarletToolkit;
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.FileSystemBrowser;
-using MvvmScarletToolkit.Implementations;
 using MvvmScarletToolkit.Observables;
 using System.Windows;
 
@@ -14,7 +13,7 @@ namespace DemoApp
         {
             base.OnStartup(e);
             var commandManager = new ScarletCommandManager();
-            var dispatcher = new ScarletDispatcher();
+            var dispatcher = ScarletDispatcher.Default;
             var commandBuilder = new CommandBuilder(dispatcher, commandManager, (lambda) => new BusyStack(lambda, dispatcher));
             var localizationService = default(ILocalizationService);
 

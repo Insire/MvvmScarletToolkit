@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace MvvmScarletToolkit
 {
-    public sealed partial class ScarletMessenger : IMessenger
+    public sealed partial class ScarletMessenger : IScarletMessenger
     {
         private readonly object _subscriptionsPadlock = new object();
         private readonly List<SubscriptionItem> _subscriptions = new List<SubscriptionItem>();
