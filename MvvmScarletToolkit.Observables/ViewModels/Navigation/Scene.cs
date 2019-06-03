@@ -26,17 +26,17 @@ namespace MvvmScarletToolkit.Observables
             set { SetValue(ref _sequence, value); }
         }
 
-        private ILocalizationViewModel _displayName;
-        public ILocalizationViewModel DisplayName
+        private ILocalizationViewModel _localization;
+        public ILocalizationViewModel Localization
         {
-            get { return _displayName; }
-            private set { SetValue(ref _displayName, value); }
+            get { return _localization; }
+            private set { SetValue(ref _localization, value); }
         }
 
-        public Scene(ICommandBuilder commandBuilder, ILocalizationViewModel displayName)
+        public Scene(ICommandBuilder commandBuilder, ILocalizationViewModel localizationViewModel)
             : base(commandBuilder)
         {
-            DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
+            Localization = localizationViewModel ?? throw new ArgumentNullException(nameof(localizationViewModel));
         }
     }
 }

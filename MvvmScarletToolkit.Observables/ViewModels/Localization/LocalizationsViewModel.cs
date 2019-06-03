@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Observables
 {
-    public class LocalizationsViewModel : ObservableObject, ILocalizationService
+    public class LocalizationsViewModel : BusinessViewModelListBase<LocalizationViewModel>, ILocalizationService
     {
         protected readonly ILocalizationProvider TranslationProvider;
 
@@ -22,10 +23,10 @@ namespace MvvmScarletToolkit.Observables
             ? Enumerable.Empty<CultureInfo>()
             : TranslationProvider.Languages;
 
-        public LocalizationsViewModel(ILocalizationProvider provider)
+        public LocalizationsViewModel(ICommandBuilder commandBuilder, ILocalizationProvider provider)
+            : base(commandBuilder)
         {
             TranslationProvider = provider ?? throw new ArgumentNullException(nameof(provider));
-            _currentLanguage = Thread.CurrentThread.CurrentUICulture;
         }
 
         public string Translate(string key)
@@ -37,10 +38,26 @@ namespace MvvmScarletToolkit.Observables
 
                 var translatedValue = TranslationProvider.Translate(key);
                 if (!string.IsNullOrEmpty(translatedValue))
+                {
                     return translatedValue;
+                }
             }
 
             return $"!{key}!";
+        }
+
+        public LocalizationViewModel Add(string key)
+        {
+            var viewModel = new LocalizationViewModel(this, key);
+            _items.Add(viewModel);
+
+            return viewModel;
+        }
+
+        protected override Task RefreshInternal(CancellationToken token)
+        {
+            CurrentLanguage = Thread.CurrentThread.CurrentUICulture;
+            return Dispatcher.Invoke(() => OnPropertyChanged(nameof(Languages)), token);
         }
     }
 }
