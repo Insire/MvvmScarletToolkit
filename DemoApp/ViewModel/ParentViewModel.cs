@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -27,7 +28,7 @@ namespace DemoApp
             set { SetValue(ref _logItems, value); }
         }
 
-        public ParentViewModel(CommandBuilder commandBuilder)
+        public ParentViewModel(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             DemoItems = new DemoItems(commandBuilder);

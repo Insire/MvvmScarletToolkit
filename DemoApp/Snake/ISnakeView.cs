@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using System.Windows.Input;
 
 namespace DemoApp
@@ -14,7 +14,5 @@ namespace DemoApp
         IConcurrentCommand ShowStartCommand { get; set; }
         SnakeViewModel SnakeViewModel { get; set; }
         View View { get; set; }
-
-        void InitializeComponent();
     }
 }

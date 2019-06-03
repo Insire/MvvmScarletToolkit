@@ -13,10 +13,10 @@ namespace DemoApp
 {
     public sealed partial class SnakeView : ISnakeView
     {
-        private readonly Dispatcher _dispatcher;
+        private readonly IScarletDispatcher _dispatcher;
         private readonly IScarletMessenger _messenger;
         private readonly IScarletCommandManager _commandManager;
-        private readonly CommandBuilder _commandBuilder;
+        private readonly ICommandBuilder _commandBuilder;
 
         private PropertyObserver<ISnakeManager> _propertyObserver;
         private FrameCounter _frameCounter;
@@ -165,9 +165,9 @@ namespace DemoApp
         public SnakeView()
         {
             _commandManager = new ScarletCommandManager();
-            var scarletDispatcher = ScarletDispatcher.Default;
+            _dispatcher = ScarletDispatcher.Default;
             _messenger = new ScarletMessenger(new DefaultMessageProxy());
-            _commandBuilder = new CommandBuilder(scarletDispatcher, _commandManager, (lambda) => new BusyStack(lambda, scarletDispatcher));
+            _commandBuilder = new CommandBuilder(_dispatcher, _commandManager, (lambda) => new BusyStack(lambda, _dispatcher));
 
             View = View.Start;
             ShowStartCommand = _commandBuilder.Create(ShowStart, CanShowStart).Build();
@@ -329,8 +329,7 @@ namespace DemoApp
                 return;
             }
 
-            _dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                new Action<int>(fps => FramesPerSecond = fps), (int)state);
+            _dispatcher.Invoke(()=>FramesPerSecond = (int)state);
         }
 
         private void SnakeView_Unloaded(object sender, RoutedEventArgs e)

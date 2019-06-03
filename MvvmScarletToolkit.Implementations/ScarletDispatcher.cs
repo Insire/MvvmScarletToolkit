@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -17,14 +18,14 @@ namespace MvvmScarletToolkit
             _dispatcherObject = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         }
 
-        public async Task Invoke(Action action)
+        public async Task Invoke(Action action, CancellationToken token)
         {
-            await _dispatcherObject.InvokeAsync(action);
+            await _dispatcherObject.InvokeAsync(action, DispatcherPriority.Normal, token);
         }
 
-        public async Task<T> Invoke<T>(Func<T> action)
+        public async Task<T> Invoke<T>(Func<T> action, CancellationToken token)
         {
-            return await _dispatcherObject.InvokeAsync(action);
+            return await _dispatcherObject.InvokeAsync(action, DispatcherPriority.Normal, token);
         }
     }
 }

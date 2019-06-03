@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace MvvmScarletToolkit.Observables
 
         public IReadOnlyCollection<T> Items { get; }
 
-        public FilterViewModel(CommandBuilder commandBuilder, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates, IEqualityComparer<T> equalityComparer, IComparer<T> comparer)
+        public FilterViewModel(ICommandBuilder commandBuilder, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates, IEqualityComparer<T> equalityComparer, IComparer<T> comparer)
             : base(commandBuilder)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
@@ -40,7 +41,7 @@ namespace MvvmScarletToolkit.Observables
             Items = new ReadOnlyObservableCollection<T>(_items);
         }
 
-        public FilterViewModel(CommandBuilder commandBuilder, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates)
+        public FilterViewModel(ICommandBuilder commandBuilder, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates)
             : this(commandBuilder, source, predicates, null, null) // TODO
         {
         }

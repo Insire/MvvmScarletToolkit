@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,7 +17,7 @@ namespace DemoApp
 
         private readonly IEnumerable<GeometryContainer> _geomtries;
 
-        public TextDisplayViewModel(CommandBuilder commandBuilder)
+        public TextDisplayViewModel(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             _typeface = new Typeface("Tahoma");

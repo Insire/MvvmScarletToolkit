@@ -15,7 +15,7 @@ namespace DemoApp
 {
     internal sealed class SnakeEngine : ObservableObject, ISnakeManager
     {
-        private readonly Dispatcher _dispatcher;
+        private readonly IScarletDispatcher _dispatcher;
         private readonly SnakeOption _options;
         private readonly IProducerConsumerCollection<Apple> _apples;
         private readonly Random _random;
@@ -132,7 +132,7 @@ namespace DemoApp
             }
         }
 
-        public SnakeEngine(SnakeOption options, Dispatcher dispatcher, IScarletMessenger messenger, ICommandBuilder commandBuilder)
+        public SnakeEngine(SnakeOption options, IScarletDispatcher dispatcher, IScarletMessenger messenger, ICommandBuilder commandBuilder)
         {
             _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
@@ -307,15 +307,15 @@ namespace DemoApp
             var error = true;
             try
             {
-                await _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<Direction>((d) =>
+                await _dispatcher.Invoke(() =>
                 {
-                    if (!InternalMove(d))
+                    if (!InternalMove(_direction))
                     {
                         State = GameState.Fail;
                     }
 
                     error = false;
-                }), _direction);
+                });
             }
             catch (TaskCanceledException)
             {

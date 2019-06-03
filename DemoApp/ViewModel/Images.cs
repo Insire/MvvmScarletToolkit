@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,7 +7,7 @@ namespace DemoApp
 {
     public class Images : BusinessViewModelListBase<Image>
     {
-        public Images(CommandBuilder commandBuilder)
+        public Images(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
         }

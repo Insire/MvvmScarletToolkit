@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
 using System.Collections.ObjectModel;
 
@@ -20,7 +20,7 @@ namespace DemoApp
             set { SetValue(ref _items, value); }
         }
 
-        public AsyncCommandViewModelStuff(CommandBuilder commandBuilder)
+        public AsyncCommandViewModelStuff(ICommandBuilder commandBuilder)
         {
             Items = new ObservableCollection<AsyncDemoItem>();
             for (var i = 0; i < 10; i++)

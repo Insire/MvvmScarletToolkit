@@ -34,7 +34,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => DisplayListView = true).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => DisplayListView = true, token).ConfigureAwait(false);
             }
         }
 
@@ -42,7 +42,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => DisplayListView = false).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => DisplayListView = false, token).ConfigureAwait(false);
             }
         }
     }

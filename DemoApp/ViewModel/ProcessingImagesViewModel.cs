@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 
@@ -19,7 +20,7 @@ namespace DemoApp
             private set { SetValue(ref _target, value); }
         }
 
-        public ProcessingImagesViewModel(CommandBuilder commandBuilder)
+        public ProcessingImagesViewModel(ICommandBuilder commandBuilder)
         {
             Source = new Images(commandBuilder);
             Target = new Images(commandBuilder);

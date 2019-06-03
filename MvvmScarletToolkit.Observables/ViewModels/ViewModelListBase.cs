@@ -115,8 +115,8 @@ namespace MvvmScarletToolkit.Observables
         {
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => _items.Clear()).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => _items.Clear(), token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count)), token).ConfigureAwait(false);
             }
         }
 

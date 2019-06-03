@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
@@ -10,7 +11,7 @@ namespace DemoApp
     {
         public ICommand AddCommand { get; }
 
-        public LogItems(CommandBuilder commandBuilder)
+        public LogItems(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             AddCommand = CommandBuilder.Create(AddNew, CanAddNew).Build();
