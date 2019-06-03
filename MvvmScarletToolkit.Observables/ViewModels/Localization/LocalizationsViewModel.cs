@@ -23,6 +23,11 @@ namespace MvvmScarletToolkit.Observables
             ? Enumerable.Empty<CultureInfo>()
             : TranslationProvider.Languages;
 
+        public LocalizationsViewModel(ICommandBuilder commandBuilder)
+            : base(commandBuilder)
+        {
+        }
+
         public LocalizationsViewModel(ICommandBuilder commandBuilder, ILocalizationProvider provider)
             : base(commandBuilder)
         {

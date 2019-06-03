@@ -16,6 +16,9 @@
     <Grid>
         <Grid.Resources>
             <mvvmscarlettoolkit:NullValueConverter x:Key="NullValueConverter" />
+            <DataTemplate DataType="{x:Type observables:LocalizationViewModel}">
+                <TextBlock Text="{Binding Value}" />
+            </DataTemplate>
         </Grid.Resources>
 
         <Grid.ColumnDefinitions>
@@ -39,7 +42,7 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type observables:Scene}">
-                        <ContentControl Content="{Binding Content}" />
+                        <ContentControl Content="{Binding Localization}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
