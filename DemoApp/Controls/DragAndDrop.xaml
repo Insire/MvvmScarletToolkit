@@ -60,6 +60,13 @@
                      ItemsSource="{Binding Target.Items}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      SelectionMode="Extended">
+                <ListBox.ContextMenu>
+                    <ContextMenu DataContext="{Binding PlacementTarget, RelativeSource={x:Static RelativeSource.Self}}">
+                        <MenuItem Command="{Binding DataContext.Target.RemoveRangeCommand}"
+                                  CommandParameter="{Binding SelectedItems}"
+                                  Header="Remove" />
+                    </ContextMenu>
+                </ListBox.ContextMenu>
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel />
