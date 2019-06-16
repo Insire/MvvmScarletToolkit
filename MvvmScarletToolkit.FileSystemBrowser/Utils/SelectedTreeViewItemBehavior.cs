@@ -36,6 +36,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             typeof(SelectedTreeViewItemBehavior),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedItemChanged));
 
+        private static MethodInfo _bringIndexIntoViewInfo;
+
         private static void OnSelectedItemChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue is TreeViewItem item)
@@ -92,19 +94,27 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 return null;
             }
 
-            var method = virtualizingPanel.GetType().GetMethod(
+            if (_bringIndexIntoViewInfo is null)
+            {
+                _bringIndexIntoViewInfo = GetBringIndexIntoViewInfo(virtualizingPanel);
+            }
+
+            if (_bringIndexIntoViewInfo is null)
+            {
+                return null;
+            }
+
+            return index => _bringIndexIntoViewInfo.Invoke(virtualizingPanel, new object[] { index });
+        }
+
+        private static MethodInfo GetBringIndexIntoViewInfo(VirtualizingStackPanel virtualizingPanel)
+        {
+            return virtualizingPanel.GetType().GetMethod(
                 "BringIndexIntoView",
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 Type.DefaultBinder,
                 new[] { typeof(int) },
                 null);
-
-            if (method is null)
-            {
-                return null;
-            }
-
-            return i => method.Invoke(virtualizingPanel, new object[] { i });
         }
 
         /// <summary>

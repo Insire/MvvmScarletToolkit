@@ -122,6 +122,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return mime;
         }
 
+#pragma warning disable IDE1006 // Naming Styles
+
         private static readonly byte[] BMP = { 66, 77 };
         private static readonly byte[] DOC = { 208, 207, 17, 224, 161, 177, 26, 225 };
         private static readonly byte[] EXE_DLL = { 77, 90 };
@@ -140,5 +142,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         private static readonly byte[] WAV_AVI = { 82, 73, 70, 70 };
         private static readonly byte[] WMV_WMA = { 48, 38, 178, 117, 142, 102, 207, 17, 166, 217, 0, 170, 0, 98, 206, 108 };
         private static readonly byte[] ZIP_DOCX = { 80, 75, 3, 4 };
+
+#pragma warning restore IDE1006 // Naming Styles
     }
 }

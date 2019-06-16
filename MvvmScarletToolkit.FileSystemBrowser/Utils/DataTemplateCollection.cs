@@ -1,30 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Windows;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
-    public sealed class DataTemplateContainer : Freezable
-    {
-        public DataTemplate DataTemplate
-        {
-            get { return (DataTemplate)GetValue(DataTemplateProperty); }
-            set { SetValue(DataTemplateProperty, value); }
-        }
-
-        public static readonly DependencyProperty DataTemplateProperty = DependencyProperty.Register(
-            nameof(DataTemplate),
-            typeof(DataTemplate),
-            typeof(DataTemplateContainer),
-            new PropertyMetadata(default(DataTemplate)));
-
-        protected override Freezable CreateInstanceCore()
-        {
-            return new DataTemplateContainer();
-        }
-    }
-
     public sealed class DataTemplateCollection : IEnumerable<DataTemplateContainer>, IList
     {
         private readonly List<DataTemplateContainer> _templates;
@@ -50,7 +29,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         public void CopyTo(Array array, int index)
         {
-            //_templates.CopyTo(array, index);
+            throw new NotImplementedException();
         }
 
         public IEnumerator GetEnumerator()

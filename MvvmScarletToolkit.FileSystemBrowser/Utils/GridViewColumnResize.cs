@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     // https://stackoverflow.com/questions/560581/how-to-autosize-and-right-align-gridviewcolumn-data-in-wpf
     // source: http://lazycowprojects.tumblr.com/post/7063214400/wpf-c-listview-column-width-auto
     // https://github.com/rolfwessels/lazycowprojects/blob/master/Wpf/GridViewColumnResize.cs
-    public static class GridViewColumnResize
+    public static partial class GridViewColumnResize
     {
         public static readonly DependencyProperty WidthProperty = DependencyProperty.RegisterAttached(
             "Width",
@@ -106,54 +106,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
 
             return behavior;
-        }
-
-        /// <summary>
-        /// GridViewColumn class that gets attached to the GridViewColumn control
-        /// </summary>
-        public class GridViewColumnResizeBehavior
-        {
-            private readonly GridViewColumn _element;
-
-            public bool IsStatic => StaticWidth >= 0;
-
-            public double StaticWidth => double.TryParse(Width, out var result) ? result : -1;
-
-            public double Percentage => !IsStatic ? Mulitplier * 100 : 0;
-
-            public double Mulitplier
-            {
-                get
-                {
-                    if (Width == "*" || Width == "1*")
-                    {
-                        return 1;
-                    }
-
-                    if (Width.EndsWith("*") && double.TryParse(Width.Substring(0, Width.Length - 1), out var perc))
-                    {
-                        return perc;
-                    }
-                    else
-                    {
-                        return 1;
-                    }
-                }
-            }
-
-            public string Width { get; set; }
-
-            public GridViewColumnResizeBehavior(GridViewColumn element)
-            {
-                _element = element;
-            }
-
-            public void SetWidth(double allowedSpace, double totalPercentage)
-            {
-                _element.Width = IsStatic
-                    ? StaticWidth
-                    : allowedSpace * (Percentage / totalPercentage);
-            }
         }
 
         /// <summary>
@@ -255,6 +207,52 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 }
 
                 return totalWidth;
+            }
+        }
+
+        /// <summary>
+        /// GridViewColumn class that gets attached to the GridViewColumn control
+        /// </summary>
+        public class GridViewColumnResizeBehavior
+        {
+            private readonly GridViewColumn _element;
+
+            public bool IsStatic => StaticWidth >= 0;
+            public double StaticWidth => double.TryParse(Width, out var result) ? result : -1;
+            public double Percentage => !IsStatic ? Mulitplier * 100 : 0;
+
+            public double Mulitplier
+            {
+                get
+                {
+                    if (Width == "*" || Width == "1*")
+                    {
+                        return 1;
+                    }
+
+                    if (Width.EndsWith("*") && double.TryParse(Width.Substring(0, Width.Length - 1), out var perc))
+                    {
+                        return perc;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
+            }
+
+            public string Width { get; set; }
+
+            public GridViewColumnResizeBehavior(GridViewColumn element)
+            {
+                _element = element;
+            }
+
+            public void SetWidth(double allowedSpace, double totalPercentage)
+            {
+                _element.Width = IsStatic
+                    ? StaticWidth
+                    : allowedSpace * (Percentage / totalPercentage);
             }
         }
     }

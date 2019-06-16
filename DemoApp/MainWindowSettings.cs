@@ -3,7 +3,7 @@ using MvvmScarletToolkit.ConfigurableWindow;
 
 namespace DemoApp
 {
-    public class MainWindowSettings : ConfigurableWindowSettings
+    public sealed class MainWindowSettings : ConfigurableWindowSettings
     {
         // the values of these consts have to be added in the project settings with their according type set
         // so, IsFirstRun has to be added and be set as a bool for instance

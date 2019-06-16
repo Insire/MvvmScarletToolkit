@@ -207,7 +207,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 depth++;
             }
 
-            DependencyObject next = null;
+            DependencyObject next;
             if (Orientation == Orientation.Horizontal)
             {
                 var nextIndex = GetNextSectionClosestIndex(itemIndex);
@@ -250,13 +250,15 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             var selected = (UIElement)Keyboard.FocusedElement;
             var itemIndex = gen.IndexFromContainer(selected);
             var depth = 0;
+
             while (itemIndex == -1)
             {
                 selected = (UIElement)VisualTreeHelper.GetParent(selected);
                 itemIndex = gen.IndexFromContainer(selected);
                 depth++;
             }
-            DependencyObject next = null;
+
+            DependencyObject next;
             if (Orientation == Orientation.Vertical)
             {
                 var nextIndex = GetLastSectionClosestIndex(itemIndex);
@@ -283,6 +285,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                     next = gen.ContainerFromIndex(itemIndex - 1);
                 }
             }
+
             while (depth != 0)
             {
                 next = VisualTreeHelper.GetChild(next, 0);
@@ -297,13 +300,15 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             var selected = (UIElement)Keyboard.FocusedElement;
             var itemIndex = gen.IndexFromContainer(selected);
             var depth = 0;
+
             while (itemIndex == -1)
             {
                 selected = (UIElement)VisualTreeHelper.GetParent(selected);
                 itemIndex = gen.IndexFromContainer(selected);
                 depth++;
             }
-            DependencyObject next = null;
+
+            DependencyObject next;
             if (Orientation == Orientation.Vertical)
             {
                 var nextIndex = GetNextSectionClosestIndex(itemIndex);
@@ -330,6 +335,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                     next = gen.ContainerFromIndex(itemIndex + 1);
                 }
             }
+
             while (depth != 0)
             {
                 next = VisualTreeHelper.GetChild(next, 0);
@@ -344,13 +350,15 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             var selected = (UIElement)Keyboard.FocusedElement;
             var itemIndex = gen.IndexFromContainer(selected);
             var depth = 0;
+
             while (itemIndex == -1)
             {
                 selected = (UIElement)VisualTreeHelper.GetParent(selected);
                 itemIndex = gen.IndexFromContainer(selected);
                 depth++;
             }
-            DependencyObject next = null;
+
+            DependencyObject next;
             if (Orientation == Orientation.Horizontal)
             {
                 var nextIndex = GetLastSectionClosestIndex(itemIndex);
@@ -377,6 +385,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                     next = gen.ContainerFromIndex(itemIndex - 1);
                 }
             }
+
             while (depth != 0)
             {
                 next = VisualTreeHelper.GetChild(next, 0);
@@ -636,7 +645,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 itemIndex = gen.IndexFromContainer(element);
             }
 
-            var section = _abstractPanel[itemIndex].Section;
             var elementRect = _realizedChildLayout[element];
 
             if (Orientation == Orientation.Horizontal)

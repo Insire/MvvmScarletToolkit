@@ -30,9 +30,9 @@ namespace MvvmScarletToolkit
 
         public ScrollViewer ScrollOwner { get; set; }
 
-        public bool CanHorizontallyScroll { get; set; } = false;
+        public bool CanHorizontallyScroll { get; set; }
 
-        public bool CanVerticallyScroll { get; set; } = false;
+        public bool CanVerticallyScroll { get; set; }
 
         public double HorizontalOffset => _offset.X;
 
