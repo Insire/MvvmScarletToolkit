@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Abstractions
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns></returns>
-        string Translate(string key);
+        string Translate(string key, CultureInfo culture);
 
         /// <summary>
         /// Gets the available languages.

@@ -19,14 +19,9 @@ namespace MvvmScarletToolkit.Observables
             set { SetValue(ref _currentLanguage, value, () => Thread.CurrentThread.CurrentUICulture = value); }
         }
 
-        public IEnumerable<CultureInfo> Languages => TranslationProvider is null
-            ? Enumerable.Empty<CultureInfo>()
-            : TranslationProvider.Languages;
-
-        public LocalizationsViewModel(ICommandBuilder commandBuilder)
-            : base(commandBuilder)
-        {
-        }
+        public IEnumerable<CultureInfo> Languages => TranslationProvider.Languages?.Any() == true
+            ? TranslationProvider.Languages
+            : Enumerable.Empty<CultureInfo>();
 
         public LocalizationsViewModel(ICommandBuilder commandBuilder, ILocalizationProvider provider)
             : base(commandBuilder)
@@ -36,12 +31,12 @@ namespace MvvmScarletToolkit.Observables
 
         public string Translate(string key)
         {
-            if (TranslationProvider != null)
+            if (TranslationProvider != null && CurrentLanguage != null)
             {
                 if (Thread.CurrentThread.CurrentUICulture != CurrentLanguage)
                     Thread.CurrentThread.CurrentUICulture = CurrentLanguage;
 
-                var translatedValue = TranslationProvider.Translate(key);
+                var translatedValue = TranslationProvider.Translate(key, CurrentLanguage);
                 if (!string.IsNullOrEmpty(translatedValue))
                 {
                     return translatedValue;
