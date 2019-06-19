@@ -14,7 +14,7 @@ namespace DemoApp
             var commandManager = new ScarletCommandManager();
             var dispatcher = ScarletDispatcher.Default;
             var commandBuilder = new CommandBuilder(dispatcher, commandManager, (lambda) => new BusyStack(lambda, dispatcher));
-            var navigation = new NavigationViewModel(commandBuilder, new LocalizationsViewModel(commandBuilder, new LocalizationProvider()));
+            var navigation = new NavigationViewModel(commandBuilder, new LocalizationsViewModel(new LocalizationProvider()));
 
             var window = new MainWindow
             {
