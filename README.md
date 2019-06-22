@@ -18,19 +18,19 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process prim
 
 ## Features
 
-- [MvvmScarletToolkit.Observables](.\MvvmScarletToolkit.Observables\readme.md)
+- [MvvmScarletToolkit.Observables](MvvmScarletToolkit.Observables/readme.md)
     - INotifyPropertyChanged base classes for single instance viewmodels and collection viewmodels
     - Navigation ViewModels
     - Localization ViewModels
     - Threadsafe busy state notifications via IBusyStack interface
     - Changetracking
     - misc observable collections
-- [MvvmScarletToolkit.Commands](.\MvvmScarletToolkit.Commands\readme.md)
+- [MvvmScarletToolkit.Commands](MvvmScarletToolkit.Commands/readme.md)
     - fluent interface to build task based icommands
         - cancellation support
         - limiting command execution to one per instance
     - basic synchronous icommand
-- [MvvmScarletToolkit](.\MvvmScarletToolkit\readme.md)
+- [MvvmScarletToolkit](.\MvvmScarletToolkit/readme.md)
     - BindingProxy
     - VirtualizingTilePanel
     - NullValueConverter
