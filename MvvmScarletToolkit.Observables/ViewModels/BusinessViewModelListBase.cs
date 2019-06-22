@@ -51,7 +51,7 @@ namespace MvvmScarletToolkit.Observables
             : base(commandBuilder)
         {
             RemoveCommand = commandBuilder
-                .Create<TViewModel>(Remove, CanRemove)
+                .Create(Remove, CanRemove)
                 .WithSingleExecution(CommandManager)
                 .Build();
 
@@ -151,11 +151,6 @@ namespace MvvmScarletToolkit.Observables
                 && !_unloadCommand.IsBusy;
         }
 
-        private Task RemoveRange()
-        {
-            return RemoveRange(SelectedItems);
-        }
-
         private async Task RemoveRange(IList items)
         {
             using (BusyStack.GetToken())
@@ -184,7 +179,17 @@ namespace MvvmScarletToolkit.Observables
 
         private bool CanRemoveRange()
         {
-            return CanRemoveRange(SelectedItems?.Cast<TViewModel>());
+            return CanRemoveRange(SelectedItems);
+        }
+
+        private bool CanRemove()
+        {
+            return CanRemove(SelectedItem);
+        }
+
+        private Task RemoveRange()
+        {
+            return RemoveRange(SelectedItems);
         }
     }
 }

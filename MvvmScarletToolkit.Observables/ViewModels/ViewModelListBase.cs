@@ -67,6 +67,7 @@ namespace MvvmScarletToolkit.Observables
 
             _items = new ObservableCollection<TViewModel>();
 
+            SelectedItems = new ObservableCollection<TViewModel>();
             Items = new ReadOnlyObservableCollection<TViewModel>(_items);
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
         }
@@ -164,6 +165,11 @@ namespace MvvmScarletToolkit.Observables
         protected async void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
             await Dispatcher.Invoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName))).ConfigureAwait(false);
+        }
+
+        protected Task Remove()
+        {
+            return Remove(SelectedItem);
         }
     }
 }
