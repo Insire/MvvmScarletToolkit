@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -32,11 +33,19 @@ namespace MvvmScarletToolkit.Observables
         }
 
         private TViewModel _selectedItem;
-        [Bindable(true, BindingDirection.OneWay)]
+        [Bindable(true, BindingDirection.TwoWay)]
         public virtual TViewModel SelectedItem
         {
             get { return _selectedItem; }
             set { SetValue(ref _selectedItem, value); }
+        }
+
+        private IList _selectedItems;
+        [Bindable(true, BindingDirection.TwoWay)]
+        public virtual IList SelectedItems
+        {
+            get { return _selectedItems; }
+            set { SetValue(ref _selectedItems, value); }
         }
 
         public TViewModel this[int index]

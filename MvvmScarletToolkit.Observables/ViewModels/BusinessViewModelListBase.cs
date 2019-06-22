@@ -56,7 +56,7 @@ namespace MvvmScarletToolkit.Observables
                 .Build();
 
             RemoveRangeCommand = commandBuilder
-                .Create<IList>(RemoveRange, CanRemoveRange)
+                .Create(RemoveRange, CanRemoveRange)
                 .WithSingleExecution(CommandManager)
                 .Build();
 
@@ -151,6 +151,11 @@ namespace MvvmScarletToolkit.Observables
                 && !_unloadCommand.IsBusy;
         }
 
+        private Task RemoveRange()
+        {
+            return RemoveRange(SelectedItems);
+        }
+
         private async Task RemoveRange(IList items)
         {
             using (BusyStack.GetToken())
@@ -175,6 +180,11 @@ namespace MvvmScarletToolkit.Observables
         protected virtual bool CanRemoveRange(IList items)
         {
             return CanRemoveRange(items?.Cast<TViewModel>());
+        }
+
+        private bool CanRemoveRange()
+        {
+            return CanRemoveRange(SelectedItems?.Cast<TViewModel>());
         }
     }
 }
