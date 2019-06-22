@@ -30,7 +30,7 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process prim
         - cancellation support
         - limiting command execution to one per instance
     - basic synchronous icommand
-- [MvvmScarletToolkit](.\MvvmScarletToolkit/readme.md)
+- [MvvmScarletToolkit](MvvmScarletToolkit/readme.md)
     - BindingProxy
     - VirtualizingTilePanel
     - NullValueConverter

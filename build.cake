@@ -1,26 +1,18 @@
-#addin nuget:?package=Cake.Incubator
+#addin nuget:?package=Cake.Incubator&version=5.0.1
 
 #tool nuget:?package=vswhere
 
 ///////////////////////////////////////////////////////////////////////////////
-// ARGUMENTS
+// SETUP
 ///////////////////////////////////////////////////////////////////////////////
-var target = Argument("target", "Default");
+
 var Configuration = Argument("configuration", "Release");
 
-//////////////////////////////////////////////////////////////////////
-// Constants
-//////////////////////////////////////////////////////////////////////
 const string Platform = "AnyCPU";
-
 const string SolutionPath =".\\MvvmScarletToolkit.sln";
 const string AssemblyInfoPath =".\\SharedAssemblyInfo.cs";
-const string PackagePath = ".\\Package";
-const string ArchivePath = ".\\Archive";
+const string PackagePath = ".\\packages";
 
-///////////////////////////////////////////////////////////////////////////////
-// SETUP / TEARDOWN
-///////////////////////////////////////////////////////////////////////////////
 Setup(ctx =>
 {
     var latestInstallationPath = VSWhereLatest(new VSWhereLatestSettings { IncludePrerelease = true });
@@ -59,7 +51,6 @@ Task("CleanSolution")
         var folders = new[]
         {
             new DirectoryPath(PackagePath),
-            new DirectoryPath(ArchivePath),
         };
 
         foreach(var folder in folders)
@@ -86,17 +77,6 @@ Task("UpdateAssemblyInfo")
             Copyright               = $"© {DateTime.Today.Year} Insire",
 
             InternalsVisibleTo      = assemblyInfoParseResult.InternalsVisibleTo,
-
-            // invalid entries:
-            // Configuration           = assemblyInfoParseResult.Configuration,
-            // Description             = assemblyInfoParseResult.Description,
-            // Guid                    = assemblyInfoParseResult.Guid,
-            // Title                   = assemblyInfoParseResult.Title,
-
-            // posssible missing entries
-            // ComVisible           = assemblyInfoParseResult.ComVisible,
-            // CustomAttributes     = assemblyInfoParseResult.CustomAttributes,
-            // CLSCompliant         = assemblyInfoParseResult.CLSCompliant,
 
             MetaDataAttributes = new []
             {
@@ -145,10 +125,10 @@ Task("Build")
         var msBuildPath = Context.Tools.Resolve("msbuild.exe");
         var settings = new MSBuildSettings
         {
-                Verbosity = Verbosity.Quiet,
-                ToolPath = msBuildPath,
-                Configuration = Configuration,
-                ArgumentCustomization = args => args.Append("/m").Append("/nr:false") // The /nr switch tells msbuild to quite once it’s done
+            Verbosity = Verbosity.Quiet,
+            ToolPath = msBuildPath,
+            Configuration = Configuration,
+            ArgumentCustomization = args => args.Append("/m").Append("/nr:false") // The /nr switch tells msbuild to quite once it’s done
         };
 
         MSBuild(SolutionPath, settings.WithTarget("restore"));
@@ -205,7 +185,6 @@ Task("Pack")
                 Description                 = $"{name} v{version}",
                 Summary                     = summary,
                 ProjectUrl                  = new Uri(@"https://github.com/Insire/MvvmScarletToolkit"),
-                // IconUrl                      = new Uri(new FilePath("..\\src\\Resources\\Images\\logo.ico").MakeAbsolute(Context.Environment).FullPath, UriKind.Absolute),
                 LicenseUrl                  = new Uri(@"https://github.com/Insire/MvvmScarletToolkit/blob/master/LICENSE.md"),
                 Copyright                   = $"© {DateTime.Today.Year} Insire",
                 ReleaseNotes                = new[]{""},
@@ -237,7 +216,7 @@ Task("PushLocally")
             .UseWorkingDirectory(".")
             .WithArguments(builder => builder
             .Append("push")
-            .AppendSwitchQuoted("-source",@"D:\Drop\NuGet")
+            .AppendSwitchQuoted("-source", @"D:\Drop\NuGet")
             .AppendQuoted(path.FullPath));
 
         StartProcess(".\\tools\\nuget.exe",settings);
@@ -250,4 +229,4 @@ Task("Default")
     .IsDependentOn("Pack")
     .IsDependentOn("PushLocally");
 
-RunTarget(target);
+RunTarget(Argument("target", "Default"));

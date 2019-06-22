@@ -246,3 +246,5 @@ ModelManifest.xml
 /nuget/push.txt
 
 .vscode
+
+./packages
