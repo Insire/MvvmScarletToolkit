@@ -219,7 +219,7 @@ Task("Pack")
 
 Task("PushLocally")
     .WithCriteria(() => BuildSystem.IsLocalBuild)
-    .DoesForEach(GetFiles(PackagePath + "\\*.nupkg"), path =>
+    .DoesForEach(() => GetFiles(PackagePath + "\\*.nupkg"), path =>
     {
         var settings = new ProcessSettings()
             .UseWorkingDirectory(".")
