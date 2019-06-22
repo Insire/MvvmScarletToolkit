@@ -23,78 +23,15 @@ const string ArchivePath = ".\\Archive";
 ///////////////////////////////////////////////////////////////////////////////
 Setup(ctx =>
 {
-    foreach(var item in VSWhereAll())
-        Verbose(item.FullPath);
-
-    var tools = new List<string>()
-    {
-        @".\Common7\IDE\Extensions\TestPlatform\vstest.console.exe",
-        @".\Common7\IDE\MSTest.exe",
-        @".\MSBuild\15.0\Bin\MSBuild.exe",
-        @".\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe",
-    };
-
-    // source https://docs.microsoft.com/en-us/visualstudio/install/workload-and-component-ids
-    var products = new List<string>
-    {
-        "Microsoft.VisualStudio.Product.Enterprise",
-        "Microsoft.VisualStudio.Product.Professional",
-        "Microsoft.VisualStudio.Product.Community",
-        "Microsoft.VisualStudio.Product.TeamExplorer",
-        "Microsoft.VisualStudio.Product.BuildTools",
-        "Microsoft.VisualStudio.Product.TestAgent",
-        "Microsoft.VisualStudio.Product.TestController",
-        "Microsoft.VisualStudio.Product.TestProfessional",
-        "Microsoft.VisualStudio.Product.FeedbackClient",
-    };
-
-    var foundMSBuild = false;
-    var foundVSTest = false;
-
-    foreach(var product in products)
-    {
-        foreach(var directory in VSWhereProducts(product))
-        {
-            foreach(var tool in tools)
-            {
-                var toolPath = directory.CombineWithFilePath(tool);
-                if(FileExists(toolPath))
-                {
-                    Context.Tools.RegisterFile(toolPath);
-                    if(tool.Contains("MSBuild.exe"))
-                        foundMSBuild = true;
-                    if(tool.Contains("vstest.console.exe"))
-                        foundVSTest = true;
-                }
-            }
-        }
-    }
-
-    if(!foundMSBuild)
-        Warning("MSBuild not found");
-
-    if(!foundVSTest)
-        Warning("VSTest not found");
-
-    if(foundMSBuild && foundVSTest)
-        Information("Required tools have been found.");
+    var latestInstallationPath = VSWhereLatest(new VSWhereLatestSettings { IncludePrerelease = true });
+    var msBuildPath = latestInstallationPath.Combine("./MSBuild/Current/Bin");
+    var msBuildPathExe = msBuildPath.CombineWithFilePath("./MSBuild.exe");
+    Context.Tools.RegisterFile(msBuildPathExe);
 
     if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
     {
         var appveyorRepoTag = EnvironmentVariable("APPVEYOR_REPO_TAG") ;
         Information($"APPVEYOR_REPO_TAG: {appveyorRepoTag}");
-    }
-
-    var folders = new[]
-    {
-        new DirectoryPath(PackagePath),
-        new DirectoryPath(ArchivePath),
-    };
-
-    foreach(var folder in folders)
-    {
-        EnsureDirectoryExists(folder);
-        CleanDirectory(folder,(file) => !file.Path.Segments.Last().Contains(".gitignore"));
     }
 });
 
@@ -117,6 +54,18 @@ Task("CleanSolution")
 
             foreach(var path in customProject.OutputPaths)
                 CleanDirectory(path.FullPath);
+        }
+
+        var folders = new[]
+        {
+            new DirectoryPath(PackagePath),
+            new DirectoryPath(ArchivePath),
+        };
+
+        foreach(var folder in folders)
+        {
+            EnsureDirectoryExists(folder);
+            CleanDirectory(folder,(file) => !file.Path.Segments.Last().Contains(".gitignore"));
         }
 });
 
@@ -182,11 +131,22 @@ Task("Build")
     .Does(() =>
     {
         var msBuildPath = Context.Tools.Resolve("msbuild.exe");
-        var settings = new MSBuildSettings()
+        var settings = new MSBuildSettings
+        {
+                Verbosity = Verbosity.Quiet,
+                ToolPath = msBuildPath,
+                Configuration = Configuration,
+                ArgumentCustomization = args => args.Append("/m").Append("/nr:false") // The /nr switch tells msbuild to quite once it’s done
+        };
+
+        MSBuild(SolutionPath, settings.WithTarget("restore"));
+
+        settings = new MSBuildSettings()
         {
             Verbosity = Verbosity.Quiet,
             Restore = true,
             NodeReuse = false,
+            ToolPath = msBuildPath
         };
 
         settings = settings
@@ -194,11 +154,6 @@ Task("Build")
                 .SetDetailedSummary(false)
                 .SetMaxCpuCount(0)
                 .SetMSBuildPlatform(MSBuildPlatform.Automatic);
-
-        if(msBuildPath != null)
-            settings.ToolPath = msBuildPath;
-        else
-            settings.ToolVersion = MSBuildToolVersion.VS2017;
 
         MSBuild(SolutionPath, settings);
 });
@@ -223,6 +178,7 @@ Task("Pack")
         NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Commands","MvvmScarletToolkit.Commands ", new DirectoryPath(".\\MvvmScarletToolkit.Commands\\bin\\Release\\")));
         NuGetPack(GetDefaultSettings("MvvmScarletToolkit.FileSystemBrowser","MvvmScarletToolkit.FileSystemBrowser ", new DirectoryPath(".\\MvvmScarletToolkit.FileSystemBrowser\\bin\\Release\\")));
         NuGetPack(GetDefaultSettings("MvvmScarletToolkit.ConfigurableWindow","MvvmScarletToolkit.ConfigurableWindow ", new DirectoryPath(".\\MvvmScarletToolkit.ConfigurableWindow\\bin\\Release\\")));
+        NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Implementations","MvvmScarletToolkit.Implementations ", new DirectoryPath(".\\MvvmScarletToolkit.Implementations\\bin\\Release\\")));
         // dont provide a nuget package for incubator, because its not intended to be released
         // NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Incubator","MvvmScarletToolkit.Incubator ", new DirectoryPath(".\\MvvmScarletToolkit.Incubator\\bin\\Release\\")));
 
@@ -250,23 +206,36 @@ Task("Pack")
                 KeepTemporaryNuSpecFile     = false,
                 Files = new[]
                 {
-                    new NuSpecContent{ Source="net471\\*",Target="lib\\net471"},
-                    new NuSpecContent{ Source="net47\\*",Target="lib\\net47"},
-                    new NuSpecContent{ Source="net462\\*",Target="lib\\net462"},
+                    new NuSpecContent{ Source="net46\\*",Target="lib\\net46"},
                     new NuSpecContent{ Source="net461\\*",Target="lib\\net461"},
+                    new NuSpecContent{ Source="net462\\*",Target="lib\\net462"},
+                    new NuSpecContent{ Source="net47\\*",Target="lib\\net47"},
+                    new NuSpecContent{ Source="net471\\*",Target="lib\\net471"},
+                    new NuSpecContent{ Source="netcoreapp3.0\\*",Target="lib\\netcoreapp3.0"},
                 }
             };
         }
 });
+
+Task("PushLocally")
+    .WithCriteria(() => BuildSystem.IsLocalBuild)
+    .DoesForEach(GetFiles(PackagePath + "\\*.nupkg"), path =>
+    {
+        var settings = new ProcessSettings()
+            .UseWorkingDirectory(".")
+            .WithArguments(builder => builder
+            .Append("push")
+            .AppendSwitchQuoted("-source",@"D:\Drop\NuGet")
+            .AppendQuoted(path.FullPath));
+
+        StartProcess(".\\tools\\nuget.exe",settings);
+    });
 
 Task("Default")
     .IsDependentOn("CleanSolution")
     .IsDependentOn("UpdateAssemblyInfo")
     .IsDependentOn("Build")
     .IsDependentOn("Pack")
-    .Does(() => 
-    {
-        Information("Hello Cake!");
-    });
+    .IsDependentOn("PushLocally");
 
 RunTarget(target);
