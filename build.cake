@@ -113,7 +113,13 @@ Task("UpdateAssemblyInfo")
             }
         };
 
-        if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
+        if (BuildSystem.IsLocalBuild)
+        {
+            settings.Version                 = Increase(settings.Version);
+            settings.FileVersion             = Increase(settings.FileVersion);
+            settings.InformationalVersion    = Increase(settings.InformationalVersion);
+        }
+        else
         {
             var version = EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "no version found from AppVeyorEnvironment";
 
@@ -125,6 +131,12 @@ Task("UpdateAssemblyInfo")
         }
 
         CreateAssemblyInfo(new FilePath(AssemblyInfoPath), settings);
+
+        string Increase(string data)
+        {
+            var version = new Version(data);
+            return new Version(version.Major,version.Minor,version.Build+1, version.Revision).ToString();
+        }
 });
 
 Task("Build")
