@@ -1,56 +1,78 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace MvvmScarletToolkit
 {
     public sealed class ExitService : IExitService
     {
-        private readonly Application _app;
-        private readonly ConcurrentStack<IBusinessViewModelListBase> _listViewModels;
-        private readonly ConcurrentStack<IBusinessViewModelBase> _viewModels;
+        public static IExitService Default { get; } = new ExitService(Application.Current, ScarletDispatcher.InternalDefault);
 
-        public static IExitService Default { get; } = new ExitService(Application.Current);
+        private readonly Application _app;
+        private readonly ScarletDispatcher _scarletDispatcher;
+        private readonly ConcurrentQueue<IBusinessViewModelListBase> _listViewModels;
+        private readonly ConcurrentQueue<IBusinessViewModelBase> _viewModels;
+
+        private Task _shutDown = Task.CompletedTask;
 
         private ExitService()
         {
-            _viewModels = new ConcurrentStack<IBusinessViewModelBase>();
-            _listViewModels = new ConcurrentStack<IBusinessViewModelListBase>();
+            _viewModels = new ConcurrentQueue<IBusinessViewModelBase>();
+            _listViewModels = new ConcurrentQueue<IBusinessViewModelListBase>();
         }
 
-        public ExitService(Application app)
+        internal ExitService(Application app, ScarletDispatcher dispatcher)
             : this()
         {
             _app = app ?? throw new ArgumentNullException(nameof(app));
-
+            _scarletDispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _app.Exit += App_Exit;
         }
 
-        private async void App_Exit(object sender, ExitEventArgs e)
+        private void App_Exit(object sender, ExitEventArgs e)
         {
             _app.Exit -= App_Exit;
+            _scarletDispatcher.InvokeSynchronous = true;
+            _shutDown = InternalShutDown();
+        }
 
-            while (_viewModels.TryPop(out var viewmodel))
+        private Task InternalShutDown()
+        {
+            Debug.WriteLine("Started Unloading ViewModels...");
+
+            var tasks = new List<Task>(_viewModels.Count + _listViewModels.Count);
+
+            while (_viewModels.TryDequeue(out var viewmodel))
             {
-                await viewmodel.Unload(CancellationToken.None);
+                tasks.Add(viewmodel.Unload(CancellationToken.None));
             }
 
-            while (_listViewModels.TryPop(out var viewmodel))
+            while (_listViewModels.TryDequeue(out var viewmodel))
             {
-                await viewmodel.Unload(CancellationToken.None);
+                tasks.Add(viewmodel.Unload(CancellationToken.None));
             }
+
+            return Task.WhenAll(tasks);
+        }
+
+        public Task ShutDown()
+        {
+            return _shutDown;
         }
 
         public void UnloadOnExit(IBusinessViewModelListBase viewModel)
         {
-            _listViewModels.Push(viewModel);
+            _listViewModels.Enqueue(viewModel);
         }
 
         public void UnloadOnExit(IBusinessViewModelBase viewModel)
         {
-            _viewModels.Push(viewModel);
+            _viewModels.Enqueue(viewModel);
         }
     }
 }
