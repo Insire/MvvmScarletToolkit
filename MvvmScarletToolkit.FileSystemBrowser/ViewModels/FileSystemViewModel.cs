@@ -18,14 +18,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         [Bindable(true, BindingDirection.OneWay)]
         public ConcurrentCommandBase RefreshFilterCommand { get; }
 
-        private RangeObservableCollection<IFileSystemInfo> _selectedItems;
-        [Bindable(true, BindingDirection.OneWay)]
-        public RangeObservableCollection<IFileSystemInfo> SelectedItems
-        {
-            get { return _selectedItems; }
-            private set { SetValue(ref _selectedItems, value); }
-        }
-
         private FileSystemOptionsViewModel _options;
         [Bindable(true, BindingDirection.OneWay)]
         public FileSystemOptionsViewModel Options
