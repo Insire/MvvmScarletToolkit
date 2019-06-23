@@ -10,6 +10,8 @@ namespace MvvmScarletToolkit.Abstractions
         IScarletCommandManager CommandManager { get; }
         IScarletDispatcher Dispatcher { get; }
 
+        IExitService Exit { get; }
+
         ICommandBuilderContext Create<TArgument, TResult>();
 
         CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(Func<TArgument, bool> canExecute);

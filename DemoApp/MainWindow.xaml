@@ -437,7 +437,15 @@
 
                 <DataTemplate DataType="{x:Type local:ProgressViewModel}">
                     <DockPanel>
-                        <Button Command="{Binding LoadCommand}" DockPanel.Dock="Bottom">Start</Button>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Unloaded">
+                                <i:InvokeCommandAction Command="{Binding UnloadCommand}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <Button Command="{Binding RefreshCommand}" DockPanel.Dock="Bottom">Refresh</Button>
                         <ProgressBar Maximum="{Binding Maximum, Mode=OneWay}" Value="{Binding Percentage, Mode=OneWay}" />
                     </DockPanel>
                 </DataTemplate>

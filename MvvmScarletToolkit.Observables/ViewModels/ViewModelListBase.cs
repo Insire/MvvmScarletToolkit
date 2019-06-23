@@ -21,6 +21,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly ICommandBuilder CommandBuilder;
         protected readonly IScarletDispatcher Dispatcher;
         protected readonly IScarletCommandManager CommandManager;
+        protected readonly IExitService Exit;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -62,8 +63,9 @@ namespace MvvmScarletToolkit.Observables
         protected ViewModelListBase(ICommandBuilder commandBuilder)
         {
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
-            Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(CommandBuilder.Dispatcher));
-            CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(CommandBuilder.CommandManager));
+            Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(ICommandBuilder.Dispatcher));
+            CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilder.CommandManager));
+            Exit = commandBuilder.Exit ?? throw new ArgumentNullException(nameof(ICommandBuilder.Exit));
 
             _items = new ObservableCollection<TViewModel>();
 

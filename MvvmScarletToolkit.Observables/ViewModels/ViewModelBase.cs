@@ -41,6 +41,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly ICommandBuilder CommandBuilder;
         protected readonly IScarletCommandManager CommandManager;
         protected readonly IScarletDispatcher Dispatcher;
+        protected readonly IExitService Exit;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -55,8 +56,9 @@ namespace MvvmScarletToolkit.Observables
         protected ViewModelBase(ICommandBuilder commandBuilder)
         {
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
-            Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.Dispatcher));
-            CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilderContext.CommandManager));
+            Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(ICommandBuilder.Dispatcher));
+            CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilder.CommandManager));
+            Exit = commandBuilder.Exit ?? throw new ArgumentNullException(nameof(ICommandBuilder.Exit));
 
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
         }

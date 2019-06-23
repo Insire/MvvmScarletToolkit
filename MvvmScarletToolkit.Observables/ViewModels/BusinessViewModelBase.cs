@@ -38,7 +38,7 @@ namespace MvvmScarletToolkit.Observables
     /// <summary>
     /// ViewModelBase that bootstraps loading, unloading and refreshing of its content
     /// </summary>
-    public abstract class BusinessViewModelBase : ViewModelBase
+    public abstract class BusinessViewModelBase : ViewModelBase, IBusinessViewModelBase
     {
         private bool _isLoaded;
         [Bindable(true, BindingDirection.OneWay)]
@@ -77,6 +77,8 @@ namespace MvvmScarletToolkit.Observables
                                           .WithSingleExecution(CommandManager)
                                           .WithBusyNotification(BusyStack)
                                           .Build();
+
+            Exit.UnloadOnExit(this);
         }
 
         protected virtual Task LoadInternal(CancellationToken token)

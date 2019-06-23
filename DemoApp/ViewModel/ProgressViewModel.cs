@@ -1,6 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
-using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,20 +30,24 @@ namespace DemoApp
 
         protected override Task UnloadInternal(CancellationToken token)
         {
+            Debug.WriteLine("Unloading ProgressViewModel");
             return Task.CompletedTask;
         }
 
         protected override async Task RefreshInternal(CancellationToken token)
         {
-            var dispatcher = System.Windows.Application.Current.Dispatcher;
+            if (!IsLoaded)
+                Debug.WriteLine("Loading ProgressViewModel");
+            else
+                Debug.WriteLine("Refreshing ProgressViewModel");
 
-            await dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => Percentage = 0));
+            await Dispatcher.Invoke(() => Percentage = 0);
             await Task.Delay(250).ConfigureAwait(false);
 
             for (var i = 0; i <= _maximum; i++)
             {
-                await dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => Percentage = i));
-                await Task.Delay(50).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => Percentage = i);
+                await Task.Delay(25).ConfigureAwait(false);
             }
         }
     }
