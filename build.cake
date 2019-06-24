@@ -32,9 +32,16 @@ Setup(ctx =>
 ///////////////////////////////////////////////////////////////////////////////
 
 Task("Debug")
-    .WithCriteria(()=>BuildSystem.IsRunningOnAzurePipelines)
     .Does(()=>
     {
+        Information("IsRunningOnAppVeyor: " + BuildSystem.IsRunningOnAppVeyor);
+        Information("IsRunningOnAzurePipelines: " + BuildSystem.IsRunningOnAzurePipelines);
+        Information("IsRunningOnAzurePipelinesHosted: " + BuildSystem.IsRunningOnAzurePipelinesHosted);
+        Information("IsRunningOnTFS: " + BuildSystem.IsRunningOnTFS);
+        Information("IsRunningOnVSTS: " + BuildSystem.IsRunningOnVSTS);
+
+        Information("Provider: " + BuildSystem.Provider);
+
         foreach(var entry in Context.EnvironmentVariables())
         {
             Information(entry.Key + " " + entry.Value);
