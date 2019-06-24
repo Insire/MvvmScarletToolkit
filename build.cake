@@ -154,6 +154,10 @@ Task("Restore")
             Sources = new[] {"https://api.nuget.org/v3/index.json"},
             Verbosity = DotNetCoreVerbosity.Minimal,
             DisableParallel = false,
+            MSBuildSettings = new DotNetCoreMSBuildSettings()
+            {
+                NoLogo = true,
+            }
         });
     });
 
