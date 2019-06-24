@@ -58,3 +58,5 @@ The included DemoApp contains examples for:
 - add a nice icon for this lib
 - add Contribution guidelines
 
+Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftThorn/_packaging/SoftThorn/nuget/v3/index.json).
+I'll make them available to everyone when changes to the API get less common. 
