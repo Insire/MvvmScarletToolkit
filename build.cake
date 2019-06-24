@@ -1,7 +1,5 @@
 #addin nuget:?package=Cake.Incubator&version=5.0.1
 
-#tool nuget:?package=vswhere
-
 ///////////////////////////////////////////////////////////////////////////////
 // SETUP
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,11 +13,6 @@ const string PackagePath = ".\\packages";
 
 Setup(ctx =>
 {
-    var latestInstallationPath = VSWhereLatest(new VSWhereLatestSettings { IncludePrerelease = true });
-    var msBuildPath = latestInstallationPath.Combine("./MSBuild/Current/Bin");
-    var msBuildPathExe = msBuildPath.CombineWithFilePath("./MSBuild.exe");
-    Context.Tools.RegisterFile(msBuildPathExe);
-
     if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
     {
         var appveyorRepoTag = EnvironmentVariable("APPVEYOR_REPO_TAG") ;
@@ -37,8 +30,6 @@ Task("Debug")
         Information("IsRunningOnAppVeyor: " + BuildSystem.IsRunningOnAppVeyor);
         Information("IsRunningOnAzurePipelines: " + BuildSystem.IsRunningOnAzurePipelines);
         Information("IsRunningOnAzurePipelinesHosted: " + BuildSystem.IsRunningOnAzurePipelinesHosted);
-        // Information("IsRunningOnTFS: " + BuildSystem.IsRunningOnTFS);
-        // Information("IsRunningOnVSTS: " + BuildSystem.IsRunningOnVSTS);
 
         Information("Provider: " + BuildSystem.Provider);
 
@@ -155,34 +146,31 @@ Task("UpdateAssemblyInfo")
         }
 });
 
+Task("Restore")
+    .Does(()=>
+    {
+        DotNetCoreRestore(new DotNetCoreRestoreSettings
+        {
+            Sources = new[] {"https://api.nuget.org/v3/index.json"},
+            Verbosity = DotNetCoreVerbosity.Minimal,
+            DisableParallel = false,
+        });
+    });
+
 Task("Build")
     .Does(() =>
     {
-        var msBuildPath = Context.Tools.Resolve("msbuild.exe");
-        var settings = new MSBuildSettings
+        DotNetCoreBuild(".", new DotNetCoreBuildSettings
         {
-            Verbosity = Verbosity.Quiet,
-            ToolPath = msBuildPath,
+            Framework = "netcoreapp3.0",
             Configuration = Configuration,
-            ArgumentCustomization = args => args.Append("/m").Append("/nr:false") // The /nr switch tells msbuild to quite once it’s done
-        };
-
-        MSBuild(SolutionPath, settings.WithTarget("restore"));
-
-        settings = new MSBuildSettings()
-        {
-            Restore = true,
-            NodeReuse = false,
-            ToolPath = msBuildPath
-        };
-
-        settings = settings
-                .SetConfiguration(Configuration)
-                .SetDetailedSummary(false)
-                .SetMaxCpuCount(0)
-                .SetMSBuildPlatform(MSBuildPlatform.Automatic);
-
-        MSBuild(SolutionPath, settings);
+            NoRestore = true,
+            MSBuildSettings = new DotNetCoreMSBuildSettings()
+            {
+                MaxCpuCount = 0,
+                ValidateProjectFile = true,
+            }
+        });
 });
 
 Task("Pack")
@@ -261,6 +249,7 @@ Task("Default")
     .IsDependentOn("Debug")
     .IsDependentOn("CleanSolution")
     .IsDependentOn("UpdateAssemblyInfo")
+    .IsDependentOn("Restore")
     .IsDependentOn("Build")
     .IsDependentOn("Pack")
     .IsDependentOn("PushLocally");
