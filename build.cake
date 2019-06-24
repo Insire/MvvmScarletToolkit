@@ -118,24 +118,26 @@ Task("UpdateAssemblyInfo")
         }
         else
         {
-            var version = string.Empty;
             if(BuildSystem.IsRunningOnAzurePipelinesHosted)
             {
                 var build = int.Parse(EnvironmentVariable("BUILD_BUILDNUMBER") ?? "no version found from AzurePipelinesHosted");
                 settings.Version                 = IncreaseWith(settings.Version, build);
                 settings.FileVersion             = IncreaseWith(settings.FileVersion, build);
                 settings.InformationalVersion    = IncreaseWith(settings.InformationalVersion, build);
+
+                Information($"Version: {settings.Version}");
+                Information($"FileVersion: {settings.FileVersion}");
+                Information($"InformationalVersion: {settings.InformationalVersion}");
             }
             else
             {
-                version = EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "no version found from AppVeyorEnvironment";
+                var version = EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "no version found from AppVeyorEnvironment";
+                settings.Version                 = version;
+                settings.FileVersion             = version;
+                settings.InformationalVersion    = version;
+
+                Information($"Version: {version}");
             }
-
-            Information($"Version: {version}");
-
-            settings.Version                 = version;
-            settings.FileVersion             = version;
-            settings.InformationalVersion    = version;
         }
 
         CreateAssemblyInfo(new FilePath(AssemblyInfoPath), settings);
