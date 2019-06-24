@@ -248,3 +248,5 @@ ModelManifest.xml
 .vscode
 
 ./packages
+/tools/*
+!/tools/packages.config
