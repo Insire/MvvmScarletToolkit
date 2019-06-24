@@ -121,10 +121,10 @@ Task("UpdateAssemblyInfo")
             var version = string.Empty;
             if(BuildSystem.IsRunningOnAzurePipelinesHosted)
             {
-                version = EnvironmentVariable("BUILD_BUILDNUMBER") ?? "no version found from AzurePipelinesHosted";
-                settings.Version                 = IncreaseWith(settings.Version, version);
-                settings.FileVersion             = IncreaseWith(settings.FileVersion, version);
-                settings.InformationalVersion    = IncreaseWith(settings.InformationalVersion, version);
+                var build = int.Parse(EnvironmentVariable("BUILD_BUILDNUMBER") ?? "no version found from AzurePipelinesHosted");
+                settings.Version                 = IncreaseWith(settings.Version, build);
+                settings.FileVersion             = IncreaseWith(settings.FileVersion, build);
+                settings.InformationalVersion    = IncreaseWith(settings.InformationalVersion, build);
             }
             else
             {
