@@ -44,7 +44,7 @@ Task("Debug")
 
         foreach(var entry in Context.EnvironmentVariables())
         {
-            Information(entry.Key + " " + entry.Value);
+            Verbose(entry.Key + " " + entry.Value);
         }
     });
 
