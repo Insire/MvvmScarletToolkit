@@ -31,6 +31,16 @@ Setup(ctx =>
 // TASKS
 ///////////////////////////////////////////////////////////////////////////////
 
+Task("Debug")
+    .WithCriteria(()=>BuildSystem.IsRunningOnAzurePipelines)
+    .Does(()=>
+    {
+        foreach(var entry in Context.EnvironmentVariables())
+        {
+            Information(entry.Key + " " + entry.Value);
+        }
+    });
+
 Task("CleanSolution")
     .Does(() =>
     {
@@ -160,8 +170,15 @@ Task("Pack")
         }
         else
         {
-            var assemblyInfoParseResult = ParseAssemblyInfo(AssemblyInfoPath);
-            version = assemblyInfoParseResult.AssemblyVersion;
+            if(BuildSystem.IsRunningOnAzurePipelines)
+            {
+                version = EnvironmentVariable("Build.BuildNumber") ?? "no version found from AppVeyorEnvironment";
+            }
+            else
+            {
+                var assemblyInfoParseResult = ParseAssemblyInfo(AssemblyInfoPath);
+                version = assemblyInfoParseResult.AssemblyVersion;
+            }
         }
 
         NuGetPack(GetDefaultSettings("MvvmScarletToolkit","MvvmScarletToolkit is a personal project and framework to speed up the development process of WPF applications.", new DirectoryPath(".\\MvvmScarletToolkit\\bin\\Release\\")));
@@ -223,6 +240,7 @@ Task("PushLocally")
     });
 
 Task("Default")
+    .IsDependentOn("Debug")
     .IsDependentOn("CleanSolution")
     .IsDependentOn("UpdateAssemblyInfo")
     .IsDependentOn("Build")
