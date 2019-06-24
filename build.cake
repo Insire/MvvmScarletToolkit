@@ -37,8 +37,8 @@ Task("Debug")
         Information("IsRunningOnAppVeyor: " + BuildSystem.IsRunningOnAppVeyor);
         Information("IsRunningOnAzurePipelines: " + BuildSystem.IsRunningOnAzurePipelines);
         Information("IsRunningOnAzurePipelinesHosted: " + BuildSystem.IsRunningOnAzurePipelinesHosted);
-        Information("IsRunningOnTFS: " + BuildSystem.IsRunningOnTFS);
-        Information("IsRunningOnVSTS: " + BuildSystem.IsRunningOnVSTS);
+        // Information("IsRunningOnTFS: " + BuildSystem.IsRunningOnTFS);
+        // Information("IsRunningOnVSTS: " + BuildSystem.IsRunningOnVSTS);
 
         Information("Provider: " + BuildSystem.Provider);
 
@@ -118,7 +118,18 @@ Task("UpdateAssemblyInfo")
         }
         else
         {
-            var version = EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "no version found from AppVeyorEnvironment";
+            var version = string.Empty;
+            if(BuildSystem.IsRunningOnAzurePipelinesHosted)
+            {
+                version = EnvironmentVariable("BUILD_BUILDNUMBER") ?? "no version found from AzurePipelinesHosted";
+                settings.Version                 = IncreaseWith(settings.Version, version);
+                settings.FileVersion             = IncreaseWith(settings.FileVersion, version);
+                settings.InformationalVersion    = IncreaseWith(settings.InformationalVersion, version);
+            }
+            else
+            {
+                version = EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "no version found from AppVeyorEnvironment";
+            }
 
             Information($"Version: {version}");
 
@@ -133,6 +144,12 @@ Task("UpdateAssemblyInfo")
         {
             var version = new Version(data);
             return new Version(version.Major,version.Minor,version.Build+1, version.Revision).ToString();
+        }
+
+        string IncreaseWith(string data, int build)
+        {
+            var version = new Version(data);
+            return new Version(version.Major,version.Minor,build, version.Revision).ToString();
         }
 });
 
@@ -152,7 +169,6 @@ Task("Build")
 
         settings = new MSBuildSettings()
         {
-            Verbosity = Verbosity.Quiet,
             Restore = true,
             NodeReuse = false,
             ToolPath = msBuildPath
@@ -177,15 +193,8 @@ Task("Pack")
         }
         else
         {
-            if(BuildSystem.IsRunningOnAzurePipelines)
-            {
-                version = EnvironmentVariable("Build.BuildNumber") ?? "no version found from AppVeyorEnvironment";
-            }
-            else
-            {
-                var assemblyInfoParseResult = ParseAssemblyInfo(AssemblyInfoPath);
-                version = assemblyInfoParseResult.AssemblyVersion;
-            }
+            var assemblyInfoParseResult = ParseAssemblyInfo(AssemblyInfoPath);
+            version = assemblyInfoParseResult.AssemblyVersion;
         }
 
         NuGetPack(GetDefaultSettings("MvvmScarletToolkit","MvvmScarletToolkit is a personal project and framework to speed up the development process of WPF applications.", new DirectoryPath(".\\MvvmScarletToolkit\\bin\\Release\\")));
