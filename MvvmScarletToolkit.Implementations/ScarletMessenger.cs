@@ -1,12 +1,16 @@
 using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit
 {
-    public sealed partial class ScarletMessenger : IScarletMessenger
+    public sealed class ScarletMessenger : IScarletMessenger
     {
+        public static IScarletMessenger Default { get; } = new ScarletMessenger(ScarletMessageProxy.Default);
+
         private readonly object _subscriptionsPadlock = new object();
         private readonly List<SubscriptionItem> _subscriptions = new List<SubscriptionItem>();
 
@@ -83,23 +87,10 @@ namespace MvvmScarletToolkit
         /// </summary>
         /// <typeparam name="TMessage">Type of message</typeparam>
         /// <param name="message">Message to deliver</param>
-        public void PublishAsync<TMessage>(TMessage message)
-
+        public Task PublishAsync<TMessage>(TMessage message)
             where TMessage : class, IScarletMessage
         {
-            PublishAsyncInternal(message, null);
-        }
-
-        /// <summary>
-        /// Publish a message to any subscribers asynchronously
-        /// </summary>
-        /// <typeparam name="TMessage">Type of message</typeparam>
-        /// <param name="message"> Message to deliver</param>
-        /// <param name="callback">AsyncCallback called on completion</param>
-        public void PublishAsync<TMessage>(TMessage message, AsyncCallback callback)
-            where TMessage : class, IScarletMessage
-        {
-            PublishAsyncInternal(message, callback);
+            return Task.Run(() => PublishInternal(message));
         }
 
 #pragma warning restore RCS1047 // Non-asynchronous method name should not end with 'Async'.
@@ -107,17 +98,17 @@ namespace MvvmScarletToolkit
         private SubscriptionToken AddSubscriptionInternal<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter, bool strongReference, IScarletMessageProxy proxy)
                 where TMessage : class, IScarletMessage
         {
-            if (deliveryAction == null)
+            if (deliveryAction is null)
             {
                 throw new ArgumentNullException(nameof(deliveryAction));
             }
 
-            if (messageFilter == null)
+            if (messageFilter is null)
             {
                 throw new ArgumentNullException(nameof(messageFilter));
             }
 
-            if (proxy == null)
+            if (proxy is null)
             {
                 throw new ArgumentNullException(nameof(proxy));
             }
@@ -144,7 +135,7 @@ namespace MvvmScarletToolkit
 
         private void RemoveSubscriptionInternal(SubscriptionToken subscriptionToken)
         {
-            if (subscriptionToken == null)
+            if (subscriptionToken is null)
             {
                 throw new ArgumentNullException(nameof(subscriptionToken));
             }
@@ -153,7 +144,7 @@ namespace MvvmScarletToolkit
             {
                 var currentlySubscribed = (from sub in _subscriptions
                                            where ReferenceEquals(sub.Subscription.SubscriptionToken, subscriptionToken)
-                                           select sub).ToList();
+                                           select sub).ToArray();
 
                 currentlySubscribed.ForEach(sub => _subscriptions.Remove(sub));
             }
@@ -162,26 +153,20 @@ namespace MvvmScarletToolkit
         private void PublishInternal<TMessage>(TMessage message)
                 where TMessage : class, IScarletMessage
         {
-            if (message == null)
+            if (message is null)
             {
                 throw new ArgumentNullException(nameof(message));
             }
 
-            List<SubscriptionItem> currentlySubscribed;
+            SubscriptionItem[] currentlySubscribed;
             lock (_subscriptionsPadlock)
             {
                 currentlySubscribed = (from sub in _subscriptions
                                        where sub.Subscription.ShouldAttemptDelivery(message)
-                                       select sub).ToList();
+                                       select sub).ToArray();
             }
 
             currentlySubscribed.ForEach(sub => sub.Proxy.Deliver(message, sub.Subscription));
-        }
-
-        private void PublishAsyncInternal<TMessage>(TMessage message, AsyncCallback callback)
-            where TMessage : class, IScarletMessage
-        {
-            ((Action)(() => PublishInternal(message))).BeginInvoke(callback, null);
         }
     }
 }

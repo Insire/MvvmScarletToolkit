@@ -1,7 +1,7 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
     /// Base class for messages that provides weak refrence storage of the sender
@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit
 
         protected ScarletMessageBase(object sender)
         {
-            if (sender == null)
+            if (sender is null)
             {
                 throw new ArgumentNullException(nameof(sender));
             }

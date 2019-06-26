@@ -1,4 +1,4 @@
-﻿namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
     /// Generic message with user specified content

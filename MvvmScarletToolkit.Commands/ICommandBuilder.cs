@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Abstractions
     {
         IScarletCommandManager CommandManager { get; }
         IScarletDispatcher Dispatcher { get; }
-
+        IScarletMessenger Messenger { get; }
         IExitService Exit { get; }
 
         ICommandBuilderContext Create<TArgument, TResult>();

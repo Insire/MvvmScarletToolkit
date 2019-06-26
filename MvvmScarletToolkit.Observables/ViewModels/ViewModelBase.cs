@@ -1,5 +1,4 @@
 using MvvmScarletToolkit.Abstractions;
-using MvvmScarletToolkit.Commands;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,6 +40,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly ICommandBuilder CommandBuilder;
         protected readonly IScarletCommandManager CommandManager;
         protected readonly IScarletDispatcher Dispatcher;
+        protected readonly IScarletMessenger Messenger;
         protected readonly IExitService Exit;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -58,6 +58,7 @@ namespace MvvmScarletToolkit.Observables
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
             Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(ICommandBuilder.Dispatcher));
             CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilder.CommandManager));
+            Messenger = commandBuilder.Messenger ?? throw new ArgumentNullException(nameof(ICommandBuilder.Messenger));
             Exit = commandBuilder.Exit ?? throw new ArgumentNullException(nameof(ICommandBuilder.Exit));
 
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);

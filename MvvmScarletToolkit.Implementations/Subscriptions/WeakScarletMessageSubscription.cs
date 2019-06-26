@@ -1,7 +1,7 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Implementations
 {
     internal class WeakScarletMessageSubscription<TMessage> : IScarletMessageSubscription
         where TMessage : class, IScarletMessage
@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit
 
         public bool ShouldAttemptDelivery(IScarletMessage message)
         {
-            if (message == null)
+            if (message is null)
             {
                 return false;
             }
@@ -51,12 +51,12 @@ namespace MvvmScarletToolkit
 
         public WeakScarletMessageSubscription(SubscriptionToken subscriptionToken, Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter)
         {
-            if (deliveryAction == null)
+            if (deliveryAction is null)
             {
                 throw new ArgumentNullException(nameof(deliveryAction));
             }
 
-            if (messageFilter == null)
+            if (messageFilter is null)
             {
                 throw new ArgumentNullException(nameof(messageFilter));
             }

@@ -1,7 +1,7 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Implementations
 {
     internal class StrongScarletMessageSubscription<TMessage> : IScarletMessageSubscription
         where TMessage : class, IScarletMessage

@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
     /// Basic "cancellable" generic message

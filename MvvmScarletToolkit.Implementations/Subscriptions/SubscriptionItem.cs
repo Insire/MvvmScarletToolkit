@@ -1,6 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Implementations
 {
     internal class SubscriptionItem
     {
