@@ -189,12 +189,12 @@ namespace MvvmScarletToolkit.Observables
 
         private void OnSelectionsChanged()
         {
-            Messenger.Publish(new ViewModelListBaseSelectionsChanged<TViewModel>(this, SelectedItems.Cast<TViewModel>()));
+            Messenger.Publish(new ViewModelListBaseSelectionsChanged<TViewModel>(this, SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
         }
 
         private void OnSelectionsChanging()
         {
-            Messenger.Publish(new ViewModelListBaseSelectionsChanging<TViewModel>(this, SelectedItems.Cast<TViewModel>()));
+            Messenger.Publish(new ViewModelListBaseSelectionsChanging<TViewModel>(this, SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
         }
     }
 }
