@@ -30,6 +30,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             set { SetValue(SelectedItemProperty, value); }
         }
 
+        /// <summary>Identifies the <see cref="SelectedItem"/> dependency property.</summary>
         public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
             nameof(SelectedItem),
             typeof(object),
@@ -42,7 +43,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             if (e.NewValue is TreeViewItem item)
             {
-                item.SetValue(TreeViewItem.IsSelectedProperty, true);
+                item.SetCurrentValue(TreeViewItem.IsSelectedProperty, true);
                 return;
             }
 
@@ -60,7 +61,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 return;
             }
 
-            item.IsSelected = true;
+            item.SetCurrentValue(TreeViewItem.IsSelectedProperty, true);
         }
 
         protected override void OnAttached()
@@ -144,7 +145,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             // Expand the current container
             if (container is TreeViewItem treeViewItem && !treeViewItem.IsExpanded)
             {
-                container.SetValue(TreeViewItem.IsExpandedProperty, true);
+                container.SetCurrentValue(TreeViewItem.IsExpandedProperty, true);
             }
 
             // Try to generate the ItemsPresenter and the ItemsPanel.
@@ -211,7 +212,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
                 // The object is not under this TreeViewItem
                 // so collapse it.
-                subContainer.IsExpanded = false;
+                subContainer.SetCurrentValue(TreeViewItem.IsExpandedProperty, false);
             }
 
             return null;

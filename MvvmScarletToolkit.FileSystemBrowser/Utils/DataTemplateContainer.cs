@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 
 namespace MvvmScarletToolkit.FileSystemBrowser
 {
@@ -10,6 +10,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             set { SetValue(DataTemplateProperty, value); }
         }
 
+        /// <summary>Identifies the <see cref="DataTemplate"/> dependency property.</summary>
         public static readonly DependencyProperty DataTemplateProperty = DependencyProperty.Register(
             nameof(DataTemplate),
             typeof(DataTemplate),

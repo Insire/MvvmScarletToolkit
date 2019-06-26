@@ -14,13 +14,7 @@ namespace MvvmScarletToolkit.Observables
         /// </summary>
         private readonly WeakReference _sender;
 
-        public object Sender
-        {
-            get
-            {
-                return _sender?.Target;
-            }
-        }
+        public object Sender => _sender?.Target;
 
         protected ScarletMessageBase(object sender)
         {

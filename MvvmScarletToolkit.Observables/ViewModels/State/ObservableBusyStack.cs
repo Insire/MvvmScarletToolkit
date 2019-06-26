@@ -62,7 +62,7 @@ namespace MvvmScarletToolkit.Observables
         {
             foreach (var observer in _observers.Select(p => p.Key).ToArray())
             {
-                await InvokeOnChanged(observer, newValue);
+                await InvokeOnChanged(observer, newValue).ConfigureAwait(false);
             }
         }
 

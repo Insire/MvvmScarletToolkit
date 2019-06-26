@@ -13,6 +13,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         ICommand LoadCommand { get; }
 
         ICommand UnloadCommand { get; }
+
         /// <summary>
         /// explicit refresh, updates filtering and the current children
         /// </summary>

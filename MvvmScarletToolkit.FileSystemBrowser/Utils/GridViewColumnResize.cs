@@ -10,13 +10,13 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     // https://stackoverflow.com/questions/560581/how-to-autosize-and-right-align-gridviewcolumn-data-in-wpf
     // source: http://lazycowprojects.tumblr.com/post/7063214400/wpf-c-listview-column-width-auto
     // https://github.com/rolfwessels/lazycowprojects/blob/master/Wpf/GridViewColumnResize.cs
-    public static partial class GridViewColumnResize
+    public static class GridViewColumnResize
     {
         public static readonly DependencyProperty WidthProperty = DependencyProperty.RegisterAttached(
             "Width",
             typeof(string),
             typeof(GridViewColumnResize),
-            new PropertyMetadata(OnSetWidthCallback));
+            new PropertyMetadata(OnWidthChanged));
 
         public static readonly DependencyProperty GridViewColumnResizeBehaviorProperty = DependencyProperty.RegisterAttached(
             "GridViewColumnResizeBehavior",
@@ -28,35 +28,49 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             "Enabled",
             typeof(bool),
             typeof(GridViewColumnResize),
-            new PropertyMetadata(OnSetEnabledCallback));
+            new PropertyMetadata(OnEnabledChanged));
 
         public static readonly DependencyProperty ListViewResizeBehaviorProperty = DependencyProperty.RegisterAttached(
-            "ListViewResizeBehaviorProperty",
+            "ListViewResizeBehavior",
             typeof(ListViewResizeBehavior),
             typeof(GridViewColumnResize),
             new PropertyMetadata(default(ListViewResizeBehavior)));
 
+        /// <summary>Helper for getting <see cref="WidthProperty"/> from <paramref name="obj"/>.</summary>
+        /// <param name="obj"><see cref="DependencyObject"/> to read <see cref="WidthProperty"/> from.</param>
+        /// <returns>Width property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
         public static string GetWidth(DependencyObject obj)
         {
             return (string)obj.GetValue(WidthProperty);
         }
 
+        /// <summary>Helper for setting <see cref="WidthProperty"/> on <paramref name="obj"/>.</summary>
+        /// <param name="obj"><see cref="DependencyObject"/> to set <see cref="WidthProperty"/> on.</param>
+        /// <param name="value">Width property value.</param>
         public static void SetWidth(DependencyObject obj, string value)
         {
             obj.SetValue(WidthProperty, value);
         }
 
+        /// <summary>Helper for getting <see cref="EnabledProperty"/> from <paramref name="obj"/>.</summary>
+        /// <param name="obj"><see cref="DependencyObject"/> to read <see cref="EnabledProperty"/> from.</param>
+        /// <returns>Enabled property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
         public static bool GetEnabled(DependencyObject obj)
         {
             return (bool)obj.GetValue(EnabledProperty);
         }
 
+        /// <summary>Helper for setting <see cref="EnabledProperty"/> on <paramref name="obj"/>.</summary>
+        /// <param name="obj"><see cref="DependencyObject"/> to set <see cref="EnabledProperty"/> on.</param>
+        /// <param name="value">Enabled property value.</param>
         public static void SetEnabled(DependencyObject obj, bool value)
         {
             obj.SetValue(EnabledProperty, value);
         }
 
-        private static void OnSetWidthCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        private static void OnWidthChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
             var element = dependencyObject as GridViewColumn;
             if (element is null)
@@ -65,12 +79,12 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
             else
             {
-                var behavior = GetOrCreateBehavior(element);
+                var behavior = GetGridViewColumnResizeBehavior(element);
                 behavior.Width = e.NewValue as string;
             }
         }
 
-        private static void OnSetEnabledCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        private static void OnEnabledChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
             var element = dependencyObject as ListView;
             if (element is null)
@@ -79,30 +93,32 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
             else
             {
-                var behavior = GetOrCreateBehavior(element);
+                var behavior = GetListViewResizeBehavior(element);
                 behavior.Enabled = (bool)e.NewValue;
             }
         }
 
-        private static ListViewResizeBehavior GetOrCreateBehavior(ListView element)
+        [AttachedPropertyBrowsableForType(typeof(ListView))]
+#pragma warning disable WPF0013 // CLR accessor for attached property must match registered type.
+        private static ListViewResizeBehavior GetListViewResizeBehavior(ListView element)
+#pragma warning restore WPF0013 // CLR accessor for attached property must match registered type.
         {
-            var behavior = element.GetValue(GridViewColumnResizeBehaviorProperty) as ListViewResizeBehavior;
-            if (behavior == null)
+            if (!(element.GetValue(GridViewColumnResizeBehaviorProperty) is ListViewResizeBehavior behavior))
             {
                 behavior = new ListViewResizeBehavior(element);
-                element.SetValue(ListViewResizeBehaviorProperty, behavior);
+                element.SetCurrentValue(ListViewResizeBehaviorProperty, behavior);
             }
 
             return behavior;
         }
 
-        private static GridViewColumnResizeBehavior GetOrCreateBehavior(GridViewColumn element)
+        [AttachedPropertyBrowsableForType(typeof(GridViewColumn))]
+        private static GridViewColumnResizeBehavior GetGridViewColumnResizeBehavior(GridViewColumn element)
         {
-            var behavior = element.GetValue(GridViewColumnResizeBehaviorProperty) as GridViewColumnResizeBehavior;
-            if (behavior == null)
+            if (!(element.GetValue(GridViewColumnResizeBehaviorProperty) is GridViewColumnResizeBehavior behavior))
             {
                 behavior = new GridViewColumnResizeBehavior(element);
-                element.SetValue(GridViewColumnResizeBehaviorProperty, behavior);
+                element.SetCurrentValue(GridViewColumnResizeBehaviorProperty, behavior);
             }
 
             return behavior;
@@ -250,9 +266,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             public void SetWidth(double allowedSpace, double totalPercentage)
             {
-                _element.Width = IsStatic
+                _element.SetCurrentValue(GridViewColumn.WidthProperty, IsStatic
                     ? StaticWidth
-                    : allowedSpace * (Percentage / totalPercentage);
+                    : allowedSpace * (Percentage / totalPercentage));
             }
         }
     }

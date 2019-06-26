@@ -124,16 +124,11 @@ namespace MvvmScarletToolkit.Abstractions
         /// <param name="message">Message to deliver</param>
         void Publish<TMessage>(TMessage message) where TMessage : class, IScarletMessage;
 
-#pragma warning disable RCS1047 // Non-asynchronous method name should not end with 'Async'.
-
         /// <summary>
         /// Publish a message to any subscribers asynchronously
         /// </summary>
         /// <typeparam name="TMessage">Type of message</typeparam>
         /// <param name="message">Message to deliver</param>
         Task PublishAsync<TMessage>(TMessage message) where TMessage : class, IScarletMessage;
-
-
-#pragma warning restore RCS1047 // Non-asynchronous method name should not end with 'Async'.
     }
 }

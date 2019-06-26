@@ -11,7 +11,6 @@ namespace MvvmScarletToolkit.Commands
         /// Configure synchronous cancellation for the given command
         /// </summary>
         /// <param name="commandBuilder"></param>
-        /// <returns></returns>
         public static ICommandBuilderContext WithCancellation(this ICommandBuilderContext commandBuilder)
         {
             commandBuilder.CancelCommand = new CancelCommand(commandBuilder.CommandManager);
@@ -22,7 +21,6 @@ namespace MvvmScarletToolkit.Commands
         /// Configure asynchronous cancellation for the given command
         /// </summary>
         /// <param name="commandBuilder"></param>
-        /// <returns></returns>
         public static ICommandBuilderContext WithAsyncCancellation(this ICommandBuilderContext commandBuilder)
         {
             throw new NotImplementedException(); // TODO add implementation
@@ -39,7 +37,6 @@ namespace MvvmScarletToolkit.Commands
         /// Which means there will be only one command be startable at a time.
         /// </summary>
         /// <param name="commandBuilder"></param>
-        /// <returns></returns>
         public static CommandBuilderContext<TArgument, TResult> WithSingleExecution<TArgument, TResult>(this CommandBuilderContext<TArgument, TResult> commandBuilder, IScarletCommandManager commandManager)
         {
             ConcurrentCommandBase DecoratorFactory(ConcurrentCommandBase command)

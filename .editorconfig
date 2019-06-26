@@ -58,7 +58,7 @@ dotnet_style_collection_initializer = true:warning
 # conditionals
 
 dotnet_style_prefer_conditional_expression_over_assignment = true:suggestion
-dotnet_style_prefer_conditional_expression_over_return = true:suggestion
+dotnet_style_prefer_conditional_expression_over_return = false:suggestion
 
 # null checks
 

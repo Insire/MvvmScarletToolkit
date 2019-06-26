@@ -11,6 +11,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             set { SetValue(FileSystemViewModelProperty, value); }
         }
 
+        /// <summary>Identifies the <see cref="FileSystemViewModel"/> dependency property.</summary>
         public static readonly DependencyProperty FileSystemViewModelProperty = DependencyProperty.Register(
             nameof(FileSystemViewModel),
             typeof(FileSystemViewModel),

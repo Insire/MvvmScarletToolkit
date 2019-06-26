@@ -12,5 +12,9 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Expression.Blend.Sdk" Version="1.0.2" />
+        <PackageReference Include="WpfAnalyzers" Version="2.2.0.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 </Project>
