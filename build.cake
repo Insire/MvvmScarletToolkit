@@ -1,4 +1,5 @@
 #addin nuget:?package=Cake.Incubator&version=5.0.1
+using Cake.Core;
 
 ///////////////////////////////////////////////////////////////////////////////
 // SETUP
@@ -27,6 +28,7 @@ Setup(ctx =>
 Task("Debug")
     .Does(()=>
     {
+        Information("IsLocalBuild: " + BuildSystem.IsLocalBuild);
         Information("IsRunningOnAppVeyor: " + BuildSystem.IsRunningOnAppVeyor);
         Information("IsRunningOnAzurePipelines: " + BuildSystem.IsRunningOnAzurePipelines);
         Information("IsRunningOnAzurePipelinesHosted: " + BuildSystem.IsRunningOnAzurePipelinesHosted);
@@ -146,37 +148,6 @@ Task("UpdateAssemblyInfo")
         }
 });
 
-Task("Restore")
-    .Does(()=>
-    {
-        DotNetCoreRestore(new DotNetCoreRestoreSettings
-        {
-            Sources = new[] {"https://api.nuget.org/v3/index.json"},
-            Verbosity = DotNetCoreVerbosity.Minimal,
-            DisableParallel = false,
-            MSBuildSettings = new DotNetCoreMSBuildSettings()
-            {
-                NoLogo = true,
-            }
-        });
-    });
-
-Task("Build")
-    .Does(() =>
-    {
-        DotNetCoreBuild(".", new DotNetCoreBuildSettings
-        {
-            Framework = "netcoreapp3.0",
-            Configuration = Configuration,
-            NoRestore = true,
-            MSBuildSettings = new DotNetCoreMSBuildSettings()
-            {
-                MaxCpuCount = 0,
-                ValidateProjectFile = true,
-            }
-        });
-});
-
 Task("Pack")
     .Does(()=>
     {
@@ -191,52 +162,50 @@ Task("Pack")
             version = assemblyInfoParseResult.AssemblyVersion;
         }
 
-        NuGetPack(GetDefaultSettings("MvvmScarletToolkit","MvvmScarletToolkit is a personal project and framework to speed up the development process of WPF applications.", new DirectoryPath(".\\MvvmScarletToolkit\\bin\\Release\\")));
-        NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Abstractions","MvvmScarletToolkit.Abstractions ", new DirectoryPath(".\\MvvmScarletToolkit.Abstractions\\bin\\Release\\")));
-        NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Observables","MvvmScarletToolkit.Observables ", new DirectoryPath(".\\MvvmScarletToolkit.Observables\\bin\\Release\\")));
-        NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Commands","MvvmScarletToolkit.Commands ", new DirectoryPath(".\\MvvmScarletToolkit.Commands\\bin\\Release\\")));
-        NuGetPack(GetDefaultSettings("MvvmScarletToolkit.FileSystemBrowser","MvvmScarletToolkit.FileSystemBrowser ", new DirectoryPath(".\\MvvmScarletToolkit.FileSystemBrowser\\bin\\Release\\")));
-        NuGetPack(GetDefaultSettings("MvvmScarletToolkit.ConfigurableWindow","MvvmScarletToolkit.ConfigurableWindow ", new DirectoryPath(".\\MvvmScarletToolkit.ConfigurableWindow\\bin\\Release\\")));
-        NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Implementations","MvvmScarletToolkit.Implementations ", new DirectoryPath(".\\MvvmScarletToolkit.Implementations\\bin\\Release\\")));
-        // dont provide a nuget package for incubator, because its not intended to be released
-        // NuGetPack(GetDefaultSettings("MvvmScarletToolkit.Incubator","MvvmScarletToolkit.Incubator ", new DirectoryPath(".\\MvvmScarletToolkit.Incubator\\bin\\Release\\")));
+        Build(@".\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj");
+        Build(@".\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj");
+        Build(@".\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj");
+        Build(@".\MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj");
+        Build(@".\MvvmScarletToolkit\MvvmScarletToolkit.csproj");
 
-        NuGetPackSettings GetDefaultSettings(string name, string summary, DirectoryPath basePath)
+        void Build(string path)
         {
-            return new NuGetPackSettings()
-            {
-                Id                          = name,
-                Version                     = version,
-                Authors                     = new[] {"Insire"},
-                Owners                      = new[] {"Insire"},
-                Description                 = $"{name} v{version}",
-                Summary                     = summary,
-                ProjectUrl                  = new Uri(@"https://github.com/Insire/MvvmScarletToolkit"),
-                LicenseUrl                  = new Uri(@"https://github.com/Insire/MvvmScarletToolkit/blob/master/LICENSE.md"),
-                Copyright                   = $"© {DateTime.Today.Year} Insire",
-                ReleaseNotes                = new[]{""},
-                Tags                        = new[]{"MvvmScarletToolkit", "MVVM", "C#", "WPF", "Windows", "Csharp", "ScarletToolkit"},
-                RequireLicenseAcceptance    = true,
-                Symbols                     = true,
-                NoPackageAnalysis           = false,
-                BasePath                    = basePath,
-                OutputDirectory             = new DirectoryPath(PackagePath),
-                KeepTemporaryNuSpecFile     = false,
-                Files = new[]
-                {
-                    new NuSpecContent{ Source="net46\\*",Target="lib\\net46"},
-                    new NuSpecContent{ Source="net461\\*",Target="lib\\net461"},
-                    new NuSpecContent{ Source="net462\\*",Target="lib\\net462"},
-                    new NuSpecContent{ Source="net47\\*",Target="lib\\net47"},
-                    new NuSpecContent{ Source="net471\\*",Target="lib\\net471"},
-                    new NuSpecContent{ Source="netcoreapp3.0\\*",Target="lib\\netcoreapp3.0"},
-                }
-            };
+            var settings = new ProcessSettings()
+                .UseWorkingDirectory(".")
+                .WithArguments(builder => builder
+                    .Append("build")
+                    .AppendQuoted(path)
+                    .Append("--force")
+                    .Append($"-c {Configuration}")
+            );
+
+            StartProcess("dotnet", settings);
+
+            Pack(path);
+        }
+
+        void Pack(string path)
+        {
+            var settings = new ProcessSettings()
+                .UseWorkingDirectory(".")
+                .WithArguments(builder => builder
+                    .Append("pack")
+                    .AppendQuoted(path)
+                    .Append("--include-symbols")
+                    .Append("--include-source")
+                    .Append("--no-build")
+                    .Append("--no-restore")
+                    .Append($"-c {Configuration}")
+                    .Append($"--output \"{PackagePath}\"")
+                    .Append($"-p:PackageVersion={version}")
+                );
+
+            StartProcess("dotnet", settings);
         }
 });
 
 Task("PushLocally")
-    .WithCriteria(() => BuildSystem.IsLocalBuild)
+    .WithCriteria(() => BuildSystem.IsLocalBuild && DirectoryExists(@"D:\Drop\NuGet"))
     .DoesForEach(() => GetFiles(PackagePath + "\\*.nupkg"), path =>
     {
         var settings = new ProcessSettings()
@@ -253,8 +222,6 @@ Task("Default")
     .IsDependentOn("Debug")
     .IsDependentOn("CleanSolution")
     .IsDependentOn("UpdateAssemblyInfo")
-    .IsDependentOn("Restore")
-    .IsDependentOn("Build")
     .IsDependentOn("Pack")
     .IsDependentOn("PushLocally");
 
