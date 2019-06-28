@@ -10,6 +10,7 @@ namespace MvvmScarletToolkit
 {
     public sealed class VirtualizingTilePanel : VirtualizingPanel, IScrollInfo
     {
+        /// <summary>Identifies the <see cref="ChildSize"/> dependency property.</summary>
         public static readonly DependencyProperty ChildSizeProperty = DependencyProperty.RegisterAttached(
             nameof(ChildSize),
             typeof(double),
@@ -250,17 +251,14 @@ namespace MvvmScarletToolkit
         private int CalculateChildrenPerRow(Size availableSize)
         {
             // Figure out how many children fit on each row
-            int childrenPerRow;
             if (availableSize.Width == double.PositiveInfinity)
             {
-                childrenPerRow = Children.Count;
+                return Children.Count;
             }
             else
             {
-                childrenPerRow = Math.Max(1, (int)Math.Floor(availableSize.Width / ChildSize));
+                return Math.Max(1, (int)Math.Floor(availableSize.Width / ChildSize));
             }
-
-            return childrenPerRow;
         }
 
         // See Ben Constable's series of posts at http://blogs.msdn.com/bencon/
@@ -373,10 +371,9 @@ namespace MvvmScarletToolkit
 
             _offset.Y = offset;
 
-            if (ScrollOwner != null)
-                ScrollOwner.InvalidateScrollInfo();
+            ScrollOwner?.InvalidateScrollInfo();
 
-            _trans.Y = -offset;
+            _trans.SetCurrentValue(TranslateTransform.YProperty, -offset);
 
             // Force us to realize the correct children
             InvalidateMeasure();

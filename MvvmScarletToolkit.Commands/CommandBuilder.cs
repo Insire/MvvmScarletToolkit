@@ -49,7 +49,10 @@ namespace MvvmScarletToolkit.Commands
             return new CommandBuilderContext<TArgument, TResult>(Dispatcher, CommandManager, _busyStackFactory, execute, canExecute);
         }
 
+#pragma warning disable RCS1163 // Unused parameter.
+
         internal static Task<TResult> DefaultExecute<TArgument, TResult>(TArgument parameter, CancellationToken token)
+#pragma warning restore RCS1163 // Unused parameter.
         {
             if (token.IsCancellationRequested)
             {
@@ -59,7 +62,10 @@ namespace MvvmScarletToolkit.Commands
             return Task.FromResult<TResult>(default);
         }
 
+#pragma warning disable RCS1163 // Unused parameter.
+
         internal static bool DefaultCanExecute<TArgument>(TArgument parameter)
+#pragma warning restore RCS1163 // Unused parameter.
         {
             return true;
         }

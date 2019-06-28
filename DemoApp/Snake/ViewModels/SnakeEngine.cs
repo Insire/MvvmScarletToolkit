@@ -316,7 +316,7 @@ namespace DemoApp
                     }
 
                     error = false;
-                });
+                }).ConfigureAwait(false);
             }
             catch (TaskCanceledException)
             {

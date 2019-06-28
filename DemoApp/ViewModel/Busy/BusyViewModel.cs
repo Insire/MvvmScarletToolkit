@@ -69,13 +69,13 @@ namespace DemoApp
             }
             else
             {
-                await BusyStack.Pull();
+                await BusyStack.Pull().ConfigureAwait(false);
             }
         }
 
         public async void OnError(Exception error)
         {
-            await BusyStack.Pull();
+            await BusyStack.Pull().ConfigureAwait(false);
         }
 
         /// <summary>

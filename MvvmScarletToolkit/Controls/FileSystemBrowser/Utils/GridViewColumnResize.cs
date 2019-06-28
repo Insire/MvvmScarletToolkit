@@ -100,7 +100,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         [AttachedPropertyBrowsableForType(typeof(ListView))]
 #pragma warning disable WPF0013 // CLR accessor for attached property must match registered type.
+#pragma warning disable WPF0004 // CLR method for a DependencyProperty must match registered name.
         private static ListViewResizeBehavior GetListViewResizeBehavior(ListView element)
+#pragma warning restore WPF0004 // CLR method for a DependencyProperty must match registered name.
 #pragma warning restore WPF0013 // CLR accessor for attached property must match registered type.
         {
             if (!(element.GetValue(GridViewColumnResizeBehaviorProperty) is ListViewResizeBehavior behavior))
@@ -109,7 +111,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 element.SetCurrentValue(ListViewResizeBehaviorProperty, behavior);
             }
 
+#pragma warning disable WPF0042 // Avoid side effects in CLR accessors.
             return behavior;
+#pragma warning restore WPF0042 // Avoid side effects in CLR accessors.
         }
 
         [AttachedPropertyBrowsableForType(typeof(GridViewColumn))]
@@ -121,7 +125,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                 element.SetCurrentValue(GridViewColumnResizeBehaviorProperty, behavior);
             }
 
+#pragma warning disable WPF0042 // Avoid side effects in CLR accessors.
             return behavior;
+#pragma warning restore WPF0042 // Avoid side effects in CLR accessors.
         }
 
         /// <summary>

@@ -114,8 +114,8 @@ namespace MvvmScarletToolkit.ConfigurableWindow
         private void ApplySettings()
         {
             var size = _settings.WindowSize;
-            Width = size.Width;
-            Height = size.Height;
+            SetCurrentValue(WidthProperty, size.Width);
+            SetCurrentValue(HeightProperty, size.Height);
 
             var loccation = _settings.WindowLocation;
 
@@ -135,13 +135,13 @@ namespace MvvmScarletToolkit.ConfigurableWindow
             {
                 WindowStartupLocation = WindowStartupLocation.Manual;
 
-                Left = loccation.X;
-                Top = loccation.Y;
+                SetCurrentValue(LeftProperty, loccation.X);
+                SetCurrentValue(TopProperty, loccation.Y);
 
                 // We need to wait until the HWND window is initialized before
                 // setting the state, to ensure that this works correctly on
                 // a multi-monitor system.  Thanks to Andrew Smith for this fix.
-                SourceInitialized += (o, e) => WindowState = _settings.WindowState;
+                SourceInitialized += (o, e) => SetCurrentValue(WindowStateProperty, _settings.WindowState);
             }
         }
     }
