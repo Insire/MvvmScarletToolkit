@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
-        <TargetFrameworks>net46;net461;net462;net47;net471;netcoreapp3.0</TargetFrameworks>
+        <TargetFrameworks>net461;netcoreapp3.0</TargetFrameworks>
         <OutputType>Library</OutputType>
         <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
         <UseWPF>true</UseWPF>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <ItemGroup>

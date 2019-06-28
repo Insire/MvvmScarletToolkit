@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFrameworks>net46;net461;net462;net47;net471;netcoreapp3.0</TargetFrameworks>
+        <TargetFrameworks>net461;netcoreapp3.0</TargetFrameworks>
         <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
         <UseWPF>true</UseWPF>
+        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <ItemGroup>
