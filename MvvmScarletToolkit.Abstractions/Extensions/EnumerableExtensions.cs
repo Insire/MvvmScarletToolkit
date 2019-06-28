@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit
     {
         public static Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody)
         {
-            return source.ForEachAsync(funcBody, 4);
+            return source.ForEachAsync(funcBody, Environment.ProcessorCount * 2);
         }
 
         public static Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP)

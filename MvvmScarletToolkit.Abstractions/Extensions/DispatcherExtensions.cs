@@ -1,9 +1,8 @@
-using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Abstractions
 {
     public static class DispatcherExtensions
     {
