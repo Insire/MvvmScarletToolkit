@@ -67,12 +67,14 @@ namespace MvvmScarletToolkit.Observables
                 .Create(Load, CanLoad)
                 .WithSingleExecution(CommandManager)
                 .WithBusyNotification(BusyStack)
+                .WithCancellation()
                 .Build();
 
             _refreshCommand = commandBuilder
                 .Create(Refresh, CanRefresh)
                 .WithSingleExecution(CommandManager)
                 .WithBusyNotification(BusyStack)
+                .WithCancellation()
                 .Build();
 
             _unloadCommand = commandBuilder

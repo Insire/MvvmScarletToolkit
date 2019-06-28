@@ -53,30 +53,42 @@ namespace MvvmScarletToolkit.Observables
             RemoveCommand = commandBuilder
                 .Create(Remove, CanRemove)
                 .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
                 .Build();
 
             RemoveRangeCommand = commandBuilder
                 .Create(RemoveRange, CanRemoveRange)
                 .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
                 .Build();
 
             ClearCommand = commandBuilder
                 .Create(Clear, CanClear)
                 .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
                 .Build();
 
             _loadCommand = commandBuilder
                 .Create(Load, CanLoad)
                 .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
                 .Build();
 
             _refreshCommand = commandBuilder
                 .Create(Refresh, CanRefresh)
+                .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
                 .Build();
 
             _unloadCommand = commandBuilder
                 .Create(Unload, CanUnload)
                 .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
                 .Build();
 
             Exit.UnloadOnExit(this);
