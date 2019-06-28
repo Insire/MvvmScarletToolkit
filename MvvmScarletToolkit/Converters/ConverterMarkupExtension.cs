@@ -6,13 +6,13 @@ using System.Windows.Markup;
 namespace MvvmScarletToolkit
 {
     public abstract class ConverterMarkupExtension<T> : MarkupExtension, IValueConverter
-        where T : class, new()
+        where T : class, IValueConverter, new()
     {
-        private static T _debugConverter;
+        private static T _converter;
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return _debugConverter ?? (_debugConverter = new T());
+            return _converter ?? (_converter = new T());
         }
 
         public abstract object Convert(object value, Type targetType, object parameter, CultureInfo culture);
