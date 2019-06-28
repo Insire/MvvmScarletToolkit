@@ -27,4 +27,8 @@
       <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
       <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="MvvmScarletToolkit %28net461%29\Converters\" />
+    </ItemGroup>
 </Project>
