@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Company>SoftThorn</Company>
+        <Product>MvvmScarletToolkit</Product>
+        <PackageProjectUrl>https://github.com/Insire/MvvmScarletToolkit</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Insire/MvvmScarletToolkit</RepositoryUrl>
+        <PackageTags>MvvmScarletToolkit,MVVM,C#,WPF,Toolkit</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+</Project>
