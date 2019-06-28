@@ -1,7 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
 using System.ComponentModel;
-using System.Windows;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -13,18 +12,20 @@ namespace MvvmScarletToolkit.Observables
         private readonly string _key;
         private readonly bool _toUpper;
         private readonly ILocalizationService _service;
+        private readonly IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> _weakEventManager;
 
-        public LocalizationViewModel(ILocalizationService service, string key, bool toUpper)
+        public LocalizationViewModel(IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, ILocalizationService service, string key, bool toUpper)
         {
+            _weakEventManager = weakEventManager ?? throw new ArgumentNullException(nameof(weakEventManager));
             _service = service ?? throw new ArgumentNullException(nameof(service));
             _key = key ?? throw new ArgumentNullException(nameof(key));
             _toUpper = toUpper;
 
-            WeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs>.AddHandler(_service, "PropertyChanged", ValueChanged);
+            _weakEventManager.AddHandler(_service, "PropertyChanged", ValueChanged);
         }
 
-        public LocalizationViewModel(ILocalizationService service, string key)
-            : this(service, key, false)
+        public LocalizationViewModel(IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, ILocalizationService service, string key)
+            : this(weakEventManager, service, key, false)
         {
         }
 
@@ -38,7 +39,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (disposing)
             {
-                WeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs>.RemoveHandler(_service, "PropertyChanged", ValueChanged);
+                _weakEventManager.RemoveHandler(_service, "PropertyChanged", ValueChanged);
             }
         }
 

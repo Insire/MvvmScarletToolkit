@@ -47,7 +47,7 @@ namespace MvvmScarletToolkit
 
         public VirtualizationViewModel(IScarletCommandManager commandManager)
         {
-            DeflateCommand = new RelayCommand(Deflate, CanDeflate);
+            DeflateCommand = new RelayCommand(commandManager, Deflate, CanDeflate);
             //ExpandCommand = AsyncCommand.Create(Expand, CanExpand, commandManager);
         }
 

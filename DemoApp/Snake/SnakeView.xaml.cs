@@ -167,13 +167,13 @@ namespace DemoApp
             _commandManager = new ScarletCommandManager();
             _dispatcher = ScarletDispatcher.Default;
             _messenger = new ScarletMessenger(new ScarletMessageProxy());
-            _commandBuilder = new CommandBuilder(_dispatcher, _commandManager, _messenger, ExitService.Default, (lambda) => new BusyStack(lambda, _dispatcher));
+            _commandBuilder = new CommandBuilder(_dispatcher, _commandManager, _messenger, ExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, _dispatcher));
 
             View = View.Start;
             ShowStartCommand = _commandBuilder.Create(ShowStart, CanShowStart).Build();
             ShowOptionsCommand = _commandBuilder.Create(ShowOptions, CanShowOptions).Build();
             ShowGameCommand = _commandBuilder.Create(ShowGame, CanShowGame).Build();
-            ExitCommand = new RelayCommand(Exit, CanExit);
+            ExitCommand = new RelayCommand(_commandManager, Exit, CanExit);
 
             DataContext = this;
 
@@ -214,7 +214,7 @@ namespace DemoApp
                 await Manager.Reset().ConfigureAwait(false);
             }
 
-            Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _dispatcher, _messenger, _commandBuilder);
+            Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _dispatcher, _messenger, _commandBuilder, _commandManager);
             SetupObserver();
 
             Keyboard.Focus(this);

@@ -42,6 +42,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly IScarletDispatcher Dispatcher;
         protected readonly IScarletMessenger Messenger;
         protected readonly IExitService Exit;
+        protected readonly IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -60,6 +61,7 @@ namespace MvvmScarletToolkit.Observables
             CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilder.CommandManager));
             Messenger = commandBuilder.Messenger ?? throw new ArgumentNullException(nameof(ICommandBuilder.Messenger));
             Exit = commandBuilder.Exit ?? throw new ArgumentNullException(nameof(ICommandBuilder.Exit));
+            WeakEventManager = commandBuilder.WeakEventManager ?? throw new ArgumentNullException(nameof(ICommandBuilder.WeakEventManager));
 
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
         }

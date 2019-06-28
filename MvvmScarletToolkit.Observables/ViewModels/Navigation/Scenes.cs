@@ -15,7 +15,7 @@ namespace MvvmScarletToolkit.Observables
 
         protected void Add(string key, object content)
         {
-            var viewmodel = new Scene(CommandBuilder, _localizationsViewModel.CreateViewModel(key))
+            var viewmodel = new Scene(CommandBuilder, _localizationsViewModel.CreateViewModel(WeakEventManager, key))
             {
                 Content = content,
                 Sequence = Items.Count,

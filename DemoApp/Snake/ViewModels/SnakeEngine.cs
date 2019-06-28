@@ -132,7 +132,7 @@ namespace DemoApp
             }
         }
 
-        public SnakeEngine(SnakeOption options, IScarletDispatcher dispatcher, IScarletMessenger messenger, ICommandBuilder commandBuilder)
+        public SnakeEngine(SnakeOption options, IScarletDispatcher dispatcher, IScarletMessenger messenger, ICommandBuilder commandBuilder, IScarletCommandManager commandManager)
         {
             _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
@@ -155,12 +155,12 @@ namespace DemoApp
             PlayCommand = commandBuilder.Create(Play).Build();
             ResetCommand = commandBuilder.Create(Reset).Build();
 
-            LoadCommand = new RelayCommand(Load, CanLoad);
+            LoadCommand = new RelayCommand(commandManager, Load, CanLoad);
 
-            MoveNorthCommand = new RelayCommand(SetDirectionNorth, CanMoveNorth);
-            MoveSouthCommand = new RelayCommand(SetDirectionSouth, CanMoveSouth);
-            MoveWestCommand = new RelayCommand(SetDirectionWest, CanMoveWest);
-            MoveEastCommand = new RelayCommand(SetDirectionEast, CanMoveEast);
+            MoveNorthCommand = new RelayCommand(commandManager, SetDirectionNorth, CanMoveNorth);
+            MoveSouthCommand = new RelayCommand(commandManager, SetDirectionSouth, CanMoveSouth);
+            MoveWestCommand = new RelayCommand(commandManager, SetDirectionWest, CanMoveWest);
+            MoveEastCommand = new RelayCommand(commandManager, SetDirectionEast, CanMoveEast);
         }
 
         private async Task Play()

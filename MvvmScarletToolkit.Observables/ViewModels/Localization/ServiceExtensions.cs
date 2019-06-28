@@ -1,12 +1,13 @@
 using MvvmScarletToolkit.Abstractions;
+using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Observables
 {
     public static class ServiceExtensions
     {
-        public static ILocalizationViewModel CreateViewModel(this ILocalizationService localizationService, string key)
+        public static ILocalizationViewModel CreateViewModel(this ILocalizationService localizationService, IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, string key)
         {
-            return new LocalizationViewModel(localizationService, key);
+            return new LocalizationViewModel(weakEventManager, localizationService, key);
         }
     }
 }
