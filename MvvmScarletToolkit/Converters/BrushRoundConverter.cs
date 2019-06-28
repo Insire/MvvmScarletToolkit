@@ -22,10 +22,5 @@ namespace MvvmScarletToolkit
 
             return brightness < 123 ? LowValue : HighValue;
         }
-
-        public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return Binding.DoNothing;
-        }
     }
 }

@@ -36,10 +36,5 @@ namespace MvvmScarletToolkit
             }
             return string.Empty;
         }
-
-        public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return Binding.DoNothing;
-        }
     }
 }

@@ -32,7 +32,7 @@ namespace DemoApp
 
         private static Geometry BuildGeometry(string charachters, Typeface typeface, NumberSubstitution numberSubstitution)
         {
-            var result = new FormattedText(charachters, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, 24, Brushes.Black, numberSubstitution, TextFormattingMode.Display)
+            var result = new FormattedText(charachters, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, 24, Brushes.Black, numberSubstitution, TextFormattingMode.Display, 90)
                             .BuildGeometry(new Point(9, 9));
 
             result.Freeze();
