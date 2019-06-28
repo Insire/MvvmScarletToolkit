@@ -47,7 +47,10 @@ namespace DemoApp
 
             for (var i = 0; i <= _maximum; i++)
             {
-                await Dispatcher.Invoke(() => Percentage = i).ConfigureAwait(false);
+                if (token.IsCancellationRequested)
+                    break;
+
+                await Dispatcher.Invoke(() => Percentage = i, token).ConfigureAwait(false);
                 await Task.Delay(25).ConfigureAwait(false);
             }
         }

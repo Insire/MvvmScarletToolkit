@@ -445,7 +445,20 @@
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                        <Button Command="{Binding RefreshCommand}" DockPanel.Dock="Bottom">Refresh</Button>
+                        <Button DockPanel.Dock="Bottom">
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Content" Value="Refresh" />
+                                    <Setter Property="Command" Value="{Binding RefreshCommand}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RefreshCommand.IsBusy}" Value="True">
+                                            <Setter Property="Content" Value="Cancel" />
+                                            <Setter Property="Command" Value="{Binding RefreshCommand.CancelCommand}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <ProgressBar Maximum="{Binding Maximum, Mode=OneWay}" Value="{Binding Percentage, Mode=OneWay}" />
                     </DockPanel>
                 </DataTemplate>
