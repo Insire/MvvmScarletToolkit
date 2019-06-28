@@ -41,7 +41,6 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             RefreshFilterCommand = commandBuilder.Create(RefreshFilterInternal, CanRefreshFilter);
             SelectCommand = commandBuilder.Create<IFileSystemInfo>(SetSelectedItem, CanSetSelectedItem);
-            SelectedItems = new RangeObservableCollection<IFileSystemInfo>();
         }
 
         private async Task RefreshFilterInternal(CancellationToken token)
