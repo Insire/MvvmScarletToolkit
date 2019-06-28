@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MvvmScarletToolkit.Abstractions
+namespace MvvmScarletToolkit
 {
     // source: https://github.com/duanenewman/SantasBloggers/blob/master/IListExtensions.cs
     // var updatedBloggers = BloggerService.GetSantasBloggers();

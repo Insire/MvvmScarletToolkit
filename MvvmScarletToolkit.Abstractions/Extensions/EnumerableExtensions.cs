@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Abstractions
+namespace MvvmScarletToolkit
 {
     public static class EnumerableExtensions
     {
