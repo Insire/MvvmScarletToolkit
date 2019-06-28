@@ -25,10 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Observab
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Abstractions", "MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj", "{4D4558E2-878F-48C8-BBE2-E22DB20E9A55}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.FileSystemBrowser", "MvvmScarletToolkit.FileSystemBrowser\MvvmScarletToolkit.FileSystemBrowser.csproj", "{F7C72545-4D60-4A85-8778-9886EBD48616}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.ConfigurableWindow", "MvvmScarletToolkit.ConfigurableWindow\MvvmScarletToolkit.ConfigurableWindow.csproj", "{C714F171-8BE1-427A-BC98-C923EA3BAA30}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Implementations", "MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj", "{1B547A43-3DB6-48FD-AF9A-EC649B5C584F}"
 EndProject
 Global
@@ -61,14 +57,6 @@ Global
 		{4D4558E2-878F-48C8-BBE2-E22DB20E9A55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D4558E2-878F-48C8-BBE2-E22DB20E9A55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D4558E2-878F-48C8-BBE2-E22DB20E9A55}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7C72545-4D60-4A85-8778-9886EBD48616}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7C72545-4D60-4A85-8778-9886EBD48616}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7C72545-4D60-4A85-8778-9886EBD48616}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7C72545-4D60-4A85-8778-9886EBD48616}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C714F171-8BE1-427A-BC98-C923EA3BAA30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C714F171-8BE1-427A-BC98-C923EA3BAA30}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C714F171-8BE1-427A-BC98-C923EA3BAA30}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C714F171-8BE1-427A-BC98-C923EA3BAA30}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1B547A43-3DB6-48FD-AF9A-EC649B5C584F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1B547A43-3DB6-48FD-AF9A-EC649B5C584F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B547A43-3DB6-48FD-AF9A-EC649B5C584F}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -6,8 +6,25 @@
         <UseWPF>true</UseWPF>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     </PropertyGroup>
+    <ItemGroup>
+      <None Remove="Controls\FileSystemBrowser\Generic.xaml" />
+    </ItemGroup>
 
     <ItemGroup>
         <Compile Include="..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Expression.Blend.Sdk" Version="1.0.2" />
+      <PackageReference Include="WpfAnalyzers" Version="2.2.0.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
+      <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
+      <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
     </ItemGroup>
 </Project>
