@@ -4,6 +4,9 @@
     <Name Resource="MinimumRecommendedRules_Name" />
     <Description Resource="MinimumRecommendedRules_Description" />
   </Localization>
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp.Features" RuleNamespace="Microsoft.CodeAnalysis.CSharp.Features">
+    <Rule Id="IDE0045" Action="Hidden" />
+  </Rules>
   <Rules AnalyzerId="PropertyChangedAnalyzers" RuleNamespace="PropertyChangedAnalyzers">
     <Rule Id="INPC001" Action="Hidden" />
     <Rule Id="INPC020" Action="Hidden" />

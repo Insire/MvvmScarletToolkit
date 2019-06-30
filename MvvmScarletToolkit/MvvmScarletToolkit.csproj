@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
         <TargetFrameworks>net461;netcoreapp3.0</TargetFrameworks>
         <OutputType>Library</OutputType>
@@ -7,7 +7,7 @@
 
     <ItemGroup>
         <PackageReference Include="Expression.Blend.Sdk" Version="1.0.2" />
-        <PackageReference Include="WpfAnalyzers" Version="2.2.0.2">
+        <PackageReference Include="WpfAnalyzers" Version="2.2.0.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
