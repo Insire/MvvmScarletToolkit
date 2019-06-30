@@ -8,11 +8,13 @@ using System.Threading.Tasks;
 
 namespace DemoApp
 {
-    public sealed class ObservableBusyViewModel : ObservableObject, IObservable<bool>
+    public sealed class ObservableBusyViewModel : ObservableObject, IObservable<bool>, IDisposable
     {
         private readonly ObservableBusyStack _observableBusyStack;
 
         private bool _isBusy;
+        private bool _disposed;
+
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -29,6 +31,11 @@ namespace DemoApp
 
         private async Task BeBusyInternal(CancellationToken token)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             using (_observableBusyStack.GetToken())
             {
                 await Task.Delay(250, token).ConfigureAwait(false);
@@ -37,7 +44,28 @@ namespace DemoApp
 
         public IDisposable Subscribe(IObserver<bool> observer)
         {
+            ThrowIfDisposed();
+
             return _observableBusyStack.Subscribe(observer);
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _observableBusyStack.Dispose();
+            _disposed = true;
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
         }
     }
 }

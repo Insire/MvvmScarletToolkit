@@ -7,6 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="IDisposableAnalyzers" Version="2.1.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
         <PackageReference Include="PropertyChangedAnalyzers" Version="2.7.1">
             <PrivateAssets>all</PrivateAssets>

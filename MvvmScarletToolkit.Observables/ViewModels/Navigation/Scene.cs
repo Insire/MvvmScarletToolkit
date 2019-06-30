@@ -38,5 +38,15 @@ namespace MvvmScarletToolkit.Observables
         {
             Localization = localizationViewModel ?? throw new ArgumentNullException(nameof(localizationViewModel));
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Localization.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

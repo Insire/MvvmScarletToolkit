@@ -17,12 +17,9 @@ namespace MvvmScarletToolkit
         {
             async Task AwaitPartition(IEnumerator<T> partition)
             {
-                using (partition)
+                while (partition.MoveNext())
                 {
-                    while (partition.MoveNext())
-                    {
-                        await funcBody(partition.Current).ConfigureAwait(false);
-                    }
+                    await funcBody(partition.Current).ConfigureAwait(false);
                 }
             }
 

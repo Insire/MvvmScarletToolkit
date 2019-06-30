@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Commands
     {
         private readonly IScarletCommandManager _commandManager;
 
-        private CancellationTokenSource _cts = new CancellationTokenSource();
+        private CancellationTokenSource _cts;
         private bool _commandExecuting;
 
         public CancellationToken Token => _cts.Token;
@@ -22,11 +22,12 @@ namespace MvvmScarletToolkit.Commands
         public void NotifyCommandStarting()
         {
             _commandExecuting = true;
-            if (!_cts.IsCancellationRequested)
+            if (_cts?.IsCancellationRequested == false)
             {
                 return;
             }
 
+            _cts?.Dispose();
             _cts = new CancellationTokenSource();
             RaiseCanExecuteChanged();
         }
@@ -39,12 +40,15 @@ namespace MvvmScarletToolkit.Commands
 
         bool ICommand.CanExecute(object parameter)
         {
-            return _commandExecuting && !_cts.IsCancellationRequested;
+            return _commandExecuting && _cts?.IsCancellationRequested != true;
         }
 
         void ICommand.Execute(object parameter)
         {
-            _cts.Cancel();
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
+
             RaiseCanExecuteChanged();
         }
 
@@ -57,6 +61,11 @@ namespace MvvmScarletToolkit.Commands
         private void RaiseCanExecuteChanged()
         {
             _commandManager.InvalidateRequerySuggested();
+        }
+
+        public void Dispose()
+        {
+            _cts?.Dispose();
         }
     }
 }

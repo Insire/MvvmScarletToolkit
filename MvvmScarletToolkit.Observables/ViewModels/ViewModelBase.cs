@@ -34,7 +34,7 @@ namespace MvvmScarletToolkit.Observables
     /// <summary>
     /// ViewModelBase that provides common services required for MVVM
     /// </summary>
-    public abstract class ViewModelBase : INotifyPropertyChanged
+    public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
     {
         protected readonly IBusyStack BusyStack;
         protected readonly ICommandBuilder CommandBuilder;
@@ -43,6 +43,8 @@ namespace MvvmScarletToolkit.Observables
         protected readonly IScarletMessenger Messenger;
         protected readonly IExitService Exit;
         protected readonly IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
+
+        private bool _disposed;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -64,6 +66,12 @@ namespace MvvmScarletToolkit.Observables
             WeakEventManager = commandBuilder.WeakEventManager ?? throw new ArgumentNullException(nameof(ICommandBuilder.WeakEventManager));
 
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
@@ -96,6 +104,20 @@ namespace MvvmScarletToolkit.Observables
             OnChanged?.Invoke();
 
             return true;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            if (disposing)
+            {
+                (BusyStack as IDisposable)?.Dispose();
+            }
         }
     }
 }

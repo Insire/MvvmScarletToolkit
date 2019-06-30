@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit.Observables
     /// <summary>
     /// Collection ViewModelBase that provides async modification
     /// </summary>
-    public abstract class ViewModelListBase<TViewModel> : INotifyPropertyChanged
+    public abstract class ViewModelListBase<TViewModel> : INotifyPropertyChanged, IDisposable
         where TViewModel : class, INotifyPropertyChanged
     {
         protected readonly ObservableCollection<TViewModel> _items;
@@ -25,6 +25,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly IScarletMessenger Messenger;
         protected readonly IExitService Exit;
         protected readonly IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
+        private bool _disposed;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -142,6 +143,12 @@ namespace MvvmScarletToolkit.Observables
             return _items.Count > 0 && !IsBusy;
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
         {
             return SetValue(ref field, value, null, null, propertyName);
@@ -179,23 +186,49 @@ namespace MvvmScarletToolkit.Observables
             return Remove(SelectedItem);
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            if (disposing)
+            {
+                BusyStack.Dispose();
+            }
+        }
+
+        protected virtual void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+        }
+
         private void OnSelectionChanged()
         {
+            ThrowIfDisposed();
             Messenger.Publish(new ViewModelListBaseSelectionChanged<TViewModel>(this, SelectedItem));
         }
 
         private void OnSelectionChanging()
         {
+            ThrowIfDisposed();
             Messenger.Publish(new ViewModelListBaseSelectionChanging<TViewModel>(this, SelectedItem));
         }
 
         private void OnSelectionsChanged()
         {
+            ThrowIfDisposed();
             Messenger.Publish(new ViewModelListBaseSelectionsChanged<TViewModel>(this, SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
         }
 
         private void OnSelectionsChanging()
         {
+            ThrowIfDisposed();
             Messenger.Publish(new ViewModelListBaseSelectionsChanging<TViewModel>(this, SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
         }
     }

@@ -28,5 +28,18 @@ namespace MvvmScarletToolkit.Observables
 
             _items.Add(viewmodel);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                for (var i = 0; i < Items.Count; i++)
+                {
+                    Items[i]?.Dispose();
+                }
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

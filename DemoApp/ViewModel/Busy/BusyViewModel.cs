@@ -86,12 +86,16 @@ namespace DemoApp
             //hm, what to do here? I guess nothing right now...
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            foreach (var disposeable in _disposables)
+            if (disposing)
             {
-                disposeable.Value.Dispose();
+                foreach (var disposeable in _disposables)
+                {
+                    disposeable.Value.Dispose();
+                }
             }
+            base.Dispose(disposing);
         }
 
         public IDisposable Subscribe(IObserver<bool> observer)

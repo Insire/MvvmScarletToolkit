@@ -13,14 +13,15 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
             var extension = Path.GetExtension(fileInfo.Name);
 
-            var key = Registry.ClassesRoot.OpenSubKey(extension);
-
-            if (key?.GetValue("Content Type") is null)
+            using (var key = Registry.ClassesRoot.OpenSubKey(extension))
             {
-                return null;
-            }
+                if (key?.GetValue("Content Type") is null)
+                {
+                    return null;
+                }
 
-            return key.GetValue("Content Type").ToString();
+                return key.GetValue("Content Type").ToString();
+            }
         }
     }
 }
