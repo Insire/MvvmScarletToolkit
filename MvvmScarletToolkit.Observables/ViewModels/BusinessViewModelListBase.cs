@@ -156,7 +156,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        protected virtual bool CanRefresh()
+        public virtual bool CanRefresh()
         {
             return IsLoaded
                 && !_loadCommand.IsBusy
