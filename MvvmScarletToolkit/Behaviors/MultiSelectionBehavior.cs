@@ -43,7 +43,7 @@ namespace MvvmScarletToolkit
 
         /// <summary>Identifies the <see cref="SelectedItems"/> dependency property.</summary>
         public static readonly DependencyProperty SelectedItemsProperty = DependencyProperty.Register(
-            "SelectedItems"
+            nameof(SelectedItems)
             , typeof(IList)
             , typeof(MultiSelectionBehavior)
             , new UIPropertyMetadata(null, OnSelectedItemsChanged));

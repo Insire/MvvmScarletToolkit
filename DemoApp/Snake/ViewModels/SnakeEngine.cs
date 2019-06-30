@@ -333,7 +333,7 @@ namespace DemoApp
 
         private bool InternalMove(Direction direction)
         {
-            var result = false;
+            bool result;
             switch (direction)
             {
                 case Direction.East:

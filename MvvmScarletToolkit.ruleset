@@ -6,5 +6,6 @@
   </Localization>
   <Rules AnalyzerId="PropertyChangedAnalyzers" RuleNamespace="PropertyChangedAnalyzers">
     <Rule Id="INPC001" Action="Hidden" />
+    <Rule Id="INPC020" Action="Hidden" />
   </Rules>
 </RuleSet>
