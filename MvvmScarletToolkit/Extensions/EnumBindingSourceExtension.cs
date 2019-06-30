@@ -4,9 +4,12 @@ using System.Windows.Markup;
 namespace MvvmScarletToolkit
 {
     // Usage: ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:EnumType}}}"
+    [MarkupExtensionReturnType(typeof(Array))]
     public sealed class EnumBindingSourceExtension : MarkupExtension
     {
         private Type _enumType;
+
+        [ConstructorArgument("enumType")]
         public Type EnumType
         {
             get { return _enumType; }

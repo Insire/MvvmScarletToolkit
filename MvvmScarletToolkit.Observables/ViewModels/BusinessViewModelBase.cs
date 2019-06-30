@@ -63,20 +63,25 @@ namespace MvvmScarletToolkit.Observables
         protected BusinessViewModelBase(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            _loadCommand = commandBuilder.Create(Load, CanLoad)
-                            .WithSingleExecution(CommandManager)
-                            .WithBusyNotification(BusyStack)
-                            .Build();
+            _loadCommand = commandBuilder
+                .Create(Load, CanLoad)
+                .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
+                .Build();
 
-            _refreshCommand = commandBuilder.Create(Refresh, CanRefresh)
-                                            .WithSingleExecution(CommandManager)
-                                            .WithBusyNotification(BusyStack)
-                                            .Build();
+            _refreshCommand = commandBuilder
+                .Create(Refresh, CanRefresh)
+                .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
+                .Build();
 
-            _unloadCommand = commandBuilder.Create(Unload, CanUnload)
-                                          .WithSingleExecution(CommandManager)
-                                          .WithBusyNotification(BusyStack)
-                                          .Build();
+            _unloadCommand = commandBuilder
+                .Create(Unload, CanUnload)
+                .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .Build();
 
             Exit.UnloadOnExit(this);
         }

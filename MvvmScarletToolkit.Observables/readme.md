@@ -11,7 +11,6 @@ This library aims to provide base and utility classes around state and state man
 |class|summary|code|
 |---|---|---|
 |``ObservableCircularBuffer<T>``| Wraps a fixed sized ``ObservableCollection<T>`` and removes the last entry when a new entry is added in the beginning of the collection|[``ObservableCircularBuffer<T>``](ObservableCircularBuffer.cs)|
-|``RangeObservableCollection<T>``|Extends an ``ObservableCollection<T>`` to be able to add ranges of entries to it|[``RangeObservableCollection<T>``](RangeObservableCollection.cs)|
 
 [Samples](samples.md)
 

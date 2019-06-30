@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit.Observables
             _observerCollection = observerCollection ?? throw new ArgumentNullException(nameof(observerCollection));
             _observer = observer ?? throw new ArgumentNullException(nameof(observer));
 
-            _observerCollection.AddOrUpdate(observer, p => default, (o, p) => default);
+            _ = _observerCollection.AddOrUpdate(observer, _ => default, (_, __) => default);
         }
 
         public void Dispose()

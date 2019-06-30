@@ -1,21 +1,21 @@
-<configurablewindow:ConfigurableWindow x:Class="DemoApp.MainWindow"
-                                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                       xmlns:browser="clr-namespace:MvvmScarletToolkit.FileSystemBrowser;assembly=MvvmScarletToolkit.FileSystemBrowser"
-                                       xmlns:configurablewindow="clr-namespace:MvvmScarletToolkit.ConfigurableWindow;assembly=MvvmScarletToolkit.ConfigurableWindow"
-                                       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                                       xmlns:local="clr-namespace:DemoApp"
-                                       xmlns:mvvmscarlettoolkit="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit"
-                                       xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
-                                       Title="DemoApp"
-                                       Width="1025"
-                                       Height="350">
+<window:ConfigurableWindow x:Class="DemoApp.MainWindow"
+                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                           xmlns:browser="clr-namespace:MvvmScarletToolkit.FileSystemBrowser;assembly=MvvmScarletToolkit"
+                           xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                           xmlns:local="clr-namespace:DemoApp"
+                           xmlns:mvvm="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit"
+                           xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
+                           xmlns:window="clr-namespace:MvvmScarletToolkit.ConfigurableWindow;assembly=MvvmScarletToolkit"
+                           Title="DemoApp"
+                           Width="1025"
+                           Height="350">
 
     <!--  DataContext: NavigationViewModel  -->
 
     <Grid>
         <Grid.Resources>
-            <mvvmscarlettoolkit:NullValueConverter x:Key="NullValueConverter" />
+            <mvvm:NullValueConverter x:Key="NullValueConverter" />
             <DataTemplate DataType="{x:Type observables:LocalizationViewModel}">
                 <TextBlock Text="{Binding Value}" />
             </DataTemplate>
@@ -445,7 +445,20 @@
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                        <Button Command="{Binding RefreshCommand}" DockPanel.Dock="Bottom">Refresh</Button>
+                        <Button DockPanel.Dock="Bottom">
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Content" Value="Refresh" />
+                                    <Setter Property="Command" Value="{Binding RefreshCommand}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RefreshCommand.IsBusy}" Value="True">
+                                            <Setter Property="Content" Value="Cancel" />
+                                            <Setter Property="Command" Value="{Binding RefreshCommand.CancelCommand}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <ProgressBar Maximum="{Binding Maximum, Mode=OneWay}" Value="{Binding Percentage, Mode=OneWay}" />
                     </DockPanel>
                 </DataTemplate>
@@ -556,9 +569,9 @@
 
                             <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <mvvmscarlettoolkit:VirtualizingTilePanel CanHorizontallyScroll="False"
-                                                                              CanVerticallyScroll="True"
-                                                                              ChildSize="50" />
+                                    <mvvm:VirtualizingTilePanel CanHorizontallyScroll="False"
+                                                                CanVerticallyScroll="True"
+                                                                ChildSize="50" />
                                 </ItemsPanelTemplate>
                             </ListBox.ItemsPanel>
 
@@ -617,4 +630,4 @@
             </ContentControl.Resources>
         </ContentControl>
     </Grid>
-</configurablewindow:ConfigurableWindow>
+</window:ConfigurableWindow>

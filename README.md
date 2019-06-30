@@ -2,7 +2,7 @@
 
 [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/Insire/Maple/blob/master/license.md)
 ![NuGet](https://img.shields.io/nuget/v/:MvvmScarletToolkit.svg)
-[![Build status](https://ci.appveyor.com/api/projects/status/cr38mi88wes4shj7/branch/master?svg=true)](https://ci.appveyor.com/project/Insire/mvvmscarlettoolkit/branch/master)
+[![Build status](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_apis/build/status/MvvmScarletToolkit-CI)](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_build/latest?definitionId=1)
 
 MvvmScarletToolkit provides classes to speedup the MVVM development process primarily for WPF applications
 
@@ -58,3 +58,5 @@ The included DemoApp contains examples for:
 - add a nice icon for this lib
 - add Contribution guidelines
 
+Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftThorn/_packaging/SoftThorn/nuget/v3/index.json).
+I'll make them available to everyone when changes to the API get less common. 

@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Windows.Input;
 
@@ -7,26 +8,29 @@ namespace MvvmScarletToolkit.Commands
     {
         private readonly Action _execute;
         private readonly Func<bool> _canExecute;
+        private readonly IScarletCommandManager _commandManager;
 
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add { _commandManager.RequerySuggested += value; }
+            remove { _commandManager.RequerySuggested -= value; }
         }
 
-        public RelayCommand(Action methodToExecute)
+        public RelayCommand(IScarletCommandManager commandManager, Action methodToExecute)
         {
             _execute = methodToExecute ?? throw new ArgumentException($"{nameof(methodToExecute)} can't be empty.", nameof(methodToExecute));
+            _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
         }
 
-        public RelayCommand(Action methodToExecute, Func<bool> canExecuteEvaluator) : this(methodToExecute)
+        public RelayCommand(IScarletCommandManager commandManager, Action methodToExecute, Func<bool> canExecuteEvaluator)
+            : this(commandManager, methodToExecute)
         {
             _canExecute = canExecuteEvaluator ?? throw new ArgumentException($"{nameof(canExecuteEvaluator)} can't be empty.", nameof(canExecuteEvaluator));
         }
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute == null || _canExecute();
+            return _canExecute is null || _canExecute();
         }
 
         public void Execute(object parameter)
@@ -39,26 +43,28 @@ namespace MvvmScarletToolkit.Commands
     {
         private readonly Action<T> _execute;
         private readonly Predicate<T> _canExecute;
+        private readonly IScarletCommandManager _commandManager;
 
-        public RelayCommand(Action<T> execute)
-            : this(execute, null)
+        public RelayCommand(IScarletCommandManager commandManager, Action<T> execute)
         {
+            _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
+            _execute = execute ?? throw new ArgumentException($"{nameof(execute)} can't be empty.", nameof(execute));
         }
 
-        public RelayCommand(Action<T> execute, Predicate<T> canExecute)
+        public RelayCommand(IScarletCommandManager commandManager, Action<T> execute, Predicate<T> canExecute)
+                        : this(commandManager, execute)
         {
-            _execute = execute ?? throw new ArgumentException($"{nameof(execute)} can't be empty.", nameof(execute));
-            _canExecute = canExecute;
+            _canExecute = canExecute ?? throw new ArgumentException($"{nameof(canExecute)} can't be empty.", nameof(canExecute));
         }
 
         public bool CanExecute(object parameter)
         {
-            if (_canExecute == null)
+            if (_canExecute is null)
             {
                 return true;
             }
 
-            if (parameter == null && typeof(T).IsValueType)
+            if (parameter is null && typeof(T).IsValueType)
             {
                 return _canExecute(default);
             }
@@ -75,8 +81,8 @@ namespace MvvmScarletToolkit.Commands
 
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add { _commandManager.RequerySuggested += value; }
+            remove { _commandManager.RequerySuggested -= value; }
         }
 
         public void Execute(object parameter)

@@ -18,7 +18,6 @@ namespace MvvmScarletToolkit.Observables
         where TViewModel : class, INotifyPropertyChanged
     {
         private bool _isLoaded;
-
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsLoaded
         {
@@ -53,30 +52,42 @@ namespace MvvmScarletToolkit.Observables
             RemoveCommand = commandBuilder
                 .Create(Remove, CanRemove)
                 .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
                 .Build();
 
             RemoveRangeCommand = commandBuilder
                 .Create(RemoveRange, CanRemoveRange)
                 .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
                 .Build();
 
             ClearCommand = commandBuilder
                 .Create(Clear, CanClear)
                 .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
                 .Build();
 
             _loadCommand = commandBuilder
                 .Create(Load, CanLoad)
                 .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
                 .Build();
 
             _refreshCommand = commandBuilder
                 .Create(Refresh, CanRefresh)
+                .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
                 .Build();
 
             _unloadCommand = commandBuilder
                 .Create(Unload, CanUnload)
                 .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
                 .Build();
 
             Exit.UnloadOnExit(this);
@@ -87,7 +98,7 @@ namespace MvvmScarletToolkit.Observables
             return RefreshInternal(token);
         }
 
-        public virtual async Task Load(CancellationToken token)
+        public async Task Load(CancellationToken token)
         {
             if (IsLoaded)
             {
@@ -117,7 +128,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        public virtual async Task Unload(CancellationToken token)
+        public async Task Unload(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -136,7 +147,7 @@ namespace MvvmScarletToolkit.Observables
 
         protected abstract Task RefreshInternal(CancellationToken token);
 
-        public virtual async Task Refresh(CancellationToken token)
+        public async Task Refresh(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
@@ -174,7 +185,7 @@ namespace MvvmScarletToolkit.Observables
                 && items?.Any(p => _items.Contains(p)) == true;
         }
 
-        protected virtual bool CanRemoveRange(IList items)
+        protected bool CanRemoveRange(IList items)
         {
             return CanRemoveRange(items?.Cast<TViewModel>());
         }

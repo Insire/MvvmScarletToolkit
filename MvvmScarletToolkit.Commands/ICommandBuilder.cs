@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Commands;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,8 +10,9 @@ namespace MvvmScarletToolkit.Abstractions
     {
         IScarletCommandManager CommandManager { get; }
         IScarletDispatcher Dispatcher { get; }
-
+        IScarletMessenger Messenger { get; }
         IExitService Exit { get; }
+        IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager { get; }
 
         ICommandBuilderContext Create<TArgument, TResult>();
 

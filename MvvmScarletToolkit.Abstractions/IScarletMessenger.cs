@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Abstractions
 {
@@ -113,7 +114,6 @@ namespace MvvmScarletToolkit.Abstractions
         /// <para>Unsubscribe from a particular message type.</para>
         /// <para>Does not throw an exception if the subscription is not found.</para>
         /// </summary>
-        /// <typeparam name="TMessage">Type of message</typeparam>
         /// <param name="subscriptionToken">Subscription token received from Subscribe</param>
         void Unsubscribe(SubscriptionToken subscriptionToken);
 
@@ -124,23 +124,11 @@ namespace MvvmScarletToolkit.Abstractions
         /// <param name="message">Message to deliver</param>
         void Publish<TMessage>(TMessage message) where TMessage : class, IScarletMessage;
 
-#pragma warning disable RCS1047 // Non-asynchronous method name should not end with 'Async'.
-
         /// <summary>
         /// Publish a message to any subscribers asynchronously
         /// </summary>
         /// <typeparam name="TMessage">Type of message</typeparam>
         /// <param name="message">Message to deliver</param>
-        void PublishAsync<TMessage>(TMessage message) where TMessage : class, IScarletMessage;
-
-        /// <summary>
-        /// Publish a message to any subscribers asynchronously
-        /// </summary>
-        /// <typeparam name="TMessage">Type of message</typeparam>
-        /// <param name="message"> Message to deliver</param>
-        /// <param name="callback">AsyncCallback called on completion</param>
-        void PublishAsync<TMessage>(TMessage message, AsyncCallback callback) where TMessage : class, IScarletMessage;
-
-#pragma warning restore RCS1047 // Non-asynchronous method name should not end with 'Async'.
+        Task PublishAsync<TMessage>(TMessage message) where TMessage : class, IScarletMessage;
     }
 }

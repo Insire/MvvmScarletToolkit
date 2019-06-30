@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +22,9 @@ namespace MvvmScarletToolkit.Observables
         protected readonly ICommandBuilder CommandBuilder;
         protected readonly IScarletDispatcher Dispatcher;
         protected readonly IScarletCommandManager CommandManager;
+        protected readonly IScarletMessenger Messenger;
         protected readonly IExitService Exit;
+        protected readonly IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -38,7 +41,7 @@ namespace MvvmScarletToolkit.Observables
         public virtual TViewModel SelectedItem
         {
             get { return _selectedItem; }
-            set { SetValue(ref _selectedItem, value); }
+            set { SetValue(ref _selectedItem, value, OnChanged: OnSelectionChanged, OnChanging: OnSelectionChanging); }
         }
 
         private IList _selectedItems;
@@ -46,7 +49,7 @@ namespace MvvmScarletToolkit.Observables
         public virtual IList SelectedItems
         {
             get { return _selectedItems; }
-            set { SetValue(ref _selectedItems, value); }
+            set { SetValue(ref _selectedItems, value, OnChanged: OnSelectionsChanged, OnChanging: OnSelectionsChanging); }
         }
 
         public TViewModel this[int index]
@@ -65,7 +68,9 @@ namespace MvvmScarletToolkit.Observables
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
             Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(ICommandBuilder.Dispatcher));
             CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilder.CommandManager));
+            Messenger = commandBuilder.Messenger ?? throw new ArgumentNullException(nameof(ICommandBuilder.Messenger));
             Exit = commandBuilder.Exit ?? throw new ArgumentNullException(nameof(ICommandBuilder.Exit));
+            WeakEventManager = commandBuilder.WeakEventManager ?? throw new ArgumentNullException(nameof(ICommandBuilder.WeakEventManager));
 
             _items = new ObservableCollection<TViewModel>();
 
@@ -172,6 +177,26 @@ namespace MvvmScarletToolkit.Observables
         protected Task Remove()
         {
             return Remove(SelectedItem);
+        }
+
+        private void OnSelectionChanged()
+        {
+            Messenger.Publish(new ViewModelListBaseSelectionChanged<TViewModel>(this, SelectedItem));
+        }
+
+        private void OnSelectionChanging()
+        {
+            Messenger.Publish(new ViewModelListBaseSelectionChanging<TViewModel>(this, SelectedItem));
+        }
+
+        private void OnSelectionsChanged()
+        {
+            Messenger.Publish(new ViewModelListBaseSelectionsChanged<TViewModel>(this, SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
+        }
+
+        private void OnSelectionsChanging()
+        {
+            Messenger.Publish(new ViewModelListBaseSelectionsChanging<TViewModel>(this, SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
         }
     }
 }

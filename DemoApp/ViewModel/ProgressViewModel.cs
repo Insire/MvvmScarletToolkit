@@ -1,3 +1,4 @@
+using MvvmScarletToolkit;
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
 using System.Diagnostics;
@@ -41,12 +42,15 @@ namespace DemoApp
             else
                 Debug.WriteLine("Refreshing ProgressViewModel");
 
-            await Dispatcher.Invoke(() => Percentage = 0);
+            await Dispatcher.Invoke(() => Percentage = 0).ConfigureAwait(false);
             await Task.Delay(250).ConfigureAwait(false);
 
             for (var i = 0; i <= _maximum; i++)
             {
-                await Dispatcher.Invoke(() => Percentage = i);
+                if (token.IsCancellationRequested)
+                    break;
+
+                await Dispatcher.Invoke(() => Percentage = i, token).ConfigureAwait(false);
                 await Task.Delay(25).ConfigureAwait(false);
             }
         }

@@ -1,14 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
-        <TargetFrameworks>net46;net461;net462;net47;net471;netcoreapp3.0</TargetFrameworks>
+        <TargetFrameworks>net461;netcoreapp3.0</TargetFrameworks>
         <OutputType>Library</OutputType>
-        <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
         <UseWPF>true</UseWPF>
     </PropertyGroup>
 
-    <ItemGroup>
-        <Compile Include="..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
-    </ItemGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="PropertyChangedAnalyzers" Version="2.7.1">
@@ -20,8 +19,4 @@
     <ItemGroup>
         <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
     </ItemGroup>
-
-    <PropertyGroup>
-        <CodeAnalysisRuleSet>"..\MvvmScarletToolkit.ruleset""</CodeAnalysisRuleSet>
-    </PropertyGroup>
 </Project>

@@ -8,7 +8,7 @@ namespace MvvmScarletToolkit.Observables
     public class ChangeTracker
     {
         private readonly IDictionary<string, ChangeGroup> _changes;
-        public bool HasChanged => _changes.Any();
+        public bool HasChanged => _changes.Count > 0;
 
         public ChangeTracker()
         {

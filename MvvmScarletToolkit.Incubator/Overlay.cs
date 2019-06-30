@@ -129,13 +129,13 @@ namespace MvvmScarletToolkit
                 RemoveVisualChild(_uiElement);
             }
 
-            protected override System.Windows.Size MeasureOverride(System.Windows.Size constraint)
+            protected override Size MeasureOverride(Size constraint)
             {
                 _uiElement.Measure(constraint);
                 return _uiElement.DesiredSize;
             }
 
-            protected override System.Windows.Size ArrangeOverride(System.Windows.Size finalSize)
+            protected override Size ArrangeOverride(Size finalSize)
             {
                 var location = new Point(0, 0);
                 var rect = new Rect(location, finalSize);
@@ -145,10 +145,7 @@ namespace MvvmScarletToolkit
                 return finalSize;
             }
 
-            protected override int VisualChildrenCount
-            {
-                get { return 1; }
-            }
+            protected override int VisualChildrenCount => 1;
 
             protected override Visual GetVisualChild(int index)
             {

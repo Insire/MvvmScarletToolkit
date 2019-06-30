@@ -31,10 +31,7 @@ namespace MvvmScarletToolkit.Observables
             private set { SetValue(ref _size, value, OnChanged: () => OnPropertyChanged(nameof(IsFull))); }
         }
 
-        public bool IsFull
-        {
-            get { return _size == Capacity; }
-        }
+        public bool IsFull => _size == Capacity;
 
         public ObservableCircularBuffer(int capacity)
             : this(capacity, new T[] { })
