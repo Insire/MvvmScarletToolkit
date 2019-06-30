@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
         <TargetFrameworks>net46;net461;net462;net47;net471;netcoreapp3.0</TargetFrameworks>
         <OutputType>Library</OutputType>
@@ -11,7 +11,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
+        <PackageReference Include="PropertyChangedAnalyzers" Version="2.7.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -19,4 +23,8 @@
         <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
     </ItemGroup>
+
+    <PropertyGroup>
+        <CodeAnalysisRuleSet>"..\MvvmScarletToolkit.ruleset""</CodeAnalysisRuleSet>
+    </PropertyGroup>
 </Project>

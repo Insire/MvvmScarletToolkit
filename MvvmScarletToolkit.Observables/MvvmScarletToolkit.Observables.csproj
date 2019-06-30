@@ -11,8 +11,19 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="PropertyChangedAnalyzers" Version="2.7.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj" />
     </ItemGroup>
+
+    <PropertyGroup>
+        <CodeAnalysisRuleSet>"..\MvvmScarletToolkit.ruleset""</CodeAnalysisRuleSet>
+    </PropertyGroup>
 </Project>
