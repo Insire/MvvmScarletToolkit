@@ -1,10 +1,11 @@
+using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class CircularBuffer<T> : IEnumerable<T>
+    public sealed class CircularBuffer<T> : ObservableObject, IEnumerable<T>
     {
         private readonly T[] _buffer;
 
@@ -60,10 +61,22 @@ namespace MvvmScarletToolkit
 
         public bool IsEmpty => Size == 0;
 
+        private int size;
         /// <summary>
         /// Current buffer size (the number of elements that the buffer has).
         /// </summary>
-        public int Size { get; private set; }
+        public int Size
+        {
+            get { return size; }
+            private set
+            {
+                SetValue(ref size, value, OnChanged: () =>
+                {
+                    OnPropertyChanged(nameof(IsFull));
+                    OnPropertyChanged(nameof(IsEmpty));
+                });
+            }
+        }
 
         public int Count { get; }
         public bool IsReadOnly { get; }

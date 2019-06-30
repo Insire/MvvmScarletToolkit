@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit.Commands
         public NotifyTaskCompletion<TResult> Execution
         {
             get { return _execution; }
-            protected set { SetValue(ref _execution, value); }
+            protected set { SetValue(ref _execution, value, OnChanged: () => OnPropertyChanged(nameof(Completion))); }
         }
 
         protected GenericConcurrentCommandBase(IScarletCommandManager commandManager)

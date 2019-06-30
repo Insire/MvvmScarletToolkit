@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit
 
         protected ScarletMessageBase(object sender)
         {
-            if (sender == null)
+            if (sender is null)
             {
                 throw new ArgumentNullException(nameof(sender));
             }

@@ -111,7 +111,7 @@ namespace DemoApp
                 }
 
                 _state = value;
-                OnPropertyChanged(nameof(State));
+                OnPropertyChanged();
             }
         }
 
@@ -127,7 +127,7 @@ namespace DemoApp
                 }
 
                 _direction = value;
-                OnPropertyChanged(nameof(Direction));
+                OnPropertyChanged();
                 _messenger.Publish(new SnakeDirectionChanged(this, value));
             }
         }

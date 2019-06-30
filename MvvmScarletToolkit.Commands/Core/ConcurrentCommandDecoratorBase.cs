@@ -3,16 +3,12 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Commands
 {
     public abstract class ConcurrentCommandDecoratorBase : ConcurrentCommandBase
     {
         protected readonly ConcurrentCommandBase Command;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public override ICommand CancelCommand => Command.CancelCommand;
 
         [Bindable(true, BindingDirection.OneWay)]
         public override bool IsBusy => Command.IsBusy;
@@ -26,6 +22,7 @@ namespace MvvmScarletToolkit.Commands
             Command = command ?? throw new ArgumentNullException(nameof(command));
             Command.CanExecuteChanged += Command_CanExecuteChanged;
             Command.PropertyChanged += Command_PropertyChanged;
+            CancelCommand = Command.CancelCommand;
         }
 
         private void Command_PropertyChanged(object sender, PropertyChangedEventArgs e)

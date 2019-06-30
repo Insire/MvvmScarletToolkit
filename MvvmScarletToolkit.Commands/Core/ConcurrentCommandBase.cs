@@ -20,8 +20,13 @@ namespace MvvmScarletToolkit.Commands
         [Bindable(true, BindingDirection.OneWay)]
         public abstract Task Completion { get; }
 
+        private ICommand _cancelCommand;
         [Bindable(true, BindingDirection.OneWay)]
-        public virtual ICommand CancelCommand { get; protected set; }
+        public ICommand CancelCommand
+        {
+            get { return _cancelCommand; }
+            protected set { SetValue(ref _cancelCommand, value); }
+        }
 
         private bool _isBusy;
         [Bindable(true, BindingDirection.OneWay)]
@@ -53,20 +58,34 @@ namespace MvvmScarletToolkit.Commands
             CommandManager.InvalidateRequerySuggested();
         }
 
-        protected void OnPropertyChanged(string propertyName)
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected virtual bool SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
+        protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
+        {
+            return SetValue(ref field, value, null, null, propertyName);
+        }
+
+        protected bool SetValue<T>(ref T field, T value, Action OnChanged, [CallerMemberName]string propertyName = null)
+        {
+            return SetValue(ref field, value, null, OnChanged, propertyName);
+        }
+
+        protected virtual bool SetValue<T>(ref T field, T value, Action OnChanging, Action OnChanged, [CallerMemberName]string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
+            OnChanging?.Invoke();
+
             field = value;
             OnPropertyChanged(propertyName);
+
+            OnChanged?.Invoke();
 
             return true;
         }

@@ -38,11 +38,21 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return info.Name.IndexOf(info.Filter, StringComparison.InvariantCultureIgnoreCase) >= 0;
         }
 
+        private ICommand _deleteCommand;
         [Bindable(true, BindingDirection.OneWay)]
-        public ICommand DeleteCommand { get; protected set; }
+        public ICommand DeleteCommand
+        {
+            get { return _deleteCommand; }
+            protected set { SetValue(ref _deleteCommand, value); }
+        }
 
+        private ICommand _toggleExpandCommand;
         [Bindable(true, BindingDirection.OneWay)]
-        public ICommand ToggleExpandCommand { get; protected set; }
+        public ICommand ToggleExpandCommand
+        {
+            get { return _toggleExpandCommand; }
+            protected set { SetValue(ref _toggleExpandCommand, value); }
+        }
 
         private IFileSystemDirectory _parent;
         [Bindable(true, BindingDirection.OneWay)]

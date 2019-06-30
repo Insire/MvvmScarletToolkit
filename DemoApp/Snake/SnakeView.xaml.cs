@@ -28,7 +28,7 @@ namespace DemoApp
         }
 
         public static readonly DependencyProperty ManagerProperty = DependencyProperty.Register(
-            "Manager",
+            nameof(Manager),
             typeof(ISnakeManager),
             typeof(SnakeView),
             new PropertyMetadata(default(ISnakeManager)));
@@ -40,7 +40,7 @@ namespace DemoApp
         }
 
         public static readonly DependencyProperty FramesPerSecondProperty = DependencyProperty.Register(
-            "FramesPerSecond",
+            nameof(FramesPerSecond),
             typeof(int),
             typeof(SnakeView),
             new PropertyMetadata(0));
@@ -52,7 +52,7 @@ namespace DemoApp
         }
 
         public static readonly DependencyProperty IsDebugProperty = DependencyProperty.Register(
-            "IsDebug",
+            nameof(IsDebug),
             typeof(bool),
             typeof(SnakeView), new PropertyMetadata(false));
 
@@ -63,7 +63,7 @@ namespace DemoApp
         }
 
         public static readonly DependencyProperty IsFpsEnabledProperty = DependencyProperty.Register(
-            "IsFpsEnabled",
+            nameof(IsFpsEnabled),
             typeof(bool),
             typeof(SnakeView),
             new PropertyMetadata(false, new PropertyChangedCallback(OnIsFpsEnabledChanged)));
@@ -75,7 +75,7 @@ namespace DemoApp
         }
 
         public static readonly DependencyProperty SnakeViewModelProperty = DependencyProperty.Register(
-            "SnakeViewModel",
+            nameof(SnakeViewModel),
             typeof(SnakeViewModel),
             typeof(SnakeView),
             new PropertyMetadata(default(SnakeViewModel)));
@@ -87,7 +87,7 @@ namespace DemoApp
         }
 
         public static readonly DependencyProperty ViewProperty = DependencyProperty.Register(
-            "View",
+            nameof(View),
             typeof(View),
             typeof(SnakeView),
             new PropertyMetadata(default(View)));
@@ -99,7 +99,7 @@ namespace DemoApp
         }
 
         public static readonly DependencyProperty ExitCommandProperty = DependencyProperty.Register(
-            "ExitCommand",
+            nameof(ExitCommand),
             typeof(ICommand),
             typeof(SnakeView),
             new PropertyMetadata(default(ICommand)));
@@ -111,7 +111,7 @@ namespace DemoApp
         }
 
         public static readonly DependencyProperty ShowStartCommandProperty = DependencyProperty.Register(
-            "ShowStartCommand",
+            nameof(ShowStartCommand),
             typeof(IConcurrentCommand),
             typeof(SnakeView),
             new PropertyMetadata(default(IConcurrentCommand)));
@@ -123,7 +123,7 @@ namespace DemoApp
         }
 
         public static readonly DependencyProperty ShowOptionsCommandProperty = DependencyProperty.Register(
-            "ShowOptionsCommand",
+            nameof(ShowOptionsCommand),
             typeof(IConcurrentCommand),
             typeof(SnakeView),
             new PropertyMetadata(default(IConcurrentCommand)));
@@ -135,7 +135,7 @@ namespace DemoApp
         }
 
         public static readonly DependencyProperty ShowGameCommandProperty = DependencyProperty.Register(
-            "ShowGameCommand",
+            nameof(ShowGameCommand),
             typeof(IConcurrentCommand),
             typeof(SnakeView),
             new PropertyMetadata(default(IConcurrentCommand)));
