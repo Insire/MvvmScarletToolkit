@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using System;
 using System.Collections.ObjectModel;
@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace MvvmScarletToolkit.Observables.ViewModels
+namespace MvvmScarletToolkit.Observables
 {
     public sealed class PagingViewModel<TViewModel> : ViewModelBase
         where TViewModel : class, INotifyPropertyChanged
