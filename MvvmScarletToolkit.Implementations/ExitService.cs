@@ -26,7 +26,7 @@ namespace MvvmScarletToolkit
             _listViewModels = new ConcurrentQueue<IBusinessViewModelListBase>();
         }
 
-        internal ExitService(Application app, ScarletDispatcher dispatcher)
+        public ExitService(Application app, ScarletDispatcher dispatcher)
             : this()
         {
             _app = app ?? throw new ArgumentNullException(nameof(app));
