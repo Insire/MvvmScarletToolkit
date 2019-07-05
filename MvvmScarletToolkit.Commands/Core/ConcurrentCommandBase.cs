@@ -60,7 +60,12 @@ namespace MvvmScarletToolkit.Commands
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, e);
         }
 
         protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null)

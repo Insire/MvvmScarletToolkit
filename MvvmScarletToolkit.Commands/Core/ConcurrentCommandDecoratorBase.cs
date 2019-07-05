@@ -20,19 +20,13 @@ namespace MvvmScarletToolkit.Commands
             : base(commandManager)
         {
             Command = command ?? throw new ArgumentNullException(nameof(command));
-            Command.CanExecuteChanged += Command_CanExecuteChanged;
             Command.PropertyChanged += Command_PropertyChanged;
             CancelCommand = Command.CancelCommand;
         }
 
         private void Command_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            OnPropertyChanged(e.PropertyName);
-        }
-
-        private void Command_CanExecuteChanged(object sender, EventArgs e)
-        {
-            RaiseCanExecuteChanged();
+            OnPropertyChanged(e);
         }
 
         [DebuggerStepThrough]
