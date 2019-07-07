@@ -1,23 +1,23 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using System;
-using System.Threading;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading;
 
 namespace MvvmScarletToolkit
 {
     public sealed class DispatcherProgress<T> : IProgress<T>, IDisposable
     {
+        private readonly IDisposable _disposable;
         private readonly IScarletDispatcher _dispatcher;
         private readonly IObservable<EventPattern<T>> _observable;
         private readonly Action<T> _action;
-        private readonly IDisposable _disposable;
 
         private event EventHandler<T> ProgressChanged;
 
         private bool _isDiposed;
 
-        public DispatcherProgress(IScarletDispatcher dispatcher, Action<T> action)
+        public DispatcherProgress(IScarletDispatcher dispatcher, Action<T> action, TimeSpan interval)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _action = action ?? throw new ArgumentNullException(nameof(action));
@@ -27,7 +27,8 @@ namespace MvvmScarletToolkit
                 fsHandler => ProgressChanged -= fsHandler);
 
             _disposable = _observable
-                .Sample(TimeSpan.FromMilliseconds(150))
+                .ObserveOn(System.Reactive.Concurrency.TaskPoolScheduler.Default)
+                .Sample(interval)
                 .Subscribe(e => ReportInternal(e.EventArgs));
         }
 

@@ -10,6 +10,8 @@ namespace DemoApp
 {
     public sealed class ProgressViewModel : BusinessViewModelBase
     {
+        private readonly IProgress<double> _progress;
+        private readonly IProgress<double> _uiBlockingProgress;
         private double _percentage;
         public double Percentage
         {
@@ -24,10 +26,22 @@ namespace DemoApp
             private set { SetValue(ref _maximum, value); }
         }
 
+        private bool _block;
+        public bool Block
+        {
+            get { return _block; }
+            set { SetValue(ref _block, value); }
+        }
+
         public ProgressViewModel(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             Maximum = 100;
+            _progress = new DispatcherProgress<double>(Dispatcher, killTheUIWithWork, TimeSpan.FromMilliseconds(50));
+            _uiBlockingProgress = new Progress<double>(killTheUIWithWork);
+
+            /// overwhelms the dispatcher and the UI thread with property changed notifications
+            void killTheUIWithWork(double i) => Dispatcher.Invoke(() => Percentage = i).ConfigureAwait(false);
         }
 
         protected override Task UnloadInternal(CancellationToken token)
@@ -46,42 +60,43 @@ namespace DemoApp
             await Dispatcher.Invoke(() => Percentage = 0).ConfigureAwait(false);
             await Task.Delay(250).ConfigureAwait(false);
 
-            using (var progress = new DispatcherProgress<int>(Dispatcher, (i) => Dispatcher.Invoke(() => Percentage = i, token).ConfigureAwait(false)))
-            {
-                var worker = new Worker(progress);
+            var worker = default(Worker);
 
-                await worker.DoWork().ConfigureAwait(false);
+            if (Block)
+            {
+                worker = new Worker(_uiBlockingProgress);
             }
-        }
-    }
-
-    public sealed class Worker
-    {
-        private readonly IProgress<int> _progress;
-
-        public Worker(IProgress<int> progress)
-        {
-            _progress = progress;
-        }
-
-        public Task DoWork()
-        {
-            return Task.Run(async () =>
+            else
             {
-                var rnd = new Random(64782);
-                var current = 0;
-                var percentage = 0;
+                worker = new Worker(_progress);
+            }
 
-                do
+            await worker.DoWork().ConfigureAwait(false);
+        }
+
+        private sealed class Worker
+        {
+            private readonly IProgress<double> _progress;
+
+            public Worker(IProgress<double> progress)
+            {
+                _progress = progress ?? throw new ArgumentNullException(nameof(progress));
+            }
+
+            public Task DoWork()
+            {
+                return Task.Run(() =>
                 {
-                    current = rnd.Next(current, 64782);
-                    var d = current * 100 / 64782d;
-                    percentage = (int)Math.Round(d, MidpointRounding.ToEven);
+                    var upperBound = 100_000_000d;
 
-                    await Task.Delay(percentage * 10);
-                    _progress.Report(percentage);
-                } while (percentage < 100);
-            });
+                    for (var i = 0d; i < upperBound; i++)
+                    {
+                        var percentage = i * 100 / upperBound;
+
+                        _progress.Report(Math.Round(percentage, 0));
+                    }
+                });
+            }
         }
     }
 }
