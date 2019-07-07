@@ -16,10 +16,13 @@ namespace MvvmScarletToolkit.Commands
         public IScarletDispatcher Dispatcher { get; }
         public IScarletCommandManager CommandManager { get; }
 
+#pragma warning disable IDISP008 // Don't assign member with injected and created disposables.
         /// <summary>
         /// can be configured externally
         /// </summary>
         public ICancelCommand CancelCommand { get; set; }
+
+#pragma warning restore IDISP008 // Don't assign member with injected and created disposables.
 
         /// <summary>
         /// can be configured externally
