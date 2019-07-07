@@ -79,9 +79,7 @@ namespace MvvmScarletToolkit.Observables
 
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
-            var args = _propertyChangedCache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name));
-
-            PropertyChanged?.Invoke(this, args);
+            PropertyChanged?.Invoke(this, _propertyChangedCache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
         }
 
         protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
