@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -36,6 +37,8 @@ namespace MvvmScarletToolkit.Observables
     /// </summary>
     public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
     {
+        private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> _propertyChangedCache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
+
         protected readonly IBusyStack BusyStack;
         protected readonly ICommandBuilder CommandBuilder;
         protected readonly IScarletCommandManager CommandManager;
@@ -76,7 +79,9 @@ namespace MvvmScarletToolkit.Observables
 
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            var args = _propertyChangedCache.GetOrAdd(propertyName, name => new PropertyChangedEventArgs(propertyName));
+
+            PropertyChanged?.Invoke(this, args);
         }
 
         protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null)

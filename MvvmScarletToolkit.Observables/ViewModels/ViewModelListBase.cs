@@ -1,6 +1,7 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -17,6 +18,8 @@ namespace MvvmScarletToolkit.Observables
     public abstract class ViewModelListBase<TViewModel> : INotifyPropertyChanged, IDisposable
         where TViewModel : class, INotifyPropertyChanged
     {
+        private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> _propertyChangedCache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
+
         protected readonly ObservableCollection<TViewModel> _items;
         protected readonly ObservableBusyStack BusyStack;
         protected readonly ICommandBuilder CommandBuilder;
@@ -176,9 +179,11 @@ namespace MvvmScarletToolkit.Observables
             return true;
         }
 
-        protected async void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
-            await Dispatcher.Invoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName))).ConfigureAwait(false);
+            var args = _propertyChangedCache.GetOrAdd(propertyName, name => new PropertyChangedEventArgs(propertyName));
+
+            PropertyChanged?.Invoke(this, args);
         }
 
         protected Task Remove()
