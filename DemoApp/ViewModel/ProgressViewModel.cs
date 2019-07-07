@@ -12,6 +12,7 @@ namespace DemoApp
     {
         private readonly IProgress<double> _progress;
         private readonly IProgress<double> _uiBlockingProgress;
+
         private double _percentage;
         public double Percentage
         {
