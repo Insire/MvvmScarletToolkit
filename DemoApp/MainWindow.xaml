@@ -445,6 +445,11 @@
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
+
+                        <StackPanel Margin="0,4" DockPanel.Dock="Top">
+                            <CheckBox Content="Murder UI" IsChecked="{Binding Block}" />
+                        </StackPanel>
+
                         <Button DockPanel.Dock="Bottom">
                             <Button.Style>
                                 <Style TargetType="{x:Type Button}">
@@ -459,6 +464,7 @@
                                 </Style>
                             </Button.Style>
                         </Button>
+
                         <ProgressBar Maximum="{Binding Maximum, Mode=OneWay}" Value="{Binding Percentage, Mode=OneWay}" />
                     </DockPanel>
                 </DataTemplate>
