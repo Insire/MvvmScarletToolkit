@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
         <TargetFrameworks>net461;netcoreapp3.0</TargetFrameworks>
         <OutputType>Library</OutputType>
@@ -7,9 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="System.Reactive" Version="4.1.5" />
         <PackageReference Include="IDisposableAnalyzers" Version="2.1.2">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
         <PackageReference Include="PropertyChangedAnalyzers" Version="2.7.1">

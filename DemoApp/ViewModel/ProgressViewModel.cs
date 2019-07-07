@@ -1,6 +1,7 @@
 using MvvmScarletToolkit;
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,14 +46,42 @@ namespace DemoApp
             await Dispatcher.Invoke(() => Percentage = 0).ConfigureAwait(false);
             await Task.Delay(250).ConfigureAwait(false);
 
-            for (var i = 0; i <= _maximum; i++)
+            using (var progress = new DispatcherProgress<int>(Dispatcher, (i) => Dispatcher.Invoke(() => Percentage = i, token).ConfigureAwait(false)))
             {
-                if (token.IsCancellationRequested)
-                    break;
+                var worker = new Worker(progress);
 
-                await Dispatcher.Invoke(() => Percentage = i, token).ConfigureAwait(false);
-                await Task.Delay(25).ConfigureAwait(false);
+                await worker.DoWork().ConfigureAwait(false);
             }
+        }
+    }
+
+    public sealed class Worker
+    {
+        private readonly IProgress<int> _progress;
+
+        public Worker(IProgress<int> progress)
+        {
+            _progress = progress;
+        }
+
+        public Task DoWork()
+        {
+            return Task.Run(async () =>
+            {
+                var rnd = new Random(64782);
+                var current = 0;
+                var percentage = 0;
+
+                do
+                {
+                    current = rnd.Next(current, 64782);
+                    var d = current * 100 / 64782d;
+                    percentage = (int)Math.Round(d, MidpointRounding.ToEven);
+
+                    await Task.Delay(percentage * 10);
+                    _progress.Report(percentage);
+                } while (percentage < 100);
+            });
         }
     }
 }
