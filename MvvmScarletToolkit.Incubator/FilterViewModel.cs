@@ -45,7 +45,7 @@ namespace MvvmScarletToolkit.Observables
         {
         }
 
-        public override async Task Load(CancellationToken token)
+        protected override async Task LoadInternal(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {

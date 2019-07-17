@@ -91,7 +91,7 @@ namespace MvvmScarletToolkit.Observables
             return Refresh(token);
         }
 
-        public virtual async Task Load(CancellationToken token)
+        public async Task Load(CancellationToken token)
         {
             if (IsLoaded)
             {
@@ -115,7 +115,7 @@ namespace MvvmScarletToolkit.Observables
 
         protected abstract Task UnloadInternal(CancellationToken token);
 
-        public virtual async Task Unload(CancellationToken token)
+        public async Task Unload(CancellationToken token)
         {
             if (!IsLoaded)
             {
@@ -139,7 +139,7 @@ namespace MvvmScarletToolkit.Observables
 
         protected abstract Task RefreshInternal(CancellationToken token);
 
-        public virtual async Task Refresh(CancellationToken token)
+        public async Task Refresh(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
