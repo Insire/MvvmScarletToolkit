@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Abstractions
@@ -8,7 +8,9 @@ namespace MvvmScarletToolkit.Abstractions
         bool IsLoaded { get; }
 
         Task Load(CancellationToken token);
+
         Task Refresh(CancellationToken token);
+
         Task Unload(CancellationToken token);
     }
 }

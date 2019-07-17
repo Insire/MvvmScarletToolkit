@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
