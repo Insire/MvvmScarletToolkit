@@ -19,22 +19,40 @@ namespace MvvmScarletToolkit
         {
             if (value is string str)
             {
-                switch (Case)
+                return Convert(str, parameter, Case);
+            }
+
+            return string.Empty;
+        }
+
+        private static object Convert(string value, object parameter, CharacterCasing fallBackCasing)
+        {
+            if (parameter is CharacterCasing characterCasing)
+            {
+                return LocalConvert(characterCasing);
+            }
+            else
+            {
+                return LocalConvert(fallBackCasing);
+            }
+
+            object LocalConvert(CharacterCasing casing)
+            {
+                switch (casing)
                 {
                     case CharacterCasing.Lower:
-                        return str.ToLower();
+                        return value.ToLower();
 
                     case CharacterCasing.Normal:
-                        return str;
+                        return value;
 
                     case CharacterCasing.Upper:
-                        return str.ToUpper();
+                        return value.ToUpper();
 
                     default:
-                        return str;
+                        return value;
                 }
             }
-            return string.Empty;
         }
     }
 }
