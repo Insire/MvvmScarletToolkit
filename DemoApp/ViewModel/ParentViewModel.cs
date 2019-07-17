@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;

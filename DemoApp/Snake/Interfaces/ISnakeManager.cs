@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit;
 using System;
 using System.ComponentModel;
 

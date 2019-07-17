@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit;
 using MvvmScarletToolkit.Observables;
 using System.Collections.ObjectModel;
 
