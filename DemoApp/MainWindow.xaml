@@ -115,7 +115,22 @@
                                         Content="Remove" />
                                 <Button Margin="0,4"
                                         Command="{Binding DemoItems.ClearCommand}"
-                                        Content="Clear" />
+                                        Content="Clear">
+                                    <Button.ToolTip>
+                                        <ToolTip DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext}">
+                                            <TextBlock>
+                                                <Run Text="IsLoaded:" />
+                                                <Run Text="{Binding DemoItems.IsLoaded, Mode=OneWay}" />
+                                                <LineBreak />
+                                                <Run Text="IsBusy:" />
+                                                <Run Text="{Binding DemoItems.IsBusy, Mode=OneWay}" />
+                                                <LineBreak />
+                                                <Run Text="Count:" />
+                                                <Run Text="{Binding DemoItems.Count, Mode=OneWay}" />
+                                            </TextBlock>
+                                        </ToolTip>
+                                    </Button.ToolTip>
+                                </Button>
                             </StackPanel>
                         </Grid>
                         <Grid Grid.Column="2">
