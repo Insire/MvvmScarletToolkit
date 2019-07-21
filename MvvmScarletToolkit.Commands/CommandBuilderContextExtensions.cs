@@ -21,10 +21,11 @@ namespace MvvmScarletToolkit.Commands
         /// Configure asynchronous cancellation for the given command
         /// </summary>
         /// <param name="commandBuilder"></param>
-        //public static ICommandBuilderContext WithAsyncCancellation(this ICommandBuilderContext commandBuilder)
-        //{
-        //    throw new NotImplementedException(); // TODO add implementation
-        //}
+        public static ICommandBuilderContext WithAsyncCancellation(this ICommandBuilderContext commandBuilder)
+        {
+            commandBuilder.CancelCommand = new ConcurrentCancelCommand(commandBuilder.CommandManager);
+            return commandBuilder;
+        }
 
         public static CommandBuilderContext<TArgument, TResult> WithBusyNotification<TArgument, TResult>(this CommandBuilderContext<TArgument, TResult> commandBuilder, IBusyStack busyStack)
         {
