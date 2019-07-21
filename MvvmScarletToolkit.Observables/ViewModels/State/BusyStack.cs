@@ -9,6 +9,7 @@ namespace MvvmScarletToolkit.Observables
     /// <summary>
     /// Will notify its owner via a provided action on if it contains more tokens
     /// </summary>
+    [DebuggerDisplay("{_id}")]
     public sealed class BusyStack : IBusyStack
     {
         private readonly Guid _id = Guid.NewGuid();
@@ -64,9 +65,6 @@ namespace MvvmScarletToolkit.Observables
         [DebuggerStepThrough]
         private Task InvokeOnChanged(bool newValue)
         {
-#if DEBUG
-            Debug.WriteLine($"BusyStack({_id}): Changed {newValue}");
-#endif
             return _dispatcher.Invoke(() => _onChanged(newValue));
         }
     }

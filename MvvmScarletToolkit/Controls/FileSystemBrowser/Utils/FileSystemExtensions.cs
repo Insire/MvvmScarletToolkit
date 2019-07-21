@@ -47,8 +47,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                                                         && (p.Attributes & FileAttributes.System) == 0
                                                         && (p.Attributes & FileAttributes.Offline) == 0
                                                         && (p.Attributes & FileAttributes.Encrypted) == 0)
-                                            .Select(p => new ScarletDirectory(p, parent, commandBuilder))
-                                            .ToArray();
+                                            .Select(p => new ScarletDirectory(p, parent, commandBuilder));
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -70,8 +69,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                                     && (p.Attributes & FileAttributes.System) == 0
                                     && (p.Attributes & FileAttributes.Offline) == 0
                                     && (p.Attributes & FileAttributes.Encrypted) == 0)
-                        .Select(p => new ScarletFile(p, parent, commandBuilder))
-                        .ToArray();
+                        .Select(p => new ScarletFile(p, parent, commandBuilder));
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -82,16 +80,11 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return Enumerable.Empty<IFileSystemInfo>();
         }
 
-        public static bool DirectoryIsEmpty(this ScarletFileSystemContainerBase info)
+        private static bool DirectoryIsEmpty(this ScarletFileSystemContainerBase info)
         {
             return !Directory.Exists(info.FullName)
                 ? false
-                : DirectoryIsEmpty(info.FullName);
-        }
-
-        public static bool DirectoryIsEmpty(this string path)
-        {
-            return !Directory.EnumerateFileSystemEntries(path).Any();
+                : !Directory.EnumerateFileSystemEntries(info.FullName).Any();
         }
 
         public static void ExpandPath(this IFileSystemInfo item)

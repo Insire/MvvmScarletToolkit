@@ -10,6 +10,7 @@ namespace MvvmScarletToolkit.Observables
     /// <summary>
     /// Will notify its owner and all subscribers via a provided action on if it contains more tokens
     /// </summary>
+    [DebuggerDisplay("{_id}")]
     public sealed partial class ObservableBusyStack : IObservable<bool>, IBusyStack, IDisposable
     {
         private readonly Guid _id = Guid.NewGuid();
@@ -81,18 +82,12 @@ namespace MvvmScarletToolkit.Observables
         [DebuggerStepThrough]
         private Task InvokeOnChanged(bool newValue)
         {
-#if DEBUG
-            Debug.WriteLine($"ObservableBusyStack({_id}): NotifyOwner {newValue}");
-#endif
             return _dispatcher.Invoke(() => _onChanged(newValue));
         }
 
         [DebuggerStepThrough]
         private Task InvokeOnChanged(IObserver<bool> observer, bool newValue)
         {
-#if DEBUG
-            Debug.WriteLine($"ObservableBusyStack({_id}): NotifySubscriber {newValue}");
-#endif
             return _dispatcher.Invoke(() => observer.OnNext(newValue));
         }
 

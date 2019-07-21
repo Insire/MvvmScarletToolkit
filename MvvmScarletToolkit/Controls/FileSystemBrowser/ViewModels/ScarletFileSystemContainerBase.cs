@@ -77,32 +77,35 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
+                if (NoFilesCollectionView is null)
+                {
+                    await Dispatcher.Invoke(() => NoFilesCollectionView = CollectionViewSource.GetDefaultView(Children));
+                }
+
+                if (DefaultCollectionView is null)
+                {
+                    await Dispatcher.Invoke(() => DefaultCollectionView = CollectionViewSource.GetDefaultView(Children));
+                }
+
                 await Dispatcher.Invoke(() =>
                 {
-                    if (NoFilesCollectionView is null)
-                    {
-                        NoFilesCollectionView = CollectionViewSource.GetDefaultView(Children);
-                    }
-
-                    if (DefaultCollectionView is null)
-                    {
-                        DefaultCollectionView = CollectionViewSource.GetDefaultView(Children);
-                    }
-
                     using (NoFilesCollectionView.DeferRefresh())
                     {
                         NoFilesCollectionView.Filter = NoFilesFilter;
                     }
+                });
 
+                await Dispatcher.Invoke(() =>
+                {
                     using (DefaultCollectionView.DeferRefresh())
                     {
                         DefaultCollectionView.Filter = SearchFilter;
                     }
-                }).ConfigureAwait(false);
+                });
 
-                await AddRange(FileSystemExtensions.GetChildren(this, CommandBuilder)).ConfigureAwait(false);
-                HasContainers = Children.Any(p => p is ScarletFileSystemContainerBase);
+                await FileSystemExtensions.GetChildren(this, CommandBuilder).ForEachAsync(Add).ConfigureAwait(false);
 
+                await Dispatcher.Invoke(() => HasContainers = Children.Any(p => p is ScarletFileSystemContainerBase)).ConfigureAwait(false);
                 await OnFilterChanged(string.Empty, token).ConfigureAwait(false);
             }
         }

@@ -75,25 +75,12 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             return item is ScarletFileSystemContainerBase value && value != SelectedItem;
         }
 
-        protected override async Task LoadInternal(CancellationToken token)
-        {
-            using (BusyStack.GetToken())
-            {
-                await AddRange(DriveInfo.GetDrives()
-                    .Where(p => p.IsReady && p.DriveType != DriveType.CDRom && p.DriveType != DriveType.Unknown)
-                    .Select(p => new ScarletDrive(p, CommandBuilder)))
-                    .ConfigureAwait(false);
-
-                await Dispatcher.Invoke(() => IsLoaded = true).ConfigureAwait(false);
-            }
-        }
-
         protected override async Task RefreshInternal(CancellationToken token)
         {
-            using (BusyStack.GetToken())
-            {
-                await Load(token).ConfigureAwait(false);
-            }
+            await AddRange(DriveInfo.GetDrives()
+                .Where(p => p.IsReady && p.DriveType != DriveType.CDRom && p.DriveType != DriveType.Unknown)
+                .Select(p => new ScarletDrive(p, CommandBuilder)))
+                .ConfigureAwait(false);
         }
     }
 }
