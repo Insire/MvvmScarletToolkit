@@ -8,7 +8,9 @@ using System.Windows.Media;
 
 namespace MvvmScarletToolkit
 {
-    // Source: https://www.codeproject.com/Articles/25058/ListView-Layout-Manager
+    // Original Author: Jani Giannoudis 27 Sep 2012
+    // Original License: The Code Project Open License (CPOL) 1.02
+    // Original Source: https://www.codeproject.com/Articles/25058/ListView-Layout-Manager
     public sealed class ListViewLayoutManager
     {
         public static readonly DependencyProperty EnabledProperty = DependencyProperty.RegisterAttached(
