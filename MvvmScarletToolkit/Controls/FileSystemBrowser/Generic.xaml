@@ -703,14 +703,14 @@
                                                                 </browser:TypeDataTemplateSelector>
 
                                                                 <DataTemplate DataType="{x:Type browser:ScarletDirectory}">
-                                                                    <ListView browser:GridViewColumnResize.Enabled="True"
+                                                                    <ListView local:ListViewLayoutManager.Enabled="True"
                                                                               ContextMenu="{StaticResource DefaultViewModelContextMenu}"
                                                                               ItemsSource="{Binding DefaultCollectionView}">
                                                                         <ListView.View>
                                                                             <GridView>
                                                                                 <GridView.Columns>
                                                                                     <GridViewColumn CellTemplateSelector="{StaticResource TypeDataTemplateSelector}" />
-                                                                                    <GridViewColumn browser:GridViewColumnResize.Width="*"
+                                                                                    <GridViewColumn local:ProportionalColumn.Width="1"
                                                                                                     DisplayMemberBinding="{Binding Name}"
                                                                                                     Header="Name" />
                                                                                     <GridViewColumn DisplayMemberBinding="{Binding CreationTimeUtc}" Header="CreationTimeUtc" />
