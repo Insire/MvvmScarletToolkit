@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -67,6 +68,18 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public int Count => Items.Count;
 
+        [Bindable(true, BindingDirection.OneWay)]
+        public bool HasItems => Items.Count > 0;
+
+        [Bindable(true, BindingDirection.OneWay)]
+        public virtual ICommand ClearCommand { get; }
+
+        [Bindable(true, BindingDirection.OneWay)]
+        public virtual ICommand RemoveRangeCommand { get; }
+
+        [Bindable(true, BindingDirection.OneWay)]
+        public virtual ICommand RemoveCommand { get; }
+
         protected ViewModelListBase(ICommandBuilder commandBuilder)
         {
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
@@ -81,6 +94,27 @@ namespace MvvmScarletToolkit.Observables
             SelectedItems = new ObservableCollection<TViewModel>();
             Items = new ReadOnlyObservableCollection<TViewModel>(_items);
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
+
+            RemoveCommand = commandBuilder
+                .Create(Remove, CanRemove)
+                .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
+                .Build();
+
+            RemoveRangeCommand = commandBuilder
+                .Create(RemoveRange, CanRemoveRange)
+                .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
+                .Build();
+
+            ClearCommand = commandBuilder
+                .Create(Clear, CanClear)
+                .WithSingleExecution(CommandManager)
+                .WithBusyNotification(BusyStack)
+                .WithCancellation()
+                .Build();
         }
 
         public virtual async Task Add(TViewModel item)
@@ -94,6 +128,7 @@ namespace MvvmScarletToolkit.Observables
             {
                 await Dispatcher.Invoke(() => _items.Add(item)).ConfigureAwait(false);
                 await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(HasItems))).ConfigureAwait(false);
             }
         }
 
@@ -116,6 +151,7 @@ namespace MvvmScarletToolkit.Observables
             {
                 await Dispatcher.Invoke(() => _items.Remove(item)).ConfigureAwait(false);
                 await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(HasItems))).ConfigureAwait(false);
             }
         }
 
@@ -138,12 +174,13 @@ namespace MvvmScarletToolkit.Observables
             {
                 await Dispatcher.Invoke(() => _items.Clear(), token).ConfigureAwait(false);
                 await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count)), token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(HasItems))).ConfigureAwait(false);
             }
         }
 
         public bool CanClear()
         {
-            return _items.Count > 0 && !IsBusy;
+            return HasItems && !IsBusy;
         }
 
         public void Dispose()
@@ -187,6 +224,47 @@ namespace MvvmScarletToolkit.Observables
         protected Task Remove()
         {
             return Remove(SelectedItem);
+        }
+
+        private async Task RemoveRange(IList items)
+        {
+            using (BusyStack.GetToken())
+            {
+                await RemoveRange(items?.Cast<TViewModel>()).ConfigureAwait(false);
+            }
+        }
+
+        protected virtual bool CanRemoveRange(IEnumerable<TViewModel> items)
+        {
+            return CanClear()
+                && items?.Any(p => _items.Contains(p)) == true;
+        }
+
+        protected bool CanRemoveRange(IList items)
+        {
+            return CanRemoveRange(items?.Cast<TViewModel>());
+        }
+
+        protected virtual bool CanRemove(TViewModel item)
+        {
+            return CanClear()
+                && !(item is null)
+                && _items.Contains(item);
+        }
+
+        private bool CanRemoveRange()
+        {
+            return CanRemoveRange(SelectedItems);
+        }
+
+        private bool CanRemove()
+        {
+            return CanRemove(SelectedItem);
+        }
+
+        private Task RemoveRange()
+        {
+            return RemoveRange(SelectedItems);
         }
 
         protected virtual void Dispose(bool disposing)

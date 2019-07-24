@@ -1,9 +1,10 @@
 using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Commands
+namespace MvvmScarletToolkit
 {
     public static class CommandBuilderContextExtensions
     {
