@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit
 {
     public static class DependencyObjectExtensions
     {
@@ -16,7 +16,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         ///     The first child of the specified visual that is of tyoe <typeparamref name="T" /> of the
         ///     specified visual in the visual tree recursively or <c>null</c> if none was found.
         /// </returns>
-        public static T GetVisualDescendant<T>(this DependencyObject visual) where T : DependencyObject
+        public static T GetVisualDescendant<T>(this DependencyObject visual)
+            where T : DependencyObject
         {
             return (T)visual.GetVisualDescendants().FirstOrDefault(d => d is T);
         }

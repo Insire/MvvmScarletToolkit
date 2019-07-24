@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit
 {
     public sealed class DataTemplateCollection : IEnumerable<DataTemplateContainer>, IList
     {

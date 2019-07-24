@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.FileSystemBrowser;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Permissions;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit
 {
     public static class FileSystemExtensions
     {

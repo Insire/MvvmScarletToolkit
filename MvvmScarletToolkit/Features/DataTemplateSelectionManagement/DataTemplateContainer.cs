@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit
 {
     public sealed class DataTemplateContainer : Freezable
     {

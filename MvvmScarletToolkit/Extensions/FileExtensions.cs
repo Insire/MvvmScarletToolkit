@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit
 {
     public static class FileExtensions
     {

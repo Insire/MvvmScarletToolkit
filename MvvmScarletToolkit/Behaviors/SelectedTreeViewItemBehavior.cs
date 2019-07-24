@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Interactivity;
 using System.Windows.Media;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit
 {
     /// <summary>
     /// Behavior that enables twoway binding to the selected item property of a WPF treeview
