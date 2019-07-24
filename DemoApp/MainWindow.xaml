@@ -508,7 +508,7 @@
                         </TreeView.ContextMenu>
 
                         <i:Interaction.Behaviors>
-                            <browser:SelectedTreeViewItemBehavior SelectedItem="{Binding SelectedItem}" />
+                            <mvvm:SelectedTreeViewItemBehavior SelectedItem="{Binding SelectedItem}" />
                         </i:Interaction.Behaviors>
 
                         <TreeView.Resources>

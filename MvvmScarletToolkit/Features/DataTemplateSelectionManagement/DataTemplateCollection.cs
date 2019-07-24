@@ -1,82 +1,52 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class DataTemplateCollection : IEnumerable<DataTemplateContainer>, IList
+    public sealed class DataTemplateCollection : Collection<DataTemplate>
     {
-        private readonly List<DataTemplateContainer> _templates;
-
-        public int Count => _templates.Count;
-        public bool IsSynchronized => false;
-
-        public object SyncRoot { get; }
-        public bool IsReadOnly { get; }
-        public bool IsFixedSize { get; }
-
-        public object this[int index]
+        public DataTemplate Find(Type type)
         {
-            get { return _templates[index]; }
-            set { _templates[index] = value as DataTemplateContainer; }
+            foreach (var candidate in Items)
+            {
+                if (Equals(candidate.DataType, type))
+                {
+                    return candidate;
+                }
+            }
+
+            return null;
         }
 
-        public DataTemplateCollection()
+        protected override void InsertItem(int index, DataTemplate item)
         {
-            _templates = new List<DataTemplateContainer>();
-            SyncRoot = new object();
+            ValidateItem(item);
+            base.InsertItem(index, item);
         }
 
-        public void CopyTo(Array array, int index)
+        protected override void SetItem(int index, DataTemplate item)
         {
-            throw new NotImplementedException();
+            ValidateItem(item);
+            base.SetItem(index, item);
         }
 
-        public IEnumerator GetEnumerator()
+        private void ValidateItem(DataTemplate item)
         {
-            return _templates.GetEnumerator();
-        }
+            if (item is null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
 
-        IEnumerator<DataTemplateContainer> IEnumerable<DataTemplateContainer>.GetEnumerator()
-        {
-            return _templates.GetEnumerator();
-        }
+            if (item.DataType is null)
+            {
+                throw new InvalidOperationException("DataTemplate.DataType cannot be null.");
+            }
 
-        public int Add(object value)
-        {
-            _templates.Add(value as DataTemplateContainer);
-
-            return _templates.Count - 1;
-        }
-
-        public bool Contains(object value)
-        {
-            return _templates.Contains(value as DataTemplateContainer);
-        }
-
-        public void Clear()
-        {
-            _templates.Clear();
-        }
-
-        public int IndexOf(object value)
-        {
-            return _templates.IndexOf(value as DataTemplateContainer);
-        }
-
-        public void Insert(int index, object value)
-        {
-            _templates.Insert(index, value as DataTemplateContainer);
-        }
-
-        public void Remove(object value)
-        {
-            _templates.Remove(value as DataTemplateContainer);
-        }
-
-        public void RemoveAt(int index)
-        {
-            _templates.RemoveAt(index);
+            if (Find((Type)item.DataType) != null)
+            {
+                throw new InvalidOperationException("Template already added for type.");
+            }
         }
     }
 }

@@ -692,15 +692,15 @@
                                                     <ControlTemplate TargetType="{x:Type ContentControl}">
                                                         <ContentPresenter Content="{Binding SelectedItem}">
                                                             <ContentPresenter.Resources>
-                                                                <browser:TypeDataTemplateSelector x:Key="TypeDataTemplateSelector">
-                                                                    <browser:TypeDataTemplateSelector.Templates>
-                                                                        <browser:DataTemplateCollection>
-                                                                            <browser:DataTemplateContainer DataTemplate="{StaticResource FolderIconPath}" />
-                                                                            <browser:DataTemplateContainer DataTemplate="{StaticResource DriveIconPath}" />
-                                                                            <browser:DataTemplateContainer DataTemplate="{StaticResource FileIconPath}" />
-                                                                        </browser:DataTemplateCollection>
-                                                                    </browser:TypeDataTemplateSelector.Templates>
-                                                                </browser:TypeDataTemplateSelector>
+                                                                <local:TypeDataTemplateSelector x:Key="TypeDataTemplateSelector">
+                                                                    <local:TypeDataTemplateSelector.Templates>
+                                                                        <local:DataTemplateCollection>
+                                                                            <StaticResource ResourceKey="FolderIconPath" />
+                                                                            <StaticResource ResourceKey="DriveIconPath" />
+                                                                            <StaticResource ResourceKey="FileIconPath" />
+                                                                        </local:DataTemplateCollection>
+                                                                    </local:TypeDataTemplateSelector.Templates>
+                                                                </local:TypeDataTemplateSelector>
 
                                                                 <DataTemplate DataType="{x:Type browser:ScarletDirectory}">
                                                                     <ListView local:ListViewLayoutManager.Enabled="True"

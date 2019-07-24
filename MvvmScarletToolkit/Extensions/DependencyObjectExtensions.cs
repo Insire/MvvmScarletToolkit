@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -44,6 +45,22 @@ namespace MvvmScarletToolkit
                     yield return subChild;
                 }
             }
+        }
+
+        /// <summary>
+        /// emulates wpf default behavior for looking up datatemplates based on a given type
+        /// </summary>
+        public static DataTemplate FindDataTemplateFor(this DependencyObject container, Type type)
+        {
+            return (container as FrameworkElement)?.FindDataTemplateFor(type);
+        }
+
+        /// <summary>
+        /// emulates wpf default behavior for looking up datatemplates based on a given type
+        /// </summary>
+        public static DataTemplate FindDataTemplateFor(this FrameworkElement container, Type type)
+        {
+            return container?.FindResource(new DataTemplateKey(type)) as DataTemplate;
         }
     }
 }
