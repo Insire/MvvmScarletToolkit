@@ -163,11 +163,11 @@ namespace MvvmScarletToolkit
             {
                 // The Tree template has not named the ItemsPresenter,
                 // so walk the descendents and find the child.
-                itemsPresenter = container.GetVisualDescendant<ItemsPresenter>();
+                itemsPresenter = container.FindVisualChildBreadthFirst<ItemsPresenter>();
                 if (itemsPresenter is null)
                 {
                     container.UpdateLayout();
-                    itemsPresenter = container.GetVisualDescendant<ItemsPresenter>();
+                    itemsPresenter = container.FindVisualChildBreadthFirst<ItemsPresenter>();
                 }
             }
 
