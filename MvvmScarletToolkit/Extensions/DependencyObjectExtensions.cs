@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
@@ -7,76 +8,59 @@ namespace MvvmScarletToolkit
 {
     public static class DependencyObjectExtensions
     {
-        public static IEnumerable<T> FindVisualChildrenBreadthFirst<T>(this DependencyObject dependencyObject)
+        /// <summary>
+        ///     Gets the first child of the specified visual that is of tyoe <typeparamref name="T" />
+        ///     in the visual tree recursively.
+        /// </summary>
+        /// <param name="visual">The visual to get the visual children for.</param>
+        /// <returns>
+        ///     The first child of the specified visual that is of tyoe <typeparamref name="T" /> of the
+        ///     specified visual in the visual tree recursively or <c>null</c> if none was found.
+        /// </returns>
+        public static T GetVisualDescendant<T>(this DependencyObject visual)
             where T : DependencyObject
         {
-            return dependencyObject.FindVisualChildrenBreadthFirst<T>(null);
+            return (T)visual.GetVisualDescendants().FirstOrDefault(d => d is T);
         }
 
-        public static IEnumerable<T> FindVisualChildrenBreadthFirst<T>(this DependencyObject dependencyObject, Func<T, bool> filter)
-            where T : DependencyObject
+        /// <summary>
+        ///     Gets all children of the specified visual in the visual tree recursively.
+        /// </summary>
+        /// <param name="visual">The visual to get the visual children for.</param>
+        /// <returns>All children of the specified visual in the visual tree recursively.</returns>
+        public static IEnumerable<DependencyObject> GetVisualDescendants(this DependencyObject visual)
         {
-            if (!(dependencyObject is null))
+            if (visual is null)
             {
-                for (var i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
-                {
-                    var child = VisualTreeHelper.GetChild(dependencyObject, i);
-                    if (child is T result && filter?.Invoke(result) != false)
-                    {
-                        yield return result;
-                    }
+                yield break;
+            }
 
-                    var grandchildren = child.FindVisualChildrenBreadthFirst(filter);
-                    foreach (var grandchild in grandchildren)
-                    {
-                        yield return grandchild;
-                    }
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(visual); i++)
+            {
+                var child = VisualTreeHelper.GetChild(visual, i);
+                yield return child;
+
+                foreach (var subChild in GetVisualDescendants(child))
+                {
+                    yield return subChild;
                 }
             }
         }
 
-        public static IEnumerable<T> FindVisualChildrenDepthFirst<T>(this DependencyObject dependencyObject)
-            where T : DependencyObject
+        /// <summary>
+        /// emulates wpf default behavior for looking up datatemplates based on a given type
+        /// </summary>
+        public static DataTemplate FindDataTemplateFor(this DependencyObject container, Type type)
         {
-            return dependencyObject.FindVisualChildrenDepthFirst<T>(null);
+            return (container as FrameworkElement)?.FindDataTemplateFor(type);
         }
 
-        public static IEnumerable<T> FindVisualChildrenDepthFirst<T>(this DependencyObject dependencyObject, Func<T, bool> filter)
-            where T : DependencyObject
+        /// <summary>
+        /// emulates wpf default behavior for looking up datatemplates based on a given type
+        /// </summary>
+        public static DataTemplate FindDataTemplateFor(this FrameworkElement container, Type type)
         {
-            if (!(dependencyObject is null))
-            {
-                for (var i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
-                {
-                    var child = VisualTreeHelper.GetChild(dependencyObject, i);
-                    var grandchildren = child.FindVisualChildrenDepthFirst<T>(filter);
-
-                    if (child is T result && filter?.Invoke(result) != false)
-                    {
-                        yield return result;
-                    }
-
-                    foreach (var grandchild in grandchildren)
-                    {
-                        yield return grandchild;
-                    }
-                }
-            }
-        }
-
-        public static T FindParent<T>(this DependencyObject dependencyObject)
-            where T : DependencyObject
-        {
-            while (dependencyObject != null)
-            {
-                if (dependencyObject is T result)
-                {
-                    return result;
-                }
-                dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
-            }
-
-            return default;
+            return container?.FindResource(new DataTemplateKey(type)) as DataTemplate;
         }
     }
 }
