@@ -12,7 +12,11 @@
     <Rule Id="INPC001" Action="Hidden" />
     <Rule Id="INPC020" Action="Hidden" />
   </Rules>
-    <Rules AnalyzerId="WpfAnalyzers" RuleNamespace="WpfAnalyzers">
+  <Rules AnalyzerId="WpfAnalyzers" RuleNamespace="WpfAnalyzers">
     <Rule Id="WPF0013" Action="Hidden" />
+  </Rules>
+    <Rules AnalyzerId="IDisposeableAnalyzers" RuleNamespace="IDisposeableAnalyzers">
+    <Rule Id="IDISP012" Action="Hidden" />
+    <Rule Id="IDISP008" Action="Hidden" />
   </Rules>
 </RuleSet>

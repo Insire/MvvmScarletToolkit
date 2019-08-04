@@ -80,8 +80,6 @@ namespace MvvmScarletToolkit
             PublishInternal(message);
         }
 
-#pragma warning disable RCS1047 // Non-asynchronous method name should not end with 'Async'.
-
         /// <summary>
         /// Publish a message to any subscribers asynchronously
         /// </summary>
@@ -92,8 +90,6 @@ namespace MvvmScarletToolkit
         {
             return Task.Run(() => PublishInternal(message));
         }
-
-#pragma warning restore RCS1047 // Non-asynchronous method name should not end with 'Async'.
 
         private SubscriptionToken AddSubscriptionInternal<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter, bool strongReference, IScarletMessageProxy proxy)
                 where TMessage : class, IScarletMessage

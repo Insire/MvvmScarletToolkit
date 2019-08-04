@@ -212,12 +212,9 @@ namespace DemoApp
         {
             State = GameState.None;
 
-            if (_snakeSource != null)
-            {
-                _snakeSource.Cancel();
-                _snakeSource.Dispose();
-                _snakeSource = null;
-            }
+            _snakeSource?.Cancel();
+            _snakeSource?.Dispose();
+            _snakeSource = null;
 
             if (_snakeTask != null)
             {
@@ -225,12 +222,9 @@ namespace DemoApp
                 _snakeTask = null;
             }
 
-            if (_appleSource != null)
-            {
-                _appleSource.Cancel();
-                _appleSource.Dispose();
-                _appleSource = null;
-            }
+            _appleSource?.Cancel();
+            _appleSource?.Dispose();
+            _appleSource = null;
 
             if (_appleTask != null)
             {
@@ -496,33 +490,29 @@ namespace DemoApp
 
         private void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed)
             {
-                if (disposing)
-                {
-                    if (_appleSource != null)
-                    {
-                        _appleSource.Cancel();
-                        _appleSource.Dispose();
-                        _appleSource = null;
-                    }
-
-                    _snakeTask?.Wait();
-
-                    if (_snakeSource != null)
-                    {
-                        _snakeSource.Cancel();
-                        _snakeSource.Dispose();
-                        _snakeSource = null;
-                    }
-
-                    _appleTask?.Wait();
-
-                    Reset().Wait();
-                }
-
-                _disposed = true;
+                return;
             }
+
+            if (disposing)
+            {
+                _appleSource?.Cancel();
+                _appleSource?.Dispose();
+                _appleSource = null;
+
+                _snakeTask?.Wait();
+
+                _snakeSource?.Cancel();
+                _snakeSource?.Dispose();
+                _snakeSource = null;
+
+                _appleTask?.Wait();
+
+                Reset().Wait();
+            }
+
+            _disposed = true;
         }
     }
 }
