@@ -1,24 +1,20 @@
 using MvvmScarletToolkit.Abstractions;
-using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
     internal class VirtualizationViewModel<TViewModel> : ObservableObject
-        where TViewModel : class
+        where TViewModel : class, IVirtualizationViewModel
     {
-        private bool _isExpanded;
-        public bool IsExpanded
-        {
-            get { return _isExpanded; }
-            private set { SetValue(ref _isExpanded, value); }
-        }
+        private readonly Func<TViewModel> _factory;
+        private readonly IScarletDispatcher _dispatcher;
 
         private VirtualizationViewModelState _state;
-        public VirtualizationViewModelState State // TODO add implementation details
+        public VirtualizationViewModelState State
         {
             get { return _state; }
             private set { SetValue(ref _state, value); }
@@ -28,7 +24,7 @@ namespace MvvmScarletToolkit
         public TViewModel ViewModel
         {
             get { return _viewModel; }
-            set { SetValue(ref _viewModel, value); }
+            private set { SetValue(ref _viewModel, value); }
         }
 
         private ICommand _deflateCommand;
@@ -45,36 +41,70 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _expandCommand, value); }
         }
 
-        public VirtualizationViewModel(IScarletCommandManager commandManager)
+        public VirtualizationViewModel(ICommandBuilder commandBuilder, IScarletCommandManager commandManager, IScarletDispatcher dispatcher, Func<TViewModel> factory)
         {
-            DeflateCommand = new RelayCommand(commandManager, Deflate, CanDeflate);
-            //ExpandCommand = AsyncCommand.Create(Expand, CanExpand, commandManager);
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+
+            DeflateCommand = commandBuilder
+                .Create(Deflate, CanDeflate)
+                .WithSingleExecution(commandManager)
+                .WithCancellation()
+                .Build();
+
+            ExpandCommand = commandBuilder
+                .Create(Expand, CanExpand)
+                .WithSingleExecution(commandManager)
+                .WithCancellation()
+                .Build();
         }
 
-        public Task Expand()
+        public async Task Expand(CancellationToken token)
         {
-            throw new NotImplementedException();
-            //if (ViewModel != null)
-            //    return;
+            if (!(ViewModel is null))
+            {
+                return;
+            }
 
-            //ViewModel = await _dataProvider.Get(Id).ConfigureAwait(true);
-            //IsExpanded = true;
+            ViewModel = _factory();
+
+            if (!ViewModel.CanLoad())
+            {
+                return;
+            }
+
+            await _dispatcher.Invoke(() => State = VirtualizationViewModelState.Expanding);
+            await ViewModel.Load(token).ConfigureAwait(false);
+            await _dispatcher.Invoke(() => State = VirtualizationViewModelState.Expanded);
         }
 
         public bool CanExpand()
         {
-            return ViewModel == null && !IsExpanded;
+            return ViewModel is null;
         }
 
-        public void Deflate()
+        public async Task Deflate(CancellationToken token)
         {
-            ViewModel = null; // enables GC
-            IsExpanded = false;
+            if (ViewModel is null)
+            {
+                return;
+            }
+
+            if (!ViewModel.CanUnload())
+            {
+                return;
+            }
+
+            await _dispatcher.Invoke(() => State = VirtualizationViewModelState.Deflating);
+            await ViewModel.Unload(token).ConfigureAwait(false);
+            await _dispatcher.Invoke(() => State = VirtualizationViewModelState.Deflated);
+
+            ViewModel = null; // enables GC to collect the viewmodel instance, if there are no other strong references to this instance
         }
 
         public bool CanDeflate()
         {
-            return ViewModel != null && IsExpanded;
+            return ViewModel != null;
         }
     }
 }

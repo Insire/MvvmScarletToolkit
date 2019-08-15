@@ -9,7 +9,7 @@ namespace DemoApp
         public NavigationViewModel(ICommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)
             : base(commandBuilder, localizationsViewModel)
         {
-            Add("ParentViewModel", new ParentViewModel(commandBuilder));
+            Add("ParentViewModel", new ParentViewModel(new LogItems(CommandBuilder, new DemoCache()), commandBuilder)); // TODO move item creationlogic to a service
             Add("Image loading", new ProcessingImagesViewModel(commandBuilder));
             Add("Drag and Drop", new ProcessingImagesViewModel(commandBuilder));
             Add("DataContextSchenanigansViewModel", new DataContextSchenanigansViewModel(commandBuilder));

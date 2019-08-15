@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0</TargetFrameworks>
         <OutputType>Library</OutputType>
@@ -6,8 +6,8 @@
 
     <ItemGroup>
         <PackageReference Include="IDisposableAnalyzers" Version="2.1.2">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="PropertyChangedAnalyzers" Version="2.7.2">
             <PrivateAssets>all</PrivateAssets>

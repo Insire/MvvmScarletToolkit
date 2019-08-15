@@ -1,11 +1,13 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit
 {
     public interface IVirtualizedListViewModel
     {
-        void ExtendItems(IEnumerable<object> items);
+        Task Extend(IEnumerable<object> items, CancellationToken token);
 
-        void DeflateItem(object item);
+        Task Deflate(object item, CancellationToken token);
     }
 }

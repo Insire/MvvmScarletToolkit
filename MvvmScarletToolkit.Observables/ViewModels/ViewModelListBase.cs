@@ -29,7 +29,6 @@ namespace MvvmScarletToolkit.Observables
         protected readonly IScarletMessenger Messenger;
         protected readonly IExitService Exit;
         protected readonly IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
-        private bool _disposed;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -79,6 +78,8 @@ namespace MvvmScarletToolkit.Observables
 
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand RemoveCommand { get; }
+
+        protected bool Disposed { get; private set; }
 
         protected ViewModelListBase(ICommandBuilder commandBuilder)
         {
@@ -269,12 +270,12 @@ namespace MvvmScarletToolkit.Observables
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed)
+            if (Disposed)
             {
                 return;
             }
 
-            _disposed = true;
+            Disposed = true;
             if (disposing)
             {
                 BusyStack.Dispose();
@@ -283,7 +284,7 @@ namespace MvvmScarletToolkit.Observables
 
         protected virtual void ThrowIfDisposed()
         {
-            if (_disposed)
+            if (Disposed)
             {
                 throw new ObjectDisposedException(GetType().FullName);
             }
