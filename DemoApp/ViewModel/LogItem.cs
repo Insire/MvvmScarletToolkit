@@ -1,9 +1,13 @@
-﻿using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit;
+using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Observables;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DemoApp
 {
-    public class LogItem : ObservableObject
+    public class LogItem : BusinessViewModelBase, IVirtualizationViewModel
     {
         private string _message;
         public string Message
@@ -26,15 +30,25 @@ namespace DemoApp
             set { SetValue(ref _isSelected, value); }
         }
 
-        public LogItem()
+        public LogItem(ICommandBuilder commandBuilder)
+            : base(commandBuilder)
         {
-            CreatedOn = DateTime.UtcNow;
-            Message = "unknown";
         }
 
-        public LogItem(string message) : this()
+        protected override Task UnloadInternal(CancellationToken token)
         {
-            Message = message;
+            CreatedOn = DateTime.MinValue;
+            Message = "";
+
+            return Task.CompletedTask;
+        }
+
+        protected override Task RefreshInternal(CancellationToken token)
+        {
+            CreatedOn = DateTime.UtcNow;
+            Message = CreatedOn.GetHashCode().ToString();
+
+            return Task.CompletedTask;
         }
     }
 }

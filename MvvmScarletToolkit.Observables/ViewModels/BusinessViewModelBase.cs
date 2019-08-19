@@ -105,7 +105,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        protected virtual bool CanLoad()
+        public virtual bool CanLoad()
         {
             return !IsLoaded
                 && !_loadCommand.IsBusy
@@ -129,7 +129,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        protected virtual bool CanUnload()
+        public virtual bool CanUnload()
         {
             return !IsLoaded
                 && !_loadCommand.IsBusy
@@ -147,7 +147,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        protected virtual bool CanRefresh()
+        public virtual bool CanRefresh()
         {
             return IsLoaded
                 && !_loadCommand.IsBusy

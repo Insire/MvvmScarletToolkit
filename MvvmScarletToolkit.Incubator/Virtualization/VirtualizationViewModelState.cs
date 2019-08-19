@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 
 namespace MvvmScarletToolkit
 {
-    [Flags]
     public enum VirtualizationViewModelState
     {
         None = 0,

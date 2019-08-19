@@ -53,7 +53,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        protected override bool CanLoad()
+        public override bool CanLoad()
         {
             return !IsBusy && base.CanLoad();
         }
@@ -67,7 +67,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        protected override bool CanUnload()
+        public override bool CanUnload()
         {
             return !IsBusy && base.CanUnload();
         }
@@ -80,7 +80,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        protected override bool CanRefresh()
+        public override bool CanRefresh()
         {
             return !IsBusy && base.CanRefresh();
         }

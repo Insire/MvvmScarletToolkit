@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit.Observables
     /// Collection ViewModelBase that bootstraps loading, unloading and refreshing of its content
     /// </summary>
     /// <typeparam name="TViewModel"></typeparam>
-    public abstract class BusinessViewModelListBase<TViewModel> : ViewModelListBase<TViewModel>, IBusinessViewModelListBase
+    public abstract class BusinessViewModelListBase<TViewModel> : ViewModelListBase<TViewModel>, IBusinessViewModelListBase<TViewModel>
         where TViewModel : class, INotifyPropertyChanged
     {
         private bool _isLoaded;
@@ -79,7 +79,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        protected virtual bool CanLoad()
+        public virtual bool CanLoad()
         {
             return !IsLoaded
                 && !_loadCommand.IsBusy
@@ -104,7 +104,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        protected virtual bool CanUnload()
+        public virtual bool CanUnload()
         {
             return !IsLoaded
                 && !_loadCommand.IsBusy

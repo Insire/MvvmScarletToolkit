@@ -1,70 +1,83 @@
+using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections;
-using System.Runtime.Caching;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
-    public class VirtualizingCollectionViewSource : ListCollectionView
+    public class VirtualizingCollectionViewSource : ListCollectionView, IVirtualizingCollectionViewSource
     {
+        public static VirtualizingCollectionViewSource Create<TViewModel>(IBusinessViewModelListBase<TViewModel> viewModelList, IScarletDispatcher dispatcher, ICache cache)
+            where TViewModel : class, IVirtualizationViewModel
+        {
+            return new VirtualizingCollectionViewSource(viewModelList.Items, dispatcher, cache, new ViewModelAdapter<TViewModel>(viewModelList));
+        }
+
         private readonly IScarletDispatcher _dispatcher;
-        private readonly IVirtualizedListViewModel _sponsor;
+        private readonly IVirtualizedListViewModel _viewModel;
 
-        //private readonly HashSet<object> _deferredItems;
-        private readonly MemoryCache _cache;
+        private readonly HashSet<object> _deferredItems;
+        private readonly ICache _cache;
 
-        private readonly CacheItemPolicy _policy;
+        private volatile bool _isDeferred;
 
-        //private readonly bool _isDeferred;
-
-        public VirtualizingCollectionViewSource(IScarletDispatcher dispatcher, MemoryCache cache, CacheItemPolicy policy, IList list)
+        internal VirtualizingCollectionViewSource(IList list, IScarletDispatcher dispatcher, ICache cache, IVirtualizedListViewModel viewModel)
             : base(list)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
-            _policy = policy ?? throw new ArgumentNullException(nameof(policy));
-            _sponsor = list as IVirtualizedListViewModel;
+            _viewModel = viewModel as IVirtualizedListViewModel ?? throw new ArgumentException(nameof(viewModel));
+
+            _deferredItems = new HashSet<object>();
+
+            _cache.ItemRemoved += _cache_ItemRemoved;
         }
 
-        public void CacheRemovedCallback(CacheEntryRemovedArguments arguments)
+        private void _cache_ItemRemoved(object sender, CachedValueRemovedEventArgs e)
         {
-            _sponsor.DeflateItem(arguments.CacheItem.Value);
+            _viewModel.Deflate(e.Value, CancellationToken.None);
+        }
+
+        public void Dispose()
+        {
+            _cache.ItemRemoved -= _cache_ItemRemoved;
         }
 
         public override object GetItemAt(int index)
         {
-            throw new NotImplementedException();
-            //if (!_isDeferred)
-            //{
-            //    _deferredItems.Clear();
+            if (!_isDeferred)
+            {
+                _deferredItems.Clear();
 
-            //    _dispatcher.Invoke(LoadDeferredItems);
+                _dispatcher.Invoke(LoadDeferredItems);
 
-            //    _isDeferred = true;
-            //}
+                _isDeferred = true;
+            }
 
-            //var item = base.GetItemAt(index);
-            //if (!_deferredItems.Contains(item))
-            //    _deferredItems.Add(item);
+            var item = base.GetItemAt(index);
+            if (!_deferredItems.Contains(item))
+                _deferredItems.Add(item);
 
-            //return item;
+            return item;
         }
 
-        private void LoadDeferredItems()
+        private async Task LoadDeferredItems()
         {
-            throw new NotImplementedException();
-            //var uniqueSet = new HashSet<object>();
-            //foreach (var item in _deferredItems)
-            //{
-            //    var hashCode = item.GetHashCode();
-            //    if (!_cache.Contains(hashCode.ToString()))
-            //        uniqueSet.Add(item);
+            var uniqueSet = new HashSet<object>();
+            foreach (var item in _deferredItems)
+            {
+                var hashCode = item.GetHashCode();
+                if (!_cache.Contains(hashCode.ToString()))
+                    uniqueSet.Add(item);
 
-            //    _cache.Add(new CacheItem(hashCode.ToString(), item), _policy);
-            //}
+                _cache.Add(hashCode.ToString(), item);
+            }
 
-            //_sponsor.ExtendItems(uniqueSet);
-            //_isDeferred = false;
+            await _viewModel.Extend(uniqueSet, CancellationToken.None);
+            _isDeferred = false;
         }
     }
 }

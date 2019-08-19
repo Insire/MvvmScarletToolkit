@@ -1,17 +1,15 @@
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Abstractions
 {
-    public interface IBusinessViewModelListBase
+    public interface IBusinessViewModelListBase : IVirtualizationViewModel
     {
-        ICommand ClearCommand { get; }
-        bool IsLoaded { get; }
-        ICommand LoadCommand { get; }
+    }
 
-        Task Refresh(CancellationToken token);
-
-        Task Unload(CancellationToken token);
+    public interface IBusinessViewModelListBase<TViewModel> : IBusinessViewModelListBase
+        where TViewModel : class, INotifyPropertyChanged
+    {
+        ReadOnlyObservableCollection<TViewModel> Items { get; }
     }
 }
