@@ -38,14 +38,9 @@ namespace MvvmScarletToolkit
 
         protected override void OnDetaching()
         {
-            base.OnDetaching();
-
-            if (AssociatedObject is null)
-            {
-                return;
-            }
-
             AssociatedObject.PasswordChanged -= PasswordChanged;
+
+            base.OnDetaching();
         }
     }
 }

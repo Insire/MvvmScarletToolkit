@@ -435,6 +435,8 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="5" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <GroupBox Grid.Row="0" Header="Password">
@@ -446,7 +448,21 @@
                         </GroupBox>
 
                         <GroupBox Grid.Row="2" Header="Clear text">
-                            <TextBlock Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="{Binding Password}" />
+                        </GroupBox>
+
+                        <GroupBox Grid.Row="4" Header="Textbox with Watermark">
+                            <TextBox Text="{Binding Password, Mode=OneWay}">
+                                <i:Interaction.Behaviors>
+                                    <mvvm:WatermarkBehavior Watermark="Search">
+                                        <mvvm:WatermarkBehavior.WatermarkStyle>
+                                            <Style TargetType="{x:Type TextBox}">
+                                                <Setter Property="Foreground" Value="Red" />
+                                            </Style>
+                                        </mvvm:WatermarkBehavior.WatermarkStyle>
+                                    </mvvm:WatermarkBehavior>
+                                </i:Interaction.Behaviors>
+                            </TextBox>
                         </GroupBox>
                     </Grid>
                 </DataTemplate>
