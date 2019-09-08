@@ -429,6 +429,28 @@
                     <local:SnakeView />
                 </DataTemplate>
 
+                <DataTemplate DataType="{x:Type local:PasswordViewModel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <GroupBox Grid.Row="0" Header="Password">
+                            <PasswordBox>
+                                <i:Interaction.Behaviors>
+                                    <mvvm:PasswordBehavior ClearTextPassword="{Binding Password}" />
+                                </i:Interaction.Behaviors>
+                            </PasswordBox>
+                        </GroupBox>
+
+                        <GroupBox Grid.Row="2" Header="Clear text">
+                            <TextBlock Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" />
+                        </GroupBox>
+                    </Grid>
+                </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:ProgressViewModel}">
                     <DockPanel>
                         <i:Interaction.Triggers>

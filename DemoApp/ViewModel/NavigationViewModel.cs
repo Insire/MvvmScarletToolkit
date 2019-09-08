@@ -20,6 +20,7 @@ namespace DemoApp
             Add("FileSystemBrowser", new FileSystemViewModel(commandBuilder, new FileSystemOptionsViewModel(commandBuilder)));
             Add("Busytree", new BusyViewModel(commandBuilder));
             Add("Text rendering", new TextDisplayViewModel(commandBuilder));
+            Add("Passwords", new PasswordViewModel());
         }
     }
 }
