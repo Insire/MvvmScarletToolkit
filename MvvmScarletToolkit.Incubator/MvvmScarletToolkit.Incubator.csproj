@@ -15,15 +15,18 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="System.Runtime.Caching" Version="4.6.0" />
     </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
-        <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
-        <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
+    <ItemGroup Condition="  '$(Framework)' == 'net461' ">
         <Reference Include="System.Runtime.Caching" />
+    </ItemGroup>
+
+    <ItemGroup Condition="  '$(Framework)' == 'netcoreapp3.0' ">
+        <PackageReference Include="System.Runtime.Caching" Version="4.6.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
     </ItemGroup>
 </Project>

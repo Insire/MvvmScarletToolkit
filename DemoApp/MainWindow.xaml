@@ -440,9 +440,9 @@
                         </Grid.RowDefinitions>
 
                         <GroupBox Grid.Row="0" Header="Password">
-                            <PasswordBox>
+                            <PasswordBox PasswordChar="*">
                                 <i:Interaction.Behaviors>
-                                    <mvvm:PasswordBehavior ClearTextPassword="{Binding Password}" />
+                                    <mvvm:PasswordBindingBehavior ClearTextPassword="{Binding Password}" />
                                 </i:Interaction.Behaviors>
                             </PasswordBox>
                         </GroupBox>

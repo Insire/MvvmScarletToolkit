@@ -4,7 +4,10 @@ using System.Windows.Controls;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class PasswordBehavior : Behavior<PasswordBox>
+    /// <summary>
+    /// Enables binding of the password property of the passwordbox
+    /// </summary>
+    public sealed class PasswordBindingBehavior : Behavior<PasswordBox>
     {
         public string ClearTextPassword
         {
@@ -16,7 +19,7 @@ namespace MvvmScarletToolkit
         public static readonly DependencyProperty ClearTextPasswordProperty = DependencyProperty.Register(
             nameof(ClearTextPassword),
             typeof(string),
-            typeof(PasswordBehavior),
+            typeof(PasswordBindingBehavior),
             new FrameworkPropertyMetadata(default(string), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         protected override void OnAttached()

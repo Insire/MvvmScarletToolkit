@@ -10,14 +10,4 @@ namespace MvvmScarletToolkit.Abstractions
 
         event EventHandler<CachedValueRemovedEventArgs> ItemRemoved;
     }
-
-    public sealed class CachedValueRemovedEventArgs : EventArgs
-    {
-        public object Value { get; set; }
-
-        public CachedValueRemovedEventArgs(object value)
-        {
-            Value = value;
-        }
-    }
 }

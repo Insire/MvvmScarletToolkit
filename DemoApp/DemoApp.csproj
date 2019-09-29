@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
@@ -7,14 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
-        <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
+        <ProjectReference Include="..\MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj" />
-        <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
 
         <Compile Update="Properties\Settings.Designer.cs">

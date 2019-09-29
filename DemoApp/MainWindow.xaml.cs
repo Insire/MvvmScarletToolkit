@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.ConfigurableWindow;
+using MvvmScarletToolkit.ConfigurableWindow;
 
 namespace DemoApp
 {
@@ -13,7 +13,7 @@ namespace DemoApp
 
         protected override IConfigurableWindowSettings CreateSettings()
         {
-            return _settings = _settings ?? new MainWindowSettings(this);
+            return _settings ??= new MainWindowSettings(this);
         }
     }
 }

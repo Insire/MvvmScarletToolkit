@@ -3,7 +3,7 @@ using System.Windows;
 namespace MvvmScarletToolkit
 {
     // Source: http://www.thomaslevesque.com/2011/03/21/wpf-how-to-bind-to-data-when-the-datacontext-is-not-inherited/
-    public class BindingProxy : Freezable
+    public sealed class BindingProxy : Freezable
     {
         /// <summary>Identifies the <see cref="Data"/> dependency property.</summary>
         public static readonly DependencyProperty DataProperty = DependencyProperty.Register(
