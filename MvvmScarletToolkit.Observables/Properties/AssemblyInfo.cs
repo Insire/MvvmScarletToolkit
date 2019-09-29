@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("MvvmScarletToolkit.Observables")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("MvvmScarletToolkit.Observables is part of the MvvmScarletToolkit framework, containing opinionated base classes for viewmodels of the MVVM pattern.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
 

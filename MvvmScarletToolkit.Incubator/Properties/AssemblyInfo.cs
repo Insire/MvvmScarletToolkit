@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("MvvmScarletToolkit.Incubator")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("MvvmScarletToolkit.Incubator is part of the MvvmScarletToolkit framework, containing ideas and features that are still in a concept phase or classes which haven't been useful enough to be publically distributed.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
 

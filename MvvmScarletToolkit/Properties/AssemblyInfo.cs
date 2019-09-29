@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("MvvmScarletToolkit")]
-[assembly: AssemblyDescription("MvvmScarletToolkit provides classes to speedup the MVVM development process")]
+[assembly: AssemblyDescription("MvvmScarletToolkit is the main library of the MvvmScarletToolkit framework, containing extensions, controls and behaviors for the WPF framework.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
 
