@@ -4,6 +4,7 @@
         <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
         <UseWPF>true</UseWPF>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+        <PublishTrimmed>true</PublishTrimmed>
     </PropertyGroup>
 
     <ItemGroup>

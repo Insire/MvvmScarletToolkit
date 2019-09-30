@@ -5,6 +5,9 @@ using System.Runtime.CompilerServices;
 
 namespace MvvmScarletToolkit.Observables
 {
+    /// <summary>
+    /// BaseViewModel that provides the implementation for <see cref="INotifyPropertyChanged"/>
+    /// </summary>
     public abstract class ObservableObject : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

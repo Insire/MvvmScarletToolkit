@@ -4,6 +4,10 @@ using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Observables
 {
+    /// <summary>
+    /// Collection ViewModelBase that adds support for paged loading
+    /// </summary>
+    /// <typeparam name="TViewModel"></typeparam>
     public abstract class DomainViewModelListBase<TViewModel> : BusinessViewModelListBase<TViewModel>
         where TViewModel : class, INotifyPropertyChanged
     {
