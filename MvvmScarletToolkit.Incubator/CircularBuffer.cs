@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ObservableCircularBuffer.CircularBuffer`1"/> class.
+        /// Initializes a new instance of the <see cref="CircularBuffer"/> class.
         /// </summary>
         /// <param name="capacity">Buffer capacity. Must be positive.</param>
         /// <param name="items">

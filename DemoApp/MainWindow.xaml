@@ -295,21 +295,81 @@
                         </i:Interaction.Triggers>
 
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="5" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="5" />
                         </Grid.ColumnDefinitions>
 
-                        <ListBox Grid.Column="0"
-                                 ItemsSource="{Binding Items}"
-                                 SelectedItem="{Binding SelectedItem}" />
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="5" />
+                        </Grid.RowDefinitions>
 
-                        <ContentControl Grid.Column="2"
+                        <TextBox x:Name="FilterTextBox"
+                                 Grid.Column="1"
+                                 Grid.ColumnSpan="3"
+                                 Text="{Binding FilterText}">
+                            <i:Interaction.Behaviors>
+                                <mvvm:WatermarkBehavior Watermark="Filter">
+                                    <mvvm:WatermarkBehavior.WatermarkStyle>
+                                        <Style TargetType="{x:Type TextBox}">
+                                            <Setter Property="Foreground" Value="Gray" />
+                                        </Style>
+                                    </mvvm:WatermarkBehavior.WatermarkStyle>
+                                </mvvm:WatermarkBehavior>
+                            </i:Interaction.Behaviors>
+                        </TextBox>
+
+                        <Button Grid.Row="0"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="3"
+                                Margin="0,0,4,0"
+                                HorizontalAlignment="Right"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Content="X"
+                                ToolTip="Clear">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <mvvm:ClearTextBoxAction Target="{Binding ElementName=FilterTextBox}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=FilterTextBox}" Value="">
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <ListBox Grid.Row="2"
+                                 Grid.Column="1"
+                                 ItemsSource="{Binding Items}"
+                                 SelectedItem="{Binding SelectedItem}"
+                                 SelectionMode="Extended">
+                            <i:Interaction.Behaviors>
+                                <mvvm:MultiSelectionBehavior SelectedItems="{Binding SelectedItems}" />
+                            </i:Interaction.Behaviors>
+                        </ListBox>
+
+                        <ContentControl Grid.Row="2"
+                                        Grid.Column="3"
                                         VerticalAlignment="Top"
                                         Content="{Binding SelectedItem}">
                             <ContentControl.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel>
+                                        <TextBlock Text="{Binding DisplayName, StringFormat={}DisplayName: {0}}" />
                                         <TextBlock Text="{Binding IsBusy, StringFormat={}IsSelfBusy: {0}}" />
                                         <TextBlock Text="{Binding RefreshCommand.IsBusy, StringFormat={}IsRefreshCommandBusy: {0}}" />
                                         <TextBlock Text="{Binding LoadCommand.IsBusy, StringFormat={}IsLoadCommandBusy: {0}}" />
@@ -318,6 +378,22 @@
                                 </DataTemplate>
                             </ContentControl.ContentTemplate>
                         </ContentControl>
+
+                        <StackPanel Grid.Row="4"
+                                    Grid.Column="1"
+                                    Orientation="Horizontal">
+                            <Button Command="{Binding RemoveRangeCommand}" Content="Remove" />
+
+                            <Button Margin="4,0"
+                                    Command="{Binding RefreshCommand}"
+                                    Content="Refresh" />
+
+                            <Button Command="{Binding ClearCommand}" Content="Clear" />
+
+                            <Button Margin="4,0"
+                                    Command="{Binding Filter.LoadCommand}"
+                                    Content="Filter" />
+                        </StackPanel>
                     </Grid>
                 </DataTemplate>
 

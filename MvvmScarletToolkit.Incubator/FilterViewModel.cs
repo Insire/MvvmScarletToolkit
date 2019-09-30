@@ -10,9 +10,7 @@ namespace MvvmScarletToolkit.Observables
     public sealed class FilterViewModel<T> : BusinessViewModelBase
     {
         private readonly IComparer<T> _comparer;
-        private readonly IEqualityComparer<T> _equalityComparer;
-
-        private readonly IEnumerable<T> _source;
+        private readonly IList<T> _source;
         private readonly ObservableCollection<T> _items;
         private readonly ReadOnlyCollection<Func<T, bool>> _predicates;
 
@@ -20,13 +18,17 @@ namespace MvvmScarletToolkit.Observables
 
         public IReadOnlyCollection<T> Items { get; }
 
-        public FilterViewModel(ICommandBuilder commandBuilder, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates, IEqualityComparer<T> equalityComparer, IComparer<T> comparer)
+        public FilterViewModel(ICommandBuilder commandBuilder, IList<T> source, Func<T, bool> predicate, IComparer<T> comparer)
+            : this(commandBuilder, source, new[] { predicate }, comparer)
+        {
+        }
+
+        public FilterViewModel(ICommandBuilder commandBuilder, IList<T> source, Func<T, bool>[] predicates, IComparer<T> comparer)
             : base(commandBuilder)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
             _comparer = comparer ?? throw new ArgumentNullException(nameof(comparer));
 
-            _equalityComparer = equalityComparer ?? EqualityComparer<T>.Default;
             _items = new ObservableCollection<T>(source); // copies every item from the enumeration into the collection (no projection)
             _predicates = new ReadOnlyCollection<Func<T, bool>>(
                 new[]
@@ -37,11 +39,6 @@ namespace MvvmScarletToolkit.Observables
                 .ToArray());
 
             Items = new ReadOnlyObservableCollection<T>(_items);
-        }
-
-        public FilterViewModel(ICommandBuilder commandBuilder, IEnumerable<T> source, IReadOnlyCollection<Func<T, bool>> predicates)
-            : this(commandBuilder, source, predicates, null, null) // TODO
-        {
         }
 
         protected override async Task LoadInternal(CancellationToken token)
@@ -108,36 +105,69 @@ namespace MvvmScarletToolkit.Observables
 
             foreach (var item in added)
             {
-                for (var i = 0; i < _items.Count - 1; i++)
-                {
-                    switch (_comparer.Compare(item, _items[i]))
-                    {
-                        case 1:
-                            break;
+                var task = Dispatcher.Invoke(() => _items.Add(item));
+                tasks.Add(task);
+            }
+            await Task.WhenAll(tasks).ConfigureAwait(false);
 
-                        case 0:
-                            break;
+            await MergeSort_Recursive(_source, 0, _source.Count - 1).ConfigureAwait(false);
+        }
 
-                        case -1:
-                            break;
-                    }
+        private async Task MergeSort_Recursive(IList<T> numbers, int left, int right)
+        {
+            int mid;
 
-                    //_items.Insert
-                }
-                //await _dispatcher.Invoke(() => _items.Add(item));
+            if (right > left)
+            {
+                mid = (right + left) / 2;
+                await MergeSort_Recursive(numbers, left, mid).ConfigureAwait(false);
+                await MergeSort_Recursive(numbers, mid + 1, right).ConfigureAwait(false);
+
+                await DoMerge(numbers, left, mid + 1, right).ConfigureAwait(false);
             }
         }
 
-        private HashSet<T> UpdateExisting()
+        private async Task DoMerge(IList<T> numbers, int left, int mid, int right)
         {
-            var result = new HashSet<T>(_equalityComparer); // questionable, if i actually benefit from using a hashset here
+            var temp = new T[numbers.Count];
+            int i, left_end, num_elements, tmp_pos;
 
-            for (var i = _items.Count; i >= 0; i--) // optional parallelization
+            left_end = mid - 1;
+            tmp_pos = left;
+            num_elements = right - left + 1;
+
+            while ((left <= left_end) && (mid <= right))
+            {
+                if (_comparer.Compare(numbers[left], numbers[mid]) <= 0)
+                    //if (numbers[left] <= numbers[mid])
+                    temp[tmp_pos++] = numbers[left++];
+                else
+                    temp[tmp_pos++] = numbers[mid++];
+            }
+
+            while (left <= left_end)
+                temp[tmp_pos++] = numbers[left++];
+
+            while (mid <= right)
+                temp[tmp_pos++] = numbers[mid++];
+
+            for (i = 0; i < num_elements; i++)
+            {
+                await Dispatcher.Invoke(() => numbers[right] = temp[right]).ConfigureAwait(false);
+                right--;
+            }
+        }
+
+        private IList<T> UpdateExisting()
+        {
+            var result = new List<T>(); // questionable, if i actually benefit from using a hashset here
+
+            for (var i = _items.Count - 1; i >= 0; i--) // optional parallelization
             {
                 for (var j = 0; j < _predicates.Count; j++)
                 {
                     var item = _items[i];
-                    var predicate = _predicates[i];
+                    var predicate = _predicates[j];
 
                     if (!predicate(item))
                     {
@@ -145,21 +175,21 @@ namespace MvvmScarletToolkit.Observables
                     }
                 }
             }
-
+            result.Sort(_comparer);
             return result;
         }
 
-        private HashSet<T> UpdateNew()
+        private IList<T> UpdateNew()
         {
-            var result = new HashSet<T>(_equalityComparer); // questionable, if i actually benefit from using a hashset here
+            var result = new List<T>(); // questionable, if i actually benefit from using a hashset here
             var source = _source.ToArray();
 
-            for (var i = source.Length; i >= 0; i--) // optional parallelization
+            for (var i = source.Length - 1; i >= 0; i--) // optional parallelization
             {
-                for (var j = 0; j < _predicates.Count; j++)
+                for (var j = 0; j < _predicates.Count - 1; j++)
                 {
                     var item = source[i];
-                    var predicate = _predicates[i];
+                    var predicate = _predicates[j];
 
                     if (predicate(item))
                     {
@@ -168,6 +198,7 @@ namespace MvvmScarletToolkit.Observables
                 }
             }
 
+            result.Sort(_comparer);
             return result;
         }
 
