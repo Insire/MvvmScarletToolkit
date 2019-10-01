@@ -1,0 +1,13 @@
+{
+  "solution": {
+    "path": "MvvmScarletToolkit.sln",
+    "projects": [
+      "MvvmScarletToolkit.Abstractions\\MvvmScarletToolkit.Abstractions.csproj",
+      "MvvmScarletToolkit.Commands\\MvvmScarletToolkit.Commands.csproj",
+      "MvvmScarletToolkit.Implementations\\MvvmScarletToolkit.Implementations.csproj",
+      "MvvmScarletToolkit.Incubator\\MvvmScarletToolkit.Incubator.csproj",
+      "MvvmScarletToolkit.Observables\\MvvmScarletToolkit.Observables.csproj",
+      "MvvmScarletToolkit\\MvvmScarletToolkit.csproj"
+    ]
+  }
+}
