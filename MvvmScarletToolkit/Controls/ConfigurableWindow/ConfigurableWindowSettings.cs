@@ -1,3 +1,4 @@
+using System;
 using System.Configuration;
 using System.Windows;
 
@@ -38,7 +39,7 @@ namespace MvvmScarletToolkit.ConfigurableWindow
 
         protected ConfigurableWindowSettings(ApplicationSettingsBase settings, string isFirstRunProp, string windowLocationProp, string windowSizeProp, string windowStateProp)
         {
-            _settings = settings;
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             _isFirstRunProp = isFirstRunProp;
             _windowLocationProp = windowLocationProp;
