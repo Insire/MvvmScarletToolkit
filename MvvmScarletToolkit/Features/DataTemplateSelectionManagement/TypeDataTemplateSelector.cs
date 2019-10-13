@@ -4,7 +4,10 @@ using System.Windows.Controls;
 
 namespace MvvmScarletToolkit
 {
-    public class TypeDataTemplateSelector : DataTemplateSelector
+    /// <summary>
+    /// A <see cref="DataTemplateSelector"/> that will check <see cref="Templates"/> for a fitting DataTemplate before falling back to WPFs default resource lookup system
+    /// </summary>
+    public sealed class TypeDataTemplateSelector : DataTemplateSelector
     {
         private DataTemplateCollection _templates;
         public DataTemplateCollection Templates => _templates ?? (_templates = new DataTemplateCollection());
