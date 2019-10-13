@@ -20,8 +20,6 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process prim
     - Navigation ViewModels
     - Localization ViewModels
     - Threadsafe busy state notifications via IBusyStack interface
-    - Changetracking
-    - misc observable collections
 - [MvvmScarletToolkit.Commands](MvvmScarletToolkit.Commands/readme.md)
     - fluent interface to build task based icommands
         - cancellation support
