@@ -6,35 +6,59 @@
 
 MvvmScarletToolkit provides classes to speedup the MVVM development process primarily for WPF applications
 
-||||||||||
+|||||||||
 |---|---|---|---|---|---|---|---|---|
 |MvvmScarletToolkit|![.NET core 3.0](https://img.shields.io/badge/.NET-core3-blue.svg)|![.NET Framework 4.8](https://img.shields.io/badge/.NET-4.8-brightgreen.svg)|![.NET Framework 4.7.2](https://img.shields.io/badge/.NET-4.7.2-brightgreen.svg)|![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg)|![.NET Framework 4.7](https://img.shields.io/badge/.NET-4.7-green.svg)|![.NET Framework 4.6.2](https://img.shields.io/badge/.NET-4.6.2-yellow.svg)|![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)|
-|MvvmScarletToolkit.Abstractions|![.NET core 3.0](https://img.shields.io/badge/.NET-core3-blue.svg)|![.NET Framework 4.8](https://img.shields.io/badge/.NET-4.8-brightgreen.svg)|![.NET Framework 4.7.2](https://img.shields.io/badge/.NET-4.7.2-brightgreen.svg)|![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg)|![.NET Framework 4.7](https://img.shields.io/badge/.NET-4.7-green.svg)|![.NET Framework 4.6.2](https://img.shields.io/badge/.NET-4.6.2-yellow.svg)|![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)|
 |MvvmScarletToolkit.Commands|![.NET core 3.0](https://img.shields.io/badge/.NET-core3-blue.svg)|![.NET Framework 4.8](https://img.shields.io/badge/.NET-4.8-brightgreen.svg)|![.NET Framework 4.7.2](https://img.shields.io/badge/.NET-4.7.2-brightgreen.svg)|![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg)|![.NET Framework 4.7](https://img.shields.io/badge/.NET-4.7-green.svg)|![.NET Framework 4.6.2](https://img.shields.io/badge/.NET-4.6.2-yellow.svg)|![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)|
-|MvvmScarletToolkit.Incubator|![.NET core 3.0](https://img.shields.io/badge/.NET-core3-blue.svg)|![.NET Framework 4.8](https://img.shields.io/badge/.NET-4.8-brightgreen.svg)|![.NET Framework 4.7.2](https://img.shields.io/badge/.NET-4.7.2-brightgreen.svg)|![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg)|![.NET Framework 4.7](https://img.shields.io/badge/.NET-4.7-green.svg)|![.NET Framework 4.6.2](https://img.shields.io/badge/.NET-4.6.2-yellow.svg)|![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)|
 |MvvmScarletToolkit.Observables|![.NET core 3.0](https://img.shields.io/badge/.NET-core3-blue.svg)|![.NET Framework 4.8](https://img.shields.io/badge/.NET-4.8-brightgreen.svg)|![.NET Framework 4.7.2](https://img.shields.io/badge/.NET-4.7.2-brightgreen.svg)|![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg)|![.NET Framework 4.7](https://img.shields.io/badge/.NET-4.7-green.svg)|![.NET Framework 4.6.2](https://img.shields.io/badge/.NET-4.6.2-yellow.svg)|![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)|
+
 ## Features
 
 - [MvvmScarletToolkit.Observables](MvvmScarletToolkit.Observables/readme.md)
-    - INotifyPropertyChanged base classes for single instance viewmodels and collection viewmodels
-    - Navigation ViewModels
-    - Localization ViewModels
-    - Threadsafe busy state notifications via IBusyStack interface
+
+  - INotifyPropertyChanged base classes for single instance viewmodels and collection viewmodels
+  - Navigation ViewModels
+  - Pagingviewmodel
+  - Localization ViewModels
+  - Threadsafe busy state notifications via IBusyStack interface
+  - EventAggregator
+
 - [MvvmScarletToolkit.Commands](MvvmScarletToolkit.Commands/readme.md)
-    - fluent interface to build task based icommands
-        - cancellation support
-        - limiting command execution to one per instance
-    - basic synchronous icommand
+
+  - fluent interface to build task based icommands
+    - cancellation support
+    - limiting command execution to one per instance
+    - state management and notification
+  - basic synchronous icommand implementation
+
 - [MvvmScarletToolkit](MvvmScarletToolkit/readme.md)
-    - BindingProxy
+
+  - BindingProxy
+  - EnumBinding support via markup extension
+  - Behaviors
+    - MultiSelectionBehavior for ListBoxes
+    - SelectedTreeViewItemBehavior
+    - PasswordBindingBehavior
+    - WatermarkBehavior for TextBoxes
+  - Controls
     - VirtualizingTilePanel
+    - FileSystemBrowser
+    - ConfigureableWindow (that opens where it was last closed)
+    - Support for * Sizing in GridViews
+  - (Multi-)Converters as Markupextension
     - NullValueConverter
-    - EnumBinding support via markup extension
-    - a few LinQ extensions
+    - InvertBooleanConverter
+    - RadioButtonCheckedConverter
+    - CaseConverter
+  - Extensions
+    - DependencyObjectExtensions
+    - EnumerableExtensions
+    - ListExtensions
 
 ## Samples
 
 The included DemoApp contains examples for:
+
 - simple navigation
 - master detail view
 - async cancelable commands using ICommand
@@ -42,8 +66,15 @@ The included DemoApp contains examples for:
 - simple file/folder browser
 - a snake game
 - barebones drag and drop example
+- an implementation of IProgress (e.g for a progressbar) to send any amount of updates without locking up the UI thread
+- stress test for rendering lots of charachters converted to geometry objects
+- a passwordbox with binding support
+- watermark support for textboxes (custom watermark style included)
+- easy grouping for bound datagrids
+- clear button for textboxes
 
 ### TODO
+
 - improve performance of the snake game and provide it as nuget package
 - finalize basic FileSystemBrowser
 - improve documentation
