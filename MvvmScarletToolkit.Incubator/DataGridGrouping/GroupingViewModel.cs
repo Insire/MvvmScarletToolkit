@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,6 +11,8 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
+    // https://github.com/tom-englert/DataGridExtensions
+    // http://dotnetpattern.com/wpf-datagrid-grouping
     public sealed class GroupingViewModel : BusinessViewModelListBase<GroupsViewModel>
     {
         private ConcurrentDictionary<string, GroupViewModel> _filterCollection;
@@ -41,7 +43,7 @@ namespace MvvmScarletToolkit
                 .WithCancellation()
                 .Build();
 
-            Messenger.Subscribe<ViewModelListBaseSelectionChanging<GroupViewModel>>((p) => OnGroupingAvailable(p.Content), (p) => !p.Sender.Equals(this) && !(p.Content is null));
+            Messenger.Subscribe<ViewModelListBaseSelectionChanging<GroupViewModel>>((p) => _filterCollection.TryAdd(p.Content.Name, p.Content), (p) => !p.Sender.Equals(this) && !(p.Content is null));
             Messenger.Subscribe<ViewModelListBaseSelectionChanged<GroupViewModel>>((p) => _filterCollection.TryRemove(p.Content.Name, out var _), (p) => !p.Sender.Equals(this) && !(p.Content is null));
         }
 
@@ -51,7 +53,7 @@ namespace MvvmScarletToolkit
 
             if (!(item.SelectedItem is null))
             {
-                OnGroupingAvailable(item.SelectedItem);
+                _filterCollection.TryAdd(item.SelectedItem.Name, item.SelectedItem);
                 Messenger.Publish(new GroupsViewModelRemoved(this, item));
             }
         }
@@ -71,14 +73,9 @@ namespace MvvmScarletToolkit
             });
         }
 
-        private void OnGroupingAvailable(GroupViewModel item)
-        {
-            _filterCollection.TryAdd(item.Name, item);
-        }
-
         private async Task Add(CancellationToken token)
         {
-            var result = new GroupsViewModel(CommandBuilder);
+            var result = new GroupsViewModel(CommandBuilder); // TODO
             await result.AddRange(_filterCollection.Values);
 
             await Add(result);

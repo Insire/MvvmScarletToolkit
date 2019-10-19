@@ -19,7 +19,7 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process prim
   - INotifyPropertyChanged base classes for single instance viewmodels and collection viewmodels
   - Navigation ViewModels
   - Pagingviewmodel
-  - Localization ViewModels
+  - Localization ViewModels (switching language without app restart)
   - Threadsafe busy state notifications via IBusyStack interface
   - EventAggregator
 
