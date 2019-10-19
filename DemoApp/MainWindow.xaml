@@ -182,6 +182,8 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="4" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="4" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <TextBlock Text="IsSelected" />
@@ -189,23 +191,32 @@
                                       Grid.ColumnSpan="4"
                                       IsChecked="{Binding IsSelected}" />
 
-                            <TextBlock Grid.Row="2" Text="Name" />
+                            <TextBlock Grid.Row="2" Text="Color" />
                             <TextBox Grid.Row="2"
+                                     Grid.Column="2"
+                                     VerticalAlignment="Top"
+                                     Text="{Binding Color}" />
+                            <Rectangle Grid.Row="2"
+                                       Grid.Column="4"
+                                       Fill="{Binding Color}" />
+
+                            <TextBlock Grid.Row="4" Text="Name" />
+                            <TextBox Grid.Row="4"
                                      Grid.Column="2"
                                      Grid.ColumnSpan="4"
                                      VerticalAlignment="Top"
                                      Text="{Binding Name}" />
 
-                            <TextBlock Grid.Row="4" Text="CreatedOn" />
-                            <Calendar Grid.Row="4"
+                            <TextBlock Grid.Row="6" Text="CreatedOn" />
+                            <Calendar Grid.Row="6"
                                       Grid.Column="2"
                                       DisplayDate="{Binding CreatedOn}"
                                       DisplayMode="Month" />
 
-                            <TextBlock Grid.Row="4"
+                            <TextBlock Grid.Row="6"
                                        Grid.Column="3"
                                        Text="UpdatedOn" />
-                            <Calendar Grid.Row="4"
+                            <Calendar Grid.Row="6"
                                       Grid.Column="4"
                                       DisplayDate="{Binding UpdatedOn, Mode=OneWay}"
                                       DisplayMode="Month" />
@@ -215,13 +226,14 @@
 
                 <DataTemplate DataType="{x:Type local:DataGridViewModel}">
                     <Grid>
-
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Loaded">
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
+
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="10" />
                             <RowDefinition Height="*" />
@@ -229,7 +241,9 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <DataGrid Grid.Row="0"
+                        <Canvas AllowDrop="True" Background="LightGray" />
+
+                        <DataGrid Grid.Row="1"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
                                   ItemsSource="{Binding Items}"
@@ -239,14 +253,15 @@
                                 <DataGridTextColumn Width="*"
                                                     Binding="{Binding Name}"
                                                     Header="Name" />
+                                <DataGridTextColumn Binding="{Binding Color}" Header="Color" />
                                 <DataGridTextColumn Binding="{Binding CreatedOn}" Header="CreatedOn" />
                                 <DataGridTextColumn Binding="{Binding UpdatedOn}" Header="UpdatedOn" />
                             </DataGrid.Columns>
                         </DataGrid>
 
-                        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" />
+                        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" />
 
-                        <ContentControl Grid.Row="2" Content="{Binding SelectedItem}" />
+                        <ContentControl Grid.Row="3" Content="{Binding SelectedItem}" />
                     </Grid>
                 </DataTemplate>
 
