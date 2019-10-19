@@ -21,6 +21,7 @@ namespace DemoApp
             Add("Busytree", new BusyViewModel(commandBuilder));
             Add("Text rendering", new TextDisplayViewModel(commandBuilder));
             Add("Passwords", new PasswordViewModel());
+            Add("Grouping", new GroupingViewModel(commandBuilder, typeof(DataGridRowViewModel)));
         }
     }
 }

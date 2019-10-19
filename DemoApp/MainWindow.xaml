@@ -4,6 +4,7 @@
                            xmlns:browser="clr-namespace:MvvmScarletToolkit.FileSystemBrowser;assembly=MvvmScarletToolkit"
                            xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
                            xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+                           xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Incubator"
                            xmlns:local="clr-namespace:DemoApp"
                            xmlns:mvvm="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit"
                            xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
@@ -856,6 +857,86 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
+                    </Grid>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type incubator:GroupingViewModel}">
+                    <Grid Margin="4">
+                        <Grid.Resources>
+                            <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
+                        </Grid.Resources>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="4" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <ContentControl>
+                            <ContentControl.Style>
+                                <Style TargetType="{x:Type ContentControl}">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <ListBox ItemsSource="{Binding Items}" FocusVisualStyle="{x:Null}"
+                                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                     SelectedItem="{Binding SelectedItem}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type incubator:GroupsViewModel}">
+                                                        <DockPanel MinWidth="150">
+                                                            <Button Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                                                    Command="{Binding Data.AddCommand, Source={StaticResource DataContextProxy}}"
+                                                                    Content="+"
+                                                                    DockPanel.Dock="Right"
+                                                                    ToolTip="Add" />
+
+                                                            <Button Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                                                    Command="{Binding Data.RemoveCommand, Source={StaticResource DataContextProxy}}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Content="-"
+                                                                    DockPanel.Dock="Right"
+                                                                    ToolTip="Remove" />
+
+                                                            <ComboBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
+                                                                <ComboBox.ItemTemplate>
+                                                                    <DataTemplate DataType="{x:Type incubator:GroupViewModel}">
+                                                                        <TextBlock Text="{Binding Name}" />
+                                                                    </DataTemplate>
+                                                                </ComboBox.ItemTemplate>
+                                                            </ComboBox>
+                                                        </DockPanel>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ListBox>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Count}" Value="0">
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <Button Grid.Column="0"
+                                                            Padding="10"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            Command="{Binding AddCommand}"
+                                                            Content="+"
+                                                            ToolTip="Add" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl>
                     </Grid>
                 </DataTemplate>
             </ContentControl.Resources>
