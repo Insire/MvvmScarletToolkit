@@ -14,7 +14,7 @@ namespace DemoApp
             Add("Drag and Drop", new ProcessingImagesViewModel(commandBuilder));
             Add("DataContextSchenanigansViewModel", new DataContextSchenanigansViewModel(commandBuilder));
             Add("AsyncCommands", new AsyncCommandViewModelStuff(commandBuilder));
-            Add("Datagrid", new ParentsViewModel(commandBuilder));
+            Add("Datagrid", new DataGridViewModel(commandBuilder));
             Add("Progress", new ProgressViewModel(commandBuilder));
             Add("Snake", new DummySnakeViewModel());
             Add("FileSystemBrowser", new FileSystemViewModel(commandBuilder, new FileSystemOptionsViewModel(commandBuilder)));

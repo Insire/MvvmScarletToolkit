@@ -166,7 +166,54 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:ParentsViewModel}">
+                <DataTemplate DataType="{x:Type local:DataGridRowViewModel}">
+                    <ScrollViewer Margin="4" VerticalScrollBarVisibility="Auto">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="4" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="4" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="4" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="IsSelected" />
+                            <CheckBox Grid.Column="2"
+                                      Grid.ColumnSpan="4"
+                                      IsChecked="{Binding IsSelected}" />
+
+                            <TextBlock Grid.Row="2" Text="Name" />
+                            <TextBox Grid.Row="2"
+                                     Grid.Column="2"
+                                     Grid.ColumnSpan="4"
+                                     VerticalAlignment="Top"
+                                     Text="{Binding Name}" />
+
+                            <TextBlock Grid.Row="4" Text="CreatedOn" />
+                            <Calendar Grid.Row="4"
+                                      Grid.Column="2"
+                                      DisplayDate="{Binding CreatedOn}"
+                                      DisplayMode="Month" />
+
+                            <TextBlock Grid.Row="4"
+                                       Grid.Column="3"
+                                       Text="UpdatedOn" />
+                            <Calendar Grid.Row="4"
+                                      Grid.Column="4"
+                                      DisplayDate="{Binding UpdatedOn, Mode=OneWay}"
+                                      DisplayMode="Month" />
+                        </Grid>
+                    </ScrollViewer>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type local:DataGridViewModel}">
                     <Grid>
 
                         <i:Interaction.Triggers>
@@ -182,16 +229,24 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <DataGrid Name="SourceGrid"
-                                  Grid.Row="0"
+                        <DataGrid Grid.Row="0"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
                                   ItemsSource="{Binding Items}"
-                                  SelectedItem="{Binding SelectedItem}" />
+                                  SelectedItem="{Binding SelectedItem}">
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Binding="{Binding IsSelected, Mode=TwoWay}" Header="IsSelected" />
+                                <DataGridTextColumn Width="*"
+                                                    Binding="{Binding Name}"
+                                                    Header="Name" />
+                                <DataGridTextColumn Binding="{Binding CreatedOn}" Header="CreatedOn" />
+                                <DataGridTextColumn Binding="{Binding UpdatedOn}" Header="UpdatedOn" />
+                            </DataGrid.Columns>
+                        </DataGrid>
 
-                        <DataGrid Grid.Row="2" ItemsSource="{Binding SelectedItem.LogItems.Items}" />
+                        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" />
 
-                        <Button Grid.Row="4"
-                                Command="{Binding SelectedItem.AddRangeCommand}"
-                                Content="Add" />
+                        <ContentControl Grid.Row="2" Content="{Binding SelectedItem}" />
                     </Grid>
                 </DataTemplate>
 
@@ -249,9 +304,11 @@
                 <DataTemplate DataType="{x:Type local:DataContextSchenanigansViewModel}">
                     <Grid>
                         <Grid.Resources>
-                            <CollectionViewSource x:Key="SortedViewSource" Source="{Binding Items}" IsLiveSortingRequested="True">
+                            <CollectionViewSource x:Key="SortedViewSource"
+                                                  IsLiveSortingRequested="True"
+                                                  Source="{Binding Items}">
                                 <CollectionViewSource.SortDescriptions>
-                                    <componentmodel:SortDescription PropertyName="IsSelected" Direction="Descending" />
+                                    <componentmodel:SortDescription Direction="Descending" PropertyName="IsSelected" />
                                     <componentmodel:SortDescription Direction="Ascending" PropertyName="DisplayName" />
                                 </CollectionViewSource.SortDescriptions>
                             </CollectionViewSource>
