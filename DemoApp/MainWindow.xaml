@@ -882,7 +882,8 @@
                                 <Style TargetType="{x:Type ContentControl}">
                                     <Setter Property="Content">
                                         <Setter.Value>
-                                            <ListBox ItemsSource="{Binding Items}" FocusVisualStyle="{x:Null}"
+                                            <ListBox FocusVisualStyle="{x:Null}"
+                                                     ItemsSource="{Binding Items}"
                                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                                      SelectedItem="{Binding SelectedItem}">
                                                 <ItemsControl.ItemTemplate>
@@ -937,6 +938,56 @@
                                 </Style>
                             </ContentControl.Style>
                         </ContentControl>
+                    </Grid>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type local:DialogViewModel}">
+                    <Grid>
+                        <Grid.Resources>
+                            <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
+                            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+                            <DataTemplate DataType="{x:Type incubator:BoolDialogResultViewModel}">
+                                <Grid Background="#cccccccc" Visibility="{Binding IsOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="4" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="4" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="1"
+                                               Grid.Column="1"
+                                               Text="Dialog open" />
+                                    <Button Grid.Row="3"
+                                            Grid.Column="1"
+                                            Padding="10"
+                                            Command="{Binding CloseCommand}"
+                                            Content="Close" />
+
+                                    <Button Grid.Row="5"
+                                            Grid.Column="1"
+                                            Padding="10"
+                                            Command="{Binding Data.RunCommand.CancelCommand, Source={StaticResource DataContextProxy}}"
+                                            Content="Cancel" />
+                                </Grid>
+                            </DataTemplate>
+                        </Grid.Resources>
+
+                        <Button Padding="10"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Command="{Binding RunCommand}"
+                                Content="Open Dialog" />
+
+                        <ContentControl Content="{Binding DialogResult}" />
                     </Grid>
                 </DataTemplate>
             </ContentControl.Resources>

@@ -22,6 +22,7 @@ namespace DemoApp
             Add("Text rendering", new TextDisplayViewModel(commandBuilder));
             Add("Passwords", new PasswordViewModel());
             Add("Grouping", new GroupingViewModel(commandBuilder, typeof(DataGridRowViewModel)));
+            Add("Dialog", new DialogViewModel(commandBuilder));
         }
     }
 }
