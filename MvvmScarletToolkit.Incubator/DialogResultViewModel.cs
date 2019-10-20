@@ -48,6 +48,11 @@ namespace MvvmScarletToolkit
                 }
                 finally
                 {
+                    if (token.IsCancellationRequested && CanClose())
+                    {
+                        await Close().ConfigureAwait(false);
+                    }
+
                     DialogClosed -= OnClosed;
                 }
 
@@ -70,7 +75,7 @@ namespace MvvmScarletToolkit
             DialogClosed?.Invoke(this, EventArgs.Empty);
         }
 
-        private Task Close(CancellationToken token)
+        private Task Close()
         {
             return Dispatcher.Invoke(() => IsOpen = false);
         }
