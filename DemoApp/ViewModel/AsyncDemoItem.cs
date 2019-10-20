@@ -35,12 +35,12 @@ namespace DemoApp
 
         protected override Task UnloadInternal(CancellationToken token)
         {
-            return Task.Delay(2000);
+            return Task.Delay(2000, token);
         }
 
         protected override Task RefreshInternal(CancellationToken token)
         {
-            return Task.Delay(2000);
+            return Task.Delay(2000, token);
         }
     }
 }
