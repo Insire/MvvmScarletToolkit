@@ -15,12 +15,6 @@ namespace MvvmScarletToolkit
         IExitService Exit { get; }
         IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager { get; }
 
-        ICommandBuilderContext Create<TArgument, TResult>();
-
-        CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(Func<TArgument, bool> canExecute);
-
-        CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(Func<TArgument, CancellationToken, Task<TResult>> execute);
-
         CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(Func<TArgument, CancellationToken, Task<TResult>> execute, Func<TArgument, bool> canExecute);
     }
 }

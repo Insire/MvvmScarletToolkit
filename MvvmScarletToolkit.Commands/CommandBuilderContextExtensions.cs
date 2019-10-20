@@ -8,11 +8,16 @@ namespace MvvmScarletToolkit
 {
     public static class CommandBuilderContextExtensions
     {
+        public static CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(this ICommandBuilder context, Func<TArgument, CancellationToken, Task<TResult>> execute)
+        {
+            return context.Create(execute, (arg) => true);
+        }
+
         /// <summary>
         /// Configure synchronous cancellation for the given command
         /// </summary>
         /// <param name="commandBuilder"></param>
-        public static ICommandBuilderContext WithCancellation(this ICommandBuilderContext commandBuilder)
+        public static CommandBuilderContext<TArgument, TResult> WithCancellation<TArgument, TResult>(this CommandBuilderContext<TArgument, TResult> commandBuilder)
         {
             commandBuilder.CancelCommand = new CancelCommand(commandBuilder.CommandManager);
             return commandBuilder;
@@ -22,7 +27,7 @@ namespace MvvmScarletToolkit
         /// Configure asynchronous cancellation for the given command
         /// </summary>
         /// <param name="commandBuilder"></param>
-        public static ICommandBuilderContext WithAsyncCancellation(this ICommandBuilderContext commandBuilder)
+        public static CommandBuilderContext<TArgument, TResult> WithAsyncCancellation<TArgument, TResult>(this CommandBuilderContext<TArgument, TResult> commandBuilder)
         {
             commandBuilder.CancelCommand = new ConcurrentCancelCommand(commandBuilder.CommandManager);
             return commandBuilder;

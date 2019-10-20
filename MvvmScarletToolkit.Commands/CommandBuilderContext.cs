@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
-    public class CommandBuilderContext<TArgument, TResult> : AbstractBuilder<ConcurrentCommandBase>, ICommandBuilderContext
+    public class CommandBuilderContext<TArgument, TResult> : AbstractBuilder<ConcurrentCommandBase>
     {
         private readonly Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>> _decorators;
         private readonly Func<TArgument, CancellationToken, Task<TResult>> _execute;
@@ -14,6 +14,7 @@ namespace MvvmScarletToolkit.Commands
         private readonly Func<Action<bool>, IBusyStack> _busyStackFactory;
 
         public IScarletDispatcher Dispatcher { get; }
+
         public IScarletCommandManager CommandManager { get; }
 
         /// <summary>
@@ -74,17 +75,17 @@ namespace MvvmScarletToolkit.Commands
             //TODO complete implementation
 
             return CreateDecoratorsOn(result);
-        }
 
-        private ConcurrentCommandBase CreateDecoratorsOn(ConcurrentCommandBase command)
-        {
-            var decorator = command;
-            while (_decorators.Count > 0)
+            ConcurrentCommandBase CreateDecoratorsOn(ConcurrentCommandBase command)
             {
-                decorator = _decorators.Dequeue()(decorator);
-            }
+                var decorator = command;
+                while (_decorators.Count > 0)
+                {
+                    decorator = _decorators.Dequeue()(decorator);
+                }
 
-            return decorator;
+                return decorator;
+            }
         }
     }
 }
