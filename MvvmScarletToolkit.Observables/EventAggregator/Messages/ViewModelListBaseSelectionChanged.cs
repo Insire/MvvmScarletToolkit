@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace MvvmScarletToolkit.Observables
+namespace MvvmScarletToolkit
 {
     public class ViewModelListBaseSelectionChanged<TViewModel> : GenericScarletMessage<TViewModel>
         where TViewModel : class, INotifyPropertyChanged

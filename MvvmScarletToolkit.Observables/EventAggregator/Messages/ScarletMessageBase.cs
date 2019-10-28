@@ -1,7 +1,7 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
 
-namespace MvvmScarletToolkit.Observables
+namespace MvvmScarletToolkit
 {
     /// <summary>
     /// Base class for messages that provides weak refrence storage of the sender
