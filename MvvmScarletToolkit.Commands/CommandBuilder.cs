@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
-    public sealed class CommandBuilder : ICommandBuilder
+    public class CommandBuilder : ICommandBuilder
     {
         private readonly Func<Action<bool>, IBusyStack> _busyStackFactory;
 
