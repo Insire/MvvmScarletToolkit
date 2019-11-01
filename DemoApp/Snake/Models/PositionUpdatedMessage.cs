@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit;
 
 namespace DemoApp
 {
