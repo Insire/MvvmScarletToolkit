@@ -19,7 +19,7 @@
         <Grid.Resources>
             <mvvm:NullValueConverter x:Key="NullValueConverter" />
             <DataTemplate DataType="{x:Type observables:LocalizationViewModel}">
-                <TextBlock Text="{Binding Value}" />
+                <TextBlock Text="{Binding Value, Mode=OneWay}" />
             </DataTemplate>
         </Grid.Resources>
 
@@ -29,9 +29,9 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <DockPanel Grid.Column="0" LastChildFill="True">
-            <TextBlock DockPanel.Dock="Top">Navigation</TextBlock>
+        <DockPanel Grid.Column="0">
             <ListBox x:Name="Scenes"
+                     BorderThickness="0"
                      ItemsSource="{Binding Items}"
                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -54,7 +54,10 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type observables:Scene}">
-                        <ContentControl Content="{Binding Localization}" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="0,0,4,0" Text="{Binding Sequence}" />
+                            <ContentControl Content="{Binding Localization}" />
+                        </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
@@ -66,11 +69,13 @@
                       VerticalAlignment="Stretch" />
 
         <!--  fill a contentcontrol with the content from the selected scene  -->
-        <ContentControl Grid.Column="2" Content="{Binding ElementName=Scenes, Path=SelectedItem.Content}">
+        <ContentControl Grid.Column="2"
+                        Margin="4,0"
+                        Content="{Binding ElementName=Scenes, Path=SelectedItem.Content}">
             <ContentControl.Resources>
 
-                <DataTemplate DataType="{x:Type local:ParentViewModel}">
-                    <Grid Margin="4,0">
+                <DataTemplate DataType="{x:Type local:VirtualizationViewModel}">
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="4" />
@@ -93,6 +98,9 @@
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Loaded">
                                     <i:InvokeCommandAction Command="{Binding LogItems.LoadCommand}" />
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="Unloaded">
+                                    <i:InvokeCommandAction Command="{Binding LogItems.UnloadCommand}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                             <ListBox.ItemContainerStyle>
@@ -168,7 +176,7 @@
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type local:DataGridRowViewModel}">
-                    <ScrollViewer Margin="4" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -266,11 +274,25 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:AsyncCommandViewModelStuff}">
+                <DataTemplate DataType="{x:Type local:AsyncStateListViewModel}">
                     <Grid>
                         <Grid.Resources>
-                            <DataTemplate x:Key="DemoItemTemplate" DataType="{x:Type local:AsyncDemoItem}">
+                            <CollectionViewSource x:Key="SortedViewSource"
+                                                  IsLiveSortingRequested="True"
+                                                  Source="{Binding SelectedItems}">
+                                <CollectionViewSource.SortDescriptions>
+                                    <componentmodel:SortDescription Direction="Descending" PropertyName="IsSelected" />
+                                    <componentmodel:SortDescription Direction="Ascending" PropertyName="DisplayName" />
+                                </CollectionViewSource.SortDescriptions>
+                            </CollectionViewSource>
+
+                            <DataTemplate x:Key="DemoItemTemplate" DataType="{x:Type local:AsyncStateViewModel}">
                                 <StackPanel Orientation="Horizontal">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Loaded">
+                                            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
                                     <Button Margin="5"
                                             Command="{Binding LoadCommand}"
                                             Content="Load"
@@ -301,188 +323,102 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="4" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="4" />
                             </Grid.ColumnDefinitions>
 
-                            <ListBox Grid.Column="0"
-                                     ItemTemplate="{StaticResource DemoItemTemplate}"
-                                     ItemsSource="{Binding Items}" />
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="4" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="4" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
 
-                            <ContentControl Grid.Column="2"
-                                            VerticalAlignment="Top"
-                                            Content="{Binding SelectedItem}"
-                                            ContentTemplate="{StaticResource DemoItemTemplate}" />
-                        </Grid>
-                    </Grid>
-                </DataTemplate>
-
-                <DataTemplate DataType="{x:Type local:DataContextSchenanigansViewModel}">
-                    <Grid>
-                        <Grid.Resources>
-                            <CollectionViewSource x:Key="SortedViewSource"
-                                                  IsLiveSortingRequested="True"
-                                                  Source="{Binding Items}">
-                                <CollectionViewSource.SortDescriptions>
-                                    <componentmodel:SortDescription Direction="Descending" PropertyName="IsSelected" />
-                                    <componentmodel:SortDescription Direction="Ascending" PropertyName="DisplayName" />
-                                </CollectionViewSource.SortDescriptions>
-                            </CollectionViewSource>
-
-                            <DataTemplate DataType="{x:Type local:AsyncDemoItem}">
-                                <StackPanel Orientation="Horizontal">
-
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="Loaded">
-                                            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-
-                                    <Button Margin="4,0"
-                                            Command="{Binding RefreshCommand}"
-                                            Content="Refresh" />
-
-                                    <Button Command="{Binding LoadCommand}" Content="Load" />
-
-                                    <Button Margin="4,0"
-                                            Command="{Binding UnloadCommand}"
-                                            Content="Unload" />
-
-                                    <TextBlock Text="{Binding DisplayName}">
-                                        <TextBlock.Style>
-                                            <Style TargetType="{x:Type TextBlock}">
+                            <TextBox x:Name="FilterTextBox"
+                                     Grid.Column="0"
+                                     Grid.ColumnSpan="3"
+                                     Text="{Binding FilterText}">
+                                <i:Interaction.Behaviors>
+                                    <mvvm:WatermarkBehavior Watermark="Filter">
+                                        <mvvm:WatermarkBehavior.WatermarkStyle>
+                                            <Style TargetType="{x:Type TextBox}">
                                                 <Setter Property="Foreground" Value="Gray" />
-                                                <Setter Property="Margin" Value="5,0" />
-                                                <Setter Property="VerticalAlignment" Value="Center" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsLoaded}" Value="True">
-                                                        <Setter Property="Foreground" Value="Blue" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                                                        <Setter Property="Foreground" Value="Red" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
                                             </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </StackPanel>
-                            </DataTemplate>
-                        </Grid.Resources>
+                                        </mvvm:WatermarkBehavior.WatermarkStyle>
+                                    </mvvm:WatermarkBehavior>
+                                </i:Interaction.Behaviors>
+                            </TextBox>
 
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Loaded">
-                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="5" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="5" />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="5" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="5" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="5" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="5" />
-                        </Grid.RowDefinitions>
-
-                        <TextBox x:Name="FilterTextBox"
-                                 Grid.Column="1"
-                                 Grid.ColumnSpan="3"
-                                 Text="{Binding FilterText}">
-                            <i:Interaction.Behaviors>
-                                <mvvm:WatermarkBehavior Watermark="Filter">
-                                    <mvvm:WatermarkBehavior.WatermarkStyle>
-                                        <Style TargetType="{x:Type TextBox}">
-                                            <Setter Property="Foreground" Value="Gray" />
-                                        </Style>
-                                    </mvvm:WatermarkBehavior.WatermarkStyle>
-                                </mvvm:WatermarkBehavior>
-                            </i:Interaction.Behaviors>
-                        </TextBox>
-
-                        <Button Grid.Row="0"
-                                Grid.Column="1"
-                                Grid.ColumnSpan="3"
-                                Margin="0,0,4,0"
-                                HorizontalAlignment="Right"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Content="X"
-                                ToolTip="Clear">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="Click">
-                                    <mvvm:ClearTextBoxAction Target="{Binding ElementName=FilterTextBox}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                            <Button.Style>
-                                <Style TargetType="{x:Type Button}">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Text, ElementName=FilterTextBox}" Value="">
-                                            <Setter Property="Visibility" Value="Hidden" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-
-                        <ListBox Grid.Row="2"
-                                 Grid.Column="1"
-                                 ItemsSource="{Binding Items}"
-                                 SelectedItem="{Binding SelectedItem}"
-                                 SelectionMode="Extended">
-                            <i:Interaction.Behaviors>
-                                <mvvm:MultiSelectionBehavior SelectedItems="{Binding SelectedItems}" />
-                            </i:Interaction.Behaviors>
-                            <ListBox.ItemContainerStyle>
-                                <Style TargetType="{x:Type ListBoxItem}">
-                                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
-                                </Style>
-                            </ListBox.ItemContainerStyle>
-                        </ListBox>
-
-                        <ScrollViewer Grid.Row="4" Grid.Column="1">
-                            <ItemsControl ItemsSource="{Binding Source={StaticResource SortedViewSource}}" />
-                        </ScrollViewer>
-
-                        <ContentControl Grid.Row="2"
-                                        Grid.Column="3"
-                                        VerticalAlignment="Top"
-                                        Content="{Binding SelectedItem}">
-                            <ContentControl.ContentTemplate>
-                                <DataTemplate>
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding DisplayName, StringFormat={}DisplayName: {0}}" />
-                                        <TextBlock Text="{Binding IsBusy, StringFormat={}IsSelfBusy: {0}}" />
-                                        <TextBlock Text="{Binding IsSelected, StringFormat={}IsSelected: {0}}" />
-                                        <TextBlock Text="{Binding RefreshCommand.IsBusy, StringFormat={}IsRefreshCommandBusy: {0}}" />
-                                        <TextBlock Text="{Binding LoadCommand.IsBusy, StringFormat={}IsLoadCommandBusy: {0}}" />
-                                        <TextBlock Text="{Binding UnloadCommand.IsBusy, StringFormat={}IsUnloadCommandBusy: {0}}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ContentControl.ContentTemplate>
-                        </ContentControl>
-
-                        <StackPanel Grid.Row="6"
+                            <Button Grid.Row="0"
                                     Grid.Column="1"
-                                    Orientation="Horizontal">
-                            <Button Command="{Binding RemoveRangeCommand}" Content="Remove" />
+                                    Grid.ColumnSpan="3"
+                                    Margin="0,0,4,0"
+                                    Padding="4,0"
+                                    HorizontalAlignment="Right"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Content="X"
+                                    ToolTip="Clear">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <mvvm:ClearTextBoxAction Target="{Binding ElementName=FilterTextBox}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=FilterTextBox}" Value="">
+                                                <Setter Property="Visibility" Value="Hidden" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
 
-                            <Button Margin="4,0"
-                                    Command="{Binding RefreshCommand}"
-                                    Content="Refresh" />
+                            <ListBox Grid.Row="2"
+                                     Grid.RowSpan="3"
+                                     Grid.Column="0"
+                                     ItemTemplate="{StaticResource DemoItemTemplate}"
+                                     ItemsSource="{Binding Items}"
+                                     SelectedItem="{Binding SelectedItem}"
+                                     SelectionMode="Extended">
+                                <i:Interaction.Behaviors>
+                                    <mvvm:MultiSelectionBehavior SelectedItems="{Binding SelectedItems}" />
+                                </i:Interaction.Behaviors>
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}">
+                                        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
 
-                            <Button Command="{Binding ClearCommand}" Content="Clear" />
-                        </StackPanel>
+                            <ScrollViewer Grid.Row="2" Grid.Column="2">
+                                <ItemsControl ItemTemplate="{StaticResource DemoItemTemplate}" ItemsSource="{Binding Source={StaticResource SortedViewSource}}" />
+                            </ScrollViewer>
+
+                            <ContentControl Grid.Row="4"
+                                            Grid.Column="2"
+                                            Content="{Binding SelectedItem}">
+                                <ContentControl.ContentTemplate>
+                                    <DataTemplate DataType="{x:Type local:AsyncStateViewModel}">
+                                        <Border BorderBrush="Black" BorderThickness="0.5">
+
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="{Binding DisplayName, StringFormat={}DisplayName: {0}}" />
+                                                <TextBlock Text="{Binding IsBusy, StringFormat={}IsSelfBusy: {0}}" />
+                                                <TextBlock Text="{Binding IsSelected, StringFormat={}IsSelected: {0}}" />
+                                                <TextBlock Text="{Binding RefreshCommand.IsBusy, StringFormat={}IsRefreshCommandBusy: {0}}" />
+                                                <TextBlock Text="{Binding LoadCommand.IsBusy, StringFormat={}IsLoadCommandBusy: {0}}" />
+                                                <TextBlock Text="{Binding UnloadCommand.IsBusy, StringFormat={}IsUnloadCommandBusy: {0}}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ContentControl.ContentTemplate>
+                            </ContentControl>
+                        </Grid>
                     </Grid>
                 </DataTemplate>
 
@@ -522,6 +458,9 @@
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Loaded">
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Unloaded">
+                                <i:InvokeCommandAction Command="{Binding UnloadCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
@@ -696,7 +635,7 @@
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type local:BusyViewModel}">
-                    <TreeView Margin="5" ItemsSource="{Binding Items}">
+                    <TreeView ItemsSource="{Binding Items}">
                         <TreeView.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Command="{Binding LoadCommand}" Header="Load" />
@@ -780,9 +719,15 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <Button Command="{Binding LoadCommand}"
-                                Content="Test"
-                                DockPanel.Dock="Top" />
+                        <UniformGrid Columns="2" DockPanel.Dock="Top">
+                            <Button Margin="2,0"
+                                    Command="{Binding LoadCommand}"
+                                    Content="Load" />
+
+                            <Button Margin="2,0"
+                                    Command="{Binding UnloadCommand}"
+                                    Content="Unload" />
+                        </UniformGrid>
 
                         <ListBox Grid.Row="1"
                                  ItemsSource="{Binding Items}"
@@ -861,13 +806,16 @@
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type incubator:GroupingViewModel}">
-                    <Grid Margin="4">
+                    <Grid>
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
                         </Grid.Resources>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Loaded">
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Unloaded">
+                                <i:InvokeCommandAction Command="{Binding UnloadCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 

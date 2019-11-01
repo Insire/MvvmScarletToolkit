@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace DemoApp
 {
-    public class ParentViewModel : ViewModelBase
+    public class VirtualizationViewModel : ViewModelBase
     {
         public ICommand AddRangeCommand { get; }
 
@@ -18,7 +18,7 @@ namespace DemoApp
             private set { SetValue(ref _logItems, value); }
         }
 
-        public ParentViewModel(LogItems logItems, ICommandBuilder commandBuilder)
+        public VirtualizationViewModel(LogItems logItems, ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             LogItems = logItems ?? throw new ArgumentNullException(nameof(logItems));

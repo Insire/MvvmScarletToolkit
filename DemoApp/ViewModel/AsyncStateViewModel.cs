@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DemoApp
 {
-    public class AsyncDemoItem : BusinessViewModelBase
+    public class AsyncStateViewModel : BusinessViewModelBase
     {
         private string _displayName;
         public string DisplayName
@@ -21,13 +21,13 @@ namespace DemoApp
             set { SetValue(ref _isSelected, value); }
         }
 
-        public AsyncDemoItem(ICommandBuilder commandBuilder)
+        public AsyncStateViewModel(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             DisplayName = "unknown";
         }
 
-        public AsyncDemoItem(ICommandBuilder commandBuilder, string displayName)
+        public AsyncStateViewModel(ICommandBuilder commandBuilder, string displayName)
             : this(commandBuilder)
         {
             DisplayName = displayName;
