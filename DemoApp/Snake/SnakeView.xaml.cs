@@ -167,7 +167,7 @@ namespace DemoApp
             _commandManager = new ScarletCommandManager();
             _dispatcher = ScarletDispatcher.Default;
             _messenger = new ScarletMessenger(new ScarletMessageProxy());
-            _commandBuilder = new CommandBuilder(_dispatcher, _commandManager, _messenger, ExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, _dispatcher));
+            _commandBuilder = new CommandBuilder(_dispatcher, _commandManager, _messenger, ScarletExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, _dispatcher));
 
             View = View.Start;
             ShowStartCommand = _commandBuilder.Create(ShowStart, CanShowStart).Build();

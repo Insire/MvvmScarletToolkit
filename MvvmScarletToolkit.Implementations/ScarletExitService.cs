@@ -9,9 +9,9 @@ using System.Windows;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class ExitService : IExitService
+    public sealed class ScarletExitService : IExitService
     {
-        private static readonly Lazy<ExitService> _default = new Lazy<ExitService>(() => new ExitService(Application.Current, ScarletDispatcher.InternalDefault));
+        private static readonly Lazy<ScarletExitService> _default = new Lazy<ScarletExitService>(() => new ScarletExitService(Application.Current, ScarletDispatcher.InternalDefault));
         public static IExitService Default { get; } = _default.Value;
 
         private readonly Application _app;
@@ -21,13 +21,13 @@ namespace MvvmScarletToolkit
 
         private Task _shutDown = Task.CompletedTask;
 
-        private ExitService()
+        private ScarletExitService()
         {
             _viewModels = new ConcurrentQueue<IBusinessViewModelBase>();
             _listViewModels = new ConcurrentQueue<IBusinessViewModelListBase>();
         }
 
-        public ExitService(Application app, ScarletDispatcher dispatcher)
+        public ScarletExitService(Application app, ScarletDispatcher dispatcher)
             : this()
         {
             _app = app ?? throw new ArgumentNullException(nameof(app));
