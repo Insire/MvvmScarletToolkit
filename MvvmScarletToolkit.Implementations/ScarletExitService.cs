@@ -16,15 +16,13 @@ namespace MvvmScarletToolkit
 
         private readonly Application _app;
         private readonly ScarletDispatcher _scarletDispatcher;
-        private readonly ConcurrentQueue<IBusinessViewModelListBase> _listViewModels;
-        private readonly ConcurrentQueue<IBusinessViewModelBase> _viewModels;
+        private readonly ConcurrentQueue<IVirtualizationViewModel> _viewModels;
 
         private Task _shutDown = Task.CompletedTask;
 
         private ScarletExitService()
         {
-            _viewModels = new ConcurrentQueue<IBusinessViewModelBase>();
-            _listViewModels = new ConcurrentQueue<IBusinessViewModelListBase>();
+            _viewModels = new ConcurrentQueue<IVirtualizationViewModel>();
         }
 
         public ScarletExitService(Application app, ScarletDispatcher dispatcher)
@@ -39,11 +37,17 @@ namespace MvvmScarletToolkit
 
         private void OnSessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
+#if DEBUG
+            Debug.WriteLine(nameof(ScarletExitService) + "." + nameof(OnSessionEnding));
+#endif
             OnImmediateAppExit();
         }
 
         private void OnAppExit(object sender, ExitEventArgs e)
         {
+#if DEBUG
+            Debug.WriteLine(nameof(ScarletExitService) + "." + nameof(OnAppExit));
+#endif
             OnImmediateAppExit();
         }
 
@@ -58,16 +62,13 @@ namespace MvvmScarletToolkit
 
         private Task InternalShutDown()
         {
-            Debug.WriteLine("Started Unloading ViewModels...");
+#if DEBUG
+            Debug.WriteLine(nameof(ScarletExitService) + "." + nameof(InternalShutDown));
+#endif
 
-            var tasks = new List<Task>(_viewModels.Count + _listViewModels.Count);
+            var tasks = new List<Task>(_viewModels.Count);
 
             while (_viewModels.TryDequeue(out var viewmodel))
-            {
-                tasks.Add(viewmodel.Unload(CancellationToken.None));
-            }
-
-            while (_listViewModels.TryDequeue(out var viewmodel))
             {
                 tasks.Add(viewmodel.Unload(CancellationToken.None));
             }
@@ -80,12 +81,7 @@ namespace MvvmScarletToolkit
             return _shutDown;
         }
 
-        public void UnloadOnExit(IBusinessViewModelListBase viewModel)
-        {
-            _listViewModels.Enqueue(viewModel);
-        }
-
-        public void UnloadOnExit(IBusinessViewModelBase viewModel)
+        public void UnloadOnExit(IVirtualizationViewModel viewModel)
         {
             _viewModels.Enqueue(viewModel);
         }

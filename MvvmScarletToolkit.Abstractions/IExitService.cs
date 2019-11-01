@@ -6,8 +6,6 @@ namespace MvvmScarletToolkit.Abstractions
     {
         Task ShutDown();
 
-        void UnloadOnExit(IBusinessViewModelListBase viewModel);
-
-        void UnloadOnExit(IBusinessViewModelBase viewModel);
+        void UnloadOnExit(IVirtualizationViewModel viewModel);
     }
 }

@@ -2,6 +2,7 @@ using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -94,10 +95,9 @@ namespace MvvmScarletToolkit.Observables
 
         public async Task Load(CancellationToken token)
         {
-            if (IsLoaded)
-            {
-                return;
-            }
+#if DEBUG
+            Debug.WriteLine(GetType().Name + "." + nameof(Load));
+#endif
 
             using (BusyStack.GetToken())
             {
@@ -118,10 +118,9 @@ namespace MvvmScarletToolkit.Observables
 
         public async Task Unload(CancellationToken token)
         {
-            if (!IsLoaded)
-            {
-                return;
-            }
+#if DEBUG
+            Debug.WriteLine(GetType().Name + "." + nameof(Unload));
+#endif
 
             using (BusyStack.GetToken())
             {
@@ -142,6 +141,10 @@ namespace MvvmScarletToolkit.Observables
 
         public async Task Refresh(CancellationToken token)
         {
+#if DEBUG
+            Debug.WriteLine(GetType().Name + "." + nameof(Refresh));
+#endif
+
             using (BusyStack.GetToken())
             {
                 await RefreshInternal(token).ConfigureAwait(false);
