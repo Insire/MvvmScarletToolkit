@@ -6,9 +6,9 @@ namespace MvvmScarletToolkit.Abstractions
     public interface IScarletMessageSubscription
     {
         /// <summary>
-        /// Token returned to the subscribed to reference this subscription
+        /// Token returned to the Subscriber to reference this subscription
         /// </summary>
-        SubscriptionToken SubscriptionToken { get; }
+        SubscriptionToken Token { get; }
 
         /// <summary>
         /// Whether delivery should be attempted.

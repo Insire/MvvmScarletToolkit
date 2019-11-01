@@ -2,7 +2,7 @@ using MvvmScarletToolkit.Abstractions;
 
 namespace MvvmScarletToolkit.Implementations
 {
-    internal class SubscriptionItem
+    internal sealed class SubscriptionItem
     {
         public IScarletMessageProxy Proxy { get; }
         public IScarletMessageSubscription Subscription { get; }

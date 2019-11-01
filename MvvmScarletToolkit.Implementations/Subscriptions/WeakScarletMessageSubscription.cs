@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Implementations
         protected WeakReference DeliveryAction { get; set; }
         protected WeakReference MessageFilter { get; set; }
 
-        public SubscriptionToken SubscriptionToken { get; }
+        public SubscriptionToken Token { get; }
 
         public bool ShouldAttemptDelivery(IScarletMessage message)
         {
@@ -61,7 +61,7 @@ namespace MvvmScarletToolkit.Implementations
                 throw new ArgumentNullException(nameof(messageFilter));
             }
 
-            SubscriptionToken = subscriptionToken ?? throw new ArgumentNullException(nameof(subscriptionToken));
+            Token = subscriptionToken ?? throw new ArgumentNullException(nameof(subscriptionToken));
             DeliveryAction = new WeakReference(deliveryAction);
             MessageFilter = new WeakReference(messageFilter);
         }
