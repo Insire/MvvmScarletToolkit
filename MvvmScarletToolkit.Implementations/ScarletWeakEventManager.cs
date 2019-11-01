@@ -7,7 +7,9 @@ namespace MvvmScarletToolkit
 {
     public sealed class ScarletWeakEventManager : IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs>
     {
-        public static IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> Default { get; } = new ScarletWeakEventManager();
+        private static readonly Lazy<ScarletWeakEventManager> _default = new Lazy<ScarletWeakEventManager>(() => new ScarletWeakEventManager());
+
+        public static IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> Default { get; } = _default.Value;
 
         public void AddHandler(INotifyPropertyChanged source, string eventName, EventHandler<PropertyChangedEventArgs> handler)
         {

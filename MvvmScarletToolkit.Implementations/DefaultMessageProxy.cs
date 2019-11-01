@@ -1,4 +1,5 @@
 using MvvmScarletToolkit.Abstractions;
+using System;
 
 namespace MvvmScarletToolkit
 {
@@ -8,7 +9,8 @@ namespace MvvmScarletToolkit
     /// </summary>
     public sealed class ScarletMessageProxy : IScarletMessageProxy
     {
-        public static IScarletMessageProxy Default { get; } = new ScarletMessageProxy();
+        private static readonly Lazy<ScarletMessageProxy> _default = new Lazy<ScarletMessageProxy>(() => new ScarletMessageProxy());
+        public static IScarletMessageProxy Default { get; } = _default.Value;
 
         public void Deliver(IScarletMessage message, IScarletMessageSubscription subscription)
         {

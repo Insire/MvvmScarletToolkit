@@ -11,7 +11,8 @@ namespace MvvmScarletToolkit
 {
     public sealed class ExitService : IExitService
     {
-        public static IExitService Default { get; } = new ExitService(Application.Current, ScarletDispatcher.InternalDefault);
+        private static readonly Lazy<ExitService> _default = new Lazy<ExitService>(() => new ExitService(Application.Current, ScarletDispatcher.InternalDefault));
+        public static IExitService Default { get; } = _default.Value;
 
         private readonly Application _app;
         private readonly ScarletDispatcher _scarletDispatcher;
@@ -31,12 +32,26 @@ namespace MvvmScarletToolkit
         {
             _app = app ?? throw new ArgumentNullException(nameof(app));
             _scarletDispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-            _app.Exit += App_Exit;
+
+            _app.Exit += OnAppExit;
+            _app.SessionEnding += OnSessionEnding;
         }
 
-        private void App_Exit(object sender, ExitEventArgs e)
+        private void OnSessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
-            _app.Exit -= App_Exit;
+            OnImmediateAppExit();
+        }
+
+        private void OnAppExit(object sender, ExitEventArgs e)
+        {
+            OnImmediateAppExit();
+        }
+
+        private void OnImmediateAppExit()
+        {
+            _app.Exit -= OnAppExit;
+            _app.SessionEnding -= OnSessionEnding;
+
             _scarletDispatcher.InvokeSynchronous = true;
             _shutDown = InternalShutDown();
         }
