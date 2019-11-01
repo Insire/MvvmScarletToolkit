@@ -1,11 +1,11 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
 namespace MvvmScarletToolkit
 {
-    public sealed class LocalizationProvider : ILocalizationProvider
+    public sealed class ScarletLocalizationProvider : ILocalizationProvider
     {
         public IEnumerable<CultureInfo> Languages { get; } = Enumerable.Empty<CultureInfo>();
 

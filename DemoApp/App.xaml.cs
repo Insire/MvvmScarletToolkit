@@ -12,7 +12,7 @@ namespace DemoApp
             base.OnStartup(e);
 
             var commandBuilder = new CommandBuilder(ScarletDispatcher.Default, ScarletCommandManager.Default, ScarletMessenger.Default, ScarletExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, ScarletDispatcher.Default));
-            var navigation = new NavigationViewModel(commandBuilder, new LocalizationsViewModel(new LocalizationProvider()));
+            var navigation = new NavigationViewModel(commandBuilder, new LocalizationsViewModel(new ScarletLocalizationProvider()));
 
             var window = new MainWindow
             {
