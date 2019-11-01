@@ -12,12 +12,21 @@ namespace MvvmScarletToolkit
         private static readonly Lazy<ScarletMessenger> _default = new Lazy<ScarletMessenger>(() => new ScarletMessenger(ScarletMessageProxy.Default));
         public static IScarletMessenger Default { get; } = _default.Value;
 
-        private readonly object _subscriptionsPadlock = new object();
-        private readonly List<SubscriptionItem> _subscriptions = new List<SubscriptionItem>();
+        private readonly object _subscriptionsPadlock;
 
+        private readonly List<SubscriptionItem> _subscriptions;
         private readonly IScarletMessageProxy _messageProxy;
 
+        private bool _disposed;
+
+        private ScarletMessenger()
+        {
+            _subscriptions = new List<SubscriptionItem>();
+            _subscriptionsPadlock = new object();
+        }
+
         public ScarletMessenger(IScarletMessageProxy messageProxy)
+            : this()
         {
             _messageProxy = messageProxy ?? throw new ArgumentNullException(nameof(messageProxy));
         }
@@ -93,7 +102,7 @@ namespace MvvmScarletToolkit
         }
 
         private SubscriptionToken AddSubscriptionInternal<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter, bool strongReference, IScarletMessageProxy proxy)
-                where TMessage : class, IScarletMessage
+            where TMessage : class, IScarletMessage
         {
             if (deliveryAction is null)
             {
@@ -110,23 +119,30 @@ namespace MvvmScarletToolkit
                 throw new ArgumentNullException(nameof(proxy));
             }
 
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ScarletMessenger));
+            }
+
             lock (_subscriptionsPadlock)
             {
-                var subscriptionToken = new SubscriptionToken(this, typeof(TMessage));
+#pragma warning disable IDE0068 // Use recommended dispose pattern
+                var token = new SubscriptionToken(this, typeof(TMessage));
+#pragma warning restore IDE0068 // Use recommended dispose pattern
 
                 IScarletMessageSubscription subscription;
                 if (strongReference)
                 {
-                    subscription = new StrongScarletMessageSubscription<TMessage>(subscriptionToken, deliveryAction, messageFilter);
+                    subscription = new StrongScarletMessageSubscription<TMessage>(token, deliveryAction, messageFilter);
                 }
                 else
                 {
-                    subscription = new WeakScarletMessageSubscription<TMessage>(subscriptionToken, deliveryAction, messageFilter);
+                    subscription = new WeakScarletMessageSubscription<TMessage>(token, deliveryAction, messageFilter);
                 }
 
                 _subscriptions.Add(new SubscriptionItem(proxy, subscription));
 
-                return subscriptionToken;
+                return new SubscriptionToken(this, typeof(TMessage));
             }
         }
 
@@ -137,14 +153,18 @@ namespace MvvmScarletToolkit
                 throw new ArgumentNullException(nameof(subscriptionToken));
             }
 
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ScarletMessenger));
+            }
+
+            SubscriptionItem[] currentlySubscribed;
             lock (_subscriptionsPadlock)
             {
-                var currentlySubscribed = (from sub in _subscriptions
-                                           where ReferenceEquals(sub.Subscription.SubscriptionToken, subscriptionToken)
-                                           select sub).ToArray();
-
-                currentlySubscribed.ForEach(sub => _subscriptions.Remove(sub));
+                currentlySubscribed = GetSubscriptions(subscriptionToken, _subscriptions).ToArray();
             }
+
+            currentlySubscribed.ForEach(sub => RemoveSubscription(sub, _subscriptions));
         }
 
         private void PublishInternal<TMessage>(TMessage message)
@@ -153,6 +173,11 @@ namespace MvvmScarletToolkit
             if (message is null)
             {
                 throw new ArgumentNullException(nameof(message));
+            }
+
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ScarletMessenger));
             }
 
             SubscriptionItem[] currentlySubscribed;
@@ -164,6 +189,47 @@ namespace MvvmScarletToolkit
             }
 
             currentlySubscribed.ForEach(sub => sub.Proxy.Deliver(message, sub.Subscription));
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ScarletMessenger));
+            }
+
+            _disposed = true;
+            if (disposing)
+            {
+                _subscriptions.ForEach(sub => RemoveSubscription(sub, _subscriptions));
+                _subscriptions.Clear();
+            }
+        }
+
+        private static void RemoveSubscription(SubscriptionItem sub, List<SubscriptionItem> subscriptions)
+        {
+            using (sub.Subscription.Token)
+            {
+                subscriptions.Remove(sub);
+            }
+        }
+
+        private static IEnumerable<SubscriptionItem> GetSubscriptions(SubscriptionToken token, List<SubscriptionItem> subscriptions)
+        {
+            if (token is null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            return from sub in subscriptions
+                   where ReferenceEquals(sub.Subscription.Token, token)
+                   select sub;
         }
     }
 }

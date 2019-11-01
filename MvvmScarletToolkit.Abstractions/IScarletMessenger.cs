@@ -6,7 +6,7 @@ namespace MvvmScarletToolkit.Abstractions
     /// <summary>
     /// Messenger hub responsible for taking subscriptions/publications and delivering of messages.
     /// </summary>
-    public interface IScarletMessenger
+    public interface IScarletMessenger : IDisposable
     {
         /// <summary>
         /// <para>
@@ -18,7 +18,8 @@ namespace MvvmScarletToolkit.Abstractions
         /// <typeparam name="TMessage">Type of message</typeparam>
         /// <param name="deliveryAction">Action to invoke when message is delivered</param>
         /// <returns>TinyMessageSubscription used to unsubscribing</returns>
-        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction) where TMessage : class, IScarletMessage;
+        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction)
+            where TMessage : class, IScarletMessage;
 
         /// <summary>
         /// <para>
@@ -31,7 +32,8 @@ namespace MvvmScarletToolkit.Abstractions
         /// <param name="deliveryAction">Action to invoke when message is delivered</param>
         /// <param name="proxy">         Proxy to use when delivering the messages</param>
         /// <returns>TinyMessageSubscription used to unsubscribing</returns>
-        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, IScarletMessageProxy proxy) where TMessage : class, IScarletMessage;
+        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, IScarletMessageProxy proxy)
+            where TMessage : class, IScarletMessage;
 
         /// <summary>
         /// <para>Subscribe to a message type with the given destination and delivery action.</para>
@@ -41,7 +43,8 @@ namespace MvvmScarletToolkit.Abstractions
         /// <param name="deliveryAction">     Action to invoke when message is delivered</param>
         /// <param name="useStrongReferences">Use strong references to destination and deliveryAction</param>
         /// <returns>TinyMessageSubscription used to unsubscribing</returns>
-        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, bool useStrongReferences) where TMessage : class, IScarletMessage;
+        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, bool useStrongReferences)
+            where TMessage : class, IScarletMessage;
 
         /// <summary>
         /// <para>
@@ -55,7 +58,8 @@ namespace MvvmScarletToolkit.Abstractions
         /// <param name="useStrongReferences">Use strong references to destination and deliveryAction</param>
         /// <param name="proxy">              Proxy to use when delivering the messages</param>
         /// <returns>TinyMessageSubscription used to unsubscribing</returns>
-        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, bool useStrongReferences, IScarletMessageProxy proxy) where TMessage : class, IScarletMessage;
+        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, bool useStrongReferences, IScarletMessageProxy proxy)
+            where TMessage : class, IScarletMessage;
 
         /// <summary>
         /// <para>
@@ -67,7 +71,8 @@ namespace MvvmScarletToolkit.Abstractions
         /// <typeparam name="TMessage">Type of message</typeparam>
         /// <param name="deliveryAction">Action to invoke when message is delivered</param>
         /// <returns>TinyMessageSubscription used to unsubscribing</returns>
-        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter) where TMessage : class, IScarletMessage;
+        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter)
+            where TMessage : class, IScarletMessage;
 
         /// <summary>
         /// <para>
@@ -81,7 +86,8 @@ namespace MvvmScarletToolkit.Abstractions
         /// <param name="deliveryAction">Action to invoke when message is delivered</param>
         /// <param name="proxy">         Proxy to use when delivering the messages</param>
         /// <returns>TinyMessageSubscription used to unsubscribing</returns>
-        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter, IScarletMessageProxy proxy) where TMessage : class, IScarletMessage;
+        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter, IScarletMessageProxy proxy)
+            where TMessage : class, IScarletMessage;
 
         /// <summary>
         /// <para>
@@ -94,7 +100,8 @@ namespace MvvmScarletToolkit.Abstractions
         /// <param name="deliveryAction">     Action to invoke when message is delivered</param>
         /// <param name="useStrongReferences">Use strong references to destination and deliveryAction</param>
         /// <returns>TinyMessageSubscription used to unsubscribing</returns>
-        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter, bool useStrongReferences) where TMessage : class, IScarletMessage;
+        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter, bool useStrongReferences)
+            where TMessage : class, IScarletMessage;
 
         /// <summary>
         /// <para>
@@ -108,7 +115,8 @@ namespace MvvmScarletToolkit.Abstractions
         /// <param name="useStrongReferences">Use strong references to destination and deliveryAction</param>
         /// <param name="proxy">              Proxy to use when delivering the messages</param>
         /// <returns>TinyMessageSubscription used to unsubscribing</returns>
-        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter, bool useStrongReferences, IScarletMessageProxy proxy) where TMessage : class, IScarletMessage;
+        SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter, bool useStrongReferences, IScarletMessageProxy proxy)
+            where TMessage : class, IScarletMessage;
 
         /// <summary>
         /// <para>Unsubscribe from a particular message type.</para>
@@ -122,13 +130,15 @@ namespace MvvmScarletToolkit.Abstractions
         /// </summary>
         /// <typeparam name="TMessage">Type of message</typeparam>
         /// <param name="message">Message to deliver</param>
-        void Publish<TMessage>(TMessage message) where TMessage : class, IScarletMessage;
+        void Publish<TMessage>(TMessage message)
+            where TMessage : class, IScarletMessage;
 
         /// <summary>
         /// Publish a message to any subscribers asynchronously
         /// </summary>
         /// <typeparam name="TMessage">Type of message</typeparam>
         /// <param name="message">Message to deliver</param>
-        Task PublishAsync<TMessage>(TMessage message) where TMessage : class, IScarletMessage;
+        Task PublishAsync<TMessage>(TMessage message)
+            where TMessage : class, IScarletMessage;
     }
 }
