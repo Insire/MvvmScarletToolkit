@@ -28,7 +28,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly IScarletCommandManager CommandManager;
         protected readonly IScarletMessenger Messenger;
         protected readonly IExitService Exit;
-        protected readonly IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
+        protected readonly IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
 
         public event PropertyChangedEventHandler PropertyChanged;
 

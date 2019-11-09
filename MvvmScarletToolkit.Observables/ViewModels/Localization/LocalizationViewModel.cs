@@ -12,9 +12,9 @@ namespace MvvmScarletToolkit.Observables
         private readonly string _key;
         private readonly bool _toUpper;
         private readonly ILocalizationService _service;
-        private readonly IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> _weakEventManager;
+        private readonly IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> _weakEventManager;
 
-        public LocalizationViewModel(IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, ILocalizationService service, string key, bool toUpper)
+        public LocalizationViewModel(IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, ILocalizationService service, string key, bool toUpper)
         {
             _weakEventManager = weakEventManager ?? throw new ArgumentNullException(nameof(weakEventManager));
             _service = service ?? throw new ArgumentNullException(nameof(service));
@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit.Observables
             _weakEventManager.AddHandler(_service, "PropertyChanged", ValueChanged);
         }
 
-        public LocalizationViewModel(IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, ILocalizationService service, string key)
+        public LocalizationViewModel(IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, ILocalizationService service, string key)
             : this(weakEventManager, service, key, false)
         {
         }

@@ -5,7 +5,7 @@ namespace MvvmScarletToolkit.Observables
 {
     public static class ServiceExtensions
     {
-        public static ILocalizationViewModel CreateViewModel(this ILocalizationService localizationService, IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, string key)
+        public static ILocalizationViewModel CreateViewModel(this ILocalizationService localizationService, IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, string key)
         {
             return new LocalizationViewModel(weakEventManager, localizationService, key);
         }

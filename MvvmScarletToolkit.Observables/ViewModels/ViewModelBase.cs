@@ -45,7 +45,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly IScarletDispatcher Dispatcher;
         protected readonly IScarletMessenger Messenger;
         protected readonly IExitService Exit;
-        protected readonly IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
+        protected readonly IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
 
         private bool _disposed;
 

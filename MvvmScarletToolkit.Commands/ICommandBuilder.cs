@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit
         IScarletDispatcher Dispatcher { get; }
         IScarletMessenger Messenger { get; }
         IExitService Exit { get; }
-        IWeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager { get; }
+        IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager { get; }
 
         CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(Func<TArgument, CancellationToken, Task<TResult>> execute, Func<TArgument, bool> canExecute);
     }
