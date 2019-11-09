@@ -8,22 +8,15 @@ namespace MvvmScarletToolkit.Abstractions
     public sealed class SubscriptionToken : IDisposable
     {
         private readonly WeakReference _hub;
-        private readonly Type _messageType;
 
-        public SubscriptionToken(IScarletMessenger hub, Type messageType)
+        public SubscriptionToken(IScarletMessenger hub)
         {
             if (hub is null)
             {
                 throw new ArgumentNullException(nameof(hub));
             }
 
-            if (!typeof(IScarletMessage).IsAssignableFrom(messageType))
-            {
-                throw new ArgumentOutOfRangeException(nameof(messageType));
-            }
-
             _hub = new WeakReference(hub);
-            _messageType = messageType;
         }
 
         public void Dispose()
@@ -39,8 +32,7 @@ namespace MvvmScarletToolkit.Abstractions
                 // free managed resources
                 if (_hub.IsAlive && _hub.Target is IScarletMessenger hub)
                 {
-                    var unsubscribeMethod = typeof(IScarletMessenger).GetMethod("Unsubscribe", new Type[] { typeof(SubscriptionToken) });
-                    unsubscribeMethod = unsubscribeMethod.MakeGenericMethod(_messageType);
+                    var unsubscribeMethod = typeof(IScarletMessenger).GetMethod(nameof(IScarletMessenger.Unsubscribe), new Type[] { typeof(SubscriptionToken) });
                     unsubscribeMethod.Invoke(hub, new object[] { this });
                 }
             }

@@ -127,7 +127,7 @@ namespace MvvmScarletToolkit
             lock (_subscriptionsPadlock)
             {
 #pragma warning disable IDE0068 // Use recommended dispose pattern
-                var token = new SubscriptionToken(this, typeof(TMessage));
+                var token = new SubscriptionToken(this);
 #pragma warning restore IDE0068 // Use recommended dispose pattern
 
                 IScarletMessageSubscription subscription;
@@ -142,7 +142,7 @@ namespace MvvmScarletToolkit
 
                 _subscriptions.Add(new SubscriptionItem(proxy, subscription));
 
-                return new SubscriptionToken(this, typeof(TMessage));
+                return new SubscriptionToken(this);
             }
         }
 
@@ -151,11 +151,6 @@ namespace MvvmScarletToolkit
             if (subscriptionToken is null)
             {
                 throw new ArgumentNullException(nameof(subscriptionToken));
-            }
-
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(nameof(ScarletMessenger));
             }
 
             SubscriptionItem[] currentlySubscribed;
@@ -207,8 +202,11 @@ namespace MvvmScarletToolkit
             _disposed = true;
             if (disposing)
             {
-                _subscriptions.ForEach(sub => RemoveSubscription(sub, _subscriptions));
-                _subscriptions.Clear();
+                for (var i = _subscriptions.Count - 1; i >= 0; i--)
+                {
+                    var sub = _subscriptions[i];
+                    RemoveSubscription(sub, _subscriptions);
+                }
             }
         }
 
