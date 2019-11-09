@@ -172,7 +172,7 @@ namespace MvvmScarletToolkit
 
             if (_disposed)
             {
-                throw new ObjectDisposedException(nameof(ScarletMessenger));
+                return;
             }
 
             SubscriptionItem[] currentlySubscribed;

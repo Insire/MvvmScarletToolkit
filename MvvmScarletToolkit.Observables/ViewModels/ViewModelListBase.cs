@@ -282,35 +282,39 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        protected virtual void ThrowIfDisposed()
+        private void OnSelectionChanged()
         {
             if (Disposed)
             {
-                throw new ObjectDisposedException(GetType().FullName);
+                return;
             }
-        }
-
-        private void OnSelectionChanged()
-        {
-            ThrowIfDisposed();
             Messenger.Publish(new ViewModelListBaseSelectionChanged<TViewModel>(this, SelectedItem));
         }
 
         private void OnSelectionChanging()
         {
-            ThrowIfDisposed();
+            if (Disposed)
+            {
+                return;
+            }
             Messenger.Publish(new ViewModelListBaseSelectionChanging<TViewModel>(this, SelectedItem));
         }
 
         private void OnSelectionsChanged()
         {
-            ThrowIfDisposed();
+            if (Disposed)
+            {
+                return;
+            }
             Messenger.Publish(new ViewModelListBaseSelectionsChanged<TViewModel>(this, SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
         }
 
         private void OnSelectionsChanging()
         {
-            ThrowIfDisposed();
+            if (Disposed)
+            {
+                return;
+            }
             Messenger.Publish(new ViewModelListBaseSelectionsChanging<TViewModel>(this, SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
         }
     }
