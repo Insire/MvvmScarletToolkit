@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
+    // TODO add validation, providing notifications on why can execute returned false
     public class CommandBuilderContext<TArgument, TResult> : AbstractBuilder<ConcurrentCommandBase>
     {
         private readonly Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>> _decorators;
@@ -26,9 +27,6 @@ namespace MvvmScarletToolkit.Commands
         /// can be configured externally
         /// </summary>
         public IBusyStack BusyStack { get; set; }
-
-        // TODO add validation, providing notifications on why can execute returned false
-        // TODO decide whether this should be reuseable (aka whether to allow subclassing)
 
         private CommandBuilderContext(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, Func<Action<bool>, IBusyStack> busyStackFactory)
         {

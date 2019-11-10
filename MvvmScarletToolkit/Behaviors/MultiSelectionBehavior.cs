@@ -61,6 +61,7 @@ namespace MvvmScarletToolkit
                 oldValue.CollectionChanged -= behavior.SourceCollectionChanged;
                 behavior.AssociatedObject.SelectionChanged -= behavior.ListBoxSelectionChanged;
             }
+
             if (e.NewValue is INotifyCollectionChanged newValue)
             {
                 behavior.AssociatedObject.SelectedItems.Clear();

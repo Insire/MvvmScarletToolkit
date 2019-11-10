@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Observables
 {
     public class LocalizationsViewModel : ObservableObject, ILocalizationService
     {
-        protected readonly ILocalizationProvider TranslationProvider;
+        protected readonly ILocalizationProvider LocalizationProvider;
 
         private CultureInfo _currentLanguage;
         public CultureInfo CurrentLanguage
@@ -18,25 +18,25 @@ namespace MvvmScarletToolkit.Observables
             set { SetValue(ref _currentLanguage, value, () => Thread.CurrentThread.CurrentUICulture = value); }
         }
 
-        public IEnumerable<CultureInfo> Languages => TranslationProvider.Languages?.Any() == true
-            ? TranslationProvider.Languages
+        public IEnumerable<CultureInfo> Languages => LocalizationProvider.Languages?.Any() == true
+            ? LocalizationProvider.Languages
             : Enumerable.Empty<CultureInfo>();
 
         public LocalizationsViewModel(ILocalizationProvider provider)
         {
-            TranslationProvider = provider ?? throw new ArgumentNullException(nameof(provider));
+            LocalizationProvider = provider ?? throw new ArgumentNullException(nameof(provider));
 
-            CurrentLanguage = Thread.CurrentThread.CurrentUICulture;
+            CurrentLanguage = LocalizationProvider.Languages.FirstOrDefault(p => p.LCID == Thread.CurrentThread.CurrentUICulture.LCID) ?? LocalizationProvider.Languages.FirstOrDefault() ?? Thread.CurrentThread.CurrentUICulture;
         }
 
         public string Translate(string key)
         {
-            if (TranslationProvider != null && CurrentLanguage != null)
+            if (LocalizationProvider != null && CurrentLanguage != null)
             {
                 if (Thread.CurrentThread.CurrentUICulture != CurrentLanguage)
                     Thread.CurrentThread.CurrentUICulture = CurrentLanguage;
 
-                var translatedValue = TranslationProvider.Translate(key, CurrentLanguage);
+                var translatedValue = LocalizationProvider.Translate(key, CurrentLanguage);
                 if (!string.IsNullOrEmpty(translatedValue))
                 {
                     return translatedValue;
