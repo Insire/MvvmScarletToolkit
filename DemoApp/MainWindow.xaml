@@ -8,6 +8,7 @@
                            xmlns:local="clr-namespace:DemoApp"
                            xmlns:mvvm="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit"
                            xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
+                           xmlns:system="clr-namespace:System;assembly=System.Runtime"
                            xmlns:window="clr-namespace:MvvmScarletToolkit.ConfigurableWindow;assembly=MvvmScarletToolkit"
                            Title="DemoApp"
                            Width="1025"
@@ -17,6 +18,7 @@
 
     <Grid>
         <Grid.Resources>
+            <system:Decimal x:Key="Num">2</system:Decimal>
             <mvvm:NullValueConverter x:Key="NullValueConverter" />
             <DataTemplate DataType="{x:Type observables:LocalizationViewModel}">
                 <TextBlock Text="{Binding Value, Mode=OneWay}" />
@@ -41,7 +43,7 @@
                         <Setter Property="IsSelected" Value="{Binding IsSelected}" />
                         <Setter Property="ToolTip">
                             <Setter.Value>
-                                <ToolTip DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext}">
+                                <ToolTip DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext, Converter={mvvm:DebugConverter}, ConverterParameter={StaticResource Num}}">
                                     <TextBlock>
                                         <Run Text="Translated Value:" />
                                         <Run Text="{Binding Localization.Value, Mode=OneWay}" />
@@ -71,7 +73,7 @@
         <!--  fill a contentcontrol with the content from the selected scene  -->
         <ContentControl Grid.Column="2"
                         Margin="4,0"
-                        Content="{Binding ElementName=Scenes, Path=SelectedItem.Content}">
+                        Content="{Binding ElementName=Scenes, Path=SelectedItem.Content, Converter={mvvm:DebugConverter}}">
             <ContentControl.Resources>
 
                 <DataTemplate DataType="{x:Type local:VirtualizationViewModel}">
