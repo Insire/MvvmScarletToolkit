@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
@@ -8,26 +8,32 @@ namespace MvvmScarletToolkit
     [ValueConversion(typeof(object), typeof(object))]
     public sealed class DebugConverter : ConverterMarkupExtension<DebugConverter>
     {
-        public string Name { get; set; } = Guid.NewGuid().ToString();
-
-        public Action<string, string> Logger { get; set; } = (message, category) => Debug.WriteLine(message, category);
+        private readonly Action<string> Logger = (message) => Debug.WriteLine(message);
 
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (parameter == null)
-                Logger(string.Format(culture, "Convert: Value = '{0}' TargetType = '{1}'", value, targetType), Name);
+            if (parameter is null)
+            {
+                Logger(string.Format(culture, "Convert: '{0}' to '{1}'", value, targetType));
+            }
             else
-                Logger(string.Format(culture, "Convert: Value = '{0}' TargetType = '{1}' Parameter = '{2}'", value, targetType, parameter), Name);
+            {
+                Logger(string.Format(culture, "Convert: '{0}' to '{1}' with Parameter = '{2}' of type: = '{3}'", value, targetType, parameter, parameter.GetType().Name));
+            }
 
             return value;
         }
 
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (parameter == null)
-                Logger(string.Format(culture, "ConvertBack: Value = '{0}' TargetType = '{1}'", value, targetType), Name);
+            if (parameter is null)
+            {
+                Logger(string.Format(culture, "ConvertBack: '{0}' to '{1}'", value, targetType));
+            }
             else
-                Logger(string.Format(culture, "ConvertBack: Value = '{0}' TargetType = '{1}' Parameter = '{2}'", value, targetType, parameter), Name);
+            {
+                Logger(string.Format(culture, "ConvertBack: '{0}' to '{1}' with Parameter = '{2}' of type: = '{3}'", value, targetType, parameter, parameter.GetType().Name));
+            }
 
             return value;
         }
