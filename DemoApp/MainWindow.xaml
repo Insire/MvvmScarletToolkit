@@ -76,6 +76,29 @@
                         Content="{Binding ElementName=Scenes, Path=SelectedItem.Content, Converter={mvvm:DebugConverter}}">
             <ContentControl.Resources>
 
+                <DataTemplate DataType="{x:Type local:SyncViewModel}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="1" Grid.Column="1">
+                            <TextBox x:Name="LocalTextBox" Text="test" />
+                            <Button Command="{Binding WorkCommand}"
+                                    CommandParameter="{Binding Text, ElementName=LocalTextBox}"
+                                    Content="Work" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:VirtualizationViewModel}">
                     <Grid>
                         <Grid.ColumnDefinitions>
