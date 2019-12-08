@@ -89,7 +89,7 @@ namespace MvvmScarletToolkit
             return builder.Create<TArgument, TResult>(ExecuteWrapper, _ => canExecute());
         }
 
-        public static CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(this ICommandBuilder builder, Func<object, Task> execute, Func<bool> canExecute)
+        public static CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(this ICommandBuilder builder, Func<CancellationToken, Task> execute, Func<bool> canExecute)
         {
             async Task<TResult> ExecuteWrapper(TArgument _, CancellationToken token)
             {
@@ -99,7 +99,7 @@ namespace MvvmScarletToolkit
             return builder.Create<TArgument, TResult>(ExecuteWrapper, _ => canExecute());
         }
 
-        public static CommandBuilderContext<TArgument, object> Create<TArgument>(this ICommandBuilder builder, Func<object, Task> execute, Func<bool> canExecute)
+        public static CommandBuilderContext<TArgument, object> Create<TArgument>(this ICommandBuilder builder, Func<CancellationToken, Task> execute, Func<bool> canExecute)
         {
             async Task<object> ExecuteWrapper(TArgument _, CancellationToken token)
             {

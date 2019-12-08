@@ -47,7 +47,7 @@ namespace MvvmScarletToolkit
             Messenger.Subscribe<ViewModelListBaseSelectionChanged<GroupViewModel>>((p) => _filterCollection.TryRemove(p.Content.Name, out var _), (p) => !p.Sender.Equals(this) && !(p.Content is null));
         }
 
-        public override async Task Remove(GroupsViewModel item)
+        public override async Task Remove(GroupsViewModel item, CancellationToken token)
         {
             await base.Remove(item);
 

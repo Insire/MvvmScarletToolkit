@@ -50,10 +50,10 @@ namespace DemoApp
             }
         }
 
-        public override async Task Remove(INotifyPropertyChanged item)
+        public override async Task Remove(INotifyPropertyChanged item, CancellationToken token)
         {
             _disposables[item].Dispose();
-            await base.Remove(item).ConfigureAwait(false);
+            await base.Remove(item, token).ConfigureAwait(false);
         }
 
         private bool CanAddChild()

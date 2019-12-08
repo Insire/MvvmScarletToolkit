@@ -111,7 +111,7 @@ namespace MvvmScarletToolkit.Observables
                 .Build();
 
             ClearCommand = commandBuilder
-                .Create(Clear, CanClear)
+                .Create<CancellationToken>(Clear, CanClear)
                 .WithSingleExecution(CommandManager)
                 .WithBusyNotification(BusyStack)
                 .WithAsyncCancellation()
@@ -187,6 +187,11 @@ namespace MvvmScarletToolkit.Observables
             {
                 await items.ForEachAsync(Remove, token).ConfigureAwait(false);
             }
+        }
+
+        public Task Clear()
+        {
+            return Clear(CancellationToken.None);
         }
 
         public async Task Clear(CancellationToken token)
