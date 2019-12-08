@@ -5,12 +5,12 @@ using System.Windows.Input;
 namespace MvvmScarletToolkit
 {
     /// <summary>
-    /// When a WPF window is first shown, there is not actual focus.
-    /// When this attached property is set on the window, it requests a traverse of the focus,
+    /// When a WPF window is first shown, there is no actual focus.
+    /// When this attached property is set on a e.g. window, it requests a traverse of the focus,
     /// thereby going to the control that has the lowest tab order.
     /// </summary>
     /// <example>
-    /// In View xaml
+    /// In xaml
     /// <Window namespace:Focus.First="true"></window>
     /// </example>
     public static class Focus
