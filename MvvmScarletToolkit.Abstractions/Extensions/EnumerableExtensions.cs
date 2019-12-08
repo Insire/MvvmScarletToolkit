@@ -2,22 +2,30 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit
 {
     public static class EnumerableExtensions
     {
+        private const int Multiplier = 2;
+
         public static Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody)
         {
-            return source.ForEachAsync(funcBody, Environment.ProcessorCount * 2);
+            return source.ForEachAsync(funcBody, Environment.ProcessorCount * Multiplier, CancellationToken.None);
         }
 
-        public static Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP)
+        public static Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, CancellationToken token)
+        {
+            return source.ForEachAsync(funcBody, Environment.ProcessorCount * Multiplier, token);
+        }
+
+        public static Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP, CancellationToken token)
         {
             async Task AwaitPartition(IEnumerator<T> partition)
             {
-                while (partition.MoveNext())
+                while (partition.MoveNext() && !token.IsCancellationRequested)
                 {
                     await funcBody(partition.Current).ConfigureAwait(false);
                 }
@@ -32,8 +40,18 @@ namespace MvvmScarletToolkit
 
         public static IEnumerable<T> ForEach<T>(this IEnumerable<T> collection, Action<T> action)
         {
+            return collection.ForEach(action, CancellationToken.None);
+        }
+
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> collection, Action<T> action, CancellationToken token)
+        {
             foreach (var item in collection)
             {
+                if (token.IsCancellationRequested)
+                {
+                    return collection;
+                }
+
                 action(item);
             }
 

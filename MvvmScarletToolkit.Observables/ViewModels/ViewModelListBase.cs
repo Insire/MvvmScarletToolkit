@@ -118,7 +118,12 @@ namespace MvvmScarletToolkit.Observables
                 .Build();
         }
 
-        public virtual async Task Add(TViewModel item)
+        public Task Add(TViewModel item)
+        {
+            return Add(item, CancellationToken.None);
+        }
+
+        public virtual async Task Add(TViewModel item, CancellationToken token)
         {
             if (item is null)
             {
@@ -127,13 +132,18 @@ namespace MvvmScarletToolkit.Observables
 
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => _items.Add(item)).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(HasItems))).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => _items.Add(item), token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count)), token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(HasItems)), token).ConfigureAwait(false);
             }
         }
 
-        public virtual async Task AddRange(IEnumerable<TViewModel> items)
+        public Task AddRange(IEnumerable<TViewModel> items)
+        {
+            return AddRange(items, CancellationToken.None);
+        }
+
+        public virtual async Task AddRange(IEnumerable<TViewModel> items, CancellationToken token)
         {
             if (items is null)
             {
@@ -142,21 +152,31 @@ namespace MvvmScarletToolkit.Observables
 
             using (BusyStack.GetToken())
             {
-                await items.ForEachAsync(Add).ConfigureAwait(false);
+                await items.ForEachAsync(Add, token).ConfigureAwait(false);
             }
         }
 
-        public virtual async Task Remove(TViewModel item)
+        public Task Remove(TViewModel item)
+        {
+            return Remove(item, CancellationToken.None);
+        }
+
+        public virtual async Task Remove(TViewModel item, CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => _items.Remove(item)).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(HasItems))).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => _items.Remove(item), token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count)), token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(HasItems)), token).ConfigureAwait(false);
             }
         }
 
-        public virtual async Task RemoveRange(IEnumerable<TViewModel> items)
+        public Task RemoveRange(IEnumerable<TViewModel> items)
+        {
+            return RemoveRange(items, CancellationToken.None);
+        }
+
+        public virtual async Task RemoveRange(IEnumerable<TViewModel> items, CancellationToken token)
         {
             if (items is null)
             {
@@ -165,7 +185,7 @@ namespace MvvmScarletToolkit.Observables
 
             using (BusyStack.GetToken())
             {
-                await items.ForEachAsync(Remove).ConfigureAwait(false);
+                await items.ForEachAsync(Remove, token).ConfigureAwait(false);
             }
         }
 
@@ -175,7 +195,7 @@ namespace MvvmScarletToolkit.Observables
             {
                 await Dispatcher.Invoke(() => _items.Clear(), token).ConfigureAwait(false);
                 await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count)), token).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(HasItems))).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(HasItems)), token).ConfigureAwait(false);
             }
         }
 
