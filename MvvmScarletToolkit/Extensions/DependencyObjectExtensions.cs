@@ -102,7 +102,7 @@ namespace MvvmScarletToolkit
                 for (var i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
                 {
                     var child = VisualTreeHelper.GetChild(dependencyObject, i);
-                    var grandchildren = child.FindVisualChildrenDepthFirst<T>(filter);
+                    var grandchildren = child.FindVisualChildrenDepthFirst(filter);
 
                     if (child is T result && filter?.Invoke(result) != false)
                     {
