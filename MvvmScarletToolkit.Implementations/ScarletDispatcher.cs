@@ -25,6 +25,11 @@ namespace MvvmScarletToolkit
 
         public async Task Invoke(Action action, CancellationToken token)
         {
+            if (action is null)
+            {
+                return;
+            }
+
             if (InvokeSynchronous)
             {
                 _dispatcherObject.Invoke(action, DispatcherPriority.Normal);
@@ -36,6 +41,11 @@ namespace MvvmScarletToolkit
 
         public async Task<T> Invoke<T>(Func<T> action, CancellationToken token)
         {
+            if (action is null)
+            {
+                return default;
+            }
+
             if (InvokeSynchronous)
             {
                 return _dispatcherObject.Invoke(action, DispatcherPriority.Normal);
