@@ -1,5 +1,3 @@
-using MvvmScarletToolkit.Observables;
-
 namespace MvvmScarletToolkit
 {
     /// <summary>
