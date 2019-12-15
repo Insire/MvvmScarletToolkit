@@ -9,7 +9,6 @@
     <Rule Id="IDE0063" Action="Hidden" />
   </Rules>
   <Rules AnalyzerId="PropertyChangedAnalyzers" RuleNamespace="PropertyChangedAnalyzers">
-    <Rule Id="INPC001" Action="Hidden" />
     <Rule Id="INPC020" Action="Hidden" />
   </Rules>
   <Rules AnalyzerId="WpfAnalyzers" RuleNamespace="WpfAnalyzers">
