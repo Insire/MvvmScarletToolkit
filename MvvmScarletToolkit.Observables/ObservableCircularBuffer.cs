@@ -7,6 +7,8 @@ using System.Linq;
 
 namespace MvvmScarletToolkit.Observables
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC005:Check if value is different before notifying."
+        , Justification = "IsFull always changes when either capacity or size changed.")]
     public sealed class ObservableCircularBuffer<T> : ObservableObject, IEnumerable<T>, INotifyCollectionChanged
     {
         private readonly ObservableCollection<T> _buffer;
@@ -50,9 +52,9 @@ namespace MvvmScarletToolkit.Observables
                 throw new ArgumentNullException(nameof(items));
             }
 
-            Size = items.Count();
+            _size = items.Count();
 
-            if (Size > capacity)
+            if (_size > capacity)
             {
                 throw new ArgumentException("Too many items to fit circular buffer", nameof(items));
             }
@@ -61,7 +63,7 @@ namespace MvvmScarletToolkit.Observables
             _buffer = new ObservableCollection<T>(items);
             _buffer.CollectionChanged += (o, e) => OnCollectionChanged(e);
 
-            Capacity = capacity;
+            _capacity = capacity;
         }
 
         public void Push(T item)

@@ -1,20 +1,26 @@
 using System;
+using System.Collections.Generic;
 
 namespace MvvmScarletToolkit.Observables
 {
     public abstract class Scenes : ViewModelListBase<Scene>
     {
         private readonly LocalizationsViewModel _localizationsViewModel;
+        private readonly List<IDisposable> _disposeables;
 
         protected Scenes(ICommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)
             : base(commandBuilder)
         {
             _localizationsViewModel = localizationsViewModel ?? throw new ArgumentNullException(nameof(LocalizationsViewModel));
+            _disposeables = new List<IDisposable>();
         }
 
         protected void Add(string key, object content)
         {
-            var viewmodel = new Scene(CommandBuilder, _localizationsViewModel.CreateViewModel(WeakEventManager, key))
+            var localization = _localizationsViewModel.CreateViewModel(WeakEventManager, key);
+            _disposeables.Add(localization);
+
+            var viewmodel = new Scene(localization)
             {
                 Content = content,
                 Sequence = Items.Count,
@@ -32,9 +38,11 @@ namespace MvvmScarletToolkit.Observables
         {
             if (disposing)
             {
-                for (var i = 0; i < Items.Count; i++)
+                _items.Clear();
+
+                for (var i = 0; i < _disposeables.Count; i++)
                 {
-                    Items[i]?.Dispose();
+                    _disposeables[i].Dispose();
                 }
             }
 

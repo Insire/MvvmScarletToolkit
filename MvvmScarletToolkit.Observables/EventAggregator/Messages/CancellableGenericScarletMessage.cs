@@ -6,6 +6,7 @@ namespace MvvmScarletToolkit
     /// Basic "cancellable" generic message
     /// </summary>
     /// <typeparam name="TContent">Content type to store</typeparam>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC001:The class has mutable properties and should implement INotifyPropertyChanged.", Justification = "Class is not meant to be bound.")]
     public class CancellableGenericScarletMessage<TContent> : ScarletMessageBase
     {
         /// <summary>

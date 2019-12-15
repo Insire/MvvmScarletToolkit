@@ -35,18 +35,23 @@ namespace MvvmScarletToolkit.Observables
             set { SetValue(ref _pageIndex, value); }
         }
 
-        private PagingViewModel<TViewModel> _paging;
         [Bindable(true, BindingDirection.OneWay)]
-        public PagingViewModel<TViewModel> Paging
-        {
-            get { return _paging; }
-            private set { SetValue(ref _paging, value); }
-        }
+        public PagingViewModel<TViewModel> Paging { get; }
 
         protected DomainViewModelListBase(ICommandBuilder commandBuilder, IEnumerable<int> pageSizes)
             : base(commandBuilder)
         {
             Paging = new PagingViewModel<TViewModel>(commandBuilder, this, new ReadOnlyObservableCollection<int>(new ObservableCollection<int>(pageSizes)));
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Paging.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

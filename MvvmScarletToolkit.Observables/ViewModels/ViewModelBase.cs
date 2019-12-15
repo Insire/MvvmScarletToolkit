@@ -28,7 +28,7 @@ namespace MvvmScarletToolkit.Observables
         protected ViewModelBase(ICommandBuilder commandBuilder, TModel model)
             : this(commandBuilder)
         {
-            Model = model;
+            _model = model;
         }
     }
 

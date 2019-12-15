@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace MvvmScarletToolkit.Commands
 {
     // TODO add validation, providing notifications on why can execute returned false
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC001:The class has mutable properties and should implement INotifyPropertyChanged.", Justification = "Class is not meant to be bound.")]
     public class CommandBuilderContext<TArgument, TResult> : AbstractBuilder<ConcurrentCommandBase>
     {
         private readonly Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>> _decorators;

@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit.Observables
 
         public ViewModelContainer(T value)
         {
-            Value = value;
+            _value = value;
         }
     }
 }

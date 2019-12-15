@@ -32,7 +32,6 @@ namespace MvvmScarletToolkit.Observables
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         private void Dispose(bool disposing)

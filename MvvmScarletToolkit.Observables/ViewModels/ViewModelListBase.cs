@@ -91,8 +91,8 @@ namespace MvvmScarletToolkit.Observables
             WeakEventManager = commandBuilder.WeakEventManager ?? throw new ArgumentNullException(nameof(ICommandBuilder.WeakEventManager));
 
             _items = new ObservableCollection<TViewModel>();
+            _selectedItems = new ObservableCollection<TViewModel>();
 
-            SelectedItems = new ObservableCollection<TViewModel>();
             Items = new ReadOnlyObservableCollection<TViewModel>(_items);
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
 
@@ -194,7 +194,7 @@ namespace MvvmScarletToolkit.Observables
             return Clear(CancellationToken.None);
         }
 
-        public async Task Clear(CancellationToken token)
+        public virtual async Task Clear(CancellationToken token)
         {
             using (BusyStack.GetToken())
             {

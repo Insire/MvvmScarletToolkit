@@ -32,7 +32,7 @@ namespace MvvmScarletToolkit.Observables
         protected BusinessViewModelBase(ICommandBuilder commandBuilder, TModel model)
             : base(commandBuilder)
         {
-            Model = model ?? throw new ArgumentNullException(nameof(model));
+            _model = model ?? throw new ArgumentNullException(nameof(model));
         }
     }
 

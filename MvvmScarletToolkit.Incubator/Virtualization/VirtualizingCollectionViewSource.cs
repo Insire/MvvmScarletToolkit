@@ -8,7 +8,7 @@ using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
-    public class VirtualizingCollectionViewSource : ListCollectionView, IVirtualizingCollectionViewSource
+    public sealed class VirtualizingCollectionViewSource : ListCollectionView, IVirtualizingCollectionViewSource
     {
         public static VirtualizingCollectionViewSource Create<TViewModel>(IBusinessViewModelListBase<TViewModel> viewModelList, IScarletDispatcher dispatcher, ICache cache)
             where TViewModel : class, IVirtualizationViewModel

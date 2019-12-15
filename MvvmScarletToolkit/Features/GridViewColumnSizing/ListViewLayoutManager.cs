@@ -27,9 +27,9 @@ namespace MvvmScarletToolkit
         private bool _loaded;
         private bool _resizing;
 
-        public ListView ListView { get; private set; }
+        private ListView ListView { get; set; }
 
-        public ScrollBarVisibility VerticalScrollBarVisibility { get; set; } = ScrollBarVisibility.Auto;
+        private ScrollBarVisibility VerticalScrollBarVisibility { get; set; } = ScrollBarVisibility.Auto;
 
         public ListViewLayoutManager(ListView listView)
         {

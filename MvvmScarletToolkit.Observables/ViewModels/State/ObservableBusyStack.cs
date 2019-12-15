@@ -103,8 +103,13 @@ namespace MvvmScarletToolkit.Observables
 
         public void Dispose()
         {
-            foreach (var item in _items.ToArray())
-                _items.TryTake(out _);
+            for (var i = 0; i < _items.Count; i++)
+            {
+                if (_items.TryTake(out var item))
+                {
+                    item.Dispose();
+                }
+            }
 
             _observers.Clear();
         }

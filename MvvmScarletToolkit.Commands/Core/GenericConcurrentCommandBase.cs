@@ -15,6 +15,8 @@ namespace MvvmScarletToolkit.Commands
 
         private NotifyTaskCompletion<TResult> _execution;
         [Bindable(true, BindingDirection.OneWay)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC005:Check if value is different before notifying.",
+            Justification = "Since Completion is a forwarded property of Execution, it is guaranteed to change, when the source property changed")]
         public NotifyTaskCompletion<TResult> Execution
         {
             get { return _execution; }

@@ -13,6 +13,8 @@ namespace MvvmScarletToolkit
 {
     // https://github.com/tom-englert/DataGridExtensions
     // http://dotnetpattern.com/wpf-datagrid-grouping
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created.", Justification = "Class is a container class and owns all instances")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP007:Don't dispose injected.", Justification = "Class is a container class and owns all instances")]
     public sealed class GroupingViewModel : BusinessViewModelListBase<GroupsViewModel>
     {
         private ConcurrentDictionary<string, GroupViewModel> _filterCollection;
@@ -49,8 +51,8 @@ namespace MvvmScarletToolkit
 
         public override async Task Remove(GroupsViewModel item, CancellationToken token)
         {
-            await base.Remove(item);
-
+            await base.Remove(item, token);
+            item.Dispose();
             if (!(item.SelectedItem is null))
             {
                 _filterCollection.TryAdd(item.SelectedItem.Name, item.SelectedItem);
@@ -87,6 +89,17 @@ namespace MvvmScarletToolkit
                 && _filterCollection != null
                 && _filterCollection.Count > 0
                 && _maxGroupings > Count;
+        }
+
+        public override async Task Clear(CancellationToken token)
+        {
+            for (var i = 0; i < _items.Count; i++)
+            {
+                var item = _items[i];
+                item.Dispose();
+            }
+
+            await base.Clear(token);
         }
     }
 }
