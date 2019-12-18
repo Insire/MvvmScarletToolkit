@@ -204,7 +204,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        public bool CanClear()
+        public virtual bool CanClear()
         {
             return HasItems && !IsBusy;
         }
