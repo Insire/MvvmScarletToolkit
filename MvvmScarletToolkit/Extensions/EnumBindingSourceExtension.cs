@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Markup;
 
 namespace MvvmScarletToolkit
@@ -32,6 +36,9 @@ namespace MvvmScarletToolkit
             }
         }
 
+        [ConstructorArgument("filterNonBrowseables")]
+        public bool FilterNonBrowseables { get; set; }
+
         public EnumBindingSourceExtension()
         {
         }
@@ -42,6 +49,13 @@ namespace MvvmScarletToolkit
             EnumType = enumType;
         }
 
+        public EnumBindingSourceExtension(Type enumType, bool filterNonBrowseables)
+            : this()
+        {
+            EnumType = enumType;
+            FilterNonBrowseables = filterNonBrowseables;
+        }
+
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             if (_enumType is null)
@@ -50,16 +64,68 @@ namespace MvvmScarletToolkit
             }
 
             var actualEnumType = Nullable.GetUnderlyingType(_enumType) ?? _enumType;
-            var enumValues = Enum.GetValues(actualEnumType);
 
-            if (actualEnumType == _enumType)
+            if (FilterNonBrowseables)
             {
-                return enumValues;
-            }
+                var filteredValues = FilterEnumWithoutAttributeOf<BrowsableAttribute>(actualEnumType)
+                    .Concat(FilterEnumWithoutAttributeOf<EditorBrowsableAttribute>(actualEnumType))
+                    .Distinct()
+                    .ToArray();
 
-            var tempArray = Array.CreateInstance(actualEnumType, enumValues.Length + 1);
-            enumValues.CopyTo(tempArray, 1);
-            return tempArray;
+                var tempArray = Array.CreateInstance(actualEnumType, filteredValues.Length + 1);
+                filteredValues.CopyTo(tempArray, 1);
+                return tempArray;
+            }
+            else
+            {
+                var enumValues = Enum.GetValues(actualEnumType);
+                if (actualEnumType == _enumType)
+                {
+                    return enumValues;
+                }
+
+                var tempArray = Array.CreateInstance(actualEnumType, enumValues.Length + 1);
+                enumValues.CopyTo(tempArray, 1);
+                return tempArray;
+            }
+        }
+
+        //public static IEnumerable<TEnum> FilterEnumWithAttributeOf<TEnum, TAttribute>()
+        //    where TEnum : struct
+        //    where TAttribute : class
+        //{
+        //    foreach (var field in typeof(TEnum).GetFields(BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static))
+        //    {
+        //        if (field.GetCustomAttributes(typeof(TAttribute), false).Length > 0)
+        //        {
+        //            yield return (TEnum)field.GetValue(null);
+        //        }
+        //    }
+        //}
+
+        //public static IEnumerable<TEnum> FilterEnumWithoutAttributeOf<TEnum, TAttribute>()
+        //    where TEnum : struct
+        //    where TAttribute : class
+        //{
+        //    foreach (var field in typeof(TEnum).GetFields(BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static))
+        //    {
+        //        if (field.GetCustomAttributes(typeof(TAttribute), false).Length == 0)
+        //        {
+        //            yield return (TEnum)field.GetValue(null);
+        //        }
+        //    }
+        //}
+
+        private static IEnumerable<object> FilterEnumWithoutAttributeOf<TAttribute>(Type type)
+            where TAttribute : class
+        {
+            foreach (var field in type.GetFields(BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static))
+            {
+                if (field.GetCustomAttributes(typeof(TAttribute), false).Length == 0)
+                {
+                    yield return field.GetValue(null);
+                }
+            }
         }
     }
 }
