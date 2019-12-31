@@ -1,19 +1,14 @@
-using MvvmScarletToolkit.ConfigurableWindow;
+using Jot;
 
 namespace DemoApp
 {
-    public partial class MainWindow : ConfigurableWindow
+    public partial class MainWindow
     {
-        private IConfigurableWindowSettings _settings;
-
-        public MainWindow()
+        public MainWindow(Tracker tracker)
         {
             InitializeComponent();
-        }
 
-        protected override IConfigurableWindowSettings CreateSettings()
-        {
-            return _settings ??= new MainWindowSettings(this);
+            tracker.Track(this);
         }
     }
 }

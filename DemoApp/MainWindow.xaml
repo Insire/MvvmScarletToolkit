@@ -1,18 +1,17 @@
-<window:ConfigurableWindow x:Class="DemoApp.MainWindow"
-                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                           xmlns:browser="clr-namespace:MvvmScarletToolkit.FileSystemBrowser;assembly=MvvmScarletToolkit"
-                           xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-                           xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-                           xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Incubator"
-                           xmlns:local="clr-namespace:DemoApp"
-                           xmlns:mvvm="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit"
-                           xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
-                           xmlns:system="clr-namespace:System;assembly=System.Runtime"
-                           xmlns:window="clr-namespace:MvvmScarletToolkit.ConfigurableWindow;assembly=MvvmScarletToolkit"
-                           Title="DemoApp"
-                           Width="1025"
-                           Height="350">
+<Window x:Class="DemoApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:browser="clr-namespace:MvvmScarletToolkit.FileSystemBrowser;assembly=MvvmScarletToolkit"
+        xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Incubator"
+        xmlns:local="clr-namespace:DemoApp"
+        xmlns:mvvm="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit"
+        xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        Title="DemoApp"
+        Width="1025"
+        Height="350">
 
     <!--  DataContext: NavigationViewModel  -->
 
@@ -966,4 +965,4 @@
             </ContentControl.Resources>
         </ContentControl>
     </Grid>
-</window:ConfigurableWindow>
+</Window>
