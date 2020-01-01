@@ -3,14 +3,18 @@ using MvvmScarletToolkit.Observables;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Data;
 
 namespace DemoApp
 {
     public class DataGridViewModel : BusinessViewModelListBase<DataGridRowViewModel>
     {
+        public GroupingViewModel Groups { get; }
+
         public DataGridViewModel(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
+            Groups = new GroupingViewModel(commandBuilder, () => CollectionViewSource.GetDefaultView(Items), typeof(DataGridRowViewModel));
         }
 
         protected override async Task RefreshInternal(CancellationToken token)

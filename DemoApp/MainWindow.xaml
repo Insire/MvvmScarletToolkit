@@ -259,28 +259,121 @@
 
                 <DataTemplate DataType="{x:Type local:DataGridViewModel}">
                     <Grid>
+                        <Grid.Resources>
+                            <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding Groups}" />
+                        </Grid.Resources>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Loaded">
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                                <i:InvokeCommandAction Command="{Binding Groups.LoadCommand}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Unloaded">
+                                <i:InvokeCommandAction Command="{Binding Groups.UnloadCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="30" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="4" />
                             <RowDefinition Height="*" />
-                            <RowDefinition Height="10" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="10" />
+                            <RowDefinition Height="4" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <Canvas AllowDrop="True" Background="LightGray" />
+                        <ContentControl>
+                            <ContentControl.Style>
+                                <Style TargetType="{x:Type ContentControl}">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <ItemsControl ItemsSource="{Binding Groups.Items}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type mvvm:GroupsViewModel}">
+                                                        <DockPanel MinWidth="150">
+                                                            <Button Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                                                    Command="{Binding Data.AddCommand, Source={StaticResource DataContextProxy}}"
+                                                                    Content="+"
+                                                                    DockPanel.Dock="Right"
+                                                                    ToolTip="Add" />
 
-                        <DataGrid Grid.Row="1"
+                                                            <Button Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                                                    Command="{Binding Data.RemoveCommand, Source={StaticResource DataContextProxy}}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Content="-"
+                                                                    DockPanel.Dock="Right"
+                                                                    ToolTip="Remove" />
+
+                                                            <ComboBox VerticalContentAlignment="Center"
+                                                                      ItemsSource="{Binding Items}"
+                                                                      SelectedItem="{Binding SelectedItem}">
+                                                                <ComboBox.ItemTemplate>
+                                                                    <DataTemplate DataType="{x:Type mvvm:GroupViewModel}">
+                                                                        <TextBlock Text="{Binding Name}" />
+                                                                    </DataTemplate>
+                                                                </ComboBox.ItemTemplate>
+                                                            </ComboBox>
+                                                        </DockPanel>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Groups.Count}" Value="0">
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <Button Padding="4"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Center"
+                                                            Command="{Binding Groups.AddCommand}"
+                                                            Content="+"
+                                                            ToolTip="Add" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl>
+
+                        <DataGrid Grid.Row="2"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
                                   ItemsSource="{Binding Items}"
                                   SelectedItem="{Binding SelectedItem}">
+                            <DataGrid.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                        <DockPanel>
+                                                            <DockPanel Height="30" DockPanel.Dock="Top">
+                                                                <TextBlock Margin="4"
+                                                                           VerticalAlignment="Center"
+                                                                           DockPanel.Dock="Right"
+                                                                           Text="{Binding ItemCount, StringFormat=Count: {0}}" />
+                                                                <TextBlock VerticalAlignment="Center"
+                                                                           FontSize="16"
+                                                                           FontWeight="DemiBold"
+                                                                           Text="{Binding Name}" />
+                                                            </DockPanel>
+                                                            <ItemsPresenter />
+                                                        </DockPanel>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </DataGrid.GroupStyle>
                             <DataGrid.Columns>
                                 <DataGridCheckBoxColumn Binding="{Binding IsSelected, Mode=TwoWay}" Header="IsSelected" />
                                 <DataGridTextColumn Width="*"
@@ -292,9 +385,9 @@
                             </DataGrid.Columns>
                         </DataGrid>
 
-                        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" />
+                        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" />
 
-                        <ContentControl Grid.Row="3" Content="{Binding SelectedItem}" />
+                        <ContentControl Grid.Row="4" Content="{Binding SelectedItem}" />
                     </Grid>
                 </DataTemplate>
 
@@ -829,7 +922,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type incubator:GroupingViewModel}">
+                <DataTemplate DataType="{x:Type mvvm:GroupingViewModel}">
                     <Grid>
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
@@ -849,7 +942,13 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <ContentControl>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <ContentControl Grid.Row="0" Grid.RowSpan="3">
                             <ContentControl.Style>
                                 <Style TargetType="{x:Type ContentControl}">
                                     <Setter Property="Content">
@@ -859,7 +958,7 @@
                                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                                      SelectedItem="{Binding SelectedItem}">
                                                 <ItemsControl.ItemTemplate>
-                                                    <DataTemplate DataType="{x:Type incubator:GroupsViewModel}">
+                                                    <DataTemplate DataType="{x:Type mvvm:GroupsViewModel}">
                                                         <DockPanel MinWidth="150">
                                                             <Button Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                                                                     Command="{Binding Data.AddCommand, Source={StaticResource DataContextProxy}}"
@@ -876,7 +975,7 @@
 
                                                             <ComboBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
                                                                 <ComboBox.ItemTemplate>
-                                                                    <DataTemplate DataType="{x:Type incubator:GroupViewModel}">
+                                                                    <DataTemplate DataType="{x:Type mvvm:GroupViewModel}">
                                                                         <TextBlock Text="{Binding Name}" />
                                                                     </DataTemplate>
                                                                 </ComboBox.ItemTemplate>
@@ -910,6 +1009,20 @@
                                 </Style>
                             </ContentControl.Style>
                         </ContentControl>
+
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="2"
+                                   Text="Group by:" />
+
+                        <ItemsControl Grid.Row="2"
+                                      Grid.Column="2"
+                                      ItemsSource="{Binding Items}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type mvvm:GroupsViewModel}">
+                                    <TextBlock Text="{Binding SelectedItem.GroupDescription.PropertyName}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </Grid>
                 </DataTemplate>
 

@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Observables;
 using System.Reflection;
+using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
@@ -12,10 +13,13 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _name, value); }
         }
 
+        public PropertyGroupDescription GroupDescription { get; }
+
         public GroupViewModel(ICommandBuilder commandBuilder, PropertyInfo propertyInfo)
             : base(commandBuilder, propertyInfo)
         {
             Name = Model.Name;
+            GroupDescription = new PropertyGroupDescription(propertyInfo.Name);
         }
     }
 }
