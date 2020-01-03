@@ -16,6 +16,16 @@ namespace MvvmScarletToolkit.Commands
             remove { _commandManager.RequerySuggested -= value; }
         }
 
+        public RelayCommand(ICommandBuilder commandBuilder, Action methodToExecute)
+            : this(commandBuilder?.CommandManager, methodToExecute)
+        {
+        }
+
+        public RelayCommand(ICommandBuilder commandBuilder, Action methodToExecute, Func<bool> canExecuteEvaluator)
+                        : this(commandBuilder?.CommandManager, methodToExecute, canExecuteEvaluator)
+        {
+        }
+
         public RelayCommand(IScarletCommandManager commandManager, Action methodToExecute)
         {
             _execute = methodToExecute ?? throw new ArgumentException($"{nameof(methodToExecute)} can't be empty.", nameof(methodToExecute));
@@ -42,8 +52,18 @@ namespace MvvmScarletToolkit.Commands
     public class RelayCommand<T> : ICommand
     {
         private readonly Action<T> _execute;
-        private readonly Predicate<T> _canExecute;
+        private readonly Func<T, bool> _canExecute;
         private readonly IScarletCommandManager _commandManager;
+
+        public RelayCommand(ICommandBuilder commandBuilder, Action<T> methodToExecute)
+            : this(commandBuilder?.CommandManager, methodToExecute)
+        {
+        }
+
+        public RelayCommand(ICommandBuilder commandBuilder, Action<T> methodToExecute, Func<T, bool> canExecuteEvaluator)
+            : this(commandBuilder?.CommandManager, methodToExecute, canExecuteEvaluator)
+        {
+        }
 
         public RelayCommand(IScarletCommandManager commandManager, Action<T> execute)
         {
@@ -51,7 +71,7 @@ namespace MvvmScarletToolkit.Commands
             _execute = execute ?? throw new ArgumentException($"{nameof(execute)} can't be empty.", nameof(execute));
         }
 
-        public RelayCommand(IScarletCommandManager commandManager, Action<T> execute, Predicate<T> canExecute)
+        public RelayCommand(IScarletCommandManager commandManager, Action<T> execute, Func<T, bool> canExecute)
                         : this(commandManager, execute)
         {
             _canExecute = canExecute ?? throw new ArgumentException($"{nameof(canExecute)} can't be empty.", nameof(canExecute));
@@ -66,7 +86,7 @@ namespace MvvmScarletToolkit.Commands
 
             if (parameter is null && typeof(T).IsValueType)
             {
-                return _canExecute(default);
+                return _canExecute.Invoke(default);
             }
 
             switch (parameter)
