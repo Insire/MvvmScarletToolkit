@@ -148,7 +148,7 @@ Task("UpdateAssemblyInfo")
         }
 });
 
-Task("Pack")
+Task("BuildAndPack")
     .Does(()=>
     {
         var version = string.Empty;
@@ -177,6 +177,7 @@ Task("Pack")
                     .AppendQuoted(path)
                     .Append("--force")
                     .Append($"-c {Configuration}")
+                    .Append($"-p:GeneratePackageOnBuild=false")
             );
 
             StartProcess("dotnet", settings);
@@ -222,7 +223,7 @@ Task("Default")
     .IsDependentOn("Debug")
     .IsDependentOn("CleanSolution")
     .IsDependentOn("UpdateAssemblyInfo")
-    .IsDependentOn("Pack")
+    .IsDependentOn("BuildAndPack")
     .IsDependentOn("PushLocally");
 
 RunTarget(Argument("target", "Default"));
