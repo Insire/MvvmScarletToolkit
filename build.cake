@@ -1,4 +1,4 @@
-#addin nuget:?package=Cake.Incubator&version=5.0.1
+#addin nuget:?package=Cake.Incubator&version=5.1.0
 using Cake.Core;
 
 ///////////////////////////////////////////////////////////////////////////////
