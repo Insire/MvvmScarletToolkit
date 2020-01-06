@@ -1,5 +1,4 @@
 using MvvmScarletToolkit;
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -13,9 +12,6 @@ namespace DemoApp
 {
     public sealed partial class SnakeView : ISnakeView
     {
-        private readonly IScarletDispatcher _dispatcher;
-        private readonly IScarletMessenger _messenger;
-        private readonly IScarletCommandManager _commandManager;
         private readonly ICommandBuilder _commandBuilder;
 
         private PropertyObserver<ISnakeManager> _propertyObserver;
@@ -164,22 +160,19 @@ namespace DemoApp
 
         public SnakeView()
         {
-            _commandManager = new ScarletCommandManager();
-            _dispatcher = ScarletDispatcher.Default;
-            _messenger = new ScarletMessenger(new ScarletMessageProxy());
-            _commandBuilder = new CommandBuilder(_dispatcher, _commandManager, _messenger, ScarletExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, _dispatcher));
+            _commandBuilder = ScarletCommandBuilder.Default;
 
             View = View.Start;
             ShowStartCommand = _commandBuilder.Create(ShowStart, CanShowStart).Build();
             ShowOptionsCommand = _commandBuilder.Create(ShowOptions, CanShowOptions).Build();
             ShowGameCommand = _commandBuilder.Create(ShowGame, CanShowGame).Build();
-            ExitCommand = new RelayCommand(_commandManager, Exit, CanExit);
+            ExitCommand = new RelayCommand(_commandBuilder.CommandManager, Exit, CanExit);
 
             DataContext = this;
 
             if (SnakeViewModel == null)
             {
-                SnakeViewModel = new SnakeViewModel(new SnakeLogViewModel(_messenger));
+                SnakeViewModel = new SnakeViewModel(new SnakeLogViewModel(_commandBuilder.Messenger));
             }
 
             InitializeComponent();
@@ -214,7 +207,7 @@ namespace DemoApp
                 await Manager.Reset().ConfigureAwait(false);
             }
 
-            Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _dispatcher, _messenger, _commandBuilder, _commandManager);
+            Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _commandBuilder.Dispatcher, _commandBuilder.Messenger, _commandBuilder, _commandBuilder.CommandManager);
             SetupObserver();
 
             Keyboard.Focus(this);
@@ -329,7 +322,7 @@ namespace DemoApp
                 return;
             }
 
-            _dispatcher.Invoke(() => FramesPerSecond = (int)state);
+            _commandBuilder.Dispatcher.Invoke(() => FramesPerSecond = (int)state);
         }
 
         private void SnakeView_Unloaded(object sender, RoutedEventArgs e)

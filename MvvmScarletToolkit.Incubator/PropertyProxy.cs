@@ -12,16 +12,7 @@ namespace MvvmScarletToolkit
         protected override void OnAttached()
         {
             base.OnAttached();
-
-            //EventHandler t = AssociatedObject.Closed; // inject this eventhandler somehow
-            //t += (s,e) => { /** do stuff here**/};
-
             AssociatedObject.Closed += AssociatedObject_Closed;
-        }
-
-        private void AssociatedObject_Closed(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         protected override void OnDetaching()
@@ -54,6 +45,11 @@ namespace MvvmScarletToolkit
             typeof(string),
             typeof(PopupPropertyProxy),
             new PropertyMetadata(default(string)));
+
+        private void AssociatedObject_Closed(object sender, EventArgs e)
+        {
+            SetCurrentValue(TargetProperty, Source);
+        }
 
         // source property from anywhere as dpprop with oneway binding
         // target property from some control as dpprop

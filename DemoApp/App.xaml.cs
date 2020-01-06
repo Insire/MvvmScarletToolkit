@@ -1,7 +1,6 @@
 using Jot;
 using Jot.Storage;
 using MvvmScarletToolkit;
-using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Windows;
@@ -27,8 +26,7 @@ namespace DemoApp
                 .PersistOn(nameof(Window.Closing))
                 .StopTrackingOn(nameof(Window.Closing));
 
-            var commandBuilder = new CommandBuilder(ScarletDispatcher.Default, ScarletCommandManager.Default, ScarletMessenger.Default, ScarletExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, ScarletDispatcher.Default));
-            var navigation = new NavigationViewModel(commandBuilder, new LocalizationsViewModel(new ScarletLocalizationProvider()));
+            var navigation = new NavigationViewModel(ScarletCommandBuilder.Default, new LocalizationsViewModel(new ScarletLocalizationProvider()));
 
             var window = new MainWindow(_tracker)
             {

@@ -1,13 +1,19 @@
 using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Observables;
 using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Commands
+namespace MvvmScarletToolkit
 {
-    public class CommandBuilder : ICommandBuilder
+    public class ScarletCommandBuilder : ICommandBuilder
     {
+        private static readonly Lazy<ScarletCommandBuilder> _default = new Lazy<ScarletCommandBuilder>(() => new ScarletCommandBuilder(ScarletDispatcher.Default, ScarletCommandManager.Default, ScarletMessenger.Default, ScarletExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, ScarletDispatcher.Default)));
+
+        public static ICommandBuilder Default { get; } = _default.Value;
+
         private readonly Func<Action<bool>, IBusyStack> _busyStackFactory;
 
         public IScarletDispatcher Dispatcher { get; }
@@ -16,7 +22,7 @@ namespace MvvmScarletToolkit.Commands
         public IExitService Exit { get; }
         public IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager { get; }
 
-        public CommandBuilder(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, IScarletMessenger messenger, IExitService exitService, IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, Func<Action<bool>, IBusyStack> busyStackFactory)
+        public ScarletCommandBuilder(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, IScarletMessenger messenger, IExitService exitService, IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, Func<Action<bool>, IBusyStack> busyStackFactory)
         {
             Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
