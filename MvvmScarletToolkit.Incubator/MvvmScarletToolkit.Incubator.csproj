@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
-        <TargetFrameworks>net461;netcoreapp3.0</TargetFrameworks>
+        <TargetFrameworks>net461;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
         <OutputType>Library</OutputType>
         <UseWPF>true</UseWPF>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -19,11 +19,15 @@
         </PackageReference>
     </ItemGroup>
 
-    <ItemGroup Condition="  '$(Framework)' == 'net461' ">
+    <ItemGroup Condition=" '$(Framework)' == 'net461' ">
         <Reference Include="System.Runtime.Caching" />
     </ItemGroup>
 
-    <ItemGroup Condition="  '$(Framework)' == 'netcoreapp3.0' ">
+    <ItemGroup Condition=" '$(Framework)' == 'netcoreapp3.0' ">
+        <PackageReference Include="System.Runtime.Caching" Version="4.7.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(Framework)' == 'netcoreapp3.1' ">
         <PackageReference Include="System.Runtime.Caching" Version="4.7.0" />
     </ItemGroup>
 

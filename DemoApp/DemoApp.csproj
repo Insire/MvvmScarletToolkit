@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+        <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
         <UseWPF>true</UseWPF>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <PublishTrimmed>true</PublishTrimmed>
