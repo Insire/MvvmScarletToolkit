@@ -262,6 +262,7 @@
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding Groups}" />
                         </Grid.Resources>
+
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Loaded">
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
@@ -275,6 +276,8 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="4" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
                             <RowDefinition Height="2*" />
                             <RowDefinition Height="4" />
                             <RowDefinition Height="*" />
@@ -282,7 +285,9 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <ContentControl>
+                        <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <ContentControl Grid.Row="2">
                             <ContentControl.Style>
                                 <Style TargetType="{x:Type ContentControl}">
                                     <Setter Property="Content">
@@ -342,7 +347,8 @@
                             </ContentControl.Style>
                         </ContentControl>
 
-                        <DataGrid Grid.Row="2"
+                        <DataGrid Grid.Row="4"
+                                  mvvm:Filter.By="{Binding Filter, Mode=OneWay}"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
                                   ItemsSource="{Binding Items}"
@@ -385,9 +391,9 @@
                             </DataGrid.Columns>
                         </DataGrid>
 
-                        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" />
+                        <GridSplitter Grid.Row="5" HorizontalAlignment="Stretch" />
 
-                        <ContentControl Grid.Row="4" Content="{Binding SelectedItem}" />
+                        <ContentControl Grid.Row="6" Content="{Binding SelectedItem}" />
                     </Grid>
                 </DataTemplate>
 

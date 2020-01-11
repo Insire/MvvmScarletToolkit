@@ -11,6 +11,20 @@ namespace DemoApp
     {
         public GroupingViewModel Groups { get; }
 
+        private Predicate<object> _filter;
+        public Predicate<object> Filter
+        {
+            get { return _filter; }
+            private set { SetValue(ref _filter, value); }
+        }
+
+        private string _filterText;
+        public string FilterText
+        {
+            get { return _filterText; }
+            set { SetValue(ref _filterText, value, OnChanged: () => OnFilterTextChanged(value)); }
+        }
+
         public DataGridViewModel(ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
@@ -25,9 +39,47 @@ namespace DemoApp
                 {
                     CreatedOn = DateTime.Now,
                     Name = Guid.NewGuid().ToString(),
-                    Color = $"#cccc{i.ToString().PadLeft(2, '0')}",
+                    Color = $"#cc{(i * 2).ToString("X2")}{(i * 3).ToString("X2")}",
                 });
             }
+        }
+
+        private void OnFilterTextChanged(string value)
+        {
+            Filter = string.IsNullOrEmpty(value) ? default(Predicate<object>) : IsMatch;
+        }
+
+        private bool IsMatch(object item)
+        {
+            if (item is DataGridRowViewModel viewmodel)
+            {
+                return IsMatch(viewmodel, FilterText);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private static bool IsMatch(DataGridRowViewModel viewModel, string filterText)
+        {
+            if (string.IsNullOrEmpty(filterText))
+            {
+                return true;
+            }
+
+            var name = viewModel.Name;
+            if (string.IsNullOrEmpty(name))
+            {
+                return false;
+            }
+
+            if (filterText.Length == 1)
+            {
+                return name.StartsWith(filterText, StringComparison.OrdinalIgnoreCase);
+            }
+
+            return name.IndexOf(filterText, 0, StringComparison.OrdinalIgnoreCase) >= 0;
         }
     }
 }
