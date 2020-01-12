@@ -1,8 +1,10 @@
-﻿using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Observables;
+using System.Threading.Tasks;
 
 namespace DemoApp
 {
-    public class Image : ObservableObject
+    public sealed class Image : ObservableObject
     {
         private string _displayName;
         public string DisplayName
@@ -30,6 +32,18 @@ namespace DemoApp
         {
             get { return _sequence; }
             set { SetValue(ref _sequence, value); }
+        }
+
+        public IAsyncCommand BusyCommand { get; }
+
+        public Image()
+        {
+            BusyCommand = AsyncCommand.Create(() => BeBusy());
+        }
+
+        private async Task BeBusy()
+        {
+            await Task.Delay(5000);
         }
     }
 }
