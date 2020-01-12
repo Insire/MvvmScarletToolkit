@@ -8,8 +8,10 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Commands
 {
-    // source: https://msdn.microsoft.com/en-us/magazine/dn630647.aspx?f=255&MSPPError=-2147217396
-    // Async Programming : Patterns for Asynchronous MVVM Applications: Commands by Stephen Cleary
+    /// <summary>
+    /// Task based ICommand implementation
+    /// </summary>
+    /// <typeparam name="TArgument">the argument that can be passed to <see cref="ICommand.Execute(object)"/> and <see cref="ICommand.CanExecute(object)"/></typeparam>
     public sealed class AsyncCommand<TArgument> : IAsyncCommand
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -41,20 +43,20 @@ namespace MvvmScarletToolkit.Commands
 
         private AsyncCommand(IScarletCommandManager commandManager)
         {
-            _commandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
+            _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
             _cancelCommand = new CancelCommand(commandManager);
         }
 
-        public AsyncCommand(IScarletCommandManager commandManager, Func<TArgument, CancellationToken, Task> execute)
+        public AsyncCommand(IScarletCommandManager commandManager, Func<TArgument, CancellationToken, Task> methodToExecute)
             : this(commandManager)
         {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _execute = methodToExecute ?? throw new ArgumentNullException($"{nameof(methodToExecute)} can't be empty.", nameof(methodToExecute));
         }
 
         public AsyncCommand(IScarletCommandManager commandManager, Func<TArgument, CancellationToken, Task> command, Func<TArgument, bool> canExecute)
             : this(commandManager, command)
         {
-            _canExecute = canExecute ?? throw new ArgumentNullException(nameof(canExecute));
+            _canExecute = canExecute ?? throw new ArgumentException($"{nameof(canExecute)} can't be empty.", nameof(canExecute));
         }
 
         public async void Execute(object parameter)

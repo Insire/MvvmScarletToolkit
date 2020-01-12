@@ -16,7 +16,7 @@ namespace MvvmScarletToolkit.Commands
 
         public CancelCommand(IScarletCommandManager commandManager)
         {
-            _commandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
+            _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
         }
 
         public void NotifyCommandStarting()

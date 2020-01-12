@@ -50,7 +50,7 @@ namespace MvvmScarletToolkit.Commands
 
         protected ConcurrentCommandBase(IScarletCommandManager commandManager)
         {
-            CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
+            CommandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
         }
 
         protected void RaiseCanExecuteChanged()
