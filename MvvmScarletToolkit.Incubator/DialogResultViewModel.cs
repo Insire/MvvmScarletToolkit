@@ -30,12 +30,12 @@ namespace MvvmScarletToolkit
                 .Build();
         }
 
-        public Task<TResult> Show()
+        public Task Show()
         {
             return Show(CancellationToken.None);
         }
 
-        public async Task<TResult> Show(CancellationToken token)
+        public async Task Show(CancellationToken token)
         {
             var tcs = new TaskCompletionSource<object>();
             using (var registration = token.Register(() => tcs.TrySetCanceled()))
@@ -61,8 +61,6 @@ namespace MvvmScarletToolkit
                     tcs.TrySetResult(null);
                 }
             }
-
-            return Model.Value;
         }
 
         private void OnOpenChanged()

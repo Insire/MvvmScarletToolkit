@@ -111,7 +111,7 @@ namespace MvvmScarletToolkit.Observables
                 .Build();
 
             ClearCommand = commandBuilder
-                .Create<CancellationToken>(Clear, CanClear)
+                .Create(() => Clear(), CanClear)
                 .WithSingleExecution(CommandManager)
                 .WithBusyNotification(BusyStack)
                 .WithAsyncCancellation()
