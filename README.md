@@ -5,13 +5,11 @@
 [![Build status](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_apis/build/status/MvvmScarletToolkit-CI)](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_build/latest?definitionId=1)
 [![CodeFactor](https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit/badge)](https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit)
 
-MvvmScarletToolkit provides classes to speedup the MVVM development process primarily for WPF applications
+MvvmScarletToolkit provides classes to speedup the MVVM development process for WPF applications using the viewmodel first approach.
 
-|||||||||
-|---|---|---|---|---|---|---|---|
-|MvvmScarletToolkit|![.NET core 3.0](https://img.shields.io/badge/.NET-core3-blue.svg)|![.NET Framework 4.8](https://img.shields.io/badge/.NET-4.8-brightgreen.svg)|![.NET Framework 4.7.2](https://img.shields.io/badge/.NET-4.7.2-brightgreen.svg)|![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg)|![.NET Framework 4.7](https://img.shields.io/badge/.NET-4.7-green.svg)|![.NET Framework 4.6.2](https://img.shields.io/badge/.NET-4.6.2-yellow.svg)|![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)|
-|MvvmScarletToolkit.Commands|![.NET core 3.0](https://img.shields.io/badge/.NET-core3-blue.svg)|![.NET Framework 4.8](https://img.shields.io/badge/.NET-4.8-brightgreen.svg)|![.NET Framework 4.7.2](https://img.shields.io/badge/.NET-4.7.2-brightgreen.svg)|![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg)|![.NET Framework 4.7](https://img.shields.io/badge/.NET-4.7-green.svg)|![.NET Framework 4.6.2](https://img.shields.io/badge/.NET-4.6.2-yellow.svg)|![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)|
-|MvvmScarletToolkit.Observables|![.NET core 3.0](https://img.shields.io/badge/.NET-core3-blue.svg)|![.NET Framework 4.8](https://img.shields.io/badge/.NET-4.8-brightgreen.svg)|![.NET Framework 4.7.2](https://img.shields.io/badge/.NET-4.7.2-brightgreen.svg)|![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg)|![.NET Framework 4.7](https://img.shields.io/badge/.NET-4.7-green.svg)|![.NET Framework 4.6.2](https://img.shields.io/badge/.NET-4.6.2-yellow.svg)|![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)|
+## Supported .Net Framework versions
+
+![.NET core 3.1](https://img.shields.io/badge/.NET-core31-blue.svg) ![.NET core 3.0](https://img.shields.io/badge/.NET-core3-blue.svg) ![.NET Framework 4.8](https://img.shields.io/badge/.NET-4.8-brightgreen.svg) ![.NET Framework 4.7.2](https://img.shields.io/badge/.NET-4.7.2-brightgreen.svg) ![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg) ![.NET Framework 4.7](https://img.shields.io/badge/.NET-4.7-green.svg) ![.NET Framework 4.6.2](https://img.shields.io/badge/.NET-4.6.2-yellow.svg) ![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)
 
 ## Features
 
@@ -73,6 +71,17 @@ The included DemoApp contains examples for:
 - watermark support for textboxes (custom watermark style included)
 - easy grouping for bound datagrids
 - clear button for textboxes
+
+## Build Requirements
+
+This library uses SDK-style project files, which means you are required to use [Visual Studio 2019](https://visualstudio.microsoft.com/de/vs/community/) or newer. Visual Studio will prompt you to install any missing components, once you open the [sln](.\MvvmScarletToolkit.sln) file.
+
+For anyone not wishing to install that, they atleast need:
+
+- .net 4.6.1 (preinstalled starting with Windows 10)
+- [Net Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+
+(This should be everything, but it's possible i missed something. So please tell me if that's the case.)
 
 ### TODO
 
