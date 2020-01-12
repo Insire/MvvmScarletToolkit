@@ -7,6 +7,9 @@ using System.Threading;
 
 namespace MvvmScarletToolkit.Observables
 {
+    /// <summary>
+    /// Viewmodel providing binding support for current language and support languages of a given <see cref="ILocalizationProvider"/>
+    /// </summary>
     public class LocalizationsViewModel : ObservableObject, ILocalizationService
     {
         protected readonly ILocalizationProvider LocalizationProvider;

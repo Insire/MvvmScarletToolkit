@@ -7,6 +7,10 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Observables
 {
+    /// <summary>
+    /// ViewModel that adds paging support to <see cref="DomainViewModelListBase{TViewModel}"/>
+    /// </summary>
+    /// <typeparam name="TViewModel"></typeparam>
     public sealed class PagingViewModel<TViewModel> : ViewModelBase
         where TViewModel : class, INotifyPropertyChanged
     {
