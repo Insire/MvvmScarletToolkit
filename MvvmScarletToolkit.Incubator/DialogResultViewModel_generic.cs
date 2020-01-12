@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
-    public abstract class DialogResultViewModel : ViewModelBase
+    public abstract class DialogResultViewModel<TResult> : ViewModelBase<ViewModelContainer<TResult>>
     {
         protected EventHandler DialogClosed;
 
@@ -19,8 +19,8 @@ namespace MvvmScarletToolkit
             protected set { SetValue(ref _isOpen, value, OnChanged: OnOpenChanged); }
         }
 
-        protected DialogResultViewModel(ICommandBuilder commandBuilder)
-            : base(commandBuilder)
+        protected DialogResultViewModel(ICommandBuilder commandBuilder, TResult model)
+            : base(commandBuilder, new ViewModelContainer<TResult>(model))
         {
             CloseCommand = commandBuilder
                 .Create(Close, CanClose)
@@ -48,6 +48,11 @@ namespace MvvmScarletToolkit
                 }
                 finally
                 {
+                    if (token.IsCancellationRequested && CanClose())
+                    {
+                        await Close().ConfigureAwait(false);
+                    }
+
                     DialogClosed -= OnClosed;
                 }
 
@@ -68,7 +73,7 @@ namespace MvvmScarletToolkit
             DialogClosed?.Invoke(this, EventArgs.Empty);
         }
 
-        private Task Close(CancellationToken token)
+        private Task Close()
         {
             return Dispatcher.Invoke(() => IsOpen = false);
         }
