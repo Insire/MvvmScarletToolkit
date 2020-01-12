@@ -13,10 +13,10 @@ namespace MvvmScarletToolkit.Commands
         public TaskStatus Status => Task.Status;
 
         [Bindable(true, BindingDirection.OneWay)]
-        public bool IsCompleted => Task.IsCompleted;
+        public bool IsRunning => !Task.IsCompleted;
 
         [Bindable(true, BindingDirection.OneWay)]
-        public bool IsNotCompleted => !Task.IsCompleted;
+        public bool IsCompleted => Task.IsCompleted;
 
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsCanceled => Task.IsCanceled;
@@ -46,31 +46,37 @@ namespace MvvmScarletToolkit.Commands
         {
             try
             {
-                await task.ConfigureAwait(false);
+                // dont configureawait(false) here since we want to raise OnPropertyChanged on the ui thread if possible
+                // but we are not going to enforce that
+
+                await task;
             }
             catch
             {
                 // no need to catch, since we capture the exception through the property task
+                // and we dont want to take down the whole application if the developer didnt add any exception handling
             }
+            finally
+            {
+                OnPropertyChanged(nameof(Status));
+                OnPropertyChanged(nameof(IsRunning));
+                OnPropertyChanged(nameof(IsCompleted));
 
-            OnPropertyChanged(nameof(Status));
-            OnPropertyChanged(nameof(IsCompleted));
-            OnPropertyChanged(nameof(IsNotCompleted));
-
-            if (task.IsCanceled)
-            {
-                OnPropertyChanged(nameof(IsCanceled));
-            }
-            else if (task.IsFaulted)
-            {
-                OnPropertyChanged(nameof(IsFaulted));
-                OnPropertyChanged(nameof(Exception));
-                OnPropertyChanged(nameof(InnerException));
-                OnPropertyChanged(nameof(ErrorMessage));
-            }
-            else
-            {
-                OnPropertyChanged(nameof(IsSuccessfullyCompleted));
+                if (task.IsCanceled)
+                {
+                    OnPropertyChanged(nameof(IsCanceled));
+                }
+                else if (task.IsFaulted)
+                {
+                    OnPropertyChanged(nameof(IsFaulted));
+                    OnPropertyChanged(nameof(Exception));
+                    OnPropertyChanged(nameof(InnerException));
+                    OnPropertyChanged(nameof(ErrorMessage));
+                }
+                else
+                {
+                    OnPropertyChanged(nameof(IsSuccessfullyCompleted));
+                }
             }
         }
 
