@@ -33,9 +33,9 @@ namespace MvvmScarletToolkit
             _busyStackFactory = busyStackFactory ?? throw new ArgumentNullException(nameof(busyStackFactory));
         }
 
-        public CommandBuilderContext<TArgument, TResult> Create<TArgument, TResult>(Func<TArgument, CancellationToken, Task<TResult>> execute, Func<TArgument, bool> canExecute)
+        public CommandBuilderContext<TArgument> Create<TArgument>(Func<TArgument, CancellationToken, Task> execute, Func<TArgument, bool> canExecute)
         {
-            return new CommandBuilderContext<TArgument, TResult>(Dispatcher, CommandManager, _busyStackFactory, execute, canExecute);
+            return new CommandBuilderContext<TArgument>(Dispatcher, CommandManager, _busyStackFactory, execute, canExecute);
         }
     }
 }

@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
-    public sealed class NotifyTaskCompletion<TResult> : INotifyPropertyChanged
+    public sealed class NotifyTaskCompletion : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public TResult Result => (Task.Status == TaskStatus.RanToCompletion) ? Task.Result : default;
 
         [Bindable(true, BindingDirection.OneWay)]
         public TaskStatus Status => Task.Status;
@@ -36,10 +33,10 @@ namespace MvvmScarletToolkit.Commands
         public AggregateException Exception => Task.Exception.Flatten();
         public Exception InnerException => Exception?.InnerException;
 
-        public Task<TResult> Task { get; }
+        public Task Task { get; }
         public Task TaskCompletion { get; }
 
-        public NotifyTaskCompletion(Task<TResult> task)
+        public NotifyTaskCompletion(Task task)
         {
             Task = task ?? throw new ArgumentNullException(nameof(task));
             TaskCompletion = WatchTaskAsync(task);
@@ -74,7 +71,6 @@ namespace MvvmScarletToolkit.Commands
             else
             {
                 OnPropertyChanged(nameof(IsSuccessfullyCompleted));
-                OnPropertyChanged(nameof(Result));
             }
         }
 
