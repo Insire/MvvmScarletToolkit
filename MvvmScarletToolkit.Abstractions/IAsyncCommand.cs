@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 
-namespace MvvmScarletToolkit.Commands
+namespace MvvmScarletToolkit
 {
     public interface IAsyncCommand : IConcurrentCommand, IDisposable
     {
-
     }
 }
