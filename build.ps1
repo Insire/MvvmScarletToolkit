@@ -98,7 +98,7 @@ function GetProxyEnabledWebClient
     return $wc
 }
 
-Write-Host "Preparing to run build script..."
+Write-Information "Preparing to run build script..."
 
 if(!$PSScriptRoot){
     $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
@@ -225,8 +225,6 @@ if (!(Test-Path $CAKE_EXE)) {
     Throw "Could not find Cake.exe at $CAKE_EXE"
 }
 
-
-
 # Build Cake arguments
 $cakeArguments = @("$Script");
 if ($Target) { $cakeArguments += "-target=$Target" }
@@ -237,6 +235,7 @@ if ($DryRun) { $cakeArguments += "-dryrun" }
 $cakeArguments += $ScriptArgs
 
 # Start Cake
-Write-Host "Running build script..."
+Write-Information "Running build script..."
+
 &$CAKE_EXE $cakeArguments
 exit $LASTEXITCODE
