@@ -4,24 +4,25 @@ using Microsoft.Xaml.Behaviors;
 
 namespace MvvmScarletToolkit
 {
-    public class ClearTextBoxAction : TriggerAction<Button>
+    public class ClearPasswordBoxAction : TriggerAction<Button>
     {
         /// <summary>Identifies the <see cref="Target"/> dependency property.</summary>
         public static readonly DependencyProperty TargetProperty = DependencyProperty.Register(
             nameof(Target),
-            typeof(TextBox),
-            typeof(ClearTextBoxAction),
-            new UIPropertyMetadata(default(TextBox)));
+            typeof(PasswordBox),
+            typeof(ClearPasswordBoxAction),
+            new UIPropertyMetadata(default(PasswordBox)));
 
-        public TextBox Target
+        public PasswordBox Target
         {
-            get { return (TextBox)GetValue(TargetProperty); }
+            get { return (PasswordBox)GetValue(TargetProperty); }
             set { SetValue(TargetProperty, value); }
         }
 
         protected override void Invoke(object parameter)
         {
             Target?.Clear();
+            Target?.SelectAll();
         }
     }
 }

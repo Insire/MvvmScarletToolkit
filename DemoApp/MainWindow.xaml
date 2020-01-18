@@ -496,6 +496,9 @@
                                             <DataTrigger Binding="{Binding Text, ElementName=FilterTextBox}" Value="">
                                                 <Setter Property="Visibility" Value="Hidden" />
                                             </DataTrigger>
+                                            <DataTrigger Binding="{Binding Text, ElementName=FilterTextBox}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Hidden" />
+                                            </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </Button.Style>
@@ -667,11 +670,40 @@
                         </Grid.RowDefinitions>
 
                         <GroupBox Grid.Row="0" Header="Password">
-                            <PasswordBox PasswordChar="*">
-                                <i:Interaction.Behaviors>
-                                    <mvvm:PasswordBindingBehavior ClearTextPassword="{Binding Password}" />
-                                </i:Interaction.Behaviors>
-                            </PasswordBox>
+                            <Grid>
+
+                                <PasswordBox x:Name="PasswordBox" PasswordChar="*">
+                                    <i:Interaction.Behaviors>
+                                        <mvvm:PasswordBindingBehavior ClearTextPassword="{Binding Password}" />
+                                    </i:Interaction.Behaviors>
+                                </PasswordBox>
+                                <Button Margin="0,0,4,0"
+                                        Padding="4,0"
+                                        HorizontalAlignment="Right"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Content="X"
+                                        ToolTip="Clear">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <mvvm:ClearPasswordBoxAction Target="{Binding ElementName=PasswordBox}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <Button.Style>
+                                        <Style TargetType="{x:Type Button}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Password}" Value="">
+                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Password}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Grid>
                         </GroupBox>
 
                         <GroupBox Grid.Row="2" Header="Clear text">
