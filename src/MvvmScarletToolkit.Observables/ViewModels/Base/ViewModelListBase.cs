@@ -30,7 +30,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly IExitService Exit;
         protected readonly IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private bool _isBusy;
         [Bindable(true, BindingDirection.OneWay)]
@@ -40,9 +40,9 @@ namespace MvvmScarletToolkit.Observables
             protected set { SetValue(ref _isBusy, value); }
         }
 
-        private TViewModel _selectedItem;
+        private TViewModel? _selectedItem;
         [Bindable(true, BindingDirection.TwoWay)]
-        public virtual TViewModel SelectedItem
+        public virtual TViewModel? SelectedItem
         {
             get { return _selectedItem; }
             set { SetValue(ref _selectedItem, value, OnChanged: OnSelectionChanged, OnChanging: OnSelectionChanging); }
@@ -156,8 +156,13 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        public Task Remove(TViewModel item)
+        public Task Remove(TViewModel? item)
         {
+            if (item is null)
+            {
+                return Task.CompletedTask;
+            }
+
             return Remove(item, CancellationToken.None);
         }
 
@@ -215,17 +220,17 @@ namespace MvvmScarletToolkit.Observables
             GC.SuppressFinalize(this);
         }
 
-        protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
+        protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string? propertyName = null)
         {
             return SetValue(ref field, value, null, null, propertyName);
         }
 
-        protected bool SetValue<T>(ref T field, T value, Action OnChanged, [CallerMemberName]string propertyName = null)
+        protected bool SetValue<T>(ref T field, T value, Action? OnChanged, [CallerMemberName]string? propertyName = null)
         {
             return SetValue(ref field, value, null, OnChanged, propertyName);
         }
 
-        protected virtual bool SetValue<T>(ref T field, T value, Action OnChanging, Action OnChanged, [CallerMemberName]string propertyName = null)
+        protected virtual bool SetValue<T>(ref T field, T value, Action? OnChanging, Action? OnChanged, [CallerMemberName]string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
@@ -242,7 +247,7 @@ namespace MvvmScarletToolkit.Observables
             return true;
         }
 
-        protected void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName]string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, _propertyChangedCache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
         }
@@ -256,7 +261,7 @@ namespace MvvmScarletToolkit.Observables
         {
             using (BusyStack.GetToken())
             {
-                await RemoveRange(items?.Cast<TViewModel>()).ConfigureAwait(false);
+                await RemoveRange(items?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()).ConfigureAwait(false);
             }
         }
 
@@ -268,11 +273,16 @@ namespace MvvmScarletToolkit.Observables
 
         protected bool CanRemoveRange(IList items)
         {
-            return CanRemoveRange(items?.Cast<TViewModel>());
+            return CanRemoveRange(items?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>());
         }
 
-        protected virtual bool CanRemove(TViewModel item)
+        protected virtual bool CanRemove(TViewModel? item)
         {
+            if (item is null)
+            {
+                return false;
+            }
+
             return CanClear()
                 && !(item is null)
                 && _items.Contains(item);

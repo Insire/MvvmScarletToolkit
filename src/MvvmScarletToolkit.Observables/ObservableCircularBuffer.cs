@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit.Observables
         private readonly ObservableCollection<T> _buffer;
         private int _start;
 
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         private int _capacity;
         public int Capacity

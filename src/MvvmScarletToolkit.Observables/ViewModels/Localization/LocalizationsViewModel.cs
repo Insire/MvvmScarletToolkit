@@ -14,8 +14,8 @@ namespace MvvmScarletToolkit.Observables
     {
         protected readonly ILocalizationProvider LocalizationProvider;
 
-        private CultureInfo _currentLanguage;
-        public CultureInfo CurrentLanguage
+        private CultureInfo? _currentLanguage;
+        public CultureInfo? CurrentLanguage
         {
             get { return _currentLanguage; }
             set { SetValue(ref _currentLanguage, value, () => Thread.CurrentThread.CurrentUICulture = value); }

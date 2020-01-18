@@ -13,7 +13,9 @@ namespace MvvmScarletToolkit.Observables
             _observerCollection = observerCollection ?? throw new ArgumentNullException(nameof(observerCollection));
             _observer = observer ?? throw new ArgumentNullException(nameof(observer));
 
-            _ = _observerCollection.AddOrUpdate(observer, _ => default, (_, __) => default);
+#pragma warning disable CS8603 // Possible null reference return.
+            _ = _observerCollection.AddOrUpdate(observer, addValueFactory: _ => default, updateValueFactory: (_, __) => default);
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public void Dispose()

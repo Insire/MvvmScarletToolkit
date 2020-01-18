@@ -10,9 +10,9 @@ namespace MvvmScarletToolkit.Observables
     public abstract class BusinessViewModelBase<TModel> : BusinessViewModelBase
         where TModel : class
     {
-        private TModel _model;
+        private TModel? _model;
         [Bindable(true, BindingDirection.OneWay)]
-        public TModel Model
+        public TModel? Model
         {
             get { return _model; }
             protected set { SetValue(ref _model, value); }

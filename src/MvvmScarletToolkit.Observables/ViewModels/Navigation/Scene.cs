@@ -5,8 +5,8 @@ namespace MvvmScarletToolkit.Observables
 {
     public class Scene : ObservableObject
     {
-        private object _content;
-        public object Content
+        private object? _content;
+        public object? Content
         {
             get { return _content; }
             set { SetValue(ref _content, value); }

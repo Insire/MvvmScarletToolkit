@@ -53,10 +53,10 @@ namespace MvvmScarletToolkit.Observables
         {
             if (_toUpper)
             {
-                return _service?.Translate(_key).ToUpperInvariant();
+                return _service?.Translate(_key)?.ToUpperInvariant() ?? _key;
             }
 
-            return _service?.Translate(_key);
+            return _service?.Translate(_key) ?? _key;
         }
     }
 }
