@@ -72,7 +72,7 @@ namespace MvvmScarletToolkit
                 _type
                     .GetProperties(BindingFlags.Instance | BindingFlags.Public)
                     .Where(p => p.CanRead)
-                    .Where(p => p.GetGetMethod(true).IsPublic)
+                    .Where(p => p.GetGetMethod(true)?.IsPublic == true)
                     .Select(p => new GroupViewModel(CommandBuilder, p))
                     .Select(p => new KeyValuePair<string, GroupViewModel>(p.Name, p))
                     .ForEach(p => _filterCollection.TryAdd(p.Key, p.Value));

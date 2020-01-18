@@ -31,7 +31,7 @@ namespace MvvmScarletToolkit
             obj.SetValue(WidthProperty, width);
         }
 
-        public static bool IsFixedColumn(GridViewColumn column)
+        public static bool IsFixedColumn(GridViewColumn? column)
         {
             if (column is null)
             {

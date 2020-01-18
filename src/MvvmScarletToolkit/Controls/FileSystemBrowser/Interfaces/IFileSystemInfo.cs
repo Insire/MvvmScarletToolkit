@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         /// <summary>
         /// the logical parent
         /// </summary>
-        IFileSystemDirectory Parent { get; }
+        IFileSystemDirectory? Parent { get; }
 
         string Name { get; }
         string FullName { get; }
@@ -55,7 +55,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         /// updates the filtering
         /// </summary>
         /// <param name="filter"></param>
-        Task OnFilterChanged(string filter, CancellationToken token);
+        Task OnFilterChanged(string? filter, CancellationToken token);
 
         Task Delete(CancellationToken token);
 

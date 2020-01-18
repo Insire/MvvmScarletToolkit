@@ -5,12 +5,13 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 {
     public sealed class RegistryFileExtensionMimeTypeResolver : IMimeTypeResolver
     {
-        public string Get(ScarletFile fileInfo)
+        public string? Get(ScarletFile fileInfo)
         {
             if (!fileInfo.Exists)
             {
                 return null;
             }
+
             var extension = Path.GetExtension(fileInfo.Name);
 
             using (var key = Registry.ClassesRoot.OpenSubKey(extension))

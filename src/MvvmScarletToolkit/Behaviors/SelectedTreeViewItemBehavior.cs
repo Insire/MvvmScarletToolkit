@@ -37,7 +37,7 @@ namespace MvvmScarletToolkit
             typeof(SelectedTreeViewItemBehavior),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedItemChanged));
 
-        private static MethodInfo _bringIndexIntoViewInfo;
+        private static MethodInfo? _bringIndexIntoViewInfo;
 
         private static void OnSelectedItemChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
@@ -55,13 +55,13 @@ namespace MvvmScarletToolkit
                 return;
             }
 
-            item = GetTreeViewItem(treeView, e.NewValue);
-            if (item is null)
+            var treeViewItem = GetTreeViewItem(treeView, e.NewValue);
+            if (treeViewItem is null)
             {
                 return;
             }
 
-            item.SetCurrentValue(TreeViewItem.IsSelectedProperty, true);
+            treeViewItem.SetCurrentValue(TreeViewItem.IsSelectedProperty, true);
         }
 
         protected override void OnAttached()
@@ -88,7 +88,7 @@ namespace MvvmScarletToolkit
             SetCurrentValue(SelectedItemProperty, e.NewValue);
         }
 
-        private static Action<int> GetBringIndexIntoView(Panel itemsHostPanel)
+        private static Action<int>? GetBringIndexIntoView(Panel itemsHostPanel)
         {
             if (!(itemsHostPanel is VirtualizingStackPanel virtualizingPanel))
             {
@@ -108,7 +108,7 @@ namespace MvvmScarletToolkit
             return index => _bringIndexIntoViewInfo.Invoke(virtualizingPanel, new object[] { index });
         }
 
-        private static MethodInfo GetBringIndexIntoViewInfo(VirtualizingStackPanel virtualizingPanel)
+        private static MethodInfo? GetBringIndexIntoViewInfo(VirtualizingStackPanel virtualizingPanel)
         {
             return virtualizingPanel.GetType().GetMethod(
                 "BringIndexIntoView",
@@ -130,7 +130,7 @@ namespace MvvmScarletToolkit
         /// <returns>
         /// The TreeViewItem that contains the specified item.
         /// </returns>
-        private static TreeViewItem GetTreeViewItem(ItemsControl container, object item)
+        private static TreeViewItem? GetTreeViewItem(ItemsControl container, object item)
         {
             if (container is null)
             {
@@ -154,12 +154,8 @@ namespace MvvmScarletToolkit
             // expanded we still need to do this step in order to
             // regenerate the visuals because they may have been virtualized away.
             container.ApplyTemplate();
-            var itemsPresenter = (ItemsPresenter)container.Template.FindName("ItemsHost", container);
-            if (itemsPresenter != null)
-            {
-                itemsPresenter.ApplyTemplate();
-            }
-            else
+            var itemsPresenter = container.Template.FindName("ItemsHost", container) as ItemsPresenter;
+            if (itemsPresenter is null)
             {
                 // The Tree template has not named the ItemsPresenter,
                 // so walk the descendents and find the child.
@@ -169,6 +165,10 @@ namespace MvvmScarletToolkit
                     container.UpdateLayout();
                     itemsPresenter = container.FindVisualChildBreadthFirst<ItemsPresenter>();
                 }
+            }
+            else
+            {
+                itemsPresenter.ApplyTemplate();
             }
 
             var itemsHostPanel = (Panel)VisualTreeHelper.GetChild(itemsPresenter, 0);

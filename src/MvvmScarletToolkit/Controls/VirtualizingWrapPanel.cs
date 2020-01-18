@@ -16,16 +16,17 @@ namespace MvvmScarletToolkit
     {
         private readonly Dictionary<UIElement, Rect> _realizedChildLayout = new Dictionary<UIElement, Rect>();
 
-        private UIElementCollection _children;
-        private ItemsControl _itemsControl;
-        private IItemContainerGenerator _generator;
+        private WrapPanelAbstraction? _abstractPanel;
+        private UIElementCollection? _children;
+        private ItemsControl? _itemsControl;
+        private IItemContainerGenerator? _generator;
+
+        private Size _pixelMeasuredViewport = new Size(0, 0);
         private Point _offset = new Point(0, 0);
         private Size _extent = new Size(0, 0);
         private Size _viewport = new Size(0, 0);
         private int firstIndex;
         private Size childSize;
-        private Size _pixelMeasuredViewport = new Size(0, 0);
-        private WrapPanelAbstraction _abstractPanel;
 
         private Size ChildSlotSize => new Size(ItemWidth, ItemHeight);
 
@@ -122,6 +123,16 @@ namespace MvvmScarletToolkit
 
         public void CleanUpItems(int minDesiredGenerated, int maxDesiredGenerated)
         {
+            if (_children is null)
+            {
+                return;
+            }
+
+            if (_generator is null)
+            {
+                return;
+            }
+
             for (var i = _children.Count - 1; i >= 0; i--)
             {
                 var childGeneratorPos = new GeneratorPosition(i, 0);
@@ -147,15 +158,19 @@ namespace MvvmScarletToolkit
                 _viewport.Height = pixelMeasuredViewportSize.Height;
             }
 
-            if (Orientation == Orientation.Horizontal)
+            if (!(_abstractPanel is null))
             {
-                _extent.Height = _abstractPanel.SectionCount + ViewportHeight - 1;
+                if (Orientation == Orientation.Horizontal)
+                {
+                    _extent.Height = _abstractPanel.SectionCount + ViewportHeight - 1;
+                }
+                else
+                {
+                    _extent.Width = _abstractPanel.SectionCount + ViewportWidth - 1;
+                }
             }
-            else
-            {
-                _extent.Width = _abstractPanel.SectionCount + ViewportWidth - 1;
-            }
-            ScrollOwner.InvalidateScrollInfo();
+
+            ScrollOwner?.InvalidateScrollInfo();
         }
 
         private void ResetScrollInfo()
@@ -166,6 +181,11 @@ namespace MvvmScarletToolkit
 
         private int GetNextSectionClosestIndex(int itemIndex)
         {
+            if (_abstractPanel is null)
+            {
+                return itemIndex;
+            }
+
             var abstractItem = _abstractPanel[itemIndex];
             if (abstractItem.Section < _abstractPanel.SectionCount - 1)
             {
@@ -183,6 +203,11 @@ namespace MvvmScarletToolkit
 
         private int GetLastSectionClosestIndex(int itemIndex)
         {
+            if (_abstractPanel is null)
+            {
+                return itemIndex;
+            }
+
             var abstractItem = _abstractPanel[itemIndex];
             if (abstractItem.Section > 0)
             {
@@ -200,6 +225,11 @@ namespace MvvmScarletToolkit
 
         private void NavigateDown()
         {
+            if (_generator is null)
+            {
+                return;
+            }
+
             var gen = _generator.GetItemContainerGeneratorForPanel(this);
             var selected = (UIElement)Keyboard.FocusedElement;
             var itemIndex = gen.IndexFromContainer(selected);
@@ -226,6 +256,11 @@ namespace MvvmScarletToolkit
             }
             else
             {
+                if (_abstractPanel is null)
+                {
+                    return;
+                }
+
                 if (itemIndex == _abstractPanel.ItemCount - 1)
                 {
                     return;
@@ -250,6 +285,11 @@ namespace MvvmScarletToolkit
 
         private void NavigateLeft()
         {
+            if (_generator is null)
+            {
+                return;
+            }
+
             var gen = _generator.GetItemContainerGeneratorForPanel(this);
 
             var selected = (UIElement)Keyboard.FocusedElement;
@@ -301,6 +341,11 @@ namespace MvvmScarletToolkit
 
         private void NavigateRight()
         {
+            if (_generator is null)
+            {
+                return;
+            }
+
             var gen = _generator.GetItemContainerGeneratorForPanel(this);
             var selected = (UIElement)Keyboard.FocusedElement;
             var itemIndex = gen.IndexFromContainer(selected);
@@ -327,6 +372,11 @@ namespace MvvmScarletToolkit
             }
             else
             {
+                if (_abstractPanel is null)
+                {
+                    return;
+                }
+
                 if (itemIndex == _abstractPanel.ItemCount - 1)
                 {
                     return;
@@ -351,6 +401,11 @@ namespace MvvmScarletToolkit
 
         private void NavigateUp()
         {
+            if (_generator is null)
+            {
+                return;
+            }
+
             var gen = _generator.GetItemContainerGeneratorForPanel(this);
             var selected = (UIElement)Keyboard.FocusedElement;
             var itemIndex = gen.IndexFromContainer(selected);
@@ -466,6 +521,11 @@ namespace MvvmScarletToolkit
             var itemCount = _itemsControl.Items.Count;
             var firstVisibleIndex = GetFirstVisibleIndex();
 
+            if (_generator is null)
+            {
+                return availableSize;
+            }
+
             var startPos = _generator.GeneratorPositionFromIndex(firstVisibleIndex);
 
             var childIndex = (startPos.Offset == 0) ? startPos.Index : startPos.Index + 1;
@@ -481,82 +541,89 @@ namespace MvvmScarletToolkit
                 var maxItemSize = 0d;
                 var currentSection = GetFirstVisibleSection();
 
+                if (_children is null)
+                {
+                    return availableSize;
+                }
+
                 while (current < itemCount)
                 {
                     // Get or create the child
-                    var child = _generator.GenerateNext(out var newlyRealized) as UIElement;
-                    if (newlyRealized)
+                    if (_generator.GenerateNext(out var newlyRealized) is UIElement child)
                     {
-                        // Figure out if we need to insert the child at the end or somewhere in the middle
-                        if (childIndex >= _children.Count)
+                        if (newlyRealized)
                         {
-                            AddInternalChild(child);
+                            // Figure out if we need to insert the child at the end or somewhere in the middle
+                            if (childIndex >= _children.Count)
+                            {
+                                AddInternalChild(child);
+                            }
+                            else
+                            {
+                                InsertInternalChild(childIndex, child);
+                            }
+                            _generator.PrepareItemContainer(child);
+                            child.Measure(ChildSlotSize);
                         }
                         else
                         {
-                            InsertInternalChild(childIndex, child);
+                            // The child has already been created, let's be sure it's in the right spot
+                            Debug.Assert(child == _children[childIndex], "Wrong child was generated");
                         }
-                        _generator.PrepareItemContainer(child);
-                        child.Measure(ChildSlotSize);
-                    }
-                    else
-                    {
-                        // The child has already been created, let's be sure it's in the right spot
-                        Debug.Assert(child == _children[childIndex], "Wrong child was generated");
-                    }
 
-                    childSize = child.DesiredSize;
-                    var childRect = new Rect(new Point(currentX, currentY), childSize);
-                    if (isHorizontal)
-                    {
-                        maxItemSize = Math.Max(maxItemSize, childRect.Height);
-                        if (childRect.Right > realizedFrameSize.Width) //wrap to a new line
+                        childSize = child.DesiredSize;
+                        var childRect = new Rect(new Point(currentX, currentY), childSize);
+                        if (isHorizontal)
                         {
-                            currentY += maxItemSize;
-                            currentX = 0;
-                            maxItemSize = childRect.Height;
-                            childRect.X = currentX;
-                            childRect.Y = currentY;
-                            currentSection++;
-                            visibleSections++;
+                            maxItemSize = Math.Max(maxItemSize, childRect.Height);
+                            if (childRect.Right > realizedFrameSize.Width) //wrap to a new line
+                            {
+                                currentY += maxItemSize;
+                                currentX = 0;
+                                maxItemSize = childRect.Height;
+                                childRect.X = currentX;
+                                childRect.Y = currentY;
+                                currentSection++;
+                                visibleSections++;
+                            }
+                            if (currentY > realizedFrameSize.Height)
+                            {
+                                stop = true;
+                            }
+
+                            currentX = childRect.Right;
                         }
-                        if (currentY > realizedFrameSize.Height)
+                        else
                         {
-                            stop = true;
-                        }
+                            maxItemSize = Math.Max(maxItemSize, childRect.Width);
+                            if (childRect.Bottom > realizedFrameSize.Height) //wrap to a new column
+                            {
+                                currentX += maxItemSize;
+                                currentY = 0;
+                                maxItemSize = childRect.Width;
+                                childRect.X = currentX;
+                                childRect.Y = currentY;
+                                currentSection++;
+                                visibleSections++;
+                            }
+                            if (currentX > realizedFrameSize.Width)
+                            {
+                                stop = true;
+                            }
 
-                        currentX = childRect.Right;
-                    }
-                    else
-                    {
-                        maxItemSize = Math.Max(maxItemSize, childRect.Width);
-                        if (childRect.Bottom > realizedFrameSize.Height) //wrap to a new column
+                            currentY = childRect.Bottom;
+                        }
+                        _realizedChildLayout.Add(child, childRect);
+                        _abstractPanel.SetItemSection(current, currentSection);
+
+                        if (stop)
                         {
-                            currentX += maxItemSize;
-                            currentY = 0;
-                            maxItemSize = childRect.Width;
-                            childRect.X = currentX;
-                            childRect.Y = currentY;
-                            currentSection++;
-                            visibleSections++;
-                        }
-                        if (currentX > realizedFrameSize.Width)
-                        {
-                            stop = true;
+                            break;
                         }
 
-                        currentY = childRect.Bottom;
+                        current++;
+                        childIndex++;
                     }
-                    _realizedChildLayout.Add(child, childRect);
-                    _abstractPanel.SetItemSection(current, currentSection);
-
-                    if (stop)
-                    {
-                        break;
-                    }
-
-                    current++;
-                    childIndex++;
                 }
             }
             CleanUpItems(firstVisibleIndex, current - 1);
@@ -570,10 +637,13 @@ namespace MvvmScarletToolkit
         {
             if (_children != null)
             {
-                foreach (UIElement child in _children)
+                foreach (var child in _children)
                 {
-                    var layoutInfo = _realizedChildLayout[child];
-                    child.Arrange(layoutInfo);
+                    if (child is UIElement element)
+                    {
+                        var layoutInfo = _realizedChildLayout[element];
+                        element.Arrange(layoutInfo);
+                    }
                 }
             }
             return finalSize;
@@ -640,6 +710,11 @@ namespace MvvmScarletToolkit
 
         public Rect MakeVisible(Visual visual, Rect rectangle)
         {
+            if (_generator is null)
+            {
+                return rectangle;
+            }
+
             var gen = _generator.GetItemContainerGeneratorForPanel(this);
             var element = (UIElement)visual;
             var itemIndex = gen.IndexFromContainer(element);
@@ -721,7 +796,7 @@ namespace MvvmScarletToolkit
             SetVerticalOffset(VerticalOffset - (_viewport.Height * 0.8));
         }
 
-        public ScrollViewer ScrollOwner { get; set; }
+        public ScrollViewer? ScrollOwner { get; set; }
 
         public void SetHorizontalOffset(double offset)
         {

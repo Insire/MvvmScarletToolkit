@@ -6,7 +6,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 {
     public sealed class UrlMonMimeTypeResolver : IMimeTypeResolver
     {
-        public string Get(ScarletFile fileInfo)
+        public string? Get(ScarletFile fileInfo)
         {
             if (!fileInfo.Exists)
             {
@@ -47,10 +47,10 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         [DllImport("urlmon.dll", CharSet = CharSet.Auto)]
         private static extern uint FindMimeFromData(
             uint pBC,
-            [MarshalAs(UnmanagedType.LPStr)] string pwzUrl,
+            [MarshalAs(UnmanagedType.LPStr)] string? pwzUrl,
             [MarshalAs(UnmanagedType.LPArray)] byte[] pBuffer,
             uint cbSize,
-            [MarshalAs(UnmanagedType.LPStr)] string pwzMimeProposed,
+            [MarshalAs(UnmanagedType.LPStr)] string? pwzMimeProposed,
             uint dwMimeFlags,
             out uint ppwzMimeOut,
             uint dwReserverd);

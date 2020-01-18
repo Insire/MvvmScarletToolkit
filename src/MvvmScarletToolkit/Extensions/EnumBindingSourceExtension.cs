@@ -11,10 +11,10 @@ namespace MvvmScarletToolkit
     [MarkupExtensionReturnType(typeof(Array))]
     public sealed class EnumBindingSourceExtension : MarkupExtension
     {
-        private Type _enumType;
+        private Type? _enumType;
 
         [ConstructorArgument("enumType")]
-        public Type EnumType
+        public Type? EnumType
         {
             get { return _enumType; }
             set
@@ -69,6 +69,7 @@ namespace MvvmScarletToolkit
             {
                 var filteredValues = FilterEnumWithoutAttributeOf<BrowsableAttribute>(actualEnumType)
                     .Concat(FilterEnumWithoutAttributeOf<EditorBrowsableAttribute>(actualEnumType))
+                    .Where(p => p != null)
                     .Distinct()
                     .ToArray();
 
@@ -116,14 +117,14 @@ namespace MvvmScarletToolkit
         //    }
         //}
 
-        private static IEnumerable<object> FilterEnumWithoutAttributeOf<TAttribute>(Type type)
+        private static IEnumerable<object?> FilterEnumWithoutAttributeOf<TAttribute>(Type type)
             where TAttribute : class
         {
             foreach (var field in type.GetFields(BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static))
             {
                 if (field.GetCustomAttributes(typeof(TAttribute), false).Length == 0)
                 {
-                    yield return field.GetValue(null);
+                    yield return field?.GetValue(null);
                 }
             }
         }

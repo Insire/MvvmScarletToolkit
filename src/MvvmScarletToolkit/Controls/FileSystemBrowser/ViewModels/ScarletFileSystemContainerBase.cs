@@ -13,17 +13,17 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     {
         private readonly ObservableCollection<IFileSystemInfo> _children;
 
-        private ICollectionView _noFilesCollectionView;
+        private ICollectionView? _noFilesCollectionView;
         [Bindable(true, BindingDirection.OneWay)]
-        public ICollectionView NoFilesCollectionView
+        public ICollectionView? NoFilesCollectionView
         {
             get { return _noFilesCollectionView; }
             protected set { SetValue(ref _noFilesCollectionView, value); }
         }
 
-        private ICollectionView _defaultCollectionView;
+        private ICollectionView? _defaultCollectionView;
         [Bindable(true, BindingDirection.OneWay)]
-        public ICollectionView DefaultCollectionView
+        public ICollectionView? DefaultCollectionView
         {
             get { return _defaultCollectionView; }
             protected set { SetValue(ref _defaultCollectionView, value); }
@@ -40,7 +40,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             get { return _children[index]; }
         }
 
-        protected ScarletFileSystemContainerBase(string name, string fullName, IFileSystemDirectory parent, ICommandBuilder commandBuilder)
+        protected ScarletFileSystemContainerBase(string name, string fullName, IFileSystemDirectory? parent, ICommandBuilder commandBuilder)
             : base(name, fullName, parent, commandBuilder)
         {
             using (BusyStack.GetToken())
@@ -52,24 +52,27 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             }
         }
 
-        public override async Task OnFilterChanged(string filter, CancellationToken token)
+        public override async Task OnFilterChanged(string? filter, CancellationToken token)
         {
             using (BusyStack.GetToken())
             {
-                Filter = filter;
+                Filter = filter ?? string.Empty;
                 await Children.ForEachAsync(async child =>
                 {
-                    await child.LoadMetaData(token).ConfigureAwait(false);
-                    child.Filter = filter;
-                }).ConfigureAwait(false);
+                    await child.LoadMetaData(token);
+                    child.Filter = filter ?? string.Empty;
+                });
 
-                await Dispatcher.Invoke(() =>
-                 {
-                     using (DefaultCollectionView.DeferRefresh())
-                     {
-                         DefaultCollectionView.Filter = SearchFilter;
-                     }
-                 }).ConfigureAwait(false);
+                if (DefaultCollectionView != null)
+                {
+                    await Dispatcher.Invoke(() =>
+                    {
+                        using (DefaultCollectionView.DeferRefresh())
+                        {
+                            DefaultCollectionView.Filter = SearchFilter;
+                        }
+                    });
+                }
             }
         }
 
@@ -87,26 +90,32 @@ namespace MvvmScarletToolkit.FileSystemBrowser
                     await Dispatcher.Invoke(() => DefaultCollectionView = CollectionViewSource.GetDefaultView(Children));
                 }
 
-                await Dispatcher.Invoke(() =>
+                if (NoFilesCollectionView != null)
                 {
-                    using (NoFilesCollectionView.DeferRefresh())
+                    await Dispatcher.Invoke(() =>
                     {
-                        NoFilesCollectionView.Filter = NoFilesFilter;
-                    }
-                });
+                        using (NoFilesCollectionView.DeferRefresh())
+                        {
+                            NoFilesCollectionView.Filter = NoFilesFilter;
+                        }
+                    });
+                }
 
-                await Dispatcher.Invoke(() =>
+                if (DefaultCollectionView != null)
                 {
-                    using (DefaultCollectionView.DeferRefresh())
+                    await Dispatcher.Invoke(() =>
                     {
-                        DefaultCollectionView.Filter = SearchFilter;
-                    }
-                });
+                        using (DefaultCollectionView.DeferRefresh())
+                        {
+                            DefaultCollectionView.Filter = SearchFilter;
+                        }
+                    });
+                }
 
-                await FileSystemExtensions.GetChildren(this, CommandBuilder).ForEachAsync(Add).ConfigureAwait(false);
+                await FileSystemExtensions.GetChildren(this, CommandBuilder).ForEachAsync(Add);
 
-                await Dispatcher.Invoke(() => HasContainers = Children.Any(p => p is ScarletFileSystemContainerBase)).ConfigureAwait(false);
-                await OnFilterChanged(string.Empty, token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => HasContainers = Children.Any(p => p is ScarletFileSystemContainerBase));
+                await OnFilterChanged(string.Empty, token);
             }
         }
 
@@ -119,8 +128,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => _children.Add(item)).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => _children.Add(item));
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count)));
             }
         }
 
@@ -133,7 +142,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             using (BusyStack.GetToken())
             {
-                await items.ForEachAsync(Add).ConfigureAwait(false);
+                await items.ForEachAsync(Add);
             }
         }
 
@@ -141,8 +150,8 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => _children.Remove(item)).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count))).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => _children.Remove(item));
+                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count)));
             }
         }
 
@@ -155,7 +164,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             using (BusyStack.GetToken())
             {
-                await items.ForEachAsync(Remove).ConfigureAwait(false);
+                await items.ForEachAsync(Remove);
             }
         }
     }

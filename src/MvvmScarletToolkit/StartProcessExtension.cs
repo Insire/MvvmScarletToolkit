@@ -7,12 +7,12 @@ using System.Windows.Markup;
 namespace MvvmScarletToolkit
 {
     [MarkupExtensionReturnType(typeof(ICommand))]
-    public class StartProcessExtension : MarkupExtension
+    public sealed class StartProcessExtension : MarkupExtension
     {
-        public ICommand Command { get; private set; }
+        public ICommand? Command { get; private set; }
 
         [ConstructorArgument("url")]
-        public string Url { get; set; }
+        public string? Url { get; set; }
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
@@ -26,6 +26,11 @@ namespace MvvmScarletToolkit
 
         private void StartProcess()
         {
+            if (Url is null || Url.Length == 0)
+            {
+                return;
+            }
+
             try
             {
                 using (Process.Start(Url))

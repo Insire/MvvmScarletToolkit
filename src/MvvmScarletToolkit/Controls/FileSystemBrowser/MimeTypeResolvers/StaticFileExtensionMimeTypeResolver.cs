@@ -5,7 +5,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 {
     public sealed class StaticFileExtensionMimeTypeResolver : IMimeTypeResolver
     {
-        public string Get(ScarletFile fileInfo)
+        public string? Get(ScarletFile fileInfo)
         {
             if (!fileInfo.Exists)
             {

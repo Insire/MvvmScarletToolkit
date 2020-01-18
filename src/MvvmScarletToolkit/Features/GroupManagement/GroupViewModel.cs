@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit
         public GroupViewModel(ICommandBuilder commandBuilder, PropertyInfo propertyInfo)
             : base(commandBuilder, propertyInfo)
         {
-            Name = Model.Name;
+            _name = Model?.Name ?? string.Empty;
             GroupDescription = new PropertyGroupDescription(propertyInfo.Name);
         }
     }

@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit
             set { SetValue(ChildSizeProperty, value); }
         }
 
-        public ScrollViewer ScrollOwner { get; set; }
+        public ScrollViewer? ScrollOwner { get; set; }
 
         public bool CanHorizontallyScroll { get; set; }
 
@@ -87,29 +87,31 @@ namespace MvvmScarletToolkit
                     bool newlyRealized;
 
                     // Get or create the child
-                    var child = generator.GenerateNext(out newlyRealized) as UIElement;
-                    if (newlyRealized)
+                    if (generator.GenerateNext(out newlyRealized) is UIElement child)
                     {
-                        // Figure out if we need to insert the child at the end or somewhere in the middle
-                        if (childIndex >= children.Count)
+                        if (newlyRealized)
                         {
-                            base.AddInternalChild(child);
+                            // Figure out if we need to insert the child at the end or somewhere in the middle
+                            if (childIndex >= children.Count)
+                            {
+                                base.AddInternalChild(child);
+                            }
+                            else
+                            {
+                                base.InsertInternalChild(childIndex, child);
+                            }
+
+                            generator.PrepareItemContainer(child);
                         }
                         else
                         {
-                            base.InsertInternalChild(childIndex, child);
+                            // The child has already been created, let's be sure it's in the right spot
+                            Debug.Assert(child == children[childIndex], "Wrong child was generated");
                         }
 
-                        generator.PrepareItemContainer(child);
+                        // Measurements will depend on layout algorithm
+                        child.Measure(GetChildSize());
                     }
-                    else
-                    {
-                        // The child has already been created, let's be sure it's in the right spot
-                        Debug.Assert(child == children[childIndex], "Wrong child was generated");
-                    }
-
-                    // Measurements will depend on layout algorithm
-                    child.Measure(GetChildSize());
                 }
             }
 

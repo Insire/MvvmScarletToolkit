@@ -9,9 +9,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
     [DebuggerDisplay("Drive: {Name} IsContainer: {IsContainer}")]
     public class ScarletDrive : ScarletFileSystemContainerBase, IFileSystemDrive
     {
-        private string _driveFormat;
+        private string? _driveFormat;
         [Bindable(true, BindingDirection.OneWay)]
-        public string DriveFormat
+        public string? DriveFormat
         {
             get { return _driveFormat; }
             private set { SetValue(ref _driveFormat, value); }

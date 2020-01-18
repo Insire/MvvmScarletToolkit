@@ -13,9 +13,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         {
         }
 
-        public override Task OnFilterChanged(string filter, CancellationToken token)
+        public override Task OnFilterChanged(string? filter, CancellationToken token)
         {
-            Filter = filter;
+            Filter = filter ?? string.Empty;
             return Task.CompletedTask;
         }
 
@@ -38,7 +38,7 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             using (BusyStack.GetToken())
             {
                 await Task.Run(() => File.Delete(FullName)).ConfigureAwait(false);
-                Parent.RefreshCommand.Execute(null);
+                Parent?.RefreshCommand?.Execute(null);
             }
         }
 

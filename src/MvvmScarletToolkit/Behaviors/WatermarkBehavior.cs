@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// the style originally set on the textbox
         /// </summary>
-        private Style _cachedStyle;
+        private Style? _cachedStyle;
 
         /// <summary>
         /// whether we want to reset the text inside the watermark property to string.empty
@@ -88,7 +88,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private void LostFocus(object sender, RoutedEventArgs e)
+        private void LostFocus(object? sender, RoutedEventArgs? e)
         {
             if (AssociatedObject.Text == string.Empty)
             {
@@ -115,7 +115,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private void SetStyle(bool setLocally, Style style)
+        private void SetStyle(bool setLocally, Style? style)
         {
             if (setLocally)
             {

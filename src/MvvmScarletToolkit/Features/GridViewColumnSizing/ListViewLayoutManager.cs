@@ -21,9 +21,9 @@ namespace MvvmScarletToolkit
 
         private const double ZeroWidthRange = 0.1;
 
-        private GridViewColumn _autoSizedColumn;
-        private ScrollViewer _scrollViewer;
-        private Cursor _resizeCursor;
+        private GridViewColumn? _autoSizedColumn;
+        private ScrollViewer? _scrollViewer;
+        private Cursor? _resizeCursor;
         private bool _loaded;
         private bool _resizing;
 
@@ -52,8 +52,13 @@ namespace MvvmScarletToolkit
             DoResizeColumns();
         }
 
-        private void RegisterEvents(DependencyObject start)
+        private void RegisterEvents(DependencyObject? start)
         {
+            if (start is null)
+            {
+                return;
+            }
+
             for (var i = 0; i < VisualTreeHelper.GetChildrenCount(start); i++)
             {
                 var childVisual = VisualTreeHelper.GetChild(start, i) as Visual;
@@ -62,18 +67,20 @@ namespace MvvmScarletToolkit
                     var gridViewColumn = FindParentColumn(childVisual);
                     if (gridViewColumn != null)
                     {
-                        var thumb = childVisual as Thumb;
-                        if (ProportionalColumn.IsProportionalColumn(gridViewColumn) || FixedColumn.IsFixedColumn(gridViewColumn) || IsFillColumn(gridViewColumn))
+                        if (childVisual is Thumb thumb)
                         {
-                            thumb.SetCurrentValue(UIElement.IsHitTestVisibleProperty, false);
-                        }
-                        else
-                        {
-                            thumb.PreviewMouseMove += new MouseEventHandler(ThumbPreviewMouseMove);
-                            thumb.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(ThumbPreviewMouseLeftButtonDown);
-                            DependencyPropertyDescriptor.FromProperty(
-                                GridViewColumn.WidthProperty,
-                                typeof(GridViewColumn)).AddValueChanged(gridViewColumn, GridColumnWidthChanged);
+                            if (ProportionalColumn.IsProportionalColumn(gridViewColumn) || FixedColumn.IsFixedColumn(gridViewColumn) || IsFillColumn(gridViewColumn))
+                            {
+                                thumb.SetCurrentValue(UIElement.IsHitTestVisibleProperty, false);
+                            }
+                            else
+                            {
+                                thumb.PreviewMouseMove += new MouseEventHandler(ThumbPreviewMouseMove);
+                                thumb.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(ThumbPreviewMouseLeftButtonDown);
+                                DependencyPropertyDescriptor.FromProperty(
+                                    GridViewColumn.WidthProperty,
+                                    typeof(GridViewColumn)).AddValueChanged(gridViewColumn, GridColumnWidthChanged);
+                            }
                         }
                     }
                 }
@@ -95,8 +102,13 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private void UnregisterEvents(DependencyObject start)
+        private void UnregisterEvents(DependencyObject? start)
         {
+            if (start is null)
+            {
+                return;
+            }
+
             for (var i = 0; i < VisualTreeHelper.GetChildrenCount(start); i++)
             {
                 var childVisual = VisualTreeHelper.GetChild(start, i) as Visual;
@@ -105,18 +117,20 @@ namespace MvvmScarletToolkit
                     var gridViewColumn = FindParentColumn(childVisual);
                     if (gridViewColumn != null)
                     {
-                        var thumb = childVisual as Thumb;
-                        if (ProportionalColumn.IsProportionalColumn(gridViewColumn) || FixedColumn.IsFixedColumn(gridViewColumn) || IsFillColumn(gridViewColumn))
+                        if (childVisual is Thumb thumb)
                         {
-                            thumb.SetCurrentValue(UIElement.IsHitTestVisibleProperty, true);
-                        }
-                        else
-                        {
-                            thumb.PreviewMouseMove -= new MouseEventHandler(ThumbPreviewMouseMove);
-                            thumb.PreviewMouseLeftButtonDown -= new MouseButtonEventHandler(ThumbPreviewMouseLeftButtonDown);
-                            DependencyPropertyDescriptor.FromProperty(
-                                GridViewColumn.WidthProperty,
-                                typeof(GridViewColumn)).RemoveValueChanged(gridViewColumn, GridColumnWidthChanged);
+                            if (ProportionalColumn.IsProportionalColumn(gridViewColumn) || FixedColumn.IsFixedColumn(gridViewColumn) || IsFillColumn(gridViewColumn))
+                            {
+                                thumb.SetCurrentValue(UIElement.IsHitTestVisibleProperty, true);
+                            }
+                            else
+                            {
+                                thumb.PreviewMouseMove -= new MouseEventHandler(ThumbPreviewMouseMove);
+                                thumb.PreviewMouseLeftButtonDown -= new MouseButtonEventHandler(ThumbPreviewMouseLeftButtonDown);
+                                DependencyPropertyDescriptor.FromProperty(
+                                    GridViewColumn.WidthProperty,
+                                    typeof(GridViewColumn)).RemoveValueChanged(gridViewColumn, GridColumnWidthChanged);
+                            }
                         }
                     }
                 }
@@ -134,7 +148,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private GridViewColumn FindParentColumn(DependencyObject element)
+        private GridViewColumn? FindParentColumn(DependencyObject element)
         {
             if (element is null)
             {
@@ -153,17 +167,29 @@ namespace MvvmScarletToolkit
             return null;
         }
 
-        private GridViewColumnHeader FindColumnHeader(DependencyObject start, GridViewColumn gridViewColumn)
+        private GridViewColumnHeader? FindColumnHeader(DependencyObject? start, GridViewColumn? gridViewColumn)
         {
+            if (start is null)
+            {
+                return null;
+            }
+
+            if (gridViewColumn is null)
+            {
+                return null;
+            }
+
             for (var i = 0; i < VisualTreeHelper.GetChildrenCount(start); i++)
             {
                 var childVisual = VisualTreeHelper.GetChild(start, i) as Visual;
                 if (childVisual is GridViewColumnHeader)
                 {
-                    var gridViewHeader = childVisual as GridViewColumnHeader;
-                    if (gridViewHeader.Column == gridViewColumn)
+                    if (childVisual is GridViewColumnHeader gridViewHeader)
                     {
-                        return gridViewHeader;
+                        if (gridViewHeader.Column == gridViewColumn)
+                        {
+                            return gridViewHeader;
+                        }
                     }
                 }
                 var childGridViewHeader = FindColumnHeader(childVisual, gridViewColumn);
@@ -177,12 +203,12 @@ namespace MvvmScarletToolkit
 
         private void InitColumns()
         {
-            if (ListView.View as GridView is null)
+            if (!(ListView.View is GridView gridView))
             {
                 return;
             }
 
-            foreach (var gridViewColumn in (ListView.View as GridView).Columns)
+            foreach (var gridViewColumn in gridView.Columns)
             {
                 if (!RangeColumn.IsRangeColumn(gridViewColumn))
                 {
@@ -273,7 +299,7 @@ namespace MvvmScarletToolkit
                 }
 
                 // search the first fill column
-                GridViewColumn fillColumn = null;
+                GridViewColumn? fillColumn = null;
                 for (var i = 0; i < view.Columns.Count; i++)
                 {
                     var gridViewColumn = view.Columns[i];
@@ -357,7 +383,7 @@ namespace MvvmScarletToolkit
             return gridViewColumn.Width - startWidth;
         }
 
-        private bool IsFillColumn(GridViewColumn gridViewColumn)
+        private bool IsFillColumn(GridViewColumn? gridViewColumn)
         {
             if (gridViewColumn is null)
             {
@@ -463,7 +489,11 @@ namespace MvvmScarletToolkit
 
         private void ThumbPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var thumb = sender as Thumb;
+            if (!(sender is Thumb thumb))
+            {
+                return;
+            }
+
             var gridViewColumn = FindParentColumn(thumb);
 
             // suppress column resizing for proportional, fixed and range fill columns
@@ -473,7 +503,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private void GridColumnWidthChanged(object sender, EventArgs e)
+        private void GridColumnWidthChanged(object? sender, EventArgs? e)
         {
             if (!_loaded)
             {
@@ -482,7 +512,7 @@ namespace MvvmScarletToolkit
             if (sender is GridViewColumn gridViewColumn)
             {
                 // suppress column resizing for proportional and fixed columns
-                if (ProportionalColumn.IsProportionalColumn(gridViewColumn) || FixedColumn.IsFixedColumn(sender as GridViewColumn))
+                if (ProportionalColumn.IsProportionalColumn(gridViewColumn) || FixedColumn.IsFixedColumn(gridViewColumn))
                 {
                     return;
                 }
@@ -498,7 +528,7 @@ namespace MvvmScarletToolkit
                     }
 
                     // ensure column bounds
-                    if (Math.Abs(SetRangeColumnToBounds(sender as GridViewColumn) - 0) > ZeroWidthRange)
+                    if (Math.Abs(SetRangeColumnToBounds(gridViewColumn) - 0) > ZeroWidthRange)
                     {
                         return;
                     }

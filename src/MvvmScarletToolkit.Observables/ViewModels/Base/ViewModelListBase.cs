@@ -118,8 +118,13 @@ namespace MvvmScarletToolkit.Observables
                 .Build();
         }
 
-        public Task Add(TViewModel item)
+        public Task Add(TViewModel? item)
         {
+            if (item is null)
+            {
+                return Task.CompletedTask;
+            }
+
             return Add(item, CancellationToken.None);
         }
 

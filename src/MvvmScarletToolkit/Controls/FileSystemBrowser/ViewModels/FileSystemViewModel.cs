@@ -17,17 +17,17 @@ namespace MvvmScarletToolkit.FileSystemBrowser
         [Bindable(true, BindingDirection.OneWay)]
         public ConcurrentCommandBase RefreshFilterCommand { get; }
 
-        private FileSystemOptionsViewModel _options;
+        private FileSystemOptionsViewModel? _options;
         [Bindable(true, BindingDirection.OneWay)]
-        public FileSystemOptionsViewModel Options
+        public FileSystemOptionsViewModel? Options
         {
             get { return _options; }
             private set { SetValue(ref _options, value); }
         }
 
-        private string _filter;
+        private string? _filter;
         [Bindable(true, BindingDirection.TwoWay)]
-        public string Filter
+        public string? Filter
         {
             get { return _filter; }
             set { SetValue(ref _filter, value); }
@@ -44,9 +44,14 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
         private async Task RefreshFilterInternal(CancellationToken token)
         {
+            if (SelectedItem is null)
+            {
+                return;
+            }
+
             using (BusyStack.GetToken())
             {
-                await SelectedItem.OnFilterChanged(Filter, token).ConfigureAwait(false);
+                await SelectedItem.OnFilterChanged(Filter, token);
             }
         }
 

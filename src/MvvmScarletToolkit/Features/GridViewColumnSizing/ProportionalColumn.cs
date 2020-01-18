@@ -31,7 +31,7 @@ namespace MvvmScarletToolkit
             obj.SetValue(WidthProperty, width);
         }
 
-        public static bool IsProportionalColumn(GridViewColumn column)
+        public static bool IsProportionalColumn(GridViewColumn? column)
         {
             if (column is null)
             {

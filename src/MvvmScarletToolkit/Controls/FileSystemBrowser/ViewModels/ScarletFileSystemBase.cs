@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.ComponentModel;
@@ -53,9 +52,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             protected set { SetValue(ref _toggleExpandCommand, value); }
         }
 
-        private IFileSystemDirectory _parent;
+        private IFileSystemDirectory? _parent;
         [Bindable(true, BindingDirection.OneWay)]
-        public IFileSystemDirectory Parent
+        public IFileSystemDirectory? Parent
         {
             get { return _parent; }
             protected set { SetValue(ref _parent, value); }
@@ -158,15 +157,28 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             protected set { SetValue(ref _lastWriteTimeUtc, value); }
         }
 
-        private ScarletFileSystemBase(ICommandBuilder commandBuilder)
+        protected ScarletFileSystemBase(string name, string fullName, IFileSystemDirectory? parent, ICommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            DeleteCommand = commandBuilder
+            _name = name ?? throw new ArgumentException($"{nameof(name)} can't be empty.", nameof(name));
+            _fullName = fullName ?? throw new ArgumentException($"{nameof(fullName)} can't be empty.", nameof(fullName));
+            _filter = string.Empty;
+
+            if (!(this is IFileSystemDrive) && parent is null)
+            {
+                throw new ArgumentException($"{nameof(parent)} can't be empty.", nameof(parent));
+            }
+            else
+            {
+                _parent = parent;
+            }
+
+            _deleteCommand = commandBuilder
                 .Create(Delete, CanDelete)
                 .WithSingleExecution(CommandManager)
                 .Build();
 
-            ToggleExpandCommand = commandBuilder
+            _toggleExpandCommand = commandBuilder
                 .Create(Toggle, CanToggle)
                 .WithSingleExecution(CommandManager)
                 .Build();
@@ -177,35 +189,9 @@ namespace MvvmScarletToolkit.FileSystemBrowser
             HasContainers = false;
         }
 
-        protected ScarletFileSystemBase(string name, string fullName, IFileSystemDirectory parent, ICommandBuilder commandBuilder)
-            : this(commandBuilder)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentException($"{nameof(name)} can't be empty.", nameof(name));
-            }
-
-            if (string.IsNullOrEmpty(fullName))
-            {
-                throw new ArgumentException($"{nameof(fullName)} can't be empty.", nameof(fullName));
-            }
-
-            if (!(this is IFileSystemDrive) && parent is null)
-            {
-                throw new ArgumentException($"{nameof(parent)} can't be empty.", nameof(parent));
-            }
-
-            using (BusyStack.GetToken())
-            {
-                Name = name;
-                FullName = fullName;
-                Parent = parent;
-            }
-        }
-
         public abstract Task LoadMetaData(CancellationToken token);
 
-        public abstract Task OnFilterChanged(string filter, CancellationToken token);
+        public abstract Task OnFilterChanged(string? filter, CancellationToken token);
 
         public abstract Task Delete(CancellationToken token);
 

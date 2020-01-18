@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (!(value is SolidColorBrush solidColorBrush))
-                return null;
+                return Binding.DoNothing;
 
             var color = solidColorBrush.Color;
 

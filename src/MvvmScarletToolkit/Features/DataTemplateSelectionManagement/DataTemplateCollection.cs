@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit
     /// </summary>
     public sealed class DataTemplateCollection : Collection<DataTemplate>
     {
-        public DataTemplate Find(Type type)
+        public DataTemplate? Find(Type type)
         {
             foreach (var candidate in Items)
             {

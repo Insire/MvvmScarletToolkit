@@ -9,10 +9,10 @@ namespace MvvmScarletToolkit
     /// </summary>
     public sealed class TypeDataTemplateSelector : DataTemplateSelector
     {
-        private DataTemplateCollection _templates;
+        private DataTemplateCollection? _templates;
         public DataTemplateCollection Templates => _templates ?? (_templates = new DataTemplateCollection());
 
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        public override DataTemplate? SelectTemplate(object item, DependencyObject container)
         {
             var type = item.GetType();
 

@@ -38,20 +38,13 @@ namespace MvvmScarletToolkit
 
             object LocalConvert(CharacterCasing casing)
             {
-                switch (casing)
+                return casing switch
                 {
-                    case CharacterCasing.Lower:
-                        return value.ToLower();
-
-                    case CharacterCasing.Normal:
-                        return value;
-
-                    case CharacterCasing.Upper:
-                        return value.ToUpper();
-
-                    default:
-                        return value;
-                }
+                    CharacterCasing.Lower => value.ToLower(),
+                    CharacterCasing.Normal => value,
+                    CharacterCasing.Upper => value.ToUpper(),
+                    _ => value,
+                };
             }
         }
     }

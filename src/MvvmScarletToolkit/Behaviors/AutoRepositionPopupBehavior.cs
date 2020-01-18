@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit
     {
         private const int WM_MOVING = 0x0216;
 
-        private IDisposable _disposableHandle;
+        private IDisposable? _disposableHandle;
 
         // should be moved to a helper class
         private static DependencyObject GetTopmostParent(DependencyObject element)
@@ -50,12 +50,12 @@ namespace MvvmScarletToolkit
             base.OnDetaching();
         }
 
-        private void AssociatedObject_LayoutUpdated(object sender, EventArgs e)
+        private void AssociatedObject_LayoutUpdated(object? sender, EventArgs? e)
         {
             ForceUpdatePopupPosition();
         }
 
-        private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+        private void AssociatedObject_Loaded(object? sender, RoutedEventArgs? e)
         {
             var root = GetTopmostParent(AssociatedObject.PlacementTarget);
             if (!(root is Window window))
