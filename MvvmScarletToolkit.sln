@@ -13,9 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		appveyor.yml = appveyor.yml
 		build.cake = build.cake
-		src\Directory.Build.targets = src\Directory.Build.targets
-		src\MvvmScarletToolkit.props = src\MvvmScarletToolkit.props
-		src\MvvmScarletToolkit.ruleset = src\MvvmScarletToolkit.ruleset
+		Directory.Build.targets = Directory.Build.targets
+		MvvmScarletToolkit.props = MvvmScarletToolkit.props
+		MvvmScarletToolkit.ruleset = MvvmScarletToolkit.ruleset
 		README.md = README.md
 		src\SharedAssemblyInfo.cs = src\SharedAssemblyInfo.cs
 	EndProjectSection
@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Abstract
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Implementations", "src\MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj", "{1B547A43-3DB6-48FD-AF9A-EC649B5C584F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Tests", "MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj", "{E3C07ACA-FD4A-427D-B73A-F67C65A892B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Tests", "src\MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj", "{E3C07ACA-FD4A-427D-B73A-F67C65A892B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

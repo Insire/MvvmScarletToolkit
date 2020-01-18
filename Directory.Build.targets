@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <CodeAnalysisRuleSet>..\MvvmScarletToolkit.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>..\..\MvvmScarletToolkit.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <!--    Workarounds to enable WPF builds in .NET Core style projects    -->
