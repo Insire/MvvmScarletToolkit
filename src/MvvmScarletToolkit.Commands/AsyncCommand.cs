@@ -14,10 +14,10 @@ namespace MvvmScarletToolkit.Commands
     /// <typeparam name="TArgument">the argument that can be passed to <see cref="ICommand.Execute(object)"/> and <see cref="ICommand.CanExecute(object)"/></typeparam>
     public sealed class AsyncCommand<TArgument> : IAsyncCommand
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        private readonly Func<TArgument, CancellationToken, Task> _execute;
-        private readonly Func<TArgument, bool> _canExecute;
+        private readonly Func<TArgument, CancellationToken, Task>? _execute;
+        private readonly Func<TArgument, bool>? _canExecute;
 
         private readonly IScarletCommandManager _commandManager;
         private readonly ICancelCommand _cancelCommand;
@@ -26,8 +26,8 @@ namespace MvvmScarletToolkit.Commands
 
         public ICommand CancelCommand => _cancelCommand;
 
-        private NotifyTaskCompletion _execution;
-        public NotifyTaskCompletion Execution
+        private NotifyTaskCompletion? _execution;
+        public NotifyTaskCompletion? Execution
         {
             get { return _execution; }
             private set
@@ -70,7 +70,7 @@ namespace MvvmScarletToolkit.Commands
             remove { _commandManager.RequerySuggested -= value; }
         }
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             var isRunning = Execution is null || Execution.IsCompleted;
 
@@ -81,7 +81,9 @@ namespace MvvmScarletToolkit.Commands
 
             if (parameter is null)
             {
+#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
                 return isRunning && _canExecute.Invoke(default);
+#pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
             }
 
             return isRunning
@@ -97,7 +99,7 @@ namespace MvvmScarletToolkit.Commands
                 ? arg
                 : default;
 
-            Execution = new NotifyTaskCompletion(_execute(argument, _cancelCommand.Token));
+            Execution = new NotifyTaskCompletion(_execute?.Invoke(argument, _cancelCommand.Token) ?? Task.CompletedTask);
             RaiseCanExecuteChanged();
 
             await Execution.TaskCompletion;
@@ -106,7 +108,7 @@ namespace MvvmScarletToolkit.Commands
             RaiseCanExecuteChanged();
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

@@ -1,16 +1,14 @@
-﻿using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Abstractions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
-    internal sealed class ConcurrentCancelCommand : ConcurrentCommandBase, ICancelCommand
+    internal sealed class ConcurrentCancelCommand : GenericConcurrentCommandBase, ICancelCommand
     {
-        private CancellationTokenSource _cts;
+        private CancellationTokenSource? _cts;
 
-        public CancellationToken Token => _cts.Token;
-
-        public override Task Completion { get; }
+        public CancellationToken Token => _cts?.Token ?? CancellationToken.None;
 
         public ConcurrentCancelCommand(IScarletCommandManager commandManager)
             : base(commandManager)
@@ -55,12 +53,16 @@ namespace MvvmScarletToolkit.Commands
 
         public override async Task ExecuteAsync(object parameter)
         {
-            await Task.Run(() =>
+            Execution = new NotifyTaskCompletion(Task.Run(() =>
             {
                 _cts?.Cancel();
                 _cts?.Dispose();
                 _cts = null;
-            });
+            }));
+
+            OnPropertyChanged(nameof(Completion));
+
+            await Completion;
 
             RaiseCanExecuteChanged();
             OnPropertyChanged(nameof(Token));

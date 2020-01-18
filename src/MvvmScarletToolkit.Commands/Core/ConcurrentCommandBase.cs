@@ -15,14 +15,14 @@ namespace MvvmScarletToolkit.Commands
     {
         protected readonly IScarletCommandManager CommandManager;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         [Bindable(true, BindingDirection.OneWay)]
         public abstract Task Completion { get; }
 
-        private ICommand _cancelCommand;
+        private ICommand? _cancelCommand;
         [Bindable(true, BindingDirection.OneWay)]
-        public ICommand CancelCommand
+        public ICommand? CancelCommand
         {
             get { return _cancelCommand; }
             protected set { SetValue(ref _cancelCommand, value); }
@@ -58,7 +58,7 @@ namespace MvvmScarletToolkit.Commands
             CommandManager.InvalidateRequerySuggested();
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
@@ -68,17 +68,17 @@ namespace MvvmScarletToolkit.Commands
             PropertyChanged?.Invoke(this, e);
         }
 
-        protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
+        protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string? propertyName = null)
         {
             return SetValue(ref field, value, null, null, propertyName);
         }
 
-        protected bool SetValue<T>(ref T field, T value, Action OnChanged, [CallerMemberName]string propertyName = null)
+        protected bool SetValue<T>(ref T field, T value, Action? OnChanged, [CallerMemberName]string? propertyName = null)
         {
             return SetValue(ref field, value, null, OnChanged, propertyName);
         }
 
-        protected virtual bool SetValue<T>(ref T field, T value, Action OnChanging, Action OnChanged, [CallerMemberName]string propertyName = null)
+        protected virtual bool SetValue<T>(ref T field, T value, Action? OnChanging, Action? OnChanged, [CallerMemberName]string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {

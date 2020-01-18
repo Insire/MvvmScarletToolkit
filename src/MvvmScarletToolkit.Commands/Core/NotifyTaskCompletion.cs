@@ -7,7 +7,7 @@ namespace MvvmScarletToolkit.Commands
 {
     public sealed class NotifyTaskCompletion : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         [Bindable(true, BindingDirection.OneWay)]
         public TaskStatus Status => Task.Status;
@@ -31,7 +31,7 @@ namespace MvvmScarletToolkit.Commands
         public string ErrorMessage => InnerException?.Message ?? string.Empty;
 
         public AggregateException Exception => Task.Exception.Flatten();
-        public Exception InnerException => Exception?.InnerException;
+        public Exception? InnerException => Exception?.InnerException;
 
         public Task Task { get; }
         public Task TaskCompletion { get; }
@@ -80,7 +80,7 @@ namespace MvvmScarletToolkit.Commands
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

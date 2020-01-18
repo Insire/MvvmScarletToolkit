@@ -11,8 +11,8 @@ namespace MvvmScarletToolkit.Commands
     public class CommandBuilderContext<TArgument> : AbstractBuilder<ConcurrentCommandBase>
     {
         private readonly Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>> _decorators;
-        private readonly Func<TArgument, CancellationToken, Task> _execute;
-        private readonly Func<TArgument, bool> _canExcute;
+        private readonly Func<TArgument, CancellationToken, Task>? _execute;
+        private readonly Func<TArgument, bool>? _canExcute;
         private readonly Func<Action<bool>, IBusyStack> _busyStackFactory;
 
         public IScarletDispatcher Dispatcher { get; }
@@ -27,9 +27,9 @@ namespace MvvmScarletToolkit.Commands
         /// <summary>
         /// can be configured externally
         /// </summary>
-        public IBusyStack BusyStack { get; set; }
+        public IBusyStack? BusyStack { get; set; }
 
-        private CommandBuilderContext(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, Func<Action<bool>, IBusyStack> busyStackFactory)
+        public CommandBuilderContext(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, Func<Action<bool>, IBusyStack> busyStackFactory, Func<TArgument, CancellationToken, Task> execute, Func<TArgument, bool> canExecute)
         {
             Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
@@ -38,11 +38,7 @@ namespace MvvmScarletToolkit.Commands
 
             _decorators = new Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>>();
             _busyStackFactory = busyStackFactory ?? throw new ArgumentNullException(nameof(busyStackFactory));
-        }
 
-        public CommandBuilderContext(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, Func<Action<bool>, IBusyStack> busyStackFactory, Func<TArgument, CancellationToken, Task> execute, Func<TArgument, bool> canExecute)
-            : this(dispatcher, commandManager, busyStackFactory)
-        {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExcute = canExecute ?? throw new ArgumentNullException(nameof(canExecute));
         }

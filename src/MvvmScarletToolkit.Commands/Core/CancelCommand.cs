@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Commands
     {
         private readonly IScarletCommandManager _commandManager;
 
-        private CancellationTokenSource _cts;
+        private CancellationTokenSource? _cts;
         private bool _commandExecuting;
 
         public CancellationToken Token => _cts?.Token ?? CancellationToken.None;
