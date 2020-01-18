@@ -142,7 +142,7 @@ namespace MvvmScarletToolkit
 
                 _subscriptions.Add(new SubscriptionItem(proxy, subscription));
 
-                return new SubscriptionToken(this);
+                return token;
             }
         }
 
@@ -225,9 +225,15 @@ namespace MvvmScarletToolkit
                 throw new ArgumentNullException(nameof(token));
             }
 
-            return from sub in subscriptions
-                   where ReferenceEquals(sub.Subscription.Token, token)
-                   select sub;
+            foreach (var sub in subscriptions)
+            {
+                if (sub.Subscription.Token.Equals(token))
+                {
+                    yield return sub;
+                }
+            }
+
+            yield break;
         }
     }
 }
