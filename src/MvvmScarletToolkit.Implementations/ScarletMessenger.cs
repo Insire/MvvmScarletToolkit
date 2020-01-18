@@ -19,15 +19,11 @@ namespace MvvmScarletToolkit
 
         private bool _disposed;
 
-        private ScarletMessenger()
+        public ScarletMessenger(IScarletMessageProxy messageProxy)
         {
             _subscriptions = new List<SubscriptionItem>();
             _subscriptionsPadlock = new object();
-        }
 
-        public ScarletMessenger(IScarletMessageProxy messageProxy)
-            : this()
-        {
             _messageProxy = messageProxy ?? throw new ArgumentNullException(nameof(messageProxy));
         }
 

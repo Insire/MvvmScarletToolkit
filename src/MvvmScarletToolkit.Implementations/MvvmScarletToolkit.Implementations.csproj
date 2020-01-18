@@ -3,6 +3,8 @@
         <TargetFrameworks>net461;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
         <OutputType>Library</OutputType>
         <UseWPF>true</UseWPF>
+        <LangVersion>8.0</LangVersion>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">

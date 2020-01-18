@@ -26,14 +26,14 @@ namespace MvvmScarletToolkit.Implementations
             return _messageFilter.Invoke(scarletMessage);
         }
 
-        public void Deliver(IScarletMessage message)
+        public void Deliver(IScarletMessage scarletMessage)
         {
-            if (!(message is TMessage))
+            if (!(scarletMessage is TMessage message))
             {
                 throw new ArgumentException("Message is not the correct type");
             }
 
-            _deliveryAction.Invoke(message as TMessage);
+            _deliveryAction.Invoke(message);
         }
 
         public StrongScarletMessageSubscription(SubscriptionToken subscriptionToken, Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter)

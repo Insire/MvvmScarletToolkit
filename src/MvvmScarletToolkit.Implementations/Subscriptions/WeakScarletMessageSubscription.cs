@@ -11,14 +11,14 @@ namespace MvvmScarletToolkit.Implementations
 
         public SubscriptionToken Token { get; }
 
-        public bool ShouldAttemptDelivery(IScarletMessage message)
+        public bool ShouldAttemptDelivery(IScarletMessage scarletMessage)
         {
-            if (message is null)
+            if (scarletMessage is null)
             {
                 return false;
             }
 
-            if (!(message is TMessage))
+            if (!(scarletMessage is TMessage message))
             {
                 return false;
             }
@@ -33,12 +33,17 @@ namespace MvvmScarletToolkit.Implementations
                 return false;
             }
 
-            return ((Func<TMessage, bool>)_messageFilter.Target).Invoke(message as TMessage);
+            if (!(_messageFilter.Target is Func<TMessage, bool> filter))
+            {
+                return false;
+            }
+
+            return filter.Invoke(message);
         }
 
-        public void Deliver(IScarletMessage message)
+        public void Deliver(IScarletMessage scarletMessage)
         {
-            if (!(message is TMessage))
+            if (!(scarletMessage is TMessage message))
             {
                 throw new ArgumentException("Message is not the correct type");
             }
@@ -48,7 +53,12 @@ namespace MvvmScarletToolkit.Implementations
                 return;
             }
 
-            ((Action<TMessage>)_deliveryAction.Target).Invoke(message as TMessage);
+            if (!(_deliveryAction.Target is Action<TMessage> filter))
+            {
+                return;
+            }
+
+            filter.Invoke(message);
         }
 
         public WeakScarletMessageSubscription(SubscriptionToken subscriptionToken, Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter)

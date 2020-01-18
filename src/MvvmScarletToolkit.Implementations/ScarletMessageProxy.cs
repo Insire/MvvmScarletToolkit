@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit
 
             Debug.WriteLine("Deliver --> " + GetTypeName(message.GetType()) + " via " + GetTypeName(subscription.GetType()));
 
-            string GetTypeName(Type type)
+            static string GetTypeName(Type type)
             {
                 var result = type.Name;
 
