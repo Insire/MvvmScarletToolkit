@@ -3,11 +3,11 @@ using System;
 
 namespace MvvmScarletToolkit.Implementations
 {
-    internal class WeakScarletMessageSubscription<TMessage> : IScarletMessageSubscription
+    internal sealed class WeakScarletMessageSubscription<TMessage> : IScarletMessageSubscription
         where TMessage : class, IScarletMessage
     {
-        protected WeakReference DeliveryAction { get; set; }
-        protected WeakReference MessageFilter { get; set; }
+        private readonly WeakReference _deliveryAction;
+        private readonly WeakReference _messageFilter;
 
         public SubscriptionToken Token { get; }
 
@@ -23,17 +23,17 @@ namespace MvvmScarletToolkit.Implementations
                 return false;
             }
 
-            if (!DeliveryAction.IsAlive)
+            if (!_deliveryAction.IsAlive)
             {
                 return false;
             }
 
-            if (!MessageFilter.IsAlive)
+            if (!_messageFilter.IsAlive)
             {
                 return false;
             }
 
-            return ((Func<TMessage, bool>)MessageFilter.Target).Invoke(message as TMessage);
+            return ((Func<TMessage, bool>)_messageFilter.Target).Invoke(message as TMessage);
         }
 
         public void Deliver(IScarletMessage message)
@@ -43,10 +43,12 @@ namespace MvvmScarletToolkit.Implementations
                 throw new ArgumentException("Message is not the correct type");
             }
 
-            if (!DeliveryAction.IsAlive)
+            if (!_deliveryAction.IsAlive)
             {
                 return;
-            } ((Action<TMessage>)DeliveryAction.Target).Invoke(message as TMessage);
+            }
+
+            ((Action<TMessage>)_deliveryAction.Target).Invoke(message as TMessage);
         }
 
         public WeakScarletMessageSubscription(SubscriptionToken subscriptionToken, Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter)
@@ -61,9 +63,10 @@ namespace MvvmScarletToolkit.Implementations
                 throw new ArgumentNullException(nameof(messageFilter));
             }
 
+            _deliveryAction = new WeakReference(deliveryAction);
+            _messageFilter = new WeakReference(messageFilter);
+
             Token = subscriptionToken ?? throw new ArgumentNullException(nameof(subscriptionToken));
-            DeliveryAction = new WeakReference(deliveryAction);
-            MessageFilter = new WeakReference(messageFilter);
         }
     }
 }

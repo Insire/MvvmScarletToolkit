@@ -3,19 +3,27 @@ using System;
 
 namespace MvvmScarletToolkit.Implementations
 {
-    internal class StrongScarletMessageSubscription<TMessage> : IScarletMessageSubscription
+    internal sealed class StrongScarletMessageSubscription<TMessage> : IScarletMessageSubscription
         where TMessage : class, IScarletMessage
     {
-        protected Action<TMessage> DeliveryAction { get; set; }
-        protected Func<TMessage, bool> MessageFilter { get; set; }
+        private readonly Action<TMessage> _deliveryAction;
+        private readonly Func<TMessage, bool> _messageFilter;
 
         public SubscriptionToken Token { get; }
 
         public bool ShouldAttemptDelivery(IScarletMessage message)
         {
-            return (message != null)
-                && (message is TMessage)
-                && MessageFilter.Invoke(message as TMessage);
+            if (message is null)
+            {
+                return false;
+            }
+
+            if (!(message is TMessage scarletMessage))
+            {
+                return false;
+            }
+
+            return _messageFilter.Invoke(scarletMessage);
         }
 
         public void Deliver(IScarletMessage message)
@@ -25,14 +33,15 @@ namespace MvvmScarletToolkit.Implementations
                 throw new ArgumentException("Message is not the correct type");
             }
 
-            DeliveryAction.Invoke(message as TMessage);
+            _deliveryAction.Invoke(message as TMessage);
         }
 
         public StrongScarletMessageSubscription(SubscriptionToken subscriptionToken, Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter)
         {
+            _deliveryAction = deliveryAction ?? throw new ArgumentNullException(nameof(deliveryAction));
+            _messageFilter = messageFilter ?? throw new ArgumentNullException(nameof(messageFilter));
+
             Token = subscriptionToken ?? throw new ArgumentNullException(nameof(subscriptionToken));
-            DeliveryAction = deliveryAction ?? throw new ArgumentNullException(nameof(deliveryAction));
-            MessageFilter = messageFilter ?? throw new ArgumentNullException(nameof(messageFilter));
         }
     }
 }
