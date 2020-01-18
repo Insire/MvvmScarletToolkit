@@ -1,0 +1,577 @@
+<UserControl x:Class="MvvmScarletToolkit.Samples.SnakeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:MvvmScarletToolkit.Samples"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             Focusable="True"
+             Unloaded="SnakeView_Unloaded"
+             mc:Ignorable="d">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Manager.LoadCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <UserControl.InputBindings>
+        <KeyBinding Key="{Binding SnakeViewModel.KeyMapViewModel.MoveNorthKey, Mode=OneWay}" Command="{Binding Manager.MoveNorthCommand, Mode=OneWay}" />
+        <KeyBinding Key="{Binding SnakeViewModel.KeyMapViewModel.MoveSouthKey, Mode=OneWay}" Command="{Binding Manager.MoveSouthCommand, Mode=OneWay}" />
+        <KeyBinding Key="{Binding SnakeViewModel.KeyMapViewModel.MoveWestKey, Mode=OneWay}" Command="{Binding Manager.MoveWestCommand, Mode=OneWay}" />
+        <KeyBinding Key="{Binding SnakeViewModel.KeyMapViewModel.MoveEastKey, Mode=OneWay}" Command="{Binding Manager.MoveEastCommand, Mode=OneWay}" />
+
+        <KeyBinding Key="{Binding SnakeViewModel.KeyMapViewModel.PlayKey, Mode=OneWay}" Command="{Binding Manager.PlayCommand, Mode=OneWay}" />
+
+        <KeyBinding Key="Backspace" Command="{Binding ShowStartCommand, Mode=OneWay}" />
+        <KeyBinding Key="Esc" Command="{Binding Manager.ResetCommand, Mode=OneWay}" />
+    </UserControl.InputBindings>
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="ViewBackGround" Color="#c16b6b6b" />
+
+        <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}">
+            <Setter Property="Padding" Value="3" />
+            <Setter Property="MinWidth" Value="100" />
+        </Style>
+
+        <!--#region Views-->
+
+        <!--  Win View  -->
+        <DockPanel x:Key="WinView">
+            <TextBlock Text="You win!" />
+        </DockPanel>
+
+        <!--  Fail View  -->
+        <DockPanel x:Key="FailView">
+            <TextBlock Text="You loose!" />
+        </DockPanel>
+
+        <!--  Debug View  -->
+        <StackPanel x:Key="DebugView"
+                    Background="{StaticResource ViewBackGround}"
+                    Orientation="Horizontal">
+            <StackPanel.Style>
+                <Style TargetType="{x:Type StackPanel}">
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsDebug}" Value="True" />
+                                <Condition Binding="{Binding View}" Value="Game" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding IsDebug}" Value="False">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+
+            <TextBlock Text="{Binding FramesPerSecond, StringFormat={}FPS: {0}, Mode=OneWay}">
+                <TextBlock.Style>
+                    <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="{x:Type TextBlock}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsFpsEnabled}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsFpsEnabled}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <TextBlock>
+                <Run Text="{Binding Manager.Snake.Body.Count, StringFormat={}Tail length: {0}, Mode=OneWay}" />
+                <Run Text=" " />
+                <Run Text="{Binding View, Mode=OneWay}" />
+                <Run Text=" " />
+                <Run Text="{Binding Manager.State, Mode=OneWay}" />
+                <Run Text=" " />
+                <Run Text="{Binding Manager.Direction, Mode=OneWay}" />
+                <Run Text=" " />
+                <Run Text="{Binding SnakeViewModel.SnakeLogViewModel.MessagesPerSecond, Mode=OneWay}" />
+            </TextBlock>
+        </StackPanel>
+
+        <!--  Options View  -->
+        <DockPanel x:Key="OptionsView" Width="300">
+            <TextBlock HorizontalAlignment="Center"
+                       DockPanel.Dock="Top"
+                       Text="Options" />
+
+            <UniformGrid Columns="2" DockPanel.Dock="Top">
+                <TextBlock Text="Presets" />
+                <ComboBox ItemsSource="{Binding SnakeViewModel.Options}" SelectedItem="{Binding SnakeViewModel.SelectedOption}">
+                    <ComboBox.Resources>
+                        <DataTemplate DataType="{x:Type local:SnakeOption}">
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.Resources>
+                </ComboBox>
+
+                <TextBlock Text="IsDebug" />
+                <CheckBox IsChecked="{Binding IsDebug}" />
+
+                <TextBlock Text="IsDefault" />
+                <CheckBox IsChecked="{Binding SnakeViewModel.SelectedOption.IsDefault, Mode=OneWay}" IsEnabled="False" />
+
+                <TextBlock Text="ShowFps" />
+                <CheckBox IsChecked="{Binding IsFpsEnabled}" />
+
+                <TextBlock Text="Move Up" />
+                <ComboBox ItemsSource="{Binding SnakeViewModel.KeyMapViewModel.Keys}" SelectedItem="{Binding SnakeViewModel.KeyMapViewModel.MoveNorthKey}" />
+
+                <TextBlock Text="Move Down" />
+                <ComboBox ItemsSource="{Binding SnakeViewModel.KeyMapViewModel.Keys}" SelectedItem="{Binding SnakeViewModel.KeyMapViewModel.MoveSouthKey}" />
+
+                <TextBlock Text="Move Right" />
+                <ComboBox ItemsSource="{Binding SnakeViewModel.KeyMapViewModel.Keys}" SelectedItem="{Binding SnakeViewModel.KeyMapViewModel.MoveWestKey}" />
+
+                <TextBlock Text="Move Left" />
+                <ComboBox ItemsSource="{Binding SnakeViewModel.KeyMapViewModel.Keys}" SelectedItem="{Binding SnakeViewModel.KeyMapViewModel.MoveEastKey}" />
+
+                <TextBlock Text="Play/Pause" />
+                <ComboBox ItemsSource="{Binding SnakeViewModel.KeyMapViewModel.Keys}" SelectedItem="{Binding SnakeViewModel.KeyMapViewModel.PlayKey}" />
+            </UniformGrid>
+
+            <Button Command="{Binding ShowStartCommand}" Content="Back" />
+        </DockPanel>
+
+        <!--  Debug Controls  -->
+        <Grid x:Key="DebugControls"
+              Margin="5"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Button Grid.Row="0"
+                    Grid.Column="2"
+                    Command="{Binding Manager.MoveNorthCommand}">
+                <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        x:Name="appbar_chevron_up"
+                        Width="76"
+                        Height="76"
+                        Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
+                    <Path Canvas.Left="23.6016"
+                          Canvas.Top="24.9375"
+                          Width="28.5"
+                          Height="25.3333"
+                          Data="F1 M 37.8516,35.625L 34.6849,38.7917L 23.6016,50.2708L 23.6016,39.9792L 37.8516,24.9375L 52.1016,39.9792L 52.1016,50.2708L 41.0182,38.7917L 37.8516,35.625 Z "
+                          Fill="#FF000000"
+                          Stretch="Fill" />
+                </Canvas>
+            </Button>
+
+            <Button Grid.Row="4"
+                    Grid.Column="2"
+                    Command="{Binding Manager.MoveSouthCommand}">
+                <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        x:Name="appbar_chevron_down"
+                        Width="76"
+                        Height="76"
+                        Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
+                    <Path Canvas.Left="23.6016"
+                          Canvas.Top="24.9375"
+                          Width="28.5"
+                          Height="25.3333"
+                          Data="F1 M 37.8516,39.5833L 52.1016,24.9375L 52.1016,35.2292L 37.8516,50.2708L 23.6016,35.2292L 23.6016,24.9375L 37.8516,39.5833 Z "
+                          Fill="#FF000000"
+                          Stretch="Fill" />
+                </Canvas>
+            </Button>
+
+            <Button Grid.Row="2"
+                    Grid.Column="0"
+                    Command="{Binding Manager.MoveWestCommand}">
+                <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        x:Name="appbar_chevron_left"
+                        Width="76"
+                        Height="76"
+                        Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
+                    <Path Canvas.Left="25.1849"
+                          Canvas.Top="23.3542"
+                          Width="25.3333"
+                          Height="28.5"
+                          Data="F1 M 35.8724,37.6042L 39.0391,40.7708L 50.5182,51.8542L 40.2266,51.8542L 25.1849,37.6041L 40.2266,23.3542L 50.5182,23.3542L 39.0391,34.4375L 35.8724,37.6042 Z "
+                          Fill="#FF000000"
+                          Stretch="Fill" />
+                </Canvas>
+            </Button>
+
+            <Button Grid.Row="2"
+                    Grid.Column="4"
+                    Command="{Binding Manager.MoveEastCommand}">
+                <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        x:Name="appbar_chevron_right"
+                        Width="76"
+                        Height="76"
+                        Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
+                    <Path Canvas.Left="25.1849"
+                          Canvas.Top="23.3542"
+                          Width="25.3333"
+                          Height="28.5"
+                          Data="F1 M 39.8307,37.6042L 36.6641,34.4375L 25.1849,23.3542L 35.4766,23.3542L 50.5182,37.6042L 35.4766,51.8542L 25.1849,51.8542L 36.6641,40.7708L 39.8307,37.6042 Z "
+                          Fill="#FF000000"
+                          Stretch="Fill" />
+                </Canvas>
+            </Button>
+
+            <Button Grid.Row="2"
+                    Grid.Column="2"
+                    Command="{Binding Manager.PlayCommand}">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.None}">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                                x:Name="appbar_control_play"
+                                                Width="76"
+                                                Height="76"
+                                                Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
+                                            <Path Canvas.Left="30.0833"
+                                                  Canvas.Top="22.1667"
+                                                  Width="20.5832"
+                                                  Height="31.6667"
+                                                  Data="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z "
+                                                  Fill="#FF000000"
+                                                  Stretch="Fill" />
+                                        </Canvas>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.Running}">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                                x:Name="appbar_control_pause"
+                                                Width="76"
+                                                Height="76"
+                                                Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
+                                            <Path Canvas.Left="26.9167"
+                                                  Canvas.Top="23.75"
+                                                  Width="22.1667"
+                                                  Height="28.5"
+                                                  Data="F1 M 26.9167,23.75L 33.25,23.75L 33.25,52.25L 26.9167,52.25L 26.9167,23.75 Z M 42.75,23.75L 49.0833,23.75L 49.0833,52.25L 42.75,52.25L 42.75,23.75 Z "
+                                                  Fill="#FF000000"
+                                                  Stretch="Fill" />
+                                        </Canvas>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.Paused}">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                                x:Name="appbar_control_resume"
+                                                Width="76"
+                                                Height="76"
+                                                Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
+                                            <Path Canvas.Left="26.9167"
+                                                  Canvas.Top="22.1667"
+                                                  Width="31.6665"
+                                                  Height="31.6667"
+                                                  Data="F1 M 38,22.1667L 58.5832,37.6043L 58.5832,38.7918L 38,53.8333L 38,22.1667 Z M 33.25,22.1667L 33.25,53.8333L 26.9167,53.8333L 26.9167,22.1667L 33.25,22.1667 Z "
+                                                  Fill="#FF000000"
+                                                  Stretch="Fill" />
+                                        </Canvas>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Manager.State}" Value="{x:Static local:GameState.Fail}">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                                x:Name="appbar_stop"
+                                                Width="76"
+                                                Height="76"
+                                                Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
+                                            <Path Canvas.Left="19"
+                                                  Canvas.Top="19"
+                                                  Width="38"
+                                                  Height="38"
+                                                  Data="F1 M 31.6667,19L 44.3333,19L 57,31.6667L 57,44.3333L 44.3333,57L 31.6667,57L 19,44.3333L 19,31.6667L 31.6667,19 Z M 26.4762,45.0454L 30.9546,49.5238L 38,42.4783L 45.0454,49.5238L 49.5237,45.0454L 42.4783,38L 49.5238,30.9546L 45.0454,26.4763L 38,33.5217L 30.9546,26.4762L 26.4762,30.9546L 33.5217,38L 26.4762,45.0454 Z "
+                                                  Fill="#FF000000"
+                                                  Stretch="Fill" />
+                                        </Canvas>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+
+        <!--  StartView  -->
+        <Grid x:Key="StartView">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Button Grid.Row="0"
+                    Command="{Binding ShowGameCommand}"
+                    Content="Start" />
+            <Button Grid.Row="2"
+                    Command="{Binding ShowOptionsCommand}"
+                    Content="Options" />
+            <Button Grid.Row="4"
+                    Command="{Binding ExitCommand}"
+                    Content="Exit" />
+        </Grid>
+
+        <!--#endregion Views-->
+
+        <!--#region DebugLog Templates-->
+        <DataTemplate x:Key="SourceTemplate">
+            <ContentControl Content="{Binding}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:Position}">
+            <TextBlock>
+                <Run Text="{Binding X, Mode=OneWay}" />
+                <Run Text="{Binding Y, Mode=OneWay}" />
+            </TextBlock>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:PositionUpdatedMessage}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="UPDATED (" />
+                <ContentControl Content="{Binding From}" />
+                <TextBlock Text=") -&gt; (" />
+                <ContentControl Content="{Binding To}" />
+                <TextBlock Text=")" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:SnakeSegmentCreatedMessage}">
+            <StackPanel Background="LightCoral" Orientation="Horizontal">
+                <TextBlock Text="ADDED @ (" />
+                <ContentControl Content="{Binding Content.CurrentPosition}" />
+                <TextBlock>
+                    <Run Text=") #" />
+                    <Run Text="{Binding Content.Sequence, Mode=OneWay}" />
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:SnakeDirectionChanged}">
+            <StackPanel Background="LightBlue" Orientation="Horizontal">
+                <TextBlock>
+                    <Run Text="CHANGED =&gt; " />
+                    <Run Text="{Binding Content, Mode=OneWay}" />
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+        <!--#endregion DebugLog Templates-->
+    </UserControl.Resources>
+
+    <Grid>
+        <!--  Debug Log  -->
+        <ItemsControl HorizontalAlignment="Right"
+                      ItemTemplate="{StaticResource SourceTemplate}"
+                      ItemsSource="{Binding SnakeViewModel.SnakeLogViewModel.Messages}"
+                      ScrollViewer.CanContentScroll="True"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.VirtualizationMode="Recycling">
+            <ItemsControl.Style>
+                <Style TargetType="{x:Type ItemsControl}">
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsDebug}" Value="True" />
+                                <Condition Binding="{Binding View}" Value="Game" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding IsDebug}" Value="False">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ItemsControl.Style>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.Template>
+                <ControlTemplate>
+                    <Border Padding="{TemplateBinding Control.Padding}"
+                            Background="{TemplateBinding Panel.Background}"
+                            BorderBrush="{TemplateBinding Border.BorderBrush}"
+                            BorderThickness="{TemplateBinding Border.BorderThickness}"
+                            SnapsToDevicePixels="True">
+                        <ScrollViewer Padding="{TemplateBinding Control.Padding}" Focusable="False">
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </ItemsControl.Template>
+        </ItemsControl>
+
+        <!--  Debug Controls  -->
+        <ContentControl HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Content="{StaticResource DebugControls}">
+            <ContentControl.Style>
+                <Style TargetType="{x:Type ContentControl}">
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsDebug}" Value="True" />
+                                <Condition Binding="{Binding View}" Value="Game" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding IsDebug}" Value="False">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+
+        <!--  Game Board  -->
+        <Viewbox>
+            <ItemsControl Width="{Binding Manager.UpperBoundX}"
+                          Height="{Binding Manager.UpperBoundY}"
+                          Background="#C1C1C1C1"
+                          ItemsSource="{Binding Manager.BoardPieces}">
+                <ItemsControl.Resources>
+                    <DataTemplate DataType="{x:Type local:SnakeHead}">
+                        <Rectangle Width="{Binding Size.Width}"
+                                   Height="{Binding Size.Height}"
+                                   Fill="Green" />
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type local:SnakeSegment}">
+                        <Rectangle Width="{Binding Size.Width}"
+                                   Height="{Binding Size.Height}"
+                                   Fill="GreenYellow" />
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type local:Apple}">
+                        <Rectangle Width="{Binding Size.Width}"
+                                   Height="{Binding Size.Height}"
+                                   Fill="Red" />
+                    </DataTemplate>
+                </ItemsControl.Resources>
+                <ItemsControl.InputBindings />
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding CurrentPosition.X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding CurrentPosition.Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+            </ItemsControl>
+        </Viewbox>
+
+        <!--  DebugInformation Overlay  -->
+        <ContentControl HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Content="{StaticResource DebugView}">
+            <ContentControl.Style>
+                <Style TargetType="{x:Type ContentControl}">
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsDebug}" Value="True" />
+                                <Condition Binding="{Binding View}" Value="Game" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding IsDebug}" Value="False">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+
+        <!--  Game Menu Overlay  -->
+        <Grid>
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Background" Value="{StaticResource ViewBackGround}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding View}" Value="Game">
+                            <Setter Property="Background" Value="Transparent" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <ContentControl Grid.Row="1" Grid.Column="1">
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding View}" Value="Start">
+                                <Setter Property="Content" Value="{StaticResource StartView}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding View}" Value="Options">
+                                <Setter Property="Content" Value="{StaticResource OptionsView}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding View}" Value="Win">
+                                <Setter Property="Content" Value="{StaticResource WinView}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding View}" Value="Fail">
+                                <Setter Property="Content" Value="{StaticResource FailView}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding View}" Value="Game">
+                                <Setter Property="Visibility" Value="Hidden" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+        </Grid>
+    </Grid>
+</UserControl>

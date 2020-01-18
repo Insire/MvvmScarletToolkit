@@ -2,12 +2,12 @@
   "solution": {
     "path": "MvvmScarletToolkit.sln",
     "projects": [
-      "MvvmScarletToolkit.Abstractions\\MvvmScarletToolkit.Abstractions.csproj",
-      "MvvmScarletToolkit.Commands\\MvvmScarletToolkit.Commands.csproj",
-      "MvvmScarletToolkit.Implementations\\MvvmScarletToolkit.Implementations.csproj",
-      "MvvmScarletToolkit.Incubator\\MvvmScarletToolkit.Incubator.csproj",
-      "MvvmScarletToolkit.Observables\\MvvmScarletToolkit.Observables.csproj",
-      "MvvmScarletToolkit\\MvvmScarletToolkit.csproj"
+      "src\\MvvmScarletToolkit.Abstractions\\MvvmScarletToolkit.Abstractions.csproj",
+      "src\\MvvmScarletToolkit.Commands\\MvvmScarletToolkit.Commands.csproj",
+      "src\\MvvmScarletToolkit.Implementations\\MvvmScarletToolkit.Implementations.csproj",
+      "src\\MvvmScarletToolkit.Incubator\\MvvmScarletToolkit.Incubator.csproj",
+      "src\\MvvmScarletToolkit.Observables\\MvvmScarletToolkit.Observables.csproj",
+      "src\\MvvmScarletToolkit\\MvvmScarletToolkit.csproj"
     ]
   }
 }

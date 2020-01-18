@@ -9,7 +9,7 @@ var Configuration = Argument("configuration", "Release");
 
 const string Platform = "AnyCPU";
 const string SolutionPath =".\\MvvmScarletToolkit.sln";
-const string AssemblyInfoPath =".\\SharedAssemblyInfo.cs";
+const string AssemblyInfoPath =".\\src\\SharedAssemblyInfo.cs";
 const string PackagePath = ".\\packages";
 
 Setup(ctx =>
@@ -162,11 +162,11 @@ Task("BuildAndPack")
             version = assemblyInfoParseResult.AssemblyVersion;
         }
 
-        Build(@".\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj");
-        Build(@".\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj");
-        Build(@".\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj");
-        Build(@".\MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj");
-        Build(@".\MvvmScarletToolkit\MvvmScarletToolkit.csproj");
+        Build(@".\src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj");
+        Build(@".\src\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj");
+        Build(@".\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj");
+        Build(@".\src\MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj");
+        Build(@".\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj");
 
         void Build(string path)
         {
