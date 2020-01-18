@@ -18,13 +18,22 @@ namespace MvvmScarletToolkit
             subscription.Deliver(message);
 
 #if DEBUG
-            var type = message.GetType();
-            var typeName = type.Name;
 
-            if (type.GenericTypeArguments.Length > 0)
-                typeName = $"{typeName.Replace("`1", string.Empty)}<{type.GenericTypeArguments[0].Name}>";
+            Debug.WriteLine("Deliver --> " + GetTypeName(message.GetType()) + " via " + GetTypeName(subscription.GetType()));
 
-            Debug.WriteLine("--> " + typeName);
+            string GetTypeName(Type type)
+            {
+                var result = type.Name;
+
+                while (type.GenericTypeArguments.Length > 0)
+                {
+                    var typeName = type.GenericTypeArguments[0].Name;
+                    result = result.Replace("`1", $"<{typeName}>");
+                    type = type.GenericTypeArguments[0];
+                }
+
+                return result;
+            }
 #endif
         }
     }
