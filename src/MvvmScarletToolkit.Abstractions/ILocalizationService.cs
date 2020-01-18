@@ -6,7 +6,7 @@ namespace MvvmScarletToolkit.Abstractions
 {
     public interface ILocalizationService : INotifyPropertyChanged
     {
-        CultureInfo CurrentLanguage { get; set; }
+        CultureInfo? CurrentLanguage { get; set; }
 
         /// <summary>
         /// Translates the key into a localized value
