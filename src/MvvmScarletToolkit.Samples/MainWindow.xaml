@@ -965,6 +965,7 @@
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
                         </Grid.Resources>
+
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Loaded">
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
@@ -1069,6 +1070,7 @@
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
                             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
                             <DataTemplate DataType="{x:Type incubator:BoolDialogResultViewModel}">
                                 <Grid Background="#cccccccc" Visibility="{Binding IsOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <Grid.ColumnDefinitions>
@@ -1076,6 +1078,7 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
+
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
@@ -1104,13 +1107,32 @@
                             </DataTemplate>
                         </Grid.Resources>
 
-                        <Button Padding="10"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Command="{Binding RunCommand}"
-                                Content="Open Dialog" />
+                        <ToggleButton x:Name="DialogToggle"
+                                      Padding="10"
+                                      IsChecked="{Binding DialogResult.IsOpen, Mode=OneWay}"
+                                      Command="{Binding RunCommand}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Content="Open Dialog" />
 
-                        <ContentControl Content="{Binding DialogResult}" />
+                        <Popup MinHeight="325"
+                               MinWidth="350"
+                               AllowsTransparency="True"
+                               IsOpen="{Binding DialogResult.IsOpen, Mode=OneWay}"
+                               Placement="Bottom"
+                               PlacementTarget="{Binding ElementName=DialogToggle}"
+                               StaysOpen="True">
+                            <i:Interaction.Behaviors>
+                                <mvvm:AutoRepositionPopupBehavior />
+                            </i:Interaction.Behaviors>
+
+                            <Border Background="DarkGray">
+                                <Border.Effect>
+                                    <DropShadowEffect />
+                                </Border.Effect>
+                                <ContentControl Content="{Binding DialogResult}" />
+                            </Border>
+                        </Popup>
                     </Grid>
                 </DataTemplate>
             </ContentControl.Resources>
