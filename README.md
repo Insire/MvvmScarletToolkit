@@ -42,7 +42,6 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
   - Controls
     - VirtualizingTilePanel
     - FileSystemBrowser
-    - ConfigureableWindow (that opens where it was last closed)
     - Support for * Sizing in GridViews
   - (Multi-)Converters as Markupextension
     - NullValueConverter

@@ -476,6 +476,7 @@
                                    Height="{Binding Size.Height}"
                                    Fill="Green" />
                     </DataTemplate>
+
                     <DataTemplate DataType="{x:Type local:SnakeSegment}">
                         <Rectangle Width="{Binding Size.Width}"
                                    Height="{Binding Size.Height}"
