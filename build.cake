@@ -179,37 +179,30 @@ Task("Build")
 
         void BuildAndPack(string path)
         {
-            var settings = new ProcessSettings()
-                .UseWorkingDirectory(".")
-                .WithArguments(builder => builder
-                    .Append("build")
-                    .AppendQuoted(path)
-                    .Append("--force")
-                    .Append($"-c {Configuration}")
-                    .Append($"-p:GeneratePackageOnBuild=false")
-            );
-
-            StartProcess("dotnet", settings);
-
+            Build(path);
             Pack(path);
         }
 
         void BuildAndTest(string path)
+        {
+            Build(path);
+            Test(path);
+        }
+
+        void Build(string path)
         {
             var settings = new ProcessSettings()
                 .UseWorkingDirectory(".")
                 .WithArguments(builder => builder
                     .Append("build")
                     .AppendQuoted(path)
-                    .Append("--force")
                     .Append($"-c {Configuration}")
-                    .Append($"-p:GeneratePackageOnBuild=false")
-                    .Append($"-p:DebugType=full") // required for opencover codecoverage
+                    .Append($"-p:GeneratePackageOnBuild=false") // we package only specific projects and we do that in a second cli call
+                    .Append($"-p:DebugType=full") // required for opencover codecoverage and sourcelinking
                     .Append($"-p:SourceLinkCreate=true")
             );
 
             StartProcess("dotnet", settings);
-            Test(path);
         }
 
         void Test(string path)
