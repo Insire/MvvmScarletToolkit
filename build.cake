@@ -1,4 +1,9 @@
+#tool nuget:?package=NUnit.ConsoleRunner&version=3.10.0
+#tool nuget:?package=OpenCover&version=4.7.922
+#tool nuget:?package=ReportGenerator&version=4.4.3
+
 #addin nuget:?package=Cake.Incubator&version=5.1.0
+
 using Cake.Core;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,6 +16,7 @@ const string Platform = "AnyCPU";
 const string SolutionPath =".\\MvvmScarletToolkit.sln";
 const string AssemblyInfoPath =".\\src\\SharedAssemblyInfo.cs";
 const string PackagePath = ".\\packages";
+const string ResultsPath = ".\\results";
 
 Setup(ctx =>
 {
@@ -61,6 +67,7 @@ Task("CleanSolution")
         var folders = new[]
         {
             new DirectoryPath(PackagePath),
+            new DirectoryPath(ResultsPath),
         };
 
         foreach(var folder in folders)
@@ -148,7 +155,7 @@ Task("UpdateAssemblyInfo")
         }
 });
 
-Task("BuildAndPack")
+Task("Build")
     .Does(()=>
     {
         var version = string.Empty;
@@ -162,13 +169,15 @@ Task("BuildAndPack")
             version = assemblyInfoParseResult.AssemblyVersion;
         }
 
-        Build(@".\src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj");
-        Build(@".\src\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj");
-        Build(@".\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj");
-        Build(@".\src\MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj");
-        Build(@".\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj");
+        BuildAndPack(@".\src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj");
+        BuildAndPack(@".\src\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj");
+        BuildAndPack(@".\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj");
+        BuildAndPack(@".\src\MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj");
+        BuildAndPack(@".\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj");
 
-        void Build(string path)
+        BuildAndTest(@".\src\MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj");
+
+        void BuildAndPack(string path)
         {
             var settings = new ProcessSettings()
                 .UseWorkingDirectory(".")
@@ -183,6 +192,74 @@ Task("BuildAndPack")
             StartProcess("dotnet", settings);
 
             Pack(path);
+        }
+
+        void BuildAndTest(string path)
+        {
+            var settings = new ProcessSettings()
+                .UseWorkingDirectory(".")
+                .WithArguments(builder => builder
+                    .Append("build")
+                    .AppendQuoted(path)
+                    .Append("--force")
+                    .Append($"-c {Configuration}")
+                    .Append($"-p:GeneratePackageOnBuild=false")
+                    .Append($"-p:DebugType=full") // required for opencover codecoverage
+            );
+
+            StartProcess("dotnet", settings);
+            Test(path);
+        }
+
+        void Test(string path)
+        {
+            var resultFile = new DirectoryPath(ResultsPath).CombineWithFilePath("coverage.xml");
+            var testSettings = new DotNetCoreTestSettings
+            {
+                NoBuild = true,
+                NoRestore = true,
+                ResultsDirectory = ResultsPath,
+                VSTestReportPath = new DirectoryPath(ResultsPath).CombineWithFilePath("testresults.xml"),
+                Configuration = Configuration,
+                Framework = "netcoreapp3.1"
+            };
+            var openCoverSettings = new OpenCoverSettings()
+            {
+                OldStyle = true,
+            };
+            var reportTypes = new[]
+            {
+                new KeyValuePair<ReportGeneratorReportType,string>(ReportGeneratorReportType.Badges, "badges"),
+                new KeyValuePair<ReportGeneratorReportType,string>(ReportGeneratorReportType.Html, "html"),
+                new KeyValuePair<ReportGeneratorReportType,string>(ReportGeneratorReportType.HtmlInline_AzurePipelines, "htmlInline_AzurePipelines"),
+                new KeyValuePair<ReportGeneratorReportType,string>(ReportGeneratorReportType.HtmlInline_AzurePipelines_Dark, "htmlInline_AzurePipelines_Dark"),
+            };
+
+            OpenCover(tool => tool.DotNetCoreTest(path, testSettings), resultFile, openCoverSettings);
+
+            foreach(var type in reportTypes)
+            {
+                GenerateReport(resultFile,type.Key,type.Value);
+            }
+        }
+
+        void GenerateReport(FilePath inputFile,ReportGeneratorReportType type, string subFolder)
+        {
+            var folder = new DirectoryPath(ResultsPath).Combine("CoverageReport");
+            var ReportGeneratorSettings = new ReportGeneratorSettings()
+            {
+                AssemblyFilters = new[]
+                {
+                    "+MvvmScarletToolkit*",
+                    "-MvvmScarletToolkit.Tests*",
+                },
+                ReportTypes = new[]
+                {
+                    type
+                }
+            };
+
+            ReportGenerator(inputFile, folder.Combine(subFolder), ReportGeneratorSettings);
         }
 
         void Pack(string path)
@@ -223,7 +300,7 @@ Task("Default")
     .IsDependentOn("Debug")
     .IsDependentOn("CleanSolution")
     .IsDependentOn("UpdateAssemblyInfo")
-    .IsDependentOn("BuildAndPack")
+    .IsDependentOn("Build")
     .IsDependentOn("PushLocally");
 
 RunTarget(Argument("target", "Default"));
