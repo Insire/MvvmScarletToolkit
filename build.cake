@@ -205,6 +205,7 @@ Task("Build")
                     .Append($"-c {Configuration}")
                     .Append($"-p:GeneratePackageOnBuild=false")
                     .Append($"-p:DebugType=full") // required for opencover codecoverage
+                    .Append($"-p:SourceLinkCreate=true")
             );
 
             StartProcess("dotnet", settings);
@@ -245,7 +246,7 @@ Task("Build")
 
         void GenerateReport(FilePath inputFile,ReportGeneratorReportType type, string subFolder)
         {
-            var folder = new DirectoryPath(ResultsPath).Combine("CoverageReport");
+            var folder = new DirectoryPath(ResultsPath).Combine("reports");
             var ReportGeneratorSettings = new ReportGeneratorSettings()
             {
                 AssemblyFilters = new[]
