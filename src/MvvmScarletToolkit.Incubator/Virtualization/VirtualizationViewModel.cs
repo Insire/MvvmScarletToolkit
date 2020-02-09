@@ -48,13 +48,13 @@ namespace MvvmScarletToolkit
 
             DeflateCommand = commandBuilder
                 .Create(Deflate, CanDeflate)
-                .WithSingleExecution(commandManager)
+                .WithSingleExecution()
                 .WithCancellation()
                 .Build();
 
             ExpandCommand = commandBuilder
                 .Create(Expand, CanExpand)
-                .WithSingleExecution(commandManager)
+                .WithSingleExecution()
                 .WithCancellation()
                 .Build();
         }

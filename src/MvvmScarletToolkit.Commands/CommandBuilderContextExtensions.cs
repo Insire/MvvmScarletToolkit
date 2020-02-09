@@ -64,18 +64,13 @@ namespace MvvmScarletToolkit
         /// Configure a command as to not automatically cancel and rerun when executed again.
         /// Which means there will be only one command be startable at a time.
         /// </summary>
-        public static CommandBuilderContext<TArgument> WithSingleExecution<TArgument>(this CommandBuilderContext<TArgument> context, IScarletCommandManager commandManager)
+        public static CommandBuilderContext<TArgument> WithSingleExecution<TArgument>(this CommandBuilderContext<TArgument> context)
         {
             ValdiateContextForNull(context);
 
-            if (commandManager is null)
-            {
-                throw new ArgumentNullException("This method should be called with a non null instance of IScarletCommandManager.");
-            }
-
             ConcurrentCommandBase DecoratorFactory(ConcurrentCommandBase command)
             {
-                return new SequentialAsyncCommandDecorator(commandManager, command);
+                return new SequentialAsyncCommandDecorator(context.CommandManager, command);
             }
 
             context.AddDecorator(DecoratorFactory);

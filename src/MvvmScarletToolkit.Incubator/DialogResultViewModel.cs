@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit
         {
             CloseCommand = commandBuilder
                 .Create(Close, CanClose)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithCancellation()
                 .Build();

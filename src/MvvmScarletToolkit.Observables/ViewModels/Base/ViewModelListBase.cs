@@ -98,21 +98,21 @@ namespace MvvmScarletToolkit.Observables
 
             RemoveCommand = commandBuilder
                 .Create(Remove, CanRemove)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithAsyncCancellation()
                 .Build();
 
             RemoveRangeCommand = commandBuilder
                 .Create(RemoveRange, CanRemoveRange)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithAsyncCancellation()
                 .Build();
 
             ClearCommand = commandBuilder
                 .Create(() => Clear(), CanClear)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithAsyncCancellation()
                 .Build();

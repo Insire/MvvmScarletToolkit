@@ -38,21 +38,21 @@ namespace MvvmScarletToolkit.Observables
         {
             _loadCommand = commandBuilder
                 .Create(Load, CanLoad)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithAsyncCancellation()
                 .Build();
 
             _refreshCommand = commandBuilder
                 .Create(Refresh, CanRefresh)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithAsyncCancellation()
                 .Build();
 
             _unloadCommand = commandBuilder
                 .Create(Unload, CanUnload)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithAsyncCancellation()
                 .Build();

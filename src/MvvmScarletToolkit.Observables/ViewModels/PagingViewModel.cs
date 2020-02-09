@@ -38,25 +38,25 @@ namespace MvvmScarletToolkit.Observables
             PageSizes = pageSizes ?? throw new ArgumentNullException(nameof(viewModel));
 
             NextCommand = commandBuilder.Create(Next, CanNext)
-                .WithSingleExecution(commandBuilder.CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithCancellation()
                 .Build();
 
             PreviousCommand = commandBuilder.Create(Previous, CanPrevious)
-                .WithSingleExecution(commandBuilder.CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithCancellation()
                 .Build();
 
             FirstCommand = commandBuilder.Create(First, CanFirst)
-                .WithSingleExecution(commandBuilder.CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithCancellation()
                 .Build();
 
             LastCommand = commandBuilder.Create(Last, CanLast)
-                .WithSingleExecution(commandBuilder.CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithCancellation()
                 .Build();

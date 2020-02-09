@@ -36,13 +36,13 @@ namespace MvvmScarletToolkit
 
             AddCommand = commandBuilder.Create(Add, CanAdd)
                 .WithBusyNotification(BusyStack)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .WithCancellation()
                 .Build();
 
             RemoveCommand = commandBuilder
                 .Create<GroupsViewModel>(p => Remove(p), CanRemove)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithCancellation()
                 .Build();

@@ -175,12 +175,12 @@ namespace MvvmScarletToolkit.FileSystemBrowser
 
             _deleteCommand = commandBuilder
                 .Create(Delete, CanDelete)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .Build();
 
             _toggleExpandCommand = commandBuilder
                 .Create(Toggle, CanToggle)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .Build();
 
             Exists = true;

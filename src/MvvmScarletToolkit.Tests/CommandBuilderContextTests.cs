@@ -162,13 +162,24 @@ namespace MvvmScarletToolkit.Tests
         public void Build_ShouldAddSingleExecutionDecorator()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
-
-            context.WithSingleExecution(commandManager);
-
-            var command = context.Build();
+            var command = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
+                .WithSingleExecution()
+                .Build();
 
             Assert.IsInstanceOf<SequentialAsyncCommandDecorator>(command);
+        }
+
+        [Test]
+        public void ExtensionsMethods_ShouldThrowOnNullInstance()
+        {
+            var context = default(CommandBuilderContext<object>);
+
+            Assert.Throws<ArgumentNullException>(() => context.WithCancellation());
+            Assert.Throws<ArgumentNullException>(() => context.WithAsyncCancellation());
+            Assert.Throws<ArgumentNullException>(() => context.WithCustomCancellation(NSubstitute.Substitute.For<ICancelCommand>()));
+
+            Assert.Throws<ArgumentNullException>(() => context.WithBusyNotification(NSubstitute.Substitute.For<IBusyStack>()));
+            Assert.Throws<ArgumentNullException>(() => context.WithSingleExecution());
         }
     }
 }

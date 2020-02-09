@@ -17,7 +17,7 @@ namespace MvvmScarletToolkit.Samples
         {
             RunCommand = CommandBuilder.Create(Run, CanRun)
                 .WithBusyNotification(BusyStack)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .WithAsyncCancellation()
                 .Build();
 

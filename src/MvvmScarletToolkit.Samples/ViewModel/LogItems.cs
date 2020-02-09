@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit.Samples
             View = VirtualizingCollectionViewSource.Create(this, Dispatcher, cache);
 
             AddCommand = CommandBuilder.Create(AddNew, CanAddNew)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithCancellation()
                 .Build();

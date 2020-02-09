@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit.Samples
             LogItems = logItems ?? throw new ArgumentNullException(nameof(logItems));
             AddRangeCommand = CommandBuilder
                 .Create(AddRange, CanAddRange)
-                .WithSingleExecution(CommandManager)
+                .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .Build();
         }
