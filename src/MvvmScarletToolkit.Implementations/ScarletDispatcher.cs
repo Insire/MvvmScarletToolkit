@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit
         private static readonly Lazy<ScarletDispatcher> _default = new Lazy<ScarletDispatcher>(() => new ScarletDispatcher(Application.Current.Dispatcher));
 
         public static IScarletDispatcher Default => InternalDefault;
-        internal static ScarletDispatcher InternalDefault { get; } = _default.Value;
+        internal static ScarletDispatcher InternalDefault => _default.Value;
 
         private const DispatcherPriority Priority = DispatcherPriority.Input;
         private readonly Dispatcher _dispatcherObject;

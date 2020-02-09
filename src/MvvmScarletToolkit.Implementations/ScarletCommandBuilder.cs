@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit
     {
         private static readonly Lazy<ScarletCommandBuilder> _default = new Lazy<ScarletCommandBuilder>(() => new ScarletCommandBuilder(ScarletDispatcher.Default, ScarletCommandManager.Default, ScarletMessenger.Default, ScarletExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, ScarletDispatcher.Default)));
 
-        public static ICommandBuilder Default { get; } = _default.Value;
+        public static ICommandBuilder Default => _default.Value;
 
         private readonly Func<Action<bool>, IBusyStack> _busyStackFactory;
 

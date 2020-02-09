@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit
     public sealed class ScarletMessageProxy : IScarletMessageProxy
     {
         private static readonly Lazy<ScarletMessageProxy> _default = new Lazy<ScarletMessageProxy>(() => new ScarletMessageProxy());
-        public static IScarletMessageProxy Default { get; } = _default.Value;
+        public static IScarletMessageProxy Default => _default.Value;
 
         public void Deliver(IScarletMessage message, IScarletMessageSubscription subscription)
         {

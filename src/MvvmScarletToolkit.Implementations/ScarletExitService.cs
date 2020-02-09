@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit
     public sealed class ScarletExitService : IExitService
     {
         private static readonly Lazy<ScarletExitService> _default = new Lazy<ScarletExitService>(() => new ScarletExitService(Application.Current, ScarletDispatcher.InternalDefault));
-        public static IExitService Default { get; } = _default.Value;
+        public static IExitService Default => _default.Value;
 
         private readonly Application _app;
         private readonly ScarletDispatcher _scarletDispatcher;

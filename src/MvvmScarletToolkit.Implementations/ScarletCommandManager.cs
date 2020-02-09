@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit
     {
         private static readonly Lazy<ScarletCommandManager> _default = new Lazy<ScarletCommandManager>(() => new ScarletCommandManager());
 
-        public static IScarletCommandManager Default { get; } = _default.Value;
+        public static IScarletCommandManager Default => _default.Value;
 
         public event EventHandler RequerySuggested
         {

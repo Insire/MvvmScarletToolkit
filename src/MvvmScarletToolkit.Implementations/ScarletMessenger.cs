@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit
     public sealed class ScarletMessenger : IScarletMessenger
     {
         private static readonly Lazy<ScarletMessenger> _default = new Lazy<ScarletMessenger>(() => new ScarletMessenger(ScarletMessageProxy.Default));
-        public static IScarletMessenger Default { get; } = _default.Value;
+        public static IScarletMessenger Default => _default.Value;
 
         private readonly object _subscriptionsPadlock;
 
