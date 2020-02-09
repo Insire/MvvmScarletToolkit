@@ -18,3 +18,4 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("a85ecf94-f42d-43b2-9c65-c27e2963cf08")]
 [assembly: InternalsVisibleTo("MvvmScarletToolkit.Implementations")]
+[assembly: InternalsVisibleTo("MvvmScarletToolkit.Tests")]

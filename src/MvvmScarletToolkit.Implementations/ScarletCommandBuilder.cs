@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit
 {
+    /// <summary>
+    /// Facade Service for creating CommandBuilderContext instances
+    /// </summary>
+    /// <typeparam name="TArgument">The argument type, that the to be created command is supposed to accept</typeparam>
     public class ScarletCommandBuilder : ICommandBuilder
     {
         private static readonly Lazy<ScarletCommandBuilder> _default = new Lazy<ScarletCommandBuilder>(() => new ScarletCommandBuilder(ScarletDispatcher.Default, ScarletCommandManager.Default, ScarletMessenger.Default, ScarletExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, ScarletDispatcher.Default)));
@@ -35,7 +39,7 @@ namespace MvvmScarletToolkit
 
         public CommandBuilderContext<TArgument> Create<TArgument>(Func<TArgument, CancellationToken, Task> execute, Func<TArgument, bool> canExecute)
         {
-            return new CommandBuilderContext<TArgument>(Dispatcher, CommandManager, _busyStackFactory, execute, canExecute);
+            return new CommandBuilderContext<TArgument>(CommandManager, _busyStackFactory, execute, canExecute);
         }
     }
 }

@@ -1,40 +1,40 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
-    // TODO add validation, providing notifications on why can execute returned false
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC001:The class has mutable properties and should implement INotifyPropertyChanged.", Justification = "Class is not meant to be bound.")]
-    public class CommandBuilderContext<TArgument> : AbstractBuilder<ConcurrentCommandBase>
+    /// <summary>
+    /// Context class for creating and configuring <see cref="MvvmScarletToolkit.Commands.ConcurrentCommand{TArgument}"/> via the fluent builder pattern
+    /// </summary>
+    /// <typeparam name="TArgument">The argument type, that the to be created command is supposed to accept</typeparam>
+    [Bindable(false)]
+    public sealed class CommandBuilderContext<TArgument> : AbstractBuilder<ConcurrentCommandBase>
     {
         private readonly Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>> _decorators;
-        private readonly Func<TArgument, CancellationToken, Task>? _execute;
-        private readonly Func<TArgument, bool>? _canExcute;
         private readonly Func<Action<bool>, IBusyStack> _busyStackFactory;
 
-        public IScarletDispatcher Dispatcher { get; }
+        private readonly Func<TArgument, CancellationToken, Task>? _execute;
+        private readonly Func<TArgument, bool>? _canExcute;
 
-        public IScarletCommandManager CommandManager { get; }
-
-        /// <summary>
-        /// can be configured externally
-        /// </summary>
-        public ICancelCommand CancelCommand { get; set; }
+        internal IScarletCommandManager CommandManager { get; }
 
         /// <summary>
-        /// can be configured externally
+        /// optional <see cref="System.Windows.Input.ICommand"/> for Cancellation-Support
         /// </summary>
-        public IBusyStack? BusyStack { get; set; }
+        internal ICancelCommand? CancelCommand { get; set; }
 
-        public CommandBuilderContext(IScarletDispatcher dispatcher, IScarletCommandManager commandManager, Func<Action<bool>, IBusyStack> busyStackFactory, Func<TArgument, CancellationToken, Task> execute, Func<TArgument, bool> canExecute)
+        /// <summary>
+        /// optional external <see cref="IBusyStack"/> that can be hooked up to receive notifications from the internal busy state
+        /// </summary>
+        internal IBusyStack? BusyStack { get; set; }
+
+        public CommandBuilderContext(IScarletCommandManager commandManager, Func<Action<bool>, IBusyStack> busyStackFactory, Func<TArgument, CancellationToken, Task> execute, Func<TArgument, bool> canExecute)
         {
-            Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
-
-            CancelCommand = new CancelCommand(commandManager);
 
             _decorators = new Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>>();
             _busyStackFactory = busyStackFactory ?? throw new ArgumentNullException(nameof(busyStackFactory));
@@ -43,44 +43,48 @@ namespace MvvmScarletToolkit.Commands
             _canExcute = canExecute ?? throw new ArgumentNullException(nameof(canExecute));
         }
 
-        public void AddDecorator(Func<ConcurrentCommandBase, ConcurrentCommandBase> decoratorFactory)
+        internal void AddDecorator(Func<ConcurrentCommandBase, ConcurrentCommandBase> decoratorFactory)
         {
+            if (decoratorFactory is null)
+            {
+                throw new ArgumentNullException(nameof(decoratorFactory) + " can't be null.");
+            }
+
             _decorators.Enqueue(decoratorFactory);
         }
 
         public override ConcurrentCommandBase Build()
         {
-            var result = default(ConcurrentCommand<TArgument>);
+            var command = CreateCommand();
+
+            return WrapInDecorators(command);
+        }
+
+        private ConcurrentCommand<TArgument> CreateCommand()
+        {
             if (_canExcute is null)
             {
-                result = new ConcurrentCommand<TArgument>(CommandManager, CancelCommand, _busyStackFactory, _execute);
+                return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? new CancelCommand(CommandManager), _busyStackFactory, _execute);
             }
-            else
+
+            if (BusyStack is null)
             {
-                if (BusyStack is null)
-                {
-                    result = new ConcurrentCommand<TArgument>(CommandManager, CancelCommand, _busyStackFactory, _execute, _canExcute);
-                }
-                else
-                {
-                    result = new ConcurrentCommand<TArgument>(CommandManager, CancelCommand, _busyStackFactory, BusyStack, _execute, _canExcute);
-                }
+                return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? new CancelCommand(CommandManager), _busyStackFactory, _execute, _canExcute);
             }
 
-            //TODO complete implementation
+            return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? new CancelCommand(CommandManager), _busyStackFactory, BusyStack, _execute, _canExcute);
+        }
 
-            return CreateDecoratorsOn(result);
-
-            ConcurrentCommandBase CreateDecoratorsOn(ConcurrentCommandBase command)
+        private ConcurrentCommandBase WrapInDecorators(ConcurrentCommandBase command)
+        {
+            var decorator = command;
+            while (_decorators.Count > 0)
             {
-                var decorator = command;
-                while (_decorators.Count > 0)
-                {
-                    decorator = _decorators.Dequeue()(decorator);
-                }
-
-                return decorator;
+                var wrapper = _decorators.Dequeue();
+                decorator = wrapper.Invoke(decorator);
             }
+
+            return decorator;
         }
     }
 }

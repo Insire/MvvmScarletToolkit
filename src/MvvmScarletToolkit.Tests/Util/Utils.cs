@@ -2,10 +2,12 @@ using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Tests
 {
-    public static class Utils
+    internal static class Utils
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for tests")]
         public static void FakeDeliveryAction<T>(T message)
@@ -62,6 +64,24 @@ namespace MvvmScarletToolkit.Tests
         public static ICommandBuilder GetTestCommandBuilder()
         {
             return new ScarletCommandBuilder(GetTestDispatcher(), GetTestCommandManager(), GetTestMessenger(), GetTestExitService(), GetTestEventManager(), GetTestBusyStackFactory());
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for tests")]
+        public static IBusyStack TestBusyStackFactory(Action<bool> lambda)
+        {
+            return NSubstitute.Substitute.For<IBusyStack>();
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for tests")]
+        public static Task TestExecute(object arg, CancellationToken token)
+        {
+            return Task.CompletedTask;
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for tests")]
+        public static bool TestCanExecute(object arg)
+        {
+            return true;
         }
     }
 }

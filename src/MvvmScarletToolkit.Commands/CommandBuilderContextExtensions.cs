@@ -51,7 +51,6 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// Configure synchronous cancellation for the given command
         /// </summary>
-        /// <param name="commandBuilder"></param>
         public static CommandBuilderContext<TArgument> WithCancellation<TArgument>(this CommandBuilderContext<TArgument> commandBuilder)
         {
             commandBuilder.CancelCommand = new CancelCommand(commandBuilder.CommandManager);
@@ -61,10 +60,18 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// Configure asynchronous cancellation for the given command
         /// </summary>
-        /// <param name="commandBuilder"></param>
         public static CommandBuilderContext<TArgument> WithAsyncCancellation<TArgument>(this CommandBuilderContext<TArgument> commandBuilder)
         {
             commandBuilder.CancelCommand = new ConcurrentCancelCommand(commandBuilder.CommandManager);
+            return commandBuilder;
+        }
+
+        /// <summary>
+        /// Provide a custom implementation of <see cref="ICancelCommand"/>
+        /// </summary>
+        public static CommandBuilderContext<TArgument> WithCustomCancellation<TArgument>(this CommandBuilderContext<TArgument> commandBuilder, ICancelCommand cancelCommand)
+        {
+            commandBuilder.CancelCommand = cancelCommand;
             return commandBuilder;
         }
 
@@ -78,7 +85,6 @@ namespace MvvmScarletToolkit
         /// Configure a command as to not automatically cancel and rerun when executed again.
         /// Which means there will be only one command be startable at a time.
         /// </summary>
-        /// <param name="commandBuilder"></param>
         public static CommandBuilderContext<TArgument> WithSingleExecution<TArgument>(this CommandBuilderContext<TArgument> commandBuilder, IScarletCommandManager commandManager)
         {
             ConcurrentCommandBase DecoratorFactory(ConcurrentCommandBase command)
