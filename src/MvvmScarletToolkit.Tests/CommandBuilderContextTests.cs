@@ -1,6 +1,7 @@
 using MvvmScarletToolkit.Commands;
 using NUnit.Framework;
 using System;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Tests
 {
@@ -40,6 +41,30 @@ namespace MvvmScarletToolkit.Tests
 
             Assert.IsNotNull(context.CommandManager);
             Assert.AreEqual(commandManager, context.CommandManager);
+        }
+
+        [Test]
+        public void Build_ShouldCreateValidCommandInstance()
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+
+            var command = context.Build();
+            Assert.IsNotNull(command);
+        }
+
+        [Test]
+        public void Build_ShouldCreateDefaultCommandInstance()
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+
+            var command = context.Build();
+
+            Assert.IsNotNull(command.CancelCommand);
+            Assert.IsInstanceOf<NoCancellationCommand>(command.CancelCommand);
+            Assert.AreEqual(command.IsBusy, false);
+            Assert.AreEqual(command.Completion, Task.CompletedTask);
         }
     }
 }

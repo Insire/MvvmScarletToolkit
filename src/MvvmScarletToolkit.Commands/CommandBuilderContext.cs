@@ -64,15 +64,15 @@ namespace MvvmScarletToolkit.Commands
         {
             if (_canExcute is null)
             {
-                return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? new CancelCommand(CommandManager), _busyStackFactory, _execute);
+                return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, _execute);
             }
 
             if (BusyStack is null)
             {
-                return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? new CancelCommand(CommandManager), _busyStackFactory, _execute, _canExcute);
+                return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, _execute, _canExcute);
             }
 
-            return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? new CancelCommand(CommandManager), _busyStackFactory, BusyStack, _execute, _canExcute);
+            return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, BusyStack, _execute, _canExcute);
         }
 
         private ConcurrentCommandBase WrapInDecorators(ConcurrentCommandBase command)
