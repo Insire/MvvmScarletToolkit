@@ -237,7 +237,7 @@ Task("Build")
             }
         }
 
-        void GenerateReport(FilePath inputFile,ReportGeneratorReportType type, string subFolder)
+        void GenerateReport(FilePath inputFile, ReportGeneratorReportType type, string subFolder)
         {
             var folder = new DirectoryPath(ResultsPath).Combine("reports");
             var ReportGeneratorSettings = new ReportGeneratorSettings()

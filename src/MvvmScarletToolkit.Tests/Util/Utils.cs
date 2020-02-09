@@ -1,4 +1,7 @@
 using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Observables;
+using System;
+using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Tests
 {
@@ -24,6 +27,41 @@ namespace MvvmScarletToolkit.Tests
             var token = new SubscriptionToken(messenger);
 
             return token;
+        }
+
+        public static IScarletDispatcher GetTestDispatcher()
+        {
+            return NSubstitute.Substitute.For<IScarletDispatcher>();
+        }
+
+        public static IScarletCommandManager GetTestCommandManager()
+        {
+            return NSubstitute.Substitute.For<IScarletCommandManager>();
+        }
+
+        public static IScarletMessenger GetTestMessenger()
+        {
+            return NSubstitute.Substitute.For<IScarletMessenger>();
+        }
+
+        public static IExitService GetTestExitService()
+        {
+            return NSubstitute.Substitute.For<IExitService>();
+        }
+
+        public static IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> GetTestEventManager()
+        {
+            return NSubstitute.Substitute.For<IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs>>();
+        }
+
+        public static Func<Action<bool>, IBusyStack> GetTestBusyStackFactory()
+        {
+            return (lambda) => new BusyStack(lambda, GetTestDispatcher());
+        }
+
+        public static ICommandBuilder GetTestCommandBuilder()
+        {
+            return new ScarletCommandBuilder(GetTestDispatcher(), GetTestCommandManager(), GetTestMessenger(), GetTestExitService(), GetTestEventManager(), GetTestBusyStackFactory());
         }
     }
 }

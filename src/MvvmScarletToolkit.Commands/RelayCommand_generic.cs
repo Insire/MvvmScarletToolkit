@@ -22,14 +22,14 @@ namespace MvvmScarletToolkit.Commands
 
         public RelayCommand(IScarletCommandManager? commandManager, Action<TArgument> execute)
         {
-            _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
-            _execute = execute ?? throw new ArgumentException($"{nameof(execute)} can't be empty.", nameof(execute));
+            _commandManager = commandManager ?? throw new ArgumentNullException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
+            _execute = execute ?? throw new ArgumentNullException($"{nameof(execute)} can't be empty.", nameof(execute));
         }
 
         public RelayCommand(IScarletCommandManager? commandManager, Action<TArgument> execute, Func<TArgument, bool> canExecute)
             : this(commandManager, execute)
         {
-            _canExecute = canExecute ?? throw new ArgumentException($"{nameof(canExecute)} can't be empty.", nameof(canExecute));
+            _canExecute = canExecute ?? throw new ArgumentNullException($"{nameof(canExecute)} can't be empty.", nameof(canExecute));
         }
 
         public bool CanExecute(object parameter)
@@ -39,19 +39,21 @@ namespace MvvmScarletToolkit.Commands
                 return true;
             }
 
-            if (parameter is null && typeof(TArgument).IsValueType)
+            if (parameter is null)
             {
+                if (typeof(TArgument).IsValueType)
+                {
+                    return false;
+                }
+
 #pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
                 return _canExecute.Invoke(default);
 #pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
             }
-
-            if (parameter is TArgument arg)
+            else
             {
-                return _canExecute.Invoke(arg);
+                return _canExecute.Invoke((TArgument)parameter);
             }
-
-            return false;
         }
 
         public event EventHandler CanExecuteChanged
@@ -62,7 +64,16 @@ namespace MvvmScarletToolkit.Commands
 
         public void Execute(object parameter)
         {
-            _execute?.Invoke((TArgument)parameter);
+            if (parameter is null)
+            {
+#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
+                _execute?.Invoke(default);
+#pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
+            }
+            else
+            {
+                _execute?.Invoke((TArgument)parameter);
+            }
         }
     }
 }
