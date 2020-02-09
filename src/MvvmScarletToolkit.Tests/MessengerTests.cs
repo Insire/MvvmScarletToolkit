@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
 
-            messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>));
+            messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction));
         }
 
         [Test]
@@ -26,7 +26,7 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
 
-            var output = messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>));
+            var output = messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction));
 
             Assert.IsInstanceOf<SubscriptionToken>(output);
         }
@@ -36,7 +36,7 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
 
-            messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), true);
+            messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), true);
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
 
-            messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), new Func<TestMessage, bool>(Utils.FakeMessageFilter<TestMessage>));
+            messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), new Func<TestMessage, bool>(Utils.FakeMessageFilter));
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
 
-            Assert.Throws<ArgumentNullException>(() => messenger.Subscribe<TestMessage>(null, new Func<TestMessage, bool>(Utils.FakeMessageFilter<TestMessage>)));
+            Assert.Throws<ArgumentNullException>(() => messenger.Subscribe(null, new Func<TestMessage, bool>(Utils.FakeMessageFilter)));
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
 
-            Assert.Throws<ArgumentNullException>(() => messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), null, new TestProxy()));
+            Assert.Throws<ArgumentNullException>(() => messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), null, new TestProxy()));
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
 
-            Assert.Throws<ArgumentNullException>(() => messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), new Func<TestMessage, bool>(Utils.FakeMessageFilter<TestMessage>), null));
+            Assert.Throws<ArgumentNullException>(() => messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), new Func<TestMessage, bool>(Utils.FakeMessageFilter), null));
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace MvvmScarletToolkit.Tests
         public void Unsubscribe_PreviousSubscription_DoesNotThrow()
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
-            var subscription = messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), new Func<TestMessage, bool>(Utils.FakeMessageFilter<TestMessage>));
+            var subscription = messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), new Func<TestMessage, bool>(Utils.FakeMessageFilter));
 
             messenger.Unsubscribe(subscription);
         }
@@ -92,8 +92,8 @@ namespace MvvmScarletToolkit.Tests
         public void Subscribe_PreviousSubscription_ReturnsDifferentSubscriptionObject()
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
-            var sub1 = messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), new Func<TestMessage, bool>(Utils.FakeMessageFilter<TestMessage>));
-            var sub2 = messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), new Func<TestMessage, bool>(Utils.FakeMessageFilter<TestMessage>));
+            var sub1 = messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), new Func<TestMessage, bool>(Utils.FakeMessageFilter));
+            var sub2 = messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), new Func<TestMessage, bool>(Utils.FakeMessageFilter));
 
             Assert.IsFalse(object.ReferenceEquals(sub1, sub2));
         }
@@ -104,7 +104,7 @@ namespace MvvmScarletToolkit.Tests
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
             var proxy = new TestProxy();
 
-            messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), proxy);
+            messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), proxy);
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace MvvmScarletToolkit.Tests
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
             var proxy = new TestProxy();
 
-            messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), new Func<TestMessage, bool>(Utils.FakeMessageFilter<TestMessage>), proxy);
+            messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), new Func<TestMessage, bool>(Utils.FakeMessageFilter), proxy);
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace MvvmScarletToolkit.Tests
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
             var proxy = new TestProxy();
 
-            messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), true, proxy);
+            messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), true, proxy);
         }
 
         [Test]
@@ -131,7 +131,7 @@ namespace MvvmScarletToolkit.Tests
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
             var proxy = new TestProxy();
 
-            messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), new Func<TestMessage, bool>(Utils.FakeMessageFilter<TestMessage>), true, proxy);
+            messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), new Func<TestMessage, bool>(Utils.FakeMessageFilter), true, proxy);
         }
 
         [Test]
@@ -139,10 +139,10 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
             var proxy = new TestProxy();
-            messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), proxy);
+            messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), proxy);
             var message = new TestMessage(this);
 
-            messenger.Publish<TestMessage>(message);
+            messenger.Publish(message);
 
             Assert.AreSame(message, proxy.Message);
         }
@@ -152,10 +152,10 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
             var proxy = new TestProxy();
-            messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), new Func<TestMessage, bool>(Utils.FakeMessageFilter<TestMessage>), proxy);
+            messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), new Func<TestMessage, bool>(Utils.FakeMessageFilter), proxy);
             var message = new TestMessage(this);
 
-            messenger.Publish<TestMessage>(message);
+            messenger.Publish(message);
 
             Assert.AreSame(message, proxy.Message);
         }
@@ -165,10 +165,10 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
             var proxy = new TestProxy();
-            messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), true, proxy);
+            messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), true, proxy);
             var message = new TestMessage(this);
 
-            messenger.Publish<TestMessage>(message);
+            messenger.Publish(message);
 
             Assert.AreSame(message, proxy.Message);
         }
@@ -178,10 +178,10 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
             var proxy = new TestProxy();
-            messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), new Func<TestMessage, bool>(Utils.FakeMessageFilter<TestMessage>), true, proxy);
+            messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), new Func<TestMessage, bool>(Utils.FakeMessageFilter), true, proxy);
             var message = new TestMessage(this);
 
-            messenger.Publish<TestMessage>(message);
+            messenger.Publish(message);
 
             Assert.AreSame(message, proxy.Message);
         }
@@ -199,16 +199,16 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
 
-            messenger.Publish<TestMessage>(new TestMessage(this));
+            messenger.Publish(new TestMessage(this));
         }
 
         [Test]
         public void Publish_Subscriber_DoesNotThrow()
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
-            messenger.Subscribe<TestMessage>(new Action<TestMessage>(Utils.FakeDeliveryAction<TestMessage>), new Func<TestMessage, bool>(Utils.FakeMessageFilter<TestMessage>));
+            messenger.Subscribe(new Action<TestMessage>(Utils.FakeDeliveryAction), new Func<TestMessage, bool>(Utils.FakeMessageFilter));
 
-            messenger.Publish<TestMessage>(new TestMessage(this));
+            messenger.Publish(new TestMessage(this));
         }
 
         [Test]
@@ -218,7 +218,7 @@ namespace MvvmScarletToolkit.Tests
             var received = false;
             messenger.Subscribe<TestMessage>((m) => { received = true; });
 
-            messenger.Publish<TestMessage>(new TestMessage(this));
+            messenger.Publish(new TestMessage(this));
 
             Assert.IsTrue(received);
         }
@@ -231,7 +231,7 @@ namespace MvvmScarletToolkit.Tests
             var token = messenger.Subscribe<TestMessage>((m) => { received = true; });
             messenger.Unsubscribe(token);
 
-            messenger.Publish<TestMessage>(new TestMessage(this));
+            messenger.Publish(new TestMessage(this));
 
             Assert.IsFalse(received);
         }
@@ -243,7 +243,7 @@ namespace MvvmScarletToolkit.Tests
             var received = false;
             messenger.Subscribe<TestMessage>((m) => { received = true; }, (m) => false);
 
-            messenger.Publish<TestMessage>(new TestMessage(this));
+            messenger.Publish(new TestMessage(this));
 
             Assert.IsFalse(received);
         }
@@ -256,7 +256,7 @@ namespace MvvmScarletToolkit.Tests
             var payload = new TestMessage(this);
             messenger.Subscribe<TestMessage>((m) => { receivedMessage = m; });
 
-            messenger.Publish<TestMessage>(payload);
+            messenger.Publish(payload);
 
             Assert.AreSame(payload, receivedMessage);
         }
@@ -352,7 +352,7 @@ namespace MvvmScarletToolkit.Tests
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
 #pragma warning disable 219
-            messenger.Publish<CancellableGenericScarletMessage<string>>(new CancellableGenericScarletMessage<string>(this, "Testing", () => { var test = true; }));
+            messenger.Publish(new CancellableGenericScarletMessage<string>(this, "Testing", () => { var test = true; }));
 #pragma warning restore 219
         }
 
@@ -360,7 +360,7 @@ namespace MvvmScarletToolkit.Tests
         public void CancellableGenericScarletMessage_PublishWithNullAction_Throws()
         {
             var messenger = new ScarletMessenger(new ScarletMessageProxy());
-            Assert.Throws<ArgumentNullException>(() => messenger.Publish<CancellableGenericScarletMessage<string>>(new CancellableGenericScarletMessage<string>(this, "Testing", null)));
+            Assert.Throws<ArgumentNullException>(() => messenger.Publish(new CancellableGenericScarletMessage<string>(this, "Testing", null)));
         }
 
         [Test]
@@ -370,7 +370,7 @@ namespace MvvmScarletToolkit.Tests
             var cancelled = false;
             messenger.Subscribe<CancellableGenericScarletMessage<string>>((m) => { m.Cancel(); });
 
-            messenger.Publish<CancellableGenericScarletMessage<string>>(new CancellableGenericScarletMessage<string>(this, "Testing", () => { cancelled = true; }));
+            messenger.Publish(new CancellableGenericScarletMessage<string>(this, "Testing", () => { cancelled = true; }));
 
             Assert.IsTrue(cancelled);
         }
@@ -385,7 +385,7 @@ namespace MvvmScarletToolkit.Tests
             messenger.Subscribe<CancellableGenericScarletMessage<string>>((m) => { m.Cancel(); });
             messenger.Subscribe<CancellableGenericScarletMessage<string>>((m) => { var test = 1; });
 #pragma warning restore 219
-            messenger.Publish<CancellableGenericScarletMessage<string>>(new CancellableGenericScarletMessage<string>(this, "Testing", () => { cancelled = true; }));
+            messenger.Publish(new CancellableGenericScarletMessage<string>(this, "Testing", () => { cancelled = true; }));
 
             Assert.IsTrue(cancelled);
         }

@@ -2,21 +2,15 @@ using MvvmScarletToolkit.Abstractions;
 
 namespace MvvmScarletToolkit.Tests
 {
-    //public class TestSubscriptionErrorHandler : ISubscriberErrorHandler
-    //{
-    //    public void Handle(IScarletMessage message, Exception exception)
-    //    {
-    //        throw exception;
-    //    }
-    //}
-
     public static class Utils
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for tests")]
         public static void FakeDeliveryAction<T>(T message)
             where T : IScarletMessage
         {
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for tests")]
         public static bool FakeMessageFilter<T>(T message)
             where T : IScarletMessage
         {
