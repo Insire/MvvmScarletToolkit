@@ -42,6 +42,7 @@ namespace MvvmScarletToolkit.Tests
             var messenger = Utils.GetTestMessenger();
             var exit = Utils.GetTestExitService();
             var eventManager = Utils.GetTestEventManager();
+
             var builder = new ScarletCommandBuilder(dispatcher, commandManager, messenger, exit, eventManager, Utils.TestBusyStackFactory);
 
             Assert.AreEqual(dispatcher, builder.Dispatcher);

@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using NUnit.Framework;
 using System;
@@ -65,6 +66,109 @@ namespace MvvmScarletToolkit.Tests
             Assert.IsInstanceOf<NoCancellationCommand>(command.CancelCommand);
             Assert.AreEqual(command.IsBusy, false);
             Assert.AreEqual(command.Completion, Task.CompletedTask);
+        }
+
+        [Test]
+        public void Build_ShouldAddConcurrentCancellationSupport()
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var command = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
+                .WithAsyncCancellation()
+                .Build();
+
+            Assert.IsNotNull(command.CancelCommand);
+            Assert.IsInstanceOf<ConcurrentCancelCommand>(command.CancelCommand);
+        }
+
+        [Test]
+        public void Build_ShouldAddCancellationSupport()
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var command = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
+                .WithCancellation()
+                .Build();
+
+            Assert.IsNotNull(command.CancelCommand);
+            Assert.IsInstanceOf<CancelCommand>(command.CancelCommand);
+        }
+
+        [Test]
+        public void Build_ShouldAddCustomCancellationSupport()
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var customCancelCommand = NSubstitute.Substitute.For<ICancelCommand>();
+            var command = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
+                .WithCustomCancellation(customCancelCommand)
+                .Build();
+
+            Assert.IsNotNull(command.CancelCommand);
+            Assert.IsInstanceOf<ICancelCommand>(command.CancelCommand);
+        }
+
+        [Test]
+        public void Build_ShouldThrowForNullCancelCommand()
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+
+            Assert.Throws<ArgumentNullException>(() => context.WithCustomCancellation(null));
+        }
+
+        [Test]
+        public void Build_ShouldCallAllDecorators()
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+
+            var count = 0;
+            var decoratorCount = 20;
+
+            for (var i = 0; i < decoratorCount; i++)
+                context.AddDecorator(DecoratorFactory);
+
+            var command = context.Build();
+
+            Assert.AreEqual(decoratorCount, count);
+
+            ConcurrentCommandBase DecoratorFactory(ConcurrentCommandBase command)
+            {
+                count++;
+                return command;
+            }
+        }
+
+        [Test]
+        public void Build_ShouldAssignBusyStack()
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var customBusyStack = NSubstitute.Substitute.For<IBusyStack>();
+            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+
+            context.WithBusyNotification(customBusyStack);
+
+            Assert.IsInstanceOf<IBusyStack>(context.BusyStack);
+        }
+
+        [Test]
+        public void Build_ShouldThrowForNullBusyStack()
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+
+            Assert.Throws<ArgumentNullException>(() => context.WithBusyNotification(null));
+        }
+
+        [Test]
+        public void Build_ShouldAddSingleExecutionDecorator()
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+
+            context.WithSingleExecution(commandManager);
+
+            var command = context.Build();
+
+            Assert.IsInstanceOf<SequentialAsyncCommandDecorator>(command);
         }
     }
 }

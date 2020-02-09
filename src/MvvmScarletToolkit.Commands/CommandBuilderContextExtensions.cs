@@ -58,7 +58,7 @@ namespace MvvmScarletToolkit
         }
 
         /// <summary>
-        /// Configure asynchronous cancellation for the given command
+        /// Configure task based cancellation for the given command
         /// </summary>
         public static CommandBuilderContext<TArgument> WithAsyncCancellation<TArgument>(this CommandBuilderContext<TArgument> commandBuilder)
         {
@@ -71,12 +71,25 @@ namespace MvvmScarletToolkit
         /// </summary>
         public static CommandBuilderContext<TArgument> WithCustomCancellation<TArgument>(this CommandBuilderContext<TArgument> commandBuilder, ICancelCommand cancelCommand)
         {
+            if (cancelCommand is null)
+            {
+                throw new ArgumentNullException("This method should be called with a non null instance of ICancelCommand.");
+            }
+
             commandBuilder.CancelCommand = cancelCommand;
             return commandBuilder;
         }
 
+        /// <summary>
+        /// Provide a custom implementation of <see cref="IBusyStack"/>
+        /// </summary>
         public static CommandBuilderContext<TArgument> WithBusyNotification<TArgument>(this CommandBuilderContext<TArgument> commandBuilder, IBusyStack busyStack)
         {
+            if (busyStack is null)
+            {
+                throw new ArgumentNullException("This method should be called with a non null instance of IBusyStack.");
+            }
+
             commandBuilder.BusyStack = busyStack;
             return commandBuilder;
         }

@@ -33,10 +33,12 @@ namespace MvvmScarletToolkit.Commands
 
         public void NotifyCommandFinished()
         {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void NotifyCommandStarting()
         {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }
