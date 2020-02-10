@@ -66,19 +66,24 @@ namespace MvvmScarletToolkit.Tests
             return new ScarletCommandBuilder(GetTestDispatcher(), GetTestCommandManager(), GetTestMessenger(), GetTestExitService(), GetTestEventManager(), GetTestBusyStackFactory());
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for tests")]
+        public static ICancelCommand GetTestCancelCommand()
+        {
+            return NSubstitute.Substitute.For<ICancelCommand>();
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for testcases")]
         public static IBusyStack TestBusyStackFactory(Action<bool> lambda)
         {
             return NSubstitute.Substitute.For<IBusyStack>();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for tests")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for testcases")]
         public static Task TestExecute(object arg, CancellationToken token)
         {
             return Task.CompletedTask;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for tests")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for testcases")]
         public static bool TestCanExecute(object arg)
         {
             return true;

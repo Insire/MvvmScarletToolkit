@@ -44,7 +44,7 @@ namespace MvvmScarletToolkit.Tests
         public void CanExecute_IsCalledOnCommandCanExecuteCheck()
         {
             var executed = false;
-            var command = new RelayCommand<object>(Utils.GetTestCommandBuilder(), (o) => { }, (o) => { executed = true; return true; });
+            var command = new RelayCommand<object>(Utils.GetTestCommandBuilder(), (o) => { Assert.Fail(); }, (o) => { executed = true; return true; });
             command.CanExecute(default(object));
 
             Assert.IsTrue(executed);
@@ -74,7 +74,7 @@ namespace MvvmScarletToolkit.Tests
         public void CanExecute_IsCalledOnCommandCanExecuteCheckForValueTypeAndNullArgument()
         {
             var executed = false;
-            var command = new RelayCommand<int>(Utils.GetTestCommandBuilder(), (o) => { }, (o) => { executed = true; return true; });
+            var command = new RelayCommand<int>(Utils.GetTestCommandBuilder(), (o) => { Assert.Fail(); }, (o) => { executed = true; return true; });
             command.CanExecute(null);
 
             Assert.IsFalse(executed);

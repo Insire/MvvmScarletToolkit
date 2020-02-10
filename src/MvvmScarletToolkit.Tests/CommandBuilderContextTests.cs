@@ -138,6 +138,45 @@ namespace MvvmScarletToolkit.Tests
         }
 
         [Test]
+        public void Build_ShouldAddAllDecoratorsInCorrectOrder()
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+
+            var count = 0;
+            var decoratorCount = 3;
+
+            context.AddDecorator(DecoratorFactory1);
+            context.AddDecorator(DecoratorFactory2);
+            context.AddDecorator(DecoratorFactory3);
+
+            var command = context.Build();
+
+            Assert.AreEqual(decoratorCount, count);
+
+            ConcurrentCommandBase DecoratorFactory1(ConcurrentCommandBase command)
+            {
+                Assert.AreEqual(0, count);
+                count++;
+                return command;
+            }
+
+            ConcurrentCommandBase DecoratorFactory2(ConcurrentCommandBase command)
+            {
+                Assert.AreEqual(1, count);
+                count++;
+                return command;
+            }
+
+            ConcurrentCommandBase DecoratorFactory3(ConcurrentCommandBase command)
+            {
+                Assert.AreEqual(2, count);
+                count++;
+                return command;
+            }
+        }
+
+        [Test]
         public void Build_ShouldAssignBusyStack()
         {
             var commandManager = Utils.GetTestCommandManager();
