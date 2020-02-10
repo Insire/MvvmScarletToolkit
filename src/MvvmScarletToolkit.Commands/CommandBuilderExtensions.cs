@@ -67,6 +67,11 @@ namespace MvvmScarletToolkit
             return builder.Create<TArgument>((parameter, token) => execute(parameter, token), (parameter) => true);
         }
 
+        public static CommandBuilderContext<TArgument> Create<TArgument>(this ICommandBuilder builder, Func<TArgument, CancellationToken, Task> execute, Func<bool> canExecute)
+        {
+            return builder.Create<TArgument>((parameter, token) => execute(parameter, token), (parameter) => canExecute());
+        }
+
         public static CommandBuilderContext<TArgument> Create<TArgument>(this ICommandBuilder builder, Func<TArgument, CancellationToken, Task> execute, Func<TArgument, bool> canExecute)
         {
             return builder.Create<TArgument>((parameter, token) => execute(parameter, token), (parameter) => canExecute(parameter));

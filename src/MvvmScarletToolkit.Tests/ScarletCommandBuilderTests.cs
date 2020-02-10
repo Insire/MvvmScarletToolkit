@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Observables;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -25,16 +24,6 @@ namespace MvvmScarletToolkit.Tests
         }
 
         [Test]
-        public void Create_DoesReturnValidContextInstance()
-        {
-            var commandManager = Utils.GetTestCommandManager();
-            var builder = new ScarletCommandBuilder(Utils.GetTestDispatcher(), commandManager, Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory);
-            var context = builder.Create(() => Task.CompletedTask);
-
-            Assert.IsNotNull(context);
-        }
-
-        [Test]
         public void Ctor_ShouldInitializeDependencyProperties()
         {
             var dispatcher = Utils.GetTestDispatcher();
@@ -50,6 +39,15 @@ namespace MvvmScarletToolkit.Tests
             Assert.AreEqual(messenger, builder.Messenger);
             Assert.AreEqual(exit, builder.Exit);
             Assert.AreEqual(eventManager, builder.WeakEventManager);
+        }
+
+        [Test]
+        public void Create_DoesReturnValidContextInstance()
+        {
+            var builder = new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory);
+
+            var context = builder.Create<object>((o, token) => Task.CompletedTask, (o) => true);
+            Assert.IsNotNull(context);
         }
     }
 }
