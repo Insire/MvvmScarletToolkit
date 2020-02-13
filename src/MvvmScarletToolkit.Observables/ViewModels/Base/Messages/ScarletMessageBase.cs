@@ -14,9 +14,7 @@ namespace MvvmScarletToolkit
         /// </summary>
         private readonly WeakReference _sender;
 
-#pragma warning disable CS8603 // Possible null reference return.
-        public object Sender => _sender?.Target;
-#pragma warning restore CS8603 // Possible null reference return.
+        public object Sender => _sender.Target;
 
         protected ScarletMessageBase(object sender)
         {

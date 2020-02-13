@@ -328,7 +328,7 @@ namespace MvvmScarletToolkit.Observables
             {
                 return;
             }
-            Messenger.Publish(new ViewModelListBaseSelectionChanged<TViewModel>(this, SelectedItem));
+            Messenger.Publish(new ViewModelListBaseSelectionChanged<TViewModel?>(this, SelectedItem));
         }
 
         private void OnSelectionChanging()
@@ -337,7 +337,7 @@ namespace MvvmScarletToolkit.Observables
             {
                 return;
             }
-            Messenger.Publish(new ViewModelListBaseSelectionChanging<TViewModel>(this, SelectedItem));
+            Messenger.Publish(new ViewModelListBaseSelectionChanging<TViewModel?>(this, SelectedItem));
         }
 
         private void OnSelectionsChanged()
