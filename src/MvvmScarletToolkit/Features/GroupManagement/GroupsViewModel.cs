@@ -28,6 +28,7 @@ namespace MvvmScarletToolkit
                 Messenger.Subscribe<ViewModelListBaseSelectionChanged<GroupViewModel>>(async (p) =>
                 {
                     await Remove(p.Content);
+                    p.Content.Dispose();
                 }, (p) => !p.Sender.Equals(this) && !(p.Content is null)),
 
                 Messenger.Subscribe<GroupsViewModelRemoved>(async (p) =>

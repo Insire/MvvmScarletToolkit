@@ -65,7 +65,6 @@ namespace MvvmScarletToolkit
             {
                 _filterCollection.TryAdd(item.SelectedItem.Name, item.SelectedItem);
             }
-            item.Dispose();
         }
 
         protected override Task RefreshInternal(CancellationToken token)
