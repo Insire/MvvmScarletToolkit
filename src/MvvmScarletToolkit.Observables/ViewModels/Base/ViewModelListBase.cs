@@ -30,6 +30,8 @@ namespace MvvmScarletToolkit.Observables
         protected readonly IExitService Exit;
         protected readonly IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
 
+        private bool _disposed;
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private bool _isBusy;
@@ -79,8 +81,6 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand RemoveCommand { get; }
 
-        protected bool Disposed { get; private set; }
-
         protected ViewModelListBase(ICommandBuilder commandBuilder)
         {
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
@@ -120,6 +120,11 @@ namespace MvvmScarletToolkit.Observables
 
         public Task Add(TViewModel? item)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
+
             if (item is null)
             {
                 return Task.CompletedTask;
@@ -130,6 +135,11 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual async Task Add(TViewModel item, CancellationToken token)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
+
             if (item is null)
             {
                 throw new ArgumentNullException(nameof(item));
@@ -145,11 +155,20 @@ namespace MvvmScarletToolkit.Observables
 
         public Task AddRange(IEnumerable<TViewModel> items)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
             return AddRange(items, CancellationToken.None);
         }
 
         public virtual async Task AddRange(IEnumerable<TViewModel> items, CancellationToken token)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
+
             if (items is null)
             {
                 throw new ArgumentNullException(nameof(items));
@@ -163,6 +182,11 @@ namespace MvvmScarletToolkit.Observables
 
         public Task Remove(TViewModel? item)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
+
             if (item is null)
             {
                 return Task.CompletedTask;
@@ -173,6 +197,11 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual async Task Remove(TViewModel item, CancellationToken token)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
+
             using (BusyStack.GetToken())
             {
                 await Dispatcher.Invoke(() => _items.Remove(item), token).ConfigureAwait(false);
@@ -183,11 +212,21 @@ namespace MvvmScarletToolkit.Observables
 
         public Task RemoveRange(IEnumerable<TViewModel> items)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
+
             return RemoveRange(items, CancellationToken.None);
         }
 
         public virtual async Task RemoveRange(IEnumerable<TViewModel> items, CancellationToken token)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
+
             if (items is null)
             {
                 throw new ArgumentNullException(nameof(items));
@@ -201,11 +240,20 @@ namespace MvvmScarletToolkit.Observables
 
         public Task Clear()
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
             return Clear(CancellationToken.None);
         }
 
         public virtual async Task Clear(CancellationToken token)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
+
             using (BusyStack.GetToken())
             {
                 await Dispatcher.Invoke(() => _items.Clear(), token).ConfigureAwait(false);
@@ -216,7 +264,9 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual bool CanClear()
         {
-            return HasItems && !IsBusy;
+            return !_disposed
+                && HasItems
+                && !IsBusy;
         }
 
         public void Dispose()
@@ -278,7 +328,8 @@ namespace MvvmScarletToolkit.Observables
 
         protected bool CanRemoveRange(IList items)
         {
-            return CanRemoveRange(items?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>());
+            return !_disposed
+                && CanRemoveRange(items?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>());
         }
 
         protected virtual bool CanRemove(TViewModel? item)
@@ -288,7 +339,8 @@ namespace MvvmScarletToolkit.Observables
                 return false;
             }
 
-            return CanClear()
+            return !_disposed
+                && CanClear()
                 && !(item is null)
                 && _items.Contains(item);
         }
@@ -310,51 +362,56 @@ namespace MvvmScarletToolkit.Observables
 
         protected virtual void Dispose(bool disposing)
         {
-            if (Disposed)
+            if (_disposed)
             {
                 return;
             }
 
-            Disposed = true;
             if (disposing)
             {
                 BusyStack.Dispose();
             }
+
+            _disposed = true;
         }
 
         private void OnSelectionChanged()
         {
-            if (Disposed)
+            if (_disposed)
             {
                 return;
             }
+
             Messenger.Publish(new ViewModelListBaseSelectionChanged<TViewModel?>(this, SelectedItem));
         }
 
         private void OnSelectionChanging()
         {
-            if (Disposed)
+            if (_disposed)
             {
                 return;
             }
+
             Messenger.Publish(new ViewModelListBaseSelectionChanging<TViewModel?>(this, SelectedItem));
         }
 
         private void OnSelectionsChanged()
         {
-            if (Disposed)
+            if (_disposed)
             {
                 return;
             }
+
             Messenger.Publish(new ViewModelListBaseSelectionsChanged<TViewModel>(this, SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
         }
 
         private void OnSelectionsChanging()
         {
-            if (Disposed)
+            if (_disposed)
             {
                 return;
             }
+
             Messenger.Publish(new ViewModelListBaseSelectionsChanging<TViewModel>(this, SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
         }
     }

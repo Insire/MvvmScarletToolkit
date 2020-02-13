@@ -20,6 +20,8 @@ namespace MvvmScarletToolkit.Observables
         private readonly Action<bool> _onChanged;
         private readonly IScarletDispatcher _dispatcher;
 
+        private bool _disposed;
+
         public ObservableBusyStack(Action<bool> onChanged, IScarletDispatcher dispatcher)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
@@ -31,6 +33,11 @@ namespace MvvmScarletToolkit.Observables
 
         public async Task Pull()
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ObservableBusyStack));
+            }
+
             var oldValue = _items.TryPeek(out _);
             _ = _items.TryTake(out _);
             var newValue = _items.TryPeek(out _);
@@ -46,6 +53,11 @@ namespace MvvmScarletToolkit.Observables
 
         public async Task Push(IDisposable token)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ObservableBusyStack));
+            }
+
             var oldValue = _items.TryPeek(out _);
             _items.Add(token);
             var newValue = _items.TryPeek(out _);
@@ -74,6 +86,11 @@ namespace MvvmScarletToolkit.Observables
 
         public IDisposable Subscribe(IObserver<bool> observer)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ObservableBusyStack));
+            }
+
             var result = new DisposalToken<bool>(observer, _observers);
 
             return result;
@@ -98,11 +115,21 @@ namespace MvvmScarletToolkit.Observables
         [DebuggerStepThrough]
         public IDisposable GetToken()
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ObservableBusyStack));
+            }
+
             return new BusyToken(this);
         }
 
         public void Dispose()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             for (var i = 0; i < _items.Count; i++)
             {
                 if (_items.TryTake(out var item))
@@ -112,6 +139,7 @@ namespace MvvmScarletToolkit.Observables
             }
 
             _observers.Clear();
+            _disposed = true;
         }
     }
 }

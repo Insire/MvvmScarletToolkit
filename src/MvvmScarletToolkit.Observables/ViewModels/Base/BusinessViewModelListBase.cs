@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
@@ -15,6 +16,8 @@ namespace MvvmScarletToolkit.Observables
     public abstract class BusinessViewModelListBase<TViewModel> : ViewModelListBase<TViewModel>, IBusinessViewModelListBase<TViewModel>
         where TViewModel : class, INotifyPropertyChanged
     {
+        private bool _disposed;
+
         private bool _isLoaded;
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsLoaded
@@ -69,6 +72,10 @@ namespace MvvmScarletToolkit.Observables
 
         public async Task Load(CancellationToken token)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(BusinessViewModelListBase<TViewModel>));
+            }
 #if DEBUG
             Debug.WriteLine($"{GetType().Name}.{nameof(Load)}");
 #endif
@@ -82,7 +89,8 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual bool CanLoad()
         {
-            return !IsLoaded
+            return !_disposed
+                && !IsLoaded
                 && !_loadCommand.IsBusy
                 && !_refreshCommand.IsBusy
                 && !_unloadCommand.IsBusy;
@@ -98,6 +106,10 @@ namespace MvvmScarletToolkit.Observables
 
         public async Task Unload(CancellationToken token)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(BusinessViewModelListBase<TViewModel>));
+            }
 #if DEBUG
             Debug.WriteLine($"{GetType().Name}.{nameof(Unload)}");
 #endif
@@ -111,7 +123,8 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual bool CanUnload()
         {
-            return !IsLoaded
+            return !_disposed
+                && !IsLoaded
                 && !_loadCommand.IsBusy
                 && !_refreshCommand.IsBusy
                 && !_unloadCommand.IsBusy;
@@ -121,6 +134,11 @@ namespace MvvmScarletToolkit.Observables
 
         public async Task Refresh(CancellationToken token)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(BusinessViewModelListBase<TViewModel>));
+            }
+
 #if DEBUG
             Debug.WriteLine($"{GetType().Name}.{nameof(Refresh)}");
 #endif
@@ -134,10 +152,22 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual bool CanRefresh()
         {
-            return IsLoaded
+            return !_disposed
+                && IsLoaded
                 && !_loadCommand.IsBusy
                 && !_refreshCommand.IsBusy
                 && !_unloadCommand.IsBusy;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
+
+            base.Dispose(disposing);
+            _disposed = true;
         }
     }
 }

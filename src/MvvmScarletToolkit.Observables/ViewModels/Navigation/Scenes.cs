@@ -8,6 +8,8 @@ namespace MvvmScarletToolkit.Observables
         private readonly LocalizationsViewModel _localizationsViewModel;
         private readonly List<IDisposable> _disposeables;
 
+        private bool _disposed;
+
         protected Scenes(ICommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)
             : base(commandBuilder)
         {
@@ -36,6 +38,11 @@ namespace MvvmScarletToolkit.Observables
 
         protected override void Dispose(bool disposing)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             if (disposing)
             {
                 _items.Clear();
@@ -43,10 +50,12 @@ namespace MvvmScarletToolkit.Observables
                 for (var i = 0; i < _disposeables.Count; i++)
                 {
                     _disposeables[i].Dispose();
+                    _disposeables.Clear();
                 }
             }
 
             base.Dispose(disposing);
+            _disposed = true;
         }
     }
 }

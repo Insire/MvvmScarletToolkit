@@ -1,4 +1,3 @@
-using MvvmScarletToolkit;
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
@@ -9,6 +8,8 @@ namespace MvvmScarletToolkit.Samples
 {
     public class LogItems : BusinessViewModelListBase<LogItem>
     {
+        private bool _disposed;
+
         public ICommand AddCommand { get; }
         public IVirtualizingCollectionViewSource View { get; }
 
@@ -45,7 +46,7 @@ namespace MvvmScarletToolkit.Samples
 
         protected override void Dispose(bool disposing)
         {
-            if (Disposed)
+            if (_disposed)
             {
                 return;
             }
@@ -55,6 +56,8 @@ namespace MvvmScarletToolkit.Samples
                 View.Dispose();
                 base.Dispose(disposing);
             }
+
+            _disposed = true;
         }
     }
 }

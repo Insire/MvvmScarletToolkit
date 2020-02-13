@@ -91,11 +91,12 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-            _disposed = true;
             if (disposing)
             {
                 (BusyStack as IDisposable)?.Dispose();
             }
+
+            _disposed = true;
         }
     }
 }

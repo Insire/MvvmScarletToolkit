@@ -19,8 +19,10 @@ namespace MvvmScarletToolkit
     {
         private readonly ConcurrentDictionary<string, GroupViewModel> _filterCollection;
         private readonly Func<ICollectionView> _collectionViewFactory;
+        private readonly List<IDisposable> _disposeables;
         private readonly Type _type;
 
+        private bool _disposed;
         private int _maxGroupings;
 
         public ICommand AddCommand { get; }
@@ -47,8 +49,11 @@ namespace MvvmScarletToolkit
                 .WithCancellation()
                 .Build();
 
-            Messenger.Subscribe<ViewModelListBaseSelectionChanging<GroupViewModel>>((p) => _filterCollection.TryAdd(p.Content.Name, p.Content), (p) => !p.Sender.Equals(this) && !(p.Content is null));
-            Messenger.Subscribe<ViewModelListBaseSelectionChanged<GroupViewModel>>((p) => _filterCollection.TryRemove(p.Content.Name, out var _), (p) => !p.Sender.Equals(this) && !(p.Content is null));
+            _disposeables = new List<IDisposable>
+            {
+                Messenger.Subscribe<ViewModelListBaseSelectionChanging<GroupViewModel>>((p) => _filterCollection.TryAdd(p.Content.Name, p.Content), (p) => !p.Sender.Equals(this) && !(p.Content is null)),
+                Messenger.Subscribe<ViewModelListBaseSelectionChanged<GroupViewModel>>((p) => _filterCollection.TryRemove(p.Content.Name, out var _), (p) => !p.Sender.Equals(this) && !(p.Content is null))
+            };
         }
 
         public override async Task Remove(GroupsViewModel item, CancellationToken token)
@@ -91,7 +96,8 @@ namespace MvvmScarletToolkit
 
         private bool CanAdd()
         {
-            return !IsBusy
+            return !_disposed
+                && !IsBusy
                 && _filterCollection != null
                 && _filterCollection.Count > 0
                 && _maxGroupings > Count;
@@ -106,6 +112,23 @@ namespace MvvmScarletToolkit
             }
 
             await base.Clear(token);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                _disposeables.ForEach(p => p.Dispose());
+                _disposeables.Clear();
+            }
+
+            base.Dispose(disposing);
+            _disposed = true;
         }
     }
 }

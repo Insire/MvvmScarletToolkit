@@ -16,6 +16,8 @@ namespace MvvmScarletToolkit.Observables
     {
         private readonly DomainViewModelListBase<TViewModel> _viewModel;
 
+        private bool _disposed;
+
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand NextCommand { get; }
 
@@ -130,6 +132,17 @@ namespace MvvmScarletToolkit.Observables
         {
             await Dispatcher.Invoke(() => _viewModel.PageIndex = index, token).ConfigureAwait(false);
             await _viewModel.Refresh(token).ConfigureAwait(false);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            base.Dispose(disposing);
+            _disposed = true;
         }
     }
 }

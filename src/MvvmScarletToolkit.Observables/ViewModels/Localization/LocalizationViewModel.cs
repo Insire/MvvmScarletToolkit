@@ -14,6 +14,8 @@ namespace MvvmScarletToolkit.Observables
         private readonly ILocalizationService _service;
         private readonly IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> _weakEventManager;
 
+        private bool _disposed;
+
         public LocalizationViewModel(IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, ILocalizationService service, string key, bool toUpper)
         {
             _weakEventManager = weakEventManager ?? throw new ArgumentNullException(nameof(weakEventManager));
@@ -36,10 +38,17 @@ namespace MvvmScarletToolkit.Observables
 
         private void Dispose(bool disposing)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             if (disposing)
             {
                 _weakEventManager.RemoveHandler(_service, "PropertyChanged", ValueChanged);
             }
+
+            _disposed = true;
         }
 
         public object Value => GetValue();
@@ -51,6 +60,11 @@ namespace MvvmScarletToolkit.Observables
 
         private string GetValue()
         {
+            if (_disposed)
+            {
+                return string.Empty;
+            }
+
             if (_toUpper)
             {
                 return _service?.Translate(_key)?.ToUpperInvariant() ?? _key;

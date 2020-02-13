@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit
 
         private event EventHandler<T> ProgressChanged;
 
-        private bool _isDiposed;
+        private bool _disposed;
 
         public DispatcherProgress(IScarletDispatcher dispatcher, Action<T> callback, TimeSpan interval)
         {
@@ -37,9 +37,9 @@ namespace MvvmScarletToolkit
 
         public void Report(T value)
         {
-            if (_isDiposed)
+            if (_disposed)
             {
-                throw new ObjectDisposedException("DispatcherProgress");
+                throw new ObjectDisposedException(nameof(DispatcherProgress<T>));
             }
 
             // queue the new value on the observable
@@ -48,9 +48,9 @@ namespace MvvmScarletToolkit
 
         private void ReportInternal(T value)
         {
-            if (_isDiposed)
+            if (_disposed)
             {
-                throw new ObjectDisposedException("DispatcherProgress");
+                throw new ObjectDisposedException(nameof(DispatcherProgress<T>));
             }
 
             _dispatcher.Invoke(() => _callback.Invoke(value), CancellationToken.None);
@@ -58,13 +58,13 @@ namespace MvvmScarletToolkit
 
         public void Dispose()
         {
-            if (_isDiposed)
+            if (_disposed)
             {
-                throw new ObjectDisposedException("DispatcherProgress");
+                return;
             }
 
             _disposable.Dispose();
-            _isDiposed = true;
+            _disposed = true;
         }
     }
 }

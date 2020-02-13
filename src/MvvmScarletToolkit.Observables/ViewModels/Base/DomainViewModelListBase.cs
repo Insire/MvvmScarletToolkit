@@ -11,6 +11,8 @@ namespace MvvmScarletToolkit.Observables
     public abstract class DomainViewModelListBase<TViewModel> : BusinessViewModelListBase<TViewModel>
         where TViewModel : class, INotifyPropertyChanged
     {
+        private bool _disposed;
+
         private int _total;
         [Bindable(true, BindingDirection.TwoWay)]
         public int Total
@@ -46,12 +48,18 @@ namespace MvvmScarletToolkit.Observables
 
         protected override void Dispose(bool disposing)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             if (disposing)
             {
                 Paging.Dispose();
             }
 
             base.Dispose(disposing);
+            _disposed = true;
         }
     }
 }

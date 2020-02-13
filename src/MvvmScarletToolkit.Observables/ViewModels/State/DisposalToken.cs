@@ -8,6 +8,8 @@ namespace MvvmScarletToolkit.Observables
         private readonly ConcurrentDictionary<IObserver<T>, IObserver<T>> _observerCollection;
         private readonly IObserver<T> _observer;
 
+        private bool _disposed;
+
         public DisposalToken(IObserver<T> observer, ConcurrentDictionary<IObserver<T>, IObserver<T>> observerCollection)
         {
             _observerCollection = observerCollection ?? throw new ArgumentNullException(nameof(observerCollection));
@@ -20,7 +22,13 @@ namespace MvvmScarletToolkit.Observables
 
         public void Dispose()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             _observerCollection.TryRemove(_observer, out _);
+            _disposed = true;
         }
     }
 }
