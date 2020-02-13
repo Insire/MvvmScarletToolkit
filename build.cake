@@ -233,7 +233,7 @@ Task("Build")
 
             foreach(var type in reportTypes)
             {
-                GenerateReport(resultFile,type.Key,type.Value);
+                GenerateReport(resultFile, type.Key, type.Value);
             }
         }
 
@@ -244,8 +244,13 @@ Task("Build")
             {
                 AssemblyFilters = new[]
                 {
-                    "+MvvmScarletToolkit*",
                     "-MvvmScarletToolkit.Tests*",
+                    "-NUnit*",
+                },
+                ClassFilters = new[]
+                {
+                    "-System*",
+                    "-Microsoft*",
                 },
                 ReportTypes = new[]
                 {
