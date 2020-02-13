@@ -9,7 +9,7 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
 
 ## Supported .Net Framework versions
 
-![.NET core 3.1](https://img.shields.io/badge/.NET-core31-blue.svg) ![.NET core 3.0](https://img.shields.io/badge/.NET-core3-blue.svg) ![.NET Framework 4.8](https://img.shields.io/badge/.NET-4.8-brightgreen.svg) ![.NET Framework 4.7.2](https://img.shields.io/badge/.NET-4.7.2-brightgreen.svg) ![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg) ![.NET Framework 4.7](https://img.shields.io/badge/.NET-4.7-green.svg) ![.NET Framework 4.6.2](https://img.shields.io/badge/.NET-4.6.2-yellow.svg) ![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)
+![.NET core 3.1](https://img.shields.io/badge/.NET-core31-blue.svg) ![.NET Framework 4.8](https://img.shields.io/badge/.NET-4.8-brightgreen.svg) ![.NET Framework 4.7.2](https://img.shields.io/badge/.NET-4.7.2-brightgreen.svg) ![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg) ![.NET Framework 4.7](https://img.shields.io/badge/.NET-4.7-green.svg) ![.NET Framework 4.6.2](https://img.shields.io/badge/.NET-4.6.2-yellow.svg) ![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)
 
 ## Features
 
