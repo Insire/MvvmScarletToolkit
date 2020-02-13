@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit.Observables
         public CultureInfo? CurrentLanguage
         {
             get { return _currentLanguage; }
-            set { SetValue(ref _currentLanguage, value, () => Thread.CurrentThread.CurrentUICulture = value); }
+            set { SetValue(ref _currentLanguage, value, OnChanged: () => Thread.CurrentThread.CurrentUICulture = value); }
         }
 
         public IEnumerable<CultureInfo> Languages => LocalizationProvider.Languages?.Any() == true
@@ -29,7 +29,9 @@ namespace MvvmScarletToolkit.Observables
         {
             LocalizationProvider = provider ?? throw new ArgumentNullException(nameof(provider));
 
-            CurrentLanguage = LocalizationProvider.Languages.FirstOrDefault(p => p.LCID == Thread.CurrentThread.CurrentUICulture.LCID) ?? LocalizationProvider.Languages.FirstOrDefault() ?? Thread.CurrentThread.CurrentUICulture;
+            CurrentLanguage = LocalizationProvider.Languages.FirstOrDefault(p => p.LCID == Thread.CurrentThread.CurrentUICulture.LCID)
+                ?? LocalizationProvider.Languages.FirstOrDefault()
+                ?? Thread.CurrentThread.CurrentUICulture;
         }
 
         public string Translate(string key)

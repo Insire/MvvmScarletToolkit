@@ -18,8 +18,8 @@ namespace MvvmScarletToolkit.Commands
         private readonly Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>> _decorators;
         private readonly Func<Action<bool>, IBusyStack> _busyStackFactory;
 
-        private readonly Func<TArgument, CancellationToken, Task>? _execute;
-        private readonly Func<TArgument, bool>? _canExcute;
+        private readonly Func<TArgument, CancellationToken, Task> _execute;
+        private readonly Func<TArgument, bool> _canExcute;
 
         internal IScarletCommandManager CommandManager { get; }
 

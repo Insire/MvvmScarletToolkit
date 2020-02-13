@@ -1109,14 +1109,14 @@
 
                         <ToggleButton x:Name="DialogToggle"
                                       Padding="10"
-                                      IsChecked="{Binding DialogResult.IsOpen, Mode=OneWay}"
-                                      Command="{Binding RunCommand}"
                                       HorizontalAlignment="Center"
                                       VerticalAlignment="Center"
-                                      Content="Open Dialog" />
+                                      Command="{Binding RunCommand}"
+                                      Content="Open Dialog"
+                                      IsChecked="{Binding DialogResult.IsOpen, Mode=OneWay}" />
 
-                        <Popup MinHeight="325"
-                               MinWidth="350"
+                        <Popup MinWidth="350"
+                               MinHeight="325"
                                AllowsTransparency="True"
                                IsOpen="{Binding DialogResult.IsOpen, Mode=OneWay}"
                                Placement="Bottom"
