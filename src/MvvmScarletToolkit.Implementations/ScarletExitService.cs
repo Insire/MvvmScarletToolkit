@@ -66,6 +66,11 @@ namespace MvvmScarletToolkit
 
             while (_viewModels.TryDequeue(out var viewmodel))
             {
+                if (!viewmodel.IsLoaded)
+                {
+                    continue;
+                }
+
                 tasks.Add(viewmodel.Unload(CancellationToken.None));
             }
 
