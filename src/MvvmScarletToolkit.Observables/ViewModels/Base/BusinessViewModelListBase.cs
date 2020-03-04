@@ -159,11 +159,19 @@ namespace MvvmScarletToolkit.Observables
                 && !_unloadCommand.IsBusy;
         }
 
-        protected override void Dispose(bool disposing)
+        protected override async void Dispose(bool disposing)
         {
             if (_disposed)
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
+
+            if (disposing)
+            {
+                if (IsLoaded && !IsBusy)
+                {
+                    await Unload(CancellationToken.None);
+                }
             }
 
             base.Dispose(disposing);
