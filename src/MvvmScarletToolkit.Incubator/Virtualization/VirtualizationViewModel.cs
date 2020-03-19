@@ -41,7 +41,7 @@ namespace MvvmScarletToolkit
             private set { SetValue(ref _expandCommand, value); }
         }
 
-        public VirtualizationViewModel(ICommandBuilder commandBuilder, IScarletCommandManager commandManager, IScarletDispatcher dispatcher, Func<TViewModel> factory)
+        public VirtualizationViewModel(IScarletCommandBuilder commandBuilder, IScarletCommandManager commandManager, IScarletDispatcher dispatcher, Func<TViewModel> factory)
         {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));

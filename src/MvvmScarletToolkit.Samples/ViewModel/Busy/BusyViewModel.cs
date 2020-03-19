@@ -17,7 +17,7 @@ namespace MvvmScarletToolkit.Samples
         public ConcurrentCommandBase AddContainerCommand { get; }
         public ConcurrentCommandBase AddChildCommand { get; }
 
-        public BusyViewModel(ICommandBuilder commandBuilder)
+        public BusyViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             _disposables = new Dictionary<INotifyPropertyChanged, IDisposable>();

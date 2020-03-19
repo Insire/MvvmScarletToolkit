@@ -7,7 +7,7 @@ namespace MvvmScarletToolkit.Samples
 {
     public class Images : BusinessViewModelListBase<Image>
     {
-        public Images(ICommandBuilder commandBuilder)
+        public Images(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
         }

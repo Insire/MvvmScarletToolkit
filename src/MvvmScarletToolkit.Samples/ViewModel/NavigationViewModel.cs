@@ -7,7 +7,7 @@ namespace MvvmScarletToolkit.Samples
 {
     public sealed class NavigationViewModel : Scenes
     {
-        public NavigationViewModel(ICommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)
+        public NavigationViewModel(IScarletCommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)
             : base(commandBuilder, localizationsViewModel)
         {
             var dataGridViewModel = new DataGridViewModel(commandBuilder);

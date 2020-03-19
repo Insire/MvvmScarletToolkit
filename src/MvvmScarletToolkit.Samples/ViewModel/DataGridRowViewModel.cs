@@ -41,7 +41,7 @@ namespace MvvmScarletToolkit.Samples
             set { SetValue(ref _isSelected, value); }
         }
 
-        public DataGridRowViewModel(ICommandBuilder commandBuilder)
+        public DataGridRowViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
         }

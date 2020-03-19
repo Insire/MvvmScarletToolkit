@@ -18,12 +18,12 @@ namespace MvvmScarletToolkit.Observables
 
         public IReadOnlyCollection<T> Items { get; }
 
-        public FilterViewModel(ICommandBuilder commandBuilder, IList<T> source, Func<T, bool> predicate, IComparer<T> comparer)
+        public FilterViewModel(IScarletCommandBuilder commandBuilder, IList<T> source, Func<T, bool> predicate, IComparer<T> comparer)
             : this(commandBuilder, source, new[] { predicate }, comparer)
         {
         }
 
-        public FilterViewModel(ICommandBuilder commandBuilder, IList<T> source, Func<T, bool>[] predicates, IComparer<T> comparer)
+        public FilterViewModel(IScarletCommandBuilder commandBuilder, IList<T> source, Func<T, bool>[] predicates, IComparer<T> comparer)
             : base(commandBuilder)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));

@@ -10,12 +10,12 @@ namespace MvvmScarletToolkit.Commands
         private readonly Func<TArgument, bool>? _canExecute;
         private readonly IScarletCommandManager _commandManager;
 
-        public RelayCommand(ICommandBuilder? commandBuilder, Action<TArgument> methodToExecute)
+        public RelayCommand(IScarletCommandBuilder? commandBuilder, Action<TArgument> methodToExecute)
             : this(commandBuilder?.CommandManager, methodToExecute)
         {
         }
 
-        public RelayCommand(ICommandBuilder? commandBuilder, Action<TArgument> methodToExecute, Func<TArgument, bool> canExecuteEvaluator)
+        public RelayCommand(IScarletCommandBuilder? commandBuilder, Action<TArgument> methodToExecute, Func<TArgument, bool> canExecuteEvaluator)
             : this(commandBuilder?.CommandManager, methodToExecute, canExecuteEvaluator)
         {
         }

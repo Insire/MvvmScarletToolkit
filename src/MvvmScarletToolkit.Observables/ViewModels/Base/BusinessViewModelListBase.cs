@@ -38,7 +38,7 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand UnloadCommand => _unloadCommand;
 
-        protected BusinessViewModelListBase(ICommandBuilder commandBuilder)
+        protected BusinessViewModelListBase(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             _loadCommand = commandBuilder

@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Observables
 
         private bool _disposed;
 
-        protected Scenes(ICommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)
+        protected Scenes(IScarletCommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)
             : base(commandBuilder)
         {
             _localizationsViewModel = localizationsViewModel ?? throw new ArgumentNullException(nameof(LocalizationsViewModel));

@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit.Samples
 
         public BoolDialogResultViewModel DialogResult { get; }
 
-        public DialogViewModel(ICommandBuilder commandBuilder)
+        public DialogViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             RunCommand = CommandBuilder.Create(Run, CanRun)

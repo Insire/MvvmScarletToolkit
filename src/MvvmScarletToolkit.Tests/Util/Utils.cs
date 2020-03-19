@@ -61,7 +61,7 @@ namespace MvvmScarletToolkit.Tests
             return (lambda) => new BusyStack(lambda, GetTestDispatcher());
         }
 
-        public static ICommandBuilder GetTestCommandBuilder()
+        public static IScarletCommandBuilder GetTestCommandBuilder()
         {
             return new ScarletCommandBuilder(GetTestDispatcher(), GetTestCommandManager(), GetTestMessenger(), GetTestExitService(), GetTestEventManager(), GetTestBusyStackFactory());
         }

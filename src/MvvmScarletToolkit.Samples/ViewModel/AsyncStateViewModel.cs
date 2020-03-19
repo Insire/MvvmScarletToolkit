@@ -21,13 +21,13 @@ namespace MvvmScarletToolkit.Samples
             set { SetValue(ref _isSelected, value); }
         }
 
-        public AsyncStateViewModel(ICommandBuilder commandBuilder)
+        public AsyncStateViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             DisplayName = "unknown";
         }
 
-        public AsyncStateViewModel(ICommandBuilder commandBuilder, string displayName)
+        public AsyncStateViewModel(IScarletCommandBuilder commandBuilder, string displayName)
             : this(commandBuilder)
         {
             DisplayName = displayName;

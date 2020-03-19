@@ -25,7 +25,7 @@ namespace MvvmScarletToolkit.Samples
             set { SetValue(ref _filterText, value, OnChanged: () => OnFilterTextChanged(value)); }
         }
 
-        public DataGridViewModel(ICommandBuilder commandBuilder)
+        public DataGridViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             Groups = new GroupingViewModel(commandBuilder, () => CollectionViewSource.GetDefaultView(Items), typeof(DataGridRowViewModel));

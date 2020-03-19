@@ -40,7 +40,7 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public PagingViewModel<TViewModel> Paging { get; }
 
-        protected DomainViewModelListBase(ICommandBuilder commandBuilder, IEnumerable<int> pageSizes)
+        protected DomainViewModelListBase(IScarletCommandBuilder commandBuilder, IEnumerable<int> pageSizes)
             : base(commandBuilder)
         {
             Paging = new PagingViewModel<TViewModel>(commandBuilder, this, new ReadOnlyObservableCollection<int>(new ObservableCollection<int>(pageSizes)));

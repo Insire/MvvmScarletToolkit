@@ -34,7 +34,7 @@ namespace MvvmScarletToolkit.Samples
             set { SetValue(ref _filterText, value); }
         }
 
-        public AsyncStateListViewModel(ICommandBuilder commandBuilder)
+        public AsyncStateListViewModel(IScarletCommandBuilder commandBuilder)
         {
             Items = new ObservableCollection<AsyncStateViewModel>();
             _selectedItems = new ObservableCollection<AsyncStateViewModel>();

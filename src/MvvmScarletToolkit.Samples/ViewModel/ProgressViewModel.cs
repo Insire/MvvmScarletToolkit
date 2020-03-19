@@ -33,7 +33,7 @@ namespace MvvmScarletToolkit.Samples
             set { SetValue(ref _block, value); }
         }
 
-        public ProgressViewModel(ICommandBuilder commandBuilder)
+        public ProgressViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             Maximum = 100;

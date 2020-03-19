@@ -2,12 +2,12 @@
 {
     public sealed class BoolDialogResultViewModel : DialogResultViewModel<bool>
     {
-        public BoolDialogResultViewModel(ICommandBuilder commandBuilder)
+        public BoolDialogResultViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder, false)
         {
         }
 
-        public BoolDialogResultViewModel(ICommandBuilder commandBuilder, bool model)
+        public BoolDialogResultViewModel(IScarletCommandBuilder commandBuilder, bool model)
             : base(commandBuilder, model)
         {
         }

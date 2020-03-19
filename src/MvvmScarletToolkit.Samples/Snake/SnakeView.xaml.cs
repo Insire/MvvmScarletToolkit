@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit.Samples
 {
     public sealed partial class SnakeView : ISnakeView
     {
-        private readonly ICommandBuilder _commandBuilder;
+        private readonly IScarletCommandBuilder _commandBuilder;
 
         private PropertyObserver<ISnakeManager> _propertyObserver;
         private FrameCounter _frameCounter;
