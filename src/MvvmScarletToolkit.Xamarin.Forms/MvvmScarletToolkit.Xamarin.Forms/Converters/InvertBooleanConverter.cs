@@ -1,7 +1,7 @@
 using System;
 using Xamarin.Forms;
 
-namespace Warenannahme
+namespace MvvmScarletToolkit
 {
     public sealed class InvertBooleanConverter : IValueConverter
     {

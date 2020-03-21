@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Xamarin.Forms.Xaml;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
-namespace Warenannahme
+namespace MvvmScarletToolkit
 {
     [Preserve(AllMembers = true)]
     [ContentProperty(nameof(Color))]

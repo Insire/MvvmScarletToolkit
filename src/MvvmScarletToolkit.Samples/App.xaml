@@ -5,7 +5,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MvvmScarletToolkit.Incubator;component/Generic.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MvvmScarletToolkit;component/Controls/FileSystemBrowser/Generic.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MvvmScarletToolkit.Wpf;component/Controls/FileSystemBrowser/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
