@@ -23,7 +23,7 @@ namespace MvvmScarletToolkit.Observables
 
         protected readonly ObservableCollection<TViewModel> _items;
         protected readonly ObservableBusyStack BusyStack;
-        protected readonly ICommandBuilder CommandBuilder;
+        protected readonly IScarletCommandBuilder CommandBuilder;
         protected readonly IScarletDispatcher Dispatcher;
         protected readonly IScarletCommandManager CommandManager;
         protected readonly IScarletMessenger Messenger;
@@ -81,14 +81,14 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand RemoveCommand { get; }
 
-        protected ViewModelListBase(ICommandBuilder commandBuilder)
+        protected ViewModelListBase(IScarletCommandBuilder commandBuilder)
         {
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
-            Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(ICommandBuilder.Dispatcher));
-            CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(ICommandBuilder.CommandManager));
-            Messenger = commandBuilder.Messenger ?? throw new ArgumentNullException(nameof(ICommandBuilder.Messenger));
-            Exit = commandBuilder.Exit ?? throw new ArgumentNullException(nameof(ICommandBuilder.Exit));
-            WeakEventManager = commandBuilder.WeakEventManager ?? throw new ArgumentNullException(nameof(ICommandBuilder.WeakEventManager));
+            Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Dispatcher));
+            CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.CommandManager));
+            Messenger = commandBuilder.Messenger ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Messenger));
+            Exit = commandBuilder.Exit ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Exit));
+            WeakEventManager = commandBuilder.WeakEventManager ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.WeakEventManager));
 
             _items = new ObservableCollection<TViewModel>();
             _selectedItems = new ObservableCollection<TViewModel>();

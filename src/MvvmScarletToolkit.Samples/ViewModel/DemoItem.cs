@@ -21,13 +21,13 @@ namespace MvvmScarletToolkit.Samples
             set { SetValue(ref _isSelected, value); }
         }
 
-        public DemoItem(ICommandBuilder commandBuilder)
+        public DemoItem(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             DisplayName = "unknown";
         }
 
-        public DemoItem(ICommandBuilder commandBuilder, string displayName)
+        public DemoItem(IScarletCommandBuilder commandBuilder, string displayName)
             : this(commandBuilder)
         {
             DisplayName = displayName;

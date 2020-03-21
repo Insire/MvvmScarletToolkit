@@ -23,7 +23,7 @@ namespace MvvmScarletToolkit.Samples
 
         public ConcurrentCommandBase BeBusyCommand { get; }
 
-        public ObservableBusyViewModel(ICommandBuilder commandBuilder, IScarletDispatcher dispatcher)
+        public ObservableBusyViewModel(IScarletCommandBuilder commandBuilder, IScarletDispatcher dispatcher)
         {
             _observableBusyStack = new ObservableBusyStack(hasItems => { IsBusy = hasItems; Debug.WriteLine("ObservableBusyViewModel is busy: " + hasItems); }, dispatcher);
             BeBusyCommand = commandBuilder.Create(BeBusyInternal, () => !IsBusy);

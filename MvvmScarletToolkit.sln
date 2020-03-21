@@ -28,7 +28,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Observab
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Abstractions", "src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj", "{4D4558E2-878F-48C8-BBE2-E22DB20E9A55}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Implementations", "src\MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj", "{1B547A43-3DB6-48FD-AF9A-EC649B5C584F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Wpf", "src\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj", "{1B547A43-3DB6-48FD-AF9A-EC649B5C584F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Tests", "src\MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj", "{E3C07ACA-FD4A-427D-B73A-F67C65A892B5}"
 EndProject

@@ -19,7 +19,7 @@ namespace MvvmScarletToolkit
             protected set { SetValue(ref _isOpen, value, OnChanged: OnOpenChanged); }
         }
 
-        protected DialogResultViewModel(ICommandBuilder commandBuilder, TResult model)
+        protected DialogResultViewModel(IScarletCommandBuilder commandBuilder, TResult model)
             : base(commandBuilder, new ViewModelContainer<TResult>(model))
         {
             CloseCommand = commandBuilder

@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit.Samples
             private set { SetValue(ref _logItems, value); }
         }
 
-        public VirtualizationViewModel(LogItems logItems, ICommandBuilder commandBuilder)
+        public VirtualizationViewModel(LogItems logItems, IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             LogItems = logItems ?? throw new ArgumentNullException(nameof(logItems));

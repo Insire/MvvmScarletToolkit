@@ -19,12 +19,12 @@ namespace MvvmScarletToolkit.Commands
             remove { _commandManager.RequerySuggested -= value; }
         }
 
-        public RelayCommand(ICommandBuilder? commandBuilder, Action methodToExecute)
+        public RelayCommand(IScarletCommandBuilder? commandBuilder, Action methodToExecute)
             : this(commandBuilder?.CommandManager, methodToExecute)
         {
         }
 
-        public RelayCommand(ICommandBuilder? commandBuilder, Action methodToExecute, Func<bool> canExecuteEvaluator)
+        public RelayCommand(IScarletCommandBuilder? commandBuilder, Action methodToExecute, Func<bool> canExecuteEvaluator)
             : this(commandBuilder?.CommandManager, methodToExecute, canExecuteEvaluator)
         {
         }

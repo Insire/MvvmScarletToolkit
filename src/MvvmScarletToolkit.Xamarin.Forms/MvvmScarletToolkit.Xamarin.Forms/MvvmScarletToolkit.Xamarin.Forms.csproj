@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Xamarin.Forms" Version="4.5.0.396" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
+        <ProjectReference Include="..\..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
+        <ProjectReference Include="..\..\MvvmScarletToolkit.Messenger\MvvmScarletToolkit.Messenger.csproj" />
+        <ProjectReference Include="..\..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
+    </ItemGroup>
+</Project>

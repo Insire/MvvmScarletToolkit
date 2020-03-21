@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit.Samples
         public ICommand AddCommand { get; }
         public IVirtualizingCollectionViewSource View { get; }
 
-        public LogItems(ICommandBuilder commandBuilder, ICache cache)
+        public LogItems(IScarletCommandBuilder commandBuilder, ICache cache)
             : base(commandBuilder)
         {
             View = VirtualizingCollectionViewSource.Create(this, Dispatcher, cache);

@@ -30,7 +30,7 @@ namespace MvvmScarletToolkit.Samples
             set { SetValue(ref _isSelected, value); }
         }
 
-        public LogItem(ICommandBuilder commandBuilder)
+        public LogItem(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
         }

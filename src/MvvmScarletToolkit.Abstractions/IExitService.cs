@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Abstractions
+namespace MvvmScarletToolkit
 {
     public interface IExitService
     {

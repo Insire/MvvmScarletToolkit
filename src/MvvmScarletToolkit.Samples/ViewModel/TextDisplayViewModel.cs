@@ -17,7 +17,7 @@ namespace MvvmScarletToolkit.Samples
 
         private readonly IEnumerable<GeometryContainer> _geomtries;
 
-        public TextDisplayViewModel(ICommandBuilder commandBuilder)
+        public TextDisplayViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             _typeface = new Typeface("Tahoma");

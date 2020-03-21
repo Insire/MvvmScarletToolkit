@@ -5,7 +5,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:MvvmScarletToolkit.Samples"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:mvvm="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit"
+             xmlns:mvvm="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Wpf"
              d:DataContext="{d:DesignInstance Type=local:ProcessingImagesViewModel,
                                               IsDesignTimeCreatable=False}"
              mc:Ignorable="d">
@@ -93,8 +93,9 @@
                                        Text="{Binding DisplayName}"
                                        TextAlignment="Center" />
 
-                            <Button Command="{Binding BusyCommand}"
-                                    Content="BeBusy" Margin="0,4"
+                            <Button Margin="0,4"
+                                    Command="{Binding BusyCommand}"
+                                    Content="BeBusy"
                                     DockPanel.Dock="Bottom" />
 
                             <Image Source="{Binding Path}" />

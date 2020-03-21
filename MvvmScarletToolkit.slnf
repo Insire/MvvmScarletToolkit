@@ -4,7 +4,7 @@
     "projects": [
       "src\\MvvmScarletToolkit.Abstractions\\MvvmScarletToolkit.Abstractions.csproj",
       "src\\MvvmScarletToolkit.Commands\\MvvmScarletToolkit.Commands.csproj",
-      "src\\MvvmScarletToolkit.Implementations\\MvvmScarletToolkit.Implementations.csproj",
+      "src\\MvvmScarletToolkit.Wpf\\MvvmScarletToolkit.Wpf.csproj",
       "src\\MvvmScarletToolkit.Incubator\\MvvmScarletToolkit.Incubator.csproj",
       "src\\MvvmScarletToolkit.Observables\\MvvmScarletToolkit.Observables.csproj",
       "src\\MvvmScarletToolkit\\MvvmScarletToolkit.csproj"

@@ -133,7 +133,7 @@ namespace MvvmScarletToolkit.Samples
             }
         }
 
-        public SnakeEngine(SnakeOption options, IScarletDispatcher dispatcher, IScarletMessenger messenger, ICommandBuilder commandBuilder, IScarletCommandManager commandManager)
+        public SnakeEngine(SnakeOption options, IScarletDispatcher dispatcher, IScarletMessenger messenger, IScarletCommandBuilder commandBuilder, IScarletCommandManager commandManager)
         {
             _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));

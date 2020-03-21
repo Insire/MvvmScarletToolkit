@@ -19,7 +19,7 @@ namespace MvvmScarletToolkit.Samples
             private set { SetValue(ref _target, value); }
         }
 
-        public ProcessingImagesViewModel(ICommandBuilder commandBuilder)
+        public ProcessingImagesViewModel(IScarletCommandBuilder commandBuilder)
         {
             Source = new Images(commandBuilder);
             Target = new Images(commandBuilder);
