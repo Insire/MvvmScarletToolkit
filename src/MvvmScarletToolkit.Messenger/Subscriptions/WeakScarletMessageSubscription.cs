@@ -11,6 +11,24 @@ namespace MvvmScarletToolkit.Implementations
 
         public SubscriptionToken Token { get; }
 
+        public WeakScarletMessageSubscription(SubscriptionToken subscriptionToken, Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter)
+        {
+            if (deliveryAction is null)
+            {
+                throw new ArgumentNullException(nameof(deliveryAction));
+            }
+
+            if (messageFilter is null)
+            {
+                throw new ArgumentNullException(nameof(messageFilter));
+            }
+
+            _deliveryAction = new WeakReference(deliveryAction);
+            _messageFilter = new WeakReference(messageFilter);
+
+            Token = subscriptionToken ?? throw new ArgumentNullException(nameof(subscriptionToken));
+        }
+
         public bool ShouldAttemptDelivery(IScarletMessage scarletMessage)
         {
             if (scarletMessage is null)
@@ -59,24 +77,6 @@ namespace MvvmScarletToolkit.Implementations
             }
 
             filter.Invoke(message);
-        }
-
-        public WeakScarletMessageSubscription(SubscriptionToken subscriptionToken, Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter)
-        {
-            if (deliveryAction is null)
-            {
-                throw new ArgumentNullException(nameof(deliveryAction));
-            }
-
-            if (messageFilter is null)
-            {
-                throw new ArgumentNullException(nameof(messageFilter));
-            }
-
-            _deliveryAction = new WeakReference(deliveryAction);
-            _messageFilter = new WeakReference(messageFilter);
-
-            Token = subscriptionToken ?? throw new ArgumentNullException(nameof(subscriptionToken));
         }
     }
 }

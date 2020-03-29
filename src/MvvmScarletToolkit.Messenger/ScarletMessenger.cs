@@ -2,6 +2,7 @@ using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Implementations;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,6 +31,10 @@ namespace MvvmScarletToolkit
         public SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction)
             where TMessage : class, IScarletMessage
         {
+#if DEBUG
+            Debug.WriteLine("ScarletMessenger: Adding --> " + typeof(TMessage).GetGenericTypeName() + " for " + new StackFrame(1).GetMethod().Name);
+#endif
+
             return AddSubscriptionInternal(deliveryAction, (_) => true, true, _messageProxy);
         }
 

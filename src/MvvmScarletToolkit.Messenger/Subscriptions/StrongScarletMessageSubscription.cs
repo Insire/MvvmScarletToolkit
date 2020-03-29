@@ -11,6 +11,14 @@ namespace MvvmScarletToolkit.Implementations
 
         public SubscriptionToken Token { get; }
 
+        public StrongScarletMessageSubscription(SubscriptionToken subscriptionToken, Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter)
+        {
+            _deliveryAction = deliveryAction ?? throw new ArgumentNullException(nameof(deliveryAction));
+            _messageFilter = messageFilter ?? throw new ArgumentNullException(nameof(messageFilter));
+
+            Token = subscriptionToken ?? throw new ArgumentNullException(nameof(subscriptionToken));
+        }
+
         public bool ShouldAttemptDelivery(IScarletMessage message)
         {
             if (message is null)
@@ -34,14 +42,6 @@ namespace MvvmScarletToolkit.Implementations
             }
 
             _deliveryAction.Invoke(message);
-        }
-
-        public StrongScarletMessageSubscription(SubscriptionToken subscriptionToken, Action<TMessage> deliveryAction, Func<TMessage, bool> messageFilter)
-        {
-            _deliveryAction = deliveryAction ?? throw new ArgumentNullException(nameof(deliveryAction));
-            _messageFilter = messageFilter ?? throw new ArgumentNullException(nameof(messageFilter));
-
-            Token = subscriptionToken ?? throw new ArgumentNullException(nameof(subscriptionToken));
         }
     }
 }

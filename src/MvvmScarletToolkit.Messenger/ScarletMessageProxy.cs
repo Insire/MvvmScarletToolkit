@@ -18,22 +18,7 @@ namespace MvvmScarletToolkit
             subscription.Deliver(message);
 
 #if DEBUG
-
-            Debug.WriteLine("Deliver --> " + GetTypeName(message.GetType()) + " via " + GetTypeName(subscription.GetType()));
-
-            static string GetTypeName(Type type)
-            {
-                var result = type.Name;
-
-                while (type.GenericTypeArguments.Length > 0)
-                {
-                    var typeName = type.GenericTypeArguments[0].Name;
-                    result = result.Replace("`1", $"<{typeName}>");
-                    type = type.GenericTypeArguments[0];
-                }
-
-                return result;
-            }
+            Debug.WriteLine("ScarletMessageProxy: Deliver --> " + message.GetType().GetGenericTypeName() + " via " + subscription.GetType().GetGenericTypeName());
 #endif
         }
     }

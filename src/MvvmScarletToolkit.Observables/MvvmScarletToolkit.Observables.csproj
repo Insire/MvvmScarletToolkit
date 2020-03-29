@@ -19,6 +19,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
+        <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
     </ItemGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
