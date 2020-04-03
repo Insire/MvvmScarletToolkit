@@ -31,10 +31,6 @@ namespace MvvmScarletToolkit
         public SubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction)
             where TMessage : class, IScarletMessage
         {
-#if DEBUG
-            Debug.WriteLine("ScarletMessenger: Adding --> " + typeof(TMessage).GetGenericTypeName() + " for " + new StackFrame(1).GetMethod().Name);
-#endif
-
             return AddSubscriptionInternal(deliveryAction, (_) => true, true, _messageProxy);
         }
 
@@ -140,6 +136,10 @@ namespace MvvmScarletToolkit
                 {
                     subscription = new WeakScarletMessageSubscription<TMessage>(token, deliveryAction, messageFilter);
                 }
+
+#if DEBUG
+                Debug.WriteLine("ScarletMessenger: Register + " + subscription.GetType().GetGenericTypeName());
+#endif
 
                 _subscriptions.Add(new SubscriptionItem(proxy, subscription));
 
