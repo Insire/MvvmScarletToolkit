@@ -1,6 +1,6 @@
-#tool nuget:?package=NUnit.ConsoleRunner&version=3.10.0
+#tool nuget:?package=NUnit.ConsoleRunner&version=3.11.1
 #tool nuget:?package=OpenCover&version=4.7.922
-#tool nuget:?package=ReportGenerator&version=4.4.3
+#tool nuget:?package=ReportGenerator&version=4.5.5
 
 #addin nuget:?package=Cake.Incubator&version=5.1.0
 
