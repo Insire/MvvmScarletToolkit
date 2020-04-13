@@ -1,12 +1,9 @@
-using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -14,40 +11,19 @@ using System.Windows.Input;
 namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
-    /// Collection ViewModelBase that provides async modification
+    /// Collection ViewModelBase wrapping around an <see cref="ObservableCollection"/> that provides methods for threadsafe modification via the dispatcher
     /// </summary>
-    public abstract class ViewModelListBase<TViewModel> : INotifyPropertyChanged, IDisposable
+    public abstract class ViewModelListBase<TViewModel> : ViewModelBase
         where TViewModel : class, INotifyPropertyChanged
     {
-        private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> _propertyChangedCache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
-
         protected readonly ObservableCollection<TViewModel> _items;
-        protected readonly ObservableBusyStack BusyStack;
-        protected readonly IScarletCommandBuilder CommandBuilder;
-        protected readonly IScarletDispatcher Dispatcher;
-        protected readonly IScarletCommandManager CommandManager;
-        protected readonly IScarletMessenger Messenger;
-        protected readonly IExitService Exit;
-        protected readonly IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
-
-        private bool _disposed;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        private bool _isBusy;
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            protected set { SetValue(ref _isBusy, value); }
-        }
 
         private TViewModel? _selectedItem;
         [Bindable(true, BindingDirection.TwoWay)]
         public virtual TViewModel? SelectedItem
         {
             get { return _selectedItem; }
-            set { SetValue(ref _selectedItem, value, OnChanged: OnSelectionChanged, OnChanging: OnSelectionChanging); }
+            set { SetValue(ref _selectedItem, value, onChanged: OnSelectionChanged, onChanging: OnSelectionChanging); }
         }
 
         private IList _selectedItems;
@@ -55,7 +31,7 @@ namespace MvvmScarletToolkit.Observables
         public virtual IList SelectedItems
         {
             get { return _selectedItems; }
-            set { SetValue(ref _selectedItems, value, OnChanged: OnSelectionsChanged, OnChanging: OnSelectionsChanging); }
+            set { SetValue(ref _selectedItems, value, onChanged: OnSelectionsChanged, onChanging: OnSelectionsChanging); }
         }
 
         public TViewModel this[int index]
@@ -82,19 +58,12 @@ namespace MvvmScarletToolkit.Observables
         public virtual ICommand RemoveCommand { get; }
 
         protected ViewModelListBase(IScarletCommandBuilder commandBuilder)
+            : base(commandBuilder)
         {
-            CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
-            Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Dispatcher));
-            CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.CommandManager));
-            Messenger = commandBuilder.Messenger ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Messenger));
-            Exit = commandBuilder.Exit ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Exit));
-            WeakEventManager = commandBuilder.WeakEventManager ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.WeakEventManager));
-
             _items = new ObservableCollection<TViewModel>();
             _selectedItems = new ObservableCollection<TViewModel>();
 
             Items = new ReadOnlyObservableCollection<TViewModel>(_items);
-            BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
 
             RemoveCommand = commandBuilder
                 .Create(Remove, CanRemove)
@@ -120,7 +89,7 @@ namespace MvvmScarletToolkit.Observables
 
         public Task Add(TViewModel? item)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
             }
@@ -135,7 +104,7 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual async Task Add(TViewModel item, CancellationToken token)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
             }
@@ -144,6 +113,10 @@ namespace MvvmScarletToolkit.Observables
             {
                 throw new ArgumentNullException(nameof(item));
             }
+
+#if DEBUG
+            LogMethodCall<ViewModelListBase<TViewModel>>();
+#endif
 
             using (BusyStack.GetToken())
             {
@@ -155,16 +128,17 @@ namespace MvvmScarletToolkit.Observables
 
         public Task AddRange(IEnumerable<TViewModel> items)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
             }
+
             return AddRange(items, CancellationToken.None);
         }
 
         public virtual async Task AddRange(IEnumerable<TViewModel> items, CancellationToken token)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
             }
@@ -174,6 +148,10 @@ namespace MvvmScarletToolkit.Observables
                 throw new ArgumentNullException(nameof(items));
             }
 
+#if DEBUG
+            LogMethodCall<ViewModelListBase<TViewModel>>();
+#endif
+
             using (BusyStack.GetToken())
             {
                 await items.ForEachAsync(Add, token).ConfigureAwait(false);
@@ -182,7 +160,7 @@ namespace MvvmScarletToolkit.Observables
 
         public Task Remove(TViewModel? item)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
             }
@@ -197,10 +175,14 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual async Task Remove(TViewModel item, CancellationToken token)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
             }
+
+#if DEBUG
+            LogMethodCall<ViewModelListBase<TViewModel>>();
+#endif
 
             using (BusyStack.GetToken())
             {
@@ -212,7 +194,7 @@ namespace MvvmScarletToolkit.Observables
 
         public Task RemoveRange(IEnumerable<TViewModel> items)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
             }
@@ -222,7 +204,7 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual async Task RemoveRange(IEnumerable<TViewModel> items, CancellationToken token)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
             }
@@ -232,6 +214,10 @@ namespace MvvmScarletToolkit.Observables
                 throw new ArgumentNullException(nameof(items));
             }
 
+#if DEBUG
+            LogMethodCall<ViewModelListBase<TViewModel>>();
+#endif
+
             using (BusyStack.GetToken())
             {
                 await items.ForEachAsync(Remove, token).ConfigureAwait(false);
@@ -240,19 +226,24 @@ namespace MvvmScarletToolkit.Observables
 
         public Task Clear()
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
             }
+
             return Clear(CancellationToken.None);
         }
 
         public virtual async Task Clear(CancellationToken token)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
             }
+
+#if DEBUG
+            LogMethodCall<ViewModelListBase<TViewModel>>();
+#endif
 
             using (BusyStack.GetToken())
             {
@@ -264,47 +255,9 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual bool CanClear()
         {
-            return !_disposed
+            return !IsDisposed
                 && HasItems
                 && !IsBusy;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string? propertyName = null)
-        {
-            return SetValue(ref field, value, null, null, propertyName);
-        }
-
-        protected bool SetValue<T>(ref T field, T value, Action? OnChanged, [CallerMemberName]string? propertyName = null)
-        {
-            return SetValue(ref field, value, null, OnChanged, propertyName);
-        }
-
-        protected virtual bool SetValue<T>(ref T field, T value, Action? OnChanging, Action? OnChanged, [CallerMemberName]string? propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-            {
-                return false;
-            }
-
-            OnChanging?.Invoke();
-
-            field = value;
-            OnPropertyChanged(propertyName);
-
-            OnChanged?.Invoke();
-
-            return true;
-        }
-
-        protected void OnPropertyChanged([CallerMemberName]string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, _propertyChangedCache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
         }
 
         protected Task Remove()
@@ -328,7 +281,7 @@ namespace MvvmScarletToolkit.Observables
 
         protected bool CanRemoveRange(IList items)
         {
-            return !_disposed
+            return !IsDisposed
                 && CanRemoveRange(items?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>());
         }
 
@@ -339,7 +292,7 @@ namespace MvvmScarletToolkit.Observables
                 return false;
             }
 
-            return !_disposed
+            return !IsDisposed
                 && CanClear()
                 && !(item is null)
                 && _items.Contains(item);
@@ -360,24 +313,9 @@ namespace MvvmScarletToolkit.Observables
             return RemoveRange(SelectedItems);
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                BusyStack.Dispose();
-            }
-
-            _disposed = true;
-        }
-
         private void OnSelectionChanged()
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 return;
             }
@@ -387,7 +325,7 @@ namespace MvvmScarletToolkit.Observables
 
         private void OnSelectionChanging()
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 return;
             }
@@ -397,7 +335,7 @@ namespace MvvmScarletToolkit.Observables
 
         private void OnSelectionsChanged()
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 return;
             }
@@ -407,7 +345,7 @@ namespace MvvmScarletToolkit.Observables
 
         private void OnSelectionsChanging()
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 return;
             }

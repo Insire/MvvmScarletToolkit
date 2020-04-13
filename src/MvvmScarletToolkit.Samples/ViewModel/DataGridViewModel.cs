@@ -1,4 +1,3 @@
-using MvvmScarletToolkit;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Threading;
@@ -22,7 +21,7 @@ namespace MvvmScarletToolkit.Samples
         public string FilterText
         {
             get { return _filterText; }
-            set { SetValue(ref _filterText, value, OnChanged: () => OnFilterTextChanged(value)); }
+            set { SetValue(ref _filterText, value, onChanged: () => OnFilterTextChanged(value)); }
         }
 
         public DataGridViewModel(IScarletCommandBuilder commandBuilder)
@@ -39,7 +38,7 @@ namespace MvvmScarletToolkit.Samples
                 {
                     CreatedOn = DateTime.Now,
                     Name = Guid.NewGuid().ToString(),
-                    Color = $"#cc{(i * 2).ToString("X2")}{(i * 3).ToString("X2")}",
+                    Color = $"#cc{i * 2:X2}{i * 3:X2}",
                 });
             }
         }

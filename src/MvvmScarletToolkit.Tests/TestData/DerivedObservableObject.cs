@@ -3,7 +3,7 @@ using System;
 
 namespace MvvmScarletToolkit.Tests
 {
-    internal class DerivedObservableObject : ObservableObject
+    internal sealed class DerivedObservableObject : ObservableObject
     {
         private readonly Action _onchanged;
         private readonly Action _onchanging;
@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit.Tests
         public object NotifyingProperty
         {
             get { return _notifyingProperty; }
-            set { SetValue(ref _notifyingProperty, value, OnChanged: _onchanged, OnChanging: _onchanging); }
+            set { SetValue(ref _notifyingProperty, value, onChanged: _onchanged, onChanging: _onchanging); }
         }
 
         public DerivedObservableObject()

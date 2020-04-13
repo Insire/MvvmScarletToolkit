@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace MvvmScarletToolkit.Observables
@@ -14,7 +15,12 @@ namespace MvvmScarletToolkit.Observables
 
         protected virtual void OnPropertyChanged([CallerMemberName]string? propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected void OnPropertyChanged(PropertyChangedEventArgs args)
+        {
+            PropertyChanged?.Invoke(this, args);
         }
 
         protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string? propertyName = null)
@@ -22,26 +28,35 @@ namespace MvvmScarletToolkit.Observables
             return SetValue(ref field, value, null, null, propertyName);
         }
 
-        protected bool SetValue<T>(ref T field, T value, Action? OnChanged, [CallerMemberName]string? propertyName = null)
+        protected bool SetValue<T>(ref T field, T value, Action? onChanged, [CallerMemberName]string? propertyName = null)
         {
-            return SetValue(ref field, value, null, OnChanged, propertyName);
+            return SetValue(ref field, value, null, onChanged, propertyName);
         }
 
-        protected virtual bool SetValue<T>(ref T field, T value, Action? OnChanging, Action? OnChanged, [CallerMemberName]string? propertyName = null)
+        protected virtual bool SetValue<T>(ref T field, T value, Action? onChanging, Action? onChanged, [CallerMemberName]string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            OnChanging?.Invoke();
+            onChanging?.Invoke();
 
             field = value;
             OnPropertyChanged(propertyName);
 
-            OnChanged?.Invoke();
+            onChanged?.Invoke();
 
             return true;
         }
+
+#if DEBUG
+
+        protected void LogMethodCall<T>([CallerMemberName]string? methodName = null)
+        {
+            Debug.WriteLine($"{typeof(T).Name}.{methodName}");
+        }
+
+#endif
     }
 }

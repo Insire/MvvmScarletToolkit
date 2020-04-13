@@ -14,8 +14,6 @@ namespace MvvmScarletToolkit.Observables
     /// </summary>
     public abstract class BusinessViewModelBase : ViewModelBase, IBusinessViewModelBase
     {
-        private bool _disposed;
-
         private bool _isLoaded;
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsLoaded
@@ -70,7 +68,7 @@ namespace MvvmScarletToolkit.Observables
 
         public async Task Load(CancellationToken token)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(BusinessViewModelBase));
             }
@@ -88,7 +86,7 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual bool CanLoad()
         {
-            return !_disposed
+            return !IsDisposed
                 && !IsLoaded
                 && !_loadCommand.IsBusy
                 && !_refreshCommand.IsBusy
@@ -99,7 +97,7 @@ namespace MvvmScarletToolkit.Observables
 
         public async Task Unload(CancellationToken token)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(BusinessViewModelBase));
             }
@@ -117,7 +115,7 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual bool CanUnload()
         {
-            return !_disposed
+            return !IsDisposed
                 && !IsLoaded
                 && !_loadCommand.IsBusy
                 && !_refreshCommand.IsBusy
@@ -128,7 +126,7 @@ namespace MvvmScarletToolkit.Observables
 
         public async Task Refresh(CancellationToken token)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 throw new ObjectDisposedException(nameof(BusinessViewModelBase));
             }
@@ -145,7 +143,7 @@ namespace MvvmScarletToolkit.Observables
 
         public virtual bool CanRefresh()
         {
-            return !_disposed
+            return !IsDisposed
                 && IsLoaded
                 && !_loadCommand.IsBusy
                 && !_refreshCommand.IsBusy
@@ -154,13 +152,12 @@ namespace MvvmScarletToolkit.Observables
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 return;
             }
 
             base.Dispose(disposing);
-            _disposed = true;
         }
     }
 }

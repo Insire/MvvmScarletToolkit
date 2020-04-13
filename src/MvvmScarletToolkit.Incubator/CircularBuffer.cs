@@ -70,7 +70,7 @@ namespace MvvmScarletToolkit
             get { return size; }
             private set
             {
-                SetValue(ref size, value, OnChanged: () =>
+                SetValue(ref size, value, onChanged: () =>
                 {
                     OnPropertyChanged(nameof(IsFull));
                     OnPropertyChanged(nameof(IsEmpty));

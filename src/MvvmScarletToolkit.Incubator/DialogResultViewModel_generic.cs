@@ -16,7 +16,7 @@ namespace MvvmScarletToolkit
         public bool IsOpen
         {
             get { return _isOpen; }
-            protected set { SetValue(ref _isOpen, value, OnChanged: OnOpenChanged); }
+            protected set { SetValue(ref _isOpen, value, onChanged: OnOpenChanged); }
         }
 
         protected DialogResultViewModel(IScarletCommandBuilder commandBuilder, TResult model)

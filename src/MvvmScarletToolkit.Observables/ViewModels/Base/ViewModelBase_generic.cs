@@ -3,7 +3,7 @@ using System.ComponentModel;
 namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
-    /// Generic ViewModelBase that provides common services required for MVVM
+    /// Generic version of <see cref="ViewModelBase"/> exposing an injected (model)class
     /// </summary>
     public abstract class ViewModelBase<TModel> : ViewModelBase
         where TModel : class

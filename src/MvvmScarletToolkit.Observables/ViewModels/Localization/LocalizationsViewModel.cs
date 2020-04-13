@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit.Observables
         public CultureInfo? CurrentLanguage
         {
             get { return _currentLanguage; }
-            set { SetValue(ref _currentLanguage, value, OnChanged: () => Thread.CurrentThread.CurrentUICulture = value); }
+            set { SetValue(ref _currentLanguage, value, onChanged: () => Thread.CurrentThread.CurrentUICulture = value); }
         }
 
         public IEnumerable<CultureInfo> Languages => LocalizationProvider.Languages?.Any() == true

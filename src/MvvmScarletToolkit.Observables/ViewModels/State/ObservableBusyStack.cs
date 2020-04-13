@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit.Observables
     /// Will notify its owner and all subscribers via a provided action on if it contains more tokens
     /// </summary>
     [DebuggerDisplay("{_id}")]
-    public sealed partial class ObservableBusyStack : IObservable<bool>, IBusyStack, IDisposable
+    public sealed partial class ObservableBusyStack : IObservableBusyStack
     {
         private readonly Guid _id = Guid.NewGuid();
 

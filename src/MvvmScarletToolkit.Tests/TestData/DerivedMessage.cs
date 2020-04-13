@@ -1,6 +1,6 @@
-﻿namespace MvvmScarletToolkit.Tests
+namespace MvvmScarletToolkit.Tests
 {
-    public class DerivedMessage<TThings> : TestMessage
+    public sealed class DerivedMessage<TThings> : TestMessage
     {
         public TThings Things { get; set; }
 

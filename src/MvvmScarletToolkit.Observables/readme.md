@@ -17,7 +17,8 @@ This library aims to provide base and utility classes around state and state man
 |class|summary|
 |---|---|
 |[``ObservableObject``](ViewModels\Base\ObservableObject.cs)|General purpose implementation of the ``INotifyPropertyChanged`` interface|
-|[``ViewModeBase<T>``](ViewModels\Base\ViewModelBase.cs)|Base class that provides a common set of actions for a single entity viewmodel centered around loading and unloading state and/or data.|
+|[``ViewModeBase``](ViewModels\Base\ViewModelBase.cs)|BaseViewModel that serves as service aggregate and caches INotifyPropertyChanged EventArgs
+|[``ViewModeBase<T>``](ViewModels\Base\ViewModelBase_generic.cs)|Generic version of the ViewModelBase exposing an injected (model)class|
 |[``ViewModeListBase<T>``](ViewModels\Base\ViewModelListBase.cs)|Base class that provides a common set of actions for a collection entity viewmodel centered around loading and unlad state and/or data.|
 |[``ViewModelContainer<T>``](ViewModels\ViewModelContainer.cs)|Generic wrapper viewmodel to add binding support|
 |[``BusinessViewModelBase``](ViewModels\Base\BusinessViewModelBase.cs)|ViewModelBase that bootstraps loading, unloading and refreshing of its content|
@@ -30,14 +31,16 @@ This library aims to provide base and utility classes around state and state man
 ##### ObservableObject
 
 ```cs
+using MvvmScarletToolkit.Observables;
+
 // DerivedObservableObject.cs
-internal class DerivedObservableObject : ObservableObject
+internal sealed class DerivedObservableObject : ObservableObject
 {
     private object _notifyingProperty;
     public object NotifyingProperty
     {
         get { return _notifyingProperty; }
-        set { SetValue(ref _notifyingProperty, value, OnChanged: OnChanged, OnChanging: OnChanging); }
+        set { SetValue(ref _notifyingProperty, value, onChanged: OnChanged, onChanging: OnChanging); }
     }
 
     private void OnChanged()
@@ -48,6 +51,37 @@ internal class DerivedObservableObject : ObservableObject
     private void OnChanging()
     {
         // your code here, when NotifyingProperty is about to change
+    }
+}
+```
+
+##### ViewModelBase
+
+```cs
+using MvvmScarletToolkit.Observables;
+
+// DerivedViewModelBase.cs
+internal sealed class DerivedViewModelBase : ViewModelBase
+{
+    public DerivedViewModelBase(IScarletCommandBuilder commandBuilder)
+        : base(commandBuilder)
+    {
+    }
+}
+```
+
+##### ViewModelBase\<TClass>
+
+```cs
+using MvvmScarletToolkit.Observables;
+
+// TClass is equivalent to any class
+// DerivedObjectViewModelBase.cs
+internal sealed class DerivedObjectViewModelBase : ViewModelBase<TClass>
+{
+    public DerivedObjectViewModelBase(IScarletCommandBuilder commandBuilder, TClass model)
+        : base(commandBuilder)
+    {
     }
 }
 ```

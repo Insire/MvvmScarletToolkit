@@ -1,30 +1,25 @@
 using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
-    /// ViewModelBase that provides common services required for MVVM
+    /// BaseViewModel that serves as service aggregate and caches <see cref="INotifyPropertyChanged"/> EventArgs
     /// </summary>
-    public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
+    public abstract class ViewModelBase : ObservableObject, IDisposable
     {
         private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> _propertyChangedCache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
 
-        protected readonly IBusyStack BusyStack;
+        protected readonly IObservableBusyStack BusyStack;
         protected readonly IScarletCommandBuilder CommandBuilder;
         protected readonly IScarletCommandManager CommandManager;
         protected readonly IScarletDispatcher Dispatcher;
         protected readonly IScarletMessenger Messenger;
         protected readonly IExitService Exit;
         protected readonly IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
-
-        private bool _disposed;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
 
         private bool _isBusy;
         [Bindable(true, BindingDirection.OneWay)]
@@ -33,6 +28,8 @@ namespace MvvmScarletToolkit.Observables
             get { return _isBusy; }
             protected set { SetValue(ref _isBusy, value); }
         }
+
+        protected bool IsDisposed { get; private set; }
 
         protected ViewModelBase(IScarletCommandBuilder commandBuilder)
         {
@@ -52,41 +49,14 @@ namespace MvvmScarletToolkit.Observables
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName]string? propertyName = null)
+        protected override void OnPropertyChanged([CallerMemberName]string? propertyName = null)
         {
-            PropertyChanged?.Invoke(this, _propertyChangedCache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
-        }
-
-        protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string? propertyName = null)
-        {
-            return SetValue(ref field, value, null, null, propertyName);
-        }
-
-        protected bool SetValue<T>(ref T field, T value, Action? OnChanged, [CallerMemberName]string? propertyName = null)
-        {
-            return SetValue(ref field, value, null, OnChanged, propertyName);
-        }
-
-        protected virtual bool SetValue<T>(ref T field, T value, Action? OnChanging, Action? OnChanged, [CallerMemberName]string? propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-            {
-                return false;
-            }
-
-            OnChanging?.Invoke();
-
-            field = value;
-            OnPropertyChanged(propertyName);
-
-            OnChanged?.Invoke();
-
-            return true;
+            OnPropertyChanged(_propertyChangedCache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed)
+            if (IsDisposed)
             {
                 return;
             }
@@ -96,7 +66,7 @@ namespace MvvmScarletToolkit.Observables
                 (BusyStack as IDisposable)?.Dispose();
             }
 
-            _disposed = true;
+            IsDisposed = true;
         }
     }
 }
