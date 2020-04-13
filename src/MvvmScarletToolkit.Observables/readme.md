@@ -27,6 +27,31 @@ This library aims to provide base and utility classes around state and state man
 
 #### Usage
 
+##### ObservableObject
+
+```cs
+// DerivedObservableObject.cs
+internal class DerivedObservableObject : ObservableObject
+{
+    private object _notifyingProperty;
+    public object NotifyingProperty
+    {
+        get { return _notifyingProperty; }
+        set { SetValue(ref _notifyingProperty, value, OnChanged: OnChanged, OnChanging: OnChanging); }
+    }
+
+    private void OnChanged()
+    {
+        // your code here, when NotifyingProperty changed
+    }
+
+    private void OnChanging()
+    {
+        // your code here, when NotifyingProperty is about to change
+    }
+}
+```
+
 ---
 
 ### State
