@@ -8,7 +8,7 @@ namespace MvvmScarletToolkit
 
         public static IScarletCommandManager Default { get; } = _default.Value;
 
-        public event EventHandler RequerySuggested;
+        public event EventHandler? RequerySuggested;
 
         public void InvalidateRequerySuggested()
         {
