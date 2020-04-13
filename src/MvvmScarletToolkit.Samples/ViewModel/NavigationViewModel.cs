@@ -1,4 +1,3 @@
-using MvvmScarletToolkit;
 using MvvmScarletToolkit.FileSystemBrowser;
 using MvvmScarletToolkit.Observables;
 using System.Windows.Data;
@@ -12,7 +11,7 @@ namespace MvvmScarletToolkit.Samples
         {
             var dataGridViewModel = new DataGridViewModel(commandBuilder);
 
-            Add(nameof(VirtualizationViewModel), new VirtualizationViewModel(new LogItems(CommandBuilder, new DemoCache()), commandBuilder)); // TODO move item creationlogic to a service
+            Add(nameof(VirtualizationViewModel), new VirtualizationViewModel(new LogItems(CommandBuilder), commandBuilder)); // TODO move item creationlogic to a service
             Add("Image Drag and Drop", new ProcessingImagesViewModel(commandBuilder));
             Add(nameof(AsyncStateListViewModel), new AsyncStateListViewModel(commandBuilder));
             Add(nameof(DataGridViewModel), dataGridViewModel);

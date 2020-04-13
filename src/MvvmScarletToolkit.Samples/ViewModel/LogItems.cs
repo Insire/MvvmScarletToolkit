@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,16 +7,11 @@ namespace MvvmScarletToolkit.Samples
 {
     public class LogItems : BusinessViewModelListBase<LogItem>
     {
-        private bool _disposed;
-
         public ICommand AddCommand { get; }
-        public IVirtualizingCollectionViewSource View { get; }
 
-        public LogItems(IScarletCommandBuilder commandBuilder, ICache cache)
+        public LogItems(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            View = VirtualizingCollectionViewSource.Create(this, Dispatcher, cache);
-
             AddCommand = CommandBuilder.Create(AddNew, CanAddNew)
                 .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
@@ -42,22 +36,6 @@ namespace MvvmScarletToolkit.Samples
             {
                 await AddNew();
             }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                View.Dispose();
-                base.Dispose(disposing);
-            }
-
-            _disposed = true;
         }
     }
 }
