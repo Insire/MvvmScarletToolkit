@@ -17,10 +17,9 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
 
   - INotifyPropertyChanged base classes for single instance viewmodels and collection viewmodels
   - Navigation ViewModels
-  - Pagingviewmodel
+  - Paging Viewmodel
   - Localization ViewModels (switching language without app restart)
   - Threadsafe busy state notifications via IBusyStack interface
-  - EventAggregator
 
 - [MvvmScarletToolkit.Commands](src/MvvmScarletToolkit.Commands/readme.md)
 
@@ -30,7 +29,11 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
     - state management and notification
   - basic synchronous icommand implementation
 
-- [MvvmScarletToolkit](src/MvvmScarletToolkit/readme.md)
+- [MvvmScarletToolkit.Messenger](src/MvvmScarletToolkit.Messenger/readme.md)
+
+  - ScarletMessenger (Event Aggregator)
+
+- [MvvmScarletToolkit.Wpf](src/MvvmScarletToolkit.Wpf/readme.md)
 
   - BindingProxy
   - EnumBinding support via markup extension
@@ -52,6 +55,13 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
     - DependencyObjectExtensions
     - EnumerableExtensions
     - ListExtensions
+
+- [MvvmScarletToolkit.Xamarin.Forms](src/MvvmScarletToolkit.Wpf/readme.md)
+
+  - BindingProxy
+  - (Multi-)Converters as Markupextension
+    - InvertBooleanConverter
+    - ColorToHexExtension
 
 ## Samples
 
