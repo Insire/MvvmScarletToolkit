@@ -170,10 +170,12 @@ Task("Build")
         }
 
         BuildAndPack(@".\src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj");
+        BuildAndPack(@".\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj");
+        BuildAndPack(@".\src\MvvmScarletToolkit.Messenger\MvvmScarletToolkit.Messenger.csproj");
         BuildAndPack(@".\src\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj");
         BuildAndPack(@".\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj");
-        BuildAndPack(@".\src\MvvmScarletToolkit.Implementations\MvvmScarletToolkit.Implementations.csproj");
-        BuildAndPack(@".\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj");
+        BuildAndPack(@".\src\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj");
+        BuildAndPack(@".\src\MvvmScarletToolkit.Xamarin.Forms\MvvmScarletToolkit.Xamarin.Forms.csproj");
 
         BuildAndTest(@".\src\MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj");
 
