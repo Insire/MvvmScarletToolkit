@@ -10,8 +10,6 @@ This library aims to provide base and utility classes around state and state man
 |---|---|
 |[``ObservableCircularBuffer<T>``](ObservableCircularBuffer.cs)| Wraps a fixed sized ``ObservableCollection<T>`` and removes the last entry when a new entry is added in the beginning of the collection|
 
-[Samples](samples.md)
-
 ---
 
 ### ViewModels
@@ -27,7 +25,7 @@ This library aims to provide base and utility classes around state and state man
 |[``BusinessViewModelListBase<T>``](ViewModels\Base\BusinessViewModelListBase.cs)|Collection ViewModelBase that bootstraps loading, unloading and refreshing of its content|
 |[``PagingViewModel``](ViewModels\PagingViewModel.cs)|ViewModel that adds paging support to ``DomainViewModelListBase<TViewModel>``|
 
-[Samples](ViewModels\samples.md)
+#### Usage
 
 ---
 
@@ -39,8 +37,6 @@ This library aims to provide base and utility classes around state and state man
 |[``ObservableBusyStack``](ViewModels\State\ObservableBusyStack.cs)|Threadsafe class that executes an action, providing information whether it currently contains any ``BusyToken`` when the Pull or Push methods are being called. Additionally provides means for observing other classes and being observed according to the ``IObserver<T>`` and ``IObservable<T>`` interfaces.|
 |[``BusyToken``](ViewModels\State\BusyToken.cs)|A a disposable class thats being used by the ``IBusyStack`` implementations of this library|
 
-[Samples](ViewModels\State\samples.md)
-
 ---
 
 ### Navigation
@@ -50,8 +46,6 @@ This library aims to provide base and utility classes around state and state man
 |[``Scene``](ViewModels\Navigation\Scene.cs)|Simple viewmodel class that provides a viewmodel property and whether it is selected|
 |[``Scenes``](ViewModels\Navigation\Scenes.cs)|Abstract viewmodel collection class that holds instances of ``Scene``s. Usecase is for having a starting point to writing your own navigation system. |
 
-[Samples](ViewModels\Navigation\samples.md)
-
 ---
 
 ### Localization
@@ -60,5 +54,3 @@ This library aims to provide base and utility classes around state and state man
 |---|---|
 |[``LocalizationViewModel``](ViewModels\Localization\LocalizationViewModel.cs)|Provides binding support for a localized string|
 |[``LocalizationsViewModel``](ViewModels\Localization\LocalizationsViewModel.cs)|Viewmodel providing binding support for current language and support languages of a given ``ILocalizationProvider``|
-
-[Samples](ViewModels\Localization\samples.md)

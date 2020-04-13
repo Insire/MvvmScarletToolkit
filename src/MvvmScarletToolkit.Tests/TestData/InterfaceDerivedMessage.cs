@@ -1,4 +1,4 @@
-﻿namespace MvvmScarletToolkit.Tests
+namespace MvvmScarletToolkit.Tests
 {
     public class InterfaceDerivedMessage<TThings> : ITestMessageInterface
     {
