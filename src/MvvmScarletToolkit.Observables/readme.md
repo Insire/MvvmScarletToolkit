@@ -62,5 +62,3 @@ This library aims to provide base and utility classes around state and state man
 |[``LocalizationsViewModel``](ViewModels\Localization\LocalizationsViewModel.cs)|Viewmodel providing binding support for current language and support languages of a given ``ILocalizationProvider``|
 
 [Samples](ViewModels\Localization\samples.md)
-
-[back](../readme.md)

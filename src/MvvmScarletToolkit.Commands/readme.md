@@ -15,5 +15,3 @@ This library aims to provide easy to use [ICommand](https://docs.microsoft.com/e
 ## Credits
 
 ``AsyncCommand<TArgument>`` and ``ConcurrentCommand<TArgument>`` are largely based on Stephen Clearlys blog post: [Async Programming : Patterns for Asynchronous MVVM Applications](https://msdn.microsoft.com/en-us/magazine/dn630647.aspx?f=255&MSPPError=-2147217396)
-
-[back](../readme.md)
