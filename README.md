@@ -56,7 +56,7 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
     - EnumerableExtensions
     - ListExtensions
 
-- [MvvmScarletToolkit.Xamarin.Forms](src/MvvmScarletToolkit.Wpf/readme.md)
+- [MvvmScarletToolkit.Xamarin.Forms](src/MvvmScarletToolkit.Xamarin.Forms/readme.md)
 
   - BindingProxy
   - (Multi-)Converters as Markupextension
@@ -65,7 +65,7 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
 
 ## Samples
 
-The included DemoApp contains examples for:
+The included Wpf Samples App contains examples for:
 
 - simple navigation
 - master detail view
