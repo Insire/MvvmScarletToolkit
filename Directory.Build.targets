@@ -13,15 +13,6 @@
         <CodeAnalysisRuleSet>..\..\MvvmScarletToolkit.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
-    <!--    Workarounds to enable WPF builds in .NET Core style projects    -->
-
-    <!-- See https://github.com/dotnet/project-system/issues/2488 -->
-    <Target Name="WorkaroundForXAMLIntellisenseBuildIssue" AfterTargets="_CheckCompileDesignTimePrerequisite">
-        <PropertyGroup>
-            <BuildingProject>False</BuildingProject>
-        </PropertyGroup>
-    </Target>
-
     <Target Name="ForceGenerationOfBindingRedirects" AfterTargets="ResolveAssemblyReferences" BeforeTargets="GenerateBindingRedirects"
             Condition="'$(AutoGenerateBindingRedirects)' == 'True'">
         <PropertyGroup>
@@ -32,22 +23,15 @@
     <!--    NuGet Package creation    -->
 
     <PropertyGroup Condition="'$(GeneratePackageOnBuild)' == 'True'">
-        <!-- Only generate symbol package and include sources when source-linking is disabled -->
-        <IncludeSymbols Condition="'$(IsSourceLinkable)' != 'True'">True</IncludeSymbols>
-        <IncludeSource Condition="'$(IsSourceLinkable)' != 'True'">True</IncludeSource>
+        <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
-        <!-- Use new symbol package style for symbol packages -->
+        <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+        <!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+        <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(IsSourceLinkable)' == 'True'">
-        <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
-        <PublishRepositoryUrl>True</PublishRepositoryUrl>
-        <!-- Embed source files that are not tracked by the source control manager in the PDB -->
-        <EmbedUntrackedSources>True</EmbedUntrackedSources>
-
-        <!-- Include debug symbols in NuGet package itself, so they are easily found by debugger -->
-        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(IsSourceLinkable)' == 'True'">
