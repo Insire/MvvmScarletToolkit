@@ -5,7 +5,7 @@
 [![Build status](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_apis/build/status/MvvmScarletToolkit-CI)](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_build/latest?definitionId=1)
 [![CodeFactor](https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit/badge)](https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit)
 
-MvvmScarletToolkit provides classes to speedup the MVVM development process for WPF applications using the viewmodel first approach.
+MvvmScarletToolkit provides classes to speedup the MVVM development process for xaml-based applications using the viewmodel first approach.
 
 ## Supported .Net Framework versions
 
@@ -13,13 +13,9 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
 
 ## Features
 
-- [MvvmScarletToolkit.Observables](src/MvvmScarletToolkit.Observables/readme.md)
+- [MvvmScarletToolkit.Messenger](src/MvvmScarletToolkit.Messenger/readme.md)
 
-  - INotifyPropertyChanged base classes for single instance viewmodels and collection viewmodels
-  - Navigation ViewModels
-  - Paging Viewmodel
-  - Localization ViewModels (switching language without app restart)
-  - Threadsafe busy state notifications via IBusyStack interface
+  - ScarletMessenger (Event Aggregator)
 
 - [MvvmScarletToolkit.Commands](src/MvvmScarletToolkit.Commands/readme.md)
 
@@ -29,9 +25,13 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
     - state management and notification
   - basic synchronous icommand implementation
 
-- [MvvmScarletToolkit.Messenger](src/MvvmScarletToolkit.Messenger/readme.md)
+- [MvvmScarletToolkit.Observables](src/MvvmScarletToolkit.Observables/readme.md)
 
-  - ScarletMessenger (Event Aggregator)
+  - INotifyPropertyChanged base classes for single instance viewmodels and collection viewmodels
+  - Navigation ViewModels
+  - Paging Viewmodel
+  - Localization ViewModels (switching language without app restart)
+  - Threadsafe busy state notifications via IBusyStack interface
 
 - [MvvmScarletToolkit.Wpf](src/MvvmScarletToolkit.Wpf/readme.md)
 
