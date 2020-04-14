@@ -5,12 +5,12 @@ namespace MvvmScarletToolkit.Observables
 {
     public sealed class DisposalToken<T> : IDisposable
     {
-        private readonly ConcurrentDictionary<IObserver<T>, IObserver<T>> _observerCollection;
+        private readonly ConcurrentDictionary<IObserver<T>, object> _observerCollection;
         private readonly IObserver<T> _observer;
 
         private bool _disposed;
 
-        public DisposalToken(IObserver<T> observer, ConcurrentDictionary<IObserver<T>, IObserver<T>> observerCollection)
+        public DisposalToken(IObserver<T> observer, ConcurrentDictionary<IObserver<T>, object> observerCollection)
         {
             _observerCollection = observerCollection ?? throw new ArgumentNullException(nameof(observerCollection));
             _observer = observer ?? throw new ArgumentNullException(nameof(observer));

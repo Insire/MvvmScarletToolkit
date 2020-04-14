@@ -113,7 +113,7 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <ListBox ItemsSource="{Binding LogItems.View}"
+                        <ListBox ItemsSource="{Binding LogItems.Items}"
                                  SelectedItem="{Binding LogItems.SelectedItem}"
                                  SelectionMode="Extended">
                             <i:Interaction.Behaviors>
@@ -793,10 +793,6 @@
                     <TreeView ItemsSource="{Binding Items}">
                         <TreeView.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Command="{Binding LoadCommand}" Header="Load" />
-                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                <MenuItem Command="{Binding UnloadCommand}" Header="Unload" />
-                                <Separator />
                                 <MenuItem Command="{Binding AddChildCommand}" Header="Add Child" />
                                 <MenuItem Command="{Binding AddContainerCommand}" Header="Add Container" />
                             </ContextMenu>
@@ -839,10 +835,6 @@
                                 <Border>
                                     <Border.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Command="{Binding LoadCommand}" Header="Load" />
-                                            <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                            <MenuItem Command="{Binding UnloadCommand}" Header="Unload" />
-                                            <Separator />
                                             <MenuItem Command="{Binding AddChildCommand}" Header="Add Child" />
                                             <MenuItem Command="{Binding AddContainerCommand}" Header="Add Container" />
                                         </ContextMenu>

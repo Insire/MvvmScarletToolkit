@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -54,7 +55,10 @@ namespace MvvmScarletToolkit.Observables
 
         protected void LogMethodCall<T>([CallerMemberName]string? methodName = null)
         {
-            Debug.WriteLine($"{typeof(T).Name}.{methodName}");
+            var type = typeof(T);
+            var name = type.GetGenericTypeName();
+
+            Debug.WriteLine($"{name}.{methodName}");
         }
 
 #endif

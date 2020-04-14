@@ -1,8 +1,8 @@
 using System;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Abstractions
 {
-    internal static class Extensions
+    public static class TypeExtensions
     {
         public static string GetGenericTypeName(this Type type)
         {

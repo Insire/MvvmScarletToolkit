@@ -28,11 +28,6 @@ namespace MvvmScarletToolkit.Observables
                 Sequence = Items.Count,
             };
 
-            if (Items.Count == 0)
-            {
-                viewmodel.IsSelected = true;
-            }
-
             _items.Add(viewmodel);
         }
 

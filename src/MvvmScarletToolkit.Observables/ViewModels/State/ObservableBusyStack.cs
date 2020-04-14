@@ -13,10 +13,9 @@ namespace MvvmScarletToolkit.Observables
     [DebuggerDisplay("{_id}")]
     public sealed partial class ObservableBusyStack : IObservableBusyStack
     {
-        private readonly Guid _id = Guid.NewGuid();
-
+        private readonly string _id;
         private readonly ConcurrentBag<IDisposable> _items;
-        private readonly ConcurrentDictionary<IObserver<bool>, IObserver<bool>> _observers;
+        private readonly ConcurrentDictionary<IObserver<bool>, object> _observers;
         private readonly Action<bool> _onChanged;
         private readonly IScarletDispatcher _dispatcher;
 
@@ -25,10 +24,11 @@ namespace MvvmScarletToolkit.Observables
         public ObservableBusyStack(Action<bool> onChanged, IScarletDispatcher dispatcher)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
+
+            _id = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
             _items = new ConcurrentBag<IDisposable>();
-            _observers = new ConcurrentDictionary<IObserver<bool>, IObserver<bool>>();
+            _observers = new ConcurrentDictionary<IObserver<bool>, object>();
         }
 
         public async Task Pull()
@@ -47,8 +47,11 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-            await NotifyOwner(newValue).ConfigureAwait(false);
-            await NotifySubscribers(newValue).ConfigureAwait(false);
+#if DEBUG
+            Debug.WriteLine($"ObservableBusyStack({_id}) PULL HasItems: {newValue}");
+#endif
+
+            await Notify(newValue);
         }
 
         public async Task Push(IDisposable token)
@@ -67,15 +70,27 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-            await NotifyOwner(newValue).ConfigureAwait(false);
-            await NotifySubscribers(newValue).ConfigureAwait(false);
+#if DEBUG
+            Debug.WriteLine($"ObservableBusyStack({_id}) PUSH HasItems: {newValue}");
+#endif
+            await Notify(newValue);
+        }
+
+        private async Task Notify(bool hasItems)
+        {
+            var owner = NotifyOwner(hasItems);
+            var subscriber = NotifySubscribers(hasItems);
+
+            await Task.WhenAll(owner, subscriber);
         }
 
         private async Task NotifySubscribers(bool newValue)
         {
-            foreach (var observer in _observers.Select(p => p.Key).ToArray())
+            var observers = _observers.Keys.ToArray();
+            for (var i = 0; i < observers.Length; i++)
             {
-                await InvokeOnChanged(observer, newValue).ConfigureAwait(false);
+                var observer = observers[i];
+                await InvokeOnChanged(observer, newValue);
             }
         }
 
@@ -105,7 +120,14 @@ namespace MvvmScarletToolkit.Observables
         [DebuggerStepThrough]
         private Task InvokeOnChanged(IObserver<bool> observer, bool newValue)
         {
-            return _dispatcher.Invoke(() => observer.OnNext(newValue));
+            if (newValue)
+            {
+                return _dispatcher.Invoke(() => observer.OnNext(newValue));
+            }
+            else
+            {
+                return _dispatcher.Invoke(() => observer.OnCompleted());
+            }
         }
 
         /// <summary>
@@ -140,6 +162,11 @@ namespace MvvmScarletToolkit.Observables
 
             _observers.Clear();
             _disposed = true;
+        }
+
+        public override string ToString()
+        {
+            return $"{_id} HasItems: {!_items.IsEmpty}";
         }
     }
 }

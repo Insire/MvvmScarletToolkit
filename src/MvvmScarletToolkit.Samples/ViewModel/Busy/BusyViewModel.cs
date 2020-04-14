@@ -21,38 +21,41 @@ namespace MvvmScarletToolkit.Samples
         {
             _disposables = new Dictionary<INotifyPropertyChanged, IDisposable>();
 
-            AddChildCommand = CommandBuilder.Create(InternalAddChildAsync, CanAddChild);
-            AddContainerCommand = CommandBuilder.Create(InternalAddContainerAsync, CanAddChild);
+            AddChildCommand = CommandBuilder
+                .Create(InternalAddChildAsync, CanAddChild)
+                .WithBusyNotification(BusyStack)
+                .WithSingleExecution()
+                .Build();
+
+            AddContainerCommand = CommandBuilder
+                .Create(InternalAddContainerAsync, CanAddChild)
+                .WithBusyNotification(BusyStack)
+                .WithSingleExecution()
+                .Build();
         }
 
         private async Task InternalAddContainerAsync(CancellationToken token)
         {
-            using (BusyStack.GetToken())
-            {
-                var viewModel = new BusyViewModel(CommandBuilder);
-                _disposables.Add(viewModel, viewModel.Subscribe(this));
+            var viewModel = new BusyViewModel(CommandBuilder);
+            _disposables.Add(viewModel, viewModel.Subscribe(this));
 
-                await Add(viewModel).ConfigureAwait(false);
-                await Task.Delay(450).ConfigureAwait(false);
-            }
+            await Add(viewModel);
+            await Task.Delay(450);
         }
 
         private async Task InternalAddChildAsync(CancellationToken token)
         {
-            using (BusyStack.GetToken())
-            {
-                var viewModel = new ObservableBusyViewModel(CommandBuilder, Dispatcher);
-                _disposables.Add(viewModel, viewModel.Subscribe(this));
+            var viewModel = new ObservableBusyViewModel(CommandBuilder, Dispatcher);
+            _disposables.Add(viewModel, viewModel.Subscribe(this));
 
-                await Add(viewModel).ConfigureAwait(false);
-                await Task.Delay(450).ConfigureAwait(false);
-            }
+            await Add(viewModel);
+            await Task.Delay(450);
         }
 
         public override async Task Remove(INotifyPropertyChanged item, CancellationToken token)
         {
             _disposables[item].Dispose();
-            await base.Remove(item, token).ConfigureAwait(false);
+            await base.Remove(item, token);
         }
 
         private bool CanAddChild()
@@ -60,29 +63,22 @@ namespace MvvmScarletToolkit.Samples
             return !IsBusy;
         }
 
-        public async void OnNext(bool value)
+        public void OnNext(bool value)
         {
-            if (value)
-            {
-                BusyStack.GetToken();
-            }
-            else
-            {
-                await BusyStack.Pull().ConfigureAwait(false);
-            }
+            BusyStack.GetToken();
         }
 
         public async void OnError(Exception error)
         {
-            await BusyStack.Pull().ConfigureAwait(false);
+            await BusyStack.Pull();
         }
 
         /// <summary>
         /// Unused
         /// </summary>
-        public void OnCompleted()
+        public async void OnCompleted()
         {
-            //hm, what to do here? I guess nothing right now...
+            await BusyStack.Pull();
         }
 
         protected override void Dispose(bool disposing)

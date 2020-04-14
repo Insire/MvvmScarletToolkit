@@ -9,10 +9,8 @@ namespace MvvmScarletToolkit.Observables
     /// <summary>
     /// Will notify its owner via a provided action on if it contains more tokens
     /// </summary>
-    [DebuggerDisplay("{_id}")]
     public sealed class BusyStack : IBusyStack
     {
-        private readonly Guid _id = Guid.NewGuid();
         private readonly ConcurrentBag<IDisposable> _items;
         private readonly Action<bool> _onChanged;
         private readonly IScarletDispatcher _dispatcher;
