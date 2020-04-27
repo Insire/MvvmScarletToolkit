@@ -21,13 +21,14 @@ namespace MvvmScarletToolkit.Samples
         public string FilterText
         {
             get { return _filterText; }
-            set { SetValue(ref _filterText, value, onChanged: () => OnFilterTextChanged(value)); }
+            set { SetValue(ref _filterText, value); }
         }
 
         public DataGridViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             Groups = new GroupingViewModel(commandBuilder, () => CollectionViewSource.GetDefaultView(Items), typeof(DataGridRowViewModel));
+            Filter = IsMatch;
         }
 
         protected override async Task RefreshInternal(CancellationToken token)
@@ -41,11 +42,6 @@ namespace MvvmScarletToolkit.Samples
                     Color = $"#cc{i * 2:X2}{i * 3:X2}",
                 });
             }
-        }
-
-        private void OnFilterTextChanged(string value)
-        {
-            Filter = string.IsNullOrEmpty(value) ? default(Predicate<object>) : IsMatch;
         }
 
         private bool IsMatch(object item)

@@ -285,7 +285,7 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged, Delay=500}" />
 
                         <ContentControl Grid.Row="2">
                             <ContentControl.Style>
@@ -349,6 +349,7 @@
 
                         <DataGrid Grid.Row="4"
                                   mvvm:Filter.By="{Binding Filter, Mode=OneWay}"
+                                  mvvm:Filter.RefreshWhenChanged="{Binding FilterText, Mode=OneWay}"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
                                   ItemsSource="{Binding Items}"
