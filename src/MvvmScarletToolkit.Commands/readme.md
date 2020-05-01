@@ -8,9 +8,88 @@ This library aims to provide easy to use [ICommand](https://docs.microsoft.com/e
 
 |class|summary|
 |---|---|
-|``AsyncCommand<TArgument>``|Task based ICommand implementation.|
-|``ConcurrentCommand<TArgument>``|An advanced Task based ICommand implementation supporting fluent configuration.|
-|``RelayComand`` and ``RelayComand<TArgument>``|Popular synchronous implementation of ICommand.|
+|``AsyncCommand<TArgument>``|Task based ``ICommand`` implementation.|
+|``ConcurrentCommand<TArgument>``|An advanced Task based ``ICommand`` implementation supporting fluent configuration via ``IScarletCommandBuilder``.|
+|``RelayComand`` and ``RelayComand<TArgument>``|Popular synchronous implementation of ``ICommand``.|
+
+## Usage
+
+### AsyncCommand\<TArgument>
+
+```cs
+public class SomeClass
+{
+    public ICommand Command { get; }
+
+    public SomeClass(IScarletCommandBuilder commandBuilder)
+    {
+        Command = AsyncCommand .Create(Do, CanDo);
+    }
+
+    private Task Do(CancellationToken token)
+    {
+        return Task.Delay(2000);
+    }
+
+    private bool CanDo()
+    {
+        return true;
+    }
+}
+```
+
+### ConcurrentCommand\<TArgument>
+
+```cs
+public class SomeClass
+{
+    public ICommand Command { get; }
+
+    public SomeClass(IScarletCommandBuilder commandBuilder)
+    {
+        Command = commandBuilder
+            .Create(Do, CanDo)
+            .WithSingleExecution() // prevent from running multiple instances of this command at the same time
+            .WithBusyNotification(BusyStack) // notify an IBusyStack instance that this command is running
+            .WithAsyncCancellation() // use an async ICommand implementation for cancellation support
+            .Build();
+    }
+
+    private Task Do(CancellationToken token)
+    {
+        return Task.Delay(2000);
+    }
+
+    private bool CanDo()
+    {
+        return true;
+    }
+}
+```
+
+### RelayComand\<TArgument>
+
+```cs
+public class SomeClass
+{
+    public ICommand Command { get; }
+
+    public SomeClass(IScarletCommandBuilder commandBuilder)
+    {
+        Command = new RelayComand(commandBuilder, Do, CanDo);
+    }
+
+    private void Do(CancellationToken token)
+    {
+        // do stuff here
+    }
+
+    private bool CanDo()
+    {
+        return true;
+    }
+}
+```
 
 ## Credits
 

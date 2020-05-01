@@ -9,7 +9,7 @@ This library aims to provide a simple event aggregator implementations for the f
 |class|summary|
 |---|---|
 |[``ScarletMessageProxy``](.\ScarletMessageProxy.cs)|``IScarletMessageProxy`` implementation used by the ``ScarletMessenger`` to forward and log Messages given to it. Logging is present in debug builds only.|
-|[``ScarletMessenger``](.\ScarletMessenger.cs)|A lightweight event aggregator/messenger for loosely coupled communication. (Modified version of [Source](https://github.com/grumpydev/TinyMessenger)).|
+|[``ScarletMessenger``](.\ScarletMessenger.cs)|A lightweight event aggregator/messenger for loosely coupled communication. (Modified version of [TinyMessenger](https://github.com/grumpydev/TinyMessenger)).|
 
 ## Usage
 
