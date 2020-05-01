@@ -1,8 +1,8 @@
+using Microsoft.Xaml.Behaviors;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Xaml.Behaviors;
 
 namespace MvvmScarletToolkit
 {

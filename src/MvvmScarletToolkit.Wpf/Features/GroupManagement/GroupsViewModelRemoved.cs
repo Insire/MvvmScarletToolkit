@@ -1,5 +1,3 @@
-﻿using MvvmScarletToolkit.Observables;
-
 namespace MvvmScarletToolkit
 {
     public sealed class GroupsViewModelRemoved : GenericScarletMessage<GroupsViewModel>

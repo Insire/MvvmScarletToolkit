@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Windows.Input;
 
@@ -46,9 +45,7 @@ namespace MvvmScarletToolkit.Commands
                     return false;
                 }
 
-#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
-                return _canExecute.Invoke(default);
-#pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
+                return _canExecute.Invoke(default!);
             }
             else
             {
@@ -66,9 +63,7 @@ namespace MvvmScarletToolkit.Commands
         {
             if (parameter is null)
             {
-#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
-                _execute?.Invoke(default);
-#pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
+                _execute?.Invoke(default!);
             }
             else
             {
