@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -62,11 +63,19 @@ namespace MvvmScarletToolkit.Commands
 
                 await task;
             }
+            // no need to catch, since we capture the exception through the property task
+            // and we dont want to take down the whole application if the developer didnt add any exception handling
+#if DEBUG
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
+
+#else
             catch
             {
-                // no need to catch, since we capture the exception through the property task
-                // and we dont want to take down the whole application if the developer didnt add any exception handling
             }
+#endif
             finally
             {
                 OnPropertyChanged(nameof(Status));
