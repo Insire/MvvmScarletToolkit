@@ -1,7 +1,7 @@
 namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
-    /// Generic wrapper viewmodel to add binding support
+    /// Generic wrapper viewmodel to add binding support to any c# object
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class ViewModelContainer<T> : ObservableObject
