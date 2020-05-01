@@ -11,16 +11,17 @@ namespace MvvmScarletToolkit.Commands
     /// </summary>
     public sealed class ConcurrentCommand<TArgument> : GenericConcurrentCommandBase
     {
-        private readonly Func<TArgument, CancellationToken, Task> _command;
-        private readonly ICancelCommand _cancelCommand;
+        private readonly Func<TArgument, CancellationToken, Task> _execute;
         private readonly Func<TArgument, bool>? _canExecute;
+
+        private readonly ICancelCommand _cancelCommand;
         private readonly IBusyStack? _externalBusyStack;
         private readonly IBusyStack _internalBusyStack;
 
-        internal ConcurrentCommand(IScarletCommandManager commandManager, ICancelCommand cancelCommand, Func<Action<bool>, IBusyStack> busyStackFactory, Func<TArgument, CancellationToken, Task> command)
+        internal ConcurrentCommand(IScarletCommandManager commandManager, ICancelCommand cancelCommand, Func<Action<bool>, IBusyStack> busyStackFactory, Func<TArgument, CancellationToken, Task> execute)
             : base(commandManager)
         {
-            _command = command ?? throw new ArgumentNullException(nameof(command));
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             CancelCommand = _cancelCommand = cancelCommand ?? throw new ArgumentNullException(nameof(cancelCommand));
 
             _internalBusyStack = busyStackFactory?.Invoke(hasItems => IsBusy = hasItems) ?? throw new ArgumentNullException(nameof(busyStackFactory));
@@ -53,19 +54,18 @@ namespace MvvmScarletToolkit.Commands
 
             if (parameter is null)
             {
-#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
-                return _canExecute.Invoke(default);
-#pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
+                return _canExecute.Invoke(default!);
             }
 
             return parameter is TArgument arg
-                && _canExecute.Invoke(arg);
+                   && _canExecute.Invoke(arg);
         }
 
         [DebuggerStepThrough]
         public override async void Execute(object parameter)
         {
-            await ExecuteAsync(parameter).ConfigureAwait(false);
+            await ExecuteAsync(parameter)
+                .ConfigureAwait(false);
         }
 
         public override async Task ExecuteAsync(object parameter)
@@ -75,63 +75,66 @@ namespace MvvmScarletToolkit.Commands
                 CancelCommand?.Execute(parameter);
             }
 
-            if (_externalBusyStack is null)
-            {
-                await ExecuteWithoutBusyStack(parameter).ConfigureAwait(false);
-            }
-            else
-            {
-                await ExecuteWithBusyStack(parameter).ConfigureAwait(false);
-            }
-        }
-
-        private async Task ExecuteWithBusyStack(object parameter)
-        {
-            if (_externalBusyStack is null)
-            {
-                throw new ArgumentNullException(nameof(_externalBusyStack));
-            }
-
-            using (_externalBusyStack.GetToken())
-            {
-                await ExecuteAsyncInternal(parameter).ConfigureAwait(false);
-            }
-        }
-
-        private async Task ExecuteWithoutBusyStack(object parameter)
-        {
-            try
-            {
-                IsBusy = true;
-                await ExecuteAsyncInternal(parameter).ConfigureAwait(false);
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-        }
-
-        private async Task ExecuteAsyncInternal(object parameter)
-        {
             var argument = parameter is TArgument arg
                 ? arg
                 : default;
 
+            if (_externalBusyStack is null)
+            {
+                await ExecuteWithoutBusyStack(argument!)
+                    .ConfigureAwait(false);
+            }
+            else
+            {
+                await ExecuteWithBusyStack(argument!)
+                    .ConfigureAwait(false);
+            }
+        }
+
+        private async Task ExecuteWithBusyStack(TArgument parameter)
+        {
+            try
+            {
+                using (_externalBusyStack!.GetToken())
+                {
+                    await ExecuteAsyncInternal(parameter)
+                        .ConfigureAwait(true); // return to UI thread here
+                }
+            }
+            finally
+            {
+                _cancelCommand.NotifyCommandFinished();
+                RaiseCanExecuteChanged();
+            }
+        }
+
+        private async Task ExecuteWithoutBusyStack(TArgument parameter)
+        {
+            try
+            {
+                IsBusy = true;
+
+                await ExecuteAsyncInternal(parameter)
+                    .ConfigureAwait(true); // return to UI thread here
+            }
+            finally
+            {
+                IsBusy = false;
+
+                RaiseCanExecuteChanged();
+                _cancelCommand.NotifyCommandFinished();
+            }
+        }
+
+        private async Task ExecuteAsyncInternal(TArgument parameter)
+        {
             using (_internalBusyStack.GetToken())
             {
                 _cancelCommand.NotifyCommandStarting();
 
-                try
-                {
-                    Execution = new NotifyTaskCompletion(_command.Invoke(argument, _cancelCommand.Token));
-                    await Execution.TaskCompletion.ConfigureAwait(true);
-                }
-                finally
-                {
-                    _cancelCommand.NotifyCommandFinished();
-
-                    RaiseCanExecuteChanged();
-                }
+                Execution = new NotifyTaskCompletion(_execute.Invoke(parameter, _cancelCommand.Token));
+                await Execution.TaskCompletion
+                    .ConfigureAwait(false);
             }
         }
     }

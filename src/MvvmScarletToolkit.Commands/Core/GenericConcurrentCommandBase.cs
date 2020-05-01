@@ -9,22 +9,26 @@ namespace MvvmScarletToolkit.Commands
     public abstract class GenericConcurrentCommandBase : ConcurrentCommandBase
     {
         [Bindable(true, BindingDirection.OneWay)]
-        public override Task Completion => Execution?.TaskCompletion ?? Task.CompletedTask;
+        public override Task Completion => Execution.TaskCompletion;
 
-        private NotifyTaskCompletion? _execution;
+        private NotifyTaskCompletion _execution;
         [Bindable(true, BindingDirection.OneWay)]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC005:Check if value is different before notifying.", Justification = "Since Completion is a forwarded property of Execution, it is guaranteed to change, when the source property changes")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC009:Don't raise PropertyChanged for missing property.", Justification = "Analyzer fails")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC012:Don't use expression for raising PropertyChanged.", Justification = "Analyzer fails")]
-        public NotifyTaskCompletion? Execution
+        public NotifyTaskCompletion Execution
         {
             get { return _execution; }
-            protected set { SetValue(ref _execution, value, OnChanged: () => OnPropertyChanged(nameof(Completion))); }
+            protected set
+            {
+                if (SetValue(ref _execution, value))
+                {
+                    OnPropertyChanged(nameof(Completion));
+                }
+            }
         }
 
         protected GenericConcurrentCommandBase(IScarletCommandManager commandManager)
             : base(commandManager)
         {
+            _execution = NotifyTaskCompletion.Completed;
         }
     }
 }

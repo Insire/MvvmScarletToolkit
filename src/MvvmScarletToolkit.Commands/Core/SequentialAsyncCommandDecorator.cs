@@ -26,8 +26,11 @@ namespace MvvmScarletToolkit.Commands
 
         public override async Task ExecuteAsync(object parameter)
         {
-            await Command.Completion.ConfigureAwait(false);
-            await Command.ExecuteAsync(parameter).ConfigureAwait(false);
+            await Command.Completion
+                .ConfigureAwait(false);
+
+            await Command.ExecuteAsync(parameter)
+                .ConfigureAwait(false);
         }
     }
 }

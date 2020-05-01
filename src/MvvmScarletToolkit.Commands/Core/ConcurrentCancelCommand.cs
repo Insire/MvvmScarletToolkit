@@ -43,7 +43,8 @@ namespace MvvmScarletToolkit.Commands
 
         public override async void Execute(object parameter)
         {
-            await ExecuteAsync(parameter).ConfigureAwait(false);
+            await ExecuteAsync(parameter)
+                .ConfigureAwait(false);
         }
 
         public override bool CanExecute(object parameter)
@@ -62,7 +63,8 @@ namespace MvvmScarletToolkit.Commands
 
             OnPropertyChanged(nameof(Completion));
 
-            await Completion;
+            await Completion
+                .ConfigureAwait(true); // return to UI thread here
 
             RaiseCanExecuteChanged();
             OnPropertyChanged(nameof(Token));
