@@ -42,7 +42,15 @@ namespace MvvmScarletToolkit.Commands
         public NotifyTaskCompletion(Task task)
         {
             Task = task ?? throw new ArgumentNullException(nameof(task));
-            TaskCompletion = WatchTaskAsync(task);
+
+            if (task == Task.CompletedTask)
+            {
+                TaskCompletion = Task.CompletedTask;
+            }
+            else
+            {
+                TaskCompletion = WatchTaskAsync(task);
+            }
         }
 
         private async Task WatchTaskAsync(Task task)

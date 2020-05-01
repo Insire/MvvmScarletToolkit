@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Commands
     public abstract class GenericConcurrentCommandBase : ConcurrentCommandBase
     {
         [Bindable(true, BindingDirection.OneWay)]
-        public override Task Completion => Execution.TaskCompletion;
+        public sealed override Task Completion => Execution.TaskCompletion;
 
         private NotifyTaskCompletion _execution;
         [Bindable(true, BindingDirection.OneWay)]
