@@ -51,7 +51,7 @@ namespace MvvmScarletToolkit
             _app.Exit -= OnAppExit;
             _app.SessionEnding -= OnSessionEnding;
 
-            _scarletDispatcher.InvokeSynchronous = true;
+            _scarletDispatcher.SetInvokeSynchronous(true);
             _shutDown = InternalShutDown();
         }
 

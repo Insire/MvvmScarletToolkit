@@ -16,9 +16,20 @@ namespace MvvmScarletToolkit
         internal static ScarletDispatcher InternalDefault => _default.Value;
 
         private const DispatcherPriority Priority = DispatcherPriority.Input;
+
         private readonly Dispatcher _dispatcherObject;
 
-        internal bool InvokeSynchronous { get; set; }
+        private bool invokeSynchronous;
+
+        internal bool GetInvokeSynchronous()
+        {
+            return invokeSynchronous;
+        }
+
+        internal void SetInvokeSynchronous(bool value)
+        {
+            invokeSynchronous = value;
+        }
 
         public ScarletDispatcher(Dispatcher dispatcher)
         {
@@ -32,7 +43,7 @@ namespace MvvmScarletToolkit
                 return;
             }
 
-            if (InvokeSynchronous)
+            if (GetInvokeSynchronous())
             {
                 _dispatcherObject.Invoke(action, DispatcherPriority.Normal);
                 return;
@@ -45,12 +56,10 @@ namespace MvvmScarletToolkit
         {
             if (action is null)
             {
-#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
-                return default;
-#pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
+                return default!;
             }
 
-            if (InvokeSynchronous)
+            if (GetInvokeSynchronous())
             {
                 return _dispatcherObject.Invoke(action, DispatcherPriority.Normal);
             }

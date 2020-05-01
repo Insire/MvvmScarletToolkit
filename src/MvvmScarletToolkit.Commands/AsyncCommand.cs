@@ -16,8 +16,8 @@ namespace MvvmScarletToolkit.Commands
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private readonly Func<TArgument, CancellationToken, Task>? _execute;
-        private readonly Func<TArgument, bool>? _canExecute;
+        private readonly Func<TArgument, CancellationToken, Task> _execute;
+        private readonly Func<TArgument, bool> _canExecute;
 
         private readonly IScarletCommandManager _commandManager;
         private readonly ICancelCommand _cancelCommand;
@@ -26,8 +26,8 @@ namespace MvvmScarletToolkit.Commands
 
         public ICommand CancelCommand => _cancelCommand;
 
-        private NotifyTaskCompletion? _execution;
-        public NotifyTaskCompletion? Execution
+        private NotifyTaskCompletion _execution;
+        public NotifyTaskCompletion Execution
         {
             get { return _execution; }
             private set
@@ -41,22 +41,26 @@ namespace MvvmScarletToolkit.Commands
             }
         }
 
-        private AsyncCommand(IScarletCommandManager commandManager)
+        public AsyncCommand(IScarletCommandManager commandManager, Func<TArgument, CancellationToken, Task> methodToExecute)
         {
             _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
             _cancelCommand = new CancelCommand(commandManager);
-        }
 
-        public AsyncCommand(IScarletCommandManager commandManager, Func<TArgument, CancellationToken, Task> methodToExecute)
-            : this(commandManager)
-        {
             _execute = methodToExecute ?? throw new ArgumentNullException($"{nameof(methodToExecute)} can't be empty.", nameof(methodToExecute));
+            _canExecute = (o) => true;
+
+            _execution = NotifyTaskCompletion.Completed;
         }
 
-        public AsyncCommand(IScarletCommandManager commandManager, Func<TArgument, CancellationToken, Task> command, Func<TArgument, bool> canExecute)
-            : this(commandManager, command)
+        public AsyncCommand(IScarletCommandManager commandManager, Func<TArgument, CancellationToken, Task> methodToExecute, Func<TArgument, bool> canExecute)
         {
+            _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
+            _cancelCommand = new CancelCommand(commandManager);
+
+            _execute = methodToExecute ?? throw new ArgumentNullException($"{nameof(methodToExecute)} can't be empty.", nameof(methodToExecute));
             _canExecute = canExecute ?? throw new ArgumentException($"{nameof(canExecute)} can't be empty.", nameof(canExecute));
+
+            _execution = NotifyTaskCompletion.Completed;
         }
 
         public async void Execute(object parameter)
@@ -74,16 +78,9 @@ namespace MvvmScarletToolkit.Commands
         {
             var isRunning = Execution is null || Execution.IsCompleted;
 
-            if (_canExecute is null)
-            {
-                return isRunning;
-            }
-
             if (parameter is null)
             {
-#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
-                return isRunning && _canExecute.Invoke(default);
-#pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
+                return isRunning && _canExecute.Invoke(default!);
             }
 
             return isRunning
@@ -99,7 +96,8 @@ namespace MvvmScarletToolkit.Commands
                 ? arg
                 : default;
 
-            Execution = new NotifyTaskCompletion(_execute?.Invoke(argument, _cancelCommand.Token) ?? Task.CompletedTask);
+            Execution = new NotifyTaskCompletion(_execute.Invoke(argument!, _cancelCommand.Token));
+
             RaiseCanExecuteChanged();
 
             await Execution.TaskCompletion;

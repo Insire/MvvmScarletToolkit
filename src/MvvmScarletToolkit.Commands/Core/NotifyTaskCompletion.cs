@@ -7,6 +7,9 @@ namespace MvvmScarletToolkit.Commands
 {
     public sealed class NotifyTaskCompletion : INotifyPropertyChanged
     {
+        private static readonly Lazy<NotifyTaskCompletion> _completed = new Lazy<NotifyTaskCompletion>(() => new NotifyTaskCompletion(Task.CompletedTask));
+        public static NotifyTaskCompletion Completed => _completed.Value;
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         [Bindable(true, BindingDirection.OneWay)]

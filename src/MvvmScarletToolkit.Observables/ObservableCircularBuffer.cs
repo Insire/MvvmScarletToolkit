@@ -20,7 +20,13 @@ namespace MvvmScarletToolkit.Observables
         public int Capacity
         {
             get { return _capacity; }
-            set { SetValue(ref _capacity, value, onChanged: () => OnPropertyChanged(nameof(IsFull))); }
+            set
+            {
+                if (SetValue(ref _capacity, value))
+                {
+                    OnPropertyChanged(nameof(IsFull));
+                }
+            }
         }
 
         private int _size;
@@ -30,7 +36,13 @@ namespace MvvmScarletToolkit.Observables
         public int Size
         {
             get { return _size; }
-            private set { SetValue(ref _size, value, onChanged: () => OnPropertyChanged(nameof(IsFull))); }
+            private set
+            {
+                if (SetValue(ref _size, value))
+                {
+                    OnPropertyChanged(nameof(IsFull));
+                };
+            }
         }
 
         public bool IsFull => _size == Capacity;
