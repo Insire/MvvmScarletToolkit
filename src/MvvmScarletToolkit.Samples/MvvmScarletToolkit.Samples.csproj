@@ -12,7 +12,6 @@
 
     <ItemGroup>
         <PackageReference Include="Jot" Version="2.1.4" />
-        <PackageReference Include="System.Runtime.Caching" Version="4.7.0" />
     </ItemGroup>
 
     <ItemGroup>

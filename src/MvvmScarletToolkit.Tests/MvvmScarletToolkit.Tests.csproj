@@ -8,8 +8,10 @@
 
     <ItemGroup>
         <PackageReference Include="Moq" Version="4.14.1" />
+
         <PackageReference Include="NSubstitute" Version="4.2.1" />
         <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.13" />
+
         <PackageReference Include="nunit" Version="3.12.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.16.1">
             <PrivateAssets>all</PrivateAssets>
@@ -23,5 +25,4 @@
         <ProjectReference Include="..\MvvmScarletToolkit.Messenger\MvvmScarletToolkit.Messenger.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj" />
     </ItemGroup>
-
 </Project>
