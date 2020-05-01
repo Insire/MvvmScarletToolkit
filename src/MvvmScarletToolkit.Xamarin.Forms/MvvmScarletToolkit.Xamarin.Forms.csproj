@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Xamarin.Forms" Version="4.5.0.530" />
+        <PackageReference Include="Xamarin.Forms" Version="4.6.0.726" />
         <PackageReference Include="IDisposableAnalyzers" Version="3.3.7">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
