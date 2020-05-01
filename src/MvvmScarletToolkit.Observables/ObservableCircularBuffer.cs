@@ -41,7 +41,7 @@ namespace MvvmScarletToolkit.Observables
                 if (SetValue(ref _size, value))
                 {
                     OnPropertyChanged(nameof(IsFull));
-                };
+                }
             }
         }
 
