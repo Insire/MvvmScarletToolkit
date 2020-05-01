@@ -83,7 +83,7 @@ The included Wpf Samples App contains examples for:
 
 ## Build Requirements
 
-This library uses SDK-style project files, which means you are required to use [Visual Studio 2019](https://visualstudio.microsoft.com/vs/community/) or newer. Visual Studio will prompt you to install any missing components once you open the [sln](.\MvvmScarletToolkit.sln) file.
+This library uses SDK-style project files, which means you are required to use [Visual Studio 2019](https://visualstudio.microsoft.com/vs/community/) or newer. Visual Studio will prompt you to install any missing components once you open the [sln](./MvvmScarletToolkit.sln) file.
 
 For anyone not wishing to install that, they atleast need:
 
