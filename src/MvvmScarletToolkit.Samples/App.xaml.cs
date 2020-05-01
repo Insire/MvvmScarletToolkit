@@ -1,6 +1,5 @@
 using Jot;
 using Jot.Storage;
-using MvvmScarletToolkit;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Windows;

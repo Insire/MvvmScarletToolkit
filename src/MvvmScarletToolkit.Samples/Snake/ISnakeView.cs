@@ -1,4 +1,3 @@
-using MvvmScarletToolkit;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Samples

@@ -1,5 +1,3 @@
-using MvvmScarletToolkit;
-
 namespace MvvmScarletToolkit.Samples
 {
     public sealed class PositionUpdatedMessage : ScarletMessageBase

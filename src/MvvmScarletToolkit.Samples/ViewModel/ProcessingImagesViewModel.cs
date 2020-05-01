@@ -1,4 +1,3 @@
-using MvvmScarletToolkit;
 using MvvmScarletToolkit.Observables;
 
 namespace MvvmScarletToolkit.Samples

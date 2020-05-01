@@ -1,4 +1,3 @@
-using MvvmScarletToolkit;
 using System;
 using System.ComponentModel;
 

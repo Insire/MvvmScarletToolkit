@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands

@@ -1,4 +1,3 @@
-using MvvmScarletToolkit;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
 using System.Threading.Tasks;
