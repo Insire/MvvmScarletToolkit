@@ -47,10 +47,10 @@ private void Build(string path)
             .AppendQuoted(path)
             .Append("--nologo")
             .Append($"-c {Configuration}")
-            .Append($"-p:GeneratePackageOnBuild=false") // we package only specific projects and we do that in a second cli call
-            .Append($"-p:DebugType=full") // required for opencover codecoverage and sourcelinking
-            .Append("-p:DebugSymbols=true")
-            .Append($"-p:SourceLinkCreate=true")
+            .Append("-p:GeneratePackageOnBuild=false") // we package only specific projects and we do that in a second cli call
+            .Append("-p:DebugType=full") // required for opencover codecoverage and sourcelinking
+            .Append("-p:DebugSymbols=true") // required for opencover codecoverage
+            .Append("-p:SourceLinkCreate=true")
     );
 
     StartProcess("dotnet", settings);
