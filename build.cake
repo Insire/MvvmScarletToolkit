@@ -239,7 +239,7 @@ Task("OpenCoverReport")
                                                 .AppendQuoted($"--logger:trx;LogFileName={vstestResultsFilePath.FullPath}")
         };
 
-        OpenCover(tool => tool.DotNetCoreTest(projectFile, testSettings), openCoverResultFile, new OpenCoverSettings() { OldStyle = true, Register = BuildSystem.IsLocalBuild ? "user" : "path64" });
+        OpenCover(tool => tool.DotNetCoreTest(projectFile, testSettings), openCoverResultFile, new OpenCoverSettings() { OldStyle = true,LogLevel = OpenCoverLogLevel.All, Register = BuildSystem.IsLocalBuild ? "user" : "path64" });
     });
 
 Task("HtmlReport")
