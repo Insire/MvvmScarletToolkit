@@ -20,7 +20,7 @@ const string SolutionPath =".\\MvvmScarletToolkit.sln";
 const string AssemblyInfoPath =".\\src\\SharedAssemblyInfo.cs";
 const string PackagePath = ".\\packages";
 const string ResultsPath = ".\\results";
-const string CoberturaResultsPath = ".\\results\\cobertura";
+const string CoberturaResultsPath = ".\\results\\reports\\cobertura";
 
 var reportsFolder = new DirectoryPath(ResultsPath).Combine("reports");
 var coberturaResultFile = new DirectoryPath(CoberturaResultsPath).CombineWithFilePath("Cobertura.xml");
