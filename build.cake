@@ -1,9 +1,11 @@
 #tool nuget:?package=NUnit.ConsoleRunner&version=3.11.1
 #tool nuget:?package=OpenCover&version=4.7.922
 #tool nuget:?package=ReportGenerator&version=4.5.6
+#tool nuget:?package=Codecov&version=1.10.0
 
-#addin nuget:?package=Cake.GitVersioning&version=3.1.91
+#addin nuget:?package=Cake.Codecov&version=0.8.0
 #addin nuget:?package=Cake.Incubator&version=5.1.0
+#addin nuget:?package=Cake.GitVersioning&version=3.1.91
 
 using Cake.Core;
 
