@@ -191,6 +191,14 @@ Task("Build")
             {
                 GenerateReport(resultFile, type.Key, type.Value);
             }
+
+            var codeCovToken = EnvironmentVariable("CODECOV_TOKEN");
+            if(string.IsNullOrEmpty(codeCovToken))
+            {
+                return;
+            }
+
+            Codecov(new[] { resultFile.FullPath }, codeCovToken);
         }
 
         void GenerateReport(FilePath inputFile, ReportGeneratorReportType type, string subFolder)
