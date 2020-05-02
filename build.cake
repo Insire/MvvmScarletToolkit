@@ -64,7 +64,9 @@ Task("CleanSolution")
             var customProject = ParseProject(project.Path, configuration: Configuration, platform: Platform);
 
             foreach(var path in customProject.OutputPaths)
+            {
                 CleanDirectory(path.FullPath);
+            }
         }
 
         var folders = new[]
@@ -184,7 +186,7 @@ Task("Build")
             if(BuildSystem.IsLocalBuild)
             {
                 // generate local html report
-                GenerateReport(resultFile, ReportGeneratorReportType.Cobertura, "html");
+                GenerateReport(resultFile, ReportGeneratorReportType.Html, "html");
             }
 
             if(BuildSystem.IsRunningOnAzurePipelinesHosted)
