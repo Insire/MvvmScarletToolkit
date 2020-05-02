@@ -20,10 +20,12 @@ const string SolutionPath =".\\MvvmScarletToolkit.sln";
 const string AssemblyInfoPath =".\\src\\SharedAssemblyInfo.cs";
 const string PackagePath = ".\\packages";
 const string ResultsPath = ".\\results";
+const string CoberturaResultsPath = ".\\results\\cobertura";
 
 var reportsFolder = new DirectoryPath(ResultsPath).Combine("reports");
-var coverageResultFile = new DirectoryPath(ResultsPath).CombineWithFilePath("coverage.xml");
-var vstestResultsFilePath = new DirectoryPath(ResultsPath).CombineWithFilePath("testresults.xml");
+var coberturaResultFile = new DirectoryPath(CoberturaResultsPath).CombineWithFilePath("Cobertura.xml");
+var openCoverResultFile = new DirectoryPath(ResultsPath).CombineWithFilePath("openCover.xml");
+var vstestResultsFilePath = new DirectoryPath(ResultsPath).CombineWithFilePath("vsTestResults.xml");
 
 var nugetPackageProjects = new[]
 {
@@ -51,6 +53,29 @@ private void Build(string path)
     );
 
     StartProcess("dotnet", settings);
+}
+
+private void GenerateReport(FilePath inputFile, ReportGeneratorReportType type, string subFolder)
+{
+    var ReportGeneratorSettings = new ReportGeneratorSettings()
+    {
+        AssemblyFilters = new[]
+        {
+            "-MvvmScarletToolkit.Tests*",
+            "-NUnit*",
+        },
+        ClassFilters = new[]
+        {
+            "-System*",
+            "-Microsoft*",
+        },
+        ReportTypes = new[]
+        {
+            type
+        }
+    };
+
+    ReportGenerator(inputFile, reportsFolder.Combine(subFolder), ReportGeneratorSettings);
 }
 
 Setup(ctx =>
@@ -176,81 +201,62 @@ Task("BuildAndPack")
         }
     });
 
-Task("BuildAndTest")
+Task("OpenCoverReport")
     .Does(()=>
     {
         var project = @".\src\MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj";
 
         Build(project);
-        Test(project);
 
-        void Test(string path)
+        var testSettings = new DotNetCoreTestSettings
         {
-            var testSettings = new DotNetCoreTestSettings
-            {
-                NoBuild = true,
-                NoRestore = true,
-                ResultsDirectory = ResultsPath,
-                VSTestReportPath = vstestResultsFilePath,
-                Configuration = Configuration,
-                Framework = "netcoreapp3.1",
-                ArgumentCustomization = builder=> builder
-                                                    .AppendQuoted("--nologo")
-            };
+            NoBuild = true,
+            NoRestore = true,
+            ResultsDirectory = ResultsPath,
+            VSTestReportPath = vstestResultsFilePath,
+            Configuration = Configuration,
+            Framework = "netcoreapp3.1",
+            ArgumentCustomization = builder=> builder
+                                                .AppendQuoted("--nologo")
+        };
 
-            var openCoverSettings = new OpenCoverSettings()
-            {
-                OldStyle = true,
-            };
-
-            Information("generating opencover report");
-            OpenCover(tool => tool.DotNetCoreTest(path, testSettings), coverageResultFile, openCoverSettings);
-
-            if(BuildSystem.IsLocalBuild)
-            {
-                Information("generating html report");
-                GenerateReport(coverageResultFile, ReportGeneratorReportType.Html, "html");
-            }
-
-            if(BuildSystem.IsRunningOnAzurePipelinesHosted)
-            {
-                Information("generating report for azure devops");
-                GenerateReport(coverageResultFile, ReportGeneratorReportType.Cobertura, "cobertura");
-
-                var codeCovToken = EnvironmentVariable("CODECOV_TOKEN");
-                if(string.IsNullOrEmpty(codeCovToken))
-                {
-                    return;
-                }
-
-                Information("uploading report to codecov");
-                Codecov(new[] { coverageResultFile.FullPath }, codeCovToken);
-            }
-        }
-
-        void GenerateReport(FilePath inputFile, ReportGeneratorReportType type, string subFolder)
+        var openCoverSettings = new OpenCoverSettings()
         {
-            var ReportGeneratorSettings = new ReportGeneratorSettings()
-            {
-                AssemblyFilters = new[]
-                {
-                    "-MvvmScarletToolkit.Tests*",
-                    "-NUnit*",
-                },
-                ClassFilters = new[]
-                {
-                    "-System*",
-                    "-Microsoft*",
-                },
-                ReportTypes = new[]
-                {
-                    type
-                }
-            };
+            OldStyle = true,
+        };
 
-            ReportGenerator(inputFile, reportsFolder.Combine(subFolder), ReportGeneratorSettings);
-        }
+        Information("generating opencover report");
+        OpenCover(tool => tool.DotNetCoreTest(project, testSettings), openCoverResultFile, openCoverSettings);
     });
+
+Task("HtmlReport")
+    .IsDependentOn("OpenCoverReport")
+    .WithCriteria(()=> BuildSystem.IsLocalBuild)
+    .Does(()=>
+    {
+        GenerateReport(openCoverResultFile, ReportGeneratorReportType.Html, "html");
+    });
+
+Task("CoberturaReport")
+    .IsDependentOn("OpenCoverReport")
+    .WithCriteria(()=> BuildSystem.IsRunningOnAzurePipelinesHosted)
+    .Does(()=>
+    {
+        GenerateReport(openCoverResultFile, ReportGeneratorReportType.Cobertura, "cobertura");
+
+        var codeCovToken = EnvironmentVariable("CODECOV_TOKEN");
+        if(string.IsNullOrEmpty(codeCovToken))
+        {
+            return;
+        }
+
+        Information("uploading report to codecov");
+        Codecov(new[] { coberturaResultFile.FullPath }, codeCovToken);
+    });
+
+Task("BuildAndTest")
+    .IsDependentOn("HtmlReport")
+    .IsDependentOn("CoberturaReport");
 
 Task("PushLocally")
     .WithCriteria(() => BuildSystem.IsLocalBuild && DirectoryExists(@"D:\Drop\NuGet"))
