@@ -210,19 +210,22 @@ Task("OpenCoverReport")
 
         var testSettings = new DotNetCoreTestSettings
         {
-            NoBuild = true,
+            NoBuild = false,
             NoRestore = true,
             ResultsDirectory = ".\\",
             Configuration = Configuration,
             Framework = "netcoreapp3.1",
             ArgumentCustomization = builder=> builder
                                                 .AppendQuoted("--nologo")
+                                                .AppendQuoted("--DebugType:full")
+                                                .AppendQuoted("--DebugSymbols:true")
                                                 .AppendQuoted($"--logger:trx;LogFileName={vstestResultsFilePath.FullPath}")
         };
 
         var openCoverSettings = new OpenCoverSettings()
         {
             OldStyle = true,
+            Register = "true"
         };
 
         Information("generating opencover report");
