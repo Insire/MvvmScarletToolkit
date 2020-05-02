@@ -141,11 +141,6 @@ Task("UpdateAssemblyInfo")
                     Key = "Compiled on:",
                     Value = "[UTC]" + DateTime.UtcNow.ToString(),
                 },
-                new AssemblyInfoMetadataAttribute()
-                {
-                    Key = "Commit date:",
-                    Value = gitVersionInformation.GitCommitDate?.ToString(),
-                },
             }
         };
 
