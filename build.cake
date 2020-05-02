@@ -235,15 +235,15 @@ Task("OpenCoverReport")
                                                 .Append("-p:DebugType=full") // required for opencover codecoverage and sourcelinking
                                                 .Append("-p:DebugSymbols=true") // required for opencover codecoverage
                                                 .Append("-p:SourceLinkCreate=true")
+                                                .Append("-p:CollectCoverage=true")
                                                 .AppendQuoted("--nologo")
-                                                .AppendQuoted($"--logger:trx;LogFileName={vstestResultsFilePath.FullPath}")
+                                                .AppendQuoted($"--logger:trx;LogFileName={vstestResultsFilePath.FullPath};")
         };
 
         OpenCover(tool => tool.DotNetCoreTest(projectFile, testSettings), openCoverResultFile, new OpenCoverSettings()
         {
              OldStyle = true,
              SkipAutoProps = true,
-             LogLevel = OpenCoverLogLevel.Verbose,
              Register = BuildSystem.IsLocalBuild ? "user" : "path64"
         });
     });
