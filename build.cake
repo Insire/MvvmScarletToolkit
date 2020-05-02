@@ -173,32 +173,34 @@ Task("Build")
                 Configuration = Configuration,
                 Framework = "netcoreapp3.1"
             };
+
             var openCoverSettings = new OpenCoverSettings()
             {
                 OldStyle = true,
             };
-            var reportTypes = new[]
-            {
-                new KeyValuePair<ReportGeneratorReportType,string>(ReportGeneratorReportType.Badges, "badges"),
-                new KeyValuePair<ReportGeneratorReportType,string>(ReportGeneratorReportType.Html, "html"),
-                new KeyValuePair<ReportGeneratorReportType,string>(ReportGeneratorReportType.HtmlInline_AzurePipelines, "htmlInline_AzurePipelines"),
-                new KeyValuePair<ReportGeneratorReportType,string>(ReportGeneratorReportType.HtmlInline_AzurePipelines_Dark, "htmlInline_AzurePipelines_Dark"),
-            };
 
             OpenCover(tool => tool.DotNetCoreTest(path, testSettings), resultFile, openCoverSettings);
 
-            foreach(var type in reportTypes)
+            if(BuildSystem.IsLocalBuild)
             {
-                GenerateReport(resultFile, type.Key, type.Value);
+                // generate local html report
+                GenerateReport(resultFile, ReportGeneratorReportType.Cobertura, "html");
             }
 
-            var codeCovToken = EnvironmentVariable("CODECOV_TOKEN");
-            if(string.IsNullOrEmpty(codeCovToken))
+            if(BuildSystem.IsRunningOnAzurePipelinesHosted)
             {
-                return;
-            }
+                // generate report for azure devops
+                GenerateReport(resultFile, ReportGeneratorReportType.Cobertura, "cobertura");
 
-            Codecov(new[] { resultFile.FullPath }, codeCovToken);
+                // generate report codecov
+                var codeCovToken = EnvironmentVariable("CODECOV_TOKEN");
+                if(string.IsNullOrEmpty(codeCovToken))
+                {
+                    return;
+                }
+
+                Codecov(new[] { resultFile.FullPath }, codeCovToken);
+            }
         }
 
         void GenerateReport(FilePath inputFile, ReportGeneratorReportType type, string subFolder)
