@@ -2,6 +2,7 @@
 #tool nuget:?package=OpenCover&version=4.7.922
 #tool nuget:?package=ReportGenerator&version=4.5.6
 #tool nuget:?package=Codecov&version=1.10.0
+#tool nuget:?package=GitVersion.CommandLine&version=5.2.4
 
 #addin nuget:?package=Cake.Codecov&version=0.8.0
 #addin nuget:?package=Cake.Incubator&version=5.1.0
@@ -21,11 +22,14 @@ const string AssemblyInfoPath =".\\src\\SharedAssemblyInfo.cs";
 const string PackagePath = ".\\packages";
 const string ResultsPath = ".\\results";
 const string CoberturaResultsPath = ".\\results\\reports\\cobertura";
+const string localNugetDirectory = @"D:\Drop\NuGet";
 
 var reportsFolder = new DirectoryPath(ResultsPath).Combine("reports");
 var coberturaResultFile = new DirectoryPath(CoberturaResultsPath).CombineWithFilePath("Cobertura.xml");
 var openCoverResultFile = new DirectoryPath(ResultsPath).CombineWithFilePath("openCover.xml");
 var vstestResultsFilePath = new DirectoryPath(ResultsPath).CombineWithFilePath("vsTestResults.trx");
+
+var publicRelease = false;
 
 var nugetPackageProjects = new[]
 {
@@ -81,33 +85,33 @@ private void GenerateReport(FilePath inputFile, ReportGeneratorReportType type, 
 
 Setup(ctx =>
 {
-    if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
+    publicRelease = EnvironmentVariable("PublicRelease", false);
+    if(publicRelease && GitVersion().BranchName == "master")
     {
-        var appveyorRepoTag = EnvironmentVariable("APPVEYOR_REPO_TAG") ;
-        Information($"APPVEYOR_REPO_TAG: {appveyorRepoTag}");
+        publicRelease = true;
+        Information("Building a public release.");
+    }
+    else
+    {
+        Information("Building a pre-release.");
+    }
+
+    Debug("IsLocalBuild: " + BuildSystem.IsLocalBuild);
+    Debug("IsRunningOnAppVeyor: " + BuildSystem.IsRunningOnAppVeyor);
+    Debug("IsRunningOnAzurePipelines: " + BuildSystem.IsRunningOnAzurePipelines);
+    Debug("IsRunningOnAzurePipelinesHosted: " + BuildSystem.IsRunningOnAzurePipelinesHosted);
+
+    Information("Provider: " + BuildSystem.Provider);
+
+    foreach(var entry in Context.EnvironmentVariables())
+    {
+        Debug(entry.Key + " " + entry.Value);
     }
 });
 
 ///////////////////////////////////////////////////////////////////////////////
 // TASKS
 ///////////////////////////////////////////////////////////////////////////////
-
-Task("Debug")
-    .Does(()=>
-    {
-        Debug("IsLocalBuild: " + BuildSystem.IsLocalBuild);
-        Debug("IsRunningOnAppVeyor: " + BuildSystem.IsRunningOnAppVeyor);
-        Debug("IsRunningOnAzurePipelines: " + BuildSystem.IsRunningOnAzurePipelines);
-        Debug("IsRunningOnAzurePipelinesHosted: " + BuildSystem.IsRunningOnAzurePipelinesHosted);
-
-        Information("Provider: " + BuildSystem.Provider);
-
-        foreach(var entry in Context.EnvironmentVariables())
-        {
-            Verbose(entry.Key + " " + entry.Value);
-        }
-    });
-
 Task("CleanSolution")
     .Does(() =>
     {
@@ -143,7 +147,7 @@ Task("CleanSolution")
 Task("UpdateAssemblyInfo")
     .Does(() =>
     {
-        var gitVersionInformation = GitVersioningGetVersion();
+        var gitVersion = GitVersion();
         var assemblyInfoParseResult = ParseAssemblyInfo(AssemblyInfoPath);
 
         var settings = new AssemblyInfoSettings()
@@ -164,8 +168,23 @@ Task("UpdateAssemblyInfo")
                 },
                 new AssemblyInfoMetadataAttribute()
                 {
-                    Key = "Compiled on:",
+                    Key = "CompileDate",
                     Value = "[UTC]" + DateTime.UtcNow.ToString(),
+                },
+                new AssemblyInfoMetadataAttribute()
+                {
+                    Key = "PublicRelease",
+                    Value = publicRelease.ToString(),
+                },
+                new AssemblyInfoMetadataAttribute()
+                {
+                    Key = "Branch",
+                    Value = gitVersion.BranchName,
+                },
+                new AssemblyInfoMetadataAttribute()
+                {
+                    Key = "Commit",
+                    Value = gitVersion.Sha,
                 },
             }
         };
@@ -181,8 +200,6 @@ Task("BuildAndPack")
 
         void Pack(string path)
         {
-            var version = GitVersioningGetVersion().SemVer2;
-
             var settings = new ProcessSettings()
                 .UseWorkingDirectory(".")
                 .WithArguments(builder => builder
@@ -195,7 +212,8 @@ Task("BuildAndPack")
                     .Append("--nologo")
                     .Append($"-c {Configuration}")
                     .Append($"--output \"{PackagePath}\"")
-                    .Append($"-p:PackageVersion={version}")
+                    .Append($"-p:PackageVersion={GitVersioningGetVersion().SemVer2}")
+                    .Append($"-p:PublicRelease={publicRelease}")
                 );
 
             StartProcess("dotnet", settings);
@@ -206,9 +224,6 @@ Task("OpenCoverReport")
     .Does(()=>
     {
         var project = @".\src\MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj";
-
-        Build(project);
-
         var testSettings = new DotNetCoreTestSettings
         {
             NoBuild = false,
@@ -224,16 +239,15 @@ Task("OpenCoverReport")
         var openCoverSettings = new OpenCoverSettings()
         {
             OldStyle = true,
-            Register = "true"
         };
 
-        Information("generating opencover report");
+        Build(project);
         OpenCover(tool => tool.DotNetCoreTest(project, testSettings), openCoverResultFile, openCoverSettings);
     });
 
 Task("HtmlReport")
     .IsDependentOn("OpenCoverReport")
-    .WithCriteria(()=> BuildSystem.IsLocalBuild)
+    .WithCriteria(()=> BuildSystem.IsLocalBuild,"since task is not running on a developer machine.")
     .Does(()=>
     {
         GenerateReport(openCoverResultFile, ReportGeneratorReportType.Html, "html");
@@ -241,19 +255,12 @@ Task("HtmlReport")
 
 Task("CoberturaReport")
     .IsDependentOn("OpenCoverReport")
-    .WithCriteria(()=> BuildSystem.IsRunningOnAzurePipelinesHosted)
+    .WithCriteria(()=> BuildSystem.IsRunningOnAzurePipelinesHosted,"since task is not running on AzurePipelines (Hosted).")
+    .WithCriteria(()=> !string.IsNullOrEmpty(EnvironmentVariable("CODECOV_TOKEN")),"since environment variable CODECOV_TOKEN missing or empty.")
     .Does(()=>
     {
         GenerateReport(openCoverResultFile, ReportGeneratorReportType.Cobertura, "cobertura");
-
-        var codeCovToken = EnvironmentVariable("CODECOV_TOKEN");
-        if(string.IsNullOrEmpty(codeCovToken))
-        {
-            return;
-        }
-
-        Information("uploading report to codecov");
-        Codecov(new[] { coberturaResultFile.FullPath }, codeCovToken);
+        Codecov(new[] { coberturaResultFile.FullPath }, EnvironmentVariable("CODECOV_TOKEN"));
     });
 
 Task("BuildAndTest")
@@ -261,21 +268,21 @@ Task("BuildAndTest")
     .IsDependentOn("CoberturaReport");
 
 Task("PushLocally")
-    .WithCriteria(() => BuildSystem.IsLocalBuild && DirectoryExists(@"D:\Drop\NuGet"))
+    .WithCriteria(() => BuildSystem.IsLocalBuild,"since task is not running on a developer machine.")
+    .WithCriteria(() => DirectoryExists(localNugetDirectory), $@"since there is no local directory ({localNugetDirectory}) to push nuget packages to.")
     .DoesForEach(() => GetFiles(PackagePath + "\\*.nupkg"), path =>
     {
         var settings = new ProcessSettings()
             .UseWorkingDirectory(".")
             .WithArguments(builder => builder
             .Append("push")
-            .AppendSwitchQuoted("-source", @"D:\Drop\NuGet")
+            .AppendSwitchQuoted("-source", localNugetDirectory)
             .AppendQuoted(path.FullPath));
 
         StartProcess(".\\tools\\nuget.exe",settings);
     });
 
 Task("Default")
-    .IsDependentOn("Debug")
     .IsDependentOn("CleanSolution")
     .IsDependentOn("UpdateAssemblyInfo")
     .IsDependentOn("BuildAndPack")
