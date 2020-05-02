@@ -239,11 +239,18 @@ Task("OpenCoverReport")
                                                 .AppendQuoted($"--logger:trx;LogFileName={vstestResultsFilePath.FullPath}")
         };
 
-        OpenCover(tool => tool.DotNetCoreTest(projectFile, testSettings), openCoverResultFile, new OpenCoverSettings() { OldStyle = true,LogLevel = OpenCoverLogLevel.All, Register = BuildSystem.IsLocalBuild ? "user" : "path64" });
+        OpenCover(tool => tool.DotNetCoreTest(projectFile, testSettings), openCoverResultFile, new OpenCoverSettings()
+        {
+             OldStyle = true,
+             SkipAutoProps = true,
+             LogLevel = OpenCoverLogLevel.Verbose,
+             Register = BuildSystem.IsLocalBuild ? "user" : "path64"
+        });
     });
 
 Task("HtmlReport")
     .IsDependentOn("OpenCoverReport")
+    .WithCriteria(()=> FileExists(openCoverResultFile),$"since {openCoverResultFile} wasn't created.")
     .WithCriteria(()=> BuildSystem.IsLocalBuild,"since task is not running on a developer machine.")
     .Does(()=>
     {
@@ -252,6 +259,7 @@ Task("HtmlReport")
 
 Task("CoberturaReport")
     .IsDependentOn("OpenCoverReport")
+    .WithCriteria(()=> FileExists(openCoverResultFile),$"since {openCoverResultFile} wasn't created.")
     .WithCriteria(()=> BuildSystem.IsRunningOnAzurePipelinesHosted,"since task is not running on AzurePipelines (Hosted).")
     .WithCriteria(()=> !string.IsNullOrEmpty(EnvironmentVariable("CODECOV_TOKEN")),"since environment variable CODECOV_TOKEN missing or empty.")
     .Does(()=>
