@@ -1,7 +1,8 @@
 #tool nuget:?package=NUnit.ConsoleRunner&version=3.11.1
 #tool nuget:?package=OpenCover&version=4.7.922
-#tool nuget:?package=ReportGenerator&version=4.5.5
+#tool nuget:?package=ReportGenerator&version=4.5.6
 
+#addin nuget:?package=Cake.GitVersioning&version=3.1.91
 #addin nuget:?package=Cake.Incubator&version=5.1.0
 
 using Cake.Core;
@@ -80,14 +81,11 @@ Task("CleanSolution")
 Task("UpdateAssemblyInfo")
     .Does(() =>
     {
+        var gitVersionInformation = GitVersioningGetVersion();
         var assemblyInfoParseResult = ParseAssemblyInfo(AssemblyInfoPath);
 
         var settings = new AssemblyInfoSettings()
         {
-            Version                 = assemblyInfoParseResult.AssemblyVersion,
-            FileVersion             = assemblyInfoParseResult.AssemblyFileVersion,
-            InformationalVersion    = assemblyInfoParseResult.AssemblyInformationalVersion,
-
             Product                 = assemblyInfoParseResult.Product,
             Company                 = assemblyInfoParseResult.Company,
             Trademark               = assemblyInfoParseResult.Trademark,
@@ -107,67 +105,21 @@ Task("UpdateAssemblyInfo")
                     Key = "Compiled on:",
                     Value = "[UTC]" + DateTime.UtcNow.ToString(),
                 },
+                new AssemblyInfoMetadataAttribute()
+                {
+                    Key = "Commit date:",
+                    Value = gitVersionInformation.GitCommitDate?.ToString(),
+                },
             }
         };
 
-        if (BuildSystem.IsLocalBuild)
-        {
-            settings.Version                 = Increase(settings.Version);
-            settings.FileVersion             = Increase(settings.FileVersion);
-            settings.InformationalVersion    = Increase(settings.InformationalVersion);
-        }
-        else
-        {
-            if(BuildSystem.IsRunningOnAzurePipelinesHosted)
-            {
-                var build = int.Parse(EnvironmentVariable("BUILD_BUILDNUMBER") ?? "no version found from AzurePipelinesHosted");
-                settings.Version                 = IncreaseWith(settings.Version, build);
-                settings.FileVersion             = IncreaseWith(settings.FileVersion, build);
-                settings.InformationalVersion    = IncreaseWith(settings.InformationalVersion, build);
-
-                Information($"Version: {settings.Version}");
-                Information($"FileVersion: {settings.FileVersion}");
-                Information($"InformationalVersion: {settings.InformationalVersion}");
-            }
-            else
-            {
-                var version = EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "no version found from AppVeyorEnvironment";
-                settings.Version                 = version;
-                settings.FileVersion             = version;
-                settings.InformationalVersion    = version;
-
-                Information($"Version: {version}");
-            }
-        }
-
         CreateAssemblyInfo(new FilePath(AssemblyInfoPath), settings);
-
-        string Increase(string data)
-        {
-            var version = new Version(data);
-            return new Version(version.Major,version.Minor,version.Build+1, version.Revision).ToString();
-        }
-
-        string IncreaseWith(string data, int build)
-        {
-            var version = new Version(data);
-            return new Version(version.Major,version.Minor,build, version.Revision).ToString();
-        }
 });
 
 Task("Build")
     .Does(()=>
     {
-        var version = string.Empty;
-        if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
-        {
-            version = EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "no version found from AppVeyorEnvironment";
-        }
-        else
-        {
-            var assemblyInfoParseResult = ParseAssemblyInfo(AssemblyInfoPath);
-            version = assemblyInfoParseResult.AssemblyVersion;
-        }
+        var version = GitVersioningGetVersion().SemVer2;
 
         BuildAndPack(@".\src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj");
         BuildAndPack(@".\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj");

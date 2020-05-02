@@ -5,14 +5,12 @@
 //------------------------------------------------------------------------------
 using System.Reflection;
 
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("SoftThorn")]
 [assembly: AssemblyProduct("MvvmScarletToolkit")]
-[assembly: AssemblyVersion("2.0.8.0")]
-[assembly: AssemblyFileVersion("2.0.8.0")]
-[assembly: AssemblyInformationalVersion("2.0.8.0")]
 [assembly: AssemblyCopyright("© 2020 Insire")]
 [assembly: AssemblyTrademark("")]
 
 // Metadata Attributes
 [assembly: AssemblyMetadata("Platform", "AnyCPU")]
-[assembly: AssemblyMetadata("Compiled on:", "[UTC]18.01.2020 08:17:12")]
+[assembly: AssemblyMetadata("Compiled on:", "[UTC]02.05.2020 11:29:57")]
+[assembly: AssemblyMetadata("Commit date:", "02.05.2020 13:11:33 +02:00")]
