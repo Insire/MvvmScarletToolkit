@@ -223,26 +223,23 @@ Task("BuildAndPack")
 Task("OpenCoverReport")
     .Does(()=>
     {
-        var project = @".\src\MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj";
+        var projectFile = @".\src\MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj";
         var testSettings = new DotNetCoreTestSettings
         {
             NoBuild = false,
             NoRestore = false,
             ResultsDirectory = ".\\",
-            Configuration = Configuration,
             Framework = "netcoreapp3.1",
-            ArgumentCustomization = builder=> builder
+            ArgumentCustomization = builder => builder
+                                                .Append("-p:GeneratePackageOnBuild=false") // we package only specific projects and we do that in a second cli call
+                                                .Append("-p:DebugType=full") // required for opencover codecoverage and sourcelinking
+                                                .Append("-p:DebugSymbols=true") // required for opencover codecoverage
+                                                .Append("-p:SourceLinkCreate=true")
                                                 .AppendQuoted("--nologo")
                                                 .AppendQuoted($"--logger:trx;LogFileName={vstestResultsFilePath.FullPath}")
         };
 
-        var openCoverSettings = new OpenCoverSettings()
-        {
-            OldStyle = true,
-        };
-
-        Build(project);
-        OpenCover(tool => tool.DotNetCoreTest(project, testSettings), openCoverResultFile, openCoverSettings);
+        OpenCover(tool => tool.DotNetCoreTest(projectFile, testSettings), openCoverResultFile, new OpenCoverSettings() { OldStyle = true, Register = "user" });
     });
 
 Task("HtmlReport")
