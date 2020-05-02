@@ -49,6 +49,7 @@ private void Build(string path)
             .Append($"-c {Configuration}")
             .Append($"-p:GeneratePackageOnBuild=false") // we package only specific projects and we do that in a second cli call
             .Append($"-p:DebugType=full") // required for opencover codecoverage and sourcelinking
+            .Append("-p:DebugSymbols=true")
             .Append($"-p:SourceLinkCreate=true")
     );
 
@@ -211,14 +212,12 @@ Task("OpenCoverReport")
         var testSettings = new DotNetCoreTestSettings
         {
             NoBuild = false,
-            NoRestore = true,
+            NoRestore = false,
             ResultsDirectory = ".\\",
             Configuration = Configuration,
             Framework = "netcoreapp3.1",
             ArgumentCustomization = builder=> builder
                                                 .AppendQuoted("--nologo")
-                                                .AppendQuoted("--DebugType:full")
-                                                .AppendQuoted("--DebugSymbols:true")
                                                 .AppendQuoted($"--logger:trx;LogFileName={vstestResultsFilePath.FullPath}")
         };
 
