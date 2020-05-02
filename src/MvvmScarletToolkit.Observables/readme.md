@@ -1,5 +1,7 @@
 # MvvmScarletToolkit.Observables
 
+![.NET standard 2.0](https://img.shields.io/badge/.NET-standard2.0-brightgreen)
+
 ## Goals
 
 This library aims to provide base and utility classes around state and state management in viewmodels in the MVVM pattern.

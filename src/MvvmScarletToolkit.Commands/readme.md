@@ -1,5 +1,7 @@
 # MvvmScarletToolkit.Commands
 
+![.NET standard 2.0](https://img.shields.io/badge/.NET-standard2.0-brightgreen)
+
 ## Goals
 
 This library aims to provide easy to use [ICommand](https://docs.microsoft.com/en-gb/dotnet/api/system.windows.input.icommand) implementations for use in viewmodels.

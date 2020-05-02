@@ -4,12 +4,9 @@
 ![NuGet](https://img.shields.io/nuget/v/:MvvmScarletToolkit.svg)
 [![Build status](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_apis/build/status/MvvmScarletToolkit-CD)](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_build/latest?definitionId=1)
 [![CodeFactor](https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit/badge)](https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit)
+[![codecov](https://codecov.io/gh/Insire/MvvmScarletToolkit/branch/master/graph/badge.svg)](https://codecov.io/gh/Insire/MvvmScarletToolkit)
 
 MvvmScarletToolkit provides classes to speedup the MVVM development process for xaml-based applications using the viewmodel first approach.
-
-## Supported .Net Framework versions
-
-![.NET core 3.1](https://img.shields.io/badge/.NET-core31-blue.svg) ![.NET Framework 4.8](https://img.shields.io/badge/.NET-4.8-brightgreen.svg) ![.NET Framework 4.7.2](https://img.shields.io/badge/.NET-4.7.2-brightgreen.svg) ![.NET Framework 4.7.1](https://img.shields.io/badge/.NET-4.7.1-brightgreen.svg) ![.NET Framework 4.7](https://img.shields.io/badge/.NET-4.7-green.svg) ![.NET Framework 4.6.2](https://img.shields.io/badge/.NET-4.6.2-yellow.svg) ![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)
 
 ## Features
 
@@ -28,10 +25,14 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
 - [MvvmScarletToolkit.Observables](src/MvvmScarletToolkit.Observables/readme.md)
 
   - INotifyPropertyChanged base classes for single instance viewmodels and collection viewmodels
-  - Navigation ViewModels
-  - Paging Viewmodel
   - Localization ViewModels (switching language without app restart)
   - Threadsafe busy state notifications via IBusyStack interface
+  - Helper viewmodels for
+    - paging
+    - enums
+    - binding to structs
+    - basic versioning/change tracking
+    - navigation
 
 - [MvvmScarletToolkit.Wpf](src/MvvmScarletToolkit.Wpf/readme.md)
 
@@ -97,10 +98,9 @@ For anyone not wishing to install that, they atleast need:
 
 ### TODO
 
-- improve performance of the snake game and provide it as nuget package
 - finalize basic FileSystemBrowser
+- add more tests
 - improve documentation
-- improve readme with screenshots of properly working features
 - add a nice icon for this lib
 - add Contribution guidelines
 

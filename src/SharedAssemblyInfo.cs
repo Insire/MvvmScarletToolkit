@@ -9,8 +9,3 @@ using System.Reflection;
 [assembly: AssemblyProduct("MvvmScarletToolkit")]
 [assembly: AssemblyCopyright("© 2020 Insire")]
 [assembly: AssemblyTrademark("")]
-
-// Metadata Attributes
-[assembly: AssemblyMetadata("Platform", "AnyCPU")]
-[assembly: AssemblyMetadata("Compiled on:", "[UTC]02.05.2020 11:29:57")]
-[assembly: AssemblyMetadata("Commit date:", "02.05.2020 13:11:33 +02:00")]

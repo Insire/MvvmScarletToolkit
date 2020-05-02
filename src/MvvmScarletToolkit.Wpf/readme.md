@@ -1,5 +1,8 @@
 # MvvmScarletToolkit.Implementations
 
+![.NET core 3.1](https://img.shields.io/badge/.NET-core31-blue.svg)
+![.NET Framework 4.6.1](https://img.shields.io/badge/.NET-4.6.1-lightgrey.svg)
+
 ## Goals
 
 This library aims to provide implementations for wpf specific classes used by the framework.

@@ -1,9 +1,12 @@
 #tool nuget:?package=NUnit.ConsoleRunner&version=3.11.1
 #tool nuget:?package=OpenCover&version=4.7.922
 #tool nuget:?package=ReportGenerator&version=4.5.6
+#tool nuget:?package=Codecov&version=1.10.0
+#tool nuget:?package=GitVersion.CommandLine&version=5.2.4
 
-#addin nuget:?package=Cake.GitVersioning&version=3.1.91
+#addin nuget:?package=Cake.Codecov&version=0.8.0
 #addin nuget:?package=Cake.Incubator&version=5.1.0
+#addin nuget:?package=Cake.GitVersioning&version=3.1.91
 
 using Cake.Core;
 
@@ -18,36 +21,97 @@ const string SolutionPath =".\\MvvmScarletToolkit.sln";
 const string AssemblyInfoPath =".\\src\\SharedAssemblyInfo.cs";
 const string PackagePath = ".\\packages";
 const string ResultsPath = ".\\results";
+const string CoberturaResultsPath = ".\\results\\reports\\cobertura";
+const string localNugetDirectory = @"D:\Drop\NuGet";
+
+var reportsFolder = new DirectoryPath(ResultsPath).Combine("reports");
+var coberturaResultFile = new DirectoryPath(CoberturaResultsPath).CombineWithFilePath("Cobertura.xml");
+var openCoverResultFile = new DirectoryPath(ResultsPath).CombineWithFilePath("openCover.xml");
+var vstestResultsFilePath = new DirectoryPath(ResultsPath).CombineWithFilePath("vsTestResults.trx");
+
+var publicRelease = false;
+
+var nugetPackageProjects = new[]
+{
+    @".\src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj",
+    @".\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj",
+    @".\src\MvvmScarletToolkit.Messenger\MvvmScarletToolkit.Messenger.csproj",
+    @".\src\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj",
+    @".\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj",
+    @".\src\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj",
+    @".\src\MvvmScarletToolkit.Xamarin.Forms\MvvmScarletToolkit.Xamarin.Forms.csproj",
+};
+
+private void Build(string path)
+{
+    var settings = new ProcessSettings()
+        .UseWorkingDirectory(".")
+        .WithArguments(builder => builder
+            .Append("build")
+            .AppendQuoted(path)
+            .Append("--nologo")
+            .Append($"-c {Configuration}")
+            .Append("-p:GeneratePackageOnBuild=false") // we package only specific projects and we do that in a second cli call
+            .Append("-p:DebugType=full") // required for opencover codecoverage and sourcelinking
+            .Append("-p:DebugSymbols=true") // required for opencover codecoverage
+            .Append("-p:SourceLinkCreate=true")
+    );
+
+    StartProcess("dotnet", settings);
+}
+
+private void GenerateReport(FilePath inputFile, ReportGeneratorReportType type, string subFolder)
+{
+    var ReportGeneratorSettings = new ReportGeneratorSettings()
+    {
+        AssemblyFilters = new[]
+        {
+            "-MvvmScarletToolkit.Tests*",
+            "-NUnit*",
+        },
+        ClassFilters = new[]
+        {
+            "-System*",
+            "-Microsoft*",
+        },
+        ReportTypes = new[]
+        {
+            type
+        }
+    };
+
+    ReportGenerator(inputFile, reportsFolder.Combine(subFolder), ReportGeneratorSettings);
+}
 
 Setup(ctx =>
 {
-    if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
+    publicRelease = EnvironmentVariable("PublicRelease", false);
+    if(publicRelease && GitVersion().BranchName == "master")
     {
-        var appveyorRepoTag = EnvironmentVariable("APPVEYOR_REPO_TAG") ;
-        Information($"APPVEYOR_REPO_TAG: {appveyorRepoTag}");
+        publicRelease = true;
+        Information("Building a public release.");
+    }
+    else
+    {
+        Information("Building a pre-release.");
+    }
+
+    Debug("IsLocalBuild: " + BuildSystem.IsLocalBuild);
+    Debug("IsRunningOnAppVeyor: " + BuildSystem.IsRunningOnAppVeyor);
+    Debug("IsRunningOnAzurePipelines: " + BuildSystem.IsRunningOnAzurePipelines);
+    Debug("IsRunningOnAzurePipelinesHosted: " + BuildSystem.IsRunningOnAzurePipelinesHosted);
+
+    Information("Provider: " + BuildSystem.Provider);
+
+    foreach(var entry in Context.EnvironmentVariables())
+    {
+        Debug(entry.Key + " " + entry.Value);
     }
 });
 
 ///////////////////////////////////////////////////////////////////////////////
 // TASKS
 ///////////////////////////////////////////////////////////////////////////////
-
-Task("Debug")
-    .Does(()=>
-    {
-        Information("IsLocalBuild: " + BuildSystem.IsLocalBuild);
-        Information("IsRunningOnAppVeyor: " + BuildSystem.IsRunningOnAppVeyor);
-        Information("IsRunningOnAzurePipelines: " + BuildSystem.IsRunningOnAzurePipelines);
-        Information("IsRunningOnAzurePipelinesHosted: " + BuildSystem.IsRunningOnAzurePipelinesHosted);
-
-        Information("Provider: " + BuildSystem.Provider);
-
-        foreach(var entry in Context.EnvironmentVariables())
-        {
-            Verbose(entry.Key + " " + entry.Value);
-        }
-    });
-
 Task("CleanSolution")
     .Does(() =>
     {
@@ -62,7 +126,9 @@ Task("CleanSolution")
             var customProject = ParseProject(project.Path, configuration: Configuration, platform: Platform);
 
             foreach(var path in customProject.OutputPaths)
+            {
                 CleanDirectory(path.FullPath);
+            }
         }
 
         var folders = new[]
@@ -81,7 +147,7 @@ Task("CleanSolution")
 Task("UpdateAssemblyInfo")
     .Does(() =>
     {
-        var gitVersionInformation = GitVersioningGetVersion();
+        var gitVersion = GitVersion();
         var assemblyInfoParseResult = ParseAssemblyInfo(AssemblyInfoPath);
 
         var settings = new AssemblyInfoSettings()
@@ -102,13 +168,23 @@ Task("UpdateAssemblyInfo")
                 },
                 new AssemblyInfoMetadataAttribute()
                 {
-                    Key = "Compiled on:",
+                    Key = "CompileDate",
                     Value = "[UTC]" + DateTime.UtcNow.ToString(),
                 },
                 new AssemblyInfoMetadataAttribute()
                 {
-                    Key = "Commit date:",
-                    Value = gitVersionInformation.GitCommitDate?.ToString(),
+                    Key = "PublicRelease",
+                    Value = publicRelease.ToString(),
+                },
+                new AssemblyInfoMetadataAttribute()
+                {
+                    Key = "Branch",
+                    Value = gitVersion.BranchName,
+                },
+                new AssemblyInfoMetadataAttribute()
+                {
+                    Key = "Commit",
+                    Value = gitVersion.Sha,
                 },
             }
         };
@@ -116,104 +192,11 @@ Task("UpdateAssemblyInfo")
         CreateAssemblyInfo(new FilePath(AssemblyInfoPath), settings);
 });
 
-Task("Build")
-    .Does(()=>
+Task("BuildAndPack")
+    .DoesForEach(nugetPackageProjects, project=>
     {
-        var version = GitVersioningGetVersion().SemVer2;
-
-        BuildAndPack(@".\src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj");
-        BuildAndPack(@".\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj");
-        BuildAndPack(@".\src\MvvmScarletToolkit.Messenger\MvvmScarletToolkit.Messenger.csproj");
-        BuildAndPack(@".\src\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj");
-        BuildAndPack(@".\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj");
-        BuildAndPack(@".\src\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj");
-        BuildAndPack(@".\src\MvvmScarletToolkit.Xamarin.Forms\MvvmScarletToolkit.Xamarin.Forms.csproj");
-
-        BuildAndTest(@".\src\MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj");
-
-        void BuildAndPack(string path)
-        {
-            Build(path);
-            Pack(path);
-        }
-
-        void BuildAndTest(string path)
-        {
-            Build(path);
-            Test(path);
-        }
-
-        void Build(string path)
-        {
-            var settings = new ProcessSettings()
-                .UseWorkingDirectory(".")
-                .WithArguments(builder => builder
-                    .Append("build")
-                    .AppendQuoted(path)
-                    .Append($"-c {Configuration}")
-                    .Append($"-p:GeneratePackageOnBuild=false") // we package only specific projects and we do that in a second cli call
-                    .Append($"-p:DebugType=full") // required for opencover codecoverage and sourcelinking
-                    .Append($"-p:SourceLinkCreate=true")
-            );
-
-            StartProcess("dotnet", settings);
-        }
-
-        void Test(string path)
-        {
-            var resultFile = new DirectoryPath(ResultsPath).CombineWithFilePath("coverage.xml");
-            var testSettings = new DotNetCoreTestSettings
-            {
-                NoBuild = true,
-                NoRestore = true,
-                ResultsDirectory = ResultsPath,
-                VSTestReportPath = new DirectoryPath(ResultsPath).CombineWithFilePath("testresults.xml"),
-                Configuration = Configuration,
-                Framework = "netcoreapp3.1"
-            };
-            var openCoverSettings = new OpenCoverSettings()
-            {
-                OldStyle = true,
-            };
-            var reportTypes = new[]
-            {
-                new KeyValuePair<ReportGeneratorReportType,string>(ReportGeneratorReportType.Badges, "badges"),
-                new KeyValuePair<ReportGeneratorReportType,string>(ReportGeneratorReportType.Html, "html"),
-                new KeyValuePair<ReportGeneratorReportType,string>(ReportGeneratorReportType.HtmlInline_AzurePipelines, "htmlInline_AzurePipelines"),
-                new KeyValuePair<ReportGeneratorReportType,string>(ReportGeneratorReportType.HtmlInline_AzurePipelines_Dark, "htmlInline_AzurePipelines_Dark"),
-            };
-
-            OpenCover(tool => tool.DotNetCoreTest(path, testSettings), resultFile, openCoverSettings);
-
-            foreach(var type in reportTypes)
-            {
-                GenerateReport(resultFile, type.Key, type.Value);
-            }
-        }
-
-        void GenerateReport(FilePath inputFile, ReportGeneratorReportType type, string subFolder)
-        {
-            var folder = new DirectoryPath(ResultsPath).Combine("reports");
-            var ReportGeneratorSettings = new ReportGeneratorSettings()
-            {
-                AssemblyFilters = new[]
-                {
-                    "-MvvmScarletToolkit.Tests*",
-                    "-NUnit*",
-                },
-                ClassFilters = new[]
-                {
-                    "-System*",
-                    "-Microsoft*",
-                },
-                ReportTypes = new[]
-                {
-                    type
-                }
-            };
-
-            ReportGenerator(inputFile, folder.Combine(subFolder), ReportGeneratorSettings);
-        }
+        Build(project);
+        Pack(project);
 
         void Pack(string path)
         {
@@ -226,34 +209,84 @@ Task("Build")
                     .Append("--include-source")
                     .Append("--no-build")
                     .Append("--no-restore")
+                    .Append("--nologo")
                     .Append($"-c {Configuration}")
                     .Append($"--output \"{PackagePath}\"")
-                    .Append($"-p:PackageVersion={version}")
+                    .Append($"-p:PackageVersion={GitVersioningGetVersion().SemVer2}")
+                    .Append($"-p:PublicRelease={publicRelease}")
                 );
 
             StartProcess("dotnet", settings);
         }
-});
+    });
+
+Task("OpenCoverReport")
+    .Does(()=>
+    {
+        var project = @".\src\MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj";
+        var testSettings = new DotNetCoreTestSettings
+        {
+            NoBuild = false,
+            NoRestore = false,
+            ResultsDirectory = ".\\",
+            Configuration = Configuration,
+            Framework = "netcoreapp3.1",
+            ArgumentCustomization = builder=> builder
+                                                .AppendQuoted("--nologo")
+                                                .AppendQuoted($"--logger:trx;LogFileName={vstestResultsFilePath.FullPath}")
+        };
+
+        var openCoverSettings = new OpenCoverSettings()
+        {
+            OldStyle = true,
+        };
+
+        Build(project);
+        OpenCover(tool => tool.DotNetCoreTest(project, testSettings), openCoverResultFile, openCoverSettings);
+    });
+
+Task("HtmlReport")
+    .IsDependentOn("OpenCoverReport")
+    .WithCriteria(()=> BuildSystem.IsLocalBuild,"since task is not running on a developer machine.")
+    .Does(()=>
+    {
+        GenerateReport(openCoverResultFile, ReportGeneratorReportType.Html, "html");
+    });
+
+Task("CoberturaReport")
+    .IsDependentOn("OpenCoverReport")
+    .WithCriteria(()=> BuildSystem.IsRunningOnAzurePipelinesHosted,"since task is not running on AzurePipelines (Hosted).")
+    .WithCriteria(()=> !string.IsNullOrEmpty(EnvironmentVariable("CODECOV_TOKEN")),"since environment variable CODECOV_TOKEN missing or empty.")
+    .Does(()=>
+    {
+        GenerateReport(openCoverResultFile, ReportGeneratorReportType.Cobertura, "cobertura");
+        Codecov(new[] { coberturaResultFile.FullPath }, EnvironmentVariable("CODECOV_TOKEN"));
+    });
+
+Task("BuildAndTest")
+    .IsDependentOn("HtmlReport")
+    .IsDependentOn("CoberturaReport");
 
 Task("PushLocally")
-    .WithCriteria(() => BuildSystem.IsLocalBuild && DirectoryExists(@"D:\Drop\NuGet"))
+    .WithCriteria(() => BuildSystem.IsLocalBuild,"since task is not running on a developer machine.")
+    .WithCriteria(() => DirectoryExists(localNugetDirectory), $@"since there is no local directory ({localNugetDirectory}) to push nuget packages to.")
     .DoesForEach(() => GetFiles(PackagePath + "\\*.nupkg"), path =>
     {
         var settings = new ProcessSettings()
             .UseWorkingDirectory(".")
             .WithArguments(builder => builder
             .Append("push")
-            .AppendSwitchQuoted("-source", @"D:\Drop\NuGet")
+            .AppendSwitchQuoted("-source", localNugetDirectory)
             .AppendQuoted(path.FullPath));
 
         StartProcess(".\\tools\\nuget.exe",settings);
     });
 
 Task("Default")
-    .IsDependentOn("Debug")
     .IsDependentOn("CleanSolution")
     .IsDependentOn("UpdateAssemblyInfo")
-    .IsDependentOn("Build")
+    .IsDependentOn("BuildAndPack")
+    .IsDependentOn("BuildAndTest")
     .IsDependentOn("PushLocally");
 
 RunTarget(Argument("target", "Default"));
