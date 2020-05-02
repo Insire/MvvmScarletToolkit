@@ -25,7 +25,7 @@ const string CoberturaResultsPath = ".\\results\\cobertura";
 var reportsFolder = new DirectoryPath(ResultsPath).Combine("reports");
 var coberturaResultFile = new DirectoryPath(CoberturaResultsPath).CombineWithFilePath("Cobertura.xml");
 var openCoverResultFile = new DirectoryPath(ResultsPath).CombineWithFilePath("openCover.xml");
-var vstestResultsFilePath = new DirectoryPath(ResultsPath).CombineWithFilePath("vsTestResults.xml");
+var vstestResultsFilePath = new DirectoryPath(ResultsPath).CombineWithFilePath("vsTestResults.trx");
 
 var nugetPackageProjects = new[]
 {
@@ -212,12 +212,12 @@ Task("OpenCoverReport")
         {
             NoBuild = true,
             NoRestore = true,
-            ResultsDirectory = ResultsPath,
-            VSTestReportPath = vstestResultsFilePath,
+            ResultsDirectory = ".\\",
             Configuration = Configuration,
             Framework = "netcoreapp3.1",
             ArgumentCustomization = builder=> builder
                                                 .AppendQuoted("--nologo")
+                                                .AppendQuoted($"--logger:trx;LogFileName={vstestResultsFilePath.FullPath}")
         };
 
         var openCoverSettings = new OpenCoverSettings()
