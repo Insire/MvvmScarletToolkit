@@ -226,26 +226,46 @@ Task("OpenCoverReport")
         var projectFile = @".\src\MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj";
         var testSettings = new DotNetCoreTestSettings
         {
+            WorkingDirectory = ".",
+            ResultsDirectory = ".",
             NoBuild = false,
             NoRestore = false,
-            ResultsDirectory = ".\\",
             Framework = "netcoreapp3.1",
             ArgumentCustomization = builder => builder
-                                                .Append("-p:GeneratePackageOnBuild=false") // we package only specific projects and we do that in a second cli call
+                                                .Append("-p:GeneratePackageOnBuild=false") // no need to generate a packe for test binaries
                                                 .Append("-p:DebugType=full") // required for opencover codecoverage and sourcelinking
                                                 .Append("-p:DebugSymbols=true") // required for opencover codecoverage
-                                                .Append("-p:SourceLinkCreate=true")
-                                                .Append("-p:CollectCoverage=true")
-                                                .AppendQuoted("--nologo")
-                                                .AppendQuoted($"--logger:trx;LogFileName={vstestResultsFilePath.FullPath};")
+                                                // .Append("-p:SourceLinkCreate=true") // required for sourcelinking
+                                                // .Append("-p:CollectCoverage=true") // required for opencover codecoverage
+                                                .Append("--nologo")
+                                                .Append($"--logger:trx;LogFileName={vstestResultsFilePath.FullPath};") // required for vs codecoverage
         };
 
         OpenCover(tool => tool.DotNetCoreTest(projectFile, testSettings), openCoverResultFile, new OpenCoverSettings()
         {
              OldStyle = true,
              SkipAutoProps = true,
-             Register = BuildSystem.IsLocalBuild ? "user" : "path64"
+             Register = BuildSystem.IsLocalBuild ? "user" : "Path32"
         });
+        // Test(projectFile);
+        // void Test(string path)
+        // {
+        //     var settings = new ProcessSettings()
+        //         .UseWorkingDirectory(".")
+        //         .WithArguments(builder => builder
+        //             .Append("test")
+        //             .Append($"-c {Configuration}")
+        //             .Append("--logger trx")
+        //             .Append("-p:CollectCoverage=true")
+        //             .Append("-p:CoverletOutputFormat=opencover")
+        //             .AppendQuoted(path)
+        //             // .Append("-p:CoverletOutput=vsTestResults.trx")
+        //             .Append($"--results-directory \"{ResultsPath}\"")
+        //             .Append("--nologo")
+        //         );
+
+        //     StartProcess("dotnet", settings);
+        // }
     });
 
 Task("HtmlReport")
