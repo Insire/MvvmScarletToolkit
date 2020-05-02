@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <Company>SoftThorn</Company>
         <Product>MvvmScarletToolkit</Product>
-        <PackageProjectUrl>https://github.com/Insire/MvvmScarletToolkit</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/Insire/MvvmScarletToolkit</RepositoryUrl>
-        <PackageTags>MvvmScarletToolkit,MVVM,C#,WPF,Toolkit</PackageTags>
+        <Company>SoftThorn</Company>
+        <Authors>Peter Vietense</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/Insire/MvvmScarletToolkit</PackageProjectUrl>
+        <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,WPF,Xamarin.Forms,Library,.NET,OSS,OpenSource</PackageTags>
+        <RepositoryUrl>https://github.com/Insire/MvvmScarletToolkit</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageReleaseNotes></PackageReleaseNotes>
     </PropertyGroup>
 </Project>

@@ -5,7 +5,7 @@
 //------------------------------------------------------------------------------
 using System.Reflection;
 
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("SoftThorn")]
 [assembly: AssemblyProduct("MvvmScarletToolkit")]
 [assembly: AssemblyVersion("2.0.8.0")]
 [assembly: AssemblyFileVersion("2.0.8.0")]
