@@ -25,10 +25,14 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
 - [MvvmScarletToolkit.Observables](src/MvvmScarletToolkit.Observables/readme.md)
 
   - INotifyPropertyChanged base classes for single instance viewmodels and collection viewmodels
-  - Navigation ViewModels
-  - Paging Viewmodel
   - Localization ViewModels (switching language without app restart)
   - Threadsafe busy state notifications via IBusyStack interface
+  - Helper viewmodels for
+    - paging
+    - enums
+    - binding to structs
+    - basic versioning/change tracking
+    - navigation
 
 - [MvvmScarletToolkit.Wpf](src/MvvmScarletToolkit.Wpf/readme.md)
 
