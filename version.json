@@ -1,17 +1,9 @@
 {
     "$schema": "https://raw.githubusercontent.com/dotnet/Nerdbank.GitVersioning/master/src/NerdBank.GitVersioning/version.schema.json",
-    "version": "1.0-prerelease",
-    "nugetPackageVersion": {
-        "semVer": 1
-     },
+    "version": "2.1-prerelease",
     "pathFilters": [
         ":!/src/MvvmScarletToolkit.Incubator",
         ":!/src/MvvmScarletToolkit.Tests",
         ":!/src/MvvmScarletToolkit.Samples"
-      ],
-      "release" : {
-        "branchName" : "v{version}",
-        "versionIncrement" : "minor",
-        "firstUnstableTag" : "prerelease"
-      }
-  }
+    ]
+}
