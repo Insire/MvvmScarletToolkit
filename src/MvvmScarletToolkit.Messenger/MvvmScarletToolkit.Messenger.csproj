@@ -25,5 +25,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
+        <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
     </ItemGroup>
 </Project>

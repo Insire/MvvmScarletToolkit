@@ -1,6 +1,6 @@
 using System.Windows.Input;
 
-namespace MvvmScarletToolkit.Abstractions.Extensions
+namespace MvvmScarletToolkit
 {
     public static class CommandExtensions
     {
