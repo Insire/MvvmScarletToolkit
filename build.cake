@@ -1,8 +1,8 @@
 #tool nuget:?package=NUnit.ConsoleRunner&version=3.11.1
-#tool nuget:?package=OpenCover&version=4.7.922
 #tool nuget:?package=ReportGenerator&version=4.5.6
 #tool nuget:?package=Codecov&version=1.10.0
 #tool nuget:?package=GitVersion.CommandLine&version=5.2.4
+#tool nuget:?package=Microsoft.CodeCoverage&version=16.6.1
 
 #addin nuget:?package=Cake.Codecov&version=0.8.0
 #addin nuget:?package=Cake.Incubator&version=5.1.0
@@ -17,20 +17,22 @@ using Cake.Core;
 var Configuration = Argument("configuration", "Release");
 
 const string Platform = "AnyCPU";
-const string SolutionPath =".\\MvvmScarletToolkit.sln";
-const string AssemblyInfoPath =".\\src\\SharedAssemblyInfo.cs";
-const string PackagePath = ".\\packages";
-const string ResultsPath = ".\\results";
-const string CoberturaResultsPath = ".\\results\\reports\\cobertura";
+const string SolutionPath ="./MvvmScarletToolkit.sln";
+const string AssemblyInfoPath ="./src/SharedAssemblyInfo.cs";
+const string PackagePath = "./packages";
+const string ResultsPath = "./results";
+const string CoberturaResultsPath = "./results/reports/cobertura";
 const string localNugetDirectory = @"D:\Drop\NuGet";
 
 var reportsFolder = new DirectoryPath(ResultsPath).Combine("reports");
 var coberturaResultFile = new DirectoryPath(CoberturaResultsPath).CombineWithFilePath("Cobertura.xml");
-var openCoverResultFile = new DirectoryPath(ResultsPath).CombineWithFilePath("openCover.xml");
-var vstestResultsFilePath = new DirectoryPath(ResultsPath).CombineWithFilePath("vsTestResults.trx");
+var vstestResultsFile = new FilePath("vsTestResults.trx");
+var codeCoverageBinaryFile = new FilePath("vsCodeCoverage.coverage");
+var codeCoverageResultsFile = new FilePath("vsCodeCoverage.xml");
 
 var publicRelease = false;
 
+// projects that are supposed to generate a nuget package
 var nugetPackageProjects = new[]
 {
     @".\src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj",
@@ -67,7 +69,7 @@ private void GenerateReport(FilePath inputFile, ReportGeneratorReportType type, 
         AssemblyFilters = new[]
         {
             "-MvvmScarletToolkit.Tests*",
-            "-NUnit*",
+            "-nunit3*",
         },
         ClassFilters = new[]
         {
@@ -77,10 +79,33 @@ private void GenerateReport(FilePath inputFile, ReportGeneratorReportType type, 
         ReportTypes = new[]
         {
             type
-        }
+        },
     };
 
     ReportGenerator(inputFile, reportsFolder.Combine(subFolder), ReportGeneratorSettings);
+}
+
+private void MergeReports(string pattern, ReportGeneratorReportType type, string subFolder)
+{
+    var ReportGeneratorSettings = new ReportGeneratorSettings()
+    {
+        AssemblyFilters = new[]
+        {
+            "-MvvmScarletToolkit.Tests*",
+            "-nunit3*",
+        },
+        ClassFilters = new[]
+        {
+            "-System*",
+            "-Microsoft*",
+        },
+        ReportTypes = new[]
+        {
+            type
+        },
+    };
+
+    ReportGenerator(pattern, reportsFolder.Combine(subFolder), ReportGeneratorSettings);
 }
 
 Setup(ctx =>
@@ -220,82 +245,83 @@ Task("BuildAndPack")
         }
     });
 
-Task("OpenCoverReport")
+Task("Test")
     .Does(()=>
     {
-        var projectFile = @".\src\MvvmScarletToolkit.Tests\MvvmScarletToolkit.Tests.csproj";
+        var projectFile = @"./src/MvvmScarletToolkit.Tests/MvvmScarletToolkit.Tests.csproj";
         var testSettings = new DotNetCoreTestSettings
         {
-            WorkingDirectory = ".",
-            ResultsDirectory = ".",
+            Framework="netcoreapp3.1",
+            Configuration = "Release",
             NoBuild = false,
             NoRestore = false,
-            Framework = "netcoreapp3.1",
             ArgumentCustomization = builder => builder
-                                                .Append("-p:GeneratePackageOnBuild=false") // no need to generate a packe for test binaries
-                                                .Append("-p:DebugType=full") // required for opencover codecoverage and sourcelinking
-                                                .Append("-p:DebugSymbols=true") // required for opencover codecoverage
-                                                // .Append("-p:SourceLinkCreate=true") // required for sourcelinking
-                                                // .Append("-p:CollectCoverage=true") // required for opencover codecoverage
-                                                .Append("--nologo")
-                                                .Append($"--logger:trx;LogFileName={vstestResultsFilePath.FullPath};") // required for vs codecoverage
+                .Append("--nologo")
+                .Append("--results-directory:./Results/coverage")
+                .Append("-p:DebugType=full")
+                .Append("-p:DebugSymbols=true")
+                .AppendSwitchQuoted("--collect",":","\"\"Code Coverage\"\"")
+                .Append($"--logger:trx;LogFileName=..\\{vstestResultsFile.FullPath};"),
         };
 
-        OpenCover(tool => tool.DotNetCoreTest(projectFile, testSettings), openCoverResultFile, new OpenCoverSettings()
-        {
-             OldStyle = true,
-             SkipAutoProps = true,
-             Register = BuildSystem.IsLocalBuild ? "user" : "Path32"
-        });
-        // Test(projectFile);
-        // void Test(string path)
-        // {
-        //     var settings = new ProcessSettings()
-        //         .UseWorkingDirectory(".")
-        //         .WithArguments(builder => builder
-        //             .Append("test")
-        //             .Append($"-c {Configuration}")
-        //             .Append("--logger trx")
-        //             .Append("-p:CollectCoverage=true")
-        //             .Append("-p:CoverletOutputFormat=opencover")
-        //             .AppendQuoted(path)
-        //             // .Append("-p:CoverletOutput=vsTestResults.trx")
-        //             .Append($"--results-directory \"{ResultsPath}\"")
-        //             .Append("--nologo")
-        //         );
-
-        //     StartProcess("dotnet", settings);
-        // }
+        DotNetCoreTest(projectFile, testSettings);
     });
 
-Task("HtmlReport")
-    .IsDependentOn("OpenCoverReport")
-    .WithCriteria(()=> FileExists(openCoverResultFile),$"since {openCoverResultFile} wasn't created.")
-    .WithCriteria(()=> BuildSystem.IsLocalBuild,"since task is not running on a developer machine.")
-    .Does(()=>
+Task("ConvertCoverage")
+    .IsDependentOn("Test")
+    .WithCriteria(()=> Context.Tools.Resolve("CodeCoverage.exe") != null, $"since CodeCoverage.exe is not a registered tool.")
+    .DoesForEach(()=> GetFiles($"{ResultsPath}/coverage/**/*.coverage"), file=>
     {
-        GenerateReport(openCoverResultFile, ReportGeneratorReportType.Html, "html");
+        var codeCoverageExe = Context.Tools.Resolve("CodeCoverage.exe");
+        var result = System.IO.Path.ChangeExtension(file.FullPath, ".xml");
+
+        var settings = new ProcessSettings()
+                .UseWorkingDirectory(ResultsPath)
+                .WithArguments(builder => builder
+                    .Append("analyze")
+                    .AppendSwitchQuoted(@"-output",":",result)
+                    .Append(file.FullPath)
+                );
+
+        StartProcess(codeCoverageExe.FullPath, settings);
     });
 
 Task("CoberturaReport")
-    .IsDependentOn("OpenCoverReport")
-    .WithCriteria(()=> FileExists(openCoverResultFile),$"since {openCoverResultFile} wasn't created.")
-    .WithCriteria(()=> BuildSystem.IsRunningOnAzurePipelinesHosted,"since task is not running on AzurePipelines (Hosted).")
+    .IsDependentOn("ConvertCoverage")
+    .WithCriteria(()=> GetFiles("./Results/coverage/**/*.xml").Count > 0, $"since there is no coverage xml file in /Results/coverage/.")
+    .WithCriteria(()=> BuildSystem.IsRunningOnAzurePipelinesHosted, "since task is not running on a Azure Pipelines (Hosted).")
+    .Does(()=>
+    {
+        MergeReports("./Results/coverage/**/*.xml", ReportGeneratorReportType.Cobertura, "cobertura");
+    });
+
+Task("HtmlReport")
+    .IsDependentOn("ConvertCoverage")
+    .WithCriteria(()=> GetFiles("./Results/coverage/**/*.xml").Count > 0, $"since there is no coverage xml file in /Results/coverage/.")
+    .WithCriteria(()=> BuildSystem.IsLocalBuild, "since task is not running on a developer machine.")
+    .Does(()=>
+    {
+        MergeReports("./Results/coverage/**/*.xml", ReportGeneratorReportType.Html, "html");
+    });
+
+Task("UploadCodecovReport")
+    .IsDependentOn("CoberturaReport")
+    .WithCriteria(()=> FileExists(coberturaResultFile), $"since {coberturaResultFile} wasn't created.")
+    .WithCriteria(()=> BuildSystem.IsRunningOnAzurePipelinesHosted, "since task is not running on AzurePipelines (Hosted).")
     .WithCriteria(()=> !string.IsNullOrEmpty(EnvironmentVariable("CODECOV_TOKEN")),"since environment variable CODECOV_TOKEN missing or empty.")
     .Does(()=>
     {
-        GenerateReport(openCoverResultFile, ReportGeneratorReportType.Cobertura, "cobertura");
         Codecov(new[] { coberturaResultFile.FullPath }, EnvironmentVariable("CODECOV_TOKEN"));
     });
 
-Task("BuildAndTest")
+Task("TestAndUploadReport")
     .IsDependentOn("HtmlReport")
-    .IsDependentOn("CoberturaReport");
+    .IsDependentOn("UploadCodecovReport");
 
 Task("PushLocally")
     .WithCriteria(() => BuildSystem.IsLocalBuild,"since task is not running on a developer machine.")
     .WithCriteria(() => DirectoryExists(localNugetDirectory), $@"since there is no local directory ({localNugetDirectory}) to push nuget packages to.")
-    .DoesForEach(() => GetFiles(PackagePath + "\\*.nupkg"), path =>
+    .DoesForEach(() => GetFiles(PackagePath + "/*.nupkg"), path =>
     {
         var settings = new ProcessSettings()
             .UseWorkingDirectory(".")
@@ -304,14 +330,14 @@ Task("PushLocally")
             .AppendSwitchQuoted("-source", localNugetDirectory)
             .AppendQuoted(path.FullPath));
 
-        StartProcess(".\\tools\\nuget.exe",settings);
+        StartProcess("./tools/nuget.exe",settings);
     });
 
 Task("Default")
     .IsDependentOn("CleanSolution")
     .IsDependentOn("UpdateAssemblyInfo")
     .IsDependentOn("BuildAndPack")
-    .IsDependentOn("BuildAndTest")
+    .IsDependentOn("TestAndUploadReport")
     .IsDependentOn("PushLocally");
 
 RunTarget(Argument("target", "Default"));
