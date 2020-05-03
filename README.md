@@ -1,6 +1,6 @@
 # MvvmScarletToolkit
 
-[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/Insire/Maple/blob/master/license.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Insire/Maple/blob/master/license.md)
 ![NuGet](https://img.shields.io/nuget/v/:MvvmScarletToolkit.svg)
 [![Build status](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_apis/build/status/MvvmScarletToolkit-CD)](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_build/latest?definitionId=1)
 [![CodeFactor](https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit/badge)](https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit)

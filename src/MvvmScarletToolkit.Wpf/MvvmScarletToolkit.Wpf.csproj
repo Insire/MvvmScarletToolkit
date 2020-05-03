@@ -5,6 +5,8 @@
         <UseWPF>true</UseWPF>
         <LangVersion>8.0</LangVersion>
         <Nullable>enable</Nullable>
+        <Description>MvvmScarletToolkit.Implementations is part of the MvvmScarletToolkit framework, containing concrete implementations for WPF that have been abstracted away in the MvvmScarletToolkit.Abstractions library.</Description>
+        <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,WPF,Library,.NET,OSS,OpenSource</PackageTags>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -12,10 +14,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Nerdbank.GitVersioning" Version="3.1.91">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.19" />
 
@@ -32,6 +30,10 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
+        <PackageReference Include="Nerdbank.GitVersioning" Version="3.1.91">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

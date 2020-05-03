@@ -6,7 +6,6 @@
         <Authors>Peter Vietense</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/Insire/MvvmScarletToolkit</PackageProjectUrl>
-        <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,WPF,Xamarin.Forms,Library,.NET,OSS,OpenSource</PackageTags>
         <RepositoryUrl>https://github.com/Insire/MvvmScarletToolkit</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageReleaseNotes></PackageReleaseNotes>
