@@ -8,6 +8,8 @@
 
 MvvmScarletToolkit provides classes to speedup the MVVM development process for xaml-based applications using the viewmodel first approach.
 
+Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftThorn/_packaging/SoftThorn/nuget/v3/index.json) and on [github](https://github.com/Insire/MvvmScarletToolkit/packages).
+
 ## Features
 
 - [MvvmScarletToolkit.Messenger](src/MvvmScarletToolkit.Messenger/readme.md)
@@ -16,11 +18,12 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
 
 - [MvvmScarletToolkit.Commands](src/MvvmScarletToolkit.Commands/readme.md)
 
-  - fluent interface to build task based icommands
+  - basic synchronous ICommand implementation
+  - basic asynchronous ICommand implementation
+  - advanced fluent interface to build task based icommands
     - cancellation support
     - limiting command execution to one per instance
     - state management and notification
-  - basic synchronous icommand implementation
 
 - [MvvmScarletToolkit.Observables](src/MvvmScarletToolkit.Observables/readme.md)
 
@@ -30,32 +33,52 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
   - Helper viewmodels for
     - paging
     - enums
-    - binding to structs
+    - binding to structs and value types
     - basic versioning/change tracking
     - navigation
 
 - [MvvmScarletToolkit.Wpf](src/MvvmScarletToolkit.Wpf/readme.md)
 
   - BindingProxy
-  - EnumBinding support via markup extension
+  - Features
+    - Support for * Sizing in GridViews
+    - Support for providing an explicit list of datatemplates for a datatemplate selector
+    - Support for managing groupings from an ICollectionView
+    - Support for loading a System.Drawing.Bitmap into a BitmapSource without copying its data
+  - Attached Properties
+    - Filter
+      - bind the predicate of a CollectionView
+      - refresh a CollectionView on property change
+    - Focus
+      - set focus on window load
+  - TriggerActions
+    - ClearPasswordBoxAction
+    - ClearTextBoxAction
   - Behaviors
     - MultiSelectionBehavior for ListBoxes
     - SelectedTreeViewItemBehavior
     - PasswordBindingBehavior
     - WatermarkBehavior for TextBoxes
+    - AutoRepositionPopupBehavior
   - Controls
-    - VirtualizingTilePanel
     - FileSystemBrowser
-    - Support for * Sizing in GridViews
+    - VirtualizingTilePanel
+    - VirtualizingWrapPanel
   - (Multi-)Converters as Markupextension
+    - CaseConverter
+    - DebugConverter
     - NullValueConverter
     - InvertBooleanConverter
+    - InvertBooleanToVisibilityConverter
     - RadioButtonCheckedConverter
-    - CaseConverter
+    - MultiBooleanAndConverter
+  - MarkupExtensions
+    - ConverterMarkupExtension
+    - MultiConverterMarkupExtension
+    - EnumBindingSourceExtension
+    - StartProcessExtension
   - Extensions
     - DependencyObjectExtensions
-    - EnumerableExtensions
-    - ListExtensions
 
 - [MvvmScarletToolkit.Xamarin.Forms](src/MvvmScarletToolkit.Xamarin.Forms/readme.md)
 
@@ -64,23 +87,29 @@ MvvmScarletToolkit provides classes to speedup the MVVM development process for 
     - InvertBooleanConverter
     - ColorToHexExtension
 
-## Samples
+- [MvvmScarletToolkit.Abstractions](src/MvvmScarletToolkit.Abstractions/readme.md)
 
-The included Wpf Samples App contains examples for:
+  - EnumerableExtensions
+  - ListExtensions
+  - EnumExtensions
+  - TypeExtensions
+  - EventExtensions
 
-- simple navigation
-- master detail view
-- async cancelable commands using ICommand
-- async(background) image loading
-- simple file/folder browser
-- a snake game
-- barebones drag and drop example
-- an implementation of IProgress (e.g for a progressbar) to send any amount of updates without locking up the UI thread
-- stress test for rendering lots of charachters converted to geometry objects
-- a passwordbox with binding support
-- watermark support for textboxes (custom watermark style included)
-- easy grouping for bound datagrids
-- clear button for textboxes
+- MvvmScarletToolkit.Samples (for WPF)
+
+  - simple navigation
+  - master detail view
+  - async cancelable commands using ICommand
+  - async(background) image loading
+  - simple file/folder browser
+  - a snake game
+  - barebones drag and drop example
+  - an implementation of IProgress (e.g for a progressbar) to send any amount of updates without locking   up the UI thread
+  - stress test for rendering lots of charachters converted to geometry objects
+  - a passwordbox with binding support
+  - watermark support for textboxes (custom watermark style included)
+  - easy grouping for bound datagrids
+  - clear button for textboxes
 
 ## Build Requirements
 
@@ -103,6 +132,3 @@ For anyone not wishing to install that, they atleast need:
 - improve documentation
 - add a nice icon for this lib
 - add Contribution guidelines
-
-Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftThorn/_packaging/SoftThorn/nuget/v3/index.json).
-I'll make them available to everyone when changes to the API get less common.
