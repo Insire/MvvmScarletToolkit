@@ -75,6 +75,20 @@
                         Content="{Binding ElementName=Scenes, Path=SelectedItem.Content, Converter={mvvm:DebugConverter}}">
             <ContentControl.Resources>
 
+                <DataTemplate DataType="{x:Type local:ContextMenuViewModels}">
+                    <Grid Background="DarkGray">
+                        <Grid.ContextMenu>
+                            <ContextMenu ItemsSource="{Binding Items}">
+                                <ContextMenu.ItemTemplate>
+                                    <HierarchicalDataTemplate DataType="{x:Type local:ContextMenuViewModel}" ItemsSource="{Binding Items}">
+                                        <MenuItem Header="{Binding Name}" />
+                                    </HierarchicalDataTemplate>
+                                </ContextMenu.ItemTemplate>
+                            </ContextMenu>
+                        </Grid.ContextMenu>
+                    </Grid>
+                </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:SyncViewModel}">
 
                     <Grid>

@@ -23,6 +23,15 @@ namespace MvvmScarletToolkit.Samples
             Add(nameof(PasswordViewModel), new PasswordViewModel());
             Add(nameof(GroupingViewModel), new GroupingViewModel(commandBuilder, () => CollectionViewSource.GetDefaultView(dataGridViewModel.Items), typeof(DataGridRowViewModel)));
             Add(nameof(DialogViewModel), new DialogViewModel(commandBuilder));
+
+            var contextMenu = new ContextMenuViewModels();
+            var menuitem = new ContextMenuViewModel();
+            menuitem.Items.Add(new ContextMenuViewModel());
+            menuitem.Items.Add(new ContextMenuViewModel());
+
+            contextMenu.Items[0].Items.Add(menuitem);
+
+            Add(nameof(ContextMenuViewModels), contextMenu);
         }
     }
 }
