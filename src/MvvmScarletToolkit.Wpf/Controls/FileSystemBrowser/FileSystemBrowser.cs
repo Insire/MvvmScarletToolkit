@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     public class FileSystemBrowser : Control
     {

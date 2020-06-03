@@ -1,7 +1,8 @@
 using MvvmScarletToolkit.Abstractions;
+using MvvmScarletToolkit.Observables;
 using System.ComponentModel;
 
-namespace MvvmScarletToolkit.Observables
+namespace MvvmScarletToolkit
 {
     public static class ServiceExtensions
     {

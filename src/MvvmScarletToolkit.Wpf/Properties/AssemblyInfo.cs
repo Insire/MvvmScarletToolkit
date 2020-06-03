@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Windows.Markup;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -16,3 +17,11 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("9bd9b759-8c12-4e08-971b-9ba34d8247ff")]
+
+// Set the recommended prefix for xaml namespaces
+[assembly: XmlnsPrefix(@"http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "mvvm")]
+
+// map clr namespaces to a single xaml namespace
+[assembly: XmlnsDefinition(@"http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit")]
+[assembly: XmlnsDefinition(@"http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Wpf")]
+[assembly: XmlnsDefinition(@"http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Wpf.FileSystemBrowser")]

@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     [DebuggerDisplay("Drive: {Name} IsContainer: {IsContainer}")]
     public class ScarletDrive : ScarletFileSystemContainerBase, IFileSystemDrive

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     public class FileSystemOptionsViewModel : ViewModelBase
     {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Observables
 {
     public sealed class ViewModelListBaseSelectionsChanging<TViewModel> : GenericScarletMessage<IEnumerable<TViewModel>>
     {

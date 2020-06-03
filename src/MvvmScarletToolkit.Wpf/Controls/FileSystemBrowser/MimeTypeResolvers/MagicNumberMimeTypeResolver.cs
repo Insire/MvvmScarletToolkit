@@ -1,7 +1,7 @@
 using System.IO;
 using System.Linq;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     // https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files
     // https://en.wikipedia.org/wiki/List_of_file_signatures

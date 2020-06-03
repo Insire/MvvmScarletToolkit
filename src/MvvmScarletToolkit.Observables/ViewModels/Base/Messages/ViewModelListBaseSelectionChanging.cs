@@ -1,4 +1,4 @@
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Observables
 {
     public sealed class ViewModelListBaseSelectionChanging<TViewModel> : GenericScarletMessage<TViewModel>
     {

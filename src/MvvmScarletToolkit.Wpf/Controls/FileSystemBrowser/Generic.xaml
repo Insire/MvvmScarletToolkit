@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:browser="clr-namespace:MvvmScarletToolkit.FileSystemBrowser"
+                    xmlns:browser="clr-namespace:MvvmScarletToolkit.Wpf.FileSystemBrowser"
                     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:local="clr-namespace:MvvmScarletToolkit">
 

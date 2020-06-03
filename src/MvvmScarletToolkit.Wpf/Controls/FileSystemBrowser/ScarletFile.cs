@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     [DebuggerDisplay("File: {Name} IsContainer: {IsContainer}")]
     public class ScarletFile : ScarletFileSystemBase, IFileSystemFile

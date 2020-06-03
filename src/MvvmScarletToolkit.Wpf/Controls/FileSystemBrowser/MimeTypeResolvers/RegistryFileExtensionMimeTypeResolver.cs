@@ -1,7 +1,7 @@
 using Microsoft.Win32;
 using System.IO;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     public sealed class RegistryFileExtensionMimeTypeResolver : IMimeTypeResolver
     {

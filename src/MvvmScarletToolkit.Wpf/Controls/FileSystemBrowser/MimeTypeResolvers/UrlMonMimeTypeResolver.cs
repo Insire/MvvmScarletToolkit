@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace MvvmScarletToolkit.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     public sealed class UrlMonMimeTypeResolver : IMimeTypeResolver
     {

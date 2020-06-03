@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.FileSystemBrowser;
+using MvvmScarletToolkit.Wpf.FileSystemBrowser;
 using MvvmScarletToolkit.Observables;
 using System.Windows.Data;
 
@@ -32,6 +32,7 @@ namespace MvvmScarletToolkit.Samples
             contextMenu.Items[0].Items.Add(menuitem);
 
             Add(nameof(ContextMenuViewModels), contextMenu);
+            Add(nameof(EnumViewModel), new EnumViewModel());
         }
     }
 }

@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +13,7 @@ namespace MvvmScarletToolkit.Observables
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName]string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
@@ -24,17 +23,17 @@ namespace MvvmScarletToolkit.Observables
             PropertyChanged?.Invoke(this, args);
         }
 
-        protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string? propertyName = null)
+        protected bool SetValue<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             return SetValue(ref field, value, null, null, propertyName);
         }
 
-        protected bool SetValue<T>(ref T field, T value, Action? onChanged, [CallerMemberName]string? propertyName = null)
+        protected bool SetValue<T>(ref T field, T value, Action? onChanged, [CallerMemberName] string? propertyName = null)
         {
             return SetValue(ref field, value, null, onChanged, propertyName);
         }
 
-        protected virtual bool SetValue<T>(ref T field, T value, Action? onChanging, Action? onChanged, [CallerMemberName]string? propertyName = null)
+        protected virtual bool SetValue<T>(ref T field, T value, Action? onChanging, Action? onChanged, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
@@ -53,7 +52,7 @@ namespace MvvmScarletToolkit.Observables
 
 #if DEBUG
 
-        protected void LogMethodCall<T>([CallerMemberName]string? methodName = null)
+        protected void LogMethodCall<T>([CallerMemberName] string? methodName = null)
         {
             var type = typeof(T);
             var name = type.GetGenericTypeName();
