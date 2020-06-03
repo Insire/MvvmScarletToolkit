@@ -49,7 +49,7 @@ namespace MvvmScarletToolkit.Observables
             GC.SuppressFinalize(this);
         }
 
-        protected override void OnPropertyChanged([CallerMemberName]string? propertyName = null)
+        protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             OnPropertyChanged(_propertyChangedCache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
         }
@@ -63,7 +63,7 @@ namespace MvvmScarletToolkit.Observables
 
             if (disposing)
             {
-                (BusyStack as IDisposable)?.Dispose();
+                BusyStack?.Dispose();
             }
 
             IsDisposed = true;

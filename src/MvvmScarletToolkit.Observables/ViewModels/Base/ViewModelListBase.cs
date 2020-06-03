@@ -87,7 +87,7 @@ namespace MvvmScarletToolkit.Observables
                 .Build();
         }
 
-        public Task Add(TViewModel? item)
+        public Task Add(TViewModel item)
         {
             if (IsDisposed)
             {
