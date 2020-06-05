@@ -87,6 +87,20 @@ namespace MvvmScarletToolkit.Observables
                 .Build();
         }
 
+        /// <summary>
+        ///<para>
+        /// This method exists for usability reasons, so that one can mdofiy the internal collection from within a constructor where Tasks can't/should't be run.
+        /// </para>
+        /// <para>
+        /// Modify the internal collection synchronously. No checks are being performed here. This method is not threadsafe.
+        /// </para>
+        /// </summary>
+        /// <param name="viewModel">the viewmodel instance to be added</param>
+        protected void AddUnchecked(TViewModel viewModel)
+        {
+            _items.Add(viewModel);
+        }
+
         public Task Add(TViewModel item)
         {
             if (IsDisposed)
