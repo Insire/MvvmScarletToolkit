@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace MvvmScarletToolkit.Wpf
 {
@@ -139,6 +140,42 @@ namespace MvvmScarletToolkit.Wpf
 
                     return result;
 
+                case "img":
+                    if (Contains("source"))
+                    {
+                        var width = double.NaN;
+                        if (Contains("width") && double.TryParse(_variables["width"], out var internal_width))
+                            width = internal_width;
+
+                        var height = double.NaN;
+                        if (Contains("height") && double.TryParse(_variables["height"], out var internal_height))
+                            height = internal_height;
+
+                        if (!Uri.TryCreate(_variables["source"], UriKind.RelativeOrAbsolute, out var uri))
+                        {
+                            var bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.UriSource = uri;
+                            bitmap.EndInit();
+
+                            var image = new Image
+                            {
+                                Source = bitmap,
+                                Width = width,
+                                Height = height
+                            };
+
+                            if (Contains("href"))
+                            {
+                                return TryCreateHyperLink(new InlineUIContainer(image), _variables["href"]);
+                            }
+
+                            return new InlineUIContainer(image);
+                        }
+                    }
+
+                    return new Run();
+
                 default:
                     return new Run();
             }
@@ -152,12 +189,13 @@ namespace MvvmScarletToolkit.Wpf
             }
 
             var link = new Hyperlink(content);
-            try
+
+            if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var uri))
             {
-                link.NavigateUri = new Uri(url);
+                link.NavigateUri = uri;
                 link.ToolTip = url;
             }
-            catch
+            else
             {
                 link.NavigateUri = null;
             }
