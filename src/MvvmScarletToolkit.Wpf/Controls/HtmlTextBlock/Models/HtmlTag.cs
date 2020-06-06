@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -39,23 +38,23 @@ namespace MvvmScarletToolkit.Wpf
 
         internal bool IsEndTag => _isEndTag.Value;
 
-        private HtmlTag(string name, Dictionary<string, string> variables)
+        private HtmlTag(string name, Dictionary<string, string> variables, List<HTMLTagInfo> builtinTags)
         {
             _variables = variables ?? throw new ArgumentNullException(nameof(variables));
             Name = name.ToLower();
 
-            _id = new Lazy<int>(() => HtmlParser.BuiltinTags.ToList().FindIndex(tagInfo => tagInfo.Html.Equals(Name.TrimStart('/'))));
+            _id = new Lazy<int>(() => builtinTags.FindIndex(tagInfo => tagInfo.Html.Equals(Name.TrimStart('/'))));
             _isEndTag = new Lazy<bool>(() => (Name.IndexOf('/') == 0) || _variables.ContainsKey("/"));
-            _level = new Lazy<int>(() => ID == -1 ? 0 : HtmlParser.BuiltinTags[ID].TagLevel);
+            _level = new Lazy<int>(() => ID == -1 ? 0 : builtinTags[ID].TagLevel);
         }
 
-        public HtmlTag(IParamParser paramParser, string name, string variableString)
-            : this(name, paramParser.StringToDictionary(variableString))
+        public HtmlTag(IParamParser paramParser, string name, string variableString, List<HTMLTagInfo> builtinTags)
+            : this(name, paramParser.StringToDictionary(variableString), builtinTags)
         {
         }
 
-        public HtmlTag(string text)
-            : this("text", new Dictionary<string, string> { { "value", text } })
+        public HtmlTag(string text, List<HTMLTagInfo> builtinTags)
+            : this("text", new Dictionary<string, string> { { "value", text } }, builtinTags)
         {
         }
 
@@ -69,14 +68,14 @@ namespace MvvmScarletToolkit.Wpf
             get { return _variables[key]; }
         }
 
-        public Inline CreateInline(TextBlock textBlock, CurrentStateType currentStateType)
+        public Inline CreateInline(TextBlock textBlock, InlineCreationContext currentStateType)
         {
             var result = CreateInlineInternal(textBlock, currentStateType);
 
-            return TryCreateHyperLink(result, currentStateType.HyperLink?.Trim('\"'));
+            return TryWrapInHyperLink(result, currentStateType.HyperLink?.Trim('\"'));
         }
 
-        private Inline CreateInlineInternal(TextBlock textBlock, CurrentStateType currentStateType)
+        private Inline CreateInlineInternal(TextBlock textBlock, InlineCreationContext currentStateType)
         {
             switch (Name)
             {
@@ -141,47 +140,54 @@ namespace MvvmScarletToolkit.Wpf
                     return result;
 
                 case "img":
-                    if (Contains("source"))
+                    if (!Contains("source"))
                     {
-                        var width = double.NaN;
-                        if (Contains("width") && double.TryParse(_variables["width"], out var internal_width))
-                            width = internal_width;
-
-                        var height = double.NaN;
-                        if (Contains("height") && double.TryParse(_variables["height"], out var internal_height))
-                            height = internal_height;
-
-                        if (!Uri.TryCreate(_variables["source"], UriKind.RelativeOrAbsolute, out var uri))
-                        {
-                            var bitmap = new BitmapImage();
-                            bitmap.BeginInit();
-                            bitmap.UriSource = uri;
-                            bitmap.EndInit();
-
-                            var image = new Image
-                            {
-                                Source = bitmap,
-                                Width = width,
-                                Height = height
-                            };
-
-                            if (Contains("href"))
-                            {
-                                return TryCreateHyperLink(new InlineUIContainer(image), _variables["href"]);
-                            }
-
-                            return new InlineUIContainer(image);
-                        }
+                        return new Run();
                     }
 
-                    return new Run();
+                    var width = double.NaN;
+                    if (Contains("width") && double.TryParse(_variables["width"], out var internal_width))
+                        width = internal_width;
+
+                    var height = double.NaN;
+                    if (Contains("height") && double.TryParse(_variables["height"], out var internal_height))
+                        height = internal_height;
+
+                    if (!Uri.TryCreate(_variables["source"], UriKind.RelativeOrAbsolute, out var uri))
+                    {
+                        return new Run();
+                    }
+
+                    var bitmap = new BitmapImage
+                    {
+                        CacheOption = BitmapCacheOption.OnLoad
+                    };
+
+                    bitmap.BeginInit();
+                    bitmap.UriSource = uri;
+                    bitmap.EndInit();
+
+                    // TODO fetch and apply style
+                    var image = new Image
+                    {
+                        Source = bitmap,
+                        Width = width,
+                        Height = height
+                    };
+
+                    if (Contains("href"))
+                    {
+                        return TryWrapInHyperLink(new InlineUIContainer(image), _variables["href"]);
+                    }
+
+                    return new InlineUIContainer(image);
 
                 default:
                     return new Run();
             }
         }
 
-        private static Inline TryCreateHyperLink(Inline content, string? url)
+        private static Inline TryWrapInHyperLink(Inline content, string? url)
         {
             if (string.IsNullOrEmpty(url))
             {

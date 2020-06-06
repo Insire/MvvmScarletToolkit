@@ -58,13 +58,21 @@ namespace MvvmScarletToolkit.Wpf
 
         public IEnumerable<HtmlTag> GetTags()
         {
-            yield return Tag;
-
-            foreach (var subnode in _items)
+            if (Tag.ID != -1)
             {
+                yield return Tag;
+            }
+
+            for (var i = 0; i < _items.Count; i++)
+            {
+                var subnode = _items[i];
+
                 foreach (var tag in subnode.GetTags())
                 {
-                    yield return tag;
+                    if (tag.ID != -1)
+                    {
+                        yield return tag;
+                    }
                 }
             }
         }

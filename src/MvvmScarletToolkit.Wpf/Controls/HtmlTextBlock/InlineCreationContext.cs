@@ -4,7 +4,7 @@ using System.Windows.Media;
 namespace MvvmScarletToolkit.Wpf
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC001:The class has mutable properties and should implement INotifyPropertyChanged.", Justification = "does not support binding")]
-    internal sealed class CurrentStateType
+    internal sealed class InlineCreationContext
     {
         private readonly List<HtmlTag> _activeStyle = new List<HtmlTag>();
 
@@ -16,7 +16,7 @@ namespace MvvmScarletToolkit.Wpf
         public string HyperLink { get; private set; }
         public Color? Foreground { get; private set; }
 
-        public CurrentStateType()
+        public InlineCreationContext()
         {
             Foreground = null;
             HyperLink = "";

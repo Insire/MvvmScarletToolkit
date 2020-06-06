@@ -1,16 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Linq;
 
 namespace MvvmScarletToolkit.Wpf
 {
     internal static partial class HtmlParser
     {
-        public static HTMLTagInfo[] BuiltinTags { get; } = new HTMLTagInfo[51]
+        private static readonly List<HTMLTagInfo> _builtinTags = new List<HTMLTagInfo>(51)
         {
            //HtmlTag Level guide
            // 50 Master
@@ -94,110 +89,26 @@ namespace MvvmScarletToolkit.Wpf
 
         public static void UpdateWith(this TextBlock textBlock, string htmlInput, IParamParser paramParser)
         {
-            var tree = new HtmlTagTree(paramParser);
-            HtmlTagNode? previousNode = tree;
+            var tree = new HtmlTagTree(paramParser, _builtinTags);
 
-            var beforeTag = string.Empty;
-            var afterTag = string.Empty;
-            var name = string.Empty;
-            var vars = string.Empty;
-
-            // build syntax tree
-            do
-            {
-                ReadNextTag(htmlInput, ref beforeTag, ref afterTag, ref name, ref vars);
-
-                if (beforeTag != string.Empty)
-                {
-                    AddTag(new HtmlTag(beforeTag));
-                }
-
-                if (name != string.Empty)
-                {
-                    AddTag(new HtmlTag(paramParser, name, vars));
-                }
-
-                htmlInput = afterTag;
-            }
-            while (afterTag.Length > 0);
+            tree.BuildFrom(htmlInput);
 
             // update textbox with inline elements according to syntax tree items
-            var currentStateType = new CurrentStateType();
-            var tags = tree.GetTags();
+            var context = new InlineCreationContext();
 
-            foreach (var tag in tags.Where(tag => tag.ID != -1).Select(tag => tag))
+            foreach (var tag in tree.GetTags())
             {
-                switch (BuiltinTags[tag.ID].Flags)
+                switch (_builtinTags[tag.ID].Flags)
                 {
                     case HTMLFlag.TextFormat:
-                        currentStateType.UpdateStyle(tag);
+                        context.UpdateStyle(tag);
                         break;
 
                     case HTMLFlag.Element:
-                        textBlock.Inlines.Add(tag.CreateInline(textBlock, currentStateType));
+                        var inline = tag.CreateInline(textBlock, context);
+                        textBlock.Inlines.Add(inline);
                         break;
                 }
-            }
-
-            void AddTag(HtmlTag tag)
-            {
-                while (previousNode != null && !previousNode.CanAdd(tag))
-                {
-                    previousNode = previousNode?.Parent;
-                }
-
-                previousNode = previousNode?.Add(tag);
-            }
-        }
-
-        /// <summary>
-        /// Parse a string and return text before a tag, the tag and it's variables, and the string after that tag.
-        /// </summary>
-        private static void ReadNextTag(string input, ref string beforeTag, ref string afterTag, ref string name, ref string vars)
-        {
-            var startIndex = input.IndexOf('<');
-            var endIndex = input.IndexOf('>');
-
-            if ((startIndex == -1) || (endIndex == -1) || (endIndex < startIndex))
-            {
-                vars = string.Empty;
-                beforeTag = input;
-                afterTag = string.Empty;
-            }
-            else
-            {
-                var tag = input.Substring(startIndex + 1, endIndex - startIndex - 1);
-                beforeTag = input.Substring(0, startIndex);
-                afterTag = input.Substring(endIndex + 1, input.Length - endIndex - 1);
-
-                var pos3 = tag.IndexOf(' ');
-                if ((pos3 != -1) && (tag != string.Empty))
-                {
-                    name = tag.Substring(0, pos3);
-                    vars = tag.Substring(pos3 + 1, tag.Length - pos3 - 1);
-                }
-                else
-                {
-                    name = tag;
-                    vars = string.Empty;
-                }
-
-                if (!name.StartsWith("!--"))
-                {
-                    return;
-                }
-
-                if ((name.Length < 6) || (!name.EndsWith("--")))
-                {
-                    var pos4 = afterTag.IndexOf("-->");
-                    if (pos4 != -1)
-                    {
-                        afterTag = afterTag.Substring(pos4 + 2, afterTag.Length - pos4 - 1);
-                    }
-                }
-
-                name = string.Empty;
-                vars = string.Empty;
             }
         }
     }
