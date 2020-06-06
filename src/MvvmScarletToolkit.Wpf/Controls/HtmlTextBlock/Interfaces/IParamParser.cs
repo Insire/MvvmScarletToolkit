@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit.Wpf
         /// </summary>
         /// <param name="param">An array of key and value pairs</param>
         /// <returns>Param String containing both key and value, e.g. key:"value"</returns>
-        string DictionaryToString(Dictionary<string, string> paramDic);
+        string DictionaryToString(Dictionary<string, string> dictionary);
 
         /// <summary>
         /// Take a Paramstring and return a dictionary containing

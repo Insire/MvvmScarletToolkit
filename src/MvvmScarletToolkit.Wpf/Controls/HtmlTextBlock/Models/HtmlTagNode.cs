@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Wpf
 
         public bool IsRoot { get; }
         public HtmlTag Tag { get; }
-        public HtmlTagNode Parent { get; }
+        public HtmlTagNode? Parent { get; }
 
         protected HtmlTagNode(bool isRoot, HtmlTag tag)
         {
@@ -41,19 +41,32 @@ namespace MvvmScarletToolkit.Wpf
             return (tag.Name == '/' + Tag.Name) || (tag.Level < Tag.Level);
         }
 
-        public HtmlTagNode Add(HtmlTag aTag)
+        public HtmlTagNode? Add(HtmlTag tag)
         {
-            if (!CanAdd(aTag))
+            if (!CanAdd(tag))
             {
                 throw new Exception();
             }
 
-            var retVal = new HtmlTagNode(this, aTag);
-            _items.Add(retVal);
+            var result = new HtmlTagNode(this, tag);
+            _items.Add(result);
 
-            return aTag.Name == '/' + Tag.Name
+            return tag.Name == '/' + Tag.Name
                 ? Parent
-                : retVal;
+                : result;
+        }
+
+        public IEnumerable<HtmlTag> GetTags()
+        {
+            yield return Tag;
+
+            foreach (var subnode in _items)
+            {
+                foreach (var tag in subnode.GetTags())
+                {
+                    yield return tag;
+                }
+            }
         }
     }
 }

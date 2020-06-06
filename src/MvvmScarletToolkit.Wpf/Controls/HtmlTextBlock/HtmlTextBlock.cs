@@ -5,7 +5,8 @@ namespace MvvmScarletToolkit.Wpf
 {
     public class HtmlTextBlock : TextBlock
     {
-        public static DependencyProperty HtmlProperty = DependencyProperty.Register(
+        /// <summary>Identifies the <see cref="Html"/> dependency property.</summary>
+        public static readonly DependencyProperty HtmlProperty = DependencyProperty.Register(
             nameof(Html),
             typeof(string),
             typeof(HtmlTextBlock),

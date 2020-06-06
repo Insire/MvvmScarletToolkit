@@ -13,28 +13,28 @@ namespace MvvmScarletToolkit.Wpf
             Serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
-        public string DictionaryToString(Dictionary<string, string> paramDic)
+        public string DictionaryToString(Dictionary<string, string> dictionary)
         {
-            return Serializer.PropertyToString(paramDic.Keys.Select(p => new Tuple<string, string>(p, paramDic[p])));
+            return Serializer.PropertyToString(dictionary.Keys.Select(p => new Tuple<string, string>(p, dictionary[p])));
         }
 
-        public Dictionary<string, string> StringToDictionary(string paramString)
+        public Dictionary<string, string> StringToDictionary(string @string)
         {
-            var retDic = new Dictionary<string, string>();
+            var result = new Dictionary<string, string>();
 
-            foreach (var tup in Serializer.StringToProperty(paramString))
+            foreach (var tup in Serializer.StringToProperty(@string))
             {
-                if (!retDic.ContainsKey(tup.Item1))
+                if (!result.ContainsKey(tup.Item1))
                 {
-                    retDic.Add(tup.Item1, tup.Item2);
+                    result.Add(tup.Item1, tup.Item2);
                 }
                 else
                 {
-                    retDic[tup.Item1] = tup.Item2;
+                    result[tup.Item1] = tup.Item2;
                 }
             }
 
-            return retDic;
+            return result;
         }
     }
 }

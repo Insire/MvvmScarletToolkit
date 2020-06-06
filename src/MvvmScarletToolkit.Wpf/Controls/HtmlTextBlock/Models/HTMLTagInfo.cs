@@ -6,11 +6,11 @@ namespace MvvmScarletToolkit.Wpf
         public HTMLFlag Flags { get; }
         public short TagLevel { get; }
 
-        public HTMLTagInfo(string aHtml, HTMLFlag aFlags, short aTagLevel)
+        public HTMLTagInfo(string html, HTMLFlag flags, short tagLevel)
         {
-            Html = aHtml;
-            Flags = aFlags;
-            TagLevel = aTagLevel;
+            Html = html;
+            Flags = flags;
+            TagLevel = tagLevel;
         }
     }
 }

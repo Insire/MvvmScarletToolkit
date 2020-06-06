@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace MvvmScarletToolkit.Wpf
 {
-    internal static class HtmlParser
+    internal static partial class HtmlParser
     {
         public static HTMLTagInfo[] BuiltinTags { get; } = new HTMLTagInfo[51]
         {
@@ -95,26 +95,26 @@ namespace MvvmScarletToolkit.Wpf
         public static void UpdateWith(this TextBlock textBlock, string htmlInput, IParamParser paramParser)
         {
             var tree = new HtmlTagTree(paramParser);
-            HtmlTagNode previousNode = tree;
+            HtmlTagNode? previousNode = tree;
 
             var beforeTag = string.Empty;
             var afterTag = string.Empty;
-            var tagName = string.Empty;
-            var tagVar = string.Empty;
+            var name = string.Empty;
+            var vars = string.Empty;
 
             // build syntax tree
             do
             {
-                ReadNextTag(htmlInput, ref beforeTag, ref afterTag, ref tagName, ref tagVar);
+                ReadNextTag(htmlInput, ref beforeTag, ref afterTag, ref name, ref vars);
 
                 if (beforeTag != string.Empty)
                 {
                     AddTag(new HtmlTag(beforeTag));
                 }
 
-                if (tagName != string.Empty)
+                if (name != string.Empty)
                 {
-                    AddTag(new HtmlTag(paramParser, tagName, tagVar));
+                    AddTag(new HtmlTag(paramParser, name, vars));
                 }
 
                 htmlInput = afterTag;
@@ -134,73 +134,60 @@ namespace MvvmScarletToolkit.Wpf
                         break;
 
                     case HTMLFlag.Element:
-                        textBlock.Inlines.Add(UpdateElement(tag, textBlock, currentStateType));
+                        textBlock.Inlines.Add(tag.CreateInline(textBlock, currentStateType));
                         break;
                 }
             }
 
             void AddTag(HtmlTag tag)
             {
-                while (!previousNode.CanAdd(tag))
+                while (previousNode != null && !previousNode.CanAdd(tag))
                 {
-                    previousNode = previousNode.Parent;
+                    previousNode = previousNode?.Parent;
                 }
 
-                previousNode = previousNode.Add(tag);
-            }
-        }
-
-        private static IEnumerable<HtmlTag> GetTags(this HtmlTagNode node)
-        {
-            yield return node.Tag;
-
-            foreach (HtmlTagNode subnode in node)
-            {
-                foreach (var tag in subnode.GetTags())
-                {
-                    yield return tag;
-                }
+                previousNode = previousNode?.Add(tag);
             }
         }
 
         /// <summary>
         /// Parse a string and return text before a tag, the tag and it's variables, and the string after that tag.
         /// </summary>
-        private static void ReadNextTag(string input, ref string beforeTag, ref string afterTag, ref string tagName, ref string tagVars)
+        private static void ReadNextTag(string input, ref string beforeTag, ref string afterTag, ref string name, ref string vars)
         {
-            var pos1 = input.IndexOf('<');
-            var pos2 = input.IndexOf('>');
+            var startIndex = input.IndexOf('<');
+            var endIndex = input.IndexOf('>');
 
-            if ((pos1 == -1) || (pos2 == -1) || (pos2 < pos1))
+            if ((startIndex == -1) || (endIndex == -1) || (endIndex < startIndex))
             {
-                tagVars = string.Empty;
+                vars = string.Empty;
                 beforeTag = input;
                 afterTag = string.Empty;
             }
             else
             {
-                var tagStr = input.Substring(pos1 + 1, pos2 - pos1 - 1);
-                beforeTag = input.Substring(0, pos1);
-                afterTag = input.Substring(pos2 + 1, input.Length - pos2 - 1);
+                var tag = input.Substring(startIndex + 1, endIndex - startIndex - 1);
+                beforeTag = input.Substring(0, startIndex);
+                afterTag = input.Substring(endIndex + 1, input.Length - endIndex - 1);
 
-                var pos3 = tagStr.IndexOf(' ');
-                if ((pos3 != -1) && (tagStr != string.Empty))
+                var pos3 = tag.IndexOf(' ');
+                if ((pos3 != -1) && (tag != string.Empty))
                 {
-                    tagName = tagStr.Substring(0, pos3);
-                    tagVars = tagStr.Substring(pos3 + 1, tagStr.Length - pos3 - 1);
+                    name = tag.Substring(0, pos3);
+                    vars = tag.Substring(pos3 + 1, tag.Length - pos3 - 1);
                 }
                 else
                 {
-                    tagName = tagStr;
-                    tagVars = string.Empty;
+                    name = tag;
+                    vars = string.Empty;
                 }
 
-                if (!tagName.StartsWith("!--"))
+                if (!name.StartsWith("!--"))
                 {
                     return;
                 }
 
-                if ((tagName.Length < 6) || (!tagName.EndsWith("--")))
+                if ((name.Length < 6) || (!name.EndsWith("--")))
                 {
                     var pos4 = afterTag.IndexOf("-->");
                     if (pos4 != -1)
@@ -209,168 +196,8 @@ namespace MvvmScarletToolkit.Wpf
                     }
                 }
 
-                tagName = string.Empty;
-                tagVars = string.Empty;
-            }
-        }
-
-        private static Inline UpdateElement(HtmlTag aTag, TextBlock textBlock, CurrentStateType currentStateType)
-        {
-            Inline retVal;
-            switch (aTag.Name)
-            {
-                case "binding":
-                case "text":
-                    if (aTag.Name == "binding")
-                    {
-                        retVal = new Bold(new Run("{Binding}"));
-                        if (aTag.Contains("path") && (textBlock.DataContext != null))
-                        {
-                            var obj = textBlock.DataContext;
-                            var pi = obj.GetType().GetProperty(aTag["path"]);
-
-                            if (pi?.CanRead == true)
-                            {
-                                retVal = new Run(pi.GetValue(obj, null).ToString());
-                            }
-                        }
-                    }
-                    else
-                    {
-                        retVal = new Run(aTag["value"]);
-                    }
-
-                    if (currentStateType.SubScript)
-                    {
-                        retVal.SetValue(Typography.VariantsProperty, FontVariants.Subscript);
-                    }
-
-                    if (currentStateType.SuperScript)
-                    {
-                        retVal.SetValue(Typography.VariantsProperty, FontVariants.Superscript);
-                    }
-
-                    if (currentStateType.Bold)
-                    {
-                        retVal = new Bold(retVal);
-                    }
-
-                    if (currentStateType.Italic)
-                    {
-                        retVal = new Italic(retVal);
-                    }
-
-                    if (currentStateType.Underline)
-                    {
-                        retVal = new Underline(retVal);
-                    }
-
-                    if (currentStateType.Foreground.HasValue)
-                    {
-                        retVal.Foreground = new SolidColorBrush(currentStateType.Foreground.Value);
-                    }
-                    break;
-
-                case "br":
-                    retVal = new LineBreak();
-                    break;
-
-                default:
-                    retVal = new Run();
-                    break;
-            }
-
-            if (string.IsNullOrEmpty(currentStateType.HyperLink))
-            {
-                return retVal;
-            }
-
-            var link = new Hyperlink(retVal);
-            try
-            {
-                var url = currentStateType.HyperLink.Trim('\"');
-                link.NavigateUri = new Uri(url);
-                link.ToolTip = url;
-            }
-            catch
-            {
-                link.NavigateUri = null;
-            }
-
-            return link;
-        }
-
-        private sealed class CurrentStateType
-        {
-            private readonly List<HtmlTag> _activeStyle = new List<HtmlTag>();
-
-            public bool Bold { get; private set; }
-            public bool Italic { get; private set; }
-            public bool Underline { get; private set; }
-            public bool SubScript { get; private set; }
-            public bool SuperScript { get; private set; }
-            public string HyperLink { get; private set; }
-            public Color? Foreground { get; private set; }
-
-            public void UpdateStyle(HtmlTag aTag)
-            {
-                if (!aTag.IsEndTag)
-                {
-                    _activeStyle.Add(aTag);
-                }
-                else
-                {
-                    for (var i = _activeStyle.Count - 1; i >= 0; i--)
-                    {
-                        if ('/' + _activeStyle[i].Name == aTag.Name)
-                        {
-                            _activeStyle.RemoveAt(i);
-                            break;
-                        }
-                    }
-                }
-
-                Bold = false;
-                Italic = false;
-                Underline = false;
-                SubScript = false;
-                SuperScript = false;
-                Foreground = null;
-                HyperLink = "";
-
-                foreach (var tag in _activeStyle)
-                {
-                    switch (tag.Name)
-                    {
-                        case "b":
-                            Bold = true;
-                            break;
-
-                        case "i":
-                            Italic = true;
-                            break;
-
-                        case "u":
-                            Underline = true;
-                            break;
-
-                        case "sub":
-                            SubScript = true;
-                            break;
-
-                        case "sup":
-                            SuperScript = true;
-                            break;
-
-                        case "a":
-                            if (tag.Contains("href"))
-                            {
-                                HyperLink = tag["href"];
-                            }
-
-                            break;
-                    }
-                }
+                name = string.Empty;
+                vars = string.Empty;
             }
         }
     }
