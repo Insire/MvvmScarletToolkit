@@ -3,14 +3,21 @@ using System.IO;
 
 namespace MvvmScarletToolkit.Samples
 {
-    public static class ImageFactory
+    public class ImageFactory
     {
-        public static IEnumerable<Image> GetImageList()
+        private readonly IScarletCommandBuilder _commandBuilder;
+
+        public ImageFactory(IScarletCommandBuilder commandBuilder)
+        {
+            _commandBuilder = commandBuilder ?? throw new System.ArgumentNullException(nameof(commandBuilder));
+        }
+
+        public IEnumerable<Image> GetImageList()
         {
             var absolutePath = Path.GetFullPath(".");
             const string resourcesFolder = "Resources";
 
-            yield return new Image()
+            yield return new Image(_commandBuilder)
             {
                 IsSelected = true,
                 DisplayName = "Valley",
@@ -18,7 +25,7 @@ namespace MvvmScarletToolkit.Samples
                 Sequence = 0,
             };
 
-            yield return new Image()
+            yield return new Image(_commandBuilder)
             {
                 IsSelected = false,
                 DisplayName = "Jungle",
@@ -26,7 +33,7 @@ namespace MvvmScarletToolkit.Samples
                 Sequence = 1,
             };
 
-            yield return new Image()
+            yield return new Image(_commandBuilder)
             {
                 IsSelected = false,
                 DisplayName = "Winter",
@@ -34,7 +41,7 @@ namespace MvvmScarletToolkit.Samples
                 Sequence = 2,
             };
 
-            yield return new Image()
+            yield return new Image(_commandBuilder)
             {
                 IsSelected = false,
                 DisplayName = "Night",
@@ -42,7 +49,7 @@ namespace MvvmScarletToolkit.Samples
                 Sequence = 3,
             };
 
-            yield return new Image()
+            yield return new Image(_commandBuilder)
             {
                 IsSelected = false,
                 DisplayName = "Moon",
@@ -50,7 +57,7 @@ namespace MvvmScarletToolkit.Samples
                 Sequence = 4,
             };
 
-            yield return new Image()
+            yield return new Image(_commandBuilder)
             {
                 IsSelected = false,
                 DisplayName = "Road",

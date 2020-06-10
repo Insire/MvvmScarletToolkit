@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit.Samples
             var dataGridViewModel = new DataGridViewModel(commandBuilder);
 
             Add(nameof(VirtualizationViewModel), new VirtualizationViewModel(new LogItems(CommandBuilder), commandBuilder)); // TODO move item creationlogic to a service
-            Add("Image Drag and Drop", new ProcessingImagesViewModel(commandBuilder));
+            Add("Image Drag and Drop", new ProcessingImagesViewModel(commandBuilder, new ImageFactory(CommandBuilder)));
             Add(nameof(AsyncStateListViewModel), new AsyncStateListViewModel(commandBuilder));
             Add(nameof(DataGridViewModel), dataGridViewModel);
             Add(nameof(ProgressViewModel), new ProgressViewModel(commandBuilder));

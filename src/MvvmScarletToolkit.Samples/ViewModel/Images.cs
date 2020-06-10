@@ -6,14 +6,17 @@ namespace MvvmScarletToolkit.Samples
 {
     public class Images : BusinessViewModelListBase<Image>
     {
-        public Images(IScarletCommandBuilder commandBuilder)
+        private readonly ImageFactory _imageFactory;
+
+        public Images(IScarletCommandBuilder commandBuilder, ImageFactory imageFactory)
             : base(commandBuilder)
         {
+            _imageFactory = imageFactory ?? throw new System.ArgumentNullException(nameof(imageFactory));
         }
 
         protected override Task RefreshInternal(CancellationToken token)
         {
-            return AddRange(ImageFactory.GetImageList());
+            return AddRange(_imageFactory.GetImageList());
         }
     }
 }

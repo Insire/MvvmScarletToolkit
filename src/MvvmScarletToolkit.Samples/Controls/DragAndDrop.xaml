@@ -35,11 +35,19 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type local:Image}">
-                    <DockPanel Height="90"
+                    <DockPanel Width="90"
+                               Height="90"
+                               Background="LightGray"
                                GiveFeedback="Element_GiveFeedback"
                                LastChildFill="True"
                                MouseMove="Element_MouseMove">
-                        <Image Source="{Binding Path}" />
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <Image Source="{Binding Source}" />
                     </DockPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -85,7 +93,9 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:Image}">
-                        <DockPanel Height="200"
+                        <DockPanel Width="200"
+                                   Height="200"
+                                   Background="LightGray"
                                    GiveFeedback="Element_GiveFeedback"
                                    MouseMove="Element_MouseMove">
                             <TextBlock Margin="0,4"
@@ -93,12 +103,7 @@
                                        Text="{Binding DisplayName}"
                                        TextAlignment="Center" />
 
-                            <Button Margin="0,4"
-                                    Command="{Binding BusyCommand}"
-                                    Content="BeBusy"
-                                    DockPanel.Dock="Bottom" />
-
-                            <Image Source="{Binding Path}" />
+                            <Image Source="{Binding Source}" />
                         </DockPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

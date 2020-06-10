@@ -1,9 +1,14 @@
+using ImageMagick;
 using MvvmScarletToolkit.Observables;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace MvvmScarletToolkit.Samples
 {
-    public sealed class Image : ObservableObject
+    public sealed class Image : ViewModelBase
     {
         private string _displayName;
         public string DisplayName
@@ -27,22 +32,51 @@ namespace MvvmScarletToolkit.Samples
         }
 
         private int _sequence;
+
         public int Sequence
         {
             get { return _sequence; }
             set { SetValue(ref _sequence, value); }
         }
 
-        public IAsyncCommand BusyCommand { get; }
-
-        public Image()
+        private BitmapSource _source;
+        public BitmapSource Source
         {
-            BusyCommand = AsyncCommand.Create(() => BeBusy());
+            get { return _source; }
+            private set { SetValue(ref _source, value); }
         }
 
-        private async Task BeBusy()
+        public ICommand LoadCommand { get; }
+
+        public Image(IScarletCommandBuilder commandBuilder)
+            : base(commandBuilder)
         {
-            await Task.Delay(5000);
+            LoadCommand = commandBuilder.Create(BeBusy, () => true)
+                .WithSingleExecution()
+                .Build();
+        }
+
+        private async Task BeBusy(CancellationToken token)
+        {
+            if (!File.Exists(_path) || _source != null)
+            {
+                return;
+            }
+
+            var image = await Task.Run(() => GetImage(_path), token);
+            await Dispatcher.Invoke(() => Source = image);
+        }
+
+        private static BitmapSource GetImage(string path)
+        {
+            using (var stream = File.OpenRead(path))
+            using (var img = new MagickImage(stream))
+            {
+                var source = img.ToBitmapSource();
+                source.Freeze();
+
+                return source;
+            }
         }
     }
 }
