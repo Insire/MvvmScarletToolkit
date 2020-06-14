@@ -1,5 +1,3 @@
-[back](../readme.md)
-
 # MvvmScarletToolkit.Wpf.FileSystemBrowser
 
 ## Goals

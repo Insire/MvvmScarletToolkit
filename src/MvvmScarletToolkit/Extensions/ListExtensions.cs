@@ -31,7 +31,7 @@ namespace MvvmScarletToolkit
 
         public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, IList<T2> updateCollection, Func<T1, T2, bool> comparer, Func<T2, T1> mapper, Action<T1, T2>? updater, Func<T1, bool> targetFilter, Func<T1, bool> ignoreItem)
         {
-            if (updateCollection == null)
+            if (updateCollection is null)
             {
                 return;
             }
@@ -54,14 +54,17 @@ namespace MvvmScarletToolkit
             Func<T1, bool> targetFilter,
             Func<T1, bool> ignoreItem)
         {
-            foreach (var targetItem in targetCollection.Where(targetFilter).ToArray())
+            var array = targetCollection.Where(targetFilter).ToArray();
+            for (var i = 0; i < array.Length; i++)
             {
+                var targetItem = array[i];
                 var updateItem = updateCollection.FirstOrDefault(u => comparer(targetItem, u));
-                if (updateItem == null && !ignoreItem(targetItem))
+                if (updateItem is null && !ignoreItem(targetItem))
                 {
                     itemsToRemove.Add(targetItem);
                     continue;
                 }
+
                 updater?.Invoke(targetItem, updateItem);
             }
         }

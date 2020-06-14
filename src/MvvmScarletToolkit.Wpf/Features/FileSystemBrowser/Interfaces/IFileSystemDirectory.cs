@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-
 namespace MvvmScarletToolkit
 {
-    public interface IFileSystemDirectory : IFileSystemInfo
+    public interface IFileSystemDirectory : IFileSystemParent, IFileSystemChild
     {
-        IReadOnlyCollection<IFileSystemInfo> Children { get; }
     }
 }

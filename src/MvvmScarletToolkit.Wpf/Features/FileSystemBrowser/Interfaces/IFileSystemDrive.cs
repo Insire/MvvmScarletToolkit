@@ -1,9 +1,15 @@
-using System.Collections.Generic;
+using MvvmScarletToolkit.Abstractions;
+using System.IO;
 
 namespace MvvmScarletToolkit
 {
-    public interface IFileSystemDrive : IFileSystemInfo
+    public interface IFileSystemDrive : IFileSystemParent
     {
-        IReadOnlyCollection<IFileSystemInfo> Children { get; }
+        string? DriveFormat { get; }
+        DriveType DriveType { get; }
+        bool IsReady { get; }
+        long AvailableFreeSpace { get; }
+        long TotalFreeSpace { get; }
+        long TotalSize { get; }
     }
 }

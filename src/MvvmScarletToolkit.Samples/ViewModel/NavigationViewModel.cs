@@ -1,5 +1,6 @@
-using MvvmScarletToolkit.Wpf.FileSystemBrowser;
 using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
+using MvvmScarletToolkit.Wpf.FileSystemBrowser;
 using System.Windows.Data;
 
 namespace MvvmScarletToolkit.Samples
@@ -17,7 +18,7 @@ namespace MvvmScarletToolkit.Samples
             Add(nameof(DataGridViewModel), dataGridViewModel);
             Add(nameof(ProgressViewModel), new ProgressViewModel(commandBuilder));
             Add("Snake", new DummySnakeViewModel());
-            Add("FileSystemBrowser", new FileSystemViewModel(commandBuilder, new FileSystemOptionsViewModel(commandBuilder)));
+            Add("FileSystemBrowser", new FileSystemViewModel(commandBuilder, new FileSystemViewModelFactory(commandBuilder), FileSystemOptionsViewModel.Default));
             Add("Busytree", new BusyViewModel(commandBuilder));
             Add("Text rendering", new TextDisplayViewModel(commandBuilder));
             Add(nameof(PasswordViewModel), new PasswordViewModel());
