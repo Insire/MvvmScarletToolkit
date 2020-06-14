@@ -20,7 +20,7 @@ namespace MvvmScarletToolkit.Samples
             base.OnStartup(e);
 
             _tracker.Configure<MainWindow>()
-                .Id(w => w.Name, System.Windows.Forms.SystemInformation.VirtualScreen.Size)
+                .Id(w => w.Name, $"[Width={SystemParameters.VirtualScreenWidth},Height{SystemParameters.VirtualScreenHeight}]")
                 .Properties(w => new { w.Height, w.Width, w.Left, w.Top, w.WindowState })
                 .PersistOn(nameof(Window.Closing))
                 .StopTrackingOn(nameof(Window.Closing));

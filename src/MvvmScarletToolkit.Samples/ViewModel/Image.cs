@@ -51,12 +51,12 @@ namespace MvvmScarletToolkit.Samples
         public Image(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            LoadCommand = commandBuilder.Create(BeBusy, () => true)
+            LoadCommand = commandBuilder.Create(Load, () => true)
                 .WithSingleExecution()
                 .Build();
         }
 
-        private async Task BeBusy(CancellationToken token)
+        private async Task Load(CancellationToken token)
         {
             if (!File.Exists(_path) || _source != null)
             {
