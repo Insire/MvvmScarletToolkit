@@ -346,7 +346,7 @@
                 <Setter Property="Padding" Value="1,0,0,0" />
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
                 <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}" />
-                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=OneWay}" />
+                <Setter Property="IsExpanded" Value="{Binding IsLoaded, Mode=OneWay}" />
                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                 <Setter Property="HorizontalContentAlignment" Value="Left" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -368,8 +368,8 @@
                                 <!--  Toggle  -->
                                 <ToggleButton x:Name="PART_Expander"
                                               ClickMode="Press"
-                                              Command="{Binding ToggleExpandCommand}"
-                                              IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                              Command="{Binding LoadCommand}"
+                                              IsChecked="{Binding IsLoaded, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
                                               Style="{StaticResource ExpandCollapseToggleStyle}" />
 
                                 <!--  Toggle Title  -->
@@ -385,20 +385,19 @@
                                         <ContentPresenter.Style>
                                             <Style TargetType="{x:Type ContentPresenter}">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsLoaded}" Value="True">
+                                                    <DataTrigger Binding="{Binding IsLoaded, Mode=OneWay}" Value="True">
                                                         <Setter Property="ToolTip">
                                                             <Setter.Value>
                                                                 <ToolTip>
                                                                     <StackPanel Orientation="Vertical">
                                                                         <TextBlock Text="{Binding Name, StringFormat={}Name: {0}, Mode=OneWay}" />
                                                                         <TextBlock Text="{Binding Count, StringFormat={}Children: {0}, Mode=OneWay}" />
-                                                                        <TextBlock Text="{Binding HasContainers, StringFormat={}HasContainers: {0}, Mode=OneWay}" />
                                                                     </StackPanel>
                                                                 </ToolTip>
                                                             </Setter.Value>
                                                         </Setter>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsLoaded}" Value="False">
+                                                    <DataTrigger Binding="{Binding IsLoaded, Mode=OneWay}" Value="False">
                                                         <Setter Property="ToolTip">
                                                             <Setter.Value>
                                                                 <ToolTip>
@@ -423,7 +422,7 @@
                             </Grid>
 
                             <ControlTemplate.Triggers>
-                                <DataTrigger Binding="{Binding IsExpanded}" Value="false">
+                                <DataTrigger Binding="{Binding IsLoaded, Mode=OneWay}" Value="false">
                                     <Setter TargetName="PART_ItemsHost" Property="Visibility" Value="Collapsed" />
                                 </DataTrigger>
                                 <Trigger Property="IsExpanded" Value="false">
@@ -453,8 +452,8 @@
 
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding IsLoaded}" Value="true" />
-                                        <Condition Binding="{Binding HasContainers}" Value="false" />
+                                        <Condition Binding="{Binding IsLoaded, Mode=OneWay}" Value="true" />
+                                        <Condition Binding="{Binding Count, Converter={local:SmallerThan 1}}" Value="True" />
                                     </MultiDataTrigger.Conditions>
                                     <Setter TargetName="PART_Expander" Property="Visibility" Value="Hidden" />
                                 </MultiDataTrigger>
@@ -490,15 +489,7 @@
                         <Setter Property="Visibility" Value="Visible" />
                     </DataTrigger>
 
-                    <DataTrigger Binding="{Binding IsHidden}" Value="false">
-                        <Setter Property="Visibility" Value="Visible" />
-                    </DataTrigger>
-
                     <DataTrigger Binding="{Binding IsContainer}" Value="false">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                    </DataTrigger>
-
-                    <DataTrigger Binding="{Binding IsHidden}" Value="true">
                         <Setter Property="Visibility" Value="Collapsed" />
                     </DataTrigger>
                 </Style.Triggers>
@@ -561,13 +552,21 @@
                                 </ContextMenu>
                             </TreeView.ContextMenu>
 
-                            <i:Interaction.Triggers>
+                            <i:Interaction.Behaviors>
+                                <local:SelectedTreeViewItemBehavior SelectedItem="{TemplateBinding SelectedItem}" />
+                            </i:Interaction.Behaviors>
+
+                            <!--<i:Interaction.Triggers>
                                 <i:EventTrigger EventName="SelectedItemChanged">
                                     <i:InvokeCommandAction Command="{Binding SelectCommand}" CommandParameter="{Binding SelectedItem, ElementName=PART_TreeView}" />
                                 </i:EventTrigger>
-                            </i:Interaction.Triggers>
+                            </i:Interaction.Triggers>-->
 
                             <TreeView.Resources>
+
+                                <CollectionViewSource x:Key="NoFilesCollectionView" Source="{Binding SelectedItem.Items, RelativeSource={RelativeSource AncestorType={x:Type browser:FileSystemBrowser}}}">
+                                </CollectionViewSource>
+
                                 <HierarchicalDataTemplate DataType="{x:Type browser:ScarletDirectory}" ItemsSource="{Binding NoFilesCollectionView}">
                                     <DockPanel ContextMenu="{StaticResource DefaultViewModelContextMenu}" IsEnabled="{Binding IsBusy, Converter={local:InvertBooleanConverter}}">
                                         <ContentControl ContentTemplate="{StaticResource FolderIconPath}" DockPanel.Dock="Left" />
@@ -603,7 +602,7 @@
                             <TextBox x:Name="SearchTermTextBox"
                                      VerticalAlignment="Center"
                                      AcceptsReturn="True"
-                                     Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged, Delay=350, Mode=TwoWay}"
+                                     Text="{TemplateBinding Filter}"
                                      ToolTip="Filter">
                                 <TextBox.InputBindings>
                                     <KeyBinding Key="Return" Command="{Binding RefreshFilterCommand}" />
@@ -684,8 +683,8 @@
                                     <Style.Triggers>
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Options.DisplayListView}" Value="True" />
-                                                <Condition Binding="{Binding SelectedItem.IsBusy}" Value="False" />
+                                                <Condition Binding="{Binding DisplayListView, RelativeSource={RelativeSource AncestorType={x:Type browser:FileSystemBrowser}}}" Value="True" />
+                                                <Condition Binding="{Binding SelectedItem.IsBusy, RelativeSource={RelativeSource AncestorType={x:Type browser:FileSystemBrowser}}}" Value="False" />
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Template">
                                                 <Setter.Value>
@@ -769,8 +768,8 @@
 
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Options.DisplayListView}" Value="False" />
-                                                <Condition Binding="{Binding SelectedItem.IsBusy}" Value="False" />
+                                                <Condition Binding="{Binding DisplayListView, RelativeSource={RelativeSource AncestorType={x:Type browser:FileSystemBrowser}}}" Value="False" />
+                                                <Condition Binding="{Binding SelectedItem.IsBusy, RelativeSource={RelativeSource AncestorType={x:Type browser:FileSystemBrowser}}}" Value="False" />
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Template">
                                                 <Setter.Value>

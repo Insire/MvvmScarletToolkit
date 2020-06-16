@@ -598,8 +598,8 @@
                                 <MenuItem Header="Move" />
                             </MenuItem>
                             <MenuItem Header="View">
-                                <MenuItem Command="{Binding Options.DisplayDetailsAsListCommand}" Header="As List" />
-                                <MenuItem Command="{Binding Options.DisplayDetailsAsIconsCommand}" Header="As Icons" />
+                                <!--<MenuItem Command="{Binding Options.DisplayDetailsAsListCommand}" Header="As List" />
+                                <MenuItem Command="{Binding Options.DisplayDetailsAsIconsCommand}" Header="As Icons" />-->
                             </MenuItem>
                             <MenuItem Header="Options" />
                             <MenuItem Header="Help">
