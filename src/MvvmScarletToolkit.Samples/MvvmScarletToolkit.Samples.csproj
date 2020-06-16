@@ -13,7 +13,7 @@
     <ItemGroup>
         <PackageReference Include="FluentValidation" Version="8.6.2" />
         <PackageReference Include="Jot" Version="2.1.6" />
-        <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="7.19.0" />
+        <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="7.19.0.1" />
         <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="1.0.1" />
     </ItemGroup>
 
