@@ -74,6 +74,51 @@
                         Content="{Binding ElementName=Scenes, Path=SelectedItem.Content, Converter={mvvm:DebugConverter}}">
             <ContentControl.Resources>
 
+                <DataTemplate DataType="{x:Type local:ValidationViewModels}">
+                    <DockPanel>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                        <ScrollViewer>
+
+                            <ItemsControl ItemsSource="{Binding Items}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type local:DataGridRowValidationViewModel}">
+                                        <DockPanel Margin="0,8">
+                                            <DockPanel.Resources>
+                                                <ControlTemplate x:Key="validationTemplate">
+                                                    <DockPanel>
+                                                        <TextBlock FontWeight="Bold" Foreground="Red">!</TextBlock>
+                                                        <AdornedElementPlaceholder />
+                                                    </DockPanel>
+                                                </ControlTemplate>
+
+                                                <Style TargetType="{x:Type TextBox}">
+                                                    <Setter Property="Validation.ErrorTemplate" Value="{StaticResource validationTemplate}" />
+                                                    <Style.Triggers>
+                                                        <Trigger Property="Validation.HasError" Value="true">
+                                                            <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)/ErrorContent}" />
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </DockPanel.Resources>
+
+                                            <TextBlock Margin="0,0,8,0"
+                                                       DockPanel.Dock="Left"
+                                                       Text="Color:" />
+
+                                            <TextBox Text="{Binding Color, Mode=OneWay, ValidatesOnNotifyDataErrors=True, ValidatesOnDataErrors=True}" />
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DockPanel>
+                </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:EnumViewModel}">
                     <DockPanel>
                         <StackPanel VerticalAlignment="Center"
