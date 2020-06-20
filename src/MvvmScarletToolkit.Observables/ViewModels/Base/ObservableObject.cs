@@ -13,6 +13,8 @@ namespace MvvmScarletToolkit.Observables
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        private string _typeName = string.Empty;
+
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
@@ -54,10 +56,13 @@ namespace MvvmScarletToolkit.Observables
 
         protected void LogMethodCall<T>([CallerMemberName] string? methodName = null)
         {
-            var type = typeof(T);
-            var name = type.GetGenericTypeName();
+            if (_typeName.Length == 0)
+            {
+                var type = typeof(T);
+                _typeName = type.GetGenericTypeName();
+            }
 
-            Debug.WriteLine($"{name}.{methodName}");
+            Debug.WriteLine($"{_typeName}.{methodName}");
         }
 
 #endif

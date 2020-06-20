@@ -7,7 +7,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     public sealed class FileSystemOptionsViewModel : ObservableObject
     {
-        private static readonly Lazy<FileSystemOptionsViewModel> _default = new Lazy<FileSystemOptionsViewModel>(() => new FileSystemOptionsViewModel(new[] { DriveType.Fixed, DriveType.Network }, FileAttributes.Normal, FileAttributes.Directory));
+        private static readonly Lazy<FileSystemOptionsViewModel> _default = new Lazy<FileSystemOptionsViewModel>(() => new FileSystemOptionsViewModel(new[] { DriveType.Fixed }, FileAttributes.Normal, FileAttributes.Directory));
 
         public static FileSystemOptionsViewModel Default => _default.Value;
 

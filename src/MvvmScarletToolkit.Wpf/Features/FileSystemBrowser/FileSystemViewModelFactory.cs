@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Wpf.FileSystemBrowser;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -13,10 +14,12 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
     public sealed class FileSystemViewModelFactory : IFileSystemViewModelFactory
     {
         private readonly IScarletCommandBuilder _commandBuilder;
+        private readonly ConcurrentDictionary<string, string> _noAccessLookup;
 
         public FileSystemViewModelFactory(IScarletCommandBuilder commandBuilder)
         {
             _commandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
+            _noAccessLookup = new ConcurrentDictionary<string, string>();
         }
 
         public Task<bool> IsEmpty(IFileSystemParent parent)
@@ -36,18 +39,39 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 return true;
             }
 
-            //var driveInfo = new DriveInfo(drive.FullName);
-            return IsDirectoryEmpty(drive.FullName);
+            return false;
         }
 
-        private static bool IsDirectoryEmpty(IFileSystemDirectory directory)
+        private bool IsDirectoryEmpty(IFileSystemDirectory directory)
         {
             return IsDirectoryEmpty(directory.FullName);
         }
 
-        private static bool IsDirectoryEmpty(string directoryPath)
+        private bool IsDirectoryEmpty(string directoryPath)
         {
-            return Directory.Exists(directoryPath) && !Directory.EnumerateFileSystemEntries(directoryPath).Any();
+            var result = true;
+            if (_noAccessLookup.ContainsKey(directoryPath))
+            {
+                return result;
+            }
+
+            try
+            {
+                if (Directory.Exists(directoryPath))
+                {
+                    var query = Directory.EnumerateFileSystemEntries(directoryPath);
+
+                    result = !query.Any();
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _noAccessLookup.TryAdd(directoryPath, directoryPath);
+
+                Debug.WriteLine(ex.Message);
+            }
+
+            return result;
         }
 
         public async Task<bool> CanAccess(IFileSystemChild child)
@@ -57,9 +81,14 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return can;
         }
 
-        private static bool CanAccess(string path)
+        private bool CanAccess(string path)
         {
-            var permission = new FileIOPermission(FileIOPermissionAccess.AllAccess, AccessControlActions.View, path);
+            if (_noAccessLookup.ContainsKey(path))
+            {
+                return false;
+            }
+
+            var permission = new FileIOPermission(FileIOPermissionAccess.Read, AccessControlActions.View, path);
 
             try
             {
@@ -68,7 +97,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             }
             catch (UnauthorizedAccessException ex)
             {
-                Debug.WriteLine($"{nameof(UnauthorizedAccessException)} occured during reading off {path}");
+                _noAccessLookup.TryAdd(path, path);
+
                 Debug.WriteLine(ex.Message);
 
                 return false;
@@ -111,19 +141,25 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
         private IEnumerable<IFileSystemDirectory> GetDirectoriesInternal(IFileSystemParent parent, FileAttributes fileAttributes, FileAttributes folderAttributes)
         {
+            if (_noAccessLookup.ContainsKey(parent.FullName))
+            {
+                return Enumerable.Empty<IFileSystemDirectory>();
+            }
+
             try
             {
                 var directories = Directory.GetDirectories(parent.FullName);
 
                 return directories
                             .Select(p => new DirectoryInfo(p))
-                            .Where(p => p.Attributes.HasFlag(FileAttributes.Directory))
+                            .Where(p => p.Attributes.HasFlag(folderAttributes) && !p.Attributes.HasFlag(FileAttributes.System))
                             .Select(p => new ScarletDirectory(p, fileAttributes, folderAttributes, parent, _commandBuilder, this));
             }
             catch (UnauthorizedAccessException ex)
             {
-                Debug.WriteLine($"{nameof(UnauthorizedAccessException)} occured during reading off {parent.FullName}");
                 Debug.WriteLine(ex.Message);
+
+                _noAccessLookup.TryAdd(parent.FullName, parent.FullName);
             }
 
             return Enumerable.Empty<IFileSystemDirectory>();
@@ -138,6 +174,11 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
         private IEnumerable<IFileSystemFile> GetFilesInternal(IFileSystemParent parent, FileAttributes fileAttributes)
         {
+            if (_noAccessLookup.ContainsKey(parent.FullName))
+            {
+                return Enumerable.Empty<IFileSystemFile>();
+            }
+
             try
             {
                 return Directory.GetFiles(parent.FullName)
@@ -147,8 +188,9 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             }
             catch (UnauthorizedAccessException ex)
             {
-                Debug.WriteLine($"{nameof(UnauthorizedAccessException)} occured during reading off {parent.FullName}");
                 Debug.WriteLine(ex.Message);
+
+                _noAccessLookup.TryAdd(parent.FullName, parent.FullName);
             }
 
             return Enumerable.Empty<IFileSystemFile>();

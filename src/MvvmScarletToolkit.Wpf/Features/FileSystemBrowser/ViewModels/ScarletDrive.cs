@@ -129,7 +129,14 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
             var children = await _factory.GetChildren(this, _fileAttributes, _folderAttributes);
 
-            // TODO update children
+            if (!IsLoaded)
+            {
+                await AddRange(children);
+            }
+            else
+            {
+                await Dispatcher.Invoke(() => Items.UpdateItems(children, FileSystemViewModelFactoryExtensions.IFileSystemChildComparer, FileSystemViewModelFactoryExtensions.IFileSystemChildMapper));
+            }
         }
     }
 }

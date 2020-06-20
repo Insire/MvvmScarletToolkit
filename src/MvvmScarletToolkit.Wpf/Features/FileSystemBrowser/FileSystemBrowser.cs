@@ -9,6 +9,31 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     public class FileSystemBrowser : Control
     {
+        private static bool FilterAllFiles(object obj)
+        {
+            return obj is IFileSystemFile;
+        }
+
+        private bool FilterByName(object obj)
+        {
+            if (!(obj is IFileSystemInfo info))
+            {
+                return false;
+            }
+
+            if (info.IsBusy)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(Filter))
+            {
+                return true;
+            }
+
+            return info.Name.IndexOf(Filter, StringComparison.InvariantCultureIgnoreCase) >= 0;
+        }
+
         public string Filter
         {
             get { return (string)GetValue(FilterProperty); }
@@ -31,6 +56,19 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         /// <summary>Identifies the <see cref="FilterAction"/> dependency property.</summary>
         public static readonly DependencyProperty FilterActionProperty = DependencyProperty.Register(
             nameof(FilterAction),
+            typeof(Predicate<object>),
+            typeof(FileSystemBrowser),
+            new PropertyMetadata(default(Predicate<object>)));
+
+        public Predicate<object> NoFilesFilter
+        {
+            get { return (Predicate<object>)GetValue(NoFilesFilterProperty); }
+            set { SetValue(NoFilesFilterProperty, value); }
+        }
+
+        /// <summary>Identifies the <see cref="NoFilesFilter"/> dependency property.</summary>
+        public static readonly DependencyProperty NoFilesFilterProperty = DependencyProperty.Register(
+            nameof(NoFilesFilter),
             typeof(Predicate<object>),
             typeof(FileSystemBrowser),
             new PropertyMetadata(default(Predicate<object>)));
@@ -84,6 +122,9 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         {
             DisplayDetailsAsListCommand = new RelayCommand(ScarletCommandBuilder.Default, ToggleAsListViewInternal);
             DisplayDetailsAsIconsCommand = new RelayCommand(ScarletCommandBuilder.Default, ToggleAsIconsInternal);
+
+            SetCurrentValue(NoFilesFilterProperty, new Predicate<object>(FilterAllFiles));
+            SetCurrentValue(FilterActionProperty, new Predicate<object>(FilterByName));
         }
 
         private void ToggleAsListViewInternal()

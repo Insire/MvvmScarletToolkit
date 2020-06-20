@@ -36,5 +36,15 @@ namespace MvvmScarletToolkit
 
             return results;
         }
+
+        internal static bool IFileSystemChildComparer(IFileSystemChild current, IFileSystemChild other)
+        {
+            return current.FullName == other.FullName && current.Exists == other.Exists;
+        }
+
+        internal static IFileSystemChild IFileSystemChildMapper(IFileSystemChild child)
+        {
+            return child;
+        }
     }
 }
