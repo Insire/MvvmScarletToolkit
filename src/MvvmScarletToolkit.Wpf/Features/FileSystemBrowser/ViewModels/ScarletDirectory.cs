@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Observables;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -12,8 +13,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
     public sealed class ScarletDirectory : BusinessViewModelListBase<IFileSystemChild>, IFileSystemDirectory
     {
         private readonly IFileSystemViewModelFactory _factory;
-        private readonly FileAttributes _fileAttributes;
-        private readonly FileAttributes _folderAttributes;
+        private readonly IReadOnlyCollection<FileAttributes> _fileAttributes;
+        private readonly IReadOnlyCollection<FileAttributes> _folderAttributes;
 
         private IFileSystemParent? _parent;
         [Bindable(true, BindingDirection.OneWay)]
@@ -90,7 +91,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsContainer { get; }
 
-        public ScarletDirectory(DirectoryInfo info, FileAttributes fileAttributes, FileAttributes folderAttributes, IFileSystemParent parent, IScarletCommandBuilder commandBuilder, IFileSystemViewModelFactory factory)
+        public ScarletDirectory(DirectoryInfo info, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes, IFileSystemParent parent, IScarletCommandBuilder commandBuilder, IFileSystemViewModelFactory factory)
             : base(commandBuilder)
         {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));

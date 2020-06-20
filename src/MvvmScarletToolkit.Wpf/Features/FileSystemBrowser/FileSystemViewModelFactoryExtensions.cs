@@ -7,7 +7,7 @@ namespace MvvmScarletToolkit
 {
     public static class FileSystemViewModelFactoryExtensions
     {
-        public static async Task<IReadOnlyCollection<IFileSystemChild>> GetChildren(this IFileSystemViewModelFactory factory, IFileSystemDirectory parent, FileAttributes fileAttributes, FileAttributes folderAttributes)
+        public static async Task<IReadOnlyCollection<IFileSystemChild>> GetChildren(this IFileSystemViewModelFactory factory, IFileSystemDirectory parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
         {
             var canAccess = await factory.CanAccess(parent);
             if (!canAccess)
@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit
             return await factory.GetChildren((IFileSystemParent)parent, fileAttributes, folderAttributes);
         }
 
-        public static async Task<IReadOnlyCollection<IFileSystemChild>> GetChildren(this IFileSystemViewModelFactory factory, IFileSystemParent parent, FileAttributes fileAttributes, FileAttributes folderAttributes)
+        public static async Task<IReadOnlyCollection<IFileSystemChild>> GetChildren(this IFileSystemViewModelFactory factory, IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
         {
             if (await factory.IsEmpty(parent))
             {

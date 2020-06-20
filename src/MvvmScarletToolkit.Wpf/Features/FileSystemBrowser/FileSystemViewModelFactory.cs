@@ -105,14 +105,14 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             }
         }
 
-        public async Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(IReadOnlyCollection<DriveType> types, FileAttributes fileAttributes, FileAttributes folderAttributes)
+        public async Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(IReadOnlyCollection<DriveType> types, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
         {
             var drives = await Task.Run(() => GetDrivesInternal(types, fileAttributes, folderAttributes).ToList());
 
             return drives;
         }
 
-        private IEnumerable<IFileSystemDrive> GetDrivesInternal(IReadOnlyCollection<DriveType> types, FileAttributes fileAttributes, FileAttributes folderAttributes)
+        private IEnumerable<IFileSystemDrive> GetDrivesInternal(IReadOnlyCollection<DriveType> types, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
         {
             if (types.Count == 0)
             {
@@ -132,14 +132,14 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 .Select(p => new ScarletDrive(p, _commandBuilder, this, fileAttributes, folderAttributes));
         }
 
-        public async Task<IReadOnlyCollection<IFileSystemDirectory>> GetDirectories(IFileSystemParent parent, FileAttributes fileAttributes, FileAttributes folderAttributes)
+        public async Task<IReadOnlyCollection<IFileSystemDirectory>> GetDirectories(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
         {
             var directories = await Task.Run(() => GetDirectoriesInternal(parent, fileAttributes, folderAttributes).ToList());
 
             return directories;
         }
 
-        private IEnumerable<IFileSystemDirectory> GetDirectoriesInternal(IFileSystemParent parent, FileAttributes fileAttributes, FileAttributes folderAttributes)
+        private IEnumerable<IFileSystemDirectory> GetDirectoriesInternal(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
         {
             if (_noAccessLookup.ContainsKey(parent.FullName))
             {
@@ -148,12 +148,13 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
             try
             {
-                var directories = Directory.GetDirectories(parent.FullName);
+                var directoryInfos = Directory
+                    .GetDirectories(parent.FullName)
+                    .Select(p => new DirectoryInfo(p));
 
-                return directories
-                            .Select(p => new DirectoryInfo(p))
-                            .Where(p => p.Attributes.HasFlag(folderAttributes) && !p.Attributes.HasFlag(FileAttributes.System))
-                            .Select(p => new ScarletDirectory(p, fileAttributes, folderAttributes, parent, _commandBuilder, this));
+                return directoryInfos
+                    .Where(p => folderAttributes.Any(q => p.Attributes.HasFlag(q)))
+                    .Select(p => new ScarletDirectory(p, fileAttributes, folderAttributes, parent, _commandBuilder, this));
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -165,14 +166,14 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return Enumerable.Empty<IFileSystemDirectory>();
         }
 
-        public async Task<IReadOnlyCollection<IFileSystemFile>> GetFiles(IFileSystemParent parent, FileAttributes fileAttributes)
+        public async Task<IReadOnlyCollection<IFileSystemFile>> GetFiles(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes)
         {
             var files = await Task.Run(() => GetFilesInternal(parent, fileAttributes).ToList());
 
             return files;
         }
 
-        private IEnumerable<IFileSystemFile> GetFilesInternal(IFileSystemParent parent, FileAttributes fileAttributes)
+        private IEnumerable<IFileSystemFile> GetFilesInternal(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes)
         {
             if (_noAccessLookup.ContainsKey(parent.FullName))
             {
@@ -181,10 +182,13 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
             try
             {
-                return Directory.GetFiles(parent.FullName)
-                        .Select(p => new FileInfo(p))
-                        .Where(p => p.Attributes.HasFlag(fileAttributes))
-                        .Select(p => new ScarletFile(p, parent, _commandBuilder));
+                var fileInfos = Directory
+                    .GetFiles(parent.FullName)
+                    .Select(p => new FileInfo(p));
+
+                return fileInfos
+                    .Where(p => fileAttributes.Any(q => p.Attributes.HasFlag(q)))
+                    .Select(p => new ScarletFile(p, parent, _commandBuilder));
             }
             catch (UnauthorizedAccessException ex)
             {

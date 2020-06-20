@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Observables;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -12,8 +13,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
     public sealed class ScarletDrive : BusinessViewModelListBase<IFileSystemChild>, IFileSystemDrive
     {
         private readonly IFileSystemViewModelFactory _factory;
-        private readonly FileAttributes _fileAttributes;
-        private readonly FileAttributes _folderAttributes;
+        private readonly IReadOnlyCollection<FileAttributes> _fileAttributes;
+        private readonly IReadOnlyCollection<FileAttributes> _folderAttributes;
 
         private string? _driveFormat;
         [Bindable(true, BindingDirection.OneWay)]
@@ -90,7 +91,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsContainer { get; }
 
-        public ScarletDrive(DriveInfo info, IScarletCommandBuilder commandBuilder, IFileSystemViewModelFactory factory, FileAttributes fileAttributes, FileAttributes folderAttributes)
+        public ScarletDrive(DriveInfo info, IScarletCommandBuilder commandBuilder, IFileSystemViewModelFactory factory, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
             : base(commandBuilder)
         {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));

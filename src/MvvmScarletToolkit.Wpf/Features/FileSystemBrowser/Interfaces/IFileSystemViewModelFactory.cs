@@ -6,11 +6,11 @@ namespace MvvmScarletToolkit
 {
     public interface IFileSystemViewModelFactory
     {
-        Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(IReadOnlyCollection<DriveType> types, FileAttributes fileAttributes, FileAttributes folderAttributes);
+        Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(IReadOnlyCollection<DriveType> types, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes);
 
-        Task<IReadOnlyCollection<IFileSystemDirectory>> GetDirectories(IFileSystemParent parent, FileAttributes fileAttributes, FileAttributes folderAttributes);
+        Task<IReadOnlyCollection<IFileSystemDirectory>> GetDirectories(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes);
 
-        Task<IReadOnlyCollection<IFileSystemFile>> GetFiles(IFileSystemParent parent, FileAttributes fileAttributes);
+        Task<IReadOnlyCollection<IFileSystemFile>> GetFiles(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes);
 
         Task<bool> IsEmpty(IFileSystemParent parent);
 
