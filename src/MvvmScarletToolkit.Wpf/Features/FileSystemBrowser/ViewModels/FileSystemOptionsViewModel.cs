@@ -17,7 +17,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         public FileSystemOptionsViewModel(IReadOnlyCollection<DriveType> driveTypes, FileAttributes fileAttributes, FileAttributes folderAttributes)
         {
-            DriveTypes = driveTypes ?? throw new System.ArgumentNullException(nameof(driveTypes));
+            DriveTypes = driveTypes ?? throw new ArgumentNullException(nameof(driveTypes));
             FileAttributes = fileAttributes;
             FolderAttributes = folderAttributes;
         }

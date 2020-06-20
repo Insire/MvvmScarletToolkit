@@ -553,7 +553,7 @@
                             </TreeView.ContextMenu>
 
                             <i:Interaction.Behaviors>
-                                <local:SelectedTreeViewItemBehavior SelectedItem="{TemplateBinding SelectedItem}" />
+                                <local:SelectedTreeViewItemBehavior SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type browser:FileSystemBrowser}}}" />
                             </i:Interaction.Behaviors>
 
                             <!--<i:Interaction.Triggers>
