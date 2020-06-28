@@ -8,6 +8,7 @@
         xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
         xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        Name="MainWindowRoot"
         Title="MvvmScarletToolkit.Samples"
         Width="1025"
         Height="350">
@@ -16,6 +17,7 @@
 
     <Grid>
         <Grid.Resources>
+            <mvvm:BindingProxy x:Key="MainWindowRootProxy" Data="{Binding ElementName=MainWindowRoot}" />
             <system:Decimal x:Key="Num">2</system:Decimal>
             <mvvm:NullValueConverter x:Key="NullValueConverter" />
             <DataTemplate DataType="{x:Type observables:LocalizationViewModel}">
@@ -28,6 +30,17 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StatusBar Grid.Row="1">
+            <StatusBarItem>
+                <TextBlock Text="{Binding Data.Tracker, Source={StaticResource MainWindowRootProxy}}" />
+            </StatusBarItem>
+        </StatusBar>
 
         <DockPanel Grid.Column="0">
             <ListBox x:Name="Scenes"
