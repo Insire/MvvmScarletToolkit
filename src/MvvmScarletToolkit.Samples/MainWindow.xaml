@@ -40,6 +40,10 @@
             <StatusBarItem>
                 <TextBlock Text="{Binding Data.Tracker, Source={StaticResource MainWindowRootProxy}}" />
             </StatusBarItem>
+
+            <StatusBarItem>
+                <TextBlock Text="{Binding Tracker, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
+            </StatusBarItem>
         </StatusBar>
 
         <DockPanel Grid.Column="0">
