@@ -693,11 +693,9 @@
                                                             <ContentPresenter.Resources>
                                                                 <local:TypeDataTemplateSelector x:Key="TypeDataTemplateSelector">
                                                                     <local:TypeDataTemplateSelector.Templates>
-                                                                        <local:DataTemplateCollection>
                                                                             <StaticResource ResourceKey="FolderIconPath" />
                                                                             <StaticResource ResourceKey="DriveIconPath" />
                                                                             <StaticResource ResourceKey="FileIconPath" />
-                                                                        </local:DataTemplateCollection>
                                                                     </local:TypeDataTemplateSelector.Templates>
                                                                 </local:TypeDataTemplateSelector>
 

@@ -36,7 +36,7 @@ namespace MvvmScarletToolkit
 
         public void HandleEvent(object sender, object args, string eventName)
         {
-            var toRaise = new List<(object subscriber, MethodInfo handler)>();
+            var toRaise = new List<(object? subscriber, MethodInfo handler)>();
             var toRemove = new List<Subscription>();
 
             if (_eventHandlers.TryGetValue(eventName, out var target))
@@ -52,7 +52,7 @@ namespace MvvmScarletToolkit
                         continue;
                     }
 
-                    var subscriber = subscription.Subscriber.Target;
+                    var subscriber = subscription.Subscriber?.Target;
 
                     if (subscriber == null)
                         // The subscriber was collected, so there's no need to keep this subscription around
@@ -109,7 +109,7 @@ namespace MvvmScarletToolkit
             if (handlerTarget == null)
             {
                 // This event handler is a static method
-                targets.Add(new Subscription(null, methodInfo));
+                targets.Add(new Subscription(default, methodInfo));
                 return;
             }
 
@@ -135,14 +135,14 @@ namespace MvvmScarletToolkit
 
         private struct Subscription
         {
-            public Subscription(WeakReference subscriber, MethodInfo handler)
+            public readonly WeakReference? Subscriber;
+            public readonly MethodInfo Handler;
+
+            public Subscription(WeakReference? subscriber, MethodInfo handler)
             {
                 Subscriber = subscriber;
                 Handler = handler ?? throw new ArgumentNullException(nameof(handler));
             }
-
-            public readonly WeakReference Subscriber;
-            public readonly MethodInfo Handler;
         }
     }
 }
