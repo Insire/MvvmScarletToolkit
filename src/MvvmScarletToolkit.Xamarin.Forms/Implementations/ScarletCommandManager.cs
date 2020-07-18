@@ -10,6 +10,10 @@ namespace MvvmScarletToolkit
 
         public event EventHandler? RequerySuggested;
 
+        public ScarletCommandManager()
+        {
+        }
+
         public void InvalidateRequerySuggested()
         {
             RequerySuggested?.Invoke(this, EventArgs.Empty);

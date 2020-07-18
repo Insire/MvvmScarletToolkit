@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Commands
 
         public CancellationToken Token => _cts?.Token ?? CancellationToken.None;
 
-        public ConcurrentCancelCommand(IScarletCommandManager commandManager)
+        public ConcurrentCancelCommand(in IScarletCommandManager commandManager)
             : base(commandManager)
         {
         }

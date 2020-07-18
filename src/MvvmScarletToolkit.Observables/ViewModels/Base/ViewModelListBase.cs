@@ -57,7 +57,7 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand RemoveCommand { get; }
 
-        protected ViewModelListBase(IScarletCommandBuilder commandBuilder)
+        protected ViewModelListBase(in IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             _items = new ObservableCollection<TViewModel>();

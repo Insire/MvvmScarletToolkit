@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit.Observables
             set { SetValue(ref _displayName, value); }
         }
 
-        public EnumViewModel(T value, string? displayName)
+        public EnumViewModel(in T value, in string? displayName)
             : base(value)
         {
             _displayName = displayName ?? "Undefined";

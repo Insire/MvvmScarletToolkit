@@ -49,7 +49,7 @@ namespace MvvmScarletToolkit.Observables
             GC.SuppressFinalize(this);
         }
 
-        protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected override void OnPropertyChanged([CallerMemberName] in string? propertyName = null)
         {
             OnPropertyChanged(_propertyChangedCache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
         }

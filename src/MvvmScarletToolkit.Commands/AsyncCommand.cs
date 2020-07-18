@@ -41,7 +41,7 @@ namespace MvvmScarletToolkit.Commands
             }
         }
 
-        public AsyncCommand(IScarletCommandManager commandManager, Func<TArgument, CancellationToken, Task> methodToExecute)
+        public AsyncCommand(in IScarletCommandManager commandManager, in Func<TArgument, CancellationToken, Task> methodToExecute)
         {
             _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
             _cancelCommand = new CancelCommand(commandManager);
@@ -52,7 +52,7 @@ namespace MvvmScarletToolkit.Commands
             _execution = NotifyTaskCompletion.Completed;
         }
 
-        public AsyncCommand(IScarletCommandManager commandManager, Func<TArgument, CancellationToken, Task> methodToExecute, Func<TArgument, bool> canExecute)
+        public AsyncCommand(in IScarletCommandManager commandManager, in Func<TArgument, CancellationToken, Task> methodToExecute, in Func<TArgument, bool> canExecute)
         {
             _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
             _cancelCommand = new CancelCommand(commandManager);
@@ -106,7 +106,7 @@ namespace MvvmScarletToolkit.Commands
             RaiseCanExecuteChanged();
         }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] in string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

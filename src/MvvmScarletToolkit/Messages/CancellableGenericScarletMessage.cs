@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit
     {
         public Action Cancel { get; }
 
-        public CancellableGenericScarletMessage(object sender, TContent content, Action cancelAction)
+        public CancellableGenericScarletMessage(in object sender, in TContent content, in Action cancelAction)
             : base(sender, content)
         {
             Cancel = cancelAction ?? throw new ArgumentNullException(nameof(cancelAction));

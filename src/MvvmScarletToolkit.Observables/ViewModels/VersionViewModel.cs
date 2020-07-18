@@ -40,12 +40,12 @@ namespace MvvmScarletToolkit.Observables
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
-        public VersionViewModel(T defaultValue)
+        public VersionViewModel(in T defaultValue)
         {
             Default = defaultValue;
         }
 
-        public VersionViewModel(T defaultValue, T current)
+        public VersionViewModel(in T defaultValue, in T current)
         {
             Default = defaultValue;
             Current = current;

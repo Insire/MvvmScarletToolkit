@@ -3,11 +3,7 @@ using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Abstractions
 {
-    public interface IBusinessViewModelListBase : IVirtualizationViewModel
-    {
-    }
-
-    public interface IBusinessViewModelListBase<TViewModel> : IBusinessViewModelListBase
+    public interface IBusinessViewModelListBase<TViewModel> : IVirtualizationViewModel
         where TViewModel : class, INotifyPropertyChanged
     {
         ReadOnlyObservableCollection<TViewModel> Items { get; }

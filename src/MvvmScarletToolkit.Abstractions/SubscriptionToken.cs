@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Abstractions
     {
         private readonly WeakReference _hub;
 
-        public SubscriptionToken(IScarletMessenger hub)
+        public SubscriptionToken(in IScarletMessenger hub)
         {
             if (hub is null)
             {

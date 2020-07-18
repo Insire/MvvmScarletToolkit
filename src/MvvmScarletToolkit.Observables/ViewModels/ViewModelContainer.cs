@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit.Observables
             set { SetValue(ref _value, value); }
         }
 
-        public ViewModelContainer(T value)
+        public ViewModelContainer(in T value)
         {
             _value = value;
         }

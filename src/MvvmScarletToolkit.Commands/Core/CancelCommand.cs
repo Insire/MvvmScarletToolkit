@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit.Commands
 
         public CancellationToken Token => _cts?.Token ?? CancellationToken.None;
 
-        public CancelCommand(IScarletCommandManager commandManager)
+        public CancelCommand(in IScarletCommandManager commandManager)
         {
             _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
         }

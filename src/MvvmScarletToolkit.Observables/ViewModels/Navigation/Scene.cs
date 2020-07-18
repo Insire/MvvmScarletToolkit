@@ -26,16 +26,11 @@ namespace MvvmScarletToolkit.Observables
             set { SetValue(ref _sequence, value); }
         }
 
-        private ILocalizationViewModel _localization;
-        public ILocalizationViewModel Localization
-        {
-            get { return _localization; }
-            private set { SetValue(ref _localization, value); }
-        }
+        public ILocalizationViewModel Localization { get; }
 
-        public Scene(ILocalizationViewModel localizationViewModel)
+        public Scene(in ILocalizationViewModel localizationViewModel)
         {
-            _localization = localizationViewModel ?? throw new ArgumentNullException(nameof(localizationViewModel));
+            Localization = localizationViewModel ?? throw new ArgumentNullException(nameof(localizationViewModel));
         }
     }
 }

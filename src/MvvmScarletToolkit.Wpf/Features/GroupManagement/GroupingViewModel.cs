@@ -43,7 +43,7 @@ namespace MvvmScarletToolkit
                 .Build();
 
             RemoveCommand = commandBuilder
-                .Create<GroupsViewModel>(p => Remove(p), CanRemove)
+                .Create<GroupsViewModel>((p, t) => Remove(p, t), (p) => CanRemove(p))
                 .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithCancellation()

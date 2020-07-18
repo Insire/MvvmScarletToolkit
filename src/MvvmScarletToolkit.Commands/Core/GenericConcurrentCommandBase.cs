@@ -25,7 +25,7 @@ namespace MvvmScarletToolkit.Commands
             }
         }
 
-        protected GenericConcurrentCommandBase(IScarletCommandManager commandManager)
+        protected GenericConcurrentCommandBase(in IScarletCommandManager commandManager)
             : base(commandManager)
         {
             _execution = NotifyTaskCompletion.Completed;

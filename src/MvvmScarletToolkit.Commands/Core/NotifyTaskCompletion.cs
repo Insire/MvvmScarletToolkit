@@ -40,7 +40,7 @@ namespace MvvmScarletToolkit.Commands
         public Task Task { get; }
         public Task TaskCompletion { get; }
 
-        public NotifyTaskCompletion(Task task)
+        public NotifyTaskCompletion(in Task task)
         {
             Task = task ?? throw new ArgumentNullException(nameof(task));
 
@@ -100,7 +100,7 @@ namespace MvvmScarletToolkit.Commands
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] in string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

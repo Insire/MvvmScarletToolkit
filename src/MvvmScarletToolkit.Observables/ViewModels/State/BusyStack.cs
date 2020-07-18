@@ -15,7 +15,7 @@ namespace MvvmScarletToolkit.Observables
         private readonly Action<bool> _onChanged;
         private readonly IScarletDispatcher _dispatcher;
 
-        public BusyStack(Action<bool> onChanged, IScarletDispatcher dispatcher)
+        public BusyStack(in Action<bool> onChanged, in IScarletDispatcher dispatcher)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));

@@ -16,39 +16,19 @@ namespace MvvmScarletToolkit.Observables
 
         private bool _disposed;
 
-        public LocalizationViewModel(IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, ILocalizationService service, string key, bool toUpper)
+        public LocalizationViewModel(in IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, in ILocalizationService service, in string key)
+            : this(weakEventManager, service, key, false)
+        {
+        }
+
+        public LocalizationViewModel(in IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, in ILocalizationService service, in string key, in bool toUpper)
         {
             _weakEventManager = weakEventManager ?? throw new ArgumentNullException(nameof(weakEventManager));
             _service = service ?? throw new ArgumentNullException(nameof(service));
             _key = key ?? throw new ArgumentNullException(nameof(key));
             _toUpper = toUpper;
 
-            _weakEventManager.AddHandler(_service, "PropertyChanged", ValueChanged);
-        }
-
-        public LocalizationViewModel(IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, ILocalizationService service, string key)
-            : this(weakEventManager, service, key, false)
-        {
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                _weakEventManager.RemoveHandler(_service, "PropertyChanged", ValueChanged);
-            }
-
-            _disposed = true;
+            _weakEventManager.AddHandler(_service, nameof(ILocalizationService.PropertyChanged), ValueChanged);
         }
 
         public object Value => GetValue();
@@ -71,6 +51,26 @@ namespace MvvmScarletToolkit.Observables
             }
 
             return _service?.Translate(_key) ?? _key;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                _weakEventManager.RemoveHandler(_service, nameof(ILocalizationService.PropertyChanged), ValueChanged);
+            }
+
+            _disposed = true;
         }
     }
 }

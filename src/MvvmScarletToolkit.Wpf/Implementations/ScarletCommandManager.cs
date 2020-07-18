@@ -18,6 +18,10 @@ namespace MvvmScarletToolkit
             remove { CommandManager.RequerySuggested -= value; }
         }
 
+        public ScarletCommandManager()
+        {
+        }
+
         public void InvalidateRequerySuggested()
         {
             CommandManager.InvalidateRequerySuggested();

@@ -15,27 +15,27 @@ namespace MvvmScarletToolkit.Observables
 
         private string _typeName = string.Empty;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] in string? propertyName = null)
         {
             OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 
-        protected void OnPropertyChanged(PropertyChangedEventArgs args)
+        protected void OnPropertyChanged(in PropertyChangedEventArgs args)
         {
             PropertyChanged?.Invoke(this, args);
         }
 
-        protected bool SetValue<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        protected bool SetValue<T>(ref T field, in T value, [CallerMemberName] in string? propertyName = null)
         {
             return SetValue(ref field, value, null, null, propertyName);
         }
 
-        protected bool SetValue<T>(ref T field, T value, Action? onChanged, [CallerMemberName] string? propertyName = null)
+        protected bool SetValue<T>(ref T field, in T value, in Action? onChanged, [CallerMemberName] in string? propertyName = null)
         {
             return SetValue(ref field, value, null, onChanged, propertyName);
         }
 
-        protected virtual bool SetValue<T>(ref T field, T value, Action? onChanging, Action? onChanged, [CallerMemberName] string? propertyName = null)
+        protected virtual bool SetValue<T>(ref T field, in T value, in Action? onChanging, in Action? onChanged, [CallerMemberName] in string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
@@ -54,7 +54,7 @@ namespace MvvmScarletToolkit.Observables
 
 #if DEBUG
 
-        protected void LogMethodCall<T>([CallerMemberName] string? methodName = null)
+        protected void LogMethodCall<T>([CallerMemberName] in string? methodName = null)
         {
             if (_typeName.Length == 0)
             {

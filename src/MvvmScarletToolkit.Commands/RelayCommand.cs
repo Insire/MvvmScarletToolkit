@@ -18,23 +18,23 @@ namespace MvvmScarletToolkit.Commands
             remove { _commandManager.RequerySuggested -= value; }
         }
 
-        public RelayCommand(IScarletCommandBuilder? commandBuilder, Action methodToExecute)
+        public RelayCommand(in IScarletCommandBuilder? commandBuilder, in Action methodToExecute)
             : this(commandBuilder?.CommandManager, methodToExecute)
         {
         }
 
-        public RelayCommand(IScarletCommandBuilder? commandBuilder, Action methodToExecute, Func<bool> canExecuteEvaluator)
+        public RelayCommand(in IScarletCommandBuilder? commandBuilder, in Action methodToExecute, in Func<bool> canExecuteEvaluator)
             : this(commandBuilder?.CommandManager, methodToExecute, canExecuteEvaluator)
         {
         }
 
-        public RelayCommand(IScarletCommandManager? commandManager, Action methodToExecute)
+        public RelayCommand(in IScarletCommandManager? commandManager, in Action methodToExecute)
         {
             _execute = methodToExecute ?? throw new ArgumentNullException($"{nameof(methodToExecute)} can't be empty.", nameof(methodToExecute));
             _commandManager = commandManager ?? throw new ArgumentNullException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
         }
 
-        public RelayCommand(IScarletCommandManager? commandManager, Action methodToExecute, Func<bool>? canExecute)
+        public RelayCommand(in IScarletCommandManager? commandManager, in Action methodToExecute, in Func<bool>? canExecute)
             : this(commandManager, methodToExecute)
         {
             _canExecute = canExecute ?? throw new ArgumentNullException($"{nameof(canExecute)} can't be empty.", nameof(canExecute));

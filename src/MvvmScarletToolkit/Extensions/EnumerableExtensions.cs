@@ -11,12 +11,12 @@ namespace MvvmScarletToolkit
     {
         private const int Multiplier = 2;
 
-        public static Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody)
+        public static Task ForEachAsync<T>(this IEnumerable<T> source, in Func<T, Task> funcBody)
         {
             return source.ForEachAsync(funcBody, Environment.ProcessorCount * Multiplier, CancellationToken.None);
         }
 
-        public static Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, CancellationToken token)
+        public static Task ForEachAsync<T>(this IEnumerable<T> source, in Func<T, Task> funcBody, in CancellationToken token)
         {
             return source.ForEachAsync(funcBody, Environment.ProcessorCount * Multiplier, token);
         }
@@ -38,12 +38,12 @@ namespace MvvmScarletToolkit
                     .Select(AwaitPartition));
         }
 
-        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> collection, Action<T> action)
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> collection, in Action<T> action)
         {
             return collection.ForEach(action, CancellationToken.None);
         }
 
-        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> collection, Action<T> action, CancellationToken token)
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> collection, in Action<T> action, in CancellationToken token)
         {
             foreach (var item in collection)
             {

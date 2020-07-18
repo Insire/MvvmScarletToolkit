@@ -19,7 +19,7 @@ namespace MvvmScarletToolkit
 
         private Task _shutDown = Task.CompletedTask;
 
-        public ScarletExitService(Application app, ScarletDispatcher dispatcher)
+        public ScarletExitService(in Application app, in ScarletDispatcher dispatcher)
         {
             _viewModels = new ConcurrentQueue<IVirtualizationViewModel>();
 

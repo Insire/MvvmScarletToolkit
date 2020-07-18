@@ -31,7 +31,7 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// Provide a custom implementation of <see cref="ICancelCommand"/>
         /// </summary>
-        public static CommandBuilderContext<TArgument> WithCustomCancellation<TArgument>(this CommandBuilderContext<TArgument> context, ICancelCommand cancelCommand)
+        public static CommandBuilderContext<TArgument> WithCustomCancellation<TArgument>(this CommandBuilderContext<TArgument> context, in ICancelCommand cancelCommand)
         {
             ValdiateContextForNull(context);
 
@@ -47,7 +47,7 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// Provide a custom implementation of <see cref="IBusyStack"/>
         /// </summary>
-        public static CommandBuilderContext<TArgument> WithBusyNotification<TArgument>(this CommandBuilderContext<TArgument> context, IBusyStack busyStack)
+        public static CommandBuilderContext<TArgument> WithBusyNotification<TArgument>(this CommandBuilderContext<TArgument> context, in IBusyStack busyStack)
         {
             ValdiateContextForNull(context);
 

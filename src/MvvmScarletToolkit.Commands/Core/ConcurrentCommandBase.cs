@@ -47,7 +47,7 @@ namespace MvvmScarletToolkit.Commands
             remove { CommandManager.RequerySuggested -= value; }
         }
 
-        protected ConcurrentCommandBase(IScarletCommandManager commandManager)
+        protected ConcurrentCommandBase(in IScarletCommandManager commandManager)
         {
             CommandManager = commandManager ?? throw new ArgumentNullException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
         }
@@ -57,7 +57,7 @@ namespace MvvmScarletToolkit.Commands
             CommandManager.InvalidateRequerySuggested();
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] in string? propertyName = null)
         {
             OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
@@ -67,17 +67,17 @@ namespace MvvmScarletToolkit.Commands
             PropertyChanged?.Invoke(this, e);
         }
 
-        protected bool SetValue<T>(ref T field, T value, [CallerMemberName]string? propertyName = null)
+        protected bool SetValue<T>(ref T field, in T value, [CallerMemberName] in string? propertyName = null)
         {
             return SetValue(ref field, value, null, null, propertyName);
         }
 
-        protected bool SetValue<T>(ref T field, T value, Action? OnChanged, [CallerMemberName]string? propertyName = null)
+        protected bool SetValue<T>(ref T field, in T value, in Action? OnChanged, [CallerMemberName] in string? propertyName = null)
         {
             return SetValue(ref field, value, null, OnChanged, propertyName);
         }
 
-        protected virtual bool SetValue<T>(ref T field, T value, Action? OnChanging, Action? OnChanged, [CallerMemberName]string? propertyName = null)
+        protected virtual bool SetValue<T>(ref T field, in T value, in Action? OnChanging, in Action? OnChanged, [CallerMemberName] in string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {

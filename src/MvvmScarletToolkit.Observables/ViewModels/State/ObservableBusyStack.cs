@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit.Observables
 
         private bool _disposed;
 
-        public ObservableBusyStack(Action<bool> onChanged, IScarletDispatcher dispatcher)
+        public ObservableBusyStack(in Action<bool> onChanged, in IScarletDispatcher dispatcher)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
