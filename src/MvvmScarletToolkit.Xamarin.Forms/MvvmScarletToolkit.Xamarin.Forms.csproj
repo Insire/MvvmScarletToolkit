@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Xamarin.Forms" Version="4.6.0.726" />
+        <PackageReference Include="Xamarin.Forms" Version="4.7.0.1142" />
 
         <PackageReference Include="IDisposableAnalyzers" Version="3.4.1">
             <PrivateAssets>all</PrivateAssets>
