@@ -167,7 +167,7 @@ namespace MvvmScarletToolkit.Observables
             {
                 if (IsLoaded && !IsBusy)
                 {
-                    await Unload(CancellationToken.None);
+                    await Unload(CancellationToken.None).ConfigureAwait(false);
                 }
             }
 

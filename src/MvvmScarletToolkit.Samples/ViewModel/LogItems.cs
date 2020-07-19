@@ -21,8 +21,7 @@ namespace MvvmScarletToolkit.Samples
 
         public async Task AddNew()
         {
-            var item = new LogItem(CommandBuilder);
-            await Add(item).ConfigureAwait(false);
+            await Add(new LogItem(CommandBuilder)).ConfigureAwait(false);
         }
 
         public bool CanAddNew()
@@ -34,8 +33,19 @@ namespace MvvmScarletToolkit.Samples
         {
             for (var i = 0; i < 1000; i++)
             {
-                await AddNew();
+                await AddNew().ConfigureAwait(false);
             }
+        }
+
+        protected override async void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Items.Dispose();
+                await Clear().ConfigureAwait(false);
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

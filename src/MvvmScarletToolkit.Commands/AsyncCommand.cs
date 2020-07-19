@@ -47,7 +47,7 @@ namespace MvvmScarletToolkit.Commands
             _cancelCommand = new CancelCommand(commandManager);
 
             _execute = methodToExecute ?? throw new ArgumentNullException($"{nameof(methodToExecute)} can't be empty.", nameof(methodToExecute));
-            _canExecute = (o) => true;
+            _canExecute = (_) => true;
 
             _execution = NotifyTaskCompletion.Completed;
         }
@@ -65,7 +65,7 @@ namespace MvvmScarletToolkit.Commands
 
         public async void Execute(object parameter)
         {
-            await ExecuteAsync(parameter);
+            await ExecuteAsync(parameter).ConfigureAwait(false);
         }
 
         public event EventHandler CanExecuteChanged
@@ -76,7 +76,7 @@ namespace MvvmScarletToolkit.Commands
 
         public bool CanExecute(object? parameter)
         {
-            var isRunning = Execution is null || Execution.IsCompleted;
+            var isRunning = Execution?.IsCompleted != false;
 
             if (parameter is null)
             {
@@ -100,7 +100,7 @@ namespace MvvmScarletToolkit.Commands
 
             RaiseCanExecuteChanged();
 
-            await Execution.TaskCompletion;
+            await Execution.TaskCompletion.ConfigureAwait(false);
             _cancelCommand.NotifyCommandFinished();
 
             RaiseCanExecuteChanged();

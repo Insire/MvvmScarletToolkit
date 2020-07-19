@@ -44,14 +44,7 @@ namespace MvvmScarletToolkit.Commands
         {
             Task = task ?? throw new ArgumentNullException(nameof(task));
 
-            if (task == Task.CompletedTask)
-            {
-                TaskCompletion = Task.CompletedTask;
-            }
-            else
-            {
-                TaskCompletion = WatchTaskAsync(task);
-            }
+            TaskCompletion = task == Task.CompletedTask ? Task.CompletedTask : WatchTaskAsync(task);
         }
 
         private async Task WatchTaskAsync(Task task)
@@ -61,11 +54,19 @@ namespace MvvmScarletToolkit.Commands
                 // dont configureawait(false) here since we want to raise OnPropertyChanged on the ui thread if possible
                 // but we are not going to enforce that
 
+#pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
                 await task;
+#pragma warning restore RCS1090 // Call 'ConfigureAwait(false)'.
             }
             // no need to catch, since we capture the exception through the property task
             // and we dont want to take down the whole application if the developer didnt add any exception handling
 #if DEBUG
+            catch (TaskCanceledException)
+            {
+            }
+            catch (OperationCanceledException)
+            {
+            }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());

@@ -40,7 +40,7 @@ namespace MvvmScarletToolkit.Samples
                     CreatedOn = DateTime.Now,
                     Name = Guid.NewGuid().ToString(),
                     Color = $"#cc{i * 2:X2}{i * 3:X2}",
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -75,6 +75,19 @@ namespace MvvmScarletToolkit.Samples
             }
 
             return name.IndexOf(filterText, 0, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        protected override async void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Groups.Dispose();
+
+                Items.Dispose();
+                await Clear().ConfigureAwait(false);
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

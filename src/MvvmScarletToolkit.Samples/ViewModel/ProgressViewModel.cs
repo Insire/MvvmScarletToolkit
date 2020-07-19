@@ -8,7 +8,7 @@ namespace MvvmScarletToolkit.Samples
 {
     public sealed class ProgressViewModel : BusinessViewModelBase
     {
-        private readonly IProgress<double> _progress;
+        private readonly DispatcherProgress<double> _progress;
         private readonly IProgress<double> _uiBlockingProgress;
 
         private double _percentage;
@@ -59,18 +59,24 @@ namespace MvvmScarletToolkit.Samples
             await Dispatcher.Invoke(() => Percentage = 0).ConfigureAwait(false);
             await Task.Delay(250).ConfigureAwait(false);
 
-            var worker = default(Worker);
-
-            if (Block)
-            {
-                worker = new Worker(_uiBlockingProgress);
-            }
-            else
-            {
-                worker = new Worker(_progress);
-            }
+            var worker = Block ? new Worker(_uiBlockingProgress) : new Worker(_progress);
 
             await worker.DoWork().ConfigureAwait(false);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (IsDisposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                _progress.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
 
         private sealed class Worker
@@ -86,7 +92,7 @@ namespace MvvmScarletToolkit.Samples
             {
                 return Task.Run(() =>
                 {
-                    var upperBound = 100_000_000d;
+                    const double upperBound = 100_000_000d;
 
                     for (var i = 0d; i < upperBound; i++)
                     {

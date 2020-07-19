@@ -139,10 +139,14 @@ namespace MvvmScarletToolkit.Observables
             while ((left <= left_end) && (mid <= right))
             {
                 if (_comparer.Compare(numbers[left], numbers[mid]) <= 0)
+                {
                     //if (numbers[left] <= numbers[mid])
                     temp[tmp_pos++] = numbers[left++];
+                }
                 else
+                {
                     temp[tmp_pos++] = numbers[mid++];
+                }
             }
 
             while (left <= left_end)

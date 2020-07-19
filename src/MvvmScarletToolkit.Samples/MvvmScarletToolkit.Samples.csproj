@@ -11,6 +11,19 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Roslynator.Analyzers" Version="2.3.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="IDisposableAnalyzers" Version="3.4.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="PropertyChangedAnalyzers" Version="3.2.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+
         <PackageReference Include="FluentValidation" Version="9.0.1" />
         <PackageReference Include="Jot" Version="2.1.7" />
         <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="7.20.0.1" />

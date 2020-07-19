@@ -22,9 +22,9 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         protected override async Task RefreshInternal(CancellationToken token)
         {
-            var drives = await _factory.GetDrives(Options.DriveTypes, Options.FileAttributes, Options.FolderAttributes);
+            var drives = await _factory.GetDrives(Options.DriveTypes, Options.FileAttributes, Options.FolderAttributes).ConfigureAwait(false);
 
-            await AddRange(drives);
+            await AddRange(drives).ConfigureAwait(false);
         }
     }
 }

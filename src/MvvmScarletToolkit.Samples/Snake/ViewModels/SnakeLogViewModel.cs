@@ -56,6 +56,7 @@ namespace MvvmScarletToolkit.Samples
         private void PushMessage(ScarletMessageBase message)
         {
             Messages.Push(message);
+#pragma warning disable INPC003 // Notify when property changes.
             _messagesPerSecond++;
 
             if (_nextUpdate > DateTime.UtcNow)
@@ -65,6 +66,7 @@ namespace MvvmScarletToolkit.Samples
 
             OnPropertyChanged(nameof(MessagesPerSecond));
             _messagesPerSecond = 0;
+#pragma warning restore INPC003 // Notify when property changes.
 
             _nextUpdate = DateTime.UtcNow.AddSeconds(1);
         }

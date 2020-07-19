@@ -57,5 +57,10 @@ namespace MvvmScarletToolkit
 
             return collection;
         }
+
+        public static void Dispose(this IEnumerable<IDisposable> source)
+        {
+            source.ForEach(p => p.Dispose());
+        }
     }
 }

@@ -51,7 +51,7 @@ namespace MvvmScarletToolkit.Observables
             Debug.WriteLine($"ObservableBusyStack({_id}) PULL HasItems: {newValue}");
 #endif
 
-            await Notify(newValue);
+            await Notify(newValue).ConfigureAwait(false);
         }
 
         public async Task Push(IDisposable token)
@@ -73,7 +73,7 @@ namespace MvvmScarletToolkit.Observables
 #if DEBUG
             Debug.WriteLine($"ObservableBusyStack({_id}) PUSH HasItems: {newValue}");
 #endif
-            await Notify(newValue);
+            await Notify(newValue).ConfigureAwait(false);
         }
 
         private async Task Notify(bool hasItems)
@@ -81,7 +81,7 @@ namespace MvvmScarletToolkit.Observables
             var owner = NotifyOwner(hasItems);
             var subscriber = NotifySubscribers(hasItems);
 
-            await Task.WhenAll(owner, subscriber);
+            await Task.WhenAll(owner, subscriber).ConfigureAwait(false);
         }
 
         private async Task NotifySubscribers(bool newValue)
@@ -90,7 +90,7 @@ namespace MvvmScarletToolkit.Observables
             for (var i = 0; i < observers.Length; i++)
             {
                 var observer = observers[i];
-                await InvokeOnChanged(observer, newValue);
+                await InvokeOnChanged(observer, newValue).ConfigureAwait(false);
             }
         }
 

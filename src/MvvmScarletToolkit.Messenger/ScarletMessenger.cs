@@ -127,15 +127,9 @@ namespace MvvmScarletToolkit
                 var token = new SubscriptionToken(this);
 #pragma warning restore IDE0068 // Use recommended dispose pattern
 
-                IScarletMessageSubscription subscription;
-                if (strongReference)
-                {
-                    subscription = new StrongScarletMessageSubscription<TMessage>(token, deliveryAction, messageFilter);
-                }
-                else
-                {
-                    subscription = new WeakScarletMessageSubscription<TMessage>(token, deliveryAction, messageFilter);
-                }
+                var subscription = strongReference
+                    ? new StrongScarletMessageSubscription<TMessage>(token, deliveryAction, messageFilter)
+                    : (IScarletMessageSubscription)new WeakScarletMessageSubscription<TMessage>(token, deliveryAction, messageFilter);
 
 #if DEBUG
                 Debug.WriteLine("ScarletMessenger: Register + " + subscription.GetType().GetGenericTypeName());
@@ -226,15 +220,20 @@ namespace MvvmScarletToolkit
                 throw new ArgumentNullException(nameof(token));
             }
 
-            foreach (var sub in subscriptions)
-            {
-                if (sub.Subscription.Token.Equals(token))
-                {
-                    yield return sub;
-                }
-            }
+            return Iterator();
 
-            yield break;
+            IEnumerable<SubscriptionItem> Iterator()
+            {
+                foreach (var sub in subscriptions)
+                {
+                    if (sub.Subscription.Token.Equals(token))
+                    {
+                        yield return sub;
+                    }
+                }
+
+                yield break;
+            }
         }
     }
 }

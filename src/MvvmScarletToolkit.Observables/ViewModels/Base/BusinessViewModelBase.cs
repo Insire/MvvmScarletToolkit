@@ -149,15 +149,5 @@ namespace MvvmScarletToolkit.Observables
                 && !_refreshCommand.IsBusy
                 && !_unloadCommand.IsBusy;
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (IsDisposed)
-            {
-                return;
-            }
-
-            base.Dispose(disposing);
-        }
     }
 }

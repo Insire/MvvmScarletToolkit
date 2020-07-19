@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 
 namespace MvvmScarletToolkit.Samples
@@ -8,8 +8,8 @@ namespace MvvmScarletToolkit.Samples
         private readonly TimerCallback _callback;
 
         private Timer _timer;
-        private int _counter = 0;
-        private bool disposed = false;
+        private int _counter;
+        private bool _disposed;
 
         public FrameCounter(TimerCallback fpsUpdate)
         {
@@ -30,14 +30,14 @@ namespace MvvmScarletToolkit.Samples
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
         }
 
         private void Dispose(bool disposing)
         {
             // Check to see if Dispose has already been called.
-            if (!disposed)
+            if (!_disposed)
             {
                 // If disposing equals true, dispose all managed and unmanaged resources.
                 if (disposing)
@@ -51,7 +51,7 @@ namespace MvvmScarletToolkit.Samples
                 }
 
                 // Note disposing has been done.
-                disposed = true;
+                _disposed = true;
             }
         }
     }

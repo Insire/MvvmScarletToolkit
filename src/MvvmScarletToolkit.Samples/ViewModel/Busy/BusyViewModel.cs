@@ -39,8 +39,8 @@ namespace MvvmScarletToolkit.Samples
             var viewModel = new BusyViewModel(CommandBuilder);
             _disposables.Add(viewModel, viewModel.Subscribe(this));
 
-            await Add(viewModel);
-            await Task.Delay(450);
+            await Add(viewModel).ConfigureAwait(false);
+            await Task.Delay(450).ConfigureAwait(false);
         }
 
         private async Task InternalAddChildAsync(CancellationToken token)
@@ -48,14 +48,14 @@ namespace MvvmScarletToolkit.Samples
             var viewModel = new ObservableBusyViewModel(CommandBuilder, Dispatcher);
             _disposables.Add(viewModel, viewModel.Subscribe(this));
 
-            await Add(viewModel);
-            await Task.Delay(450);
+            await Add(viewModel).ConfigureAwait(false);
+            await Task.Delay(450).ConfigureAwait(false);
         }
 
         public override async Task Remove(INotifyPropertyChanged item, CancellationToken token)
         {
             _disposables[item].Dispose();
-            await base.Remove(item, token);
+            await base.Remove(item, token).ConfigureAwait(false);
         }
 
         private bool CanAddChild()
@@ -70,7 +70,7 @@ namespace MvvmScarletToolkit.Samples
 
         public async void OnError(Exception error)
         {
-            await BusyStack.Pull();
+            await BusyStack.Pull().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace MvvmScarletToolkit.Samples
         /// </summary>
         public async void OnCompleted()
         {
-            await BusyStack.Pull();
+            await BusyStack.Pull().ConfigureAwait(false);
         }
 
         protected override void Dispose(bool disposing)

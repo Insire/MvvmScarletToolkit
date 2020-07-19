@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit.Samples
         private DateTime _updatedOn;
         public DateTime UpdatedOn
         {
-            get { return _createdOn; }
+            get { return _updatedOn; }
             private set { SetValue(ref _updatedOn, value); }
         }
 
