@@ -63,20 +63,19 @@ namespace MvvmScarletToolkit.Samples
                 return;
             }
 
-            var image = await Task.Run(() => GetImage(_path), token);
-            await Dispatcher.Invoke(() => Source = image);
+            var image = await Task.Run(() => GetImage(_path), token).ConfigureAwait(false);
+            await Dispatcher.Invoke(() => Source = image).ConfigureAwait(false);
         }
 
         private static BitmapSource GetImage(string path)
         {
-            using (var stream = File.OpenRead(path))
-            using (var img = new MagickImage(stream))
-            {
-                var source = img.ToBitmapSource();
-                source.Freeze();
+            using var stream = File.OpenRead(path);
+            using var img = new MagickImage(stream);
 
-                return source;
-            }
+            var source = img.ToBitmapSource();
+            source.Freeze();
+
+            return source;
         }
     }
 }
