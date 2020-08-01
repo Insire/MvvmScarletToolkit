@@ -91,6 +91,148 @@
                         Content="{Binding ElementName=Scenes, Path=SelectedItem.Content, Converter={mvvm:DebugConverter}}">
             <ContentControl.Resources>
 
+                <DataTemplate DataType="{x:Type local:ProcessViewModel}">
+                    <Grid>
+                        <Grid.Resources>
+                            <mvvm:BindingProxy x:Key="OutputProxy" Data="{Binding Output}" />
+                            <mvvm:BindingProxy x:Key="ErrorsProxy" Data="{Binding Errors}" />
+
+                            <CompositeCollection x:Key="CompositeCollection">
+                                <CollectionContainer Collection="{Binding Data, Source={StaticResource OutputProxy}}" />
+                                <CollectionContainer Collection="{Binding Data, Source={StaticResource ErrorsProxy}}" />
+                            </CompositeCollection>
+                        </Grid.Resources>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="FilePath" />
+                        <TextBlock Grid.Row="2" Text="Args" />
+                        <TextBlock Grid.Row="4" Text="WorkingDirectory" />
+
+                        <TextBox Grid.Row="0"
+                                 Grid.Column="2"
+                                 Text="{Binding FilePath}" />
+                        <TextBox Grid.Row="2"
+                                 Grid.Column="2"
+                                 Text="{Binding Args}" />
+                        <TextBox Grid.Row="4"
+                                 Grid.Column="2"
+                                 Text="{Binding WorkingDirectory}" />
+
+                        <Button Grid.Row="0"
+                                Grid.Column="4"
+                                Content="Select" />
+
+                        <Button Grid.Row="6"
+                                Grid.Column="4"
+                                Command="{Binding StartCommand}"
+                                Content="Run" />
+
+                        <TextBlock Grid.Row="6"
+                                   Grid.Column="0"
+                                   Text="Output" />
+                        <TextBlock Grid.Row="6"
+                                   Grid.Column="2"
+                                   Text="Errors" />
+
+                        <ScrollViewer Grid.Row="8"
+                                      Grid.Column="0"
+                                      HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding Output}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type local:ProcessData}">
+                                        <TextBlock>
+                                            <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
+                                            <Run Text="{Binding Message, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+
+                        <ScrollViewer Grid.Row="8"
+                                      Grid.Column="2"
+                                      HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding Errors}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type local:ProcessErrorData}">
+                                        <TextBlock TextWrapping="Wrap">
+                                            <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
+                                            <Run Text="{Binding Message, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+
+                        <TextBlock Grid.Row="10"
+                                   Grid.Column="0"
+                                   Text="All Output" />
+
+                        <ScrollViewer Grid.Row="12"
+                                      Grid.Column="0"
+                                      Grid.ColumnSpan="3"
+                                      HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding Source={StaticResource CompositeCollection}}">
+                                <ItemsControl.Resources>
+                                    <DataTemplate DataType="{x:Type local:ProcessData}">
+                                        <TextBlock Foreground="Blue">
+                                            <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
+                                            <Run Text="{Binding Message, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type local:ProcessErrorData}">
+                                        <TextBlock Foreground="Red" TextWrapping="Wrap">
+                                            <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
+                                            <Run Text="{Binding Message, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ItemsControl.Resources>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:ValidationViewModels}">
                     <DockPanel>
                         <i:Interaction.Triggers>

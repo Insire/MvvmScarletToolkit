@@ -25,6 +25,7 @@ namespace MvvmScarletToolkit.Samples
             Add(nameof(GroupingViewModel), new GroupingViewModel(commandBuilder, () => CollectionViewSource.GetDefaultView(dataGridViewModel.Items), typeof(DataGridRowViewModel)));
             Add(nameof(DialogViewModel), new DialogViewModel(commandBuilder));
             Add(nameof(ValidationViewModels), new ValidationViewModels(commandBuilder));
+            Add(nameof(ProcessViewModel), new ProcessViewModel(commandBuilder));
 
             var contextMenu = new ContextMenuViewModels();
             var menuitem = new ContextMenuViewModel();
