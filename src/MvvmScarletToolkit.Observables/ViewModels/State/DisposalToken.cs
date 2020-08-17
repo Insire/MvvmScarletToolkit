@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Observables
 
         private bool _disposed;
 
-        public DisposalToken(IObserver<T> observer, ConcurrentDictionary<IObserver<T>, object> observerCollection)
+        public DisposalToken(in IObserver<T> observer, in ConcurrentDictionary<IObserver<T>, object> observerCollection)
         {
             _observerCollection = observerCollection ?? throw new ArgumentNullException(nameof(observerCollection));
             _observer = observer ?? throw new ArgumentNullException(nameof(observer));

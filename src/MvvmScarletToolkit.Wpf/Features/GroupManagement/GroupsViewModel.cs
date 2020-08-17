@@ -33,7 +33,11 @@ namespace MvvmScarletToolkit
 
                 Messenger.Subscribe<GroupsViewModelRemoved>(async (p) =>
                 {
-                    await Add(p.Content.SelectedItem);
+                    var item = p.Content?.SelectedItem;
+                    if (item != null)
+                    {
+                        await Add(item);
+                    }
                 }, (p) => !p.Sender.Equals(this) && !(p.Content is null) && !(p.Content.SelectedItem is null)),
 
                 Messenger.Subscribe<ViewModelListBaseSelectionChanging<GroupViewModel>>((p) =>

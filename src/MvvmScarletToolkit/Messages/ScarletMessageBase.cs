@@ -16,7 +16,7 @@ namespace MvvmScarletToolkit
 
         public object Sender => _sender.Target;
 
-        protected ScarletMessageBase(object sender)
+        protected ScarletMessageBase(in object sender)
         {
             if (sender is null)
             {

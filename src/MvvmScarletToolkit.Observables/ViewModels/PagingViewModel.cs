@@ -33,7 +33,7 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public ReadOnlyObservableCollection<int> PageSizes { get; }
 
-        public PagingViewModel(IScarletCommandBuilder commandBuilder, DomainViewModelListBase<TViewModel> viewModel, ReadOnlyObservableCollection<int> pageSizes)
+        public PagingViewModel(in IScarletCommandBuilder commandBuilder, in DomainViewModelListBase<TViewModel> viewModel, in ReadOnlyObservableCollection<int> pageSizes)
             : base(commandBuilder)
         {
             _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));

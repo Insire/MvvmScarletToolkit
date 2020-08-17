@@ -14,22 +14,22 @@ namespace MvvmScarletToolkit
     // });
     public static class ListExtensions
     {
-        public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, IEnumerable<T2> updateCollection, Func<T1, T2, bool> comparer, Func<T2, T1> mapper)
+        public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, in IEnumerable<T2> updateCollection, in Func<T1, T2, bool> comparer, in Func<T2, T1> mapper)
         {
             UpdateItems(targetCollection, updateCollection, comparer, mapper, null, _ => true, _ => false);
         }
 
-        public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, IEnumerable<T2> updateCollection, Func<T1, T2, bool> comparer, Func<T2, T1> mapper, Action<T1, T2>? updater)
+        public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, in IEnumerable<T2> updateCollection, in Func<T1, T2, bool> comparer, in Func<T2, T1> mapper, in Action<T1, T2>? updater)
         {
             UpdateItems(targetCollection, updateCollection, comparer, mapper, updater, _ => true, _ => false);
         }
 
-        public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, IEnumerable<T2> updateCollection, Func<T1, T2, bool> comparer, Func<T2, T1> mapper, Action<T1, T2>? updater, Func<T1, bool> targetFilter)
+        public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, in IEnumerable<T2> updateCollection, in Func<T1, T2, bool> comparer, in Func<T2, T1> mapper, in Action<T1, T2>? updater, in Func<T1, bool> targetFilter)
         {
             UpdateItems(targetCollection, updateCollection, comparer, mapper, updater, targetFilter, _ => false);
         }
 
-        public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, IEnumerable<T2> updateCollection, Func<T1, T2, bool> comparer, Func<T2, T1> mapper, Action<T1, T2>? updater, Func<T1, bool> targetFilter, Func<T1, bool> ignoreItem)
+        public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, in IEnumerable<T2> updateCollection, in Func<T1, T2, bool> comparer, in Func<T2, T1> mapper, in Action<T1, T2>? updater, in Func<T1, bool> targetFilter, in Func<T1, bool> ignoreItem)
         {
             if (updateCollection is null)
             {
@@ -46,13 +46,13 @@ namespace MvvmScarletToolkit
         }
 
         private static void UpdateExistingItemsAndIdentifyRemovedItems<T1, T2>(
-            IList<T1> targetCollection,
-            IEnumerable<T2> updateCollection,
+            in IList<T1> targetCollection,
+            in IEnumerable<T2> updateCollection,
             Func<T1, T2, bool> comparer,
-            Action<T1, T2>? updater,
+            in Action<T1, T2>? updater,
             List<T1> itemsToRemove,
-            Func<T1, bool> targetFilter,
-            Func<T1, bool> ignoreItem)
+            in Func<T1, bool> targetFilter,
+            in Func<T1, bool> ignoreItem)
         {
             var array = targetCollection.Where(targetFilter).ToArray();
             for (var i = 0; i < array.Length; i++)
@@ -69,7 +69,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private static void RemoveOldItemsFromTarget<T1>(ICollection<T1> targetCollection, IEnumerable<T1> itemsToRemove)
+        private static void RemoveOldItemsFromTarget<T1>(ICollection<T1> targetCollection, in IEnumerable<T1> itemsToRemove)
         {
             foreach (var item in itemsToRemove)
             {
@@ -77,7 +77,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private static void AddNewItemsToTarget<T1, T2>(IList<T1> targetCollection, IEnumerable<T2> updateCollection, Func<T1, T2, bool> comparer, Func<T2, T1> mapper)
+        private static void AddNewItemsToTarget<T1, T2>(IList<T1> targetCollection, in IEnumerable<T2> updateCollection, Func<T1, T2, bool> comparer, in Func<T2, T1> mapper)
         {
             var itemsToAdd = updateCollection.Where(updateItem
                 => !targetCollection.Any(existingITem => comparer(existingITem, updateItem))).ToList();

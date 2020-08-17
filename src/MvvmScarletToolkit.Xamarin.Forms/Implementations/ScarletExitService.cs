@@ -9,7 +9,12 @@ namespace MvvmScarletToolkit
     public sealed class ScarletExitService : IExitService
     {
         private static readonly Lazy<ScarletExitService> _default = new Lazy<ScarletExitService>(() => new ScarletExitService());
+
         public static IExitService Default => _default.Value;
+
+        public ScarletExitService()
+        {
+        }
 
         public Task ShutDown()
         {

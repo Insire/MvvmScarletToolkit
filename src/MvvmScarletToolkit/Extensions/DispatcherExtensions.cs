@@ -6,12 +6,12 @@ namespace MvvmScarletToolkit
 {
     public static class DispatcherExtensions
     {
-        public static Task Invoke(this IScarletDispatcher dispatcher, Action action)
+        public static Task Invoke(this IScarletDispatcher dispatcher, in Action action)
         {
             return dispatcher.Invoke(action, CancellationToken.None);
         }
 
-        public static Task<T> Invoke<T>(this IScarletDispatcher dispatcher, Func<T> action)
+        public static Task<T> Invoke<T>(this IScarletDispatcher dispatcher, in Func<T> action)
         {
             return dispatcher.Invoke(action, CancellationToken.None);
         }

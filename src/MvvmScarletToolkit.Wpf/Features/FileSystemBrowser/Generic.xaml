@@ -564,8 +564,7 @@
 
                             <TreeView.Resources>
 
-                                <CollectionViewSource x:Key="NoFilesCollectionView" Source="{Binding SelectedItem.Items, RelativeSource={RelativeSource AncestorType={x:Type browser:FileSystemBrowser}}}">
-                                </CollectionViewSource>
+                                <CollectionViewSource x:Key="NoFilesCollectionView" Source="{Binding SelectedItem.Items, RelativeSource={RelativeSource AncestorType={x:Type browser:FileSystemBrowser}}}" />
 
                                 <HierarchicalDataTemplate DataType="{x:Type browser:ScarletDirectory}" ItemsSource="{Binding NoFilesCollectionView}">
                                     <DockPanel ContextMenu="{StaticResource DefaultViewModelContextMenu}" IsEnabled="{Binding IsBusy, Converter={local:InvertBooleanConverter}}">
@@ -693,11 +692,9 @@
                                                             <ContentPresenter.Resources>
                                                                 <local:TypeDataTemplateSelector x:Key="TypeDataTemplateSelector">
                                                                     <local:TypeDataTemplateSelector.Templates>
-                                                                        <local:DataTemplateCollection>
-                                                                            <StaticResource ResourceKey="FolderIconPath" />
-                                                                            <StaticResource ResourceKey="DriveIconPath" />
-                                                                            <StaticResource ResourceKey="FileIconPath" />
-                                                                        </local:DataTemplateCollection>
+                                                                        <StaticResource ResourceKey="FolderIconPath" />
+                                                                        <StaticResource ResourceKey="DriveIconPath" />
+                                                                        <StaticResource ResourceKey="FileIconPath" />
                                                                     </local:TypeDataTemplateSelector.Templates>
                                                                 </local:TypeDataTemplateSelector>
 

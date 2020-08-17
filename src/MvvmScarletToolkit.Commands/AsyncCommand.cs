@@ -41,18 +41,18 @@ namespace MvvmScarletToolkit.Commands
             }
         }
 
-        public AsyncCommand(IScarletCommandManager commandManager, Func<TArgument, CancellationToken, Task> methodToExecute)
+        public AsyncCommand(in IScarletCommandManager commandManager, in Func<TArgument, CancellationToken, Task> methodToExecute)
         {
             _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
             _cancelCommand = new CancelCommand(commandManager);
 
             _execute = methodToExecute ?? throw new ArgumentNullException($"{nameof(methodToExecute)} can't be empty.", nameof(methodToExecute));
-            _canExecute = (o) => true;
+            _canExecute = (_) => true;
 
             _execution = NotifyTaskCompletion.Completed;
         }
 
-        public AsyncCommand(IScarletCommandManager commandManager, Func<TArgument, CancellationToken, Task> methodToExecute, Func<TArgument, bool> canExecute)
+        public AsyncCommand(in IScarletCommandManager commandManager, in Func<TArgument, CancellationToken, Task> methodToExecute, in Func<TArgument, bool> canExecute)
         {
             _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
             _cancelCommand = new CancelCommand(commandManager);
@@ -65,7 +65,7 @@ namespace MvvmScarletToolkit.Commands
 
         public async void Execute(object parameter)
         {
-            await ExecuteAsync(parameter);
+            await ExecuteAsync(parameter).ConfigureAwait(false);
         }
 
         public event EventHandler CanExecuteChanged
@@ -76,7 +76,7 @@ namespace MvvmScarletToolkit.Commands
 
         public bool CanExecute(object? parameter)
         {
-            var isRunning = Execution is null || Execution.IsCompleted;
+            var isRunning = Execution?.IsCompleted != false;
 
             if (parameter is null)
             {
@@ -100,13 +100,13 @@ namespace MvvmScarletToolkit.Commands
 
             RaiseCanExecuteChanged();
 
-            await Execution.TaskCompletion;
+            await Execution.TaskCompletion.ConfigureAwait(false);
             _cancelCommand.NotifyCommandFinished();
 
             RaiseCanExecuteChanged();
         }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] in string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

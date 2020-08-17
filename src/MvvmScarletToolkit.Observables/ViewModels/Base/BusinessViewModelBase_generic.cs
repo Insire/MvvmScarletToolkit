@@ -18,12 +18,12 @@ namespace MvvmScarletToolkit.Observables
             protected set { SetValue(ref _model, value); }
         }
 
-        protected BusinessViewModelBase(IScarletCommandBuilder commandBuilder)
+        protected BusinessViewModelBase(in IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
         }
 
-        protected BusinessViewModelBase(IScarletCommandBuilder commandBuilder, TModel model)
+        protected BusinessViewModelBase(in IScarletCommandBuilder commandBuilder, in TModel model)
             : base(commandBuilder)
         {
             _model = model ?? throw new ArgumentNullException(nameof(model));

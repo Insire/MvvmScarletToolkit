@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit.Observables
     /// <summary>
     /// ViewModelBase that bootstraps loading, unloading and refreshing of its content
     /// </summary>
-    public abstract class BusinessViewModelBase : ViewModelBase, IBusinessViewModelBase
+    public abstract class BusinessViewModelBase : ViewModelBase, IVirtualizationViewModel
     {
         private bool _isLoaded;
         [Bindable(true, BindingDirection.OneWay)]
@@ -34,7 +34,7 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand UnloadCommand => _unloadCommand;
 
-        protected BusinessViewModelBase(IScarletCommandBuilder commandBuilder)
+        protected BusinessViewModelBase(in IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             _loadCommand = commandBuilder
@@ -148,16 +148,6 @@ namespace MvvmScarletToolkit.Observables
                 && !_loadCommand.IsBusy
                 && !_refreshCommand.IsBusy
                 && !_unloadCommand.IsBusy;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (IsDisposed)
-            {
-                return;
-            }
-
-            base.Dispose(disposing);
         }
     }
 }

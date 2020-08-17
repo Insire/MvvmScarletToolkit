@@ -9,23 +9,23 @@ namespace MvvmScarletToolkit.Commands
         private readonly Func<TArgument, bool>? _canExecute;
         private readonly IScarletCommandManager _commandManager;
 
-        public RelayCommand(IScarletCommandBuilder? commandBuilder, Action<TArgument> methodToExecute)
+        public RelayCommand(in IScarletCommandBuilder? commandBuilder, in Action<TArgument> methodToExecute)
             : this(commandBuilder?.CommandManager, methodToExecute)
         {
         }
 
-        public RelayCommand(IScarletCommandBuilder? commandBuilder, Action<TArgument> methodToExecute, Func<TArgument, bool> canExecuteEvaluator)
+        public RelayCommand(in IScarletCommandBuilder? commandBuilder, in Action<TArgument> methodToExecute, in Func<TArgument, bool> canExecuteEvaluator)
             : this(commandBuilder?.CommandManager, methodToExecute, canExecuteEvaluator)
         {
         }
 
-        public RelayCommand(IScarletCommandManager? commandManager, Action<TArgument> execute)
+        public RelayCommand(in IScarletCommandManager? commandManager, in Action<TArgument> execute)
         {
             _commandManager = commandManager ?? throw new ArgumentNullException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
             _execute = execute ?? throw new ArgumentNullException($"{nameof(execute)} can't be empty.", nameof(execute));
         }
 
-        public RelayCommand(IScarletCommandManager? commandManager, Action<TArgument> execute, Func<TArgument, bool> canExecute)
+        public RelayCommand(in IScarletCommandManager? commandManager, in Action<TArgument> execute, in Func<TArgument, bool> canExecute)
             : this(commandManager, execute)
         {
             _canExecute = canExecute ?? throw new ArgumentNullException($"{nameof(canExecute)} can't be empty.", nameof(canExecute));

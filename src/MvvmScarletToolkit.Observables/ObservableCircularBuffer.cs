@@ -47,12 +47,12 @@ namespace MvvmScarletToolkit.Observables
 
         public bool IsFull => _size == Capacity;
 
-        public ObservableCircularBuffer(int capacity)
+        public ObservableCircularBuffer(in int capacity)
             : this(capacity, new T[] { })
         {
         }
 
-        public ObservableCircularBuffer(int capacity, IEnumerable<T> items)
+        public ObservableCircularBuffer(in int capacity, in IEnumerable<T> items)
         {
             if (capacity < 1)
             {
@@ -78,7 +78,7 @@ namespace MvvmScarletToolkit.Observables
             _capacity = capacity;
         }
 
-        public void Push(T item)
+        public void Push(in T item)
         {
             if (IsFull)
             {

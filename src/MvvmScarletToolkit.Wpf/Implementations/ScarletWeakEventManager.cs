@@ -11,6 +11,10 @@ namespace MvvmScarletToolkit
 
         public static IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> Default => _default.Value;
 
+        public ScarletWeakEventManager()
+        {
+        }
+
         public void AddHandler(INotifyPropertyChanged source, string eventName, EventHandler<PropertyChangedEventArgs> handler)
         {
             WeakEventManager<INotifyPropertyChanged, PropertyChangedEventArgs>.AddHandler(source, eventName, handler);

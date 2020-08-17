@@ -7,12 +7,12 @@ namespace MvvmScarletToolkit.Tests
     {
         private readonly Action<Action> _exceptionHandler;
 
-        public ExceptionHandlingProxy(Action<Action> exceptionHandler)
+        public IScarletMessage Message { get; private set; }
+
+        public ExceptionHandlingProxy(in Action<Action> exceptionHandler)
         {
             _exceptionHandler = exceptionHandler ?? throw new ArgumentNullException(nameof(exceptionHandler));
         }
-
-        public IScarletMessage Message { get; private set; }
 
         public void Deliver(IScarletMessage message, IScarletMessageSubscription subscription)
         {

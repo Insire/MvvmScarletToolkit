@@ -26,16 +26,24 @@ namespace MvvmScarletToolkit.Samples
 
         private async Task Run(CancellationToken token)
         {
-            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5)))
-            using (var linked = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, token))
-            {
-                await DialogResult.Show(linked.Token).ConfigureAwait(false);
-            }
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            using var linked = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, token);
+            await DialogResult.Show(linked.Token).ConfigureAwait(false);
         }
 
         private bool CanRun()
         {
             return !IsBusy;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                DialogResult.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

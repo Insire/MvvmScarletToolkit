@@ -16,12 +16,12 @@ namespace MvvmScarletToolkit.Observables
             protected set { SetValue(ref _model, value); }
         }
 
-        protected ViewModelBase(IScarletCommandBuilder commandBuilder)
+        protected ViewModelBase(in IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
         }
 
-        protected ViewModelBase(IScarletCommandBuilder commandBuilder, TModel model)
+        protected ViewModelBase(in IScarletCommandBuilder commandBuilder, in TModel model)
             : this(commandBuilder)
         {
             _model = model;

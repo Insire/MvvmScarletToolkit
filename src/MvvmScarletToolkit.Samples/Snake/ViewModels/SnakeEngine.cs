@@ -269,28 +269,28 @@ namespace MvvmScarletToolkit.Samples
 
         private bool CanMoveNorth()
         {
-            return (State & GameState.Running) != 0
+            return (State == GameState.Running)
                 && Direction != Direction.South
                 && Direction != Direction.North;
         }
 
         private bool CanMoveSouth()
         {
-            return (State & GameState.Running) != 0
+            return (State == GameState.Running)
                 && Direction != Direction.North
                 && Direction != Direction.South;
         }
 
         private bool CanMoveWest()
         {
-            return (State & GameState.Running) != 0
+            return (State == GameState.Running)
                 && Direction != Direction.East
                 && Direction != Direction.West;
         }
 
         private bool CanMoveEast()
         {
-            return (State & GameState.Running) != 0
+            return (State == GameState.Running)
                 && Direction != Direction.West
                 && Direction != Direction.East;
         }
@@ -483,7 +483,6 @@ namespace MvvmScarletToolkit.Samples
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         private void Dispose(bool disposing)

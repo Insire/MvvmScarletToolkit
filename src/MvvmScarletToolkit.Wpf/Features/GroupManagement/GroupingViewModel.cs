@@ -43,7 +43,7 @@ namespace MvvmScarletToolkit
                 .Build();
 
             RemoveCommand = commandBuilder
-                .Create<GroupsViewModel>(p => Remove(p), CanRemove)
+                .Create<GroupsViewModel>((p, t) => Remove(p, t), (p) => CanRemove(p))
                 .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithCancellation()
@@ -58,7 +58,7 @@ namespace MvvmScarletToolkit
 
         public override async Task Remove(GroupsViewModel item, CancellationToken token)
         {
-            await base.Remove(item, token);
+            await base.Remove(item, token).ConfigureAwait(false);
             Messenger.Publish(new GroupsViewModelRemoved(this, item));
 
             if (!(item.SelectedItem is null))
@@ -75,8 +75,7 @@ namespace MvvmScarletToolkit
             {
                 _type
                     .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => p.CanRead)
-                    .Where(p => p.GetGetMethod(true)?.IsPublic == true)
+                    .Where(p => p.CanRead && p.GetGetMethod(true)?.IsPublic == true)
                     .Select(p => new GroupViewModel(CommandBuilder, p))
                     .Select(p => new KeyValuePair<string, GroupViewModel>(p.Name, p))
                     .ForEach(p => _filterCollection.TryAdd(p.Key, p.Value));
@@ -88,17 +87,16 @@ namespace MvvmScarletToolkit
         private async Task Add(CancellationToken token)
         {
             var result = new GroupsViewModel(CommandBuilder, _collectionViewFactory);
-            await result.AddRange(_filterCollection.Values);
+            await result.AddRange(_filterCollection.Values).ConfigureAwait(false);
 
-            await Add(result);
+            await Add(result).ConfigureAwait(false);
         }
 
         private bool CanAdd()
         {
             return !_disposed
                 && !IsBusy
-                && _filterCollection != null
-                && _filterCollection.Count > 0
+                && _filterCollection?.Count > 0
                 && _maxGroupings > Count;
         }
 
@@ -110,7 +108,7 @@ namespace MvvmScarletToolkit
                 item.Dispose();
             }
 
-            await base.Clear(token);
+            await base.Clear(token).ConfigureAwait(false);
         }
 
         protected override void Dispose(bool disposing)

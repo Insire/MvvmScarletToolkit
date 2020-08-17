@@ -2,7 +2,7 @@ using MvvmScarletToolkit.Abstractions;
 
 namespace MvvmScarletToolkit
 {
-    public interface IFileSystemInfo : IBusinessViewModelBase
+    public interface IFileSystemInfo : IVirtualizationViewModel
     {
         string Name { get; }
         string FullName { get; }

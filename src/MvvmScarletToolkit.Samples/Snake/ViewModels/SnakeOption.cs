@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Observables;
 using System;
 
 namespace MvvmScarletToolkit.Samples
@@ -35,12 +35,22 @@ namespace MvvmScarletToolkit.Samples
             };
         }
 
+        private bool _isDefault;
         /// <summary>
         /// indicates whether this instance should be modified via the UI
         /// </summary>
-        public bool IsDefault { get; private set; }
+        public bool IsDefault
+        {
+            get { return _isDefault; }
+            private set { SetValue(ref _isDefault, value); }
+        }
 
-        public string Name { get; private set; }
+        private string _name;
+        public string Name
+        {
+            get { return _name; }
+            private set { SetValue(ref _name, value); }
+        }
 
         private int _fieldSize;
         /// <summary>
@@ -49,7 +59,16 @@ namespace MvvmScarletToolkit.Samples
         public int FieldSize
         {
             get { return _fieldSize; }
-            set { SetValue(ref _fieldSize, value); }
+            set
+            {
+                if (SetValue(ref _fieldSize, value))
+                {
+                    OnPropertyChanged(nameof(StepWidth));
+                    OnPropertyChanged(nameof(MaxWidth));
+                    OnPropertyChanged(nameof(MaxHeight));
+                    OnPropertyChanged(nameof(BoardPieceSize));
+                }
+            }
         }
 
         private int _fieldCountX;
@@ -59,7 +78,13 @@ namespace MvvmScarletToolkit.Samples
         public int FieldCountX
         {
             get { return _fieldCountX; }
-            set { SetValue(ref _fieldCountX, value); }
+            set
+            {
+                if (SetValue(ref _fieldCountX, value))
+                {
+                    OnPropertyChanged(nameof(MaxWidth));
+                }
+            }
         }
 
         private int _fieldCountY;
@@ -69,10 +94,17 @@ namespace MvvmScarletToolkit.Samples
         public int FieldCountY
         {
             get { return _fieldCountY; }
-            set { SetValue(ref _fieldCountY, value); }
+            set
+            {
+                if (SetValue(ref _fieldCountY, value))
+                {
+                    OnPropertyChanged(nameof(MaxHeight));
+                }
+            }
         }
 
         private double _speedMultiplier;
+
         /// <summary>
         /// a value between 0 and 1
         /// </summary>
@@ -82,15 +114,32 @@ namespace MvvmScarletToolkit.Samples
             set { SetValue(ref _speedMultiplier, value); }
         }
 
+        private int _foodInterval;
+
         /// <summary>
         /// How often food should be generated
         /// </summary>
-        public int FoodInterval { get; set; }
+        public int FoodInterval
+        {
+            get { return _foodInterval; }
+            set
+            {
+                if (SetValue(ref _foodInterval, value))
+                {
+                    OnPropertyChanged(nameof(FoodTickRate));
+                }
+            }
+        }
 
+        private int _maxFoodCount;
         /// <summary>
         /// maximum amount of food units
         /// </summary>
-        public int MaxFoodCount { get; set; }
+        public int MaxFoodCount
+        {
+            get { return _maxFoodCount; }
+            set { SetValue(ref _maxFoodCount, value); }
+        }
 
         /// <summary>
         /// determines how many units a board piece can move per tick

@@ -4,7 +4,7 @@ namespace MvvmScarletToolkit.Observables
 {
     public sealed class ViewModelListBaseSelectionsChanged<TViewModel> : GenericScarletMessage<IEnumerable<TViewModel>>
     {
-        public ViewModelListBaseSelectionsChanged(object sender, IEnumerable<TViewModel> content)
+        public ViewModelListBaseSelectionsChanged(in object sender, in IEnumerable<TViewModel> content)
             : base(sender, content)
         {
         }

@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit
         /// </summary>
         public TContent Content { get; }
 
-        public GenericScarletMessage(object sender, TContent content)
+        public GenericScarletMessage(in object sender, in TContent content)
             : base(sender)
         {
             Content = content;

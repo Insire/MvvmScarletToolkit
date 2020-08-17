@@ -33,7 +33,7 @@ namespace MvvmScarletToolkit.Commands
         /// </summary>
         internal IBusyStack? BusyStack { get; set; }
 
-        public CommandBuilderContext(IScarletCommandManager commandManager, Func<Action<bool>, IBusyStack> busyStackFactory, Func<TArgument, CancellationToken, Task> execute, Func<TArgument, bool> canExecute)
+        public CommandBuilderContext(in IScarletCommandManager commandManager, in Func<Action<bool>, IBusyStack> busyStackFactory, in Func<TArgument, CancellationToken, Task> execute, in Func<TArgument, bool> canExecute)
         {
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
 
@@ -44,7 +44,7 @@ namespace MvvmScarletToolkit.Commands
             _canExcute = canExecute ?? throw new ArgumentNullException(nameof(canExecute));
         }
 
-        internal void AddDecorator(Func<ConcurrentCommandBase, ConcurrentCommandBase> decoratorFactory)
+        internal void AddDecorator(in Func<ConcurrentCommandBase, ConcurrentCommandBase> decoratorFactory)
         {
             if (decoratorFactory is null)
             {
@@ -76,7 +76,7 @@ namespace MvvmScarletToolkit.Commands
             return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, BusyStack, _execute, _canExcute);
         }
 
-        private ConcurrentCommandBase WrapInDecorators(ConcurrentCommandBase command)
+        private ConcurrentCommandBase WrapInDecorators(in ConcurrentCommandBase command)
         {
             var decorator = command;
             while (_decorators.Count > 0)

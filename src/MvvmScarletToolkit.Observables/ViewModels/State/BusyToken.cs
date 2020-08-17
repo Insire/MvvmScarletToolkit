@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Observables
 
         private bool _disposed;
 
-        public BusyToken(IBusyStack busyStack)
+        public BusyToken(in IBusyStack busyStack)
         {
             _busyStack = busyStack ?? throw new ArgumentNullException(nameof(busyStack));
             _disposed = false;

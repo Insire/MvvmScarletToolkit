@@ -15,7 +15,7 @@ namespace MvvmScarletToolkit.Commands
         [Bindable(true, BindingDirection.OneWay)]
         public override Task Completion => Command.Completion;
 
-        protected ConcurrentCommandDecoratorBase(IScarletCommandManager commandManager, ConcurrentCommandBase command)
+        protected ConcurrentCommandDecoratorBase(in IScarletCommandManager commandManager, in ConcurrentCommandBase command)
             : base(commandManager)
         {
             Command = command ?? throw new ArgumentNullException(nameof(command));
