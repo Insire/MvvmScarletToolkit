@@ -1,12 +1,10 @@
+using MvvmScarletToolkit.Observables;
 using System;
-using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Samples
 {
-    public sealed class ProcessData : INotifyPropertyChanged
+    public sealed class ProcessData : ObservableObject
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public string Message { get; }
         public DateTime TimeStamp { get; }
 
