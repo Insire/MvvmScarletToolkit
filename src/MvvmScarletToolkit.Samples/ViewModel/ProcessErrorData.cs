@@ -1,12 +1,10 @@
+using MvvmScarletToolkit.Observables;
 using System;
-using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Samples
 {
-    public sealed class ProcessErrorData : INotifyPropertyChanged
+    public sealed class ProcessErrorData : ObservableObject
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public string Message { get; }
         public DateTime TimeStamp { get; }
 
