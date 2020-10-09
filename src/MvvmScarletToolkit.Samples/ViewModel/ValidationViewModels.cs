@@ -25,8 +25,8 @@ namespace MvvmScarletToolkit.Samples
                     Name = Guid.NewGuid().ToString(),
                 });
 
-                await Add(vm);
-                await vm.Validate();
+                await Add(vm).ConfigureAwait(false);
+                await vm.Validate().ConfigureAwait(false);
             }
         }
     }

@@ -16,7 +16,7 @@ namespace MvvmScarletToolkit
             return source.ForEachAsync(funcBody, Environment.ProcessorCount * Multiplier, CancellationToken.None);
         }
 
-        public static Task ForEachAsync<T>(this IEnumerable<T> source, in Func<T, Task> funcBody, in CancellationToken token)
+        public static Task ForEachAsync<T>(this IEnumerable<T> source, in Func<T, Task> funcBody, CancellationToken token)
         {
             return source.ForEachAsync(funcBody, Environment.ProcessorCount * Multiplier, token);
         }
@@ -43,7 +43,7 @@ namespace MvvmScarletToolkit
             return collection.ForEach(action, CancellationToken.None);
         }
 
-        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> collection, in Action<T> action, in CancellationToken token)
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> collection, in Action<T> action, CancellationToken token)
         {
             foreach (var item in collection)
             {
