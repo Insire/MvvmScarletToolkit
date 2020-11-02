@@ -11,7 +11,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="7.22.0" />
+        <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="7.22.1" />
         <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="2.0.2" />
         <PackageReference Include="Roslynator.Analyzers" Version="3.0.0">
             <PrivateAssets>all</PrivateAssets>
