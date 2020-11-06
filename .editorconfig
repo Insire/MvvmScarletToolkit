@@ -125,3 +125,9 @@ csharp_space_between_method_call_empty_parameter_list_parentheses = false
 
 csharp_preserve_single_line_statements = false
 csharp_preserve_single_line_blocks = true
+
+# usings
+csharp_using_directive_placement = outside_namespace:suggestion
+dotnet_sort_system_directives_first = false
+dotnet_separate_import_directive_groups = false
+csharp_prefer_simple_using_statement = false:suggestion

@@ -45,7 +45,7 @@ namespace MvvmScarletToolkit.Samples
 
         public async Task Validate()
         {
-            _result = await _validator.ValidateAsync<T>(ViewModel);
+            _result = await _validator.ValidateAsync(ViewModel, _ => { }).ConfigureAwait(false);
 
             HasErrors = !_result.IsValid;
             IsValid = _result.IsValid;

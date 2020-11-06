@@ -7,7 +7,8 @@ using System.Windows.Controls;
 namespace MvvmScarletToolkit
 {
     // usage:
-    // xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    // xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    // xmlns:local="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
     // <i:Interaction.Behaviors>
     //  <local:MultiSelectionBehavior SelectedItems = "{Binding SelectedItems}" />
     // </ i:Interaction.Behaviors>
@@ -21,7 +22,9 @@ namespace MvvmScarletToolkit
 
             if (SelectedItems != null)
             {
-                AssociatedObject.SelectedItems.Clear();
+                if (AssociatedObject.SelectedItems.Count > 0)
+                    AssociatedObject.SelectedItems.Clear();
+
                 foreach (var item in SelectedItems)
                 {
                     AssociatedObject.SelectedItems.Add(item);
@@ -46,7 +49,7 @@ namespace MvvmScarletToolkit
             nameof(SelectedItems)
             , typeof(IList)
             , typeof(MultiSelectionBehavior)
-            , new UIPropertyMetadata(null, OnSelectedItemsChanged));
+            , new UIPropertyMetadata(default(IList), OnSelectedItemsChanged));
 
         private static void OnSelectedItemsChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
@@ -59,18 +62,21 @@ namespace MvvmScarletToolkit
             if (e.OldValue is INotifyCollectionChanged oldValue)
             {
                 oldValue.CollectionChanged -= behavior.SourceCollectionChanged;
-                behavior.AssociatedObject.SelectionChanged -= behavior.ListBoxSelectionChanged;
             }
 
             if (e.NewValue is INotifyCollectionChanged newValue)
             {
-                behavior.AssociatedObject.SelectedItems.Clear();
+                if (e.OldValue != null) // skip setting the initial value from the UI(since thats an empty collection), as that will overwrite anything that has been set in the bound object
+                {
+                    if (behavior.AssociatedObject.SelectedItems.Count > 0)
+                        behavior.AssociatedObject.SelectedItems.Clear();
+                }
+
                 foreach (var item in (IEnumerable)newValue)
                 {
                     behavior.AssociatedObject.SelectedItems.Add(item);
                 }
 
-                behavior.AssociatedObject.SelectionChanged += behavior.ListBoxSelectionChanged;
                 newValue.CollectionChanged += behavior.SourceCollectionChanged;
             }
         }
@@ -120,7 +126,7 @@ namespace MvvmScarletToolkit
                 return;
 
             var selectedItems = SelectedItems;
-            if (selectedItems == null)
+            if (selectedItems is null)
                 return;
 
             try

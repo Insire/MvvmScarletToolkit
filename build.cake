@@ -1,12 +1,12 @@
 #tool nuget:?package=NUnit.ConsoleRunner&version=3.11.1
-#tool nuget:?package=ReportGenerator&version=4.5.6
+#tool nuget:?package=ReportGenerator&version=4.6.7
 #tool nuget:?package=Codecov&version=1.10.0
-#tool nuget:?package=GitVersion.CommandLine&version=5.2.4
-#tool nuget:?package=Microsoft.CodeCoverage&version=16.6.1
+#tool nuget:?package=GitVersion.CommandLine&version=5.3.7
+#tool nuget:?package=Microsoft.CodeCoverage&version=16.7.1
 
-#addin nuget:?package=Cake.Codecov&version=0.8.0
+#addin nuget:?package=Cake.Codecov&version=0.9.1
 #addin nuget:?package=Cake.Incubator&version=5.1.0
-#addin nuget:?package=Cake.GitVersioning&version=3.1.91
+#addin nuget:?package=Cake.GitVersioning&version=3.2.31
 
 using Cake.Core;
 
