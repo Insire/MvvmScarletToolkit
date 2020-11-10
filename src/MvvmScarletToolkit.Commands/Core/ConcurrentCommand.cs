@@ -79,48 +79,22 @@ namespace MvvmScarletToolkit.Commands
                 ? arg
                 : default;
 
-            if (_externalBusyStack is null)
-            {
-                await ExecuteWithoutBusyStack(argument!)
-                    .ConfigureAwait(false);
-            }
-            else
-            {
-                await ExecuteWithBusyStack(argument!)
-                    .ConfigureAwait(false);
-            }
-        }
-
-        private async Task ExecuteWithBusyStack(TArgument parameter)
-        {
             try
             {
-                using (_externalBusyStack!.GetToken())
+                if (_externalBusyStack is null)
                 {
-                    await ExecuteAsyncInternal(parameter)
-                        .ConfigureAwait(true); // return to UI thread here
+                    await ExecuteAsyncInternal(argument!);
+                }
+                else
+                {
+                    using (_externalBusyStack!.GetToken())
+                    {
+                        await ExecuteAsyncInternal(argument!);
+                    }
                 }
             }
             finally
             {
-                _cancelCommand.NotifyCommandFinished();
-                RaiseCanExecuteChanged();
-            }
-        }
-
-        private async Task ExecuteWithoutBusyStack(TArgument parameter)
-        {
-            try
-            {
-                IsBusy = true;
-
-                await ExecuteAsyncInternal(parameter)
-                    .ConfigureAwait(true); // return to UI thread here
-            }
-            finally
-            {
-                IsBusy = false;
-
                 RaiseCanExecuteChanged();
                 _cancelCommand.NotifyCommandFinished();
             }
@@ -134,7 +108,7 @@ namespace MvvmScarletToolkit.Commands
 
                 Execution = new NotifyTaskCompletion(_execute.Invoke(parameter, _cancelCommand.Token));
                 await Execution.TaskCompletion
-                    .ConfigureAwait(false);
+                    .ConfigureAwait(true); // return to UI thread here
             }
         }
     }
