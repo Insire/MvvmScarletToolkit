@@ -8,6 +8,6 @@
     "pathFilters": [
         ":!/src/MvvmScarletToolkit.Incubator",
         ":!/src/MvvmScarletToolkit.Tests",
-        ":!/src/MvvmScarletToolkit.Samples"
+        ":!/src/MvvmScarletToolkit.Wpf.Samples"
     ]
 }

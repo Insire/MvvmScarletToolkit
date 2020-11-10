@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28711.60
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit", "src\MvvmScarletToolkit\MvvmScarletToolkit.csproj", "{D555C0FD-335D-4C64-B80B-8999E66402B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Samples", "src\MvvmScarletToolkit.Samples\MvvmScarletToolkit.Samples.csproj", "{66BE74B3-937A-45AF-8F44-8024E930FAA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Wpf.Samples", "src\MvvmScarletToolkit.Wpf.Samples\MvvmScarletToolkit.Wpf.Samples.csproj", "{66BE74B3-937A-45AF-8F44-8024E930FAA7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE94110B-58A4-473C-819C-C331D83C14ED}"
 	ProjectSection(SolutionItems) = preProject
@@ -36,6 +36,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Xamarin.Forms", "src\MvvmScarletToolkit.Xamarin.Forms\MvvmScarletToolkit.Xamarin.Forms.csproj", "{CB537DC0-C7B6-4F6B-A66B-F9303EF4A1F0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Messenger", "src\MvvmScarletToolkit.Messenger\MvvmScarletToolkit.Messenger.csproj", "{5A64553C-11AD-4387-94B1-2A4A46B61847}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{E302CFE9-12CC-4732-9CAF-3F2377667DBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,6 +88,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{66BE74B3-937A-45AF-8F44-8024E930FAA7} = {E302CFE9-12CC-4732-9CAF-3F2377667DBC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {57591B2A-CCBB-43A1-B8BE-5DA13ED5FE66}
