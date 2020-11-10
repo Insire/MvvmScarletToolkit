@@ -1,0 +1,26 @@
+<forms:WindowsPage x:Class="MvvmScarletToolkit.Xamarin.Forms.Samples.UWP.MainPage"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:forms="using:Xamarin.Forms.Platform.UWP"
+                   xmlns:local="using:MvvmScarletToolkit.Xamarin.Forms.Samples.UWP"
+                   xmlns:samples="using:MvvmScarletToolkit.Xamarin.Forms.Samples"
+                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <forms:WindowsPage.DataContext>
+        <samples:MainPageViewModel />
+    </forms:WindowsPage.DataContext>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel>
+            <Button Padding="30,24,30,0"
+                    Command="{Binding WorkCommand}"
+                    Content="Work"
+                    FontSize="16" />
+
+            <Button Padding="30,24,30,0"
+                    Command="{Binding ResetCommand}"
+                    Content="Reset"
+                    FontSize="16" />
+        </StackPanel>
+    </Grid>
+</forms:WindowsPage>
