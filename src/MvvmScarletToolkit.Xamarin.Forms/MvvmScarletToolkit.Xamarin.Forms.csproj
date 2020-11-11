@@ -42,7 +42,4 @@
         <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
     </ItemGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    </PropertyGroup>
 </Project>

@@ -168,8 +168,6 @@ Setup(ctx =>
 
     Information($"NUGETORG_APIKEY was{(string.IsNullOrEmpty(EnvironmentVariable("NUGETORG_APIKEY")) ? " not" : "")} set.");
     Information($"CODECOV_TOKEN was{(string.IsNullOrEmpty(EnvironmentVariable("CODECOV_TOKEN")) ? " not" : "")} set.");
-    Information($"ApiCredentials__Email was{(string.IsNullOrEmpty(EnvironmentVariable("ApiCredentials__Email")) ? " not" : "")} set.");
-    Information($"ApiCredentials__Password was{(string.IsNullOrEmpty(EnvironmentVariable("ApiCredentials__Password")) ? " not" : "")} set.");
 });
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -236,13 +234,13 @@ Task("UpdateAssemblyInfo")
 
 Task("BuildAndPack")
     .IsDependentOn("CleanSolutionAgain")
-    .DoesForEach(nugetPackageProjects, project=>
+    .Does(()=>
     {
         var settings = new ProcessSettings()
             .UseWorkingDirectory(".")
             .WithArguments(builder => builder
                 .Append("pack")
-                .AppendQuoted(project)
+                .AppendQuoted("./MvvmScarletToolkit.slnf")
                 .Append($"-c {Configuration}")
                 .Append($"--output \"{PackagePath}\"")
                 .Append($"-p:PackageVersion={GitVersioningGetVersion().SemVer2}")
@@ -343,16 +341,27 @@ Task("PushLocally")
     .WithCriteria(() => BuildSystem.IsLocalBuild, "since task is not running on a developer machine.")
     .WithCriteria(() => DirectoryExists(localNugetDirectory), $@"since there is no local directory ({localNugetDirectory}) to push nuget packages to.")
     .WithCriteria(() => FileExists(Context.Tools.Resolve("nuget.exe")), $@"since there is no nuget.exe registered with cake")
-    .DoesForEach(() => GetFiles(PackagePath + "/*.nupkg"), path =>
+    .Does(() =>
     {
         var settings = new ProcessSettings()
             .UseWorkingDirectory(".")
             .WithArguments(builder => builder
-            .Append("push")
-            .AppendSwitchQuoted("-source", localNugetDirectory)
-            .AppendQuoted(path.FullPath));
+                .AppendSwitchQuoted("nuget add source", localNugetDirectory)
+                .AppendSwitch("-name","Local"));
 
-        StartProcess(Context.Tools.Resolve("nuget.exe"), settings);
+        StartProcess(Context.Tools.Resolve("dotnet.exe"), settings);
+
+        foreach(var path in GetFiles(PackagePath + "/*.nupkg"))
+        {
+            settings = new ProcessSettings()
+                .UseWorkingDirectory(".")
+                .WithArguments(builder => builder
+                    .Append("push")
+                    .AppendSwitchQuoted("-source", localNugetDirectory)
+                    .AppendQuoted(path.FullPath));
+
+            StartProcess(Context.Tools.Resolve("nuget.exe"), settings);
+        }
     });
 
 Task("PushRemote")
