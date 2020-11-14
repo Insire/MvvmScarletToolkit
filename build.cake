@@ -25,11 +25,10 @@ const string localNugetDirectory = @"D:\Drop\NuGet";
 
 
 var packageFolder = MakeAbsolute(new DirectoryPath(PackagePath));
-var reportsFolder = new DirectoryPath(ResultsPath).Combine("reports");
-var coberturaResultFile = new DirectoryPath(CoberturaResultsPath).CombineWithFilePath("Cobertura.xml");
-var vstestResultsFile = new FilePath("vsTestResults.trx");
-var codeCoverageBinaryFile = new FilePath("vsCodeCoverage.coverage");
-var codeCoverageResultsFile = new FilePath("vsCodeCoverage.xml");
+var resultsFolder = MakeAbsolute(new DirectoryPath(ResultsPath));
+var reportsFolder = resultsFolder.Combine("reports");
+var coberturaResultFile = MakeAbsolute(new DirectoryPath(CoberturaResultsPath)).CombineWithFilePath("Cobertura.xml");
+var vstestResultsFile = resultsFolder.CombineWithFilePath("vsTestResults.trx");
 
 var publicRelease = false;
 var gitVersion = default(GitVersion);
@@ -99,8 +98,10 @@ private void Clean(bool cleanBin, bool cleanObj, bool cleanOutput, bool cleanMis
     foreach(var project in solution.Projects)
     {
         // check solution items and exclude solution folders, since they are virtual
-        if(project.Name == "Solution Items" || project.Name == "Samples")
+        if(project.Type == "{2150E333-8FDC-42A3-9474-1A3956D46DE8}")
+        {
             continue;
+        }
 
         var projectFile = project.Path; // FilePath
         if(cleanBin)
@@ -134,8 +135,8 @@ private void Clean(bool cleanBin, bool cleanObj, bool cleanOutput, bool cleanMis
     {
         var folders = new[]
         {
-            new DirectoryPath(PackagePath),
-            new DirectoryPath(ResultsPath),
+            packageFolder,
+            resultsFolder,
         };
 
         foreach(var folder in folders)
@@ -168,6 +169,12 @@ Setup(ctx =>
 
     Information($"NUGETORG_APIKEY was{(string.IsNullOrEmpty(EnvironmentVariable("NUGETORG_APIKEY")) ? " not" : "")} set.");
     Information($"CODECOV_TOKEN was{(string.IsNullOrEmpty(EnvironmentVariable("CODECOV_TOKEN")) ? " not" : "")} set.");
+
+    Information($"packageFolder: {packageFolder}");
+    Information($"resultsFolder: {resultsFolder}");
+    Information($"reportsFolder: {reportsFolder}");
+    Information($"coberturaResultFile: {coberturaResultFile}");
+    Information($"vstestResultsFile: {vstestResultsFile}");
 });
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -233,7 +240,6 @@ Task("UpdateAssemblyInfo")
 });
 
 Task("BuildAndPack")
-    .IsDependentOn("CleanSolutionAgain")
     .Does(()=>
     {
         var settings = new ProcessSettings()
@@ -286,35 +292,30 @@ Task("Test")
     });
 
 Task("ConvertCoverage")
-    .IsDependentOn("Test")
     .WithCriteria(()=> Context.Tools.Resolve("CodeCoverage.exe") != null, $"since CodeCoverage.exe is not a registered tool.")
     .DoesForEach(()=> GetFiles($"{ResultsPath}/coverage/**/*.coverage"), file=>
     {
-        var codeCoverageExe = Context.Tools.Resolve("CodeCoverage.exe");
         var result = System.IO.Path.ChangeExtension(file.FullPath, ".xml");
 
         var settings = new ProcessSettings()
                 .UseWorkingDirectory(ResultsPath)
                 .WithArguments(builder => builder
                     .Append("analyze")
-                    .AppendSwitchQuoted(@"-output",":",result)
+                    .AppendSwitchQuoted(@"-output",":", result)
                     .Append(file.FullPath)
                 );
 
-        StartProcess(codeCoverageExe.FullPath, settings);
+        StartProcess(Context.Tools.Resolve("CodeCoverage.exe"), settings);
     });
 
 Task("CoberturaReport")
-    .IsDependentOn("ConvertCoverage")
-    .WithCriteria(()=> GetFiles("./Results/coverage/**/*.xml").Count > 0, $"since there is no coverage xml file in /Results/coverage/.")
-    .WithCriteria(()=> BuildSystem.IsRunningOnAzurePipelinesHosted, "since task is not running on a Azure Pipelines (Hosted).")
+    .WithCriteria(()=> GetFiles("./Results/coverage/**/*.xml").Count > 0, $"since there are no coverage xml files in /Results/coverage/.")
     .Does(()=>
     {
         MergeReports("./Results/coverage/**/*.xml", ReportGeneratorReportType.Cobertura, "cobertura");
     });
 
 Task("HtmlReport")
-    .IsDependentOn("ConvertCoverage")
     .WithCriteria(()=> GetFiles("./Results/coverage/**/*.xml").Count > 0, $"since there is no coverage xml file in /Results/coverage/.")
     .WithCriteria(()=> BuildSystem.IsLocalBuild, "since task is not running on a developer machine.")
     .Does(()=>
@@ -323,21 +324,15 @@ Task("HtmlReport")
     });
 
 Task("UploadCodecovReport")
-    .IsDependentOn("CoberturaReport")
     .WithCriteria(()=> FileExists(coberturaResultFile), $"since {coberturaResultFile} wasn't created.")
-    .WithCriteria(()=> BuildSystem.IsRunningOnAzurePipelinesHosted, "since task is not running on AzurePipelines (Hosted).")
+    .WithCriteria(()=> BuildSystem.IsRunningOnAzurePipelinesHosted || BuildSystem.IsRunningOnAzurePipelines, "since task is not running on AzurePipelines.")
     .WithCriteria(() => !string.IsNullOrEmpty(EnvironmentVariable("CODECOV_TOKEN")),"since environment variable CODECOV_TOKEN missing or empty.")
     .Does(()=>
     {
         Codecov(new[] { coberturaResultFile.FullPath }, EnvironmentVariable("CODECOV_TOKEN"));
     });
 
-Task("TestAndUploadReport")
-    .IsDependentOn("HtmlReport")
-    .IsDependentOn("UploadCodecovReport");
-
 Task("PushLocally")
-    .IsDependentOn("BuildAndPack")
     .WithCriteria(() => BuildSystem.IsLocalBuild, "since task is not running on a developer machine.")
     .WithCriteria(() => DirectoryExists(localNugetDirectory), $@"since there is no local directory ({localNugetDirectory}) to push nuget packages to.")
     .WithCriteria(() => FileExists(Context.Tools.Resolve("nuget.exe")), $@"since there is no nuget.exe registered with cake")
@@ -347,7 +342,7 @@ Task("PushLocally")
             .UseWorkingDirectory(".")
             .WithArguments(builder => builder
                 .AppendSwitchQuoted("nuget add source", localNugetDirectory)
-                .AppendSwitch("-name","Local"));
+                .AppendSwitch("--name","Local"));
 
         StartProcess(Context.Tools.Resolve("dotnet.exe"), settings);
 
@@ -365,7 +360,6 @@ Task("PushLocally")
     });
 
 Task("PushRemote")
-    .IsDependentOn("BuildAndPack")
     .WithCriteria(() => BuildSystem.IsRunningOnAzurePipelines || BuildSystem.IsRunningOnAzurePipelinesHosted, "since task is running on a azure devops.")
     .WithCriteria(() => !string.IsNullOrEmpty(EnvironmentVariable("NUGETORG_APIKEY")),"since environment variable NUGETORG_APIKEY missing or empty.")
     .WithCriteria(() => FileExists(Context.Tools.Resolve("nuget.exe")), $@"since there is no nuget.exe registered with cake")
@@ -388,15 +382,17 @@ Task("PushRemote")
         }
     });
 
-Task("Push")
-    .IsDependentOn("PushRemote")
-    .IsDependentOn("PushLocally");
-
 Task("Default")
     .IsDependentOn("CleanSolution")
     .IsDependentOn("UpdateAssemblyInfo")
-    .IsDependentOn("TestAndUploadReport")
+    .IsDependentOn("Test")
+    .IsDependentOn("ConvertCoverage")
+    .IsDependentOn("HtmlReport")
+    .IsDependentOn("CoberturaReport")
+    .IsDependentOn("UploadCodecovReport")
+    .IsDependentOn("CleanSolutionAgain")
     .IsDependentOn("BuildAndPack")
-    .IsDependentOn("Push");
+    .IsDependentOn("PushRemote")
+    .IsDependentOn("PushLocally");
 
 RunTarget(Argument("target", "Default"));
