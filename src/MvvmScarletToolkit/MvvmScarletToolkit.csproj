@@ -27,8 +27,4 @@
     <ItemGroup>
         <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
     </ItemGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    </PropertyGroup>
 </Project>

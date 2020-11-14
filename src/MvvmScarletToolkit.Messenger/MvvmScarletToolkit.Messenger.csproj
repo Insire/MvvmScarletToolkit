@@ -8,10 +8,6 @@
         <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,Library,.NET,OSS,OpenSource</PackageTags>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    </PropertyGroup>
-
     <ItemGroup>
         <PackageReference Include="Roslynator.Analyzers" Version="3.0.0">
             <PrivateAssets>all</PrivateAssets>

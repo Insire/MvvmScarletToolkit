@@ -95,7 +95,7 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
   - TypeExtensions
   - EventExtensions
 
-- MvvmScarletToolkit.Samples (for WPF)
+- MvvmScarletToolkit.Wpf.Samples (for WPF)
 
   - simple navigation
   - master detail view
