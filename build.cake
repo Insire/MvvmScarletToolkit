@@ -23,7 +23,6 @@ const string ResultsPath = "./results";
 const string CoberturaResultsPath = "./results/reports/cobertura";
 const string localNugetDirectory = @"D:\Drop\NuGet";
 
-
 var packageFolder = MakeAbsolute(new DirectoryPath(PackagePath));
 var resultsFolder = MakeAbsolute(new DirectoryPath(ResultsPath));
 var reportsFolder = resultsFolder.Combine("reports");
@@ -32,18 +31,6 @@ var vstestResultsFile = resultsFolder.CombineWithFilePath("vsTestResults.trx");
 
 var publicRelease = false;
 var gitVersion = default(GitVersion);
-
-// projects that are supposed to generate a nuget package
-var nugetPackageProjects = new[]
-{
-    @".\src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj",
-    @".\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj",
-    @".\src\MvvmScarletToolkit.Messenger\MvvmScarletToolkit.Messenger.csproj",
-    @".\src\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj",
-    @".\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj",
-    @".\src\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj",
-    @".\src\MvvmScarletToolkit.Xamarin.Forms\MvvmScarletToolkit.Xamarin.Forms.csproj",
-};
 
 private void GenerateReport(FilePath inputFile, ReportGeneratorReportType type, string subFolder)
 {
