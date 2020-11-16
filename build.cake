@@ -23,7 +23,6 @@ const string ResultsPath = "./results";
 const string CoberturaResultsPath = "./results/reports/cobertura";
 const string localNugetDirectory = @"D:\Drop\NuGet";
 
-
 var packageFolder = MakeAbsolute(new DirectoryPath(PackagePath));
 var resultsFolder = MakeAbsolute(new DirectoryPath(ResultsPath));
 var reportsFolder = resultsFolder.Combine("reports");
