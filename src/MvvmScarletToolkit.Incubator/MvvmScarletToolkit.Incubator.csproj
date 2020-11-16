@@ -21,7 +21,7 @@
         </PackageReference>
 
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.19" />
-        <PackageReference Include="System.Reactive" Version="4.4.1" />
+        <PackageReference Include="System.Reactive" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(Framework)' == 'net461' ">
