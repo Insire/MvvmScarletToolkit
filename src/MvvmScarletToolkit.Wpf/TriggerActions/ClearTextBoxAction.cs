@@ -13,9 +13,9 @@ namespace MvvmScarletToolkit
             typeof(ClearTextBoxAction),
             new UIPropertyMetadata(default(TextBox)));
 
-        public TextBox Target
+        public TextBox? Target
         {
-            get { return (TextBox)GetValue(TargetProperty); }
+            get { return (TextBox?)GetValue(TargetProperty); }
             set { SetValue(TargetProperty, value); }
         }
 
