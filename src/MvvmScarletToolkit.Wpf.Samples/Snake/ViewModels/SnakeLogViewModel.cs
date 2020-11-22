@@ -1,10 +1,11 @@
-using MvvmScarletToolkit.Abstractions;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Observables;
 using System;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class SnakeLogViewModel : ObservableObject
+    public sealed class SnakeLogViewModel : ObservableRecipient
     {
         private DateTime _nextUpdate;
 
@@ -12,28 +13,24 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public ObservableCircularBuffer<ScarletMessageBase> Messages
         {
             get { return _messages; }
-            private set { SetValue(ref _messages, value); }
+            private set { SetProperty(ref _messages, value); }
         }
 
         private int _messagesPerSecond;
         public int MessagesPerSecond
         {
             get { return _messagesPerSecond; }
-            private set { SetValue(ref _messagesPerSecond, value); }
+            private set { SetProperty(ref _messagesPerSecond, value); }
         }
 
-        public SnakeLogViewModel(IScarletMessenger messenger)
+        public SnakeLogViewModel(IMessenger messenger)
+            : base(messenger)
         {
             Messages = new ObservableCircularBuffer<ScarletMessageBase>(100);
 
-            if (messenger == null)
-            {
-                throw new ArgumentNullException(nameof(messenger));
-            }
-
-            messenger.Subscribe<PositionUpdatedMessage>(MessageSubscription);
-            messenger.Subscribe<SnakeSegmentCreatedMessage>(MessageSubscription);
-            messenger.Subscribe<SnakeDirectionChanged>(MessageSubscription);
+            Messenger.Register<PositionUpdatedMessage>(this, (r, m) => MessageSubscription(m));
+            Messenger.Register<SnakeSegmentCreatedMessage>(this, (r, m) => MessageSubscription(m));
+            Messenger.Register<SnakeDirectionChanged>(this, (r, m) => MessageSubscription(m));
 
             _nextUpdate = DateTime.UtcNow.AddSeconds(1);
         }

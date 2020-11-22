@@ -350,10 +350,14 @@
 
                         <ListBox ItemsSource="{Binding LogItems.Items}"
                                  SelectedItem="{Binding LogItems.SelectedItem}"
-                                 SelectionMode="Extended">
+                                 SelectionMode="Extended"
+                                 VirtualizingStackPanel.IsVirtualizing="True"
+                                 VirtualizingStackPanel.VirtualizationMode="Standard">
+
                             <i:Interaction.Behaviors>
                                 <mvvm:MultiSelectionBehavior SelectedItems="{Binding LogItems.SelectedItems}" />
                             </i:Interaction.Behaviors>
+
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Loaded">
                                     <i:InvokeCommandAction Command="{Binding LogItems.LoadCommand}" />
@@ -362,11 +366,13 @@
                                     <i:InvokeCommandAction Command="{Binding LogItems.UnloadCommand}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
+
                             <ListBox.ItemContainerStyle>
                                 <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
-                                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                                 </Style>
                             </ListBox.ItemContainerStyle>
+
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Grid.IsSharedSizeScope="True">
@@ -375,8 +381,18 @@
                                             <ColumnDefinition Width="*" MinWidth="4" />
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="Col2" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding CreatedOn, UpdateSourceTrigger=PropertyChanged}" />
-                                        <TextBlock Grid.Column="2" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <TextBlock Grid.Column="0" Text="{Binding CreatedOn}" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Message}" />
+
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Loaded">
+                                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="Unloaded">
+                                                <i:InvokeCommandAction Command="{Binding UnloadCommand}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -388,6 +404,7 @@
                                     <WrapPanel />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
+
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="{x:Type local:LogItem}">
                                     <Rectangle Width="10"
@@ -405,6 +422,22 @@
                                                     <DataTrigger Binding="{Binding IsBusy}" Value="True">
                                                         <Setter Property="Fill" Value="Red" />
                                                         <Setter Property="ToolTip" Value="Busy" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                        <Setter Property="Fill" Value="Blue" />
+                                                        <Setter Property="ToolTip">
+                                                            <Setter.Value>
+                                                                <ToolTip>
+                                                                    <TextBlock>
+                                                                        <Run Text="{Binding IsLoaded, StringFormat={}IsLoaded: {0}, Mode=OneWay}" />
+                                                                        <LineBreak />
+                                                                        <Run Text="{Binding IsBusy, StringFormat={}IsBusy: {0}, Mode=OneWay}" />
+                                                                        <LineBreak />
+                                                                        <Run Text="{Binding IsActive, StringFormat={}IsActive: {0}, Mode=OneWay}" />
+                                                                    </TextBlock>
+                                                                </ToolTip>
+                                                            </Setter.Value>
+                                                        </Setter>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>

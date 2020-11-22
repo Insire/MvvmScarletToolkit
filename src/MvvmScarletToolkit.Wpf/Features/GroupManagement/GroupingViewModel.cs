@@ -1,3 +1,4 @@
+using Microsoft.Toolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.Concurrent;
@@ -11,6 +12,7 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
+    // manages
     // https://github.com/tom-englert/DataGridExtensions
     // http://dotnetpattern.com/wpf-datagrid-grouping
     [System.Diagnostics.CodeAnalysis.SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created.", Justification = "Class is a container class and owns all instances")]
@@ -19,7 +21,6 @@ namespace MvvmScarletToolkit
     {
         private readonly ConcurrentDictionary<string, GroupViewModel> _filterCollection;
         private readonly Func<ICollectionView> _collectionViewFactory;
-        private readonly List<IDisposable> _disposeables;
         private readonly Type _type;
 
         private bool _disposed;
@@ -49,17 +50,31 @@ namespace MvvmScarletToolkit
                 .WithCancellation()
                 .Build();
 
-            _disposeables = new List<IDisposable>
+            Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, (r, m) =>
             {
-                Messenger.Subscribe<ViewModelListBaseSelectionChanging<GroupViewModel>>((p) => _filterCollection.TryAdd(p.Content.Name, p.Content), (p) => !p.Sender.Equals(this) && !(p.Content is null)),
-                Messenger.Subscribe<ViewModelListBaseSelectionChanged<GroupViewModel>>((p) => _filterCollection.TryRemove(p.Content.Name, out var _), (p) => !p.Sender.Equals(this) && !(p.Content is null))
-            };
+                if (m.Value is null)
+                {
+                    return;
+                }
+
+                r._filterCollection.TryAdd(m.Value.Name, m.Value);
+            });
+
+            Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, (r, m) =>
+            {
+                if (m.Value is null)
+                {
+                    return;
+                }
+
+                r._filterCollection.TryRemove(m.Value.Name, out var _);
+            });
         }
 
         public override async Task Remove(GroupsViewModel item, CancellationToken token)
         {
             await base.Remove(item, token).ConfigureAwait(false);
-            Messenger.Publish(new GroupsViewModelRemoved(this, item));
+            Messenger.Send(new GroupsViewModelRemoved(item));
 
             if (!(item.SelectedItem is null))
             {
@@ -120,8 +135,6 @@ namespace MvvmScarletToolkit
 
             if (disposing)
             {
-                _disposeables.ForEach(p => p.Dispose());
-                _disposeables.Clear();
             }
 
             base.Dispose(disposing);

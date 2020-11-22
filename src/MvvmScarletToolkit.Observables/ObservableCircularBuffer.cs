@@ -1,3 +1,4 @@
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace MvvmScarletToolkit.Observables
             get { return _capacity; }
             set
             {
-                if (SetValue(ref _capacity, value))
+                if (SetProperty(ref _capacity, value))
                 {
                     OnPropertyChanged(nameof(IsFull));
                 }
@@ -38,7 +39,7 @@ namespace MvvmScarletToolkit.Observables
             get { return _size; }
             private set
             {
-                if (SetValue(ref _size, value))
+                if (SetProperty(ref _size, value))
                 {
                     OnPropertyChanged(nameof(IsFull));
                 }

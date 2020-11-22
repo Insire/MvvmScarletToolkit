@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Commands;
+using Microsoft.Toolkit.Mvvm.Input;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Threading.Tasks;
@@ -164,7 +164,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             ShowStartCommand = _commandBuilder.Create(ShowStart, CanShowStart).Build();
             ShowOptionsCommand = _commandBuilder.Create(ShowOptions, CanShowOptions).Build();
             ShowGameCommand = _commandBuilder.Create(ShowGame, CanShowGame).Build();
-            ExitCommand = new RelayCommand(_commandBuilder.CommandManager, Exit, CanExit);
+            ExitCommand = new RelayCommand(Exit, CanExit);
 
             DataContext = this;
 
@@ -205,7 +205,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 await Manager.Reset().ConfigureAwait(false);
             }
 
-            Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _commandBuilder.Dispatcher, _commandBuilder.Messenger, _commandBuilder, _commandBuilder.CommandManager);
+            Manager = new SnakeEngine(SnakeViewModel.SelectedOption, _commandBuilder.Dispatcher, _commandBuilder.Messenger, _commandBuilder);
             SetupObserver();
 
             Keyboard.Focus(this);

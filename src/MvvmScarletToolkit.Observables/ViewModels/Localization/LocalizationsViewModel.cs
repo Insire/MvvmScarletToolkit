@@ -1,3 +1,4 @@
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace MvvmScarletToolkit.Observables
             get { return _currentLanguage; }
             set
             {
-                if (SetValue(ref _currentLanguage, value))
+                if (SetProperty(ref _currentLanguage, value))
                 {
                     Thread.CurrentThread.CurrentUICulture = value;
                 }

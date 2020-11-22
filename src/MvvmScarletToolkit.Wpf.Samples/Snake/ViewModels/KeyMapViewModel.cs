@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,42 +12,42 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public ObservableCollection<Key> Keys
         {
             get { return _keys; }
-            private set { SetValue(ref _keys, value); }
+            private set { SetProperty(ref _keys, value); }
         }
 
         private Key _moveNorthKey;
         public Key MoveNorthKey
         {
             get { return _moveNorthKey; }
-            set { SetValue(ref _moveNorthKey, value); }
+            set { SetProperty(ref _moveNorthKey, value); }
         }
 
         private Key _moveSouthKey;
         public Key MoveSouthKey
         {
             get { return _moveSouthKey; }
-            set { SetValue(ref _moveSouthKey, value); }
+            set { SetProperty(ref _moveSouthKey, value); }
         }
 
         private Key _moveWestKey;
         public Key MoveWestKey
         {
             get { return _moveWestKey; }
-            set { SetValue(ref _moveWestKey, value); }
+            set { SetProperty(ref _moveWestKey, value); }
         }
 
         private Key _moveEastKey;
         public Key MoveEastKey
         {
             get { return _moveEastKey; }
-            set { SetValue(ref _moveEastKey, value); }
+            set { SetProperty(ref _moveEastKey, value); }
         }
 
         private Key _playKey;
         public Key PlayKey
         {
             get { return _playKey; }
-            set { SetValue(ref _playKey, value); }
+            set { SetProperty(ref _playKey, value); }
         }
 
         public KeyMapViewModel()

@@ -14,14 +14,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public Predicate<object> Filter
         {
             get { return _filter; }
-            private set { SetValue(ref _filter, value); }
+            private set { SetProperty(ref _filter, value); }
         }
 
         private string _filterText;
         public string FilterText
         {
             get { return _filterText; }
-            set { SetValue(ref _filterText, value); }
+            set { SetProperty(ref _filterText, value); }
         }
 
         public DataGridViewModel(IScarletCommandBuilder commandBuilder)

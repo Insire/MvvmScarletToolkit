@@ -15,21 +15,21 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public double Percentage
         {
             get { return _percentage; }
-            private set { SetValue(ref _percentage, value); }
+            private set { SetProperty(ref _percentage, value); }
         }
 
         private double _maximum;
         public double Maximum
         {
             get { return _maximum; }
-            private set { SetValue(ref _maximum, value); }
+            private set { SetProperty(ref _maximum, value); }
         }
 
         private bool _block;
         public bool Block
         {
             get { return _block; }
-            set { SetValue(ref _block, value); }
+            set { SetProperty(ref _block, value); }
         }
 
         public ProgressViewModel(IScarletCommandBuilder commandBuilder)

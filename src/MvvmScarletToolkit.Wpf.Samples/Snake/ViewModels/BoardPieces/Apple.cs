@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Diagnostics;
 
@@ -11,14 +11,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public Position CurrentPosition
         {
             get { return _currentPosition; }
-            private set { SetValue(ref _currentPosition, value); }
+            private set { SetProperty(ref _currentPosition, value); }
         }
 
         private Size _size;
         public Size Size
         {
             get { return _size; }
-            private set { SetValue(ref _size, value); }
+            private set { SetProperty(ref _size, value); }
         }
 
         public Apple(Position position, Size size)

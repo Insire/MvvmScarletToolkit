@@ -26,21 +26,21 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public string Args
         {
             get { return _args; }
-            set { SetValue(ref _args, value); }
+            set { SetProperty(ref _args, value); }
         }
 
         private string _filePath;
         public string FilePath
         {
             get { return _filePath; }
-            set { SetValue(ref _filePath, value); }
+            set { SetProperty(ref _filePath, value); }
         }
 
         private string _workingDirectory;
         public string WorkingDirectory
         {
             get { return _workingDirectory; }
-            set { SetValue(ref _workingDirectory, value); }
+            set { SetProperty(ref _workingDirectory, value); }
         }
 
         public ICommand StartCommand => _startCommand;

@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Commands;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -120,8 +120,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         public FileSystemBrowser()
         {
-            DisplayDetailsAsListCommand = new RelayCommand(ScarletCommandBuilder.Default, ToggleAsListViewInternal);
-            DisplayDetailsAsIconsCommand = new RelayCommand(ScarletCommandBuilder.Default, ToggleAsIconsInternal);
+            DisplayDetailsAsListCommand = new RelayCommand(ToggleAsListViewInternal);
+            DisplayDetailsAsIconsCommand = new RelayCommand(ToggleAsIconsInternal);
 
             SetCurrentValue(NoFilesFilterProperty, new Predicate<object>(FilterAllFiles));
             SetCurrentValue(FilterActionProperty, new Predicate<object>(FilterByName));

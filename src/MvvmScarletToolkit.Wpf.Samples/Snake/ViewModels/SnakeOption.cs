@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 
 namespace MvvmScarletToolkit.Wpf.Samples
@@ -42,14 +42,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public bool IsDefault
         {
             get { return _isDefault; }
-            private set { SetValue(ref _isDefault, value); }
+            private set { SetProperty(ref _isDefault, value); }
         }
 
         private string _name;
         public string Name
         {
             get { return _name; }
-            private set { SetValue(ref _name, value); }
+            private set { SetProperty(ref _name, value); }
         }
 
         private int _fieldSize;
@@ -61,7 +61,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             get { return _fieldSize; }
             set
             {
-                if (SetValue(ref _fieldSize, value))
+                if (SetProperty(ref _fieldSize, value))
                 {
                     OnPropertyChanged(nameof(StepWidth));
                     OnPropertyChanged(nameof(MaxWidth));
@@ -80,7 +80,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             get { return _fieldCountX; }
             set
             {
-                if (SetValue(ref _fieldCountX, value))
+                if (SetProperty(ref _fieldCountX, value))
                 {
                     OnPropertyChanged(nameof(MaxWidth));
                 }
@@ -96,7 +96,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             get { return _fieldCountY; }
             set
             {
-                if (SetValue(ref _fieldCountY, value))
+                if (SetProperty(ref _fieldCountY, value))
                 {
                     OnPropertyChanged(nameof(MaxHeight));
                 }
@@ -111,7 +111,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public double SpeedMultiplier
         {
             get { return _speedMultiplier; }
-            set { SetValue(ref _speedMultiplier, value); }
+            set { SetProperty(ref _speedMultiplier, value); }
         }
 
         private int _foodInterval;
@@ -124,7 +124,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             get { return _foodInterval; }
             set
             {
-                if (SetValue(ref _foodInterval, value))
+                if (SetProperty(ref _foodInterval, value))
                 {
                     OnPropertyChanged(nameof(FoodTickRate));
                 }
@@ -138,7 +138,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public int MaxFoodCount
         {
             get { return _maxFoodCount; }
-            set { SetValue(ref _maxFoodCount, value); }
+            set { SetProperty(ref _maxFoodCount, value); }
         }
 
         /// <summary>

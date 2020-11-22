@@ -1,16 +1,18 @@
 using MvvmScarletToolkit.Observables;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
+    [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
     public sealed class GroupViewModel : ViewModelBase<PropertyInfo>
     {
         private string _name;
         public string Name
         {
             get { return _name; }
-            private set { SetValue(ref _name, value); }
+            private set { SetProperty(ref _name, value); }
         }
 
         public PropertyGroupDescription GroupDescription { get; }
@@ -20,6 +22,11 @@ namespace MvvmScarletToolkit
         {
             _name = Model?.Name ?? string.Empty;
             GroupDescription = new PropertyGroupDescription(propertyInfo.Name);
+        }
+
+        private string GetDebuggerDisplay()
+        {
+            return $"{nameof(GroupViewModel)}: {Name}";
         }
     }
 }

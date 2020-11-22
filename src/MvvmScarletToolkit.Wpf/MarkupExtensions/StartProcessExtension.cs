@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Commands;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Diagnostics;
 using System.Windows.Input;
@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit
         {
             if (Command is null)
             {
-                Command = new RelayCommand(ScarletCommandManager.Default, StartProcess);
+                Command = new RelayCommand(StartProcess);
             }
 
             return Command;

@@ -1,9 +1,11 @@
+using Microsoft.Toolkit.Mvvm.Messaging.Messages;
+
 namespace MvvmScarletToolkit
 {
-    public sealed class GroupsViewModelRemoved : GenericScarletMessage<GroupsViewModel>
+    public sealed class GroupsViewModelRemoved : ValueChangedMessage<GroupsViewModel>
     {
-        public GroupsViewModelRemoved(object sender, GroupsViewModel content)
-            : base(sender, content)
+        public GroupsViewModelRemoved(GroupsViewModel content)
+            : base(content)
         {
         }
     }

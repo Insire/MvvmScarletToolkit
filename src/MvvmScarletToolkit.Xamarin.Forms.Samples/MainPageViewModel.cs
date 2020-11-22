@@ -15,7 +15,7 @@ namespace MvvmScarletToolkit.Xamarin.Forms.Samples
         public int Count
         {
             get { return _count; }
-            set { SetValue(ref _count, value); }
+            set { SetProperty(ref _count, value); }
         }
 
         public MainPageViewModel()

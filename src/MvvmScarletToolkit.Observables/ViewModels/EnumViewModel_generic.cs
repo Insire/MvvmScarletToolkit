@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Observables
         public string DisplayName
         {
             get { return _displayName; }
-            set { SetValue(ref _displayName, value); }
+            set { SetProperty(ref _displayName, value); }
         }
 
         public EnumViewModel(in T value, in string? displayName)

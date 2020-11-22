@@ -1,3 +1,4 @@
+using Microsoft.Toolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -9,28 +10,6 @@ namespace MvvmScarletToolkit.Tests
 {
     internal static class Utils
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for tests")]
-        public static void FakeDeliveryAction<T>(T message)
-            where T : IScarletMessage
-        {
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for tests")]
-        public static bool FakeMessageFilter<T>(T message)
-            where T : IScarletMessage
-        {
-            return true;
-        }
-
-        public static SubscriptionToken GetTokenWithOutOfScopeMessenger()
-        {
-            var messenger = new ScarletMessenger(new ScarletMessageProxy());
-
-            var token = new SubscriptionToken(messenger);
-
-            return token;
-        }
-
         public static IScarletDispatcher GetTestDispatcher()
         {
             return NSubstitute.Substitute.For<IScarletDispatcher>();
@@ -41,9 +20,9 @@ namespace MvvmScarletToolkit.Tests
             return NSubstitute.Substitute.For<IScarletCommandManager>();
         }
 
-        public static IScarletMessenger GetTestMessenger()
+        public static IMessenger GetTestMessenger()
         {
-            return NSubstitute.Substitute.For<IScarletMessenger>();
+            return NSubstitute.Substitute.For<IMessenger>();
         }
 
         public static IExitService GetTestExitService()

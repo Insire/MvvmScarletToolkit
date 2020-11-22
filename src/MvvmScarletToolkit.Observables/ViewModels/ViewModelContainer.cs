@@ -1,3 +1,5 @@
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+
 namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
@@ -10,7 +12,7 @@ namespace MvvmScarletToolkit.Observables
         public T Value
         {
             get { return _value; }
-            set { SetValue(ref _value, value); }
+            set { SetProperty(ref _value, value); }
         }
 
         public ViewModelContainer(in T value)

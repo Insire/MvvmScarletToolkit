@@ -15,7 +15,7 @@ namespace MvvmScarletToolkit.Observables
         public TModel? Model
         {
             get { return _model; }
-            protected set { SetValue(ref _model, value); }
+            protected set { SetProperty(ref _model, value); }
         }
 
         protected BusinessViewModelBase(in IScarletCommandBuilder commandBuilder)
