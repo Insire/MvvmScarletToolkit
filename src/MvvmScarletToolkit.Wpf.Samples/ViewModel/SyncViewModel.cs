@@ -1,5 +1,5 @@
-using MvvmScarletToolkit.Commands;
-using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 using System.Windows;
 using System.Windows.Input;
 
@@ -9,9 +9,9 @@ namespace MvvmScarletToolkit.Wpf.Samples
     {
         public ICommand WorkCommand { get; }
 
-        public SyncViewModel(IScarletCommandManager commandManager)
+        public SyncViewModel()
         {
-            WorkCommand = new RelayCommand<string>(commandManager, (arg) => Work(arg));
+            WorkCommand = new RelayCommand<string>((arg) => Work(arg));
         }
 
         private void Work(string arg)

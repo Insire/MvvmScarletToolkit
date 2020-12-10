@@ -16,7 +16,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public IFileSystemParent? Parent
         {
             get { return _parent; }
-            private set { SetValue(ref _parent, value); }
+            private set { SetProperty(ref _parent, value); }
         }
 
         private string _name;
@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public string Name
         {
             get { return _name; }
-            private set { SetValue(ref _name, value); }
+            private set { SetProperty(ref _name, value); }
         }
 
         private string _fullName;
@@ -32,7 +32,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public string FullName
         {
             get { return _fullName; }
-            private set { SetValue(ref _fullName, value); }
+            private set { SetProperty(ref _fullName, value); }
         }
 
         private bool _exists;
@@ -40,7 +40,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public bool Exists
         {
             get { return _exists; }
-            private set { SetValue(ref _exists, value); }
+            private set { SetProperty(ref _exists, value); }
         }
 
         private bool _isSelected;
@@ -48,7 +48,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public bool IsSelected
         {
             get { return _isSelected; }
-            set { SetValue(ref _isSelected, value); }
+            set { SetProperty(ref _isSelected, value); }
         }
 
         private bool _isHidden;
@@ -56,7 +56,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public bool IsHidden
         {
             get { return _isHidden; }
-            private set { SetValue(ref _isHidden, value); }
+            private set { SetProperty(ref _isHidden, value); }
         }
 
         private DateTime? _creationTimeUtc;
@@ -64,7 +64,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public DateTime? CreationTimeUtc
         {
             get { return _creationTimeUtc; }
-            private set { SetValue(ref _creationTimeUtc, value); }
+            private set { SetProperty(ref _creationTimeUtc, value); }
         }
 
         private DateTime? _lastAccessTimeUtc;
@@ -72,7 +72,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public DateTime? LastAccessTimeUtc
         {
             get { return _lastAccessTimeUtc; }
-            private set { SetValue(ref _lastAccessTimeUtc, value); }
+            private set { SetProperty(ref _lastAccessTimeUtc, value); }
         }
 
         private DateTime? _lastWriteTimeUtc;
@@ -80,7 +80,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public DateTime? LastWriteTimeUtc
         {
             get { return _lastWriteTimeUtc; }
-            private set { SetValue(ref _lastWriteTimeUtc, value); }
+            private set { SetProperty(ref _lastWriteTimeUtc, value); }
         }
 
         [Bindable(true, BindingDirection.OneWay)]

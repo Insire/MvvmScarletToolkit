@@ -1,3 +1,4 @@
+using Microsoft.Toolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using System;
@@ -11,7 +12,7 @@ namespace MvvmScarletToolkit
     {
         IScarletCommandManager CommandManager { get; }
         IScarletDispatcher Dispatcher { get; }
-        IScarletMessenger Messenger { get; }
+        IMessenger Messenger { get; }
         IExitService Exit { get; }
         IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager { get; }
 

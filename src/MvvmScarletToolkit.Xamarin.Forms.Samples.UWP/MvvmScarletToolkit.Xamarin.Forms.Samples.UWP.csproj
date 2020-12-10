@@ -144,7 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="4.8.0.1687" />
-    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.10" />
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.11" />
     <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
   </ItemGroup>
   <ItemGroup>
@@ -155,10 +155,6 @@
     <ProjectReference Include="..\..\src\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj">
       <Project>{a85ecf94-f42d-43b2-9c65-c27e2963cf08}</Project>
       <Name>MvvmScarletToolkit.Commands</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Messenger\MvvmScarletToolkit.Messenger.csproj">
-      <Project>{5a64553c-11ad-4387-94b1-2a4a46b61847}</Project>
-      <Name>MvvmScarletToolkit.Messenger</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj">
       <Project>{3d7bbed6-6056-488d-ae6a-65df15d3d046}</Project>

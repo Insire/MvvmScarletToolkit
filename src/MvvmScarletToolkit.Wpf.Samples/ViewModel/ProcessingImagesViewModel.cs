@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
@@ -8,14 +8,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public Images Source
         {
             get { return _source; }
-            private set { SetValue(ref _source, value); }
+            private set { SetProperty(ref _source, value); }
         }
 
         private Images _target;
         public Images Target
         {
             get { return _target; }
-            private set { SetValue(ref _target, value); }
+            private set { SetProperty(ref _target, value); }
         }
 
         public ProcessingImagesViewModel(IScarletCommandBuilder commandBuilder, ImageFactory imageFactory)

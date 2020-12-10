@@ -7,8 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Moq" Version="4.15.1" />
-
+        <PackageReference Include="Moq" Version="4.15.2" />
         <PackageReference Include="NSubstitute" Version="4.2.2" />
         <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.14" />
 
@@ -17,12 +16,11 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
-        <ProjectReference Include="..\MvvmScarletToolkit.Messenger\MvvmScarletToolkit.Messenger.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj" />
     </ItemGroup>
 </Project>

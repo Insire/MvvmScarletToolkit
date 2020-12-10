@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Abstractions;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using System.Diagnostics;
 
 namespace MvvmScarletToolkit.Wpf.Samples
@@ -8,8 +8,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
     {
         public int Sequence { get; }
 
-        public SnakeSegment(SnakeOption options, IPositionable positionable, IScarletMessenger log, int sequence)
-            : base(options, log)
+        public SnakeSegment(SnakeOption options, IPositionable positionable, IMessenger messenger, int sequence)
+            : base(options, messenger)
         {
             CurrentPosition = positionable.CurrentPosition;
             Sequence = sequence;

@@ -1,33 +1,33 @@
+using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Xamarin.Forms.Samples
 {
     public sealed class MainPageViewModel : ViewModelBase
     {
-        public ICommand WorkCommand { get; }
-        public ICommand ResetCommand { get; }
+        public ConcurrentCommandBase WorkCommand { get; }
+        public ConcurrentCommandBase ResetCommand { get; }
 
         private int _count;
         public int Count
         {
             get { return _count; }
-            set { SetValue(ref _count, value); }
+            set { SetProperty(ref _count, value); }
         }
 
         public MainPageViewModel()
             : base(ScarletCommandBuilder.Default)
         {
             WorkCommand = CommandBuilder.Create(Work, CanWork)
-                .WithSingleExecution()
+                .WithSingleExecution("Work")
                 .WithBusyNotification(BusyStack)
                 .Build();
 
             ResetCommand = CommandBuilder.Create(Reset, CanReset)
-                .WithSingleExecution()
+                .WithSingleExecution("Reset")
                 .WithBusyNotification(BusyStack)
                 .Build();
         }
@@ -53,7 +53,7 @@ namespace MvvmScarletToolkit.Xamarin.Forms.Samples
             await Task.Delay(2000, token);
             Debug.WriteLine("Done ...");
 
-            Count++;
+            //Count++;
         }
 
         private bool CanWork()

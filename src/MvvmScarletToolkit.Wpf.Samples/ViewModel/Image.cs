@@ -14,21 +14,21 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public string DisplayName
         {
             get { return _displayName; }
-            set { SetValue(ref _displayName, value); }
+            set { SetProperty(ref _displayName, value); }
         }
 
         private string _path;
         public string Path
         {
             get { return _path; }
-            set { SetValue(ref _path, value); }
+            set { SetProperty(ref _path, value); }
         }
 
         private bool _isSelected;
         public bool IsSelected
         {
             get { return _isSelected; }
-            set { SetValue(ref _isSelected, value); }
+            set { SetProperty(ref _isSelected, value); }
         }
 
         private int _sequence;
@@ -36,14 +36,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public int Sequence
         {
             get { return _sequence; }
-            set { SetValue(ref _sequence, value); }
+            set { SetProperty(ref _sequence, value); }
         }
 
         private BitmapSource _source;
         public BitmapSource Source
         {
             get { return _source; }
-            private set { SetValue(ref _source, value); }
+            private set { SetProperty(ref _source, value); }
         }
 
         public ICommand LoadCommand { get; }

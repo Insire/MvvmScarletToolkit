@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -70,11 +70,11 @@ namespace MvvmScarletToolkit
             get { return size; }
             private set
             {
-                SetValue(ref size, value, onChanged: () =>
+                if (SetProperty(ref size, value))
                 {
                     OnPropertyChanged(nameof(IsFull));
                     OnPropertyChanged(nameof(IsEmpty));
-                });
+                }
             }
         }
 

@@ -1,4 +1,4 @@
-namespace MvvmScarletToolkit
+﻿namespace MvvmScarletToolkit.Wpf.Samples
 {
     /// <summary>
     /// Generic message with user specified content

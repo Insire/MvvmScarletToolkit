@@ -1,87 +1,96 @@
+using Microsoft.Toolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Observables;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit
 {
+    // holds group descriptions, so that one can be selected and applied to a collection
+    [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
     public sealed class GroupsViewModel : ViewModelListBase<GroupViewModel>
     {
-        private readonly Func<ICollectionView> _collectionView;
-        private readonly List<IDisposable> _disposeables;
+        private readonly Func<ICollectionView> _collectionViewFactory;
 
-        private bool _disposed;
-
-        public GroupsViewModel(IScarletCommandBuilder commandBuilder, Func<ICollectionView> collectionView)
+        public GroupsViewModel(IScarletCommandBuilder commandBuilder, Func<ICollectionView> collectionViewFactory)
             : base(commandBuilder)
         {
-            _collectionView = collectionView ?? throw new ArgumentNullException(nameof(collectionView));
-            _disposeables = new List<IDisposable>
+            _collectionViewFactory = collectionViewFactory ?? throw new ArgumentNullException(nameof(collectionViewFactory));
+
+            Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, async (r, m) =>
             {
-                Messenger.Subscribe<ViewModelListBaseSelectionChanging<GroupViewModel>>(async (p) =>
+                if (m.Value is null)
                 {
-                    await Add(p.Content);
-                }, (p) => !p.Sender.Equals(this) && !(p.Content is null)),
+                    return;
+                }
 
-                Messenger.Subscribe<ViewModelListBaseSelectionChanged<GroupViewModel>>(async (p) =>
+                if (ReferenceEquals(m.Sender, r))
                 {
-                    await Remove(p.Content);
-                    p.Content.Dispose();
-                }, (p) => !p.Sender.Equals(this) && !(p.Content is null)),
+                    //Debug.WriteLine($"1 this instance({r.GetDebuggerDisplay()}) selection is changing => remove the previous value({m.Value.Name}) from the view");
+                    // this instance selection is changing
+                    // => remove the previous value from the view
+                    var view = _collectionViewFactory.Invoke();
+                    await Dispatcher.Invoke(() => view?.GroupDescriptions.Remove(m.Value.GroupDescription));
+                }
+                else
+                {
+                    //Debug.WriteLine($"2 another instance selection is changing => add the last value({m.Value.Name}) to the possible selections");
+                    // another instance selection is changing
+                    // => add the last value to the possible selections
+                    await r.Add(m.Value);
+                }
+            });
 
-                Messenger.Subscribe<GroupsViewModelRemoved>(async (p) =>
+            Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, async (r, m) =>
+            {
+                if (m.Value is null)
                 {
-                    var item = p.Content?.SelectedItem;
-                    if (item != null)
-                    {
-                        await Add(item);
-                    }
-                }, (p) => !p.Sender.Equals(this) && !(p.Content is null) && !(p.Content.SelectedItem is null)),
+                    return;
+                }
 
-                Messenger.Subscribe<ViewModelListBaseSelectionChanging<GroupViewModel>>((p) =>
+                if (ReferenceEquals(m.Sender, r))
                 {
-                    var view = _collectionView.Invoke();
-                    view?.GroupDescriptions.Remove(p.Content.GroupDescription);
-                }, (p) => p.Sender.Equals(this) && !(p.Content is null)),
+                    //Debug.WriteLine($"3 this instance({r.GetDebuggerDisplay()}) selection changed => add the current value({m.Value.Name}) to the view");
+                    // this instance selection changed
+                    // => add the current value to the view
+                    var view = _collectionViewFactory.Invoke();
+                    await Dispatcher.Invoke(() => view?.GroupDescriptions.Add(m.Value.GroupDescription));
+                }
+                else
+                {
+                    //Debug.WriteLine($"4 another instance selection changed =>  remove the current value({m.Value.Name}) from the possible selections");
+                    // another instance selection changed
+                    // => remove the current value from the possible selections
+                    await r.Remove(m.Value);
+                    m.Value.Dispose();
+                }
+            });
 
-                Messenger.Subscribe<ViewModelListBaseSelectionChanged<GroupViewModel>>((p) =>
+            Messenger.Register<GroupsViewModel, GroupsViewModelRemoved>(this, async (r, m) =>
+            {
+                if (m?.Value?.SelectedItem is null)
                 {
-                    var view = _collectionView.Invoke();
-                    view?.GroupDescriptions.Add(p.Content.GroupDescription);
-                }, (p) => p.Sender.Equals(this) && !(p.Content is null)),
+                    return;
+                }
 
-                Messenger.Subscribe<GroupsViewModelRemoved>(async p =>
-                {
-                    await Clear();
-                }, p => p.Content.Equals(this))
-            };
+                // another instance was removed, so if the selection was valid, add it back to the pool of possible selections
+                await r.Add(m.Value.SelectedItem);
+            });
         }
 
-        public override Task Clear(CancellationToken token)
+        public override async Task Clear(CancellationToken token)
         {
-            var view = _collectionView.Invoke();
-            view?.GroupDescriptions.Clear();
+            var view = _collectionViewFactory.Invoke();
+            await Dispatcher.Invoke(() => view?.GroupDescriptions.Clear());
 
-            return base.Clear(token);
+            await base.Clear(token);
         }
 
-        protected override void Dispose(bool disposing)
+        private string GetDebuggerDisplay()
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                _disposeables.ForEach(p => p.Dispose());
-                _disposeables.Clear();
-            }
-
-            base.Dispose(disposing);
-            _disposed = true;
+            return $"{nameof(GroupsViewModel)}: {SelectedItem?.Name ?? "none"}";
         }
     }
 }

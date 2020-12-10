@@ -1,3 +1,4 @@
+using Microsoft.Toolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
@@ -14,7 +15,7 @@ namespace MvvmScarletToolkit
     /// <typeparam name="TArgument">The argument type, that the to be created command is supposed to accept</typeparam>
     public class ScarletCommandBuilder : IScarletCommandBuilder
     {
-        private static readonly Lazy<ScarletCommandBuilder> _default = new Lazy<ScarletCommandBuilder>(() => new ScarletCommandBuilder(ScarletDispatcher.Default, ScarletCommandManager.Default, ScarletMessenger.Default, ScarletExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, ScarletDispatcher.Default)));
+        private static readonly Lazy<ScarletCommandBuilder> _default = new Lazy<ScarletCommandBuilder>(() => new ScarletCommandBuilder(ScarletDispatcher.Default, ScarletCommandManager.Default, WeakReferenceMessenger.Default, ScarletExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, ScarletDispatcher.Default)));
 
         public static IScarletCommandBuilder Default => _default.Value;
 
@@ -22,11 +23,11 @@ namespace MvvmScarletToolkit
 
         public IScarletDispatcher Dispatcher { get; }
         public IScarletCommandManager CommandManager { get; }
-        public IScarletMessenger Messenger { get; }
+        public IMessenger Messenger { get; }
         public IExitService Exit { get; }
         public IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager { get; }
 
-        public ScarletCommandBuilder(in IScarletDispatcher dispatcher, in IScarletCommandManager commandManager, in IScarletMessenger messenger, in IExitService exitService, in IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, in Func<Action<bool>, IBusyStack> busyStackFactory)
+        public ScarletCommandBuilder(in IScarletDispatcher dispatcher, in IScarletCommandManager commandManager, in IMessenger messenger, in IExitService exitService, in IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager, in Func<Action<bool>, IBusyStack> busyStackFactory)
         {
             Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));

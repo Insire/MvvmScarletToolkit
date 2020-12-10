@@ -1,33 +1,32 @@
-using MvvmScarletToolkit.Abstractions;
-using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class Snake : ObservableObject
+    public sealed class Snake : ObservableRecipient
     {
         private readonly SnakeOption _options;
-        private readonly IScarletMessenger _messenger;
 
         private SnakeHead _head;
         public SnakeHead Head
         {
             get { return _head; }
-            private set { SetValue(ref _head, value); }
+            private set { SetProperty(ref _head, value); }
         }
 
         private ObservableCollection<SnakeSegment> _body;
         public ObservableCollection<SnakeSegment> Body
         {
             get { return _body; }
-            private set { SetValue(ref _body, value); }
+            private set { SetProperty(ref _body, value); }
         }
 
-        public Snake(SnakeOption options, IScarletMessenger messenger)
+        public Snake(SnakeOption options, IMessenger messenger)
+            : base(messenger)
         {
-            _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _options = options ?? throw new ArgumentNullException(nameof(options));
 
             Body = new ObservableCollection<SnakeSegment>();
@@ -161,16 +160,16 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 var segment = Body.LastOrDefault();
                 if (segment != null)
                 {
-                    segment = new SnakeSegment(_options, segment, _messenger, Body.Count);
+                    segment = new SnakeSegment(_options, segment, Messenger, Body.Count);
                 }
                 else
                 {
-                    segment = new SnakeSegment(_options, Head, _messenger, Body.Count);
+                    segment = new SnakeSegment(_options, Head, Messenger, Body.Count);
                 }
 
                 Body.Add(segment);
 
-                _messenger.Publish(new SnakeSegmentCreatedMessage(this, segment));
+                Messenger.Send(new SnakeSegmentCreatedMessage(this, segment));
                 return true;
             }
 

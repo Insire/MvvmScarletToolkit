@@ -10,14 +10,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public string DisplayName
         {
             get { return _displayName; }
-            set { SetValue(ref _displayName, value); }
+            set { SetProperty(ref _displayName, value); }
         }
 
         private bool _isSelected;
         public bool IsSelected
         {
             get { return _isSelected; }
-            set { SetValue(ref _isSelected, value); }
+            set { SetProperty(ref _isSelected, value); }
         }
 
         public AsyncStateViewModel(IScarletCommandBuilder commandBuilder)

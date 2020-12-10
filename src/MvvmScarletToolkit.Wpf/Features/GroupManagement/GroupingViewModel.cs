@@ -1,35 +1,99 @@
+using Microsoft.Toolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
+    // manages
     // https://github.com/tom-englert/DataGridExtensions
     // http://dotnetpattern.com/wpf-datagrid-grouping
     [System.Diagnostics.CodeAnalysis.SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created.", Justification = "Class is a container class and owns all instances")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP007:Don't dispose injected.", Justification = "Class is a container class and owns all instances")]
     public sealed class GroupingViewModel : BusinessViewModelListBase<GroupsViewModel>
     {
+        public static GroupingViewModel Create<T>(ReadOnlyObservableCollection<T> collection)
+            where T : class, INotifyPropertyChanged
+        {
+            return Create(ScarletCommandBuilder.Default, collection);
+        }
+
+        public static GroupingViewModel Create<T>(IScarletCommandBuilder commandBuilder, ReadOnlyObservableCollection<T> collection)
+            where T : class, INotifyPropertyChanged
+        {
+            return new GroupingViewModel(commandBuilder, () => (ListCollectionView)CollectionViewSource.GetDefaultView(collection), typeof(T));
+        }
+
+        public static GroupingViewModel Create<T>(IScarletCommandBuilder commandBuilder, Func<ListCollectionView> collectionViewFactory)
+            where T : class, INotifyPropertyChanged
+        {
+            return new GroupingViewModel(commandBuilder, collectionViewFactory, typeof(T));
+        }
+
         private readonly ConcurrentDictionary<string, GroupViewModel> _filterCollection;
-        private readonly Func<ICollectionView> _collectionViewFactory;
-        private readonly List<IDisposable> _disposeables;
+        private readonly Func<ListCollectionView> _collectionViewFactory;
         private readonly Type _type;
 
-        private bool _disposed;
         private int _maxGroupings;
+        private ListCollectionView? _view;
+
+        private bool _isLiveGroupingEnabled;
+        public bool IsLiveGroupingEnabled
+        {
+            get { return _isLiveGroupingEnabled; }
+            set
+            {
+                if (SetProperty(ref _isLiveGroupingEnabled, value))
+                {
+                    if (_view is null)
+                    {
+                        return;
+                    }
+
+                    _view.IsLiveGrouping = value;
+                }
+            }
+        }
+
+        private bool _isLiveSortingEnabled;
+        public bool IsLiveSortingEnabled
+        {
+            get { return _isLiveSortingEnabled; }
+            set
+            {
+                if (SetProperty(ref _isLiveSortingEnabled, value))
+                {
+                    if (_view is null)
+                    {
+                        return;
+                    }
+
+                    using (_view.DeferRefresh())
+                    {
+                        //var descriptions = _view.SortDescriptions.Cast<SortDescription>().DistinctBy(p => p.PropertyName).ToArray();
+                        //_view.SortDescriptions.Clear();
+
+                        _view.IsLiveSorting = value;
+
+                        //_view.SortDescriptions.AddRange(descriptions);
+                    }
+                }
+            }
+        }
 
         public ICommand AddCommand { get; }
 
         public override ICommand RemoveCommand { get; }
 
-        public GroupingViewModel(IScarletCommandBuilder commandBuilder, Func<ICollectionView> collectionViewFactory, Type type)
+        private GroupingViewModel(IScarletCommandBuilder commandBuilder, Func<ListCollectionView> collectionViewFactory, Type type)
             : base(commandBuilder)
         {
             _type = type ?? throw new ArgumentNullException(nameof(type));
@@ -49,17 +113,50 @@ namespace MvvmScarletToolkit
                 .WithCancellation()
                 .Build();
 
-            _disposeables = new List<IDisposable>
+            Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, (r, m) =>
             {
-                Messenger.Subscribe<ViewModelListBaseSelectionChanging<GroupViewModel>>((p) => _filterCollection.TryAdd(p.Content.Name, p.Content), (p) => !p.Sender.Equals(this) && !(p.Content is null)),
-                Messenger.Subscribe<ViewModelListBaseSelectionChanged<GroupViewModel>>((p) => _filterCollection.TryRemove(p.Content.Name, out var _), (p) => !p.Sender.Equals(this) && !(p.Content is null))
-            };
+                if (m.Value is null)
+                {
+                    return;
+                }
+
+                r._filterCollection.TryAdd(m.Value.Name, m.Value);
+            });
+
+            Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, (r, m) =>
+            {
+                if (m.Value is null)
+                {
+                    return;
+                }
+
+                r._filterCollection.TryRemove(m.Value.Name, out var _);
+            });
+        }
+
+        private ListCollectionView GetCollectionView()
+        {
+            _view ??= _collectionViewFactory.Invoke();
+
+            using (_view.DeferRefresh())
+            {
+                _view.IsLiveGrouping = _isLiveGroupingEnabled;
+                _view.IsLiveSorting = _isLiveSortingEnabled;
+            }
+
+            return _view;
         }
 
         public override async Task Remove(GroupsViewModel item, CancellationToken token)
         {
             await base.Remove(item, token).ConfigureAwait(false);
-            Messenger.Publish(new GroupsViewModelRemoved(this, item));
+            Messenger.Send(new GroupsViewModelRemoved(item));
+
+            var description = item.SelectedItem?.GroupDescription;
+            if (!(description is null))
+            {
+                await Dispatcher.Invoke(() => _view?.GroupDescriptions.Remove(description)).ConfigureAwait(false);
+            }
 
             if (!(item.SelectedItem is null))
             {
@@ -86,7 +183,7 @@ namespace MvvmScarletToolkit
 
         private async Task Add(CancellationToken token)
         {
-            var result = new GroupsViewModel(CommandBuilder, _collectionViewFactory);
+            var result = new GroupsViewModel(CommandBuilder, GetCollectionView);
             await result.AddRange(_filterCollection.Values).ConfigureAwait(false);
 
             await Add(result).ConfigureAwait(false);
@@ -94,7 +191,7 @@ namespace MvvmScarletToolkit
 
         private bool CanAdd()
         {
-            return !_disposed
+            return !IsDisposed
                 && !IsBusy
                 && _filterCollection?.Count > 0
                 && _maxGroupings > Count;
@@ -109,23 +206,6 @@ namespace MvvmScarletToolkit
             }
 
             await base.Clear(token).ConfigureAwait(false);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                _disposeables.ForEach(p => p.Dispose());
-                _disposeables.Clear();
-            }
-
-            base.Dispose(disposing);
-            _disposed = true;
         }
     }
 }

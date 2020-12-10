@@ -32,8 +32,17 @@ namespace MvvmScarletToolkit.Commands
         public virtual bool IsBusy
         {
             get { return _isBusy; }
-            protected set { SetValue(ref _isBusy, value); }
+            protected set
+            {
+                if (SetValue(ref _isBusy, value))
+                {
+                    OnPropertyChanged(nameof(IsNotBusy));
+                }
+            }
         }
+
+        [Bindable(true, BindingDirection.OneWay)]
+        public bool IsNotBusy => !IsBusy;
 
         public abstract void Execute(object parameter);
 

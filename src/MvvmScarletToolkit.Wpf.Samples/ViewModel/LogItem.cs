@@ -11,21 +11,21 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public string Message
         {
             get { return _message; }
-            set { SetValue(ref _message, value); }
+            set { SetProperty(ref _message, value); }
         }
 
         private DateTime _createdOn;
         public DateTime CreatedOn
         {
             get { return _createdOn; }
-            set { SetValue(ref _createdOn, value); }
+            set { SetProperty(ref _createdOn, value); }
         }
 
         private bool _isSelected;
         public bool IsSelected
         {
             get { return _isSelected; }
-            set { SetValue(ref _isSelected, value); }
+            set { SetProperty(ref _isSelected, value); }
         }
 
         public LogItem(IScarletCommandBuilder commandBuilder)

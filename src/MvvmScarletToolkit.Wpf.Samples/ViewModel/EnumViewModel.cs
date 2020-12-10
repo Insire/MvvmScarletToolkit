@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
@@ -8,7 +8,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public ViewModelEnum Value
         {
             get { return _value; }
-            set { SetValue(ref _value, value); }
+            set { SetProperty(ref _value, value); }
         }
     }
 }

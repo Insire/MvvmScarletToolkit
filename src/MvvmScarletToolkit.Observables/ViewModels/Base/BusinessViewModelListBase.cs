@@ -20,7 +20,7 @@ namespace MvvmScarletToolkit.Observables
         public bool IsLoaded
         {
             get { return _isLoaded; }
-            protected set { SetValue(ref _isLoaded, value); }
+            protected set { SetProperty(ref _isLoaded, value); }
         }
 
         private readonly ConcurrentCommandBase _loadCommand;
@@ -73,14 +73,12 @@ namespace MvvmScarletToolkit.Observables
             {
                 throw new ObjectDisposedException(nameof(BusinessViewModelListBase<TViewModel>));
             }
-#if DEBUG
-            LogMethodCall<BusinessViewModelListBase<TViewModel>>();
-#endif
 
             using (BusyStack.GetToken())
             {
                 await LoadInternal(token).ConfigureAwait(false);
                 await Dispatcher.Invoke(() => IsLoaded = true).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => IsActive = true).ConfigureAwait(false);
             }
         }
 
@@ -107,14 +105,12 @@ namespace MvvmScarletToolkit.Observables
             {
                 throw new ObjectDisposedException(nameof(BusinessViewModelListBase<TViewModel>));
             }
-#if DEBUG
-            LogMethodCall<BusinessViewModelListBase<TViewModel>>();
-#endif
 
             using (BusyStack.GetToken())
             {
                 await UnloadInternal(token).ConfigureAwait(false);
                 await Dispatcher.Invoke(() => IsLoaded = false).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => IsActive = false).ConfigureAwait(false);
             }
         }
 
@@ -135,10 +131,6 @@ namespace MvvmScarletToolkit.Observables
             {
                 throw new ObjectDisposedException(nameof(BusinessViewModelListBase<TViewModel>));
             }
-
-#if DEBUG
-            LogMethodCall<BusinessViewModelListBase<TViewModel>>();
-#endif
 
             using (BusyStack.GetToken())
             {

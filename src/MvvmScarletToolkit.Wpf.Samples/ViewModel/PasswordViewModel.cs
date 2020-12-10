@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
@@ -8,7 +8,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public string Password
         {
             get { return _password; }
-            set { SetValue(ref _password, value); }
+            set { SetProperty(ref _password, value); }
         }
     }
 }

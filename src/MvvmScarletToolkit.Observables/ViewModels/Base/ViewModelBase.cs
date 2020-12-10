@@ -1,23 +1,19 @@
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Abstractions;
 using System;
-using System.Collections.Concurrent;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
     /// BaseViewModel that serves as service aggregate and caches <see cref="INotifyPropertyChanged"/> EventArgs
     /// </summary>
-    public abstract class ViewModelBase : ObservableObject, IDisposable
+    public abstract class ViewModelBase : ObservableRecipient, IDisposable
     {
-        private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> _propertyChangedCache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
-
         protected readonly IObservableBusyStack BusyStack;
         protected readonly IScarletCommandBuilder CommandBuilder;
         protected readonly IScarletCommandManager CommandManager;
         protected readonly IScarletDispatcher Dispatcher;
-        protected readonly IScarletMessenger Messenger;
         protected readonly IExitService Exit;
         protected readonly IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
 
@@ -26,17 +22,19 @@ namespace MvvmScarletToolkit.Observables
         public bool IsBusy
         {
             get { return _isBusy; }
-            protected set { SetValue(ref _isBusy, value); }
+            protected set { SetProperty(ref _isBusy, value); }
         }
 
         protected bool IsDisposed { get; private set; }
 
         protected ViewModelBase(IScarletCommandBuilder commandBuilder)
+#pragma warning disable CS8604 // Possible null reference argument. Yes, thats intended
+            : base(commandBuilder?.Messenger)
+#pragma warning restore CS8604 // Possible null reference argument.
         {
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
             Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Dispatcher));
             CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.CommandManager));
-            Messenger = commandBuilder.Messenger ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Messenger));
             Exit = commandBuilder.Exit ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Exit));
             WeakEventManager = commandBuilder.WeakEventManager ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.WeakEventManager));
 
@@ -49,11 +47,6 @@ namespace MvvmScarletToolkit.Observables
             GC.SuppressFinalize(this);
         }
 
-        protected override void OnPropertyChanged([CallerMemberName] in string? propertyName = null)
-        {
-            OnPropertyChanged(_propertyChangedCache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (IsDisposed)
@@ -64,6 +57,7 @@ namespace MvvmScarletToolkit.Observables
             if (disposing)
             {
                 BusyStack?.Dispose();
+                IsActive = false;
             }
 
             IsDisposed = true;
