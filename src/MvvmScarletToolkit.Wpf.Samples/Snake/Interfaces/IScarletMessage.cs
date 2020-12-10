@@ -1,8 +1,5 @@
-namespace MvvmScarletToolkit.Abstractions
+﻿namespace MvvmScarletToolkit.Wpf.Samples
 {
-    /// <summary>
-    /// A TinyMessage to be published/delivered by TinyMessenger
-    /// </summary>
     public interface IScarletMessage
     {
         /// <summary>

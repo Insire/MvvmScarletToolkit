@@ -1,3 +1,4 @@
+using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace MvvmScarletToolkit.Observables
         public virtual TViewModel? SelectedItem
         {
             get { return _selectedItem; }
-            set { SetValue(ref _selectedItem, value, onChanged: OnSelectionChanged, onChanging: OnSelectionChanging); }
+            set { SetProperty(ref _selectedItem, value); }
         }
 
         private IList _selectedItems;
@@ -31,7 +32,7 @@ namespace MvvmScarletToolkit.Observables
         public virtual IList SelectedItems
         {
             get { return _selectedItems; }
-            set { SetValue(ref _selectedItems, value, onChanged: OnSelectionsChanged, onChanging: OnSelectionsChanging); }
+            set { SetProperty(ref _selectedItems, value); }
         }
 
         public TViewModel this[int index]
@@ -85,6 +86,37 @@ namespace MvvmScarletToolkit.Observables
                 .WithBusyNotification(BusyStack)
                 .WithAsyncCancellation()
                 .Build();
+
+            PropertyChanging += ViewModelListBase_PropertyChanging;
+            PropertyChanged += ViewModelListBase_PropertyChanged;
+        }
+
+        private void ViewModelListBase_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(ViewModelListBase<TViewModel>.SelectedItem):
+                    OnSelectionChanged();
+                    break;
+
+                case nameof(ViewModelListBase<TViewModel>.SelectedItems):
+                    OnSelectionsChanged();
+                    break;
+            }
+        }
+
+        private void ViewModelListBase_PropertyChanging(object sender, PropertyChangingEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(ViewModelListBase<TViewModel>.SelectedItem):
+                    OnSelectionChanging();
+                    break;
+
+                case nameof(ViewModelListBase<TViewModel>.SelectedItems):
+                    OnSelectionsChanging();
+                    break;
+            }
         }
 
         /// <summary>
@@ -128,10 +160,6 @@ namespace MvvmScarletToolkit.Observables
                 throw new ArgumentNullException(nameof(item));
             }
 
-#if DEBUG
-            LogMethodCall<ViewModelListBase<TViewModel>>();
-#endif
-
             using (BusyStack.GetToken())
             {
                 await Dispatcher.Invoke(() => _items.Add(item), token).ConfigureAwait(false);
@@ -162,10 +190,6 @@ namespace MvvmScarletToolkit.Observables
                 throw new ArgumentNullException(nameof(items));
             }
 
-#if DEBUG
-            LogMethodCall<ViewModelListBase<TViewModel>>();
-#endif
-
             using (BusyStack.GetToken())
             {
                 await items.ForEachAsync(Add, token).ConfigureAwait(false);
@@ -193,10 +217,6 @@ namespace MvvmScarletToolkit.Observables
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
             }
-
-#if DEBUG
-            LogMethodCall<ViewModelListBase<TViewModel>>();
-#endif
 
             using (BusyStack.GetToken())
             {
@@ -228,10 +248,6 @@ namespace MvvmScarletToolkit.Observables
                 throw new ArgumentNullException(nameof(items));
             }
 
-#if DEBUG
-            LogMethodCall<ViewModelListBase<TViewModel>>();
-#endif
-
             using (BusyStack.GetToken())
             {
                 await items.ForEachAsync(Remove, token).ConfigureAwait(false);
@@ -254,10 +270,6 @@ namespace MvvmScarletToolkit.Observables
             {
                 throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
             }
-
-#if DEBUG
-            LogMethodCall<ViewModelListBase<TViewModel>>();
-#endif
 
             using (BusyStack.GetToken())
             {
@@ -334,7 +346,7 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-            Messenger.Publish(new ViewModelListBaseSelectionChanged<TViewModel?>(this, SelectedItem));
+            Messenger.Send(new ViewModelListBaseSelectionChanged<TViewModel?>(this, SelectedItem));
         }
 
         private void OnSelectionChanging()
@@ -344,7 +356,7 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-            Messenger.Publish(new ViewModelListBaseSelectionChanging<TViewModel?>(this, SelectedItem));
+            Messenger.Send(new ViewModelListBaseSelectionChanging<TViewModel?>(this, SelectedItem));
         }
 
         private void OnSelectionsChanged()
@@ -354,7 +366,7 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-            Messenger.Publish(new ViewModelListBaseSelectionsChanged<TViewModel>(this, SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
+            Messenger.Send(new ViewModelListBaseSelectionsChanged<TViewModel>(SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
         }
 
         private void OnSelectionsChanging()
@@ -364,7 +376,22 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-            Messenger.Publish(new ViewModelListBaseSelectionsChanging<TViewModel>(this, SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
+            Messenger.Send(new ViewModelListBaseSelectionsChanging<TViewModel>(SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
+        }
+
+        protected override async void Dispose(bool disposing)
+        {
+            if (IsDisposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
+
+            if (disposing)
+            {
+                await Clear();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

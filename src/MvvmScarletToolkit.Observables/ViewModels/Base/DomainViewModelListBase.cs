@@ -16,7 +16,7 @@ namespace MvvmScarletToolkit.Observables
         public int Total
         {
             get { return _total; }
-            protected set { SetValue(ref _total, value); }
+            protected set { SetProperty(ref _total, value); }
         }
 
         private int _pageSize;
@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit.Observables
         public int PageSize
         {
             get { return _pageSize; }
-            set { SetValue(ref _pageSize, value); }
+            set { SetProperty(ref _pageSize, value); }
         }
 
         private int _pageIndex;
@@ -32,7 +32,7 @@ namespace MvvmScarletToolkit.Observables
         public int PageIndex
         {
             get { return _pageIndex; }
-            set { SetValue(ref _pageIndex, value); }
+            set { SetProperty(ref _pageIndex, value); }
         }
 
         [Bindable(true, BindingDirection.OneWay)]

@@ -2,7 +2,6 @@ using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Tests.Util;
 using NUnit.Framework;
 using System;
-using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Tests
 {
@@ -18,37 +17,6 @@ namespace MvvmScarletToolkit.Tests
         public void Ctor_DoesNotThrow()
         {
             new DerivedViewModelBase(Utils.GetTestCommandBuilder());
-        }
-
-        [Test]
-        public void InpcEvents_AreCached()
-        {
-            var eventArgs = default(PropertyChangedEventArgs);
-            var vm = new DerivedViewModelBase(Utils.GetTestCommandBuilder());
-            var eventArgsCount = 0;
-            Assert.AreEqual(false, vm.IsBusy);
-
-            vm.PropertyChanged += OnPropertyChangedFirst;
-
-            vm.SetIsBusy(true);
-            vm.SetIsBusy(false);
-
-            Assert.AreEqual(2, eventArgsCount);
-
-            void OnPropertyChangedFirst(object sender, PropertyChangedEventArgs e)
-            {
-                eventArgsCount++;
-                eventArgs = e;
-
-                vm.PropertyChanged -= OnPropertyChangedFirst;
-                vm.PropertyChanged += OnPropertyChangedSecond;
-            }
-
-            void OnPropertyChangedSecond(object sender, PropertyChangedEventArgs e)
-            {
-                eventArgsCount++;
-                Assert.AreEqual(eventArgs, e);
-            }
         }
 
         [Test]

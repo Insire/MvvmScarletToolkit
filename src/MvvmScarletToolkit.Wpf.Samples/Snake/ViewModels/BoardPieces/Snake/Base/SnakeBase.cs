@@ -1,37 +1,36 @@
-using MvvmScarletToolkit.Abstractions;
-using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public abstract class SnakeBase : ObservableObject, IPositionable
+    public abstract class SnakeBase : ObservableRecipient, IPositionable
     {
-        private readonly IScarletMessenger _messenger;
         private readonly SnakeOption _options;
 
         private Position _currentPosition;
         public Position CurrentPosition
         {
             get { return _currentPosition; }
-            protected set { SetValue(ref _currentPosition, value); }
+            protected set { SetProperty(ref _currentPosition, value); }
         }
 
         private Size _size;
         public Size Size
         {
             get { return _size; }
-            protected set { SetValue(ref _size, value); }
+            protected set { SetProperty(ref _size, value); }
         }
 
-        protected SnakeBase(SnakeOption options, Size size, IScarletMessenger messenger)
+        protected SnakeBase(SnakeOption options, Size size, IMessenger messenger)
+            : base(messenger)
         {
-            _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             Size = size ?? throw new ArgumentNullException(nameof(size));
         }
 
-        protected SnakeBase(SnakeOption options, IScarletMessenger log)
-            : this(options, new Size(options.BoardPieceSize, options.BoardPieceSize), log)
+        protected SnakeBase(SnakeOption options, IMessenger messenger)
+            : this(options, new Size(options.BoardPieceSize, options.BoardPieceSize), messenger)
         {
         }
 
@@ -112,7 +111,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
             CurrentPosition = newPosition;
 
-            _messenger.Publish(message);
+            Messenger.Send(message);
         }
     }
 }

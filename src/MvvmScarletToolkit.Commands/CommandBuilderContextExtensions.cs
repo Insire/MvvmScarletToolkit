@@ -66,11 +66,16 @@ namespace MvvmScarletToolkit
         /// </summary>
         public static CommandBuilderContext<TArgument> WithSingleExecution<TArgument>(this CommandBuilderContext<TArgument> context)
         {
+            return context.WithSingleExecution(default(string));
+        }
+
+        public static CommandBuilderContext<TArgument> WithSingleExecution<TArgument>(this CommandBuilderContext<TArgument> context, string? name)
+        {
             ValdiateContextForNull(context);
 
             ConcurrentCommandBase DecoratorFactory(ConcurrentCommandBase command)
             {
-                return new SequentialAsyncCommandDecorator(context.CommandManager, command);
+                return new SequentialAsyncCommandDecorator(context.CommandManager, command, name);
             }
 
             context.AddDecorator(DecoratorFactory);

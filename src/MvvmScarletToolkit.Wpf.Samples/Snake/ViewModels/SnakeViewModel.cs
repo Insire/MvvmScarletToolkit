@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -11,28 +11,28 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public SnakeOption SelectedOption
         {
             get { return _selectedOption; }
-            set { SetValue(ref _selectedOption, value); }
+            set { SetProperty(ref _selectedOption, value); }
         }
 
         private ObservableCollection<SnakeOption> _options;
         public ObservableCollection<SnakeOption> Options
         {
             get { return _options; }
-            private set { SetValue(ref _options, value); }
+            private set { SetProperty(ref _options, value); }
         }
 
         private KeyMapViewModel _keyMapViewModel;
         public KeyMapViewModel KeyMapViewModel
         {
             get { return _keyMapViewModel; }
-            private set { SetValue(ref _keyMapViewModel, value); }
+            private set { SetProperty(ref _keyMapViewModel, value); }
         }
 
         private SnakeLogViewModel _snakeLogViewModel;
         public SnakeLogViewModel SnakeLogViewModel
         {
             get { return _snakeLogViewModel; }
-            private set { SetValue(ref _snakeLogViewModel, value); }
+            private set { SetProperty(ref _snakeLogViewModel, value); }
         }
 
         public SnakeViewModel(SnakeLogViewModel snakeLogViewModel)

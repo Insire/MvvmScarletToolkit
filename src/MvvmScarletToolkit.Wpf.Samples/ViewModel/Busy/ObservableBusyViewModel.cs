@@ -1,3 +1,4 @@
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Diagnostics;
@@ -17,7 +18,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public bool IsBusy
         {
             get { return _isBusy; }
-            private set { SetValue(ref _isBusy, value); }
+            private set { SetProperty(ref _isBusy, value); }
         }
 
         public ICommand BeBusyCommand { get; }

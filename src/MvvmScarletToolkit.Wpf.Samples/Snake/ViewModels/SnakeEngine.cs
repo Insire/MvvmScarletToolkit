@@ -1,6 +1,7 @@
-using MvvmScarletToolkit.Abstractions;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Commands;
-using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,13 +13,12 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    internal sealed class SnakeEngine : ObservableObject, ISnakeManager
+    internal sealed class SnakeEngine : ObservableRecipient, ISnakeManager
     {
         private readonly IScarletDispatcher _dispatcher;
         private readonly SnakeOption _options;
         private readonly IProducerConsumerCollection<Apple> _apples;
         private readonly Random _random;
-        private readonly IScarletMessenger _messenger;
 
         private bool _isLoaded;
         private bool _disposed;
@@ -39,63 +39,63 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public Snake Snake
         {
             get { return _snake; }
-            private set { SetValue(ref _snake, value); }
+            private set { SetProperty(ref _snake, value); }
         }
 
         private ObservableCollection<IPositionable> _boardPieces;
         public ObservableCollection<IPositionable> BoardPieces
         {
             get { return _boardPieces; }
-            private set { SetValue(ref _boardPieces, value); }
+            private set { SetProperty(ref _boardPieces, value); }
         }
 
         private IConcurrentCommand _playCommand;
         public IConcurrentCommand PlayCommand
         {
             get { return _playCommand; }
-            private set { SetValue(ref _playCommand, value); }
+            private set { SetProperty(ref _playCommand, value); }
         }
 
         private IConcurrentCommand _resetCommand;
         public IConcurrentCommand ResetCommand
         {
             get { return _resetCommand; }
-            private set { SetValue(ref _resetCommand, value); }
+            private set { SetProperty(ref _resetCommand, value); }
         }
 
         private ICommand _moveNorthCommand;
         public ICommand MoveNorthCommand
         {
             get { return _moveNorthCommand; }
-            private set { SetValue(ref _moveNorthCommand, value); }
+            private set { SetProperty(ref _moveNorthCommand, value); }
         }
 
         private ICommand _moveSouthCommand;
         public ICommand MoveSouthCommand
         {
             get { return _moveSouthCommand; }
-            private set { SetValue(ref _moveSouthCommand, value); }
+            private set { SetProperty(ref _moveSouthCommand, value); }
         }
 
         private ICommand _moveWestCommand;
         public ICommand MoveWestCommand
         {
             get { return _moveWestCommand; }
-            private set { SetValue(ref _moveWestCommand, value); }
+            private set { SetProperty(ref _moveWestCommand, value); }
         }
 
         private ICommand _moveEastCommand;
         public ICommand MoveEastCommand
         {
             get { return _moveEastCommand; }
-            private set { SetValue(ref _moveEastCommand, value); }
+            private set { SetProperty(ref _moveEastCommand, value); }
         }
 
         private ICommand _loadCommand;
         public ICommand LoadCommand
         {
             get { return _loadCommand; }
-            private set { SetValue(ref _loadCommand, value); }
+            private set { SetProperty(ref _loadCommand, value); }
         }
 
         private volatile GameState _state;
@@ -127,13 +127,13 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
                 _direction = value;
                 OnPropertyChanged();
-                _messenger.Publish(new SnakeDirectionChanged(this, value));
+                Messenger.Send(new SnakeDirectionChanged(this, value));
             }
         }
 
-        public SnakeEngine(SnakeOption options, IScarletDispatcher dispatcher, IScarletMessenger messenger, IScarletCommandBuilder commandBuilder, IScarletCommandManager commandManager)
+        public SnakeEngine(SnakeOption options, IScarletDispatcher dispatcher, IMessenger messenger, IScarletCommandBuilder commandBuilder)
+            : base(messenger)
         {
-            _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _apples = new ConcurrentQueue<Apple>();
@@ -148,18 +148,18 @@ namespace MvvmScarletToolkit.Wpf.Samples
             UpperBoundY = _options.MaxHeight;
             UpperBoundX = _options.MaxWidth;
 
-            Snake = new Snake(_options, _messenger);
+            Snake = new Snake(_options, Messenger);
             BoardPieces = new ObservableCollection<IPositionable>();
 
             PlayCommand = commandBuilder.Create(Play).Build();
             ResetCommand = commandBuilder.Create(Reset).Build();
 
-            LoadCommand = new RelayCommand(commandManager, Load, CanLoad);
+            LoadCommand = new RelayCommand(Load, CanLoad);
 
-            MoveNorthCommand = new RelayCommand(commandManager, SetDirectionNorth, CanMoveNorth);
-            MoveSouthCommand = new RelayCommand(commandManager, SetDirectionSouth, CanMoveSouth);
-            MoveWestCommand = new RelayCommand(commandManager, SetDirectionWest, CanMoveWest);
-            MoveEastCommand = new RelayCommand(commandManager, SetDirectionEast, CanMoveEast);
+            MoveNorthCommand = new RelayCommand(SetDirectionNorth, CanMoveNorth);
+            MoveSouthCommand = new RelayCommand(SetDirectionSouth, CanMoveSouth);
+            MoveWestCommand = new RelayCommand(SetDirectionWest, CanMoveWest);
+            MoveEastCommand = new RelayCommand(SetDirectionEast, CanMoveEast);
         }
 
         private async Task Play()
@@ -233,7 +233,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             _boardPieces.Clear();
             _apples.Clear();
 
-            Snake = new Snake(_options, _messenger);
+            Snake = new Snake(_options, Messenger);
             UpdateBoardPieces();
         }
 

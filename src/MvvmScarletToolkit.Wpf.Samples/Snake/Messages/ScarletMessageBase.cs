@@ -1,7 +1,6 @@
-using MvvmScarletToolkit.Abstractions;
-using System;
+﻿using System;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Wpf.Samples
 {
     /// <summary>
     /// Base class for messages that provides weak refrence storage of the sender

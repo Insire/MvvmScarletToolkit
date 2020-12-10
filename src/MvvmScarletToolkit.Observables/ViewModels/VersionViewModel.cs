@@ -1,3 +1,4 @@
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 
 namespace MvvmScarletToolkit.Observables
@@ -24,7 +25,7 @@ namespace MvvmScarletToolkit.Observables
             get { return _current; }
             set
             {
-                if (SetValue(ref _current, value))
+                if (SetProperty(ref _current, value))
                 {
                     if (!EqualityComparer<T>.Default.Equals(_current, Default))
                     {

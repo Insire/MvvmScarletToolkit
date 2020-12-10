@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System.Diagnostics;
 
 namespace MvvmScarletToolkit.Wpf.Samples
@@ -10,14 +10,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public int Width
         {
             get { return _width; }
-            private set { SetValue(ref _width, value); }
+            private set { SetProperty(ref _width, value); }
         }
 
         private int _height;
         public int Height
         {
             get { return _height; }
-            private set { SetValue(ref _height, value); }
+            private set { SetProperty(ref _height, value); }
         }
 
         public Size(int width, int height)

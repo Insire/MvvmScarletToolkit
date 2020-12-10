@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public LogItems LogItems
         {
             get { return _logItems; }
-            private set { SetValue(ref _logItems, value); }
+            private set { SetProperty(ref _logItems, value); }
         }
 
         public VirtualizationViewModel(LogItems logItems, IScarletCommandBuilder commandBuilder)

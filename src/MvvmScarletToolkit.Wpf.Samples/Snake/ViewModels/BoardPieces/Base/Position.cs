@@ -1,4 +1,4 @@
-﻿using MvvmScarletToolkit.Observables;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System.Diagnostics;
 
 namespace MvvmScarletToolkit.Wpf.Samples
@@ -10,14 +10,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public int X
         {
             get { return _x; }
-            set { SetValue(ref _x, value); }
+            set { SetProperty(ref _x, value); }
         }
 
         private int _y;
         public int Y
         {
             get { return _y; }
-            set { SetValue(ref _y, value); }
+            set { SetProperty(ref _y, value); }
         }
 
         public Position()
