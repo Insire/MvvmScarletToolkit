@@ -2,7 +2,6 @@ using MvvmScarletToolkit.Observables;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Data;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
@@ -27,7 +26,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public DataGridViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            Groups = new GroupingViewModel(commandBuilder, () => CollectionViewSource.GetDefaultView(Items), typeof(DataGridRowViewModel));
+            Groups = GroupingViewModel.Create(commandBuilder, Items);
             Filter = IsMatch;
         }
 
@@ -77,14 +76,13 @@ namespace MvvmScarletToolkit.Wpf.Samples
             return name.IndexOf(filterText, 0, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
-        protected override async void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 Groups.Dispose();
 
                 Items.Dispose();
-                await Clear().ConfigureAwait(false);
             }
 
             base.Dispose(disposing);

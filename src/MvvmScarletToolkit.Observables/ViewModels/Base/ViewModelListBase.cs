@@ -378,5 +378,20 @@ namespace MvvmScarletToolkit.Observables
 
             Messenger.Send(new ViewModelListBaseSelectionsChanging<TViewModel>(SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
         }
+
+        protected override async void Dispose(bool disposing)
+        {
+            if (IsDisposed)
+            {
+                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+            }
+
+            if (disposing)
+            {
+                await Clear();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

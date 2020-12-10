@@ -6,7 +6,7 @@ using System.Windows.Data;
 namespace MvvmScarletToolkit
 {
     [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-    public sealed class GroupViewModel : ViewModelBase<PropertyInfo>
+    public sealed class GroupViewModel : ViewModelBase
     {
         private string _name;
         public string Name
@@ -18,9 +18,14 @@ namespace MvvmScarletToolkit
         public PropertyGroupDescription GroupDescription { get; }
 
         public GroupViewModel(IScarletCommandBuilder commandBuilder, PropertyInfo propertyInfo)
-            : base(commandBuilder, propertyInfo)
+            : base(commandBuilder)
         {
-            _name = Model?.Name ?? string.Empty;
+            if (propertyInfo is null)
+            {
+                throw new System.ArgumentNullException(nameof(propertyInfo));
+            }
+
+            _name = propertyInfo.Name;
             GroupDescription = new PropertyGroupDescription(propertyInfo.Name);
         }
 

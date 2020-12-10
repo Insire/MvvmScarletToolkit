@@ -1,7 +1,6 @@
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.FileSystemBrowser;
-using System.Windows.Data;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
@@ -22,7 +21,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             Add("Busytree", new BusyViewModel(commandBuilder));
             Add("Text rendering", new TextDisplayViewModel(commandBuilder));
             Add(nameof(PasswordViewModel), new PasswordViewModel());
-            Add(nameof(GroupingViewModel), new GroupingViewModel(commandBuilder, () => CollectionViewSource.GetDefaultView(dataGridViewModel.Items), typeof(DataGridRowViewModel)));
+            Add(nameof(GroupingViewModel), GroupingViewModel.Create(commandBuilder, dataGridViewModel.Items));
             Add(nameof(DialogViewModel), new DialogViewModel(commandBuilder));
             Add(nameof(ValidationViewModels), new ValidationViewModels(commandBuilder));
             Add(nameof(ProcessViewModel), new ProcessViewModel(commandBuilder));

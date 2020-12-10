@@ -551,6 +551,8 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="4" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged, Delay=500}" />
@@ -563,30 +565,42 @@
                                             <ItemsControl ItemsSource="{Binding Groups.Items}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate DataType="{x:Type mvvm:GroupsViewModel}">
-                                                        <DockPanel MinWidth="150">
-                                                            <Button Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
-                                                                    Command="{Binding Data.AddCommand, Source={StaticResource DataContextProxy}}"
-                                                                    Content="+"
-                                                                    DockPanel.Dock="Right"
-                                                                    ToolTip="Add" />
+                                                        <Border Margin="0,0,8,0"
+                                                                Padding="4"
+                                                                Background="#FCFCFC"
+                                                                BorderBrush="#EEE"
+                                                                BorderThickness="1">
 
-                                                            <Button Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
-                                                                    Command="{Binding Data.RemoveCommand, Source={StaticResource DataContextProxy}}"
-                                                                    CommandParameter="{Binding}"
-                                                                    Content="-"
-                                                                    DockPanel.Dock="Right"
-                                                                    ToolTip="Remove" />
+                                                            <DockPanel MinWidth="150">
+                                                                <Button Width="30"
+                                                                        Height="30"
+                                                                        Margin="0,0,8,0"
+                                                                        Command="{Binding Data.RemoveCommand, Source={StaticResource DataContextProxy}}"
+                                                                        CommandParameter="{Binding}"
+                                                                        Content="-"
+                                                                        DockPanel.Dock="Left"
+                                                                        ToolTip="Remove" />
 
-                                                            <ComboBox VerticalContentAlignment="Center"
-                                                                      ItemsSource="{Binding Items}"
-                                                                      SelectedItem="{Binding SelectedItem}">
-                                                                <ComboBox.ItemTemplate>
-                                                                    <DataTemplate DataType="{x:Type mvvm:GroupViewModel}">
-                                                                        <TextBlock Text="{Binding Name}" />
-                                                                    </DataTemplate>
-                                                                </ComboBox.ItemTemplate>
-                                                            </ComboBox>
-                                                        </DockPanel>
+                                                                <Button Width="30"
+                                                                        Height="30"
+                                                                        Margin="8,0,0,0"
+                                                                        Command="{Binding Data.AddCommand, Source={StaticResource DataContextProxy}}"
+                                                                        Content="+"
+                                                                        DockPanel.Dock="Right"
+                                                                        ToolTip="Add" />
+
+                                                                <ComboBox Height="30"
+                                                                          VerticalContentAlignment="Center"
+                                                                          ItemsSource="{Binding Items}"
+                                                                          SelectedItem="{Binding SelectedItem}">
+                                                                    <ComboBox.ItemTemplate>
+                                                                        <DataTemplate DataType="{x:Type mvvm:GroupViewModel}">
+                                                                            <TextBlock Text="{Binding Name}" />
+                                                                        </DataTemplate>
+                                                                    </ComboBox.ItemTemplate>
+                                                                </ComboBox>
+                                                            </DockPanel>
+                                                        </Border>
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
                                                 <ItemsControl.ItemsPanel>
@@ -601,7 +615,9 @@
                                         <DataTrigger Binding="{Binding Groups.Count}" Value="0">
                                             <Setter Property="Content">
                                                 <Setter.Value>
-                                                    <Button Padding="4"
+                                                    <Button Width="30"
+                                                            Height="30"
+                                                            Padding="4"
                                                             HorizontalAlignment="Left"
                                                             VerticalAlignment="Center"
                                                             Command="{Binding Groups.AddCommand}"
@@ -630,16 +646,16 @@
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="{x:Type GroupItem}">
                                                         <DockPanel>
-                                                            <DockPanel Height="30" DockPanel.Dock="Top">
-                                                                <TextBlock Margin="4"
-                                                                           VerticalAlignment="Center"
-                                                                           DockPanel.Dock="Right"
-                                                                           Text="{Binding ItemCount, StringFormat=Count: {0}}" />
-                                                                <TextBlock VerticalAlignment="Center"
-                                                                           FontSize="16"
-                                                                           FontWeight="DemiBold"
-                                                                           Text="{Binding Name}" />
-                                                            </DockPanel>
+                                                            <StackPanel Height="30"
+                                                                        DockPanel.Dock="Top"
+                                                                        Orientation="Horizontal">
+                                                                <TextBlock Margin="8,0,0,0" VerticalAlignment="Center">
+                                                                    <Run FontSize="16"
+                                                                         FontWeight="DemiBold"
+                                                                         Text="{Binding Name, Mode=OneWay}" />
+                                                                    <Run Text="{Binding ItemCount, StringFormat=Count: {0}, Mode=OneWay}" />
+                                                                </TextBlock>
+                                                            </StackPanel>
                                                             <ItemsPresenter />
                                                         </DockPanel>
                                                     </ControlTemplate>
@@ -663,6 +679,19 @@
                         <GridSplitter Grid.Row="5" HorizontalAlignment="Stretch" />
 
                         <ContentControl Grid.Row="6" Content="{Binding SelectedItem}" />
+
+                        <StackPanel Grid.Row="8" Orientation="Horizontal">
+                            <ToggleButton Height="30"
+                                          Padding="8,0"
+                                          Content="Live grouping"
+                                          IsChecked="{Binding Groups.IsLiveGroupingEnabled}" />
+
+                            <ToggleButton Height="30"
+                                          Margin="8,0"
+                                          Padding="8,0"
+                                          Content="Live sorting"
+                                          IsChecked="{Binding Groups.IsLiveSortingEnabled}" />
+                        </StackPanel>
                     </Grid>
                 </DataTemplate>
 
