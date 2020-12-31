@@ -67,7 +67,7 @@ namespace MvvmScarletToolkit
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
             var seenKeys = new HashSet<TKey>();
-            foreach (TSource element in source)
+            foreach (var element in source)
             {
                 if (seenKeys.Add(keySelector(element)))
                 {
@@ -78,10 +78,7 @@ namespace MvvmScarletToolkit
 
         public static void AddRange<T>(this ICollection<T> source, IEnumerable<T> items)
         {
-            foreach (var item in items)
-            {
-                source.Add(item);
-            }
+            items.ForEach(p => source.Add(p));
         }
     }
 }
