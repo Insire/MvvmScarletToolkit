@@ -27,10 +27,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
             var navigation = new NavigationViewModel(ScarletCommandBuilder.Default, new LocalizationsViewModel(new ScarletLocalizationProvider()));
 
-            var window = new MainWindow(_tracker)
-            {
-                DataContext = navigation
-            };
+            var window = new MainWindow(_tracker, navigation);
 
             window.Show();
         }
