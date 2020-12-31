@@ -17,13 +17,20 @@ namespace MvvmScarletToolkit.Wpf.Samples
             typeof(MainWindow),
             new PropertyMetadata(null));
 
-        public MainWindow(Tracker tracker)
+        public MainWindow(Tracker tracker, NavigationViewModel navigationViewModel)
         {
+            if (navigationViewModel is null)
+            {
+                throw new System.ArgumentNullException(nameof(navigationViewModel));
+            }
+
             InitializeComponent();
 
             tracker.Track(this);
 
             SetCurrentValue(TrackerProperty, tracker);
+
+            DataContext = navigationViewModel;
         }
     }
 }
