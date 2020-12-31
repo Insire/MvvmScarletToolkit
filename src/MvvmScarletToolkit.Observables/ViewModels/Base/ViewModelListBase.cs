@@ -40,6 +40,10 @@ namespace MvvmScarletToolkit.Observables
             get { return _items[index]; }
         }
 
+        /// <summary>
+        /// <para>Readonly collection of all the entries managed by this instance</para>
+        /// <para>Using <see cref="ICollection{TViewModel}.Add"/> on this, will result in a <see cref="NotSupportedException"/></para>
+        /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public ReadOnlyObservableCollection<TViewModel> Items { get; }
 
@@ -388,7 +392,7 @@ namespace MvvmScarletToolkit.Observables
 
             if (disposing)
             {
-                await Clear();
+                await Clear().ConfigureAwait(false);
             }
 
             base.Dispose(disposing);
