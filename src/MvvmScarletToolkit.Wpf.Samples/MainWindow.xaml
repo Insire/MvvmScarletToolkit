@@ -700,8 +700,8 @@
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type local:AsyncStateListViewModel}">
-                    <Grid>
-                        <Grid.Resources>
+                    <DockPanel>
+                        <DockPanel.Resources>
                             <CollectionViewSource x:Key="SortedViewSource"
                                                   IsLiveSortingRequested="True"
                                                   Source="{Binding SelectedItems}">
@@ -743,7 +743,7 @@
                                     </TextBlock>
                                 </StackPanel>
                             </DataTemplate>
-                        </Grid.Resources>
+                        </DockPanel.Resources>
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -806,6 +806,8 @@
                                 </Button.Style>
                             </Button>
 
+
+
                             <ListBox Grid.Row="2"
                                      Grid.RowSpan="3"
                                      Grid.Column="0"
@@ -823,7 +825,17 @@
                                 </ListBox.ItemContainerStyle>
                             </ListBox>
 
-                            <ScrollViewer Grid.Row="2" Grid.Column="2">
+                            <TextBlock Grid.Row="2"
+                                       Grid.RowSpan="3"
+                                       Grid.Column="0"
+                                       Margin="0,0,25,00"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Bottom"
+                                       Text="{Binding SelectedItems.Count, StringFormat='{}{0} Entries selected'}" />
+
+                            <ScrollViewer Grid.Row="2"
+                                          Grid.Column="2"
+                                          VerticalScrollBarVisibility="Auto">
                                 <ItemsControl ItemTemplate="{StaticResource DemoItemTemplate}" ItemsSource="{Binding Source={StaticResource SortedViewSource}}" />
                             </ScrollViewer>
 
@@ -847,7 +859,7 @@
                                 </ContentControl.ContentTemplate>
                             </ContentControl>
                         </Grid>
-                    </Grid>
+                    </DockPanel>
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type local:ProcessingImagesViewModel}">
