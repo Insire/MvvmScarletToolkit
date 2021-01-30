@@ -1,4 +1,5 @@
 using Microsoft.Toolkit.Mvvm.ComponentModel;
+using System.Collections;
 using System.Collections.ObjectModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
@@ -19,12 +20,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             set { SetProperty(ref _items, value); }
         }
 
-        private ObservableCollection<AsyncStateViewModel> _selectedItems;
-        public ObservableCollection<AsyncStateViewModel> SelectedItems
-        {
-            get { return _selectedItems; }
-            set { SetProperty(ref _selectedItems, value); }
-        }
+        public IList SelectedItems { get; }
 
         private string _filterText;
         public string FilterText
@@ -36,7 +32,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public AsyncStateListViewModel(IScarletCommandBuilder commandBuilder)
         {
             Items = new ObservableCollection<AsyncStateViewModel>();
-            _selectedItems = new ObservableCollection<AsyncStateViewModel>();
+            SelectedItems = new ObservableCollection<AsyncStateViewModel>();
 
             for (var i = 0; i < 10; i++)
             {
