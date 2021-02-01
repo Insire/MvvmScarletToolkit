@@ -18,7 +18,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
-        <PackageReference Include="FluentValidation" Version="9.4.0" />
+        <PackageReference Include="FluentValidation" Version="9.5.0" />
         <PackageReference Include="Jot" Version="2.1.8" />
     </ItemGroup>
   
