@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+        <TargetFrameworks>netcoreapp3.1;net5.0-windows</TargetFrameworks>
         <UseWPF>true</UseWPF>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <PublishTrimmed>true</PublishTrimmed>
@@ -21,7 +21,7 @@
         <PackageReference Include="FluentValidation" Version="9.5.1" />
         <PackageReference Include="Jot" Version="2.1.8" />
     </ItemGroup>
-  
+
     <ItemGroup>
         <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj" />
