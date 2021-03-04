@@ -11,14 +11,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="7.23.1" />
-        <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="3.0.5" />
-        <PackageReference Include="Roslynator.Analyzers" Version="3.0.0">
+        <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="7.23.2.1" />
+        <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="3.0.7" />
+        <PackageReference Include="Roslynator.Analyzers" Version="3.1.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
-        <PackageReference Include="FluentValidation" Version="9.4.0" />
+        <PackageReference Include="FluentValidation" Version="9.5.1" />
         <PackageReference Include="Jot" Version="2.1.8" />
     </ItemGroup>
   
