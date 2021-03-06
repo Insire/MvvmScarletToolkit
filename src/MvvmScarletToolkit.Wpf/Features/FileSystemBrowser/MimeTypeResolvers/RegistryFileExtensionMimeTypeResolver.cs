@@ -16,7 +16,12 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
             using (var key = Registry.ClassesRoot.OpenSubKey(extension))
             {
-                if (key?.GetValue("Content Type") is null)
+                if (key is null)
+                {
+                    return null;
+                }
+
+                if (key.GetValue("Content Type") is null)
                 {
                     return null;
                 }
