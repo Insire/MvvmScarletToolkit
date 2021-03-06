@@ -10,17 +10,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Cake.Codecov" Version="0.9.1" />
-        <PackageReference Include="Cake.Frosting" Version="1.0.0-rc0001" />
-        <PackageReference Include="Cake.GitVersioning" Version="3.3.37" />
-        <PackageReference Include="Cake.Incubator" Version="5.1.0" />
-        <PackageReference Include="Codecov" Version="1.12.3" />
-        <PackageReference Include="GitVersion.CommandLine" Version="5.5.0">
+        <PackageReference Include="Cake.Codecov" Version="1.0.0" />
+        <PackageReference Include="Cake.Frosting" Version="1.1.0" />
+        <PackageReference Include="Cake.GitVersioning" Version="3.4.165-alpha" />
+        <PackageReference Include="Cake.Incubator" Version="6.0.0" />
+        <PackageReference Include="Codecov" Version="1.13.0" />
+        <PackageReference Include="GitVersion.CommandLine" Version="5.6.6">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.CodeCoverage" Version="16.7.1" />
-        <PackageReference Include="NUnit.ConsoleRunner" Version="3.11.1" />
-        <PackageReference Include="ReportGenerator" Version="4.7.1" />
+        <PackageReference Include="Microsoft.CodeCoverage" Version="16.9.1" />
+        <PackageReference Include="NUnit.ConsoleRunner" Version="3.12.0" />
+        <PackageReference Include="ReportGenerator" Version="4.8.7" />
     </ItemGroup>
 </Project>

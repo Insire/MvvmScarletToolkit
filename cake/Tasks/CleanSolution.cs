@@ -14,13 +14,18 @@ public sealed class CleanSolution : FrostingTask<Context>
         foreach (var project in solution.Projects)
         {
             // check solution items and exclude solution folders, since they are virtual
-            if (project.Name == "Solution Items")
+            if (project.Type == "{2150E333-8FDC-42A3-9474-1A3956D46DE8}")
                 continue;
 
             var customProject = context.ParseProject(project.Path, configuration: Context.BuildConfiguration, platform: Context.Platform);
 
             foreach (var path in customProject.OutputPaths)
             {
+                if (path is null)
+                {
+                    continue;
+                }
+
                 context.CleanDirectory(path.FullPath);
             }
         }

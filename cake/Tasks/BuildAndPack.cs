@@ -1,4 +1,4 @@
-﻿using Build;
+using Build;
 using Cake.Common;
 using Cake.Core;
 using Cake.Core.IO;
@@ -17,6 +17,7 @@ public sealed class BuildAndPack : FrostingTask<Context>
 
             void Pack(string path)
             {
+                var semver = context.GitVersioningGetVersion().SemVer2;
                 var settings = new ProcessSettings()
                     .UseWorkingDirectory(".")
                     .WithArguments(builder => builder
@@ -29,7 +30,7 @@ public sealed class BuildAndPack : FrostingTask<Context>
                         .Append("--nologo")
                         .Append($"-c {Context.BuildConfiguration}")
                         .Append($"--output \"{Context.PackagePath}\"")
-                        .Append($"-p:PackageVersion={context.GitVersioningGetVersion().SemVer2}")
+                        .Append($"-p:PackageVersion={semver}")
                         .Append($"-p:PublicRelease={context.IsPublicRelease}")
                     );
 
