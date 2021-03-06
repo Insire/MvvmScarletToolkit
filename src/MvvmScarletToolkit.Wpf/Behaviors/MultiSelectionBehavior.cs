@@ -84,7 +84,7 @@ namespace MvvmScarletToolkit
         private bool _isUpdatingTarget;
         private bool _isUpdatingSource;
 
-        private void SourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void SourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (_isUpdatingSource)
                 return;
@@ -120,7 +120,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private void ListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             if (_isUpdatingTarget)
                 return;
