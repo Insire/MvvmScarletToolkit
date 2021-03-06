@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public string? DriveFormat
         {
             get { return _driveFormat; }
-            private set { SetValue(ref _driveFormat, value); }
+            private set { SetProperty(ref _driveFormat, value); }
         }
 
         private DriveType _driveType;
@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public DriveType DriveType
         {
             get { return _driveType; }
-            private set { SetValue(ref _driveType, value); }
+            private set { SetProperty(ref _driveType, value); }
         }
 
         private bool _isReady;
@@ -37,7 +37,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public bool IsReady
         {
             get { return _isReady; }
-            private set { SetValue(ref _isReady, value); }
+            private set { SetProperty(ref _isReady, value); }
         }
 
         private long _availableFreeSpace;
@@ -45,7 +45,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public long AvailableFreeSpace
         {
             get { return _availableFreeSpace; }
-            private set { SetValue(ref _availableFreeSpace, value); }
+            private set { SetProperty(ref _availableFreeSpace, value); }
         }
 
         private long _totalFreeSpace;
@@ -53,7 +53,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public long TotalFreeSpace
         {
             get { return _totalFreeSpace; }
-            private set { SetValue(ref _totalFreeSpace, value); }
+            private set { SetProperty(ref _totalFreeSpace, value); }
         }
 
         private long _totalSize;
@@ -61,7 +61,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public long TotalSize
         {
             get { return _totalSize; }
-            private set { SetValue(ref _totalSize, value); }
+            private set { SetProperty(ref _totalSize, value); }
         }
 
         private string _name;
@@ -69,7 +69,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public string Name
         {
             get { return _name; }
-            private set { SetValue(ref _name, value); }
+            private set { SetProperty(ref _name, value); }
         }
 
         private string _fullName;
@@ -77,7 +77,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public string FullName
         {
             get { return _fullName; }
-            private set { SetValue(ref _fullName, value); }
+            private set { SetProperty(ref _fullName, value); }
         }
 
         private bool _isSelected;
@@ -85,7 +85,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         public bool IsSelected
         {
             get { return _isSelected; }
-            set { SetValue(ref _isSelected, value); }
+            set { SetProperty(ref _isSelected, value); }
         }
 
         [Bindable(true, BindingDirection.OneWay)]

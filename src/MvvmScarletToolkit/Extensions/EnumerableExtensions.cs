@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,6 +62,23 @@ namespace MvvmScarletToolkit
         public static void Dispose(this IEnumerable<IDisposable> source)
         {
             source.ForEach(p => p.Dispose());
+        }
+
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            var seenKeys = new HashSet<TKey>();
+            foreach (var element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
+
+        public static void AddRange<T>(this ICollection<T> source, IEnumerable<T> items)
+        {
+            items.ForEach(p => source.Add(p));
         }
     }
 }

@@ -9,9 +9,9 @@ namespace MvvmScarletToolkit
     /// </summary>
     public sealed class PasswordBindingBehavior : Behavior<PasswordBox>
     {
-        public string ClearTextPassword
+        public string? ClearTextPassword
         {
-            get { return (string)GetValue(ClearTextPasswordProperty); }
+            get { return (string?)GetValue(ClearTextPasswordProperty); }
             set { SetValue(ClearTextPasswordProperty, value); }
         }
 

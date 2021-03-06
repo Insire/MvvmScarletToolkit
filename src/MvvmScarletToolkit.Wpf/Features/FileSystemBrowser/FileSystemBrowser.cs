@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Commands;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -47,9 +47,9 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             typeof(FileSystemBrowser),
             new PropertyMetadata(string.Empty));
 
-        public Predicate<object> FilterAction
+        public Predicate<object>? FilterAction
         {
-            get { return (Predicate<object>)GetValue(FilterActionProperty); }
+            get { return (Predicate<object>?)GetValue(FilterActionProperty); }
             set { SetValue(FilterActionProperty, value); }
         }
 
@@ -60,9 +60,9 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             typeof(FileSystemBrowser),
             new PropertyMetadata(default(Predicate<object>)));
 
-        public Predicate<object> NoFilesFilter
+        public Predicate<object>? NoFilesFilter
         {
-            get { return (Predicate<object>)GetValue(NoFilesFilterProperty); }
+            get { return (Predicate<object>?)GetValue(NoFilesFilterProperty); }
             set { SetValue(NoFilesFilterProperty, value); }
         }
 
@@ -73,9 +73,9 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             typeof(FileSystemBrowser),
             new PropertyMetadata(default(Predicate<object>)));
 
-        public IFileSystemInfo SelectedItem
+        public IFileSystemInfo? SelectedItem
         {
-            get { return (IFileSystemInfo)GetValue(SelectedItemProperty); }
+            get { return (IFileSystemInfo?)GetValue(SelectedItemProperty); }
             set { SetValue(SelectedItemProperty, value); }
         }
 
@@ -86,9 +86,9 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             typeof(FileSystemBrowser),
             new PropertyMetadata(default(IFileSystemInfo)));
 
-        public FileSystemViewModel FileSystemViewModel
+        public FileSystemViewModel? FileSystemViewModel
         {
-            get { return (FileSystemViewModel)GetValue(FileSystemViewModelProperty); }
+            get { return (FileSystemViewModel?)GetValue(FileSystemViewModelProperty); }
             set { SetValue(FileSystemViewModelProperty, value); }
         }
 
@@ -120,8 +120,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         public FileSystemBrowser()
         {
-            DisplayDetailsAsListCommand = new RelayCommand(ScarletCommandBuilder.Default, ToggleAsListViewInternal);
-            DisplayDetailsAsIconsCommand = new RelayCommand(ScarletCommandBuilder.Default, ToggleAsIconsInternal);
+            DisplayDetailsAsListCommand = new RelayCommand(ToggleAsListViewInternal);
+            DisplayDetailsAsIconsCommand = new RelayCommand(ToggleAsIconsInternal);
 
             SetCurrentValue(NoFilesFilterProperty, new Predicate<object>(FilterAllFiles));
             SetCurrentValue(FilterActionProperty, new Predicate<object>(FilterByName));

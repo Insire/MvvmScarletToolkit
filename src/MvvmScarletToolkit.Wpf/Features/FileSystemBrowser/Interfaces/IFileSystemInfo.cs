@@ -1,5 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
-
 namespace MvvmScarletToolkit
 {
     public interface IFileSystemInfo : IVirtualizationViewModel

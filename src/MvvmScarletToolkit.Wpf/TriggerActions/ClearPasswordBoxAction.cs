@@ -13,9 +13,9 @@ namespace MvvmScarletToolkit
             typeof(ClearPasswordBoxAction),
             new UIPropertyMetadata(default(PasswordBox)));
 
-        public PasswordBox Target
+        public PasswordBox? Target
         {
-            get { return (PasswordBox)GetValue(TargetProperty); }
+            get { return (PasswordBox?)GetValue(TargetProperty); }
             set { SetValue(TargetProperty, value); }
         }
 

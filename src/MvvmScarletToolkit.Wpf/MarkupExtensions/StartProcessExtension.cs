@@ -1,11 +1,14 @@
-using MvvmScarletToolkit.Commands;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 using System.Windows.Markup;
 
 namespace MvvmScarletToolkit
 {
+    // xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
+    // usage: <Hyperlink Command="{mvvm:StartProcess Url='www.github.com/Insire/Dawn'}"/>
     [MarkupExtensionReturnType(typeof(ICommand))]
     public sealed class StartProcessExtension : MarkupExtension
     {
@@ -18,7 +21,7 @@ namespace MvvmScarletToolkit
         {
             if (Command is null)
             {
-                Command = new RelayCommand(ScarletCommandManager.Default, StartProcess);
+                Command = new RelayCommand(StartProcess);
             }
 
             return Command;
@@ -33,8 +36,20 @@ namespace MvvmScarletToolkit
 
             try
             {
-                using (Process.Start(Url))
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
+                    using (Process.Start(new ProcessStartInfo("cmd", $"/c start {Url}")))
+                    { }
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    using (Process.Start("xdg-open", Url))
+                    { }
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    using (Process.Start("open", Url))
+                    { }
                 }
             }
             catch (Exception ex)

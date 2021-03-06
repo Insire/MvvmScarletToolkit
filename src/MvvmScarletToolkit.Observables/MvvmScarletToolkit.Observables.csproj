@@ -10,11 +10,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Roslynator.Analyzers" Version="3.0.0">
+        <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.0-preview5" />
+        <PackageReference Include="Roslynator.Analyzers" Version="3.1.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="IDisposableAnalyzers" Version="3.4.3">
+        <PackageReference Include="IDisposableAnalyzers" Version="3.4.13">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -37,8 +38,4 @@
         <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
     </ItemGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    </PropertyGroup>
 </Project>

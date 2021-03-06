@@ -25,9 +25,9 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// The text to display, when the associated TextBox does not hold a value
         /// </summary>
-        public string Watermark
+        public string? Watermark
         {
-            get { return (string)GetValue(WatermarkProperty); }
+            get { return (string?)GetValue(WatermarkProperty); }
             set { SetValue(WatermarkProperty, value); }
         }
 
@@ -41,9 +41,9 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// The Style to use for the associated TextBox, when it doesn't hold a value
         /// </summary>
-        public Style WatermarkStyle
+        public Style? WatermarkStyle
         {
-            get { return (Style)GetValue(WatermarkStyleProperty); }
+            get { return (Style?)GetValue(WatermarkStyleProperty); }
             set { SetValue(WatermarkStyleProperty, value); }
         }
 
@@ -124,11 +124,11 @@ namespace MvvmScarletToolkit
                     _cachedStyle = AssociatedObject.Style;
                 }
 
-                AssociatedObject.SetCurrentValue(TextBox.StyleProperty, style);
+                AssociatedObject.SetValue(TextBox.StyleProperty, style);
             }
             else
             {
-                AssociatedObject.SetCurrentValue(TextBox.StyleProperty, style);
+                AssociatedObject.SetValue(TextBox.StyleProperty, style);
             }
         }
 

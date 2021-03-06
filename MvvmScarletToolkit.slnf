@@ -4,8 +4,6 @@
     "projects": [
       "src\\MvvmScarletToolkit.Abstractions\\MvvmScarletToolkit.Abstractions.csproj",
       "src\\MvvmScarletToolkit.Commands\\MvvmScarletToolkit.Commands.csproj",
-      "src\\MvvmScarletToolkit.Incubator\\MvvmScarletToolkit.Incubator.csproj",
-      "src\\MvvmScarletToolkit.Messenger\\MvvmScarletToolkit.Messenger.csproj",
       "src\\MvvmScarletToolkit.Observables\\MvvmScarletToolkit.Observables.csproj",
       "src\\MvvmScarletToolkit.Wpf\\MvvmScarletToolkit.Wpf.csproj",
       "src\\MvvmScarletToolkit.Xamarin.Forms\\MvvmScarletToolkit.Xamarin.Forms.csproj",

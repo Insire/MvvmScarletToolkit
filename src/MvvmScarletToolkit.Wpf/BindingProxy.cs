@@ -17,7 +17,7 @@ namespace MvvmScarletToolkit
             return new BindingProxy();
         }
 
-        public object Data
+        public object? Data
         {
             get { return GetValue(DataProperty); }
             set { SetValue(DataProperty, value); }

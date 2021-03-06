@@ -7,22 +7,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Moq" Version="4.14.7" />
-
+        <PackageReference Include="Moq" Version="4.16.1" />
         <PackageReference Include="NSubstitute" Version="4.2.2" />
-        <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.13" />
+        <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.14" />
 
-        <PackageReference Include="nunit" Version="3.12.0" />
+        <PackageReference Include="nunit" Version="3.13.1" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.17.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
-        <ProjectReference Include="..\MvvmScarletToolkit.Messenger\MvvmScarletToolkit.Messenger.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj" />
     </ItemGroup>
 </Project>

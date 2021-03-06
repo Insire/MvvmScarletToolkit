@@ -38,9 +38,9 @@ namespace MvvmScarletToolkit
             base.OnDetaching();
         }
 
-        public IList SelectedItems
+        public IList? SelectedItems
         {
-            get { return (IList)GetValue(SelectedItemsProperty); }
+            get { return (IList?)GetValue(SelectedItemsProperty); }
             set { SetValue(SelectedItemsProperty, value); }
         }
 

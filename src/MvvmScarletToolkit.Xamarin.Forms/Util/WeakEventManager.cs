@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit
     {
         private readonly Dictionary<string, List<Subscription>> _eventHandlers = new Dictionary<string, List<Subscription>>();
 
-        public void AddEventHandler<TEventArgs>(EventHandler<TEventArgs> handler, [CallerMemberName]string eventName = null!)
+        public void AddEventHandler<TEventArgs>(EventHandler<TEventArgs> handler, [CallerMemberName] string eventName = null!)
             where TEventArgs : EventArgs
         {
             if (string.IsNullOrEmpty(eventName))
@@ -23,7 +23,7 @@ namespace MvvmScarletToolkit
             AddEventHandler(eventName, handler.Target, handler.GetMethodInfo());
         }
 
-        public void AddEventHandler(EventHandler handler, [CallerMemberName]string eventName = null!)
+        public void AddEventHandler(EventHandler handler, [CallerMemberName] string eventName = null!)
         {
             if (string.IsNullOrEmpty(eventName))
                 throw new ArgumentNullException(nameof(eventName));
@@ -75,7 +75,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        public void RemoveEventHandler<TEventArgs>(EventHandler<TEventArgs> handler, [CallerMemberName]string eventName = null!)
+        public void RemoveEventHandler<TEventArgs>(EventHandler<TEventArgs> handler, [CallerMemberName] string eventName = null!)
             where TEventArgs : EventArgs
         {
             if (string.IsNullOrEmpty(eventName))
@@ -87,7 +87,7 @@ namespace MvvmScarletToolkit
             RemoveEventHandler(eventName, handler.Target, handler.GetMethodInfo());
         }
 
-        public void RemoveEventHandler(EventHandler handler, [CallerMemberName]string eventName = null!)
+        public void RemoveEventHandler(EventHandler handler, [CallerMemberName] string eventName = null!)
         {
             if (string.IsNullOrEmpty(eventName))
                 throw new ArgumentNullException(nameof(eventName));

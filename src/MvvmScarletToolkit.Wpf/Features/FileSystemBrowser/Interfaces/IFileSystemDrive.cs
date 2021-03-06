@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using System.IO;
 
 namespace MvvmScarletToolkit
