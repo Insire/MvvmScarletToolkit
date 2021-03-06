@@ -249,3 +249,4 @@ ModelManifest.xml
 /results/*
 
 .[Vv][Ss]*
+.dotnet
