@@ -1,7 +1,6 @@
 using Cake.Common;
 using Cake.Common.Build;
 using Cake.Common.Diagnostics;
-using Cake.Common.IO;
 using Cake.Common.Tools.GitVersion;
 using Cake.Core;
 using Cake.Core.IO;
@@ -39,11 +38,6 @@ public class Context : FrostingContext
 
         NugetPackageProjects = new[]
         {
-            @".\src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj",
-            @".\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj",
-            @".\src\MvvmScarletToolkit.Messenger\MvvmScarletToolkit.Messenger.csproj",
-            @".\src\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj",
-            @".\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj",
             @".\src\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj",
             @".\src\MvvmScarletToolkit.Xamarin.Forms\MvvmScarletToolkit.Xamarin.Forms.csproj",
         };
@@ -62,10 +56,6 @@ public class Context : FrostingContext
 
         this.Information($"Provider: {context.BuildSystem().Provider}");
         this.Information($"Platform: {context.Environment.Platform.Family} ({(context.Environment.Platform.Is64Bit ? "x64" : "x86")})");
-
-        this.Information($"nuget.exe ({context.Tools.Resolve("nuget.exe")}) {(this.FileExists(context.Tools.Resolve("nuget.exe")) ? "was found" : "is missing")}");
-        this.Information($"dotnet.exe ({context.Tools.Resolve("dotnet.exe")}) {(this.FileExists(context.Tools.Resolve("dotnet.exe")) ? "was found" : "is missing")}");
-        this.Information($"CodeCoverage.exe ({context.Tools.Resolve("CodeCoverage.exe")}) {(this.FileExists(context.Tools.Resolve("CodeCoverage.exe")) ? "was found" : "is missing")}");
 
         this.Information($"NUGETORG_APIKEY was{(string.IsNullOrEmpty(context.EnvironmentVariable("NUGETORG_APIKEY")) ? " not" : "")} set.");
         this.Information($"CODECOV_TOKEN was{(string.IsNullOrEmpty(context.EnvironmentVariable("CODECOV_TOKEN")) ? " not" : "")} set.");

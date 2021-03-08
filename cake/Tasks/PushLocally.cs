@@ -1,33 +1,26 @@
-using Cake.Common;
 using Cake.Common.Build;
 using Cake.Common.IO;
+using Cake.Common.Tools.NuGet;
 using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
-using System.Linq;
 
 public sealed class PushLocally : FrostingTask<Context>
 {
     public override void Run(Context context)
     {
-        var settings = new ProcessSettings()
-            .UseWorkingDirectory(".")
-            .WithArguments(builder => builder
-                .AppendSwitchQuoted("nuget add source", Context.LocalNugetDirectoryPath)
-                .AppendSwitch("--name", "Local"));
-
-        context.StartProcess(context.Tools.Resolve("dotnet.exe"), settings);
-
-        foreach (var path in context.GetFiles(Context.PackagePath + "/*.nupkg"))
+        if (!context.NuGetHasSource(Context.LocalNugetDirectoryPath))
         {
-            settings = new ProcessSettings()
-                .UseWorkingDirectory(".")
-                .WithArguments(builder => builder
-                    .Append("push")
-                    .AppendSwitchQuoted("-source", Context.LocalNugetDirectoryPath)
-                    .AppendQuoted(path.FullPath));
+            context.NuGetAddSource("Local", Context.LocalNugetDirectoryPath);
+        }
 
-            context.StartProcess(context.Tools.Resolve("nuget.exe"), settings);
+        foreach (var package in context.GetFiles(Context.PackagePath + "/*.nupkg"))
+        {
+            context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
+            {
+                Source = Context.LocalNugetDirectoryPath,
+                SkipDuplicate = true,
+            });
         }
     }
 

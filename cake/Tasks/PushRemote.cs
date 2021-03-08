@@ -1,10 +1,10 @@
 using Cake.Common;
 using Cake.Common.Build;
 using Cake.Common.IO;
+using Cake.Common.Tools.NuGet;
 using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
-using System.Linq;
 
 public sealed class PushRemote : FrostingTask<Context>
 {
@@ -12,18 +12,12 @@ public sealed class PushRemote : FrostingTask<Context>
     {
         foreach (var package in context.GetFiles(Context.PackagePath + "/*.nupkg"))
         {
-            var settings = new ProcessSettings()
-                .UseWorkingDirectory(".")
-                .WithArguments(builder => builder
-                    .Append("push")
-                    .AppendQuoted(package.FullPath)
-                    .AppendSwitchSecret("-apikey", context.EnvironmentVariable("NUGETORG_APIKEY"))
-                    .AppendSwitchQuoted("-source", "https://api.nuget.org/v3/index.json")
-                    .Append("-SkipDuplicate")
-                    .AppendSwitch("-Verbosity", "detailed")
-                );
-
-            context.StartProcess(context.Tools.Resolve("nuget.exe"), settings);
+            context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
+            {
+                ApiKey = context.EnvironmentVariable("NUGETORG_APIKEY"),
+                Source = "https://api.nuget.org/v3/index.json",
+                SkipDuplicate = true,
+            });
         }
     }
 
@@ -31,7 +25,6 @@ public sealed class PushRemote : FrostingTask<Context>
     {
         return base.ShouldRun(context)
             && context.BuildSystem().IsRunningOnAzurePipelines || context.BuildSystem().IsRunningOnAzurePipelinesHosted
-            && !string.IsNullOrEmpty(context.EnvironmentVariable("NUGETORG_APIKEY"))
-            && context.FileExists(context.Tools.Resolve("nuget.exe"));
+            && !string.IsNullOrEmpty(context.EnvironmentVariable("NUGETORG_APIKEY"));
     }
 }
