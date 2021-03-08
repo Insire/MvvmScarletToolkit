@@ -1,5 +1,4 @@
-﻿using Build;
-using Cake.Common.Build;
+using Build;
 using Cake.Common.IO;
 using Cake.Common.Tools.ReportGenerator;
 using Cake.Core;
@@ -17,7 +16,6 @@ public sealed class HtmlReport : FrostingTask<Context>
     public override bool ShouldRun(Context context)
     {
         return base.ShouldRun(context)
-            && context.GetFiles("./Results/coverage/**/*.xml").Count > 0
-            && context.BuildSystem().IsLocalBuild;
+            && context.GetFiles("./Results/coverage/**/*.xml").Count > 0;
     }
 }

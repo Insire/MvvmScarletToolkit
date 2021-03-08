@@ -21,8 +21,7 @@ public class Context : FrostingContext
     public DirectoryPath ReportsFolder { get; }
     public FilePath CoberturaResultFile { get; }
     public FilePath VsTestResultsFile { get; }
-    public FilePath CodeCoverageBinaryFile { get; }
-    public FilePath CodeCoverageResultsFile { get; }
+
     public bool IsPublicRelease { get; }
 
     public string[] NugetPackageProjects { get; }
@@ -30,11 +29,9 @@ public class Context : FrostingContext
     public Context(ICakeContext context)
         : base(context)
     {
-        ReportsFolder = new DirectoryPath(ResultsPath).Combine("reports");
-        CoberturaResultFile = new DirectoryPath(CoberturaResultsPath).CombineWithFilePath("Cobertura.xml");
+        ReportsFolder = new DirectoryPath(ResultsPath).Combine("reports").MakeAbsolute(context.Environment.WorkingDirectory);
+        CoberturaResultFile = new DirectoryPath(CoberturaResultsPath).CombineWithFilePath("Cobertura.xml").MakeAbsolute(context.Environment.WorkingDirectory);
         VsTestResultsFile = new FilePath("vsTestResults.trx");
-        CodeCoverageBinaryFile = new FilePath("vsCodeCoverage.coverage");
-        CodeCoverageResultsFile = new FilePath("vsCodeCoverage.xml");
 
         NugetPackageProjects = new[]
         {
@@ -63,7 +60,5 @@ public class Context : FrostingContext
         this.Information($"reportsFolder: {ReportsFolder}");
         this.Information($"coberturaResultFile: {CoberturaResultFile}");
         this.Information($"VsTestResultsFile: {VsTestResultsFile}");
-        this.Information($"CodeCoverageBinaryFile: {CodeCoverageBinaryFile}");
-        this.Information($"CodeCoverageResultsFile: {CodeCoverageResultsFile}");
     }
 }

@@ -12,38 +12,32 @@ public sealed class BuildAndPack : FrostingTask<Context>
     {
         foreach (var project in context.NugetPackageProjects)
         {
-            context.Build(project);
-            Pack(project);
+            var semver = context.GitVersioningGetVersion().SemVer2;
+            var settings = new ProcessSettings()
+                .UseWorkingDirectory(".")
+                .WithArguments(builder => builder
+                    .Append("pack")
+                    .AppendQuoted("./MvvmScarletToolkit.slnf")
+                    .Append($"-c {Context.BuildConfiguration}")
+                    .Append($"--output \"{Context.PackagePath}\"")
+                    .Append($"-p:PackageVersion={context.GitVersioningGetVersion().SemVer2}")
+                    .Append($"-p:PublicRelease={context.IsPublicRelease}") // Nerdbank.GitVersioning - omit git commit ID
 
-            void Pack(string path)
-            {
-                var semver = context.GitVersioningGetVersion().SemVer2;
-                var settings = new ProcessSettings()
-                    .UseWorkingDirectory(".")
-                    .WithArguments(builder => builder
-                        .Append("pack")
-                        .AppendQuoted("./MvvmScarletToolkit.slnf")
-                        .Append($"-c {Context.BuildConfiguration}")
-                        .Append($"--output \"{Context.PackagePath}\"")
-                        .Append($"-p:PackageVersion={context.GitVersioningGetVersion().SemVer2}")
-                        .Append($"-p:PublicRelease={context.IsPublicRelease}") // Nerdbank.GitVersioning - omit git commit ID
+                    // Creating symbol packages
+                    .Append($"-p:IncludeSymbols=true")
+                    .Append($"-p:SymbolPackageFormat=snupkg")
 
-                        // Creating symbol packages
-                        .Append($"-p:IncludeSymbols=true")
-                        .Append($"-p:SymbolPackageFormat=snupkg")
+                    // enable source linking
+                    .Append($"-p:PublishRepositoryUrl=true")
 
-                        // enable source linking
-                        .Append($"-p:PublishRepositoryUrl=true")
+                    // Deterministic Builds
+                    .Append($"-p:EmbedUntrackedSources=true")
 
-                        // Deterministic Builds
-                        .Append($"-p:EmbedUntrackedSources=true")
+                    .Append($"-p:DebugType=portable")
+                    .Append($"-p:DebugSymbols=true")
+                );
 
-                        .Append($"-p:DebugType=portable")
-                        .Append($"-p:DebugSymbols=true")
-                    );
-
-                context.StartProcess("dotnet", settings);
-            }
+            context.StartProcess("dotnet", settings);
         }
     }
 }

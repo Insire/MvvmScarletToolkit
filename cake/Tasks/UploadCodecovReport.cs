@@ -1,6 +1,5 @@
-﻿using Cake.Codecov;
+using Cake.Codecov;
 using Cake.Common;
-using Cake.Common.Build;
 using Cake.Common.IO;
 using Cake.Frosting;
 
@@ -16,7 +15,6 @@ public sealed class UploadCodecovReport : FrostingTask<Context>
     {
         return base.ShouldRun(context)
             && context.FileExists(context.CoberturaResultFile)
-            && context.BuildSystem().IsRunningOnAzurePipelinesHosted
             && !string.IsNullOrEmpty(context.EnvironmentVariable("CODECOV_TOKEN"));
     }
 }
