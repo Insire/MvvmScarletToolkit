@@ -22,16 +22,24 @@ public sealed class BuildAndPack : FrostingTask<Context>
                     .UseWorkingDirectory(".")
                     .WithArguments(builder => builder
                         .Append("pack")
-                        .AppendQuoted(path)
-                        .Append("--include-symbols")
-                        .Append("--include-source")
-                        .Append("--no-build")
-                        .Append("--no-restore")
-                        .Append("--nologo")
+                        .AppendQuoted("./MvvmScarletToolkit.slnf")
                         .Append($"-c {Context.BuildConfiguration}")
                         .Append($"--output \"{Context.PackagePath}\"")
-                        .Append($"-p:PackageVersion={semver}")
-                        .Append($"-p:PublicRelease={context.IsPublicRelease}")
+                        .Append($"-p:PackageVersion={context.GitVersioningGetVersion().SemVer2}")
+                        .Append($"-p:PublicRelease={context.IsPublicRelease}") // Nerdbank.GitVersioning - omit git commit ID
+
+                        // Creating symbol packages
+                        .Append($"-p:IncludeSymbols=true")
+                        .Append($"-p:SymbolPackageFormat=snupkg")
+
+                        // enable source linking
+                        .Append($"-p:PublishRepositoryUrl=true")
+
+                        // Deterministic Builds
+                        .Append($"-p:EmbedUntrackedSources=true")
+
+                        .Append($"-p:DebugType=portable")
+                        .Append($"-p:DebugSymbols=true")
                     );
 
                 context.StartProcess("dotnet", settings);

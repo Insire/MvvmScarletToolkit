@@ -1,6 +1,7 @@
 using Cake.Common;
 using Cake.Common.Build;
 using Cake.Common.Diagnostics;
+using Cake.Common.IO;
 using Cake.Common.Tools.GitVersion;
 using Cake.Core;
 using Cake.Core.IO;
@@ -33,7 +34,7 @@ public class Context : FrostingContext
         ReportsFolder = new DirectoryPath(ResultsPath).Combine("reports");
         CoberturaResultFile = new DirectoryPath(CoberturaResultsPath).CombineWithFilePath("Cobertura.xml");
         VsTestResultsFile = new FilePath("vsTestResults.trx");
-        CodeCoverageBinaryFile = new FilePath("vsCodeCoverage.coverag");
+        CodeCoverageBinaryFile = new FilePath("vsCodeCoverage.coverage");
         CodeCoverageResultsFile = new FilePath("vsCodeCoverage.xml");
 
         NugetPackageProjects = new[]
@@ -59,16 +60,20 @@ public class Context : FrostingContext
             this.Information("Building a pre-release.");
         }
 
-        this.Debug("IsLocalBuild: " + this.BuildSystem().IsLocalBuild);
-        this.Debug("IsRunningOnAppVeyor: " + this.BuildSystem().IsRunningOnAppVeyor);
-        this.Debug("IsRunningOnAzurePipelines: " + this.BuildSystem().IsRunningOnAzurePipelines);
-        this.Debug("IsRunningOnAzurePipelinesHosted: " + this.BuildSystem().IsRunningOnAzurePipelinesHosted);
+        this.Information($"Provider: {context.BuildSystem().Provider}");
+        this.Information($"Platform: {context.Environment.Platform.Family} ({(context.Environment.Platform.Is64Bit ? "x64" : "x86")})");
 
-        this.Information("Provider: " + this.BuildSystem().Provider);
+        this.Information($"nuget.exe ({context.Tools.Resolve("nuget.exe")}) {(this.FileExists(context.Tools.Resolve("nuget.exe")) ? "was found" : "is missing")}");
+        this.Information($"dotnet.exe ({context.Tools.Resolve("dotnet.exe")}) {(this.FileExists(context.Tools.Resolve("dotnet.exe")) ? "was found" : "is missing")}");
+        this.Information($"CodeCoverage.exe ({context.Tools.Resolve("CodeCoverage.exe")}) {(this.FileExists(context.Tools.Resolve("CodeCoverage.exe")) ? "was found" : "is missing")}");
 
-        foreach (var entry in this.EnvironmentVariables())
-        {
-            this.Debug(entry.Key + " " + entry.Value);
-        }
+        this.Information($"NUGETORG_APIKEY was{(string.IsNullOrEmpty(context.EnvironmentVariable("NUGETORG_APIKEY")) ? " not" : "")} set.");
+        this.Information($"CODECOV_TOKEN was{(string.IsNullOrEmpty(context.EnvironmentVariable("CODECOV_TOKEN")) ? " not" : "")} set.");
+
+        this.Information($"reportsFolder: {ReportsFolder}");
+        this.Information($"coberturaResultFile: {CoberturaResultFile}");
+        this.Information($"VsTestResultsFile: {VsTestResultsFile}");
+        this.Information($"CodeCoverageBinaryFile: {CodeCoverageBinaryFile}");
+        this.Information($"CodeCoverageResultsFile: {CodeCoverageResultsFile}");
     }
 }

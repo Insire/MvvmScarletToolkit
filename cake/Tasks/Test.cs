@@ -1,4 +1,4 @@
-﻿using Cake.Common.Tools.DotNetCore;
+using Cake.Common.Tools.DotNetCore;
 using Cake.Common.Tools.DotNetCore.Test;
 using Cake.Core;
 using Cake.Frosting;

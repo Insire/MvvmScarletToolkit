@@ -1,7 +1,11 @@
 using Cake.Common;
+using Cake.Common.IO;
+using Cake.Common.Solution;
 using Cake.Common.Tools.ReportGenerator;
 using Cake.Core;
 using Cake.Core.IO;
+using Cake.Incubator.Project;
+using System.Linq;
 
 namespace Build
 {
@@ -69,6 +73,63 @@ namespace Build
             };
 
             context.ReportGenerator(new GlobPattern(pattern), context.ReportsFolder.Combine(subFolder), ReportGeneratorSettings);
+        }
+
+        public static void Clean(this Context context, bool cleanBin, bool cleanObj, bool cleanOutput, bool cleanMisc)
+        {
+            var solution = context.ParseSolution(Context.SolutionPath);
+
+            foreach (var project in solution.Projects)
+            {
+                // check solution items and exclude solution folders, since they are virtual
+                if (project.Type == "{2150E333-8FDC-42A3-9474-1A3956D46DE8}")
+                {
+                    continue;
+                }
+
+                var projectFile = project.Path; // FilePath
+                if (cleanBin)
+                {
+                    var binFolder = projectFile.GetDirectory().Combine("bin");
+                    if (context.DirectoryExists(binFolder))
+                    {
+                        context.CleanDirectory(binFolder);
+                    }
+                }
+
+                if (cleanObj)
+                {
+                    var objFolder = projectFile.GetDirectory().Combine("obj");
+                    if (context.DirectoryExists(objFolder))
+                    {
+                        context.CleanDirectory(objFolder);
+                    }
+                }
+
+                if (cleanOutput)
+                {
+                    var customProject = context.ParseProject(project.Path, configuration: Context.BuildConfiguration, platform: Context.Platform);
+                    foreach (var path in customProject.OutputPaths.Where(p => p != null))
+                    {
+                        context.CleanDirectory(path.FullPath);
+                    }
+                }
+            }
+
+            if (cleanMisc)
+            {
+                var folders = new[]
+                {
+                    Context.PackagePath,
+                    Context.ResultsPath,
+                };
+
+                foreach (var folder in folders)
+                {
+                    context.EnsureDirectoryExists(folder);
+                    context.CleanDirectory(folder, (file) => !file.Path.Segments.Last().Contains(".gitignore"));
+                }
+            }
         }
     }
 }
