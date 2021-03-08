@@ -59,7 +59,7 @@ namespace MvvmScarletToolkit
             // see: https://docs.microsoft.com/en-us/dotnet/api/system.windows.frameworkelement.loaded#remarks
             void OnLoaded(object _, EventArgs __)
             {
-                element.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                element.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
             }
         }
     }
