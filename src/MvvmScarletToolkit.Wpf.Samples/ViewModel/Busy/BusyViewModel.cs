@@ -39,8 +39,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
             var viewModel = new BusyViewModel(CommandBuilder);
             _disposables.Add(viewModel, viewModel.Subscribe(this));
 
-            await Add(viewModel).ConfigureAwait(false);
-            await Task.Delay(450).ConfigureAwait(false);
+            await Add(viewModel, token).ConfigureAwait(false);
+            await Task.Delay(450, token).ConfigureAwait(false);
         }
 
         private async Task InternalAddChildAsync(CancellationToken token)
@@ -48,8 +48,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
             var viewModel = new ObservableBusyViewModel(CommandBuilder, Dispatcher);
             _disposables.Add(viewModel, viewModel.Subscribe(this));
 
-            await Add(viewModel).ConfigureAwait(false);
-            await Task.Delay(450).ConfigureAwait(false);
+            await Add(viewModel, token).ConfigureAwait(false);
+            await Task.Delay(450, token).ConfigureAwait(false);
         }
 
         public override async Task Remove(INotifyPropertyChanged item, CancellationToken token)

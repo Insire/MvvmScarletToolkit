@@ -101,7 +101,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         private Task Start(CancellationToken token)
         {
-            return Task.Run(() => StartInternal(token));
+            return Task.Run(() => StartInternal(token), token);
         }
 
         private async Task StartInternal(CancellationToken token)

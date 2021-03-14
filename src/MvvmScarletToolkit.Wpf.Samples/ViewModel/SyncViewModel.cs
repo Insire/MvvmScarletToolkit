@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             WorkCommand = new RelayCommand<string>((arg) => Work(arg));
         }
 
-        private void Work(string arg)
+        private static void Work(string arg)
         {
             MessageBox.Show(arg);
         }

@@ -41,7 +41,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         protected override Task RefreshInternal(CancellationToken token)
         {
-            return AddRange(_geomtries);
+            return AddRange(_geomtries, token);
         }
     }
 }

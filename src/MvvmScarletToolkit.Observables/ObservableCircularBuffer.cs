@@ -8,8 +8,6 @@ using System.Linq;
 
 namespace MvvmScarletToolkit.Observables
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC005:Check if value is different before notifying."
-        , Justification = "IsFull always changes when either capacity or size changed.")]
     public sealed class ObservableCircularBuffer<T> : ObservableObject, IEnumerable<T>, INotifyCollectionChanged
     {
         private readonly ObservableCollection<T> _buffer;

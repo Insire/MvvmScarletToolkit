@@ -32,7 +32,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         {
             using (BusyStack.GetToken())
             {
-                await LogItems.AddRange(Enumerable.Range(0, 5).Select(p => new LogItem(CommandBuilder))).ConfigureAwait(false);
+                await LogItems.AddRange(Enumerable.Range(0, 5).Select(_ => new LogItem(CommandBuilder))).ConfigureAwait(false);
             }
         }
 
