@@ -102,7 +102,6 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
   - async cancelable commands using ICommand
   - async(background) image loading
   - simple file/folder browser
-  - a snake game
   - barebones drag and drop example
   - an implementation of IProgress (e.g for a progressbar) to send any amount of updates without locking   up the UI thread
   - stress test for rendering lots of charachters converted to geometry objects

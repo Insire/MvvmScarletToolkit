@@ -893,9 +893,6 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:DummySnakeViewModel}">
-                    <local:SnakeView />
-                </DataTemplate>
 
                 <DataTemplate DataType="{x:Type local:PasswordViewModel}">
                     <Grid>
