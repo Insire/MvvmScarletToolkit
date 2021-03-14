@@ -12,17 +12,11 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
 
 ## Features
 
-- [MvvmScarletToolkit.Messenger](src/MvvmScarletToolkit.Messenger/readme.md)
-
-  - ScarletMessenger (Event Aggregator)
-
 - [MvvmScarletToolkit.Commands](src/MvvmScarletToolkit.Commands/readme.md)
 
-  - basic synchronous ICommand implementation
-  - basic asynchronous ICommand implementation
-  - advanced fluent interface to build task based icommands
+  - fluent interface to build task based icommands
     - cancellation support
-    - limiting command execution to one per instance
+    - limiting command execution to one per instance at any given time
     - state management and notification
 
 - [MvvmScarletToolkit.Observables](src/MvvmScarletToolkit.Observables/readme.md)
@@ -56,6 +50,7 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
     - ClearTextBoxAction
   - Behaviors
     - MultiSelectionBehavior for ListBoxes
+    - AutoscrollBehavior for ListBoxes
     - SelectedTreeViewItemBehavior
     - PasswordBindingBehavior
     - WatermarkBehavior for TextBoxes
@@ -100,7 +95,6 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
   - simple navigation
   - master detail view
   - async cancelable commands using ICommand
-  - async(background) image loading
   - simple file/folder browser
   - barebones drag and drop example
   - an implementation of IProgress (e.g for a progressbar) to send any amount of updates without locking   up the UI thread
