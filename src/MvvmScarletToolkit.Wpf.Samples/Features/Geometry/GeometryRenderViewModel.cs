@@ -9,14 +9,14 @@ using System.Windows.Media;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class TextDisplayViewModel : BusinessViewModelListBase<GeometryContainer>
+    public sealed class GeometryRenderViewModel : BusinessViewModelListBase<GeometryContainer>
     {
         private readonly Typeface _typeface;
         private readonly NumberSubstitution _numberSubstitution;
 
         private readonly IEnumerable<GeometryContainer> _geomtries;
 
-        public TextDisplayViewModel(IScarletCommandBuilder commandBuilder)
+        public GeometryRenderViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             _typeface = new Typeface("Tahoma");

@@ -1,15 +1,18 @@
 using MvvmScarletToolkit.Observables;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public class LogItems : BusinessViewModelListBase<LogItem>
+    public sealed class DataEntriesViewModel : BusinessViewModelListBase<DataEntryViewModel>
     {
         public ICommand AddCommand { get; }
 
-        public LogItems(IScarletCommandBuilder commandBuilder)
+        public ICommand AddRangeCommand { get; }
+
+        public DataEntriesViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             AddCommand = CommandBuilder.Create(AddNew, CanAddNew)
@@ -17,14 +20,33 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 .WithBusyNotification(BusyStack)
                 .WithCancellation()
                 .Build();
+
+            AddRangeCommand = CommandBuilder
+                .Create(AddRange, CanAddRange)
+                .WithSingleExecution()
+                .WithBusyNotification(BusyStack)
+                .Build();
         }
 
-        public async Task AddNew()
+        public Task AddNew()
         {
-            await Add(new LogItem(CommandBuilder)).ConfigureAwait(false);
+            return Add(new DataEntryViewModel(CommandBuilder));
         }
 
         public bool CanAddNew()
+        {
+            return Items != null;
+        }
+
+        public async Task AddRange()
+        {
+            using (BusyStack.GetToken())
+            {
+                await AddRange(Enumerable.Range(0, 5).Select(_ => new DataEntryViewModel(CommandBuilder))).ConfigureAwait(false);
+            }
+        }
+
+        private bool CanAddRange()
         {
             return Items != null;
         }

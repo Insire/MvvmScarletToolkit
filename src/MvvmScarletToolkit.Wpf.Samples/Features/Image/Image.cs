@@ -31,7 +31,6 @@ namespace MvvmScarletToolkit.Wpf.Samples
         }
 
         private int _sequence;
-
         public int Sequence
         {
             get { return _sequence; }

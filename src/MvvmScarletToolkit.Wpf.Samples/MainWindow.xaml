@@ -40,16 +40,6 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StatusBar Grid.Row="1">
-            <StatusBarItem>
-                <TextBlock Text="{Binding Data.Tracker, Source={StaticResource MainWindowRootProxy}}" />
-            </StatusBarItem>
-
-            <StatusBarItem>
-                <TextBlock Text="{Binding Tracker, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
-            </StatusBarItem>
-        </StatusBar>
-
         <DockPanel Grid.Column="0">
             <ListBox x:Name="Scenes"
                      BorderThickness="0"
@@ -269,30 +259,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:SyncViewModel}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="1" Grid.Column="1">
-                            <TextBox x:Name="LocalTextBox" Text="test" />
-                            <Button Command="{Binding WorkCommand}"
-                                    CommandParameter="{Binding Text, ElementName=LocalTextBox}"
-                                    Content="Work" />
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-
-                <DataTemplate DataType="{x:Type local:VirtualizationViewModel}">
+                <DataTemplate DataType="{x:Type local:DataEntriesViewModel}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
@@ -307,22 +274,22 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <ListBox ItemsSource="{Binding LogItems.Items}"
-                                 SelectedItem="{Binding LogItems.SelectedItem}"
+                        <ListBox ItemsSource="{Binding Items}"
+                                 SelectedItem="{Binding SelectedItem}"
                                  SelectionMode="Extended"
                                  VirtualizingStackPanel.IsVirtualizing="True"
                                  VirtualizingStackPanel.VirtualizationMode="Standard">
 
                             <i:Interaction.Behaviors>
-                                <mvvm:MultiSelectionBehavior SelectedItems="{Binding LogItems.SelectedItems}" />
+                                <mvvm:MultiSelectionBehavior SelectedItems="{Binding SelectedItems}" />
                             </i:Interaction.Behaviors>
 
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Loaded">
-                                    <i:InvokeCommandAction Command="{Binding LogItems.LoadCommand}" />
+                                    <i:InvokeCommandAction Command="{Binding LoadCommand}" />
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="Unloaded">
-                                    <i:InvokeCommandAction Command="{Binding LogItems.UnloadCommand}" />
+                                    <i:InvokeCommandAction Command="{Binding UnloadCommand}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
 
@@ -357,7 +324,7 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <ItemsControl Grid.Column="2" ItemsSource="{Binding LogItems.Items}">
+                        <ItemsControl Grid.Column="2" ItemsSource="{Binding Items}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel />
@@ -365,7 +332,7 @@
                             </ItemsControl.ItemsPanel>
 
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type local:LogItem}">
+                                <DataTemplate DataType="{x:Type local:DataEntryViewModel}">
                                     <Rectangle Width="10"
                                                Height="10"
                                                Margin="1">
@@ -924,24 +891,29 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
-                        <StackPanel Margin="0,4" DockPanel.Dock="Top">
-                            <CheckBox Content="Murder UI" IsChecked="{Binding Block}" />
+                        <StackPanel Margin="0,4"
+                                    DockPanel.Dock="Bottom"
+                                    Orientation="Horizontal">
+                            <CheckBox Margin="4,0"
+                                      VerticalAlignment="Center"
+                                      Content="Murder UI with INPC-Events"
+                                      IsChecked="{Binding Block}" />
+                            <Button DockPanel.Dock="Bottom">
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Content" Value="Refresh" />
+                                        <Setter Property="Command" Value="{Binding RefreshCommand}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RefreshCommand.IsBusy}" Value="True">
+                                                <Setter Property="Content" Value="Cancel" />
+                                                <Setter Property="Command" Value="{Binding RefreshCommand.CancelCommand}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
                         </StackPanel>
 
-                        <Button DockPanel.Dock="Bottom">
-                            <Button.Style>
-                                <Style TargetType="{x:Type Button}">
-                                    <Setter Property="Content" Value="Refresh" />
-                                    <Setter Property="Command" Value="{Binding RefreshCommand}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding RefreshCommand.IsBusy}" Value="True">
-                                            <Setter Property="Content" Value="Cancel" />
-                                            <Setter Property="Command" Value="{Binding RefreshCommand.CancelCommand}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
 
                         <ProgressBar Maximum="{Binding Maximum, Mode=OneWay}" Value="{Binding Percentage, Mode=OneWay}">
                             <ProgressBar.Style>
@@ -1046,7 +1018,7 @@
                     </TreeView>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:TextDisplayViewModel}">
+                <DataTemplate DataType="{x:Type local:GeometryRenderViewModel}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />

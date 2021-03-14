@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public class LogItem : BusinessViewModelBase, IVirtualizationViewModel
+    public sealed class DataEntryViewModel : BusinessViewModelBase
     {
         private string _message;
         public string Message
@@ -28,7 +28,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             set { SetProperty(ref _isSelected, value); }
         }
 
-        public LogItem(IScarletCommandBuilder commandBuilder)
+        public DataEntryViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
         }

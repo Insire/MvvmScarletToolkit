@@ -39,7 +39,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
                     CreatedOn = DateTime.Now,
                     Name = Guid.NewGuid().ToString(),
                     Color = $"#cc{i * 2:X2}{i * 3:X2}",
-                }).ConfigureAwait(false);
+                }, token).ConfigureAwait(false);
             }
         }
 
