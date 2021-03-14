@@ -27,14 +27,6 @@ namespace MvvmScarletToolkit.Observables
             set { SetProperty(ref _selectedItem, value); }
         }
 
-        private IList _selectedItems;
-        [Bindable(true, BindingDirection.TwoWay)]
-        public virtual IList SelectedItems
-        {
-            get { return _selectedItems; }
-            set { SetProperty(ref _selectedItems, value); }
-        }
-
         public TViewModel this[int index]
         {
             get { return _items[index]; }
@@ -46,6 +38,9 @@ namespace MvvmScarletToolkit.Observables
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public ReadOnlyObservableCollection<TViewModel> Items { get; }
+
+        [Bindable(true, BindingDirection.OneWay)]
+        public ObservableCollection<TViewModel> SelectedItems { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
         public int Count => Items.Count;
@@ -66,7 +61,7 @@ namespace MvvmScarletToolkit.Observables
             : base(commandBuilder)
         {
             _items = new ObservableCollection<TViewModel>();
-            _selectedItems = new ObservableCollection<TViewModel>();
+            SelectedItems = new ObservableCollection<TViewModel>();
 
             Items = new ReadOnlyObservableCollection<TViewModel>(_items);
 
@@ -330,7 +325,7 @@ namespace MvvmScarletToolkit.Observables
 
         private bool CanRemoveRange()
         {
-            return CanRemoveRange(SelectedItems);
+            return CanRemoveRange((IList)SelectedItems);
         }
 
         private bool CanRemove()
@@ -340,7 +335,7 @@ namespace MvvmScarletToolkit.Observables
 
         private Task RemoveRange()
         {
-            return RemoveRange(SelectedItems);
+            return RemoveRange((IList)SelectedItems);
         }
 
         private void OnSelectionChanged()
