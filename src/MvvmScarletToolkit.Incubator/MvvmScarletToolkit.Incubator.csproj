@@ -10,21 +10,12 @@
     <ItemGroup>
         <PackageReference Include="DynamicData" Version="7.1.1" />
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.31" />
+        <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
 
         <PackageReference Include="Roslynator.Analyzers" Version="3.1.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-
-        <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
-    </ItemGroup>
-
-    <ItemGroup Condition=" '$(Framework)' == 'net461' ">
-        <Reference Include="System.Runtime.Caching" />
-    </ItemGroup>
-
-    <ItemGroup Condition=" '$(Framework)' == 'netcoreapp3.1' ">
-        <PackageReference Include="System.Runtime.Caching" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>

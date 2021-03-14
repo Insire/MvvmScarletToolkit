@@ -105,8 +105,8 @@ namespace MvvmScarletToolkit
 
                     using (source.DeferRefresh())
                     {
-                        source.Filter -= new FilterEventHandler(FilterAdapter);
-                        source.Filter += new FilterEventHandler(FilterAdapter);
+                        source.Filter -= FilterAdapter;
+                        source.Filter += FilterAdapter;
                     }
                     break;
 
@@ -117,8 +117,7 @@ namespace MvvmScarletToolkit
 
             void FilterAdapter(object sender, FilterEventArgs e)
             {
-                var source = sender as CollectionViewSource;
-                if (source is null)
+                if (!(sender is CollectionViewSource source))
                 {
                     return;
                 }
@@ -149,9 +148,9 @@ namespace MvvmScarletToolkit
 
             // we dont care what property was bound to this,
             // we only care that it changed. When it changes we refresh the view to force updating the filter
-            var view = (CollectionView)CollectionViewSource.GetDefaultView(itemsControl.ItemsSource);
+            var view = CollectionViewSource.GetDefaultView(itemsControl.ItemsSource) as CollectionView;
 
-            view.Refresh();
+            view?.Refresh();
         }
     }
 }

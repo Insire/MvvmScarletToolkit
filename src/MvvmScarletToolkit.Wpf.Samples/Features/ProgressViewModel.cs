@@ -57,7 +57,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 Debug.WriteLine("Refreshing ProgressViewModel");
 
             await Dispatcher.Invoke(() => Percentage = 0).ConfigureAwait(false);
-            await Task.Delay(250).ConfigureAwait(false);
+            await Task.Delay(250, token).ConfigureAwait(false);
 
             var worker = Block ? new Worker(_uiBlockingProgress) : new Worker(_progress);
 
