@@ -683,20 +683,31 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <TextBox x:Name="FilterTextBox"
-                                     Grid.Column="0"
-                                     Grid.ColumnSpan="3"
-                                     Text="{Binding FilterText}">
-                                <i:Interaction.Behaviors>
-                                    <mvvm:WatermarkBehavior Watermark="Filter">
-                                        <mvvm:WatermarkBehavior.WatermarkStyle>
-                                            <Style TargetType="{x:Type TextBox}">
-                                                <Setter Property="Foreground" Value="Gray" />
-                                            </Style>
-                                        </mvvm:WatermarkBehavior.WatermarkStyle>
-                                    </mvvm:WatermarkBehavior>
-                                </i:Interaction.Behaviors>
-                            </TextBox>
+                            <DockPanel Grid.Column="0">
+                                <Label Content="Filter:" Target="{Binding ElementName=FilterTextBox}" />
+                                <TextBox x:Name="FilterTextBox"
+                                         Grid.Column="1"
+                                         VerticalContentAlignment="Center"
+                                         Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged, Delay=150}" />
+                            </DockPanel>
+
+                            <DockPanel Grid.Column="2">
+                                <ToggleButton Content="Generate Items and Auto-Scroll">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="{x:Type ToggleButton}">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter Property="Command" Value="{Binding EnableGenerationCommand}" />
+                                                </Trigger>
+
+                                                <Trigger Property="IsChecked" Value="False">
+                                                    <Setter Property="Command" Value="{Binding DisableGenerationCommand}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+                            </DockPanel>
 
                             <Button Grid.Row="0"
                                     Grid.Column="1"
@@ -713,6 +724,7 @@
                                         <mvvm:ClearTextBoxAction Target="{Binding ElementName=FilterTextBox}" />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
+
                                 <Button.Style>
                                     <Style TargetType="{x:Type Button}">
                                         <Setter Property="Visibility" Value="Visible" />
@@ -731,13 +743,17 @@
                             <ListBox Grid.Row="2"
                                      Grid.RowSpan="3"
                                      Grid.Column="0"
+                                     mvvm:Filter.By="{Binding Filter}"
+                                     mvvm:Filter.RefreshWhenChanged="{Binding FilterText}"
                                      ItemTemplate="{StaticResource DemoItemTemplate}"
                                      ItemsSource="{Binding Items}"
                                      SelectedItem="{Binding SelectedItem}"
                                      SelectionMode="Extended">
                                 <i:Interaction.Behaviors>
                                     <mvvm:MultiSelectionBehavior SelectedItems="{Binding SelectedItems}" />
+                                    <mvvm:AutoScrollBehavior />
                                 </i:Interaction.Behaviors>
+
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="{x:Type ListBoxItem}">
                                         <Setter Property="IsSelected" Value="{Binding IsSelected}" />
@@ -748,16 +764,48 @@
                             <TextBlock Grid.Row="2"
                                        Grid.RowSpan="3"
                                        Grid.Column="0"
-                                       Margin="0,0,25,00"
+                                       Margin="0,0,25,0"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Bottom"
+                                       Text="{Binding Items.Count, StringFormat='{}{0} Entries'}" />
+
+                            <Border Grid.Row="2"
+                                    Grid.Column="2"
+                                    BorderBrush="Black"
+                                    BorderThickness="0.5">
+                                <ItemsControl ItemsSource="{Binding SelectedItems}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel IsItemsHost="True" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type local:AsyncStateViewModel}">
+                                            <TextBlock Margin="4,0"
+                                                       VerticalAlignment="Center"
+                                                       Text="{Binding DisplayName}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="{x:Type TextBlock}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                                                <Setter Property="Foreground" Value="Red" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+
+                            <TextBlock Grid.Row="2"
+                                       Grid.Column="2"
+                                       Margin="0,0,4,0"
                                        HorizontalAlignment="Right"
                                        VerticalAlignment="Bottom"
                                        Text="{Binding SelectedItems.Count, StringFormat='{}{0} Entries selected'}" />
-
-                            <ScrollViewer Grid.Row="2"
-                                          Grid.Column="2"
-                                          VerticalScrollBarVisibility="Auto">
-                                <ItemsControl ItemTemplate="{StaticResource DemoItemTemplate}" ItemsSource="{Binding Source={StaticResource SortedViewSource}}" />
-                            </ScrollViewer>
 
                             <ContentControl Grid.Row="4"
                                             Grid.Column="2"
@@ -766,7 +814,7 @@
                                     <DataTemplate DataType="{x:Type local:AsyncStateViewModel}">
                                         <Border BorderBrush="Black" BorderThickness="0.5">
 
-                                            <StackPanel Orientation="Vertical">
+                                            <StackPanel Margin="4" Orientation="Vertical">
                                                 <TextBlock Text="{Binding DisplayName, StringFormat={}DisplayName: {0}}" />
                                                 <TextBlock Text="{Binding IsBusy, StringFormat={}IsSelfBusy: {0}}" />
                                                 <TextBlock Text="{Binding IsSelected, StringFormat={}IsSelected: {0}}" />
@@ -913,7 +961,6 @@
                                 </Button.Style>
                             </Button>
                         </StackPanel>
-
 
                         <ProgressBar Maximum="{Binding Maximum, Mode=OneWay}" Value="{Binding Percentage, Mode=OneWay}">
                             <ProgressBar.Style>

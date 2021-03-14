@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public class AsyncStateViewModel : BusinessViewModelBase
+    public sealed class AsyncStateViewModel : BusinessViewModelBase
     {
         private string _displayName;
         public string DisplayName

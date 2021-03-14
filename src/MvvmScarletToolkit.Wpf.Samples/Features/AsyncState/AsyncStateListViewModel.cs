@@ -1,26 +1,13 @@
-using Microsoft.Toolkit.Mvvm.ComponentModel;
-using System.Collections;
-using System.Collections.ObjectModel;
+using Microsoft.Toolkit.Mvvm.Input;
+using MvvmScarletToolkit.Observables;
+using System;
+using System.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public class AsyncStateListViewModel : ObservableObject
+    public sealed class AsyncStateListViewModel : ViewModelListBase<AsyncStateViewModel>
     {
-        private AsyncStateViewModel _selectedItem;
-        public AsyncStateViewModel SelectedItem
-        {
-            get { return _selectedItem; }
-            set { SetProperty(ref _selectedItem, value); }
-        }
-
-        private ObservableCollection<AsyncStateViewModel> _items;
-        public ObservableCollection<AsyncStateViewModel> Items
-        {
-            get { return _items; }
-            set { SetProperty(ref _items, value); }
-        }
-
-        public IList SelectedItems { get; }
+        private readonly Timer _timer;
 
         private string _filterText;
         public string FilterText
@@ -29,23 +16,67 @@ namespace MvvmScarletToolkit.Wpf.Samples
             set { SetProperty(ref _filterText, value); }
         }
 
-        public AsyncStateListViewModel(IScarletCommandBuilder commandBuilder)
-        {
-            Items = new ObservableCollection<AsyncStateViewModel>();
-            SelectedItems = new ObservableCollection<AsyncStateViewModel>();
+        public Predicate<object> Filter { get; }
 
+        public RelayCommand EnableGenerationCommand { get; }
+        public RelayCommand DisableGenerationCommand { get; }
+
+        public AsyncStateListViewModel(IScarletCommandBuilder commandBuilder)
+            : base(commandBuilder)
+        {
             for (var i = 0; i < 10; i++)
             {
-                Items.Add(new AsyncStateViewModel(commandBuilder)
+                AddUnchecked(new AsyncStateViewModel(commandBuilder)
                 {
                     DisplayName = "Test " + i,
                 });
             }
 
-            SelectedItem = new AsyncStateViewModel(commandBuilder)
+            SelectedItem = Items[0];
+
+            Filter = ObjectFilter;
+
+            _timer = new Timer(new TimerCallback(OnTimerElapsed), this, Timeout.InfiniteTimeSpan, TimeSpan.FromSeconds(1));
+
+            EnableGenerationCommand = new RelayCommand(() => _timer.Change(TimeSpan.Zero, TimeSpan.FromSeconds(1)));
+            DisableGenerationCommand = new RelayCommand(() => _timer.Change(Timeout.InfiniteTimeSpan, TimeSpan.FromSeconds(1)));
+        }
+
+        private static void OnTimerElapsed(object state)
+        {
+            if (state is AsyncStateListViewModel viewModel)
             {
-                DisplayName = "Test X",
-            };
+                _ = viewModel.Dispatcher.Invoke(() =>
+                {
+                    var count = viewModel.Items.Count;
+                    viewModel.Add(new AsyncStateViewModel(viewModel.CommandBuilder)
+                    {
+                        DisplayName = "New " + count
+                    });
+                });
+            }
+        }
+
+        private bool ObjectFilter(object obj)
+        {
+            if (obj is not AsyncStateViewModel chat)
+            {
+                return true;
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(FilterText))
+                {
+                    return true;
+                }
+
+                if (chat.DisplayName.IndexOf(FilterText, StringComparison.InvariantCultureIgnoreCase) > -1)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
