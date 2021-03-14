@@ -16,14 +16,12 @@ namespace MvvmScarletToolkit.Wpf.Samples
             Add(nameof(AsyncStateListViewModel), new AsyncStateListViewModel(commandBuilder));
             Add(nameof(DataGridViewModel), dataGridViewModel);
             Add(nameof(ProgressViewModel), new ProgressViewModel(commandBuilder));
-            Add("Snake", new DummySnakeViewModel());
             Add("FileSystemBrowser", new FileSystemViewModel(commandBuilder, new FileSystemViewModelFactory(commandBuilder), FileSystemOptionsViewModel.Default));
             Add("Busytree", new BusyViewModel(commandBuilder));
             Add("Text rendering", new TextDisplayViewModel(commandBuilder));
             Add(nameof(PasswordViewModel), new PasswordViewModel());
             Add(nameof(GroupingViewModel), GroupingViewModel.Create(commandBuilder, dataGridViewModel.Items));
             Add(nameof(DialogViewModel), new DialogViewModel(commandBuilder));
-            Add(nameof(ValidationViewModels), new ValidationViewModels(commandBuilder));
             Add(nameof(ProcessViewModel), new ProcessViewModel(commandBuilder));
 
             var contextMenu = new ContextMenuViewModels();
