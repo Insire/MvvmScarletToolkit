@@ -6,7 +6,7 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 
-public sealed class PushRemote : FrostingTask<Context>
+public sealed class PushNuget : FrostingTask<Context>
 {
     public override void Run(Context context)
     {
@@ -24,7 +24,8 @@ public sealed class PushRemote : FrostingTask<Context>
     public override bool ShouldRun(Context context)
     {
         return base.ShouldRun(context)
-            && context.BuildSystem().IsRunningOnAzurePipelines || context.BuildSystem().IsRunningOnAzurePipelinesHosted
-            && !string.IsNullOrEmpty(context.EnvironmentVariable("NUGETORG_APIKEY"));
+            && (context.BuildSystem().IsRunningOnAzurePipelines || context.BuildSystem().IsRunningOnAzurePipelinesHosted)
+            && !string.IsNullOrEmpty(context.EnvironmentVariable("NUGETORG_APIKEY"))
+            && context.IsPublicRelease;
     }
 }
