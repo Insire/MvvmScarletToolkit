@@ -15,7 +15,7 @@ public sealed class PushGithub : FrostingTask<Context>
             context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
             {
                 ApiKey = context.EnvironmentVariable("GITHUB_APIKEY"),
-                Source = "https://api.nuget.org/v3/index.json",
+                Source = "https://nuget.pkg.github.com/insire/index.json",
                 SkipDuplicate = true,
             });
         }
