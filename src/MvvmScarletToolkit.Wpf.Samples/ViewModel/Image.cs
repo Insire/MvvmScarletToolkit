@@ -1,4 +1,3 @@
-using ImageMagick;
 using MvvmScarletToolkit.Observables;
 using System.IO;
 using System.Threading;
@@ -70,12 +69,17 @@ namespace MvvmScarletToolkit.Wpf.Samples
         private static BitmapSource GetImage(string path)
         {
             using var stream = File.OpenRead(path);
-            using var img = new MagickImage(stream);
 
-            var source = img.ToBitmapSource();
-            source.Freeze();
+            var img = new BitmapImage();
+            img.BeginInit();
+            img.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+            img.CacheOption = BitmapCacheOption.OnLoad;
+            img.StreamSource = stream;
+            img.EndInit();
 
-            return source;
+            img.Freeze();
+
+            return img;
         }
     }
 }

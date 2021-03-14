@@ -9,8 +9,6 @@ using System.Windows.Media.Imaging;
 namespace MvvmScarletToolkit.Wpf
 {
     // source: https://stackoverflow.com/questions/94456/load-a-wpf-bitmapimage-from-a-system-drawing-bitmap/7390373#7390373
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP007:Don't dispose injected.",
-        Justification = "SharedBitmapSource is a container around the injected bitmap instance that provides a bitmapsource without creating a new instance of it")]
     public sealed class SharedBitmapSource : BitmapSource, IDisposable
     {
         private bool _disposed = false;
@@ -27,7 +25,7 @@ namespace MvvmScarletToolkit.Wpf
 
         public override System.Windows.Media.PixelFormat Format => ConvertPixelFormat(Bitmap.PixelFormat);
 
-        public override BitmapPalette? Palette => null;
+        public override BitmapPalette Palette => null;
 
         public SharedBitmapSource(int width, int height, System.Drawing.Imaging.PixelFormat sourceFormat)
             : this(new Bitmap(width, height, sourceFormat))
@@ -58,7 +56,7 @@ namespace MvvmScarletToolkit.Wpf
             Bitmap.UnlockBits(sourceData);
         }
 
-        protected override Freezable? CreateInstanceCore()
+        protected override Freezable CreateInstanceCore()
         {
             var instance = Activator.CreateInstance(GetType());
             if (instance is Freezable freezable)
