@@ -4,34 +4,26 @@ using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
+    ///<summary>
+    /// Compare the <see cref="Binding.Path"/> value with the <see cref="Binding.ConverterParameter"/> value and return whether they are <see cref="object.Equals(object, object)"/>
+    ///</summary>
+    /// <remarks>
+    /// <c>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</c>
+    /// </remarks>
     [ValueConversion(typeof(object), typeof(bool))]
-    public class RadioButtonCheckedConverter : ConverterMarkupExtension<RadioButtonCheckedConverter>
+    public sealed class RadioButtonCheckedConverter : ConverterMarkupExtension<RadioButtonCheckedConverter>
     {
         /// <summary>
-        /// Converts a value.
-        /// </summary>
-        /// <param name="value">The value produced by the binding source.</param>
-        /// <param name="targetType">The type of the binding target property.</param>
-        /// <param name="parameter">The converter parameter to use.</param>
-        /// <param name="culture">The culture to use in the converter.</param>
-        /// <returns>
         /// A converted value. If the method returns null, the valid null value is used.
-        /// </returns>
+        /// </summary>
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value.Equals(parameter);
         }
 
         /// <summary>
-        /// Converts a value.
-        /// </summary>
-        /// <param name="value">The value that is produced by the binding target.</param>
-        /// <param name="targetType">The type to convert to.</param>
-        /// <param name="parameter">The converter parameter to use.</param>
-        /// <param name="culture">The culture to use in the converter.</param>
-        /// <returns>
         /// A converted value. If the method returns null, the valid null value is used.
-        /// </returns>
+        /// </summary>
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value.Equals(true) ? parameter : Binding.DoNothing;

@@ -1,9 +1,15 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
+    /// <summary>
+    /// negate a boolean value
+    /// </summary>
+    /// <remarks>
+    /// <c>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</c>
+    /// </remarks>
     [ValueConversion(typeof(bool), typeof(bool))]
     public sealed class IsNot : ConverterMarkupExtension<IsNullOrEmpty>
     {
@@ -14,7 +20,7 @@ namespace MvvmScarletToolkit
                 return !boolean;
             }
 
-            return false;
+            return Binding.DoNothing;
         }
     }
 }

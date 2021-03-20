@@ -5,6 +5,12 @@ using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
+    /// <summary>
+    /// alter the casing for a string
+    /// </summary>
+    /// <remarks>
+    /// <c>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</c>
+    /// </remarks>
     [ValueConversion(typeof(string), typeof(string))]
     public sealed class ToCase : ConverterMarkupExtension<ToCase>
     {
@@ -22,7 +28,7 @@ namespace MvvmScarletToolkit
                 return Convert(str, parameter, Casing);
             }
 
-            return string.Empty;
+            return Binding.DoNothing;
         }
 
         private static object Convert(string value, object parameter, CharacterCasing fallBackCasing)

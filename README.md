@@ -61,6 +61,8 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
     - VirtualizingWrapPanel
   - (Multi-)Converters as Markupextension
     - ToCase (convert a string to a given casing)
+    - SmallerThan (whether a bound number is smaller than the converter value)
+    - GreaterThan (whether a bound number is larger than the converter value)
     - IsNot (negate a boolean)
     - IsNotNull (return whether something is not null)
     - IsNotNullOrEmpty (return whether a string is not null or empty)
@@ -69,8 +71,6 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
     - IsNullOrEmpty (return whether a string is null or empty)
     - IsNullOrWhiteSpace (return whether a string is null or whitespace)
     - DebugConverter (log bound values and value changes to the Debug.Listener)
-    - NullValueConverter (return only strings that are not null and not empty)
-    - InvertBooleanConverter (negate a boolean)
     - InvertBooleanToVisibilityConverter (negate a boolean to visibility)
     - RadioButtonCheckedConverter (compares the bound value to the argument and returns whether they are equal)
     - MultiBooleanAndConverter (combines all conditions with logical and)

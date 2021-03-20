@@ -7,7 +7,12 @@ using System.Windows.Markup;
 
 namespace MvvmScarletToolkit
 {
-    // Usage: ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:EnumType}}}"
+    /// <summary>
+    /// Create an itemsource from an enum type
+    /// </summary>
+    /// <example>
+    /// <c><ItemsControl ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:MyEnumType}}}"/></c>
+    /// </example>
     [MarkupExtensionReturnType(typeof(Array))]
     public sealed class EnumBindingSourceExtension : MarkupExtension
     {

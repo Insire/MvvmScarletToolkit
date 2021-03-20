@@ -5,6 +5,12 @@ using System.Windows.Markup;
 
 namespace MvvmScarletToolkit
 {
+    ///<summary>
+    /// whether a bound number is smaller than <see cref="Value"/>
+    /// </summary>
+    /// <remarks>
+    /// <c>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</c>
+    /// </remarks>
     [ValueConversion(typeof(int), typeof(bool))]
     public sealed class SmallerThan : ConverterMarkupExtension<SmallerThan>
     {
@@ -23,12 +29,22 @@ namespace MvvmScarletToolkit
 
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is int number)
+            return value switch
             {
-                return number < Value;
-            }
-
-            return false;
+                sbyte number => number < Value,
+                byte number => number < Value,
+                short number => number < Value,
+                ushort number => number < Value,
+                int number => number < Value,
+                uint number => number < Value,
+                long number => number < Value,
+                //case ulong number:
+                //    return number < Value;
+                float number => number < Value,
+                double number => number < Value,
+                decimal number => number < Value,
+                _ => Binding.DoNothing,
+            };
         }
     }
 }
