@@ -35,6 +35,7 @@ public class Context : FrostingContext
 
         NugetPackageProjects = new[]
         {
+            @".\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj",
             @".\src\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj",
             @".\src\MvvmScarletToolkit.Xamarin.Forms\MvvmScarletToolkit.Xamarin.Forms.csproj",
         };
@@ -55,6 +56,7 @@ public class Context : FrostingContext
         this.Information($"Platform: {context.Environment.Platform.Family} ({(context.Environment.Platform.Is64Bit ? "x64" : "x86")})");
 
         this.Information($"NUGETORG_APIKEY was{(string.IsNullOrEmpty(context.EnvironmentVariable("NUGETORG_APIKEY")) ? " not" : "")} set.");
+        this.Information($"GITHUB_APIKEY was{(string.IsNullOrEmpty(context.EnvironmentVariable("GITHUB_APIKEY")) ? " not" : "")} set.");
         this.Information($"CODECOV_TOKEN was{(string.IsNullOrEmpty(context.EnvironmentVariable("CODECOV_TOKEN")) ? " not" : "")} set.");
 
         this.Information($"reportsFolder: {ReportsFolder}");

@@ -72,7 +72,7 @@ namespace MvvmScarletToolkit
 
         private void TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (AssociatedObject.Text == string.Empty)
+            if (AssociatedObject.Text?.Length == 0)
             {
                 if (!_skipTextReset)
                 {
@@ -90,7 +90,7 @@ namespace MvvmScarletToolkit
 
         private void LostFocus(object? sender, RoutedEventArgs? e)
         {
-            if (AssociatedObject.Text == string.Empty)
+            if (AssociatedObject.Text?.Length == 0)
             {
                 _isTextFromWatermark = true;
                 AssociatedObject.SetCurrentValue(TextBox.TextProperty, Watermark);

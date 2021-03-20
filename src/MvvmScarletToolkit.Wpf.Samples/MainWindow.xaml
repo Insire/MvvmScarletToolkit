@@ -908,8 +908,8 @@
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Grid.Row="2" Header="Clear text">
-                            <TextBlock Text="{Binding Password}" />
+                        <GroupBox Grid.Row="2" Header="Clear text (ToUpper)">
+                            <TextBlock Text="{Binding Password, Converter={mvvm:ToCase Casing=Upper}}" />
                         </GroupBox>
 
                         <GroupBox Grid.Row="4" Header="Textbox with Watermark">
