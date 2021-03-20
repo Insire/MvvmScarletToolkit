@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit
 
         private void StartProcess()
         {
-            if (Url is null || Url.Length == 0)
+            if (string.IsNullOrEmpty(Url))
             {
                 return;
             }

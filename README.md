@@ -65,18 +65,25 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
     - VirtualizingTilePanel
     - VirtualizingWrapPanel
   - (Multi-)Converters as Markupextension
-    - CaseConverter
-    - DebugConverter
-    - NullValueConverter
-    - InvertBooleanConverter
-    - InvertBooleanToVisibilityConverter
-    - RadioButtonCheckedConverter
-    - MultiBooleanAndConverter
+    - ToCase (convert a string to a given casing)
+    - IsNot (negate a boolean)
+    - IsNotNull (return whether something is not null)
+    - IsNotNullOrEmpty (return whether a string is not null or empty)
+    - IsNotNullOrWhiteSpace (return whether a string is not null or whitespace)
+    - IsNull (return whether something is null)
+    - IsNullOrEmpty (return whether a string is null or empty)
+    - IsNullOrWhiteSpace (return whether a string is null or whitespace)
+    - DebugConverter (log bound values and value changes to the Debug.Listener)
+    - NullValueConverter (return only strings that are not null and not empty)
+    - InvertBooleanConverter (negate a boolean)
+    - InvertBooleanToVisibilityConverter (negate a boolean to visibility)
+    - RadioButtonCheckedConverter (compares the bound value to the argument and returns whether they are equal)
+    - MultiBooleanAndConverter (combines all conditions with logical and)
   - MarkupExtensions
     - ConverterMarkupExtension
     - MultiConverterMarkupExtension
-    - EnumBindingSourceExtension
-    - StartProcessExtension
+    - EnumBindingSourceExtension (create an itemsource from an enum type)
+    - StartProcessExtension (let the OS open an uri)
   - Extensions
     - DependencyObjectExtensions
 
