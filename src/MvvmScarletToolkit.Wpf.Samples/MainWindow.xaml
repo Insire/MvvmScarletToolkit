@@ -23,7 +23,6 @@
         <Grid.Resources>
             <mvvm:BindingProxy x:Key="MainWindowRootProxy" Data="{Binding ElementName=MainWindowRoot}" />
             <system:Decimal x:Key="Num">2</system:Decimal>
-            <mvvm:NullValueConverter x:Key="NullValueConverter" />
             <DataTemplate DataType="{x:Type observables:LocalizationViewModel}">
                 <TextBlock Text="{Binding Value, Mode=OneWay}" />
             </DataTemplate>
