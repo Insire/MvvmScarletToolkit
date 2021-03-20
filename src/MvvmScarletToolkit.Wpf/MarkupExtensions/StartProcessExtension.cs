@@ -7,8 +7,12 @@ using System.Windows.Markup;
 
 namespace MvvmScarletToolkit
 {
-    // xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
-    // usage: <Hyperlink Command="{mvvm:StartProcess Url='www.github.com/Insire/Dawn'}"/>
+    /// <summary>
+    /// namespace: xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
+    /// </summary>
+    /// <example>
+    /// <c><Hyperlink Command="{mvvm:StartProcess Url='www.github.com/Insire/Dawn'}"/></c>
+    /// </example>
     [MarkupExtensionReturnType(typeof(ICommand))]
     public sealed class StartProcessExtension : MarkupExtension
     {

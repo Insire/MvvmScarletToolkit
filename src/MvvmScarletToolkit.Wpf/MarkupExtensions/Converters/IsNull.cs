@@ -1,9 +1,15 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
+    /// <summary>
+    /// whether something is null
+    /// </summary>
+    /// <remarks>
+    /// <c>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</c>
+    /// </remarks>
     [ValueConversion(typeof(bool), typeof(object))]
     public sealed class IsNull : ConverterMarkupExtension<IsNullOrEmpty>
     {

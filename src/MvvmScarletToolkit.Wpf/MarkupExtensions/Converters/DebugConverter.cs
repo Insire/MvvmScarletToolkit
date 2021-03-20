@@ -5,6 +5,12 @@ using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
+    /// <summary>
+    /// log bound values and value changes to the Debug.Listener
+    /// </summary>
+    /// <remarks>
+    /// <c>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</c>
+    /// </remarks>
     [ValueConversion(typeof(object), typeof(object))]
     public sealed class DebugConverter : ConverterMarkupExtension<DebugConverter>
     {

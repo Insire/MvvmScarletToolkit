@@ -4,6 +4,12 @@ using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
+    /// <summary>
+    /// whether a string is null or empty
+    /// </summary>
+    /// <remarks>
+    /// <c>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</c>
+    /// </remarks>
     [ValueConversion(typeof(string), typeof(bool))]
     public sealed class IsNullOrEmpty : ConverterMarkupExtension<IsNullOrEmpty>
     {
@@ -14,7 +20,7 @@ namespace MvvmScarletToolkit
                 return string.IsNullOrEmpty(text);
             }
 
-            return false;
+            return Binding.DoNothing;
         }
     }
 }
