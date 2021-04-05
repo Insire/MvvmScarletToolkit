@@ -28,7 +28,7 @@ namespace MvvmScarletToolkit.Observables
         protected bool IsDisposed { get; private set; }
 
         protected ViewModelBase(IScarletCommandBuilder commandBuilder)
-            : base(commandBuilder.Messenger)
+            : base((commandBuilder?.Messenger)!)
         {
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
             Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Dispatcher));

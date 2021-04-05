@@ -7,7 +7,7 @@ using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
-namespace MvvmScarletToolkit.Incubator
+namespace MvvmScarletToolkit
 {
     public abstract class SourceListViewModelBase<T> : ObservableObject, IDisposable
         where T : class
@@ -52,7 +52,7 @@ namespace MvvmScarletToolkit.Incubator
             _sourceCache.AddOrUpdate(item);
         }
 
-        public T TryGet(string key)
+        public T? TryGet(string key)
         {
             var result = _sourceCache.Lookup(key);
             if (result.HasValue)
