@@ -36,6 +36,7 @@ namespace MvvmScarletToolkit
                 {
                     return result;
                 }
+
                 dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
             }
 
@@ -57,9 +58,9 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// Gets all children of the specified visual in the visual tree recursively.
         /// </summary>
-        /// <param name="visual">The visual to get the visual children for.</param>
+        /// <param name="dependencyObject">The visual to get the visual children for.</param>
         /// <returns>All children of the specified visual in the visual tree recursively.</returns>
-        public static IEnumerable<T> FindVisualChildrenBreadthFirst<T>(this DependencyObject dependencyObject, Func<T, bool>? filter)
+        public static IEnumerable<T> FindVisualChildrenBreadthFirst<T>(this DependencyObject dependencyObject, Func<T, bool>? filter = null)
             where T : DependencyObject
         {
             if (dependencyObject is null)
@@ -84,12 +85,29 @@ namespace MvvmScarletToolkit
             for (var i = 0; i < count; i++)
             {
                 var child = children[i];
-                var grandchildren = child.FindVisualChildrenBreadthFirst(filter);
-
-                foreach (var grandchild in grandchildren)
+                foreach (var grandchild in child.FindVisualChildrenBreadthFirst(filter))
                 {
                     yield return grandchild;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets all children of the specified visual in the visual tree recursively including itself.
+        /// </summary>
+        /// <param name="dependencyObject">The visual to get the visual children for.</param>
+        /// <returns>All children of the specified visual in the visual tree recursively including itself.</returns>
+        public static IEnumerable<T> FindVisualChildrenBreadthFirstOrSelf<T>(this DependencyObject dependencyObject, Func<T, bool>? filter = null)
+            where T : DependencyObject
+        {
+            if (dependencyObject is T self && filter?.Invoke(self) != false)
+            {
+                yield return self;
+            }
+
+            foreach (var child in dependencyObject.FindVisualChildrenBreadthFirst<T>(filter))
+            {
+                yield return child;
             }
         }
 
@@ -108,9 +126,9 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// Gets all children of the specified visual in the visual tree recursively.
         /// </summary>
-        /// <param name="visual">The visual to get the visual children for.</param>
+        /// <param name="dependencyObject">The visual to get the visual children for.</param>
         /// <returns>All children of the specified visual in the visual tree recursively.</returns>
-        public static IEnumerable<T> FindVisualChildrenDepthFirst<T>(this DependencyObject dependencyObject, Func<T, bool>? filter)
+        public static IEnumerable<T> FindVisualChildrenDepthFirst<T>(this DependencyObject dependencyObject, Func<T, bool>? filter = null)
             where T : DependencyObject
         {
             if (dependencyObject is null)
@@ -127,11 +145,29 @@ namespace MvvmScarletToolkit
                     yield return result;
                 }
 
-                var grandchildren = child.FindVisualChildrenDepthFirst(filter);
-                foreach (var grandchild in grandchildren)
+                foreach (var grandchild in child.FindVisualChildrenDepthFirst(filter))
                 {
                     yield return grandchild;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets all children of the specified visual in the visual tree recursively including itself.
+        /// </summary>
+        /// <param name="dependencyObject">The visual to get the visual children for.</param>
+        /// <returns>All children of the specified visual in the visual tree recursively including itself.</returns>
+        public static IEnumerable<T> FindVisualChildrenDepthFirstOrSelf<T>(this DependencyObject dependencyObject, Func<T, bool>? filter = null)
+            where T : DependencyObject
+        {
+            if (dependencyObject is T self && filter?.Invoke(self) != false)
+            {
+                yield return self;
+            }
+
+            foreach (var child in dependencyObject.FindVisualChildrenDepthFirst<T>(filter))
+            {
+                yield return child;
             }
         }
 
