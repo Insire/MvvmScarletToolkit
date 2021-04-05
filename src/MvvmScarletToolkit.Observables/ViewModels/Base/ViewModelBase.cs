@@ -28,9 +28,7 @@ namespace MvvmScarletToolkit.Observables
         protected bool IsDisposed { get; private set; }
 
         protected ViewModelBase(IScarletCommandBuilder commandBuilder)
-#pragma warning disable CS8604 // Possible null reference argument. Yes, thats intended
-            : base(commandBuilder?.Messenger)
-#pragma warning restore CS8604 // Possible null reference argument.
+            : base(commandBuilder.Messenger)
         {
             CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
             Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Dispatcher));

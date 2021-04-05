@@ -16,6 +16,9 @@ namespace MvvmScarletToolkit.Observables
         where TViewModel : class, INotifyPropertyChanged
     {
         private bool _isLoaded;
+        /// <summary>
+        /// Indicates whether <see cref="Load"/> has been called already
+        /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsLoaded
         {
@@ -24,14 +27,23 @@ namespace MvvmScarletToolkit.Observables
         }
 
         private readonly ConcurrentCommandBase _loadCommand;
+        /// <summary>
+        /// Executes <see cref="Refresh"/> unless, <see cref="Load"/> has already been called
+        /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand LoadCommand => _loadCommand;
 
         private readonly ConcurrentCommandBase _refreshCommand;
+        /// <summary>
+        /// Clears <see cref="Items"/> to add new instances
+        /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand RefreshCommand => _refreshCommand;
 
         private readonly ConcurrentCommandBase _unloadCommand;
+        /// <summary>
+        /// Undoes <see cref="Load"/>. Clears all instances by default.
+        /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand UnloadCommand => _unloadCommand;
 
