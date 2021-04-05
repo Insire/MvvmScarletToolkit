@@ -3,7 +3,6 @@ using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -17,16 +16,15 @@ namespace MvvmScarletToolkit
     // manages
     // https://github.com/tom-englert/DataGridExtensions
     // http://dotnetpattern.com/wpf-datagrid-grouping
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created.", Justification = "Class is a container class and owns all instances")]
     public sealed class GroupingViewModel : BusinessViewModelListBase<GroupsViewModel>
     {
-        public static GroupingViewModel Create<T>(ReadOnlyObservableCollection<T> collection)
+        public static GroupingViewModel Create<T>(IEnumerable<T> collection)
             where T : class, INotifyPropertyChanged
         {
             return Create(ScarletCommandBuilder.Default, collection);
         }
 
-        public static GroupingViewModel Create<T>(IScarletCommandBuilder commandBuilder, ReadOnlyObservableCollection<T> collection)
+        public static GroupingViewModel Create<T>(IScarletCommandBuilder commandBuilder, IEnumerable<T> collection)
             where T : class, INotifyPropertyChanged
         {
             return new GroupingViewModel(commandBuilder, () => (ListCollectionView)CollectionViewSource.GetDefaultView(collection), typeof(T));

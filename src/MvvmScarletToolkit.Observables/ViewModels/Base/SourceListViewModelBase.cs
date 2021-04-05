@@ -9,18 +9,18 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace MvvmScarletToolkit
 {
-    public abstract class SourceListViewModelBase<T> : ObservableObject, IDisposable
-        where T : class
+    public abstract class SourceListViewModelBase<TViewModel> : ObservableObject, IDisposable
+        where TViewModel : class
     {
-        private readonly SourceCache<T, string> _sourceCache;
+        private readonly SourceCache<TViewModel, string> _sourceCache;
         private readonly SynchronizationContext _synchronizationContext;
         private readonly IDisposable _subscription;
 
         private bool _disposedValue;
 
-        public IObservableCollection<T> Items { get; }
+        public IObservableCollection<TViewModel> Items { get; }
 
-        protected SourceListViewModelBase(SynchronizationContext synchronizationContext, Func<T, string> selector)
+        protected SourceListViewModelBase(SynchronizationContext synchronizationContext, Func<TViewModel, string> selector)
         {
             if (selector is null)
             {
@@ -29,8 +29,8 @@ namespace MvvmScarletToolkit
 
             _synchronizationContext = synchronizationContext ?? throw new ArgumentNullException(nameof(synchronizationContext));
 
-            _sourceCache = new SourceCache<T, string>(selector);
-            Items = new ObservableCollectionExtended<T>();
+            _sourceCache = new SourceCache<TViewModel, string>(selector);
+            Items = new ObservableCollectionExtended<TViewModel>();
 
             _subscription = Connect()
                 .DistinctUntilChanged()
@@ -42,17 +42,17 @@ namespace MvvmScarletToolkit
 
         public abstract Task Refresh(CancellationToken token);
 
-        protected void AddOrUpdateMany(IEnumerable<T> items)
+        protected void AddOrUpdateMany(IEnumerable<TViewModel> items)
         {
             _sourceCache.AddOrUpdate(items);
         }
 
-        protected void AddOrUpdate(T item)
+        protected void AddOrUpdate(TViewModel item)
         {
             _sourceCache.AddOrUpdate(item);
         }
 
-        public T? TryGet(string key)
+        public TViewModel? TryGet(string key)
         {
             var result = _sourceCache.Lookup(key);
             if (result.HasValue)
@@ -75,7 +75,7 @@ namespace MvvmScarletToolkit
             _sourceCache.Clear();
         }
 
-        public IObservable<IChangeSet<T, string>> Connect()
+        public IObservable<IChangeSet<TViewModel, string>> Connect()
         {
             return _sourceCache.Connect();
         }
