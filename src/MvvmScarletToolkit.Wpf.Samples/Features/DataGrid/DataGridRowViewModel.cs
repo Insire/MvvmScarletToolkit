@@ -3,8 +3,21 @@ using System;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public class DataGridRowViewModel : ViewModelBase
+    public sealed class DataGridRowViewModel : ViewModelBase
     {
+        private int id;
+        public int Id
+        {
+            get { return id; }
+            set
+            {
+                if (SetProperty(ref id, value))
+                {
+                    UpdatedOn = DateTime.Now;
+                }
+            }
+        }
+
         private string _name;
         public string Name
         {
@@ -58,9 +71,12 @@ namespace MvvmScarletToolkit.Wpf.Samples
             set { SetProperty(ref _isSelected, value); }
         }
 
-        public DataGridRowViewModel(IScarletCommandBuilder commandBuilder)
+        public int Page { get; }
+
+        public DataGridRowViewModel(IScarletCommandBuilder commandBuilder, int page)
             : base(commandBuilder)
         {
+            Page = page;
         }
     }
 }

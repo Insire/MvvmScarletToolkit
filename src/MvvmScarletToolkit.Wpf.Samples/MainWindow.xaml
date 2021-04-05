@@ -392,64 +392,6 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:DataGridRowViewModel}">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="4" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="4" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="4" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="4" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Text="IsSelected" />
-                            <CheckBox Grid.Column="2"
-                                      Grid.ColumnSpan="4"
-                                      IsChecked="{Binding IsSelected}" />
-
-                            <TextBlock Grid.Row="2" Text="Color" />
-                            <TextBox Grid.Row="2"
-                                     Grid.Column="2"
-                                     VerticalAlignment="Top"
-                                     Text="{Binding Color}" />
-                            <Rectangle Grid.Row="2"
-                                       Grid.Column="4"
-                                       Fill="{Binding Color}" />
-
-                            <TextBlock Grid.Row="4" Text="Name" />
-                            <TextBox Grid.Row="4"
-                                     Grid.Column="2"
-                                     Grid.ColumnSpan="4"
-                                     VerticalAlignment="Top"
-                                     Text="{Binding Name}" />
-
-                            <TextBlock Grid.Row="6" Text="CreatedOn" />
-                            <Calendar Grid.Row="6"
-                                      Grid.Column="2"
-                                      DisplayDate="{Binding CreatedOn}"
-                                      DisplayMode="Month" />
-
-                            <TextBlock Grid.Row="6"
-                                       Grid.Column="3"
-                                       Text="UpdatedOn" />
-                            <Calendar Grid.Row="6"
-                                      Grid.Column="4"
-                                      DisplayDate="{Binding UpdatedOn, Mode=OneWay}"
-                                      DisplayMode="Month" />
-                        </Grid>
-                    </ScrollViewer>
-                </DataTemplate>
-
                 <DataTemplate DataType="{x:Type local:DataGridViewModel}">
                     <Grid>
                         <Grid.Resources>
@@ -471,9 +413,11 @@
                             <RowDefinition Height="4" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="4" />
-                            <RowDefinition Height="2*" />
-                            <RowDefinition Height="4" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="4" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="4" />
@@ -559,10 +503,15 @@
                         <DataGrid Grid.Row="4"
                                   mvvm:Filter.By="{Binding Filter, Mode=OneWay}"
                                   mvvm:Filter.RefreshWhenChanged="{Binding FilterText, Mode=OneWay}"
-                                  AutoGenerateColumns="False"
+                                  AutoGenerateColumns="false"
                                   IsReadOnly="True"
                                   ItemsSource="{Binding Items}"
                                   SelectedItem="{Binding SelectedItem}">
+
+                            <i:Interaction.Behaviors>
+                                <mvvm:ScrollToEndCommandBehavior Command="{Binding NextCommand}" />
+                            </i:Interaction.Behaviors>
+
                             <DataGrid.GroupStyle>
                                 <GroupStyle>
                                     <GroupStyle.ContainerStyle>
@@ -590,8 +539,11 @@
                                     </GroupStyle.ContainerStyle>
                                 </GroupStyle>
                             </DataGrid.GroupStyle>
+
                             <DataGrid.Columns>
                                 <DataGridCheckBoxColumn Binding="{Binding IsSelected, Mode=TwoWay}" Header="IsSelected" />
+
+                                <DataGridTextColumn Binding="{Binding Id}" Header="Id" />
                                 <DataGridTextColumn Width="*"
                                                     Binding="{Binding Name}"
                                                     Header="Name" />
@@ -601,11 +553,94 @@
                             </DataGrid.Columns>
                         </DataGrid>
 
-                        <GridSplitter Grid.Row="5" HorizontalAlignment="Stretch" />
+                        <DockPanel Grid.Row="6">
+                            <Button Command="{Binding FirstCommand}"
+                                    Content="Load First"
+                                    DockPanel.Dock="Left" />
 
-                        <ContentControl Grid.Row="6" Content="{Binding SelectedItem}" />
+                            <Button Margin="8,0"
+                                    Command="{Binding PreviousCommand}"
+                                    Content="Load Previous"
+                                    DockPanel.Dock="Left" />
 
-                        <StackPanel Grid.Row="8" Orientation="Horizontal">
+                            <Button Command="{Binding LastCommand}"
+                                    Content="Load Last"
+                                    DockPanel.Dock="Right" />
+
+                            <Button Margin="8,0"
+                                    Command="{Binding NextCommand}"
+                                    Content="Load Next"
+                                    DockPanel.Dock="Right" />
+
+                            <TextBlock Margin="8,0" HorizontalAlignment="Center">
+                                <Run Text="{Binding CurrentPage, StringFormat='{}Page {0}', Mode=OneWay}" />
+                                <Run Text="{Binding TotalPageCount, StringFormat='{}of {0}', Mode=OneWay}" />
+                            </TextBlock>
+                        </DockPanel>
+
+                        <ContentControl Grid.Row="8" Content="{Binding SelectedItem}">
+                            <ContentControl.ContentTemplate>
+                                <DataTemplate DataType="{x:Type local:DataGridRowViewModel}">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="4" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="4" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="4" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="4" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Text="IsSelected" />
+                                            <CheckBox Grid.Column="2"
+                                                      Grid.ColumnSpan="4"
+                                                      IsChecked="{Binding IsSelected}" />
+
+                                            <TextBlock Grid.Row="2" Text="Color" />
+                                            <TextBox Grid.Row="2"
+                                                     Grid.Column="2"
+                                                     VerticalAlignment="Top"
+                                                     Text="{Binding Color}" />
+                                            <Rectangle Grid.Row="2"
+                                                       Grid.Column="4"
+                                                       Fill="{Binding Color}" />
+
+                                            <TextBlock Grid.Row="4" Text="Name" />
+                                            <TextBox Grid.Row="4"
+                                                     Grid.Column="2"
+                                                     Grid.ColumnSpan="4"
+                                                     VerticalAlignment="Top"
+                                                     Text="{Binding Name}" />
+
+                                            <TextBlock Grid.Row="6" Text="CreatedOn" />
+                                            <Calendar Grid.Row="6"
+                                                      Grid.Column="2"
+                                                      DisplayDate="{Binding CreatedOn}"
+                                                      DisplayMode="Month" />
+
+                                            <TextBlock Grid.Row="6"
+                                                       Grid.Column="3"
+                                                       Text="UpdatedOn" />
+                                            <Calendar Grid.Row="6"
+                                                      Grid.Column="4"
+                                                      DisplayDate="{Binding UpdatedOn, Mode=OneWay}"
+                                                      DisplayMode="Month" />
+                                        </Grid>
+                                    </ScrollViewer>
+                                </DataTemplate>
+                            </ContentControl.ContentTemplate>
+                        </ContentControl>
+
+                        <DockPanel Grid.Row="10">
                             <ToggleButton Height="30"
                                           Padding="8,0"
                                           Content="Live grouping"
@@ -616,7 +651,9 @@
                                           Padding="8,0"
                                           Content="Live sorting"
                                           IsChecked="{Binding Groups.IsLiveSortingEnabled}" />
-                        </StackPanel>
+
+                            <TextBlock VerticalAlignment="Center" Text="{Binding Items.Count, StringFormat='{}{0} Rows '}" />
+                        </DockPanel>
                     </Grid>
                 </DataTemplate>
 
