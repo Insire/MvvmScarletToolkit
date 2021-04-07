@@ -1,11 +1,9 @@
-using MvvmScarletToolkit.Observables;
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public class DataGridViewModel : BusinessViewModelListBase<DataGridRowViewModel>
+    public sealed class DataGridViewModel : PagedSourceListViewModelBase<DataGridRowViewModel>
     {
         public GroupingViewModel Groups { get; }
 
@@ -23,24 +21,15 @@ namespace MvvmScarletToolkit.Wpf.Samples
             set { SetProperty(ref _filterText, value); }
         }
 
-        public DataGridViewModel(IScarletCommandBuilder commandBuilder)
-            : base(commandBuilder)
+        public DataGridViewModel(IScarletCommandBuilder commandBuilder, SynchronizationContext synchronizationContext)
+            : base(commandBuilder, synchronizationContext, vm => vm.Name, new DataGridDataProvider(commandBuilder, 2000, 50))
         {
-            Groups = GroupingViewModel.Create(commandBuilder, Items);
+            Groups = GroupingViewModel.Create(Items);
             Filter = IsMatch;
-        }
 
-        protected override async Task RefreshInternal(CancellationToken token)
-        {
-            for (var i = 0; i < 50; i++)
-            {
-                await Add(new DataGridRowViewModel(CommandBuilder)
-                {
-                    CreatedOn = DateTime.Now,
-                    Name = Guid.NewGuid().ToString(),
-                    Color = $"#cc{i * 2:X2}{i * 3:X2}",
-                }, token).ConfigureAwait(false);
-            }
+            PageSize = 50;
+            TotalPageCount = 2000;
+            CurrentPage = 1;
         }
 
         private bool IsMatch(object item)

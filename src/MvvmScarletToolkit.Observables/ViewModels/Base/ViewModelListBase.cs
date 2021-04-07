@@ -51,9 +51,15 @@ namespace MvvmScarletToolkit.Observables
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand ClearCommand { get; }
 
+        /// <summary>
+        /// Removes all instances that are in <see cref="SelectedItems"/> from <see cref="Items"/>
+        /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand RemoveRangeCommand { get; }
 
+        /// <summary>
+        /// removes the instance in <see cref="SelectedItem"/> from <see cref="Items"/>
+        /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand RemoveCommand { get; }
 

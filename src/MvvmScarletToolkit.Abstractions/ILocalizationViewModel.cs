@@ -5,6 +5,6 @@ namespace MvvmScarletToolkit.Abstractions
 {
     public interface ILocalizationViewModel : INotifyPropertyChanged, IDisposable
     {
-        object Value { get; }
+        string Value { get; }
     }
 }

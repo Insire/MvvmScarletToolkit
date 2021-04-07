@@ -1,6 +1,6 @@
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
-namespace MvvmScarletToolkit.Observables
+namespace MvvmScarletToolkit
 {
     /// <summary>
     /// Generic wrapper viewmodel to add binding support to any c# object

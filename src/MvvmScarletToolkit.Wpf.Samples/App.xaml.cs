@@ -2,6 +2,7 @@ using Jot;
 using Jot.Storage;
 using MvvmScarletToolkit.Observables;
 using System;
+using System.Threading;
 using System.Windows;
 
 namespace MvvmScarletToolkit.Wpf.Samples
@@ -25,7 +26,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 .PersistOn(nameof(Window.Closing))
                 .StopTrackingOn(nameof(Window.Closing));
 
-            var navigation = new NavigationViewModel(ScarletCommandBuilder.Default, new LocalizationsViewModel(new ScarletLocalizationProvider()));
+            var navigation = new NavigationViewModel(SynchronizationContext.Current, ScarletCommandBuilder.Default, new LocalizationsViewModel(new ScarletLocalizationProvider()));
 
             var window = new MainWindow(_tracker, navigation);
 

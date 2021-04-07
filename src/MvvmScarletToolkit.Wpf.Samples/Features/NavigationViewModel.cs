@@ -1,15 +1,16 @@
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.FileSystemBrowser;
+using System.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
     public sealed class NavigationViewModel : Scenes
     {
-        public NavigationViewModel(IScarletCommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)
+        public NavigationViewModel(SynchronizationContext synchronizationContext, IScarletCommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)
             : base(commandBuilder, localizationsViewModel)
         {
-            var dataGridViewModel = new DataGridViewModel(commandBuilder);
+            var dataGridViewModel = new DataGridViewModel(commandBuilder, synchronizationContext);
 
             Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder));
             Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(commandBuilder, new ImageFactory(CommandBuilder)));

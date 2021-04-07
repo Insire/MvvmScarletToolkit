@@ -32,7 +32,7 @@ namespace MvvmScarletToolkit.Observables
             _weakEventManager.AddHandler(_service, nameof(ILocalizationService.PropertyChanged), ValueChanged);
         }
 
-        public object Value => GetValue();
+        public string Value => GetValue();
 
         private void ValueChanged(object sender, PropertyChangedEventArgs e)
         {
