@@ -1,14 +1,15 @@
 using Cake.Common;
+using Cake.Common.Build;
 using Cake.Common.IO;
 using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 
-public sealed class PushGithub : FrostingTask<Context>
+public sealed class PushGithub : FrostingTask<BuildContext>
 {
-    public override void Run(Context context)
+    public override void Run(BuildContext context)
     {
-        foreach (var package in context.GetFiles(Context.PackagePath + "/*.nupkg"))
+        foreach (var package in context.GetFiles(BuildContext.PackagePath + "/*.nupkg"))
         {
             var settings = new ProcessSettings()
                 .UseWorkingDirectory(".")
@@ -25,10 +26,10 @@ public sealed class PushGithub : FrostingTask<Context>
         }
     }
 
-    public override bool ShouldRun(Context context)
+    public override bool ShouldRun(BuildContext context)
     {
         return base.ShouldRun(context)
-            //&& (context.BuildSystem().IsRunningOnAzurePipelines || context.BuildSystem().IsRunningOnAzurePipelinesHosted)
+            && (context.BuildSystem().IsRunningOnAzurePipelines || context.BuildSystem().IsRunningOnAzurePipelinesHosted)
             && !string.IsNullOrEmpty(context.EnvironmentVariable("GITHUB_APIKEY"))
             && !context.IsPublicRelease;
     }

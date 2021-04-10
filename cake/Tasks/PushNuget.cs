@@ -6,11 +6,11 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 
-public sealed class PushNuget : FrostingTask<Context>
+public sealed class PushNuget : FrostingTask<BuildContext>
 {
-    public override void Run(Context context)
+    public override void Run(BuildContext context)
     {
-        foreach (var package in context.GetFiles(Context.PackagePath + "/*.nupkg"))
+        foreach (var package in context.GetFiles(BuildContext.PackagePath + "/*.nupkg"))
         {
             context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
             {
@@ -21,7 +21,7 @@ public sealed class PushNuget : FrostingTask<Context>
         }
     }
 
-    public override bool ShouldRun(Context context)
+    public override bool ShouldRun(BuildContext context)
     {
         return base.ShouldRun(context)
             && (context.BuildSystem().IsRunningOnAzurePipelines || context.BuildSystem().IsRunningOnAzurePipelinesHosted)
