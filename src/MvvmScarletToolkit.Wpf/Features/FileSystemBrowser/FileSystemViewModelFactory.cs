@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
+#if NET5_0_OR_GREATER
+    [System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
+#endif
+
     public sealed class FileSystemViewModelFactory : IFileSystemViewModelFactory
     {
         private readonly IScarletCommandBuilder _commandBuilder;
@@ -28,18 +32,15 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             {
                 IFileSystemDrive drive => Task.Run(() => IsDriveEmpty(drive)),
                 IFileSystemDirectory directory => Task.Run(() => IsDirectoryEmpty(directory)),
+#pragma warning disable RCS1079 // Throwing of new NotImplementedException.
                 _ => throw new NotImplementedException(),
+#pragma warning restore RCS1079 // Throwing of new NotImplementedException.
             };
         }
 
         private static bool IsDriveEmpty(IFileSystemDrive drive)
         {
-            if (drive.DriveType == DriveType.NoRootDirectory || drive.DriveType == DriveType.Unknown)
-            {
-                return true;
-            }
-
-            return false;
+            return drive.DriveType == DriveType.NoRootDirectory || drive.DriveType == DriveType.Unknown;
         }
 
         private bool IsDirectoryEmpty(IFileSystemDirectory directory)
@@ -74,11 +75,9 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return result;
         }
 
-        public async Task<bool> CanAccess(IFileSystemChild child)
+        public Task<bool> CanAccess(IFileSystemChild child)
         {
-            var can = await Task.Run(() => CanAccess(child.FullName));
-
-            return can;
+            return Task.Run(() => CanAccess(child.FullName));
         }
 
         private bool CanAccess(string path)
@@ -88,7 +87,13 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 return false;
             }
 
+#if NET5_0_OR_GREATER
+#pragma warning disable SYSLIB0003 // Type or member is obsolete
+#endif
             var permission = new FileIOPermission(FileIOPermissionAccess.Read, AccessControlActions.View, path);
+#if NET5_0_OR_GREATER
+#pragma warning restore SYSLIB0003 // Type or member is obsolete
+#endif
 
             try
             {
@@ -105,11 +110,9 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             }
         }
 
-        public async Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(IReadOnlyCollection<DriveType> types, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
+        public Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(IReadOnlyCollection<DriveType> types, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
         {
-            var drives = await Task.Run(() => GetDrivesInternal(types, fileAttributes, folderAttributes).ToList());
-
-            return drives;
+            return Task.Run<IReadOnlyCollection<IFileSystemDrive>>(() => GetDrivesInternal(types, fileAttributes, folderAttributes).ToList());
         }
 
         private IEnumerable<IFileSystemDrive> GetDrivesInternal(IReadOnlyCollection<DriveType> types, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
@@ -132,11 +135,9 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 .Select(p => new ScarletDrive(p, _commandBuilder, this, fileAttributes, folderAttributes));
         }
 
-        public async Task<IReadOnlyCollection<IFileSystemDirectory>> GetDirectories(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
+        public Task<IReadOnlyCollection<IFileSystemDirectory>> GetDirectories(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
         {
-            var directories = await Task.Run(() => GetDirectoriesInternal(parent, fileAttributes, folderAttributes).ToList());
-
-            return directories;
+            return Task.Run<IReadOnlyCollection<IFileSystemDirectory>>(() => GetDirectoriesInternal(parent, fileAttributes, folderAttributes).ToList());
         }
 
         private IEnumerable<IFileSystemDirectory> GetDirectoriesInternal(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
@@ -166,11 +167,9 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return Enumerable.Empty<IFileSystemDirectory>();
         }
 
-        public async Task<IReadOnlyCollection<IFileSystemFile>> GetFiles(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes)
+        public Task<IReadOnlyCollection<IFileSystemFile>> GetFiles(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes)
         {
-            var files = await Task.Run(() => GetFilesInternal(parent, fileAttributes).ToList());
-
-            return files;
+            return Task.Run<IReadOnlyCollection<IFileSystemFile>>(() => GetFilesInternal(parent, fileAttributes).ToList());
         }
 
         private IEnumerable<IFileSystemFile> GetFilesInternal(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes)

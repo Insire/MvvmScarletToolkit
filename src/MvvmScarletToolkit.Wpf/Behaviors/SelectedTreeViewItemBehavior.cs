@@ -23,6 +23,10 @@ namespace MvvmScarletToolkit
     // <i:Interaction.Behaviors>
     //    <mvvm:SelectedTreeViewItemBehavior SelectedItem="{Binding SelectedItemProperty}" />
     // </ i:Interaction.Behaviors>
+#if NET5_0_OR_GREATER
+    [System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
+#endif
+
     public sealed class SelectedTreeViewItemBehavior : Behavior<TreeView>
     {
         public object SelectedItem

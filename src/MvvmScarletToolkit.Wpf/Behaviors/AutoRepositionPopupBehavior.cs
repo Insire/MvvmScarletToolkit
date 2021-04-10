@@ -25,6 +25,10 @@ namespace MvvmScarletToolkit
     // <i:Interaction.Behaviors>
     //    <mvvm:AutoRepositionPopupBehavior />
     // </ i:Interaction.Behaviors>
+#if NET5_0_OR_GREATER
+    [System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
+#endif
+
     public sealed class AutoRepositionPopupBehavior : Behavior<Popup>
     {
         private const int WM_MOVING = 0x0216;
