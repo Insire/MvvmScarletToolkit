@@ -28,6 +28,19 @@ namespace MvvmScarletToolkit
 
     public sealed class MultiSelectionBehavior : Behavior<MultiSelector>
     {
+        public IList? SelectedItems
+        {
+            get { return (IList?)GetValue(SelectedItemsProperty); }
+            set { SetValue(SelectedItemsProperty, value); }
+        }
+
+        /// <summary>Identifies the <see cref="SelectedItems"/> dependency property.</summary>
+        public static readonly DependencyProperty SelectedItemsProperty = DependencyProperty.Register(
+            nameof(SelectedItems)
+            , typeof(IList)
+            , typeof(MultiSelectionBehavior)
+            , new UIPropertyMetadata(default(IList), OnSelectedItemsChanged));
+
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -37,7 +50,9 @@ namespace MvvmScarletToolkit
             if (SelectedItems != null)
             {
                 if (AssociatedObject.SelectedItems.Count > 0)
+                {
                     AssociatedObject.SelectedItems.Clear();
+                }
 
                 foreach (var item in SelectedItems)
                 {
@@ -52,26 +67,17 @@ namespace MvvmScarletToolkit
             base.OnDetaching();
         }
 
-        public IList? SelectedItems
-        {
-            get { return (IList?)GetValue(SelectedItemsProperty); }
-            set { SetValue(SelectedItemsProperty, value); }
-        }
-
-        /// <summary>Identifies the <see cref="SelectedItems"/> dependency property.</summary>
-        public static readonly DependencyProperty SelectedItemsProperty = DependencyProperty.Register(
-            nameof(SelectedItems)
-            , typeof(IList)
-            , typeof(MultiSelectionBehavior)
-            , new UIPropertyMetadata(default(IList), OnSelectedItemsChanged));
-
         private static void OnSelectedItemsChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             if (!(o is MultiSelectionBehavior behavior))
+            {
                 return;
+            }
 
             if (behavior.AssociatedObject is null)
+            {
                 return;
+            }
 
             if (e.OldValue is INotifyCollectionChanged oldValue)
             {
@@ -83,7 +89,9 @@ namespace MvvmScarletToolkit
                 if (e.OldValue != null) // skip setting the initial value from the UI(since thats an empty collection), as that will overwrite anything that has been set in the bound object
                 {
                     if (behavior.AssociatedObject.SelectedItems.Count > 0)
+                    {
                         behavior.AssociatedObject.SelectedItems.Clear();
+                    }
                 }
 
                 foreach (var item in (IEnumerable)newValue)
@@ -101,7 +109,9 @@ namespace MvvmScarletToolkit
         private void SourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (_isUpdatingSource)
+            {
                 return;
+            }
 
             try
             {
@@ -137,11 +147,15 @@ namespace MvvmScarletToolkit
         private void ListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             if (_isUpdatingTarget)
+            {
                 return;
+            }
 
             var selectedItems = SelectedItems;
             if (selectedItems is null)
+            {
                 return;
+            }
 
             try
             {

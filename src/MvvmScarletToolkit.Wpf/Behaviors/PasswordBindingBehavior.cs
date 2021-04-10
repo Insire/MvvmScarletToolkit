@@ -18,6 +18,10 @@ namespace MvvmScarletToolkit
     /// </item>
     /// </list>
     /// </remarks>
+    // usage:
+    // <i:Interaction.Behaviors>
+    //    <mvvm:PasswordBindingBehavior ClearTextPassword="{Binding StringProperty}" />
+    // </ i:Interaction.Behaviors>
     public sealed class PasswordBindingBehavior : Behavior<PasswordBox>
     {
         public string? ClearTextPassword

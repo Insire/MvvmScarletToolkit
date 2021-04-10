@@ -19,8 +19,25 @@ namespace MvvmScarletToolkit
     /// </list>
     /// </remarks>
     // source: https://stackoverflow.com/questions/11065995/binding-selecteditem-in-a-hierarchicaldatatemplate-applied-wpf-treeview/18700099#18700099
+    // usage:
+    // <i:Interaction.Behaviors>
+    //    <mvvm:SelectedTreeViewItemBehavior SelectedItem="{Binding SelectedItemProperty}" />
+    // </ i:Interaction.Behaviors>
     public sealed class SelectedTreeViewItemBehavior : Behavior<TreeView>
     {
+        public object SelectedItem
+        {
+            get { return GetValue(SelectedItemProperty); }
+            set { SetValue(SelectedItemProperty, value); }
+        }
+
+        /// <summary>Identifies the <see cref="SelectedItem"/> dependency property.</summary>
+        public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
+            nameof(SelectedItem),
+            typeof(object),
+            typeof(SelectedTreeViewItemBehavior),
+             new FrameworkPropertyMetadata(default, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -44,18 +61,5 @@ namespace MvvmScarletToolkit
         {
             SetCurrentValue(SelectedItemProperty, e.NewValue);
         }
-
-        public object SelectedItem
-        {
-            get { return GetValue(SelectedItemProperty); }
-            set { SetValue(SelectedItemProperty, value); }
-        }
-
-        /// <summary>Identifies the <see cref="SelectedItem"/> dependency property.</summary>
-        public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
-            nameof(SelectedItem),
-            typeof(object),
-            typeof(SelectedTreeViewItemBehavior),
-             new FrameworkPropertyMetadata(default, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
     }
 }

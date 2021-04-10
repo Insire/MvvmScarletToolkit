@@ -22,6 +22,10 @@ namespace MvvmScarletToolkit.Wpf
     /// </list>
     /// </remarks>
     // source: https://stackoverflow.com/a/25855886
+    // usage:
+    // <i:Interaction.Behaviors>
+    //    <mvvm:AutoScrollBehavior />
+    // </ i:Interaction.Behaviors>
     public sealed class AutoScrollBehavior : Behavior<Selector>
     {
         private ScrollViewer? _scrollViewer;

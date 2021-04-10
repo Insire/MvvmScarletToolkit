@@ -60,7 +60,10 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
     - PasswordBindingBehavior: bind PasswordBox.Password
     - WatermarkBehavior for TextBoxes
     - AutoRepositionPopupBehavior
-    - LaunchNavigateUriAsNewProcess: Launch Hyperlink.NavigateUri in a new Process
+    - LaunchNavigateUriAsNewProcessBehavior: Launch Hyperlink.NavigateUri in a new Process
+    - ScrollSelectionIntoViewBehavior: scroll SelectedItem into View for DataGrid and ListBox
+    - ScrollToEndCommandBehavior: execute a command, when a scrollviewer has been scrolled to its vertical or horizontal end
+    - AutoScrollBehavior: auto scrolling for Selector (e.g. ListBox and DataGrid)
   - Controls
     - FileSystemBrowser
     - VirtualizingTilePanel

@@ -509,7 +509,7 @@
                                   SelectedItem="{Binding SelectedItem}">
 
                             <i:Interaction.Behaviors>
-                                <mvvm:ScrollToEndCommandBehavior Command="{Binding NextCommand}" />
+                                <mvvm:ScrollToEndCommandBehavior Command="{Binding NextCommand}" Interval="00:00:00.250" />
                                 <mvvm:AutoScrollBehavior />
                             </i:Interaction.Behaviors>
 

@@ -24,6 +24,10 @@ namespace MvvmScarletToolkit.Wpf
     /// </item>
     /// </list>
     /// </remarks>
+    // usage:
+    // <i:Interaction.Behaviors>
+    //  <mvvm:ScrollToEndCommandBehavior Command = "{Binding NextCommand}" Interval="00:00:00.250" />
+    // </ i:Interaction.Behaviors>
     public sealed class ScrollToEndCommandBehavior : Behavior<FrameworkElement>
     {
         public static readonly DependencyProperty IntervalProperty = DependencyProperty.Register(

@@ -20,6 +20,10 @@ namespace MvvmScarletToolkit.Wpf
     /// </item>
     /// </list>
     /// </remarks>
+        // usage:
+    // <i:Interaction.Behaviors>
+    //    <mvvm:LaunchNavigateUriAsNewProcessBehavior />
+    // </ i:Interaction.Behaviors>
     public sealed class LaunchNavigateUriAsNewProcessBehavior : Behavior<Hyperlink>
     {
         private RelayCommand? _command;
@@ -41,7 +45,7 @@ namespace MvvmScarletToolkit.Wpf
             propertyDescriptor?.RemoveValueChanged(AssociatedObject, OnNavigateUriChanged);
         }
 
-        private void OnNavigateUriChanged(object sender, EventArgs args)
+        private void OnNavigateUriChanged(object? sender, EventArgs args)
         {
             _command?.NotifyCanExecuteChanged();
         }
