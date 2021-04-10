@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace MvvmScarletToolkit
 {
@@ -27,6 +28,17 @@ namespace MvvmScarletToolkit
             }
         }
 
+        public static DependencyObject? FindTopMostParent(this DependencyObject dependencyObject)
+        {
+            while (dependencyObject != null)
+            {
+                var isVisual = dependencyObject is Visual || dependencyObject is Visual3D;
+                dependencyObject = isVisual ? VisualTreeHelper.GetParent(dependencyObject) : LogicalTreeHelper.GetParent(dependencyObject);
+            }
+
+            return default;
+        }
+
         public static T? FindParent<T>(this DependencyObject dependencyObject)
             where T : DependencyObject
         {
@@ -37,7 +49,8 @@ namespace MvvmScarletToolkit
                     return result;
                 }
 
-                dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
+                var isVisual = dependencyObject is Visual || dependencyObject is Visual3D;
+                dependencyObject = isVisual ? VisualTreeHelper.GetParent(dependencyObject) : LogicalTreeHelper.GetParent(dependencyObject);
             }
 
             return default;

@@ -6,9 +6,34 @@ using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
-    // source: https://stackoverflow.com/questions/15358113/wpf-filter-a-listbox/39438710#39438710
+    /// <summary>
+    /// Attached properties that enable binding <see cref="ICollectionView.Filter"/> and calling <see cref="ICollectionView.Refresh"/> when a property changes with XAML only
+    /// </summary>
+    /// <remarks>
+    /// required namespaces:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</description>
+    /// </item>
+    /// </list>
+    /// </remarks>
+    // original idea from: https://stackoverflow.com/questions/15358113/wpf-filter-a-listbox/39438710#39438710
     public static class Filter
     {
+        /// <summary>
+        /// the bindable predicate thats executed for filtering a <see cref="ICollectionView"/>
+        /// </summary>
+        /// <remarks>
+        /// can be set on:
+        /// <list type="bullet">
+        /// <item>
+        /// <description><see cref="CollectionViewSource"/> and sub types</description>
+        /// </item>
+        /// <item>
+        /// <description><see cref="ItemsControl"/> and sub types</description>
+        /// </item>
+        /// </list>
+        /// </remarks>
         public static readonly DependencyProperty ByProperty = DependencyProperty.RegisterAttached(
             "By",
             typeof(Predicate<object>),
@@ -16,45 +41,36 @@ namespace MvvmScarletToolkit
             new PropertyMetadata(default(Predicate<object>), OnByChanged));
 
         /// <summary>Helper for setting <see cref="ByProperty"/> on <paramref name="element"/>.</summary>
-        /// <param name="element"><see cref="ItemsControl"/> to set <see cref="ByProperty"/> on.</param>
+        /// <param name="element"><see cref="DependencyObject"/> to set <see cref="ByProperty"/> on.</param>
         /// <param name="value">By property value.</param>
-        public static void SetBy(ItemsControl element, Predicate<object> value)
+        public static void SetBy(DependencyObject element, Predicate<object> value)
         {
             element.SetValue(ByProperty, value);
         }
 
         /// <summary>Helper for getting <see cref="ByProperty"/> from <paramref name="element"/>.</summary>
-        /// <param name="element"><see cref="ItemsControl"/> to read <see cref="ByProperty"/> from.</param>
+        /// <param name="element"><see cref="DependencyObject"/> to read <see cref="ByProperty"/> from.</param>
         /// <returns>By property value.</returns>
-        [AttachedPropertyBrowsableForType(typeof(ItemsControl))]
-        public static Predicate<object> GetBy(ItemsControl element)
+        [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+        public static Predicate<object> GetBy(DependencyObject element)
         {
             return (Predicate<object>)element.GetValue(ByProperty);
         }
 
-        public static readonly DependencyProperty ViewByProperty = DependencyProperty.RegisterAttached(
-            "ViewBy",
-            typeof(Predicate<object>),
-            typeof(Filter),
-            new PropertyMetadata(default(Predicate<object>), OnViewByChanged));
-
-        /// <summary>Helper for setting <see cref="ViewByProperty"/> on <paramref name="element"/>.</summary>
-        /// <param name="element"><see cref="CollectionViewSource"/> to set <see cref="ViewByProperty"/> on.</param>
-        /// <param name="value">ViewBy property value.</param>
-        public static void SetViewBy(CollectionViewSource element, Predicate<object> value)
-        {
-            element.SetValue(ViewByProperty, value);
-        }
-
-        /// <summary>Helper for getting <see cref="ViewByProperty"/> from <paramref name="element"/>.</summary>
-        /// <param name="element"><see cref="CollectionViewSource"/> to read <see cref="ViewByProperty"/> from.</param>
-        /// <returns>ViewBy property value.</returns>
-        [AttachedPropertyBrowsableForType(typeof(CollectionViewSource))]
-        public static Predicate<object> GetViewBy(CollectionViewSource element)
-        {
-            return (Predicate<object>)element.GetValue(ViewByProperty);
-        }
-
+        /// <summary>
+        /// the property that we listen for changes on, so that we can refresh its <see cref="ICollectionView"/>
+        /// </summary>
+        /// <remarks>
+        /// can be set on:
+        /// <list type="bullet">
+        /// <item>
+        /// <description><see cref="CollectionViewSource"/> and sub types</description>
+        /// </item>
+        /// <item>
+        /// <description><see cref="ItemsControl"/> and sub types</description>
+        /// </item>
+        /// </list>
+        /// </remarks>
         public static readonly DependencyProperty RefreshWhenChangedProperty = DependencyProperty.RegisterAttached(
             "RefreshWhenChanged",
             typeof(object),
@@ -64,7 +80,7 @@ namespace MvvmScarletToolkit
         /// <summary>Helper for setting <see cref="RefreshWhenChangedProperty"/> on <paramref name="element"/>.</summary>
         /// <param name="element"><see cref="ItemsControl"/> to set <see cref="RefreshWhenChangedProperty"/> on.</param>
         /// <param name="value">RefreshWhenChanged property value.</param>
-        public static void SetRefreshWhenChanged(ItemsControl element, object value)
+        public static void SetRefreshWhenChanged(DependencyObject element, object value)
         {
             element.SetValue(RefreshWhenChangedProperty, value);
         }
@@ -72,8 +88,8 @@ namespace MvvmScarletToolkit
         /// <summary>Helper for getting <see cref="RefreshWhenChangedProperty"/> from <paramref name="element"/>.</summary>
         /// <param name="element"><see cref="ItemsControl"/> to read <see cref="RefreshWhenChangedProperty"/> from.</param>
         /// <returns>RefreshWhenChanged property value.</returns>
-        [AttachedPropertyBrowsableForType(typeof(ItemsControl))]
-        public static object GetRefreshWhenChanged(ItemsControl element)
+        [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
+        public static object GetRefreshWhenChanged(DependencyObject element)
         {
             return element.GetValue(RefreshWhenChangedProperty);
         }
@@ -87,70 +103,66 @@ namespace MvvmScarletToolkit
 
             if (d is ItemsControl itemsControl && itemsControl.Items.CanFilter)
             {
-                FilterItemsControl(itemsControl, predicate);
-                return;
-            }
-        }
-
-        private static void OnViewByChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (!(e.NewValue is Predicate<object> predicate))
-            {
+                AttachFilterToCollectionView(itemsControl.Items, predicate);
                 return;
             }
 
-            switch (d)
+            if (d is CollectionViewSource collectionViewSource)
             {
-                case CollectionViewSource source:
-
-                    using (source.DeferRefresh())
-                    {
-                        source.Filter -= FilterAdapter;
-                        source.Filter += FilterAdapter;
-                    }
-                    break;
-
-                case ICollectionView view:
-                    FilterCollectioNView(view, predicate);
-                    break;
-            }
-
-            void FilterAdapter(object sender, FilterEventArgs e)
-            {
-                if (!(sender is CollectionViewSource source))
+                if (collectionViewSource.View is null)
                 {
-                    return;
-                }
+                    var propertyDescriptor = DependencyPropertyDescriptor.FromProperty(CollectionViewSource.ViewProperty, typeof(CollectionViewSource));
+                    propertyDescriptor?.RemoveValueChanged(collectionViewSource, OnViewChanged);
+                    propertyDescriptor?.AddValueChanged(collectionViewSource, OnViewChanged);
 
-                e.Accepted = predicate(e.Item);
+                    void OnViewChanged(object sender, EventArgs args)
+                    {
+                        if (collectionViewSource.View is null)
+                        {
+                            return;
+                        }
+
+                        AttachFilterToCollectionView(collectionViewSource.View, predicate);
+                    }
+                }
+                else
+                {
+                    AttachFilterToCollectionView(collectionViewSource.View, predicate);
+                }
             }
         }
 
-        private static void FilterItemsControl(ItemsControl itemsControl, Predicate<object> predicate)
-        {
-            FilterCollectioNView(itemsControl.Items, predicate);
-        }
-
-        private static void FilterCollectioNView(ICollectionView view, Predicate<object> predicate)
+        private static void AttachFilterToCollectionView(ICollectionView view, Predicate<object> predicate)
         {
             using (view.DeferRefresh())
             {
-                view.Filter = predicate;
+                if (view.Filter is null)
+                {
+                    view.Filter = predicate;
+                }
+                else
+                {
+                    view.Filter -= predicate;
+                    view.Filter += predicate;
+                }
             }
         }
 
         private static void OnRefreshWhenChangedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is ItemsControl itemsControl) || !itemsControl.Items.CanFilter)
+            if (d is CollectionViewSource collectionViewSource && collectionViewSource.View?.CanFilter == true)
             {
-                return;
+                collectionViewSource.View.Refresh();
             }
 
-            // we dont care what property was bound to this,
-            // we only care that it changed. When it changes we refresh the view to force updating the filter
-            var view = CollectionViewSource.GetDefaultView(itemsControl.ItemsSource) as CollectionView;
+            if (d is ItemsControl itemsControl && itemsControl.Items?.CanFilter == true)
+            {
+                // we dont care what property was bound to this,
+                // we only care that it changed. When it changes we refresh the view to force updating the filter
+                var view = CollectionViewSource.GetDefaultView(itemsControl.ItemsSource) as CollectionView;
 
-            view?.Refresh();
+                view?.Refresh();
+            }
         }
     }
 }

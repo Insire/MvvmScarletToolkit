@@ -509,7 +509,8 @@
                                   SelectedItem="{Binding SelectedItem}">
 
                             <i:Interaction.Behaviors>
-                                <mvvm:ScrollToEndCommandBehavior Command="{Binding NextCommand}" />
+                                <mvvm:ScrollToEndCommandBehavior Command="{Binding NextCommand}" Interval="00:00:00.250" />
+                                <mvvm:AutoScrollBehavior />
                             </i:Interaction.Behaviors>
 
                             <DataGrid.GroupStyle>
@@ -575,6 +576,7 @@
                             <TextBlock Margin="8,0" HorizontalAlignment="Center">
                                 <Run Text="{Binding CurrentPage, StringFormat='{}Page {0}', Mode=OneWay}" />
                                 <Run Text="{Binding TotalPageCount, StringFormat='{}of {0}', Mode=OneWay}" />
+                                <Run Text="{Binding Items.Count, StringFormat='{}(Entries {0})', Mode=OneWay}" />
                             </TextBlock>
                         </DockPanel>
 
@@ -661,8 +663,10 @@
                     <DockPanel>
                         <DockPanel.Resources>
                             <CollectionViewSource x:Key="SortedViewSource"
+                                                  mvvm:Filter.By="{Binding Filter}"
+                                                  mvvm:Filter.RefreshWhenChanged="{Binding FilterText}"
                                                   IsLiveSortingRequested="True"
-                                                  Source="{Binding SelectedItems}">
+                                                  Source="{Binding Items}">
                                 <CollectionViewSource.SortDescriptions>
                                     <componentmodel:SortDescription Direction="Descending" PropertyName="IsSelected" />
                                     <componentmodel:SortDescription Direction="Ascending" PropertyName="DisplayName" />
@@ -676,6 +680,7 @@
                                             <i:InvokeCommandAction Command="{Binding LoadCommand}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
+
                                     <Button Margin="5"
                                             Command="{Binding LoadCommand}"
                                             Content="Load"
@@ -779,10 +784,8 @@
                             <ListBox Grid.Row="2"
                                      Grid.RowSpan="3"
                                      Grid.Column="0"
-                                     mvvm:Filter.By="{Binding Filter}"
-                                     mvvm:Filter.RefreshWhenChanged="{Binding FilterText}"
                                      ItemTemplate="{StaticResource DemoItemTemplate}"
-                                     ItemsSource="{Binding Items}"
+                                     ItemsSource="{Binding Source={StaticResource SortedViewSource}}"
                                      SelectedItem="{Binding SelectedItem}"
                                      SelectionMode="Extended">
                                 <i:Interaction.Behaviors>

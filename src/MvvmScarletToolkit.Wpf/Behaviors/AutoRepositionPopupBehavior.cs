@@ -3,34 +3,33 @@ using System;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
 
 namespace MvvmScarletToolkit
 {
+    /// <summary>
+    /// Behavior that enables synchronizing a <see cref="Popup"/>s position, when the <see cref="Window"/> its attached to, is being moved
+    /// </summary>
+    /// <remarks>
+    /// required namespaces:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>xmlns:i="http://schemas.microsoft.com/xaml/behaviors"</description>
+    /// </item>
+    /// <item>
+    /// <description>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</description>
+    /// </item>
+    /// </list>
+    /// </remarks>
     // source: https://putridparrot.com/blog/automatically-update-a-wpf-popup-position/
-    public class AutoRepositionPopupBehavior : Behavior<Popup>
+    // usage:
+    // <i:Interaction.Behaviors>
+    //    <mvvm:AutoRepositionPopupBehavior />
+    // </ i:Interaction.Behaviors>
+    public sealed class AutoRepositionPopupBehavior : Behavior<Popup>
     {
         private const int WM_MOVING = 0x0216;
 
         private IDisposable? _disposableHandle;
-
-        // should be moved to a helper class
-        private static DependencyObject GetTopmostParent(DependencyObject element)
-        {
-            var current = element;
-            var result = element;
-
-            while (current != null)
-            {
-                result = current;
-                current = (current is Visual || current is Visual3D) ?
-                    VisualTreeHelper.GetParent(current)
-                    : LogicalTreeHelper.GetParent(current);
-            }
-
-            return result;
-        }
 
         protected override void OnAttached()
         {
@@ -57,7 +56,7 @@ namespace MvvmScarletToolkit
 
         private void AssociatedObject_Loaded(object? sender, RoutedEventArgs? e)
         {
-            var root = GetTopmostParent(AssociatedObject.PlacementTarget);
+            var root = AssociatedObject.PlacementTarget.FindParent<Window>();
             if (!(root is Window window))
             {
                 return;

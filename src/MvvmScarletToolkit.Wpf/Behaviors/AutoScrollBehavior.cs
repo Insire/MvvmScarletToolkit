@@ -7,14 +7,26 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Wpf
 {
-    // List box automatically scrolls to show new items as they are added asynchronously.
-    // A user interaction with the listbox stops automatic scrolling - AKA obnoxious behavior.
-    // Once finished interacting, to continue automatic scrolling, drag the scroll bar to
-    // the bottom and let go, or use the mouse wheel or keyboard to do the same.
-    // This indicates that the user wants automatic scrolling to resume.
-
+    /// <summary>
+    /// Behavior that enables scrolling to the end of for example a <see cref="ListBox"/> or <see cref="DataGrid"/>. Includes support for pausing of scrolling, when user scrolls manually
+    /// </summary>
+    /// <remarks>
+    /// required namespaces:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>xmlns:i="http://schemas.microsoft.com/xaml/behaviors"</description>
+    /// </item>
+    /// <item>
+    /// <description>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</description>
+    /// </item>
+    /// </list>
+    /// </remarks>
     // source: https://stackoverflow.com/a/25855886
-    public sealed class AutoScrollBehavior : Behavior<ListBox>
+    // usage:
+    // <i:Interaction.Behaviors>
+    //    <mvvm:AutoScrollBehavior />
+    // </ i:Interaction.Behaviors>
+    public sealed class AutoScrollBehavior : Behavior<Selector>
     {
         private ScrollViewer? _scrollViewer;
 

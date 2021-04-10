@@ -41,20 +41,23 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
     - Support for loading a System.Drawing.Bitmap into a BitmapSource without copying its data
   - Attached Properties
     - Filter
-      - bind the predicate of a CollectionView
-      - refresh a CollectionView on property change
+      - binding ICollectionView.Filter
+      - refresh ICollectionView on property change
     - Focus
       - set focus on window load
   - TriggerActions
     - ClearPasswordBoxAction
     - ClearTextBoxAction
   - Behaviors
-    - MultiSelectionBehavior for ListBoxes
-    - AutoscrollBehavior for ListBoxes
-    - SelectedTreeViewItemBehavior
-    - PasswordBindingBehavior
+    - MultiSelectionBehavior: bind MultiSelector.SelectedItems (works for DataGrid and ListBox)
+    - SelectedTreeViewItemBehavior: bind SelectedItem for TreeView
+    - PasswordBindingBehavior: bind PasswordBox.Password
     - WatermarkBehavior for TextBoxes
     - AutoRepositionPopupBehavior
+    - LaunchNavigateUriAsNewProcessBehavior: Launch Hyperlink.NavigateUri in a new Process
+    - ScrollSelectionIntoViewBehavior: scroll SelectedItem into View for DataGrid and ListBox
+    - ScrollToEndCommandBehavior: execute a command, when a scrollviewer has been scrolled to its vertical or horizontal end
+    - AutoScrollBehavior: auto scrolling for Selector (e.g. ListBox and DataGrid)
   - Controls
     - FileSystemBrowser
     - VirtualizingTilePanel

@@ -6,7 +6,25 @@ using Microsoft.Xaml.Behaviors;
 
 namespace MvvmScarletToolkit.Wpf
 {
-    public sealed class LaunchNavigateUriAsNewProcessOnCommandExecution : Behavior<Hyperlink>
+    /// <summary>
+    /// Behavior that enables launching an <see cref="Uri"/> as new <see cref="Process"/> via cmd
+    /// </summary>
+    /// <remarks>
+    /// required namespaces:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>xmlns:i="http://schemas.microsoft.com/xaml/behaviors"</description>
+    /// </item>
+    /// <item>
+    /// <description>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</description>
+    /// </item>
+    /// </list>
+    /// </remarks>
+        // usage:
+    // <i:Interaction.Behaviors>
+    //    <mvvm:LaunchNavigateUriAsNewProcessBehavior />
+    // </ i:Interaction.Behaviors>
+    public sealed class LaunchNavigateUriAsNewProcessBehavior : Behavior<Hyperlink>
     {
         private RelayCommand? _command;
 
@@ -27,7 +45,7 @@ namespace MvvmScarletToolkit.Wpf
             propertyDescriptor?.RemoveValueChanged(AssociatedObject, OnNavigateUriChanged);
         }
 
-        private void OnNavigateUriChanged(object sender, EventArgs args)
+        private void OnNavigateUriChanged(object? sender, EventArgs args)
         {
             _command?.NotifyCanExecuteChanged();
         }

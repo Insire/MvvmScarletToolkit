@@ -10,6 +10,24 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Wpf
 {
+    /// <summary>
+    /// Behavior that enables executing a command, when a scrollviewer has been scrolled to its vertical or horizontal end
+    /// </summary>
+    /// <remarks>
+    /// required namespaces:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>xmlns:i="http://schemas.microsoft.com/xaml/behaviors"</description>
+    /// </item>
+    /// <item>
+    /// <description>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</description>
+    /// </item>
+    /// </list>
+    /// </remarks>
+    // usage:
+    // <i:Interaction.Behaviors>
+    //  <mvvm:ScrollToEndCommandBehavior Command = "{Binding NextCommand}" Interval="00:00:00.250" />
+    // </ i:Interaction.Behaviors>
     public sealed class ScrollToEndCommandBehavior : Behavior<FrameworkElement>
     {
         public static readonly DependencyProperty IntervalProperty = DependencyProperty.Register(
