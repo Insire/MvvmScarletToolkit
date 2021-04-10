@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit.Tests
         [Test]
         public void Ctor_DoesntThrow()
         {
-            new CommandBuilderContext<object>(Utils.GetTestCommandManager(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+            var _ = new CommandBuilderContext<object>(Utils.GetTestCommandManager(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
         }
 
         [Test]

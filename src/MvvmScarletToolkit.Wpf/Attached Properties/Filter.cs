@@ -115,7 +115,7 @@ namespace MvvmScarletToolkit
                     propertyDescriptor?.RemoveValueChanged(collectionViewSource, OnViewChanged);
                     propertyDescriptor?.AddValueChanged(collectionViewSource, OnViewChanged);
 
-                    void OnViewChanged(object sender, EventArgs args)
+                    void OnViewChanged(object? sender, EventArgs args)
                     {
                         if (collectionViewSource.View is null)
                         {

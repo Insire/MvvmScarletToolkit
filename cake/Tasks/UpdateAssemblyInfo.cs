@@ -1,15 +1,13 @@
 using Cake.Common.Solution.Project.Properties;
-using Cake.Common.Tools.GitVersion;
 using Cake.Core.IO;
 using Cake.Frosting;
 using System;
 
-public sealed class UpdateAssemblyInfo : FrostingTask<Context>
+public sealed class UpdateAssemblyInfo : FrostingTask<BuildContext>
 {
-    public override void Run(Context context)
+    public override void Run(BuildContext context)
     {
-        var gitVersion = context.GitVersion();
-        var assemblyInfoParseResult = context.ParseAssemblyInfo(Context.AssemblyInfoPath);
+        var assemblyInfoParseResult = context.ParseAssemblyInfo(BuildContext.AssemblyInfoPath);
 
         var settings = new AssemblyInfoSettings()
         {
@@ -25,7 +23,7 @@ public sealed class UpdateAssemblyInfo : FrostingTask<Context>
                 new AssemblyInfoMetadataAttribute()
                 {
                     Key = "Platform",
-                    Value = Context.Platform,
+                    Value = BuildContext.Platform,
                 },
                 new AssemblyInfoMetadataAttribute()
                 {
@@ -40,16 +38,21 @@ public sealed class UpdateAssemblyInfo : FrostingTask<Context>
                 new AssemblyInfoMetadataAttribute()
                 {
                     Key = "Branch",
-                    Value = gitVersion.BranchName,
+                    Value = context.Branch,
                 },
                 new AssemblyInfoMetadataAttribute()
                 {
                     Key = "Commit",
-                    Value = gitVersion.Sha,
+                    Value = context.GitVersion.GitCommitId,
+                },
+                new AssemblyInfoMetadataAttribute()
+                {
+                    Key = "Version",
+                    Value = context.GitVersion.SemVer2,
                 },
             }
         };
 
-        context.CreateAssemblyInfo(new FilePath(Context.AssemblyInfoPath), settings);
+        context.CreateAssemblyInfo(new FilePath(BuildContext.AssemblyInfoPath), settings);
     }
 }

@@ -1,9 +1,8 @@
 using Cake.Frosting;
-using Build;
 
-public sealed class CleanSolutionAgain : FrostingTask<Context>
+public sealed class CleanSolutionAgain : FrostingTask<BuildContext>
 {
-    public override void Run(Context context)
+    public override void Run(BuildContext context)
     {
         context.Clean(true, true, true, false);
     }

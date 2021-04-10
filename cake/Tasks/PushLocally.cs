@@ -5,29 +5,29 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 
-public sealed class PushLocally : FrostingTask<Context>
+public sealed class PushLocally : FrostingTask<BuildContext>
 {
-    public override void Run(Context context)
+    public override void Run(BuildContext context)
     {
-        if (!context.NuGetHasSource(Context.LocalNugetDirectoryPath))
+        if (!context.NuGetHasSource(BuildContext.LocalNugetDirectoryPath))
         {
-            context.NuGetAddSource("Local", Context.LocalNugetDirectoryPath);
+            context.NuGetAddSource("Local", BuildContext.LocalNugetDirectoryPath);
         }
 
-        foreach (var package in context.GetFiles(Context.PackagePath + "/*.nupkg"))
+        foreach (var package in context.GetFiles(BuildContext.PackagePath + "/*.nupkg"))
         {
             context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
             {
-                Source = Context.LocalNugetDirectoryPath,
+                Source = BuildContext.LocalNugetDirectoryPath,
                 SkipDuplicate = true,
             });
         }
     }
 
-    public override bool ShouldRun(Context context)
+    public override bool ShouldRun(BuildContext context)
     {
         return base.ShouldRun(context)
             && context.BuildSystem().IsLocalBuild
-            && context.DirectoryExists(Context.LocalNugetDirectoryPath);
+            && context.DirectoryExists(BuildContext.LocalNugetDirectoryPath);
     }
 }

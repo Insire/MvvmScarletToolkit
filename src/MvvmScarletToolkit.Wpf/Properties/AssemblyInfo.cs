@@ -19,9 +19,9 @@ using System.Windows.Markup;
 [assembly: Guid("9bd9b759-8c12-4e08-971b-9ba34d8247ff")]
 
 // Set the recommended prefix for xaml namespaces
-[assembly: XmlnsPrefix(@"http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "mvvm")]
+[assembly: XmlnsPrefix("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "mvvm")]
 
 // map clr namespaces to a single xaml namespace
-[assembly: XmlnsDefinition(@"http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit")]
-[assembly: XmlnsDefinition(@"http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Wpf")]
-[assembly: XmlnsDefinition(@"http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Wpf.FileSystemBrowser")]
+[assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit")]
+[assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Wpf")]
+[assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Wpf.FileSystemBrowser")]

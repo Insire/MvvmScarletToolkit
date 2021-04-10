@@ -4,24 +4,23 @@ using Cake.Core;
 using Cake.Frosting;
 using System.Linq;
 
-public sealed class Test : FrostingTask<Context>
+public sealed class Test : FrostingTask<BuildContext>
 {
-    public override void Run(Context context)
+    public override void Run(BuildContext context)
     {
-        var projectFile = @"./src/MvvmScarletToolkit.Tests/MvvmScarletToolkit.Tests.csproj";
+        var projectFile = @"./src/MvvmScarletToolkit.Wpf.Tests/MvvmScarletToolkit.Wpf.Tests.csproj";
         var testSettings = new DotNetCoreTestSettings
         {
-            Framework = "netcoreapp3.1",
+            ToolPath = context.Tools.Resolve("dotnet.exe"),
             Configuration = "Release",
             NoBuild = false,
             NoRestore = false,
             ArgumentCustomization = builder => builder
-                .Append("--nologo")
                 .Append("--results-directory:./Results/coverage")
                 .Append("-p:DebugType=full")
                 .Append("-p:DebugSymbols=true")
                 .AppendSwitchQuoted("--collect", ":", "\"\"Code Coverage\"\"")
-                .Append($"--logger:trx;LogFileName=..\\{context.VsTestResultsFile.FullPath};"),
+                .Append($"--logger:trx;"),
         };
 
         context.DotNetCoreTest(projectFile, testSettings);

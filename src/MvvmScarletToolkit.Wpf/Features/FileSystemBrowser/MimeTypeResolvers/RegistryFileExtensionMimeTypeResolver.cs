@@ -3,6 +3,10 @@ using System.IO;
 
 namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
+#if NET5_0_OR_GREATER
+    [System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
+#endif
+
     public sealed class RegistryFileExtensionMimeTypeResolver : IMimeTypeResolver
     {
         public string? Get(IFileSystemFile fileInfo)
@@ -26,7 +30,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                     return null;
                 }
 
-                return key.GetValue("Content Type").ToString();
+                return key.GetValue("Content Type")?.ToString();
             }
         }
     }

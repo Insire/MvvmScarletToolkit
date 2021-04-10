@@ -28,6 +28,10 @@ namespace MvvmScarletToolkit.Wpf
     // <i:Interaction.Behaviors>
     //  <mvvm:ScrollToEndCommandBehavior Command = "{Binding NextCommand}" Interval="00:00:00.250" />
     // </ i:Interaction.Behaviors>
+#if NET5_0_OR_GREATER
+    [System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
+#endif
+
     public sealed class ScrollToEndCommandBehavior : Behavior<FrameworkElement>
     {
         public static readonly DependencyProperty IntervalProperty = DependencyProperty.Register(
@@ -62,7 +66,7 @@ namespace MvvmScarletToolkit.Wpf
 
         public ScrollToEndCommandBehavior()
         {
-            _scheduler = new SynchronizationContextScheduler(SynchronizationContext.Current);
+            _scheduler = new SynchronizationContextScheduler(SynchronizationContext.Current!);
         }
 
         protected override void OnAttached()
@@ -106,7 +110,7 @@ namespace MvvmScarletToolkit.Wpf
                     propertyDescriptor?.RemoveValueChanged(scrollViewer, OnVerticalOffsetChanged);
                     propertyDescriptor?.AddValueChanged(scrollViewer, OnVerticalOffsetChanged);
 
-                    void OnVerticalOffsetChanged(object sender, EventArgs args)
+                    void OnVerticalOffsetChanged(object? sender, EventArgs args)
                     {
                         var atBottom = scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight;
 
@@ -123,7 +127,7 @@ namespace MvvmScarletToolkit.Wpf
                     propertyDescriptor?.RemoveValueChanged(scrollViewer, OnHorizontalOffsetChanged);
                     propertyDescriptor?.AddValueChanged(scrollViewer, OnHorizontalOffsetChanged);
 
-                    void OnHorizontalOffsetChanged(object sender, EventArgs args)
+                    void OnHorizontalOffsetChanged(object? sender, EventArgs args)
                     {
                         var atBottom = scrollViewer.HorizontalOffset >= scrollViewer.ScrollableWidth;
 

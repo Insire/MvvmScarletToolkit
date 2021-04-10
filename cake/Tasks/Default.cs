@@ -8,6 +8,6 @@ using Cake.Frosting;
 [Dependency(typeof(PushNuget))]
 [Dependency(typeof(PushGithub))]
 [Dependency(typeof(PushLocally))]
-public sealed class Default : FrostingTask<Context>
+public sealed class Default : FrostingTask<BuildContext>
 {
 }
