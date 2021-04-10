@@ -12,7 +12,6 @@ namespace MvvmScarletToolkit
     /// <summary>
     /// Facade Service for creating CommandBuilderContext instances
     /// </summary>
-    /// <typeparam name="TArgument">The argument type, that the to be created command is supposed to accept</typeparam>
     public class ScarletCommandBuilder : IScarletCommandBuilder
     {
         private static readonly Lazy<ScarletCommandBuilder> _default = new Lazy<ScarletCommandBuilder>(() => new ScarletCommandBuilder(ScarletDispatcher.Default, ScarletCommandManager.Default, WeakReferenceMessenger.Default, ScarletExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, ScarletDispatcher.Default)));
