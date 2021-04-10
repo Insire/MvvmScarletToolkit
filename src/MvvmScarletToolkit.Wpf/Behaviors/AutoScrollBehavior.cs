@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit.Wpf
     // This indicates that the user wants automatic scrolling to resume.
 
     // source: https://stackoverflow.com/a/25855886
-    public sealed class AutoScrollBehavior : Behavior<ListBox>
+    public sealed class AutoScrollBehavior : Behavior<Selector>
     {
         private ScrollViewer? _scrollViewer;
 

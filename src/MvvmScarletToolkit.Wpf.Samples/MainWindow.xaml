@@ -510,6 +510,7 @@
 
                             <i:Interaction.Behaviors>
                                 <mvvm:ScrollToEndCommandBehavior Command="{Binding NextCommand}" />
+                                <mvvm:AutoScrollBehavior />
                             </i:Interaction.Behaviors>
 
                             <DataGrid.GroupStyle>
@@ -575,6 +576,7 @@
                             <TextBlock Margin="8,0" HorizontalAlignment="Center">
                                 <Run Text="{Binding CurrentPage, StringFormat='{}Page {0}', Mode=OneWay}" />
                                 <Run Text="{Binding TotalPageCount, StringFormat='{}of {0}', Mode=OneWay}" />
+                                <Run Text="{Binding Items.Count, StringFormat='{}(Entries {0})', Mode=OneWay}" />
                             </TextBlock>
                         </DockPanel>
 
@@ -676,6 +678,7 @@
                                             <i:InvokeCommandAction Command="{Binding LoadCommand}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
+
                                     <Button Margin="5"
                                             Command="{Binding LoadCommand}"
                                             Content="Load"
