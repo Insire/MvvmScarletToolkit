@@ -3,8 +3,6 @@ using System;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
 
 namespace MvvmScarletToolkit
 {
@@ -23,28 +21,15 @@ namespace MvvmScarletToolkit
     /// </list>
     /// </remarks>
     // source: https://putridparrot.com/blog/automatically-update-a-wpf-popup-position/
+    // usage:
+    // <i:Interaction.Behaviors>
+    //    <mvvm:AutoRepositionPopupBehavior />
+    // </ i:Interaction.Behaviors>
     public sealed class AutoRepositionPopupBehavior : Behavior<Popup>
     {
         private const int WM_MOVING = 0x0216;
 
         private IDisposable? _disposableHandle;
-
-        // should be moved to a helper class
-        private static DependencyObject GetTopmostParent(DependencyObject element)
-        {
-            var current = element;
-            var result = element;
-
-            while (current != null)
-            {
-                result = current;
-                current = (current is Visual || current is Visual3D) ?
-                    VisualTreeHelper.GetParent(current)
-                    : LogicalTreeHelper.GetParent(current);
-            }
-
-            return result;
-        }
 
         protected override void OnAttached()
         {
@@ -71,7 +56,7 @@ namespace MvvmScarletToolkit
 
         private void AssociatedObject_Loaded(object? sender, RoutedEventArgs? e)
         {
-            var root = GetTopmostParent(AssociatedObject.PlacementTarget);
+            var root = AssociatedObject.PlacementTarget.FindParent<Window>();
             if (!(root is Window window))
             {
                 return;
