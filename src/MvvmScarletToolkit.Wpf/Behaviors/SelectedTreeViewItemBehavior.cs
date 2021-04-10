@@ -8,16 +8,16 @@ namespace MvvmScarletToolkit
     /// Behavior that enables twoway binding to the selected item property of a WPF treeview
     /// </summary>
     /// <remarks>
-    /// requires the xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" namespace
+    /// required namespaces:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>xmlns:i="http://schemas.microsoft.com/xaml/behaviors"</description>
+    /// </item>
+    /// <item>
+    /// <description>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</description>
+    /// </item>
+    /// </list>
     /// </remarks>
-    /// <example>
-    /// Here is how to use the behavior in XAML:
-    /// <code>
-    /// <i:Interaction.Behaviors>
-    ///     <local:SelectedTreeViewItemBehavior SelectedItem = "{Binding SomeViewModel.SomeProperty}" />
-    /// </ i:Interaction.Behaviors>
-    /// </code>
-    /// </example>
     // source: https://stackoverflow.com/questions/11065995/binding-selecteditem-in-a-hierarchicaldatatemplate-applied-wpf-treeview/18700099#18700099
     public sealed class SelectedTreeViewItemBehavior : Behavior<TreeView>
     {

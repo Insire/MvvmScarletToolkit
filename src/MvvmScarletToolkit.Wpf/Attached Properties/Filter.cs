@@ -6,6 +6,17 @@ using System.Windows.Data;
 
 namespace MvvmScarletToolkit
 {
+    /// <summary>
+    /// Attached properties that enable binding <see cref="ICollectionView.Filter"/> and calling <see cref="ICollectionView.Refresh"/> when a property changes with XAML only
+    /// </summary>
+    /// <remarks>
+    /// required namespaces:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</description>
+    /// </item>
+    /// </list>
+    /// </remarks>
     // original idea from: https://stackoverflow.com/questions/15358113/wpf-filter-a-listbox/39438710#39438710
     public static class Filter
     {

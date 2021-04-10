@@ -3,16 +3,30 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace MvvmScarletToolkit
 {
+    /// <summary>
+    /// Behavior enables binding <see cref="MultiSelector.SelectedItems"/> to an existing instance of <see cref="IList"/>
+    /// </summary>
+    /// <remarks>
+    /// required namespaces:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>xmlns:i="http://schemas.microsoft.com/xaml/behaviors"</description>
+    /// </item>
+    /// <item>
+    /// <description>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</description>
+    /// </item>
+    /// </list>
+    /// </remarks>
     // usage:
-    // xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    // xmlns:local="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
     // <i:Interaction.Behaviors>
-    //  <local:MultiSelectionBehavior SelectedItems = "{Binding SelectedItems}" />
+    //    <mvvm:MultiSelectionBehavior SelectedItems = "{Binding SelectedItems}" />
     // </ i:Interaction.Behaviors>
-    public sealed class MultiSelectionBehavior : Behavior<ListBox>
+
+    public sealed class MultiSelectionBehavior : Behavior<MultiSelector>
     {
         protected override void OnAttached()
         {

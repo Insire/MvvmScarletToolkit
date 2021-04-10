@@ -6,6 +6,20 @@ using Microsoft.Xaml.Behaviors;
 
 namespace MvvmScarletToolkit.Wpf
 {
+    /// <summary>
+    /// Behavior that enables launching an <see cref="Uri"/> as new <see cref="Process"/> via cmd
+    /// </summary>
+    /// <remarks>
+    /// required namespaces:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>xmlns:i="http://schemas.microsoft.com/xaml/behaviors"</description>
+    /// </item>
+    /// <item>
+    /// <description>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</description>
+    /// </item>
+    /// </list>
+    /// </remarks>
     public sealed class LaunchNavigateUriAsNewProcessOnCommandExecution : Behavior<Hyperlink>
     {
         private RelayCommand? _command;

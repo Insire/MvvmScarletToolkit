@@ -8,8 +8,22 @@ using System.Windows.Media.Media3D;
 
 namespace MvvmScarletToolkit
 {
+    /// <summary>
+    /// Behavior that enables synchronizing a <see cref="Popup"/>s position, when the <see cref="Window"/> its attached to, is being moved
+    /// </summary>
+    /// <remarks>
+    /// required namespaces:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>xmlns:i="http://schemas.microsoft.com/xaml/behaviors"</description>
+    /// </item>
+    /// <item>
+    /// <description>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</description>
+    /// </item>
+    /// </list>
+    /// </remarks>
     // source: https://putridparrot.com/blog/automatically-update-a-wpf-popup-position/
-    public class AutoRepositionPopupBehavior : Behavior<Popup>
+    public sealed class AutoRepositionPopupBehavior : Behavior<Popup>
     {
         private const int WM_MOVING = 0x0216;
 

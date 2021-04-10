@@ -5,8 +5,19 @@ using System.Windows.Controls;
 namespace MvvmScarletToolkit
 {
     /// <summary>
-    /// Enables binding of the password property of the passwordbox
+    /// Behavior that enables binding for <see cref="PasswordBox.Password"/>
     /// </summary>
+    /// <remarks>
+    /// required namespaces:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>xmlns:i="http://schemas.microsoft.com/xaml/behaviors"</description>
+    /// </item>
+    /// <item>
+    /// <description>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</description>
+    /// </item>
+    /// </list>
+    /// </remarks>
     public sealed class PasswordBindingBehavior : Behavior<PasswordBox>
     {
         public string? ClearTextPassword
