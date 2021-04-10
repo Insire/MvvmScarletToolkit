@@ -20,7 +20,7 @@ namespace MvvmScarletToolkit.Wpf
     /// </item>
     /// </list>
     /// </remarks>
-    public sealed class LaunchNavigateUriAsNewProcessOnCommandExecution : Behavior<Hyperlink>
+    public sealed class LaunchNavigateUriAsNewProcess : Behavior<Hyperlink>
     {
         private RelayCommand? _command;
 
