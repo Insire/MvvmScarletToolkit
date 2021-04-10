@@ -663,8 +663,10 @@
                     <DockPanel>
                         <DockPanel.Resources>
                             <CollectionViewSource x:Key="SortedViewSource"
+                                                  mvvm:Filter.By="{Binding Filter}"
+                                                  mvvm:Filter.RefreshWhenChanged="{Binding FilterText}"
                                                   IsLiveSortingRequested="True"
-                                                  Source="{Binding SelectedItems}">
+                                                  Source="{Binding Items}">
                                 <CollectionViewSource.SortDescriptions>
                                     <componentmodel:SortDescription Direction="Descending" PropertyName="IsSelected" />
                                     <componentmodel:SortDescription Direction="Ascending" PropertyName="DisplayName" />
@@ -782,10 +784,8 @@
                             <ListBox Grid.Row="2"
                                      Grid.RowSpan="3"
                                      Grid.Column="0"
-                                     mvvm:Filter.By="{Binding Filter}"
-                                     mvvm:Filter.RefreshWhenChanged="{Binding FilterText}"
                                      ItemTemplate="{StaticResource DemoItemTemplate}"
-                                     ItemsSource="{Binding Items}"
+                                     ItemsSource="{Binding Source={StaticResource SortedViewSource}}"
                                      SelectedItem="{Binding SelectedItem}"
                                      SelectionMode="Extended">
                                 <i:Interaction.Behaviors>
