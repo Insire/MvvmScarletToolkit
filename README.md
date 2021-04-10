@@ -47,19 +47,20 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
     - Support for loading a System.Drawing.Bitmap into a BitmapSource without copying its data
   - Attached Properties
     - Filter
-      - bind the predicate of a CollectionView
-      - refresh a CollectionView on property change
+      - binding ICollectionView.Filter
+      - refresh ICollectionView on property change
     - Focus
       - set focus on window load
   - TriggerActions
     - ClearPasswordBoxAction
     - ClearTextBoxAction
   - Behaviors
-    - MultiSelectionBehavior for ListBoxes
-    - SelectedTreeViewItemBehavior
-    - PasswordBindingBehavior
+    - MultiSelectionBehavior: bind MultiSelector.SelectedItems (works for DataGrid and ListBox)
+    - SelectedTreeViewItemBehavior: bind SelectedItem for TreeView
+    - PasswordBindingBehavior: bind PasswordBox.Password
     - WatermarkBehavior for TextBoxes
     - AutoRepositionPopupBehavior
+    - LaunchNavigateUriAsNewProcess: Launch Hyperlink.NavigateUri in a new Process
   - Controls
     - FileSystemBrowser
     - VirtualizingTilePanel

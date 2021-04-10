@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit.Wpf
     /// </item>
     /// </list>
     /// </remarks>
-    public sealed class ScrollSelectionIntoView : Behavior<Selector>
+    public sealed class ScrollSelectionIntoViewBehavior : Behavior<Selector>
     {
         protected override void OnAttached()
         {
