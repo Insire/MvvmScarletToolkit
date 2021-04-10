@@ -10,35 +10,10 @@ This library aims to provide easy to use [ICommand](https://docs.microsoft.com/e
 
 |class|summary|
 |---|---|
-|``AsyncCommand<TArgument>``|Task based ``ICommand`` implementation.|
-|``ConcurrentCommand<TArgument>``|An advanced Task based ``ICommand`` implementation supporting fluent configuration via ``IScarletCommandBuilder``.|
-|``RelayComand`` and ``RelayComand<TArgument>``|Popular synchronous implementation of ``ICommand``.|
+|``ConcurrentCommand<TArgument>``|A Task based ``ICommand`` implementation supporting fluent configuration via ``IScarletCommandBuilder``.|
 
 ## Usage
 
-### AsyncCommand\<TArgument>
-
-```cs
-public class SomeClass
-{
-    public ICommand Command { get; }
-
-    public SomeClass(IScarletCommandBuilder commandBuilder)
-    {
-        Command = AsyncCommand .Create(Do, CanDo);
-    }
-
-    private Task Do(CancellationToken token)
-    {
-        return Task.Delay(2000);
-    }
-
-    private bool CanDo()
-    {
-        return true;
-    }
-}
-```
 
 ### ConcurrentCommand\<TArgument>
 
@@ -69,30 +44,7 @@ public class SomeClass
 }
 ```
 
-### RelayComand\<TArgument>
-
-```cs
-public class SomeClass
-{
-    public ICommand Command { get; }
-
-    public SomeClass(IScarletCommandBuilder commandBuilder)
-    {
-        Command = new RelayComand(commandBuilder, Do, CanDo);
-    }
-
-    private void Do(CancellationToken token)
-    {
-        // do stuff here
-    }
-
-    private bool CanDo()
-    {
-        return true;
-    }
-}
-```
 
 ## Credits
 
-``AsyncCommand<TArgument>`` and ``ConcurrentCommand<TArgument>`` are largely based on Stephen Clearlys blog post: [Async Programming : Patterns for Asynchronous MVVM Applications](https://msdn.microsoft.com/en-us/magazine/dn630647.aspx?f=255&MSPPError=-2147217396)
+``ConcurrentCommand<TArgument>`` is largely based on Stephen Clearlys blog post: [Async Programming : Patterns for Asynchronous MVVM Applications](https://msdn.microsoft.com/en-us/magazine/dn630647.aspx?f=255&MSPPError=-2147217396)
