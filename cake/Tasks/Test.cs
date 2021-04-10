@@ -8,7 +8,7 @@ public sealed class Test : FrostingTask<Context>
 {
     public override void Run(Context context)
     {
-        var projectFile = @"./src/MvvmScarletToolkit.Tests/MvvmScarletToolkit.Tests.csproj";
+        var projectFile = @"./src/MvvmScarletToolkit.Wpf.Tests/MvvmScarletToolkit.Wpf.Tests.csproj";
         var testSettings = new DotNetCoreTestSettings
         {
             Framework = "netcoreapp3.1",
