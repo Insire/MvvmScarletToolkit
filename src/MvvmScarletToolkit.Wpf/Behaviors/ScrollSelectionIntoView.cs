@@ -1,9 +1,10 @@
 using Microsoft.Xaml.Behaviors;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace MvvmScarletToolkit.Wpf
 {
-    public sealed class ScrollSelectionIntoView : Behavior<ListBox>
+    public sealed class ScrollSelectionIntoView : Behavior<Selector>
     {
         protected override void OnAttached()
         {
