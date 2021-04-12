@@ -1,0 +1,132 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:local="clr-namespace:MvvmScarletToolkit.Wpf">
+
+    <SolidColorBrush x:Key="ToastColourSuccess">#3fb618</SolidColorBrush>
+    <SolidColorBrush x:Key="ToastColourInfo">#9954bb</SolidColorBrush>
+    <SolidColorBrush x:Key="ToastColourWarning">#ff7518</SolidColorBrush>
+    <SolidColorBrush x:Key="ToastColourDanger">#ff0039</SolidColorBrush>
+
+    <Style BasedOn="{StaticResource {x:Type ContentControl}}" TargetType="{x:Type local:ToastNotification}">
+        <Style.Resources>
+            <Storyboard x:Key="ToastScaleInStoryboard" Storyboard.TargetName="{Binding}">
+                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                 From="0.3"
+                                 To="1"
+                                 Duration="0:0:0.25">
+                    <DoubleAnimation.EasingFunction>
+                        <CubicEase EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                 From="0"
+                                 To="1"
+                                 Duration="0:0:0.3">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase Amplitude="0.3" EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                 From="0"
+                                 To="1"
+                                 Duration="0:0:0.3">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase Amplitude="0.3" EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+        </Style.Resources>
+        <Setter Property="MinWidth" Value="300" />
+        <Setter Property="MinHeight" Value="100" />
+        <Setter Property="RenderTransformOrigin" Value="1.0,0.5" />
+        <Setter Property="FontFamily" Value="Calibri" />
+        <Setter Property="FontSizeTitle" Value="26" />
+        <Setter Property="FontSize" Value="19" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="ColourSuccess" Value="{StaticResource ToastColourSuccess}" />
+        <Setter Property="ColourDanger" Value="{StaticResource ToastColourDanger}" />
+        <Setter Property="ColourInfo" Value="{StaticResource ToastColourInfo}" />
+        <Setter Property="ColourWarning" Value="{StaticResource ToastColourWarning}" />
+        <Setter Property="IsPersistent" Value="False" />
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:ToastNotification}">
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Background="{TemplateBinding Background}" BorderThickness="0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0"
+                                            Margin="15"
+                                            VerticalAlignment="Center">
+                                    <TextBlock FontFamily="{TemplateBinding FontFamily}"
+                                               FontSize="{TemplateBinding FontSizeTitle}"
+                                               FontWeight="Bold"
+                                               Foreground="{TemplateBinding Foreground}"
+                                               Text="{TemplateBinding Title}"
+                                               TextWrapping="Wrap" />
+                                    <TextBlock Margin="0,3,0,0"
+                                               FontFamily="{TemplateBinding FontFamily}"
+                                               FontSize="{TemplateBinding FontSize}"
+                                               Foreground="{TemplateBinding Foreground}"
+                                               Text="{TemplateBinding Message}"
+                                               TextWrapping="Wrap" />
+                                </StackPanel>
+
+                                <Button x:Name="PART_DismissButton"
+                                        Grid.Column="1"
+                                        Margin="3"
+                                        Padding="10,5"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Cursor="Hand"
+                                        FontSize="1">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                    <Image Width="18"
+                                           Height="18"
+                                           Source="/PeanutButter.Toast;component/Icons/CrossWhite.png" />
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <Viewbox Grid.Column="1"
+                                 Height="24"
+                                 Margin="-1,0,0,0"
+                                 VerticalAlignment="Center">
+                            <Polygon Fill="{TemplateBinding Background}"
+                                     Points="0,0 8,5, 0,10"
+                                     Stroke="Transparent" />
+                        </Viewbox>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
