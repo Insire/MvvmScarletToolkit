@@ -16,7 +16,7 @@ namespace MvvmScarletToolkit
         private readonly IObservable<EventPattern<T>> _observable;
         private readonly Action<T> _callback;
 
-        private event EventHandler<T> ProgressChanged;
+        private event EventHandler<T>? ProgressChanged;
 
         private bool _disposed;
 
@@ -43,7 +43,7 @@ namespace MvvmScarletToolkit
             }
 
             // queue the new value on the observable
-            ProgressChanged.Invoke(this, value);
+            ProgressChanged?.Invoke(this, value);
         }
 
         private void ReportInternal(T value)
