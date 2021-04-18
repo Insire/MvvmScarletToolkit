@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -98,7 +99,7 @@ namespace MvvmScarletToolkit.Observables
             SelectedItems.CollectionChanged += ViewModelListBase_CollectionChanged;
         }
 
-        private void ViewModelListBase_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void ViewModelListBase_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             OnSelectionsChanged();
         }
