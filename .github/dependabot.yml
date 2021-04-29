@@ -1,0 +1,37 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "04:00"
+  open-pull-requests-limit: 10
+  target-branch: dev
+  ignore:
+  - dependency-name: Magick.NET.SystemWindowsMedia
+    versions:
+    - 3.0.5
+    - 3.0.6
+  - dependency-name: Magick.NET-Q8-AnyCPU
+    versions:
+    - 7.23.1
+    - 7.23.2
+  - dependency-name: IDisposableAnalyzers
+    versions:
+    - 3.4.10
+  - dependency-name: FluentValidation
+    versions:
+    - 9.4.0
+    - 9.5.0
+  - dependency-name: Moq
+    versions:
+    - 4.16.0
+  - dependency-name: nunit
+    versions:
+    - 3.13.0
+  - dependency-name: Microsoft.Xaml.Behaviors.Wpf
+    versions:
+    - 1.1.31
+  - dependency-name: WpfAnalyzers
+    versions:
+    - 3.5.4
