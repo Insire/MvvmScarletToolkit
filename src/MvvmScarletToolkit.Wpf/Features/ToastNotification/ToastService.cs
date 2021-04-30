@@ -1,82 +1,91 @@
 using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 
 namespace MvvmScarletToolkit.Wpf
 {
     public sealed class ToastService : IToastService
     {
-        private ToastNotificationHost? _host;
+        private readonly ObservableCollection<ToastViewModel> _toasts;
 
-        public void Show(string title, string message, ToastType toastType, TimeSpan displayTime, Rect? origin = null, bool isPersistent = false)
+        private ToastNotificationHostWindow? _host;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public ReadOnlyObservableCollection<ToastViewModel> Toasts { get; }
+
+        public ToastService()
         {
-            //Show the host window
-            ShowHost(origin);
+            _toasts = new ObservableCollection<ToastViewModel>();
+            Toasts = new ReadOnlyObservableCollection<ToastViewModel>(_toasts);
 
-            //Create a new toast control
-            var notification = new ToastNotification()
-            {
-                Title = title,
-                Message = message,
-                ToastType = toastType,
-                IsPersistent = isPersistent
-            };
-
-            //Create a toast and accompanying dispatcher timer.
-            var toast = new Toast(notification);
-            toast.ToastClosing += Toast_ToastClosing;
-
-            //Add the toast to the host window
-            _host?.Toasts?.Add(notification);
-
-            //display it for X seconds
-            toast.Show(displayTime);
+            _toasts.CollectionChanged += OnCollectionChanged;
         }
 
-        private void ShowHost(Rect? origin)
+        public void Show(string title, string body, ToastType toastType, TimeSpan displayTime, Rect? origin, bool isPersistent)
         {
-            //If the current host window is null, create it.
-            if (_host == null)
+            if (_host is null)
             {
-                _host = new ToastNotificationHost()
+                _host = new ToastNotificationHostWindow()
                 {
-                    DisplayOrigin = origin
+                    DataContext = this,
                 };
 
                 _host.Show();
-                _host.Closed += _HOST_Closed;
-            }
-            //Otherwise, set it's display location and origin.
-            else
-            {
-                _host.DisplayOrigin = origin;
+                _host.Closing += OnHostClosing;
+                _host.Loaded += OnLoaded;
             }
 
-            _host.Reposition();
+            Reposition(_host, origin);
 
-            //Display the window
             if (!_host.IsVisible)
             {
                 _host.Visibility = Visibility.Visible;
             }
+
+            _toasts.Add(new ToastViewModel(_toasts, title, body, toastType, isPersistent, displayTime));
         }
 
-        private void Toast_ToastClosing(object sender, ToastNotification e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            //Remove the toast from the host window
-            _host?.Toasts?.Remove(e);
+            // reposition here aswell?
+        }
 
-            //If there are no more toasts to show, then close the host window
-            if (_host?.Toasts?.Count == 0)
+        private void Reposition(Window window, Rect? origin)
+        {
+            const int offset = 12;
+
+            var area = origin ?? SystemParameters.WorkArea;
+
+            //Display the toast at the top right of the area.
+            window.Left = area.Right - window.Width - offset;
+            window.Top = area.Top + offset;
+        }
+
+        private void OnHostClosing(object? sender, EventArgs e)
+        {
+            _host = null;
+
+            if (sender is ToastNotificationHostWindow host)
             {
-                _host.Visibility = Visibility.Collapsed;
+                host.Closing -= OnHostClosing;
             }
         }
 
-        private void _HOST_Closed(object sender, EventArgs e)
+        private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            //Reset the host.
-            _host.Closed -= _HOST_Closed;
-            _host = null;
+            if (e.Action == NotifyCollectionChangedAction.Remove && _toasts.Count == 0)
+            {
+                var host = _host;
+                if (host is null)
+                {
+                    return;
+                }
+
+                host.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }
