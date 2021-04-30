@@ -619,9 +619,14 @@
                                             <TextBlock Grid.Row="4" Text="Name" />
                                             <TextBox Grid.Row="4"
                                                      Grid.Column="2"
-                                                     Grid.ColumnSpan="4"
                                                      VerticalAlignment="Top"
                                                      Text="{Binding Name}" />
+
+                                            <CheckBox Grid.Row="4"
+                                                      Grid.Column="4"
+                                                      Content="IsNotNullOrWhiteSpace"
+                                                      IsChecked="{Binding Name, Converter={mvvm:IsNotNullOrWhiteSpace}}"
+                                                      IsHitTestVisible="False" />
 
                                             <TextBlock Grid.Row="6" Text="CreatedOn" />
                                             <Calendar Grid.Row="6"
@@ -632,10 +637,10 @@
                                             <TextBlock Grid.Row="6"
                                                        Grid.Column="3"
                                                        Text="UpdatedOn" />
-                                            <Calendar Grid.Row="6"
-                                                      Grid.Column="4"
-                                                      DisplayDate="{Binding UpdatedOn, Mode=OneWay}"
-                                                      DisplayMode="Month" />
+                                            <TextBlock Grid.Row="6"
+                                                       Grid.Column="4"
+                                                       HorizontalAlignment="Center"
+                                                       Text="{Binding UpdatedOn, Mode=OneWay}" />
                                         </Grid>
                                     </ScrollViewer>
                                 </DataTemplate>
