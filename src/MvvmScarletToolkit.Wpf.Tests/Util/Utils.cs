@@ -40,9 +40,19 @@ namespace MvvmScarletToolkit.Tests
             return (lambda) => new BusyStack(lambda, GetTestDispatcher());
         }
 
-        public static IScarletCommandBuilder GetTestCommandBuilder()
+        public static IScarletCommandBuilder GetTestCommandBuilder(IScarletDispatcher dispatcher = null,
+                                                                   IScarletCommandManager commandManager = null,
+                                                                   IMessenger messenger = null,
+                                                                   IExitService exitService = null,
+                                                                   IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> eventManager = null,
+                                                                   Func<Action<bool>, IBusyStack> busyStackFactory = null)
         {
-            return new ScarletCommandBuilder(GetTestDispatcher(), GetTestCommandManager(), GetTestMessenger(), GetTestExitService(), GetTestEventManager(), GetTestBusyStackFactory());
+            return new ScarletCommandBuilder(dispatcher ?? GetTestDispatcher(),
+                                             commandManager ?? GetTestCommandManager(),
+                                             messenger ?? GetTestMessenger(),
+                                             exitService ?? GetTestExitService(),
+                                             eventManager ?? GetTestEventManager(),
+                                             busyStackFactory ?? GetTestBusyStackFactory());
         }
 
         public static ICancelCommand GetTestCancelCommand()

@@ -49,7 +49,8 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
     - ClearPasswordBoxAction
     - ClearTextBoxAction
   - Behaviors
-    - MultiSelectionBehavior: bind MultiSelector.SelectedItems (works for DataGrid and ListBox)
+    - MultiSelectionBehavior: bind MultiSelector.SelectedItems (for DataGrid)
+    - MultiListBoxSelectionBehavior: bind ListBx.SelectedItems
     - SelectedTreeViewItemBehavior: bind SelectedItem for TreeView
     - PasswordBindingBehavior: bind PasswordBox.Password
     - WatermarkBehavior for TextBoxes

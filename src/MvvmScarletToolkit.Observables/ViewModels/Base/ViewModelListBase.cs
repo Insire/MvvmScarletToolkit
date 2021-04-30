@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -94,6 +95,13 @@ namespace MvvmScarletToolkit.Observables
 
             PropertyChanging += ViewModelListBase_PropertyChanging;
             PropertyChanged += ViewModelListBase_PropertyChanged;
+
+            SelectedItems.CollectionChanged += ViewModelListBase_CollectionChanged;
+        }
+
+        private void ViewModelListBase_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            OnSelectionsChanged();
         }
 
         private void ViewModelListBase_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -102,10 +110,6 @@ namespace MvvmScarletToolkit.Observables
             {
                 case nameof(ViewModelListBase<TViewModel>.SelectedItem):
                     OnSelectionChanged();
-                    break;
-
-                case nameof(ViewModelListBase<TViewModel>.SelectedItems):
-                    OnSelectionsChanged();
                     break;
             }
         }
@@ -116,10 +120,6 @@ namespace MvvmScarletToolkit.Observables
             {
                 case nameof(ViewModelListBase<TViewModel>.SelectedItem):
                     OnSelectionChanging();
-                    break;
-
-                case nameof(ViewModelListBase<TViewModel>.SelectedItems):
-                    OnSelectionsChanging();
                     break;
             }
         }
@@ -374,16 +374,6 @@ namespace MvvmScarletToolkit.Observables
             Messenger.Send(new ViewModelListBaseSelectionsChanged<TViewModel>(SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
         }
 
-        private void OnSelectionsChanging()
-        {
-            if (IsDisposed)
-            {
-                return;
-            }
-
-            Messenger.Send(new ViewModelListBaseSelectionsChanging<TViewModel>(SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
-        }
-
         protected override async void Dispose(bool disposing)
         {
             if (IsDisposed)
@@ -393,6 +383,11 @@ namespace MvvmScarletToolkit.Observables
 
             if (disposing)
             {
+                PropertyChanging -= ViewModelListBase_PropertyChanging;
+                PropertyChanged -= ViewModelListBase_PropertyChanged;
+
+                SelectedItems.CollectionChanged -= ViewModelListBase_CollectionChanged;
+
                 await Clear().ConfigureAwait(false);
             }
 
