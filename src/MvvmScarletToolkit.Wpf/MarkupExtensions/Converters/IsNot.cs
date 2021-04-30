@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit
     /// <c>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</c>
     /// </remarks>
     [ValueConversion(typeof(bool), typeof(bool))]
-    public sealed class IsNot : ConverterMarkupExtension<IsNullOrEmpty>
+    public sealed class IsNot : ConverterMarkupExtension<IsNot>
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

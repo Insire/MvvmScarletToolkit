@@ -3,9 +3,9 @@ using System;
 
 namespace MvvmScarletToolkit.Tests
 {
-    internal sealed class DerivedViewModelBase : ViewModelBase
+    internal sealed class DerivedViewModelListBase : ViewModelListBase<DerivedObjectViewModelBase>
     {
-        public DerivedViewModelBase(IScarletCommandBuilder commandBuilder)
+        public DerivedViewModelListBase(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
         }
