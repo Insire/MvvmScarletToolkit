@@ -82,7 +82,7 @@
                 </ListBox.ContextMenu>
 
                 <i:Interaction.Behaviors>
-                    <mvvm:MultiSelectionBehavior SelectedItems="{Binding SelectedItems}" />
+                    <mvvm:MultiListBoxSelectionBehavior SelectedItems="{Binding SelectedItems}" />
                 </i:Interaction.Behaviors>
 
                 <ListBox.ItemsPanel>

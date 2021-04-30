@@ -280,7 +280,7 @@
                                  VirtualizingStackPanel.VirtualizationMode="Standard">
 
                             <i:Interaction.Behaviors>
-                                <mvvm:MultiSelectionBehavior SelectedItems="{Binding SelectedItems}" />
+                                <mvvm:MultiListBoxSelectionBehavior SelectedItems="{Binding SelectedItems}" />
                             </i:Interaction.Behaviors>
 
                             <i:Interaction.Triggers>
@@ -794,7 +794,7 @@
                                      SelectedItem="{Binding SelectedItem}"
                                      SelectionMode="Extended">
                                 <i:Interaction.Behaviors>
-                                    <mvvm:MultiSelectionBehavior SelectedItems="{Binding SelectedItems}" />
+                                    <mvvm:MultiListBoxSelectionBehavior SelectedItems="{Binding SelectedItems}" />
                                     <mvvm:AutoScrollBehavior />
                                 </i:Interaction.Behaviors>
 
