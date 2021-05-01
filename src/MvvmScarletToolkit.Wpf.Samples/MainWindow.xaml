@@ -1377,6 +1377,61 @@
                         </Popup>
                     </Grid>
                 </DataTemplate>
+
+                <DataTemplate DataType="{x:Type local:ToastsViewModel}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="4" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="0"
+                                   Text="Title:" />
+                        <TextBox Grid.Row="0"
+                                 Grid.Column="2"
+                                 Text="{Binding Title}" />
+
+                        <TextBlock Grid.Row="2"
+                                   Grid.Column="0"
+                                   Text="Body:" />
+                        <TextBox Grid.Row="2"
+                                 Grid.Column="2"
+                                 Text="{Binding Body}" />
+
+                        <TextBlock Grid.Row="4"
+                                   Grid.Column="0"
+                                   Text="Type:" />
+                        <ComboBox Grid.Row="4"
+                                  Grid.Column="2"
+                                  ItemsSource="{mvvm:EnumBindingSource {x:Type mvvm:ToastType}}"
+                                  SelectedItem="{Binding ToastType}" />
+
+                        <CheckBox Grid.Row="6"
+                                  Grid.Column="2"
+                                  Content="Persist:"
+                                  IsChecked="{Binding Persist}" />
+
+                        <Button Grid.Row="8"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Command="{Binding ShowToastCommand}"
+                                Content="Send Toast" />
+                    </Grid>
+                </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
     </Grid>

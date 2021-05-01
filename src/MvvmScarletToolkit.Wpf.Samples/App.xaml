@@ -1,10 +1,12 @@
 <Application x:Class="MvvmScarletToolkit.Wpf.Samples.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnMainWindowClose">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MvvmScarletToolkit.Wpf;component/Features/FileSystemBrowser/Generic.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MvvmScarletToolkit.Wpf;component/Features/ToastNotification/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
