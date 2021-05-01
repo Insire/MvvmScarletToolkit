@@ -3,8 +3,36 @@
                     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:local="clr-namespace:MvvmScarletToolkit.Wpf">
 
-    <DataTemplate DataType="{x:Type local:ToastViewModel}">
+    <Style x:Key="DefaultToastWindowStyle" TargetType="{x:Type Window}">
+        <Setter Property="MinWidth" Value="450" />
+        <Setter Property="MinHeight" Value="300" />
+        <Setter Property="MaxWidth" Value="450" />
+        <Setter Property="AllowsTransparency" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="ShowActivated" Value="False" />
+        <Setter Property="ShowInTaskbar" Value="False" />
+        <Setter Property="SizeToContent" Value="Height" />
+        <Setter Property="Topmost" Value="True" />
+        <Setter Property="WindowStyle" Value="None" />
+        <Setter Property="Content">
+            <Setter.Value>
+                <ContentControl Content="{Binding}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
 
+    <DataTemplate DataType="{x:Type local:ToastService}">
+        <ItemsControl Padding="20" ItemsSource="{Binding Items}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type local:ToastViewModel}">
         <Grid x:Name="this"
               MinWidth="300"
               MinHeight="100"
@@ -42,20 +70,26 @@
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
+                <EventTrigger RoutedEvent="Unloaded">
+                    <BeginStoryboard>
+                        <Storyboard Storyboard.TargetName="this">
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                             From="1"
+                                             To="0"
+                                             Duration="0:0:0.25">
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
             </Grid.Triggers>
 
             <Grid.RenderTransform>
                 <ScaleTransform />
             </Grid.RenderTransform>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Loaded">
-                    <i:InvokeCommandAction Command="{Binding BeginDismissCommand, Mode=OneWay}" />
+                    <i:InvokeCommandAction Command="{Binding BeginDismissCommand}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
@@ -63,8 +97,24 @@
                 <Border.Style>
                     <Style TargetType="{x:Type Border}">
                         <Style.Triggers>
+                            <DataTrigger Binding="{Binding ToastType}" Value="0">
+                                <Setter Property="Background" Value="Black" />
+                            </DataTrigger>
+
                             <DataTrigger Binding="{Binding ToastType}" Value="1">
-                                <Setter Property="Background" Value="AliceBlue" />
+                                <Setter Property="Background" Value="Green" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding ToastType}" Value="2">
+                                <Setter Property="Background" Value="Red" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding ToastType}" Value="4">
+                                <Setter Property="Background" Value="Orange" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding ToastType}" Value="8">
+                                <Setter Property="Background" Value="Gray" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -93,15 +143,14 @@
                                    TextWrapping="Wrap" />
                     </StackPanel>
 
-                    <Button x:Name="PART_DismissButton"
-                            Grid.Column="1"
+                    <Button Grid.Column="1"
                             Margin="3"
                             Padding="10,5"
                             Background="Transparent"
                             BorderThickness="0"
                             Command="{Binding DismissCommand}"
-                            Cursor="Hand"
-                            FontSize="1">
+                            Content="X"
+                            Cursor="Hand">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Template">
@@ -115,28 +164,9 @@
                                 </Setter>
                             </Style>
                         </Button.Style>
-
-                        <Image Width="18" Height="18" />
                     </Button>
                 </Grid>
             </Border>
-
-            <Viewbox Grid.Column="1"
-                     Height="24"
-                     Margin="-1,0,0,0"
-                     VerticalAlignment="Center">
-                <Polygon Points="0,0 8,5, 0,10" Stroke="Transparent">
-                    <Polygon.Style>
-                        <Style TargetType="{x:Type Polygon}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ToastType}" Value="1">
-                                    <Setter Property="Fill" Value="AliceBlue" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Polygon.Style>
-                </Polygon>
-            </Viewbox>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

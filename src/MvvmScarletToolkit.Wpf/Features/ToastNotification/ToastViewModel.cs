@@ -1,7 +1,6 @@
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -10,7 +9,7 @@ namespace MvvmScarletToolkit.Wpf
     public class ToastViewModel : ObservableObject
     {
         private readonly DispatcherTimer _timer;
-        private readonly ObservableCollection<ToastViewModel> _toasts;
+        private readonly ToastService _toastService;
 
         public string Title { get; }
 
@@ -24,9 +23,9 @@ namespace MvvmScarletToolkit.Wpf
 
         public ICommand DismissCommand { get; }
 
-        public ToastViewModel(ObservableCollection<ToastViewModel> toasts, string title, string body, ToastType toastType, bool isPersistent, TimeSpan displayTime)
+        public ToastViewModel(ToastService toastService, string title, string body, ToastType toastType, bool isPersistent, TimeSpan displayTime)
         {
-            _toasts = toasts ?? throw new ArgumentNullException(nameof(toasts));
+            _toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
 
             Title = title;
             Body = body;
@@ -53,11 +52,11 @@ namespace MvvmScarletToolkit.Wpf
             OnToastClosing();
         }
 
-        protected virtual void OnToastClosing()
+        protected virtual async void OnToastClosing()
         {
             _timer?.Stop();
 
-            _toasts.Remove(this);
+            await _toastService.Remove(this).ConfigureAwait(false);
         }
 
         private void OnTimerTick(object? sender, EventArgs e)
