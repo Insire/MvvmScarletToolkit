@@ -5,14 +5,12 @@
 
     <Style x:Key="DefaultToastWindowStyle" TargetType="{x:Type Window}">
         <Setter Property="MinWidth" Value="450" />
-        <Setter Property="MinHeight" Value="300" />
         <Setter Property="MaxWidth" Value="450" />
         <Setter Property="AllowsTransparency" Value="True" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="ShowActivated" Value="False" />
         <Setter Property="ShowInTaskbar" Value="False" />
-        <Setter Property="SizeToContent" Value="Height" />
         <Setter Property="Topmost" Value="True" />
         <Setter Property="WindowStyle" Value="None" />
         <Setter Property="Content">
@@ -76,8 +74,7 @@
                             <DoubleAnimation Storyboard.TargetProperty="Opacity"
                                              From="1"
                                              To="0"
-                                             Duration="0:0:0.25">
-                            </DoubleAnimation>
+                                             Duration="0:0:0.25" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
