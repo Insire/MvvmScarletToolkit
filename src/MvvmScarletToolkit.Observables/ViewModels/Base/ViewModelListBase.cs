@@ -93,18 +93,23 @@ namespace MvvmScarletToolkit.Observables
                 .WithAsyncCancellation()
                 .Build();
 
-            PropertyChanging += ViewModelListBase_PropertyChanging;
-            PropertyChanged += ViewModelListBase_PropertyChanged;
+            PropertyChanging += OnPropertyChanging;
+            PropertyChanged += OnPropertyChanged;
 
-            SelectedItems.CollectionChanged += ViewModelListBase_CollectionChanged;
+            _items.CollectionChanged += OnCollectionChanged;
+            SelectedItems.CollectionChanged += OnSelectedItemsCollectionChanged;
         }
 
-        private void ViewModelListBase_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected virtual void OnSelectedItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             OnSelectionsChanged();
         }
 
-        private void ViewModelListBase_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected virtual void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+        }
+
+        protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -114,7 +119,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        private void ViewModelListBase_PropertyChanging(object sender, PropertyChangingEventArgs e)
+        protected virtual void OnPropertyChanging(object sender, PropertyChangingEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -383,10 +388,10 @@ namespace MvvmScarletToolkit.Observables
 
             if (disposing)
             {
-                PropertyChanging -= ViewModelListBase_PropertyChanging;
-                PropertyChanged -= ViewModelListBase_PropertyChanged;
+                PropertyChanging -= OnPropertyChanging;
+                PropertyChanged -= OnPropertyChanged;
 
-                SelectedItems.CollectionChanged -= ViewModelListBase_CollectionChanged;
+                SelectedItems.CollectionChanged -= OnSelectedItemsCollectionChanged;
 
                 await Clear().ConfigureAwait(false);
             }

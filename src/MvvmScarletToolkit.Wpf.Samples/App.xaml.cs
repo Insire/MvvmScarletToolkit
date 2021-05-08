@@ -33,9 +33,11 @@ namespace MvvmScarletToolkit.Wpf.Samples
             window.Show();
         }
 
-        protected override void OnExit(ExitEventArgs e)
+        protected override async void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
+
+            await ScarletExitService.Default.ShutDown();
 
             _tracker.PersistAll();
         }

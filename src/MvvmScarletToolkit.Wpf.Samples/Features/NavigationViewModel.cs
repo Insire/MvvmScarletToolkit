@@ -5,6 +5,10 @@ using System.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
+#if NET5_0_OR_GREATER
+
+    [System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
+#endif
     public sealed class NavigationViewModel : Scenes
     {
         public NavigationViewModel(SynchronizationContext synchronizationContext, IScarletCommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)
@@ -34,6 +38,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
             Add("MVVM ContextMenus", contextMenu);
             Add("Binding Enum values", new EnumViewModel());
+            Add("MVVM Toast-Notification", new ToastsViewModel(commandBuilder));
         }
     }
 }
