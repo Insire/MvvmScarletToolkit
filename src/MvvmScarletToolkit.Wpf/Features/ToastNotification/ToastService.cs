@@ -44,30 +44,33 @@ namespace MvvmScarletToolkit.Wpf
 
         public async Task Show(IToast toast)
         {
-            if (_host is null)
+            await Dispatcher.Invoke(() =>
             {
-                _host = new Window()
+                if (_host is null)
                 {
-                    DataContext = this,
-                };
+                    _host = new Window()
+                    {
+                        DataContext = this,
+                    };
 
-                var obj = Application.Current.FindResource(WindowStyleKey);
-                if (obj is Style style && style.TargetType == typeof(Window))
-                {
-                    _host.Style = style;
+                    var obj = Application.Current.FindResource(WindowStyleKey);
+                    if (obj is Style style && style.TargetType == typeof(Window))
+                    {
+                        _host.Style = style;
+                    }
+
+                    _host.Closing += OnHostClosing;
+                    _host.Loaded += OnLoaded;
+                    _host.Show();
                 }
 
-                _host.Closing += OnHostClosing;
-                _host.Loaded += OnLoaded;
-                _host.Show();
-            }
+                Reposition(_host, Origin, WindowOffset);
 
-            Reposition(_host, Origin, WindowOffset);
-
-            if (!_host.IsVisible)
-            {
-                _host.Visibility = Visibility.Visible;
-            }
+                if (!_host.IsVisible)
+                {
+                    _host.Visibility = Visibility.Visible;
+                }
+            }).ConfigureAwait(false);
 
             await Add(toast).ConfigureAwait(false);
 
