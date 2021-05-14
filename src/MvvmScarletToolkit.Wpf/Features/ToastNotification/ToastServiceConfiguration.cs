@@ -1,4 +1,5 @@
 using System;
+using System.Windows;
 
 namespace MvvmScarletToolkit.Wpf
 {
@@ -23,5 +24,10 @@ namespace MvvmScarletToolkit.Wpf
         /// how long to wait, before finally removing toasts from the toast collection
         /// </summary>
         public TimeSpan ToastCloseDelay { get; set; } = TimeSpan.FromSeconds(1);
+
+        /// <summary>
+        /// The container to display the toast within. Leave this as null to use the primary monitor.
+        /// </summary>
+        public Rect? Origin { get; set; }
     }
 }

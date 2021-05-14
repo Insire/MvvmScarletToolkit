@@ -7,7 +7,7 @@ using System.Windows.Threading;
 
 namespace MvvmScarletToolkit.Wpf
 {
-    public sealed class ToastService : ViewModelListBase<ToastViewModel>, IToastService
+    public sealed class ToastService : ViewModelListBase<IToast>, IToastService
     {
         private static readonly Lazy<ToastService> _default = new Lazy<ToastService>(() => new ToastService(ScarletCommandBuilder.Default, new ToastServiceConfiguration()));
 
@@ -20,6 +20,7 @@ namespace MvvmScarletToolkit.Wpf
         public int WindowOffset { get; }
         public TimeSpan WindowCloseDelay { get; }
         public TimeSpan ToastCloseDelay { get; }
+        public Rect? Origin { get; set; }
 
         public ToastService(IScarletCommandBuilder commandBuilder, ToastServiceConfiguration configuration)
             : base(commandBuilder)
@@ -41,38 +42,41 @@ namespace MvvmScarletToolkit.Wpf
             ToastCloseDelay = configuration.ToastCloseDelay;
         }
 
-        public async Task Show(string title, string body, Enum toastType, TimeSpan displayTime, Rect? origin, bool isPersistent)
+        public async Task Show(IToast toast)
         {
-            if (_host is null)
+            await Dispatcher.Invoke(() =>
             {
-                _host = new Window()
+                if (_host is null)
                 {
-                    DataContext = this,
-                };
+                    _host = new Window()
+                    {
+                        DataContext = this,
+                    };
 
-                var obj = Application.Current.FindResource(WindowStyleKey);
-                if (obj is Style style && style.TargetType == typeof(Window))
-                {
-                    _host.Style = style;
+                    var obj = Application.Current.FindResource(WindowStyleKey);
+                    if (obj is Style style && style.TargetType == typeof(Window))
+                    {
+                        _host.Style = style;
+                    }
+
+                    _host.Closing += OnHostClosing;
+                    _host.Loaded += OnLoaded;
+                    _host.Show();
                 }
 
-                _host.Closing += OnHostClosing;
-                _host.Loaded += OnLoaded;
-                _host.Show();
-            }
+                Reposition(_host, Origin, WindowOffset);
 
-            Reposition(_host, origin, WindowOffset);
+                if (!_host.IsVisible)
+                {
+                    _host.Visibility = Visibility.Visible;
+                }
+            }).ConfigureAwait(false);
 
-            if (!_host.IsVisible)
-            {
-                _host.Visibility = Visibility.Visible;
-            }
-
-            await Add(new ToastViewModel(this, title, body, toastType, isPersistent, displayTime)).ConfigureAwait(false);
+            await Add(toast).ConfigureAwait(false);
 
             void OnLoaded(object sender, RoutedEventArgs e)
             {
-                Reposition(_host, origin, WindowOffset);
+                Reposition(_host, Origin, WindowOffset);
             }
         }
 
@@ -80,7 +84,7 @@ namespace MvvmScarletToolkit.Wpf
         {
             var area = origin ?? SystemParameters.WorkArea;
 
-            //Display the toast at the top right of the area.
+            // Display the toast at the top right of the area.
             window.Left = area.Right - window.Width - offset;
             window.Top = area.Top + offset;
 

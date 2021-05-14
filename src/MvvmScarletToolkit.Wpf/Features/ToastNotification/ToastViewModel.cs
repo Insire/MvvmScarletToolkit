@@ -7,10 +7,10 @@ using System.Windows.Threading;
 
 namespace MvvmScarletToolkit.Wpf
 {
-    public class ToastViewModel : ObservableObject
+    public class ToastViewModel : ObservableObject, IToast
     {
         private readonly DispatcherTimer _timer;
-        private readonly ToastService _toastService;
+        private readonly IToastService _toastService;
 
         private bool _isRemoving;
         /// <summary>
@@ -44,7 +44,12 @@ namespace MvvmScarletToolkit.Wpf
         /// </summary>
         public ICommand DismissCommand { get; }
 
-        public ToastViewModel(ToastService toastService, string title, string body, Enum toastType, bool isPersistent, TimeSpan displayTime)
+        /// <summary>
+        /// The duration to show the toast for.
+        /// </summary>
+        public TimeSpan VisibleFor { get; }
+
+        public ToastViewModel(IToastService toastService, string title, string body, Enum toastType, bool isPersistent, TimeSpan visibleFor)
         {
             _toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
 
@@ -52,13 +57,14 @@ namespace MvvmScarletToolkit.Wpf
             Body = body;
             ToastType = toastType;
             IsPersistent = isPersistent;
+            VisibleFor = visibleFor;
 
             BeginDismissCommand = new RelayCommand(BeginDismissImpl);
             DismissCommand = new RelayCommand(DismissImpl);
 
             _timer = new DispatcherTimer
             {
-                Interval = displayTime
+                Interval = visibleFor
             };
             _timer.Tick += OnTimerTick;
         }
