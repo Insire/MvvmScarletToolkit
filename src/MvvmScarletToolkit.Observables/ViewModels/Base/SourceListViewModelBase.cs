@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace MvvmScarletToolkit
             Items = new ObservableCollectionExtended<TViewModel>();
 
             _subscription = Connect()
+                .ObserveOn(TaskPoolScheduler.Default)
                 .DistinctUntilChanged()
                 .ObserveOn(_synchronizationContext)
                 .Bind(Items)
