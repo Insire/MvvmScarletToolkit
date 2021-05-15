@@ -50,11 +50,6 @@ namespace MvvmScarletToolkit.Wpf
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            if (configuration.WindowStyleKey is null)
-            {
-                throw new ArgumentNullException(nameof(configuration.WindowStyleKey));
-            }
-
             _items = new SourceList<IToast>();
             Items = new ObservableCollectionExtended<IToast>();
 
@@ -96,7 +91,7 @@ namespace MvvmScarletToolkit.Wpf
                 .ObserveOn(TaskPoolScheduler.Default)
                 .Delay(WindowCloseDelay)
                 .ObserveOn(_synchronizationContext)
-                .Subscribe(p =>
+                .Subscribe(_ =>
                 {
                     if (_items.Count == 0)
                     {
@@ -167,7 +162,7 @@ namespace MvvmScarletToolkit.Wpf
 
         public void Show(IToast toast)
         {
-            _synchronizationContext.Post(new SendOrPostCallback(context => SetupHost((ToastService)context)), this);
+            _synchronizationContext.Post(new SendOrPostCallback(context => SetupHost((ToastService)context!)), this);
 
             _items.Add(toast);
         }

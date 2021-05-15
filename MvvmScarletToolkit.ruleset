@@ -8,6 +8,9 @@
     <Rule Id="IDISP008" Action="Hidden" />
     <Rule Id="IDISP012" Action="Hidden" />
   </Rules>
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp.Features" RuleNamespace="Microsoft.CodeAnalysis.CSharp.Features">
+    <Rule Id="IDE0045" Action="None" />
+  </Rules>
   <Rules AnalyzerId="PropertyChangedAnalyzers" RuleNamespace="PropertyChangedAnalyzers">
     <Rule Id="INPC020" Action="Hidden" />
   </Rules>
