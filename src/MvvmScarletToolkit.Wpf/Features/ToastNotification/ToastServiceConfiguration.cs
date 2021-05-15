@@ -5,6 +5,8 @@ namespace MvvmScarletToolkit.Wpf
 {
     public sealed class ToastServiceConfiguration
     {
+        private const int DefaultIsVisibleForInSeconds = 3;
+
         /// <summary>
         /// the window style to look for
         /// </summary>
@@ -18,7 +20,7 @@ namespace MvvmScarletToolkit.Wpf
         /// <summary>
         /// how lojg to wait, before closing the notification window
         /// </summary>
-        public TimeSpan WindowCloseDelay { get; set; } = TimeSpan.FromSeconds(5);
+        public TimeSpan WindowCloseDelay { get; set; } = TimeSpan.FromSeconds(DefaultIsVisibleForInSeconds);
 
         /// <summary>
         /// how long to wait, before finally removing toasts from the toast collection
@@ -29,5 +31,10 @@ namespace MvvmScarletToolkit.Wpf
         /// The container to display the toast within. Leave this as null to use the primary monitor.
         /// </summary>
         public Rect? Origin { get; set; }
+
+        /// <summary>
+        /// The duration to show the toast for.
+        /// </summary>
+        public TimeSpan ToastVisibleFor { get; set; } = TimeSpan.FromSeconds(DefaultIsVisibleForInSeconds);
     }
 }
