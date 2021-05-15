@@ -170,7 +170,7 @@ namespace MvvmScarletToolkit
                 .Build();
         }
 
-        public override async Task Refresh(CancellationToken token)
+        public async Task Refresh(CancellationToken token)
         {
             var results = await _pagedDataProvider.Get(CurrentPage * PageSize, PageSize, token).ConfigureAwait(false);
 
