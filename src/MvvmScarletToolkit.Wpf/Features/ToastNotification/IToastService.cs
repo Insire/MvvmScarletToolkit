@@ -1,13 +1,13 @@
+using DynamicData.Binding;
 using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Wpf
 {
-    public interface IToastService : INotifyPropertyChanged
+    public interface IToastService : INotifyPropertyChanged, IDisposable
     {
-        ReadOnlyObservableCollection<IToast> Items { get; }
+        IObservableCollection<IToast> Items { get; }
 
         /// <summary>
         /// how long to wait, before finally removing toasts from the toast collection
@@ -15,13 +15,13 @@ namespace MvvmScarletToolkit.Wpf
         TimeSpan ToastCloseDelay { get; }
 
         /// <summary>
-        /// Show a toast notification for a given time frame.
+        /// Show a toast notification according to the service configuration
         /// </summary>
-        Task Show(IToast toast);
+        void Show(IToast toast);
 
         /// <summary>
-        /// Remove a toast notification.
+        /// will close and remove a toast immediately
         /// </summary>
-        Task Remove(IToast toast);
+        ICommand DismissCommand { get; }
     }
 }

@@ -1396,6 +1396,8 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="4" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0"
@@ -1430,6 +1432,12 @@
                                 Grid.ColumnSpan="3"
                                 Command="{Binding ShowToastCommand}"
                                 Content="Send Toast" />
+
+                        <Button Grid.Row="10"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Command="{Binding ShowManyToastsCommand}"
+                                Content="Send many Toasts" />
                     </Grid>
                 </DataTemplate>
             </ContentControl.Resources>

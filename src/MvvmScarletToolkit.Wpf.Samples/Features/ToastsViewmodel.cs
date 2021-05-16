@@ -8,6 +8,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
     public sealed class ToastsViewModel : ViewModelBase
     {
         public ICommand ShowToastCommand { get; }
+        public ICommand ShowManyToastsCommand { get; }
 
         private ToastType _toastType;
         public ToastType ToastType
@@ -44,6 +45,10 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 .Create(ShowToastImpl)
                 .Build();
 
+            ShowManyToastsCommand = commandBuilder
+                .Create(ShowManyToastsImpl)
+                .Build();
+
             _title = "Toast-Title";
             _body = "Toast-Body";
             _toastType = ToastType.Success;
@@ -51,7 +56,19 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         private Task ShowToastImpl(CancellationToken token)
         {
-            return ToastService.Default.Show(Title, Body, ToastType, Persist);
+            ToastService.Default.Show(Title, Body, ToastType, Persist);
+
+            return Task.CompletedTask;
+        }
+
+        private Task ShowManyToastsImpl(CancellationToken token)
+        {
+            for (var i = 0; i < 100; i++)
+            {
+                ToastService.Default.Show(Title, Body, ToastType, Persist);
+            }
+
+            return Task.CompletedTask;
         }
     }
 }
