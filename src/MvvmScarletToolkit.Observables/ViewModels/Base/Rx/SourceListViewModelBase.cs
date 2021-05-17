@@ -86,13 +86,16 @@ namespace MvvmScarletToolkit
             _sourceCache.AddOrUpdate(viewModels);
         }
 
-        protected void AddOrUpdate(TViewModel viewModel)
+        protected TViewModel AddOrUpdate(TViewModel viewModel)
         {
             if (viewModel is null)
             {
                 throw new ArgumentNullException(nameof(viewModel));
             }
+
             _sourceCache.AddOrUpdate(viewModel);
+
+            return viewModel;
         }
 
         public TViewModel? TryGet(string key)
