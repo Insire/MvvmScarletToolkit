@@ -16,7 +16,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Jot" Version="2.1.8" />
-        <PackageReference Include="XamlFlair.WPF" Version="1.2.8" />
+        <PackageReference Include="XamlFlair.WPF" Version="1.2.9" />
     </ItemGroup>
 
     <ItemGroup>
