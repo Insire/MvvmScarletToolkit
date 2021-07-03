@@ -38,7 +38,7 @@ namespace MvvmScarletToolkit.Xamarin.Forms.Samples
         private async Task Reset(CancellationToken token)
         {
             Debug.WriteLine("Resetting ...");
-            await Task.Delay(2000, token);
+            await Task.Delay(2000, token).ConfigureAwait(false);
             Debug.WriteLine("Reset complete ...");
 
             Count = 0;
@@ -53,7 +53,7 @@ namespace MvvmScarletToolkit.Xamarin.Forms.Samples
         private async Task Work(CancellationToken token)
         {
             Debug.WriteLine("Working ...");
-            await Task.Delay(2000, token);
+            await Task.Delay(2000, token).ConfigureAwait(false);
             Debug.WriteLine("Done ...");
 
             token.ThrowIfCancellationRequested();

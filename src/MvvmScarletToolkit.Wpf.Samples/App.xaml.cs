@@ -2,11 +2,13 @@ using Jot;
 using Jot.Storage;
 using MvvmScarletToolkit.Observables;
 using System;
+using System.Runtime.Versioning;
 using System.Threading;
 using System.Windows;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
+    [SupportedOSPlatform("windows7.0")]
     public partial class App : Application
     {
         private readonly Tracker _tracker;
@@ -37,7 +39,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         {
             base.OnExit(e);
 
-            await ScarletExitService.Default.ShutDown();
+            await ScarletExitService.Default.ShutDown().ConfigureAwait(false);
 
             _tracker.PersistAll();
         }
