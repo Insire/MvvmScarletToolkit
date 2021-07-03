@@ -12,4 +12,11 @@
     <PropertyGroup>
         <CodeAnalysisRuleSet>..\..\MvvmScarletToolkit.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
+
+    <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
+        <PackageReference Include="Roslynator.Analyzers" Version="3.2.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 </Project>
