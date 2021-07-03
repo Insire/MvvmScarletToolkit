@@ -88,27 +88,32 @@ namespace MvvmScarletToolkit
                 throw new ArgumentOutOfRangeException(nameof(size), "Must be greater than zero.");
             }
 
-            using (var enumerator = source.GetEnumerator())
+            return BatchInternal();
+
+            IEnumerable<IEnumerable<TSource>> BatchInternal()
             {
-                while (enumerator.MoveNext())
+                using (var enumerator = source.GetEnumerator())
                 {
-                    var i = 0;
-                    // Batch is a local function closing over `i` and `enumerator` that
-                    // executes the inner batch enumeration
-                    IEnumerable<TSource> Batch()
+                    while (enumerator.MoveNext())
                     {
-                        do
+                        var i = 0;
+                        // Batch is a local function closing over `i` and `enumerator` that
+                        // executes the inner batch enumeration
+                        IEnumerable<TSource> Batch()
                         {
-                            yield return enumerator.Current;
+                            do
+                            {
+                                yield return enumerator.Current;
+                            }
+                            while (++i < size && enumerator.MoveNext());
                         }
-                        while (++i < size && enumerator.MoveNext());
-                    }
 
-                    yield return Batch();
+                        yield return Batch();
 
-                    while (++i < size && enumerator.MoveNext())
-                    {
-                        // discard skipped items
+                        while (++i < size && enumerator.MoveNext())
+                        {
+                            // discard skipped items
+                        }
                     }
                 }
             }

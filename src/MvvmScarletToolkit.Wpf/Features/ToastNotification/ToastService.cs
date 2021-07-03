@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit.Wpf
 {
     public class ToastService : ObservableObject, IToastService
     {
-        private static readonly Lazy<ToastService> _default = new Lazy<ToastService>(() => new ToastService(new ToastServiceConfiguration(), SynchronizationContext.Current));
+        private static readonly Lazy<ToastService> _default = new Lazy<ToastService>(() => new ToastService(new ToastServiceConfiguration(), SynchronizationContext.Current!));
 
         public static IToastService Default => _default.Value;
 
