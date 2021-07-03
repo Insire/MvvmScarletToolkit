@@ -11,14 +11,14 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.2" />
-        <PackageReference Include="DynamicData" Version="7.1.16" />
+        <PackageReference Include="DynamicData" Version="7.1.17" />
 
-        <PackageReference Include="Roslynator.Analyzers" Version="3.1.0">
+        <PackageReference Include="Roslynator.Analyzers" Version="3.2.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
-        <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.194">
+        <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.220">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

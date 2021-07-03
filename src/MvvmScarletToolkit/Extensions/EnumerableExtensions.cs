@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,6 +78,45 @@ namespace MvvmScarletToolkit
         public static void AddRange<T>(this ICollection<T> source, IEnumerable<T> items)
         {
             items.ForEach(p => source.Add(p));
+        }
+
+        // source: https://stackoverflow.com/a/44505349
+        public static IEnumerable<IEnumerable<TSource>> Batch<TSource>(this IEnumerable<TSource> source, int size)
+        {
+            if (size <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(size), "Must be greater than zero.");
+            }
+
+            return BatchInternal();
+
+            IEnumerable<IEnumerable<TSource>> BatchInternal()
+            {
+                using (var enumerator = source.GetEnumerator())
+                {
+                    while (enumerator.MoveNext())
+                    {
+                        var i = 0;
+                        // Batch is a local function closing over `i` and `enumerator` that
+                        // executes the inner batch enumeration
+                        IEnumerable<TSource> Batch()
+                        {
+                            do
+                            {
+                                yield return enumerator.Current;
+                            }
+                            while (++i < size && enumerator.MoveNext());
+                        }
+
+                        yield return Batch();
+
+                        while (++i < size && enumerator.MoveNext())
+                        {
+                            // discard skipped items
+                        }
+                    }
+                }
+            }
         }
     }
 }

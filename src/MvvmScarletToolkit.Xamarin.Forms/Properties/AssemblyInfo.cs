@@ -1,5 +1,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -16,3 +18,6 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("9bd9b759-8c12-4e08-971b-9ba21d8247ff")]
+[assembly: Preserve(AllMembers = true)]
+[assembly: XmlnsPrefix("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "mvvm")]
+[assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit")]

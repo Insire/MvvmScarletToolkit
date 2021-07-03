@@ -2,23 +2,34 @@
 <ContentPage x:Class="MvvmScarletToolkit.Xamarin.Forms.Samples.MainPage"
              xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
              xmlns:samples="clr-namespace:MvvmScarletToolkit.Xamarin.Forms.Samples"
              x:DataType="samples:MainPageViewModel">
+
+    <ContentPage.Resources>
+        <mvvm:IsNot x:Key="IsNot" />
+    </ContentPage.Resources>
 
     <ContentPage.BindingContext>
         <samples:MainPageViewModel />
     </ContentPage.BindingContext>
 
-    <StackLayout>
+    <StackLayout Margin="30"
+                 Spacing="30">
+        <Label HorizontalTextAlignment="Center"
+               Text="{Binding Count, StringFormat='{}Amount of Times worked: {0}'}" />
 
-        <Button Padding="30,24,30,0"
-                Command="{Binding WorkCommand}"
+        <Button Command="{Binding WorkCommand}"
                 FontSize="16"
-                IsEnabled="{Binding WorkCommand.IsNotBusy}"
+                IsEnabled="{Binding WorkCommand.IsBusy, Converter={StaticResource IsNot}}"
                 Text="Work" />
 
-        <Button Padding="30,24,30,0"
-                Command="{Binding ResetCommand}"
+        <Button Command="{Binding WorkCommand.CancelCommand}"
+                FontSize="16"
+                IsEnabled="{Binding WorkCommand.IsBusy}"
+                Text="Cancel Work" />
+
+        <Button Command="{Binding ResetCommand}"
                 FontSize="16"
                 IsEnabled="{Binding ResetCommand.IsNotBusy}"
                 Text="Reset" />

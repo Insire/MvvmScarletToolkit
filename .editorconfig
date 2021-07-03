@@ -131,3 +131,22 @@ csharp_using_directive_placement = outside_namespace:suggestion
 dotnet_sort_system_directives_first = false
 dotnet_separate_import_directive_groups = false
 csharp_prefer_simple_using_statement = false:suggestion
+
+dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
+
+# IDE0058: Expression value is never used
+csharp_style_unused_value_expression_statement_preference = discard_variable
+dotnet_diagnostic.IDE0058.severity = none
+
+# IDE0045: Use conditional expression for assignment
+dotnet_style_prefer_conditional_expression_over_assignment = false
+
+# CA2208: Instantiate argument exceptions correctly
+dotnet_diagnostic.CA2208.severity = none
+
+# CA1806: Do not ignore method results
+dotnet_diagnostic.CA1806.severity = none
+
+# IDE0130: Namespace does not match folder structure
+dotnet_style_namespace_match_folder = true
+dotnet_diagnostic.IDE0130.severity = none

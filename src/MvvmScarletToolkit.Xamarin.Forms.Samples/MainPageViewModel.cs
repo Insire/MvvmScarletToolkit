@@ -21,12 +21,15 @@ namespace MvvmScarletToolkit.Xamarin.Forms.Samples
         public MainPageViewModel()
             : base(ScarletCommandBuilder.Default)
         {
-            WorkCommand = CommandBuilder.Create(Work, CanWork)
+            WorkCommand = CommandBuilder
+                .Create(Work, CanWork)
                 .WithSingleExecution("Work")
                 .WithBusyNotification(BusyStack)
+                .WithAsyncCancellation()
                 .Build();
 
-            ResetCommand = CommandBuilder.Create(Reset, CanReset)
+            ResetCommand = CommandBuilder
+                .Create(Reset, CanReset)
                 .WithSingleExecution("Reset")
                 .WithBusyNotification(BusyStack)
                 .Build();
@@ -35,7 +38,7 @@ namespace MvvmScarletToolkit.Xamarin.Forms.Samples
         private async Task Reset(CancellationToken token)
         {
             Debug.WriteLine("Resetting ...");
-            await Task.Delay(2000, token);
+            await Task.Delay(2000, token).ConfigureAwait(false);
             Debug.WriteLine("Reset complete ...");
 
             Count = 0;
@@ -50,10 +53,12 @@ namespace MvvmScarletToolkit.Xamarin.Forms.Samples
         private async Task Work(CancellationToken token)
         {
             Debug.WriteLine("Working ...");
-            await Task.Delay(2000, token);
+            await Task.Delay(2000, token).ConfigureAwait(false);
             Debug.WriteLine("Done ...");
 
-            //Count++;
+            token.ThrowIfCancellationRequested();
+
+            Count++;
         }
 
         private bool CanWork()
