@@ -95,36 +95,34 @@ namespace MvvmScarletToolkit.Commands
                 ? arg
                 : default;
 
+            var externalToken = default(IDisposable);
             try
             {
-                if (_externalBusyStack is null)
+                externalToken = _externalBusyStack?.GetToken();
+
+                using (_internalBusyStack.GetToken())
                 {
-                    await ExecuteAsyncInternal(argument!);
-                }
-                else
-                {
-                    using (_externalBusyStack!.GetToken())
+                    try
                     {
-                        await ExecuteAsyncInternal(argument!);
+                        _cancelCommand.NotifyCommandStarting();
+
+                        // if we intend to react with a binding to the currently running state of the command, we need to tell it to rerun CanExecute
+                        CommandManager.InvalidateRequerySuggested();
+
+                        Execution = new NotifyTaskCompletion(_execute.Invoke(argument!, _cancelCommand.Token), _exceptionHandler);
+                        await Execution.TaskCompletion.ConfigureAwait(true); // return to UI thread here
+                    }
+                    finally
+                    {
+                        _cancelCommand.NotifyCommandFinished();
                     }
                 }
             }
             finally
             {
+                externalToken?.Dispose();
+
                 RaiseCanExecuteChanged();
-                _cancelCommand.NotifyCommandFinished();
-            }
-        }
-
-        private async Task ExecuteAsyncInternal(TArgument parameter)
-        {
-            using (_internalBusyStack.GetToken())
-            {
-                _cancelCommand.NotifyCommandStarting();
-
-                Execution = new NotifyTaskCompletion(_execute.Invoke(parameter, _cancelCommand.Token));
-                await Execution.TaskCompletion
-                    .ConfigureAwait(true); // return to UI thread here
             }
         }
     }

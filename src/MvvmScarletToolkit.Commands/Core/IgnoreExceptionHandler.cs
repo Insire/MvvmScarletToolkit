@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {
-    internal sealed class IgnoreExceptionHandler : IScarletExceptionHandler
+    public sealed class IgnoreExceptionHandler : IScarletExceptionHandler
     {
         private static readonly Lazy<IScarletExceptionHandler> _default = new Lazy<IScarletExceptionHandler>(() => new IgnoreExceptionHandler());
 
