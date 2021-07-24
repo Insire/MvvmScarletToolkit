@@ -1,4 +1,4 @@
-namespace MvvmScarletToolkit.Abstractions
+namespace MvvmScarletToolkit
 {
     public interface IBuilder<out TElement>
     {

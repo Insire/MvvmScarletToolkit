@@ -1,5 +1,4 @@
 using Microsoft.Toolkit.Mvvm.Messaging;
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using System;
 using System.ComponentModel;

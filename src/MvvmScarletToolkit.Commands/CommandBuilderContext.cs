@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +11,6 @@ namespace MvvmScarletToolkit.Commands
     /// </summary>
     /// <typeparam name="TArgument">The argument type, that the to be created command is supposed to accept</typeparam>
     [Bindable(false)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC001:The class has mutable properties and should implement INotifyPropertyChanged.", Justification = "Analyzer fails")]
     public sealed class CommandBuilderContext<TArgument> : AbstractBuilder<ConcurrentCommandBase>
     {
         private readonly Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>> _decorators;

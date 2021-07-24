@@ -1,5 +1,4 @@
 using Microsoft.Toolkit.Mvvm.ComponentModel;
-using MvvmScarletToolkit.Abstractions;
 using System;
 
 namespace MvvmScarletToolkit.Observables

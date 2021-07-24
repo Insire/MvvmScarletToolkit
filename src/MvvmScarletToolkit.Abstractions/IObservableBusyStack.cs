@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace MvvmScarletToolkit.Abstractions
+namespace MvvmScarletToolkit
 {
     public interface IObservableBusyStack : IObservable<bool>, IBusyStack, IDisposable
     {

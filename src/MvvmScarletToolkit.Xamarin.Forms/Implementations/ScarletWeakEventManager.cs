@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using System;
 using System.ComponentModel;
 using Xamarin.Forms;
