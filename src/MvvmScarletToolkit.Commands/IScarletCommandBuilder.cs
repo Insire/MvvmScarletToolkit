@@ -9,6 +9,7 @@ namespace MvvmScarletToolkit
 {
     public interface IScarletCommandBuilder
     {
+        IScarletExceptionHandler ExceptionHandler { get; }
         IScarletCommandManager CommandManager { get; }
         IScarletDispatcher Dispatcher { get; }
         IMessenger Messenger { get; }

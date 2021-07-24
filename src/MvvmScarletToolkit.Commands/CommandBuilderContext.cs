@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MvvmScarletToolkit.Commands
 {
     /// <summary>
-    /// Context class for creating and configuring <see cref="MvvmScarletToolkit.Commands.ConcurrentCommand{TArgument}"/> via the fluent builder pattern
+    /// Context class for creating and configuring <see cref="ConcurrentCommand{TArgument}"/> via the fluent builder pattern
     /// </summary>
     /// <typeparam name="TArgument">The argument type, that the to be created command is supposed to accept</typeparam>
     [Bindable(false)]
@@ -20,6 +20,7 @@ namespace MvvmScarletToolkit.Commands
         private readonly Func<TArgument, bool> _canExcute;
 
         internal IScarletCommandManager CommandManager { get; }
+        internal IScarletExceptionHandler ExceptionHandler { get; }
 
         /// <summary>
         /// optional <see cref="System.Windows.Input.ICommand"/> for Cancellation-Support
@@ -31,9 +32,14 @@ namespace MvvmScarletToolkit.Commands
         /// </summary>
         internal IBusyStack? BusyStack { get; set; }
 
-        public CommandBuilderContext(in IScarletCommandManager commandManager, in Func<Action<bool>, IBusyStack> busyStackFactory, in Func<TArgument, CancellationToken, Task> execute, in Func<TArgument, bool> canExecute)
+        public CommandBuilderContext(in IScarletCommandManager commandManager,
+                                     in IScarletExceptionHandler exceptionHandler,
+                                     in Func<Action<bool>, IBusyStack> busyStackFactory,
+                                     in Func<TArgument, CancellationToken, Task> execute,
+                                     in Func<TArgument, bool> canExecute)
         {
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
+            ExceptionHandler = exceptionHandler ?? throw new ArgumentNullException(nameof(exceptionHandler));
 
             _decorators = new Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>>();
             _busyStackFactory = busyStackFactory ?? throw new ArgumentNullException(nameof(busyStackFactory));
@@ -63,15 +69,15 @@ namespace MvvmScarletToolkit.Commands
         {
             if (_canExcute is null)
             {
-                return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, _execute);
+                return new ConcurrentCommand<TArgument>(CommandManager, ExceptionHandler, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, _execute);
             }
 
             if (BusyStack is null)
             {
-                return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, _execute, _canExcute);
+                return new ConcurrentCommand<TArgument>(CommandManager, ExceptionHandler, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, _execute, _canExcute);
             }
 
-            return new ConcurrentCommand<TArgument>(CommandManager, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, BusyStack, _execute, _canExcute);
+            return new ConcurrentCommand<TArgument>(CommandManager, ExceptionHandler, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, BusyStack, _execute, _canExcute);
         }
 
         private ConcurrentCommandBase WrapInDecorators(in ConcurrentCommandBase command)

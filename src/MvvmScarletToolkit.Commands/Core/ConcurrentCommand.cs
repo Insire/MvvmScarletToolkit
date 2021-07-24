@@ -10,6 +10,7 @@ namespace MvvmScarletToolkit.Commands
     /// </summary>
     public sealed class ConcurrentCommand<TArgument> : GenericConcurrentCommandBase
     {
+        private readonly IScarletExceptionHandler _exceptionHandler;
         private readonly Func<TArgument, CancellationToken, Task> _execute;
         private readonly Func<TArgument, bool>? _canExecute;
 
@@ -17,23 +18,39 @@ namespace MvvmScarletToolkit.Commands
         private readonly IBusyStack? _externalBusyStack;
         private readonly IBusyStack _internalBusyStack;
 
-        internal ConcurrentCommand(in IScarletCommandManager commandManager, in ICancelCommand cancelCommand, in Func<Action<bool>, IBusyStack> busyStackFactory, in Func<TArgument, CancellationToken, Task> execute)
+        internal ConcurrentCommand(in IScarletCommandManager commandManager,
+                                   in IScarletExceptionHandler exceptionHandler,
+                                   in ICancelCommand cancelCommand,
+                                   in Func<Action<bool>, IBusyStack> busyStackFactory,
+                                   in Func<TArgument, CancellationToken, Task> execute)
             : base(commandManager)
         {
+            _exceptionHandler = exceptionHandler ?? throw new ArgumentNullException(nameof(exceptionHandler));
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             CancelCommand = _cancelCommand = cancelCommand ?? throw new ArgumentNullException(nameof(cancelCommand));
 
             _internalBusyStack = busyStackFactory?.Invoke(hasItems => IsBusy = hasItems) ?? throw new ArgumentNullException(nameof(busyStackFactory));
         }
 
-        internal ConcurrentCommand(in IScarletCommandManager commandManager, in ICancelCommand cancelCommand, in Func<Action<bool>, IBusyStack> busyStackFactory, in Func<TArgument, CancellationToken, Task> command, in Func<TArgument, bool> canExecuteEvaluator)
-            : this(commandManager, cancelCommand, busyStackFactory, command)
+        internal ConcurrentCommand(in IScarletCommandManager commandManager,
+                                   in IScarletExceptionHandler exceptionHandler,
+                                   in ICancelCommand cancelCommand,
+                                   in Func<Action<bool>, IBusyStack> busyStackFactory,
+                                   in Func<TArgument, CancellationToken, Task> command,
+                                   in Func<TArgument, bool> canExecuteEvaluator)
+            : this(commandManager, exceptionHandler, cancelCommand, busyStackFactory, command)
         {
             _canExecute = canExecuteEvaluator ?? throw new ArgumentNullException(nameof(canExecuteEvaluator));
         }
 
-        internal ConcurrentCommand(in IScarletCommandManager commandManager, in ICancelCommand cancelCommand, in Func<Action<bool>, IBusyStack> busyStackFactory, in IBusyStack externalBusyStack, in Func<TArgument, CancellationToken, Task> command, in Func<TArgument, bool> canExecuteEvaluator)
-            : this(commandManager, cancelCommand, busyStackFactory, command, canExecuteEvaluator)
+        internal ConcurrentCommand(in IScarletCommandManager commandManager,
+                                   in IScarletExceptionHandler exceptionHandler,
+                                   in ICancelCommand cancelCommand,
+                                   in Func<Action<bool>, IBusyStack> busyStackFactory,
+                                   in IBusyStack externalBusyStack,
+                                   in Func<TArgument, CancellationToken, Task> command,
+                                   in Func<TArgument, bool> canExecuteEvaluator)
+            : this(commandManager, exceptionHandler, cancelCommand, busyStackFactory, command, canExecuteEvaluator)
         {
             _externalBusyStack = externalBusyStack ?? throw new ArgumentNullException(nameof(externalBusyStack));
         }

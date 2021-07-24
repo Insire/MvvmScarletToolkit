@@ -6,12 +6,14 @@ namespace MvvmScarletToolkit.Commands
     internal sealed class ConcurrentCancelCommand : GenericConcurrentCommandBase, ICancelCommand
     {
         private CancellationTokenSource? _cts;
+        private readonly IScarletExceptionHandler _exceptionHandler;
 
         public CancellationToken Token => _cts?.Token ?? CancellationToken.None;
 
-        public ConcurrentCancelCommand(in IScarletCommandManager commandManager)
+        public ConcurrentCancelCommand(in IScarletCommandManager commandManager, in IScarletExceptionHandler exceptionHandler)
             : base(commandManager)
         {
+            _exceptionHandler = exceptionHandler ?? throw new System.ArgumentNullException(nameof(exceptionHandler));
         }
 
         public void NotifyCommandStarting()
@@ -58,7 +60,7 @@ namespace MvvmScarletToolkit.Commands
                 _cts?.Cancel();
                 _cts?.Dispose();
                 _cts = null;
-            }));
+            }), _exceptionHandler);
 
             OnPropertyChanged(nameof(Completion));
 

@@ -10,23 +10,23 @@ namespace MvvmScarletToolkit.Tests
         [Test]
         public void Ctor_DoesntThrow()
         {
-            var _ = new CommandBuilderContext<object>(Utils.GetTestCommandManager(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+            var _ = new CommandBuilderContext<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
         }
 
         [Test]
         public void Ctor_ThrowsWithNullDependencies()
         {
-            Assert.Throws<ArgumentNullException>(() => new CommandBuilderContext<object>(null, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute));
-            Assert.Throws<ArgumentNullException>(() => new CommandBuilderContext<object>(Utils.GetTestCommandManager(), null, Utils.TestExecute, Utils.TestCanExecute));
-            Assert.Throws<ArgumentNullException>(() => new CommandBuilderContext<object>(Utils.GetTestCommandManager(), Utils.TestBusyStackFactory, null, Utils.TestCanExecute));
-            Assert.Throws<ArgumentNullException>(() => new CommandBuilderContext<object>(Utils.GetTestCommandManager(), Utils.TestBusyStackFactory, Utils.TestExecute, null));
+            Assert.Throws<ArgumentNullException>(() => new CommandBuilderContext<object>(null, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute));
+            Assert.Throws<ArgumentNullException>(() => new CommandBuilderContext<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), null, Utils.TestExecute, Utils.TestCanExecute));
+            Assert.Throws<ArgumentNullException>(() => new CommandBuilderContext<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, null, Utils.TestCanExecute));
+            Assert.Throws<ArgumentNullException>(() => new CommandBuilderContext<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, null));
         }
 
         [Test]
         public void Ctor_ShouldNotInitializeAllProperties()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+            var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             // should not be initialized by default, since they represent optional features
             Assert.IsNull(context.BusyStack);
@@ -37,7 +37,7 @@ namespace MvvmScarletToolkit.Tests
         public void Ctor_ShouldInitializeDependencyProperties()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+            var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             Assert.IsNotNull(context.CommandManager);
             Assert.AreEqual(commandManager, context.CommandManager);
@@ -47,7 +47,7 @@ namespace MvvmScarletToolkit.Tests
         public void Build_ShouldCreateValidCommandInstance()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+            var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             var command = context.Build();
             Assert.IsNotNull(command);
@@ -57,7 +57,7 @@ namespace MvvmScarletToolkit.Tests
         public void Build_ShouldCreateDefaultCommandInstance()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+            var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             var command = context.Build();
 
@@ -71,7 +71,7 @@ namespace MvvmScarletToolkit.Tests
         public void Build_ShouldAddConcurrentCancellationSupport()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var command = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
+            var command = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
                 .WithAsyncCancellation()
                 .Build();
 
@@ -83,7 +83,7 @@ namespace MvvmScarletToolkit.Tests
         public void Build_ShouldAddCancellationSupport()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var command = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
+            var command = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
                 .WithCancellation()
                 .Build();
 
@@ -96,7 +96,7 @@ namespace MvvmScarletToolkit.Tests
         {
             var commandManager = Utils.GetTestCommandManager();
             var customCancelCommand = NSubstitute.Substitute.For<ICancelCommand>();
-            var command = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
+            var command = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
                 .WithCustomCancellation(customCancelCommand)
                 .Build();
 
@@ -108,7 +108,7 @@ namespace MvvmScarletToolkit.Tests
         public void Build_ShouldThrowForNullCancelCommand()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+            var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             Assert.Throws<ArgumentNullException>(() => context.WithCustomCancellation(null));
         }
@@ -117,7 +117,7 @@ namespace MvvmScarletToolkit.Tests
         public void Build_ShouldCallAllDecorators()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+            var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             var count = 0;
             var decoratorCount = 20;
@@ -140,7 +140,7 @@ namespace MvvmScarletToolkit.Tests
         public void Build_ShouldAddAllDecoratorsInCorrectOrder()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+            var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             var count = 0;
             var decoratorCount = 3;
@@ -180,7 +180,7 @@ namespace MvvmScarletToolkit.Tests
         {
             var commandManager = Utils.GetTestCommandManager();
             var customBusyStack = NSubstitute.Substitute.For<IBusyStack>();
-            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+            var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             context.WithBusyNotification(customBusyStack);
 
@@ -191,7 +191,7 @@ namespace MvvmScarletToolkit.Tests
         public void Build_ShouldThrowForNullBusyStack()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var context = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+            var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             Assert.Throws<ArgumentNullException>(() => context.WithBusyNotification(null));
         }
@@ -200,7 +200,7 @@ namespace MvvmScarletToolkit.Tests
         public void Build_ShouldAddSingleExecutionDecorator()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var command = new CommandBuilderContext<object>(commandManager, Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
+            var command = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
                 .WithSingleExecution()
                 .Build();
 
