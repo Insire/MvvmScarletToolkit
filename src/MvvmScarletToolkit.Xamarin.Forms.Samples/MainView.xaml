@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage x:Class="MvvmScarletToolkit.Xamarin.Forms.Samples.MainView"
+            xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:samples="clr-namespace:MvvmScarletToolkit.Xamarin.Forms.Samples">
+
+    <samples:RegularCommandPage />
+
+    <samples:StatefulCommandPage />
+
+    <samples:ThrowingCommandPage />
+</TabbedPage>
