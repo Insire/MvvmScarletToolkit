@@ -32,5 +32,8 @@
     <EmbeddedResource Update="Features\ThrowingCommand\ThrowingCommandPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Features\Progress\ProgressPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

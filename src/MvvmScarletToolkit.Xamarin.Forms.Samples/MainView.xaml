@@ -9,4 +9,6 @@
     <samples:StatefulCommandPage />
 
     <samples:ThrowingCommandPage />
+
+    <samples:ProgressPage />
 </TabbedPage>
