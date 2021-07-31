@@ -21,3 +21,4 @@ using Xamarin.Forms.Internals;
 [assembly: Preserve(AllMembers = true)]
 [assembly: XmlnsPrefix("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "mvvm")]
 [assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit")]
+[assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Xamarin.Forms")]

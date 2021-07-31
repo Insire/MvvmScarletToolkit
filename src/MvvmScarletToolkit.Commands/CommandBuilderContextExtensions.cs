@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using System;
 
@@ -24,20 +23,21 @@ namespace MvvmScarletToolkit
         {
             ValdiateContextForNull(context);
 
-            context.CancelCommand = new ConcurrentCancelCommand(context.CommandManager);
+            context.CancelCommand = new ConcurrentCancelCommand(context.CommandManager, context.ExceptionHandler);
             return context;
         }
 
         /// <summary>
         /// Provide a custom implementation of <see cref="ICancelCommand"/>
         /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
         public static CommandBuilderContext<TArgument> WithCustomCancellation<TArgument>(this CommandBuilderContext<TArgument> context, in ICancelCommand cancelCommand)
         {
             ValdiateContextForNull(context);
 
             if (cancelCommand is null)
             {
-                throw new ArgumentNullException("This method should be called with a non null instance of ICancelCommand.");
+                throw new ArgumentNullException(nameof(cancelCommand), "This method should be called with a non null instance of ICancelCommand.");
             }
 
             context.CancelCommand = cancelCommand;
@@ -47,13 +47,14 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// Provide a custom implementation of <see cref="IBusyStack"/>
         /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
         public static CommandBuilderContext<TArgument> WithBusyNotification<TArgument>(this CommandBuilderContext<TArgument> context, in IBusyStack busyStack)
         {
             ValdiateContextForNull(context);
 
             if (busyStack is null)
             {
-                throw new ArgumentNullException("This method should be called with a non null instance of IBusyStack.");
+                throw new ArgumentNullException(nameof(busyStack), "This method should be called with a non null instance of IBusyStack.");
             }
 
             context.BusyStack = busyStack;
@@ -66,7 +67,7 @@ namespace MvvmScarletToolkit
         /// </summary>
         public static CommandBuilderContext<TArgument> WithSingleExecution<TArgument>(this CommandBuilderContext<TArgument> context)
         {
-            return context.WithSingleExecution(default(string));
+            return context.WithSingleExecution(default);
         }
 
         public static CommandBuilderContext<TArgument> WithSingleExecution<TArgument>(this CommandBuilderContext<TArgument> context, string? name)
@@ -87,7 +88,7 @@ namespace MvvmScarletToolkit
         {
             if (context is null)
             {
-                throw new ArgumentNullException("This method should be called on a non null instance of CommandBuilderContext<TArgument>.");
+                throw new ArgumentNullException(nameof(context), "This method should be called on a non null instance of CommandBuilderContext<TArgument>.");
             }
         }
     }

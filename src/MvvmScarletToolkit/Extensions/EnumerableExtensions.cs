@@ -80,42 +80,39 @@ namespace MvvmScarletToolkit
             items.ForEach(p => source.Add(p));
         }
 
-        // source: https://stackoverflow.com/a/44505349
+        // source: https://stackoverflow.com/a/13731823
         public static IEnumerable<IEnumerable<TSource>> Batch<TSource>(this IEnumerable<TSource> source, int size)
         {
             if (size <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(size), "Must be greater than zero.");
+                yield break;
             }
 
-            return BatchInternal();
+            TSource[]? bucket = null;
+            var count = 0;
 
-            IEnumerable<IEnumerable<TSource>> BatchInternal()
+            foreach (var item in source)
             {
-                using (var enumerator = source.GetEnumerator())
+                if (bucket == null)
                 {
-                    while (enumerator.MoveNext())
-                    {
-                        var i = 0;
-                        // Batch is a local function closing over `i` and `enumerator` that
-                        // executes the inner batch enumeration
-                        IEnumerable<TSource> Batch()
-                        {
-                            do
-                            {
-                                yield return enumerator.Current;
-                            }
-                            while (++i < size && enumerator.MoveNext());
-                        }
-
-                        yield return Batch();
-
-                        while (++i < size && enumerator.MoveNext())
-                        {
-                            // discard skipped items
-                        }
-                    }
+                    bucket = new TSource[size];
                 }
+
+                bucket[count++] = item;
+                if (count != size)
+                {
+                    continue;
+                }
+
+                yield return bucket;
+
+                bucket = null;
+                count = 0;
+            }
+
+            if (bucket != null && count > 0)
+            {
+                yield return bucket.Take(count).ToArray();
             }
         }
     }

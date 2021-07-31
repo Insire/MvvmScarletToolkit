@@ -1,7 +1,7 @@
 using Microsoft.Toolkit.Mvvm.ComponentModel;
-using MvvmScarletToolkit.Abstractions;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace MvvmScarletToolkit.Observables
 {

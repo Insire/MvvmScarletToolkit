@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 
-namespace MvvmScarletToolkit.Abstractions
+namespace MvvmScarletToolkit
 {
     public interface ILocalizationViewModel : INotifyPropertyChanged, IDisposable
     {

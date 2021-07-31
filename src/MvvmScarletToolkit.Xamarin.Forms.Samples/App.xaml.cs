@@ -8,7 +8,7 @@ namespace MvvmScarletToolkit.Xamarin.Forms.Samples
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = new MainView();
         }
 
         protected override void OnStart()

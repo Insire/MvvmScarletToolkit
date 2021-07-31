@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -11,6 +10,7 @@ namespace MvvmScarletToolkit.Commands
     /// </summary>
     public sealed class ConcurrentCommand<TArgument> : GenericConcurrentCommandBase
     {
+        private readonly IScarletExceptionHandler _exceptionHandler;
         private readonly Func<TArgument, CancellationToken, Task> _execute;
         private readonly Func<TArgument, bool>? _canExecute;
 
@@ -18,23 +18,39 @@ namespace MvvmScarletToolkit.Commands
         private readonly IBusyStack? _externalBusyStack;
         private readonly IBusyStack _internalBusyStack;
 
-        internal ConcurrentCommand(in IScarletCommandManager commandManager, in ICancelCommand cancelCommand, in Func<Action<bool>, IBusyStack> busyStackFactory, in Func<TArgument, CancellationToken, Task> execute)
+        internal ConcurrentCommand(in IScarletCommandManager commandManager,
+                                   in IScarletExceptionHandler exceptionHandler,
+                                   in ICancelCommand cancelCommand,
+                                   in Func<Action<bool>, IBusyStack> busyStackFactory,
+                                   in Func<TArgument, CancellationToken, Task> execute)
             : base(commandManager)
         {
+            _exceptionHandler = exceptionHandler ?? throw new ArgumentNullException(nameof(exceptionHandler));
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             CancelCommand = _cancelCommand = cancelCommand ?? throw new ArgumentNullException(nameof(cancelCommand));
 
             _internalBusyStack = busyStackFactory?.Invoke(hasItems => IsBusy = hasItems) ?? throw new ArgumentNullException(nameof(busyStackFactory));
         }
 
-        internal ConcurrentCommand(in IScarletCommandManager commandManager, in ICancelCommand cancelCommand, in Func<Action<bool>, IBusyStack> busyStackFactory, in Func<TArgument, CancellationToken, Task> command, in Func<TArgument, bool> canExecuteEvaluator)
-            : this(commandManager, cancelCommand, busyStackFactory, command)
+        internal ConcurrentCommand(in IScarletCommandManager commandManager,
+                                   in IScarletExceptionHandler exceptionHandler,
+                                   in ICancelCommand cancelCommand,
+                                   in Func<Action<bool>, IBusyStack> busyStackFactory,
+                                   in Func<TArgument, CancellationToken, Task> command,
+                                   in Func<TArgument, bool> canExecuteEvaluator)
+            : this(commandManager, exceptionHandler, cancelCommand, busyStackFactory, command)
         {
             _canExecute = canExecuteEvaluator ?? throw new ArgumentNullException(nameof(canExecuteEvaluator));
         }
 
-        internal ConcurrentCommand(in IScarletCommandManager commandManager, in ICancelCommand cancelCommand, in Func<Action<bool>, IBusyStack> busyStackFactory, in IBusyStack externalBusyStack, in Func<TArgument, CancellationToken, Task> command, in Func<TArgument, bool> canExecuteEvaluator)
-            : this(commandManager, cancelCommand, busyStackFactory, command, canExecuteEvaluator)
+        internal ConcurrentCommand(in IScarletCommandManager commandManager,
+                                   in IScarletExceptionHandler exceptionHandler,
+                                   in ICancelCommand cancelCommand,
+                                   in Func<Action<bool>, IBusyStack> busyStackFactory,
+                                   in IBusyStack externalBusyStack,
+                                   in Func<TArgument, CancellationToken, Task> command,
+                                   in Func<TArgument, bool> canExecuteEvaluator)
+            : this(commandManager, exceptionHandler, cancelCommand, busyStackFactory, command, canExecuteEvaluator)
         {
             _externalBusyStack = externalBusyStack ?? throw new ArgumentNullException(nameof(externalBusyStack));
         }
@@ -79,36 +95,34 @@ namespace MvvmScarletToolkit.Commands
                 ? arg
                 : default;
 
+            var externalToken = default(IDisposable);
             try
             {
-                if (_externalBusyStack is null)
+                externalToken = _externalBusyStack?.GetToken();
+
+                using (_internalBusyStack.GetToken())
                 {
-                    await ExecuteAsyncInternal(argument!);
-                }
-                else
-                {
-                    using (_externalBusyStack!.GetToken())
+                    try
                     {
-                        await ExecuteAsyncInternal(argument!);
+                        _cancelCommand.NotifyCommandStarting();
+
+                        // if we intend to react with a binding to the currently running state of the command, we need to tell it to rerun CanExecute
+                        CommandManager.InvalidateRequerySuggested();
+
+                        Execution = new NotifyTaskCompletion(_execute.Invoke(argument!, _cancelCommand.Token), _exceptionHandler);
+                        await Execution.TaskCompletion.ConfigureAwait(true); // return to UI thread here
+                    }
+                    finally
+                    {
+                        _cancelCommand.NotifyCommandFinished();
                     }
                 }
             }
             finally
             {
+                externalToken?.Dispose();
+
                 RaiseCanExecuteChanged();
-                _cancelCommand.NotifyCommandFinished();
-            }
-        }
-
-        private async Task ExecuteAsyncInternal(TArgument parameter)
-        {
-            using (_internalBusyStack.GetToken())
-            {
-                _cancelCommand.NotifyCommandStarting();
-
-                Execution = new NotifyTaskCompletion(_execute.Invoke(parameter, _cancelCommand.Token));
-                await Execution.TaskCompletion
-                    .ConfigureAwait(true); // return to UI thread here
             }
         }
     }

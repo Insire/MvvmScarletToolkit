@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -13,16 +12,21 @@ namespace MvvmScarletToolkit.Observables
     {
         private readonly ConcurrentBag<IDisposable> _items;
         private readonly Action<bool> _onChanged;
-        private readonly IScarletDispatcher _dispatcher;
 
-        public BusyStack(in Action<bool> onChanged, in IScarletDispatcher dispatcher)
+        public BusyStack(in Action<bool> onChanged)
         {
-            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
             _items = new ConcurrentBag<IDisposable>();
         }
 
-        public async Task Pull()
+        [Obsolete("The IScarletDispatcher instance is not being used here anymore")]
+        public BusyStack(in Action<bool> onChanged, in IScarletDispatcher dispatcher)
+        {
+            _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
+            _items = new ConcurrentBag<IDisposable>();
+        }
+
+        public Task Pull()
         {
             var oldValue = _items.TryPeek(out _);
             _ = _items.TryTake(out _);
@@ -30,13 +34,15 @@ namespace MvvmScarletToolkit.Observables
 
             if (oldValue.Equals(newValue))
             {
-                return;
+                return Task.CompletedTask;
             }
 
-            await InvokeOnChanged(newValue).ConfigureAwait(false);
+            InvokeOnChanged(newValue);
+
+            return Task.CompletedTask;
         }
 
-        public async Task Push(IDisposable token)
+        public Task Push(IDisposable token)
         {
             var oldValue = _items.TryPeek(out _);
             _items.Add(token);
@@ -44,10 +50,12 @@ namespace MvvmScarletToolkit.Observables
 
             if (oldValue.Equals(newValue))
             {
-                return;
+                return Task.CompletedTask;
             }
 
-            await InvokeOnChanged(newValue).ConfigureAwait(false);
+            InvokeOnChanged(newValue);
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -61,9 +69,9 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [DebuggerStepThrough]
-        private Task InvokeOnChanged(bool newValue)
+        private void InvokeOnChanged(bool newValue)
         {
-            return _dispatcher.Invoke(() => _onChanged(newValue));
+            _onChanged(newValue);
         }
     }
 }

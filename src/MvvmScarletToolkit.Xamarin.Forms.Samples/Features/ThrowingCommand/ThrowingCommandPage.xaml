@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="MvvmScarletToolkit.Xamarin.Forms.Samples.ThrowingCommandPage"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:samples="clr-namespace:MvvmScarletToolkit.Xamarin.Forms.Samples"
+             Title="Command with Exception"
+             x:DataType="samples:ThrowingCommandViewModel">
+
+    <ContentPage.BindingContext>
+        <samples:ThrowingCommandViewModel />
+    </ContentPage.BindingContext>
+
+    <StackLayout Margin="30"
+                 Spacing="30">
+
+        <Label Text="{Binding Description}" />
+
+        <ActivityIndicator IsRunning="{Binding Command.IsBusy}" />
+
+        <Button Command="{Binding Command}"
+                FontSize="16"
+                Text="Run">
+            <Button.Triggers>
+                <DataTrigger Binding="{Binding Command.IsBusy}"
+                             TargetType="{x:Type Button}"
+                             Value="True">
+                    <Setter Property="Text" Value="Cancel" />
+                    <Setter Property="Command" Value="{Binding Command.CancelCommand}" />
+                </DataTrigger>
+            </Button.Triggers>
+        </Button>
+    </StackLayout>
+</ContentPage>

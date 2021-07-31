@@ -1,5 +1,4 @@
 using Microsoft.Toolkit.Mvvm.Messaging;
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using System;
 using System.ComponentModel;
@@ -10,6 +9,7 @@ namespace MvvmScarletToolkit
 {
     public interface IScarletCommandBuilder
     {
+        IScarletExceptionHandler ExceptionHandler { get; }
         IScarletCommandManager CommandManager { get; }
         IScarletDispatcher Dispatcher { get; }
         IMessenger Messenger { get; }

@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace MvvmScarletToolkit
 {
@@ -17,12 +16,14 @@ namespace MvvmScarletToolkit
 
         public Task Invoke(Action action, CancellationToken token)
         {
-            return Device.InvokeOnMainThreadAsync(action);
+            action.Invoke();
+
+            return Task.CompletedTask;
         }
 
         public Task<T> Invoke<T>(Func<T> action, CancellationToken token)
         {
-            return Device.InvokeOnMainThreadAsync(action);
+            return Task.FromResult(action.Invoke());
         }
     }
 }

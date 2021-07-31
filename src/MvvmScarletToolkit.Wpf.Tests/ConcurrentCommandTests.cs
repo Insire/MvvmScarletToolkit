@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using MvvmScarletToolkit.Commands;
 using NUnit.Framework;
 using System;
@@ -14,49 +13,49 @@ namespace MvvmScarletToolkit.Tests
         [OneTimeSetUp]
         public static void Setup()
         {
-            _builder = new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory);
+            _builder = new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory);
         }
 
         [Test]
         public void Ctor_DoesNotThrow()
         {
-            new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object o, CancellationToken token) => Task.CompletedTask);
+            new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object o, CancellationToken token) => Task.CompletedTask);
         }
 
         [Test]
         public void Ctor_DoesThrowForNullCommandManager()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(null, Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object o, CancellationToken token) => Task.CompletedTask));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(null, Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object o, CancellationToken token) => Task.CompletedTask));
         }
 
         [Test]
         public void Ctor_DoesThrowForNullCancelCommand()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), null, Utils.GetTestBusyStackFactory(), (object o, CancellationToken token) => Task.CompletedTask));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), null, Utils.GetTestBusyStackFactory(), (object o, CancellationToken token) => Task.CompletedTask));
         }
 
         [Test]
         public void Ctor_DoesThrowForNullBusyStackFactory()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestCancelCommand(), null, (object o, CancellationToken token) => Task.CompletedTask));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), null, (object o, CancellationToken token) => Task.CompletedTask));
         }
 
         [Test]
         public void Ctor_DoesThrowForNullBusyStack()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), default(IBusyStack), (object o, CancellationToken token) => Task.CompletedTask, (object o) => true));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), default(IBusyStack), (object o, CancellationToken token) => Task.CompletedTask, (object o) => true));
         }
 
         [Test]
         public void Ctor_DoesThrowForNullExecute()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), null));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), null));
         }
 
         [Test]
         public void Ctor_DoesThrowForNullCanExecute()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object o, CancellationToken token) => Task.CompletedTask, null));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object o, CancellationToken token) => Task.CompletedTask, null));
         }
 
         [Test]

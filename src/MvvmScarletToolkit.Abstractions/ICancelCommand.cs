@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Windows.Input;
 
-namespace MvvmScarletToolkit.Abstractions
+namespace MvvmScarletToolkit
 {
     public interface ICancelCommand : ICommand, IDisposable
     {

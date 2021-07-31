@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -11,19 +10,17 @@ namespace MvvmScarletToolkit.Observables
     /// Will notify its owner and all subscribers via a provided action on if it contains more tokens
     /// </summary>
     [DebuggerDisplay("{_id}")]
-    public sealed partial class ObservableBusyStack : IObservableBusyStack
+    public sealed class ObservableBusyStack : IObservableBusyStack
     {
         private readonly string _id;
         private readonly ConcurrentBag<IDisposable> _items;
         private readonly ConcurrentDictionary<IObserver<bool>, object> _observers;
         private readonly Action<bool> _onChanged;
-        private readonly IScarletDispatcher _dispatcher;
 
         private bool _disposed;
 
-        public ObservableBusyStack(in Action<bool> onChanged, in IScarletDispatcher dispatcher)
+        public ObservableBusyStack(in Action<bool> onChanged)
         {
-            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
 
             _id = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
@@ -31,7 +28,17 @@ namespace MvvmScarletToolkit.Observables
             _observers = new ConcurrentDictionary<IObserver<bool>, object>();
         }
 
-        public async Task Pull()
+        [Obsolete("The IScarletDispatcher instance is not being used here anymore")]
+        public ObservableBusyStack(in Action<bool> onChanged, in IScarletDispatcher dispatcher)
+        {
+            _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
+
+            _id = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            _items = new ConcurrentBag<IDisposable>();
+            _observers = new ConcurrentDictionary<IObserver<bool>, object>();
+        }
+
+        public Task Pull()
         {
             if (_disposed)
             {
@@ -44,17 +51,19 @@ namespace MvvmScarletToolkit.Observables
 
             if (oldValue.Equals(newValue))
             {
-                return;
+                return Task.CompletedTask;
             }
 
 #if DEBUG
             Debug.WriteLine($"ObservableBusyStack({_id}) PULL HasItems: {newValue}");
 #endif
 
-            await Notify(newValue).ConfigureAwait(false);
+            Notify(newValue);
+
+            return Task.CompletedTask;
         }
 
-        public async Task Push(IDisposable token)
+        public Task Push(IDisposable token)
         {
             if (_disposed)
             {
@@ -67,36 +76,36 @@ namespace MvvmScarletToolkit.Observables
 
             if (oldValue.Equals(newValue))
             {
-                return;
+                return Task.CompletedTask;
             }
 
 #if DEBUG
             Debug.WriteLine($"ObservableBusyStack({_id}) PUSH HasItems: {newValue}");
 #endif
-            await Notify(newValue).ConfigureAwait(false);
+            Notify(newValue);
+
+            return Task.CompletedTask;
         }
 
-        private async Task Notify(bool hasItems)
+        private void Notify(bool hasItems)
         {
-            var owner = NotifyOwner(hasItems);
-            var subscriber = NotifySubscribers(hasItems);
-
-            await Task.WhenAll(owner, subscriber).ConfigureAwait(false);
+            NotifyOwner(hasItems);
+            NotifySubscribers(hasItems);
         }
 
-        private async Task NotifySubscribers(bool newValue)
+        private void NotifySubscribers(bool newValue)
         {
             var observers = _observers.Keys.ToArray();
             for (var i = 0; i < observers.Length; i++)
             {
                 var observer = observers[i];
-                await InvokeOnChanged(observer, newValue).ConfigureAwait(false);
+                InvokeOnChanged(observer, newValue);
             }
         }
 
-        private Task NotifyOwner(bool newValue)
+        private void NotifyOwner(bool newValue)
         {
-            return InvokeOnChanged(newValue);
+            InvokeOnChanged(newValue);
         }
 
         public IDisposable Subscribe(IObserver<bool> observer)
@@ -106,27 +115,25 @@ namespace MvvmScarletToolkit.Observables
                 throw new ObjectDisposedException(nameof(ObservableBusyStack));
             }
 
-            var result = new DisposalToken<bool>(observer, _observers);
-
-            return result;
+            return new DisposalToken<bool>(observer, _observers);
         }
 
         [DebuggerStepThrough]
-        private Task InvokeOnChanged(bool newValue)
+        private void InvokeOnChanged(bool newValue)
         {
-            return _dispatcher.Invoke(() => _onChanged(newValue));
+            _onChanged(newValue);
         }
 
         [DebuggerStepThrough]
-        private Task InvokeOnChanged(IObserver<bool> observer, bool newValue)
+        private void InvokeOnChanged(IObserver<bool> observer, bool newValue)
         {
             if (newValue)
             {
-                return _dispatcher.Invoke(() => observer.OnNext(newValue));
+                observer.OnNext(newValue);
             }
             else
             {
-                return _dispatcher.Invoke(() => observer.OnCompleted());
+                observer.OnCompleted();
             }
         }
 
@@ -134,6 +141,7 @@ namespace MvvmScarletToolkit.Observables
         /// Returns a new <see cref="IDisposable"/> thats associated with <see cref="this"/> instance of a <see cref="IDisposable"/>
         /// </summary>
         /// <returns>a new <see cref="IDisposable"/></returns>
+        /// <exception cref="ObjectDisposedException"></exception>
         [DebuggerStepThrough]
         public IDisposable GetToken()
         {

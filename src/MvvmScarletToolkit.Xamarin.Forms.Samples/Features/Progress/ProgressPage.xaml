@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="MvvmScarletToolkit.Xamarin.Forms.Samples.ProgressPage"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
+             xmlns:samples="clr-namespace:MvvmScarletToolkit.Xamarin.Forms.Samples"
+             Title="Progress"
+             x:DataType="samples:ProgressViewModel">
+
+    <ContentPage.BindingContext>
+        <samples:ProgressViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Content>
+        <Grid Margin="30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <ProgressBar Grid.Row="0"
+                         mvvm:AnimatedProgress.CurrentValue="{Binding Percentage}"
+                         mvvm:AnimatedProgress.Maximum="100"
+                         ProgressColor="OrangeRed" />
+
+            <Button Grid.Row="2"
+                    Command="{Binding ProgressCommand}"
+                    Text="Run" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

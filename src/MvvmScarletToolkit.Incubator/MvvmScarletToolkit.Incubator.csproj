@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DynamicData" Version="7.1.17" />
+        <PackageReference Include="DynamicData" Version="7.2.1" />
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.31" />
         <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     </ItemGroup>

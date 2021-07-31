@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -8,7 +7,9 @@ namespace MvvmScarletToolkit.Commands
 {
     public sealed class NotifyTaskCompletion : INotifyPropertyChanged
     {
-        private static readonly Lazy<NotifyTaskCompletion> _completed = new Lazy<NotifyTaskCompletion>(() => new NotifyTaskCompletion(Task.CompletedTask));
+        private static readonly Lazy<NotifyTaskCompletion> _completed = new Lazy<NotifyTaskCompletion>(() => new NotifyTaskCompletion(Task.CompletedTask, IgnoreExceptionHandler.Default));
+        private readonly IScarletExceptionHandler _exceptionHandler;
+
         public static NotifyTaskCompletion Completed => _completed.Value;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -40,43 +41,24 @@ namespace MvvmScarletToolkit.Commands
         public Task Task { get; }
         public Task TaskCompletion { get; }
 
-        public NotifyTaskCompletion(in Task task)
+        public NotifyTaskCompletion(in Task task, in IScarletExceptionHandler exceptionHandler)
         {
             Task = task ?? throw new ArgumentNullException(nameof(task));
-
+            _exceptionHandler = exceptionHandler ?? throw new ArgumentNullException(nameof(exceptionHandler));
             TaskCompletion = task == Task.CompletedTask ? Task.CompletedTask : WatchTaskAsync(task);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Add call to 'ConfigureAwait' (or vice versa).", Justification = "dont configureawait(false) here since we want to raise OnPropertyChanged on the ui thread if possible, but we are not going to enforce that")]
         private async Task WatchTaskAsync(Task task)
         {
             try
             {
-                // dont configureawait(false) here since we want to raise OnPropertyChanged on the ui thread if possible
-                // but we are not going to enforce that
-
-#pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
                 await task;
-#pragma warning restore RCS1090 // Call 'ConfigureAwait(false)'.
-            }
-            // no need to catch, since we capture the exception through the property task
-            // and we dont want to take down the whole application if the developer didnt add any exception handling
-#if DEBUG
-            catch (TaskCanceledException)
-            {
-            }
-            catch (OperationCanceledException)
-            {
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.ToString());
+                await _exceptionHandler.Handle(ex);
             }
-
-#else
-            catch
-            {
-            }
-#endif
             finally
             {
                 OnPropertyChanged(nameof(Status));

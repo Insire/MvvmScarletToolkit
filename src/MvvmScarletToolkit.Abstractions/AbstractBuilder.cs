@@ -1,4 +1,4 @@
-namespace MvvmScarletToolkit.Abstractions
+namespace MvvmScarletToolkit
 {
     public abstract class AbstractBuilder<TElement> : IBuilder<TElement>
     {
