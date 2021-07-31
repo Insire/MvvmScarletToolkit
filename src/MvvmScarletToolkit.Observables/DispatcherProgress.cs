@@ -8,7 +8,6 @@ namespace MvvmScarletToolkit
     /// <summary>
     /// will limit invocations of a callback queued on the dispatcher to a predefined interval
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public sealed class DispatcherProgress<T> : IProgress<T>, IDisposable
     {
         private readonly IDisposable _disposable;
@@ -46,14 +45,14 @@ namespace MvvmScarletToolkit
             ProgressChanged?.Invoke(this, value);
         }
 
-        private void ReportInternal(T value)
+        private async void ReportInternal(T value)
         {
             if (_disposed)
             {
                 throw new ObjectDisposedException(nameof(DispatcherProgress<T>));
             }
 
-            _dispatcher.Invoke(() => _callback.Invoke(value), CancellationToken.None);
+            await _dispatcher.Invoke(() => _callback.Invoke(value), CancellationToken.None).ConfigureAwait(false);
         }
 
         public void Dispose()
