@@ -16,7 +16,9 @@ namespace MvvmScarletToolkit
 
         public Task Invoke(Action action, CancellationToken token)
         {
-            return Task.FromResult(action);
+            action.Invoke();
+
+            return Task.CompletedTask;
         }
 
         public Task<T> Invoke<T>(Func<T> action, CancellationToken token)
