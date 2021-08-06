@@ -1,4 +1,5 @@
 using System;
+using Xamarin.Forms;
 
 namespace MvvmScarletToolkit
 {
@@ -16,7 +17,13 @@ namespace MvvmScarletToolkit
 
         public void InvalidateRequerySuggested()
         {
-            RequerySuggested?.Invoke(this, EventArgs.Empty);
+            var handler = RequerySuggested;
+            if (handler is null)
+            {
+                return;
+            }
+
+            Device.BeginInvokeOnMainThread(() => handler.Invoke(this, EventArgs.Empty));
         }
     }
 }
