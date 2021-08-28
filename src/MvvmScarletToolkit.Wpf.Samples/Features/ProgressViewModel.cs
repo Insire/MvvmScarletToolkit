@@ -61,7 +61,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
             var worker = Block ? new Worker(_uiBlockingProgress) : new Worker(_progress);
 
-            await worker.DoWork().ConfigureAwait(false);
+            await worker.DoWork(token).ConfigureAwait(false);
         }
 
         protected override void Dispose(bool disposing)
@@ -88,7 +88,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 _progress = progress ?? throw new ArgumentNullException(nameof(progress));
             }
 
-            public Task DoWork()
+            public Task DoWork(CancellationToken token)
             {
                 return Task.Run(() =>
                 {
@@ -96,11 +96,16 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
                     for (var i = 0d; i < upperBound; i++)
                     {
+                        if (token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
                         var percentage = i * 100 / upperBound;
 
                         _progress.Report(Math.Round(percentage, 0));
                     }
-                });
+                }, token);
             }
         }
     }
