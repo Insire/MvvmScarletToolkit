@@ -38,6 +38,11 @@ namespace MvvmScarletToolkit.Wpf
                 return;
             }
 
+            if (behavior.AssociatedObject is null)
+            {
+                return;
+            }
+
             behavior.OnPercentageChanged((double)e.OldValue, (double)e.NewValue);
         }
 
