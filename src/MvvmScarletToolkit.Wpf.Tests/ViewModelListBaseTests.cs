@@ -30,7 +30,7 @@ namespace MvvmScarletToolkit.Tests
         public void ShouldBeBusyWhenUsingBusyStack()
         {
             var dispatcher = new TestDispatcher();
-            var commandBuilder = new ScarletCommandBuilder(dispatcher, Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), (lambda) => new BusyStack(lambda, Utils.GetTestDispatcher()));
+            var commandBuilder = new ScarletCommandBuilder(dispatcher, Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), (lambda) => new BusyStack(lambda));
 
             var vm = new DerivedViewModelListBase(commandBuilder);
 
