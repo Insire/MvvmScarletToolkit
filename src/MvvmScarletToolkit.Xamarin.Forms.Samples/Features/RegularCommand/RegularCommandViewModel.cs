@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit.Xamarin.Forms.Samples
         public ConcurrentCommandBase Command { get; }
 
         public RegularCommandViewModel()
-            : base(new ScarletCommandBuilder(ScarletDispatcher.Default, ScarletCommandManager.Default, IgnoreExceptionHandler.Default, WeakReferenceMessenger.Default, ScarletExitService.Default, new ScarletWeakEventManager(), (lambda) => new BusyStack(lambda, ScarletDispatcher.Default)))
+            : base(new ScarletCommandBuilder(ScarletDispatcher.Default, ScarletCommandManager.Default, IgnoreExceptionHandler.Default, WeakReferenceMessenger.Default, ScarletExitService.Default, new ScarletWeakEventManager(), (lambda) => new BusyStack(lambda)))
         {
             Command = CommandBuilder
                 .Create(CommandImpl, CanImpl)

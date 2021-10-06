@@ -1,7 +1,6 @@
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -36,7 +35,7 @@ namespace MvvmScarletToolkit.Observables
             Exit = commandBuilder.Exit ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Exit));
             WeakEventManager = commandBuilder.WeakEventManager ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.WeakEventManager));
 
-            BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
+            BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
         }
 
         public void Dispose()

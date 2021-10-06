@@ -25,7 +25,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         public ObservableBusyViewModel(IScarletCommandBuilder commandBuilder, IScarletDispatcher dispatcher)
         {
-            _observableBusyStack = new ObservableBusyStack(hasItems => { IsBusy = hasItems; Debug.WriteLine("ObservableBusyViewModel is busy: " + hasItems); }, dispatcher);
+            _observableBusyStack = new ObservableBusyStack(hasItems => { IsBusy = hasItems; Debug.WriteLine("ObservableBusyViewModel is busy: " + hasItems); });
 
             BeBusyCommand = commandBuilder.Create(BeBusyInternal, () => !IsBusy)
                 .WithBusyNotification(_observableBusyStack)
