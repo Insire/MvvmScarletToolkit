@@ -11,15 +11,15 @@ namespace MvvmScarletToolkit
     /// <remarks>
     /// <c>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</c>
     /// </remarks>
-    [ValueConversion(typeof(int), typeof(bool))]
-    public sealed class SmallerThan : ConverterMarkupExtension<SmallerThan>
+    [ValueConversion(typeof(double?), typeof(bool))]
+    public sealed class SmallerThan : MarkupExtension, IValueConverter
     {
         [ConstructorArgument("value")]
-        public int Value { get; set; }
+        public double? Value { get; set; }
 
         public SmallerThan()
         {
-            Value = 0;
+            Value = null;
         }
 
         public SmallerThan(int value)
@@ -27,24 +27,52 @@ namespace MvvmScarletToolkit
             Value = value;
         }
 
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object ProvideValue(IServiceProvider serviceProvider)
         {
+            return this;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var comparison = 0d;
+            if (Value.HasValue)
+            {
+                comparison = Value.Value;
+            }
+
+            if (parameter is double @double)
+            {
+                comparison = @double;
+            }
+
+            if (parameter is string @string && double.TryParse(@string, out @double))
+            {
+                comparison = @double;
+            }
+
             return value switch
             {
-                sbyte number => number < Value,
-                byte number => number < Value,
-                short number => number < Value,
-                ushort number => number < Value,
-                int number => number < Value,
-                uint number => number < Value,
-                long number => number < Value,
-                //case ulong number:
-                //    return number < Value;
-                float number => number < Value,
-                double number => number < Value,
-                decimal number => number < Value,
+                sbyte number => number < comparison,
+                byte number => number < comparison,
+                short number => number < comparison,
+                ushort number => number < comparison,
+                int number => number < comparison,
+                uint number => number < comparison,
+                long number => number < comparison,
+                ulong number => number < comparison,
+                float number => number < comparison,
+                double number => number < comparison,
+                decimal number => System.Convert.ToDouble(number) < comparison,
                 _ => Binding.DoNothing,
             };
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            // According to https://msdn.microsoft.com/en-us/library/system.windows.data.ivalueconverter.convertback(v=vs.110).aspx#Anchor_1
+            // (kudos Scott Chamberlain), if you do not support a conversion
+            // back you should return a Binding.DoNothing or a DependencyProperty.UnSetProperty
+            return Binding.DoNothing;
         }
     }
 }
