@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Commands
+namespace MvvmScarletToolkit
 {
     public sealed class IgnoreExceptionHandler : IScarletExceptionHandler
     {
