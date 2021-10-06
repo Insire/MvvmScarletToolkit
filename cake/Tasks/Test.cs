@@ -4,25 +4,35 @@ using Cake.Core;
 using Cake.Frosting;
 using System.Linq;
 
-public sealed class Test : FrostingTask<BuildContext>
+namespace Build
 {
-    public override void Run(BuildContext context)
+    public sealed class Test : FrostingTask<BuildContext>
     {
-        var projectFile = @"./src/MvvmScarletToolkit.Wpf.Tests/MvvmScarletToolkit.Wpf.Tests.csproj";
-        var testSettings = new DotNetCoreTestSettings
+        public override void Run(BuildContext context)
         {
-            ToolPath = context.Tools.Resolve("dotnet.exe"),
-            Configuration = "Release",
-            NoBuild = false,
-            NoRestore = false,
-            ArgumentCustomization = builder => builder
-                .Append("--results-directory:./Results/coverage")
-                .Append("-p:DebugType=full")
-                .Append("-p:DebugSymbols=true")
-                .AppendSwitchQuoted("--collect", ":", "\"\"Code Coverage\"\"")
-                .Append($"--logger:trx;"),
-        };
+            var projectFile = @"./src/MvvmScarletToolkit.Wpf.Tests/MvvmScarletToolkit.Wpf.Tests.csproj";
+            var testSettings = new DotNetCoreTestSettings
+            {
+                ToolPath = context.Tools.Resolve("dotnet.exe"),
+                Configuration = "Release",
+                NoBuild = false,
+                NoRestore = false,
+                NoLogo = true,
+                HandleExitCode = HandleExitCode,
+                ArgumentCustomization = builder => builder
+                    .Append("--results-directory:./Results/coverage")
+                    .Append("-p:DebugType=full")
+                    .Append("-p:DebugSymbols=true")
+                    .AppendSwitchQuoted("--collect", ":", "\"\"Code Coverage\"\"")
+                    .Append($"--logger:trx;"),
+            };
 
-        context.DotNetCoreTest(projectFile, testSettings);
+            context.DotNetCoreTest(projectFile, testSettings);
+        }
+
+        private static bool HandleExitCode(int code)
+        {
+            return true;
+        }
     }
 }

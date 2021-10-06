@@ -5,29 +5,32 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 
-public sealed class PushLocally : FrostingTask<BuildContext>
+namespace Build
 {
-    public override void Run(BuildContext context)
+    public sealed class PushLocally : FrostingTask<BuildContext>
     {
-        if (!context.NuGetHasSource(BuildContext.LocalNugetDirectoryPath))
+        public override void Run(BuildContext context)
         {
-            context.NuGetAddSource("Local", BuildContext.LocalNugetDirectoryPath);
-        }
-
-        foreach (var package in context.GetFiles(BuildContext.PackagePath + "/*.nupkg"))
-        {
-            context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
+            if (!context.NuGetHasSource(BuildContext.LocalNugetDirectoryPath))
             {
-                Source = BuildContext.LocalNugetDirectoryPath,
-                SkipDuplicate = true,
-            });
-        }
-    }
+                context.NuGetAddSource("Local", BuildContext.LocalNugetDirectoryPath);
+            }
 
-    public override bool ShouldRun(BuildContext context)
-    {
-        return base.ShouldRun(context)
-            && context.BuildSystem().IsLocalBuild
-            && context.DirectoryExists(BuildContext.LocalNugetDirectoryPath);
+            foreach (var package in context.GetFiles(BuildContext.PackagePath + "/*.nupkg"))
+            {
+                context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
+                {
+                    Source = BuildContext.LocalNugetDirectoryPath,
+                    SkipDuplicate = true,
+                });
+            }
+        }
+
+        public override bool ShouldRun(BuildContext context)
+        {
+            return base.ShouldRun(context)
+                && context.BuildSystem().IsLocalBuild
+                && context.DirectoryExists(BuildContext.LocalNugetDirectoryPath);
+        }
     }
 }

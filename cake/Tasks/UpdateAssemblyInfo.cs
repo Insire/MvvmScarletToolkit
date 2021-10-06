@@ -3,23 +3,25 @@ using Cake.Core.IO;
 using Cake.Frosting;
 using System;
 
-public sealed class UpdateAssemblyInfo : FrostingTask<BuildContext>
+namespace Build
 {
-    public override void Run(BuildContext context)
+    public sealed class UpdateAssemblyInfo : FrostingTask<BuildContext>
     {
-        var assemblyInfoParseResult = context.ParseAssemblyInfo(BuildContext.AssemblyInfoPath);
-
-        var settings = new AssemblyInfoSettings()
+        public override void Run(BuildContext context)
         {
-            Product = assemblyInfoParseResult.Product,
-            Company = assemblyInfoParseResult.Company,
-            Trademark = assemblyInfoParseResult.Trademark,
-            Copyright = $"© {DateTime.Today.Year} Insire",
+            var assemblyInfoParseResult = context.ParseAssemblyInfo(BuildContext.AssemblyInfoPath);
 
-            InternalsVisibleTo = assemblyInfoParseResult.InternalsVisibleTo,
-
-            MetaDataAttributes = new[]
+            var settings = new AssemblyInfoSettings()
             {
+                Product = assemblyInfoParseResult.Product,
+                Company = assemblyInfoParseResult.Company,
+                Trademark = assemblyInfoParseResult.Trademark,
+                Copyright = $"© {DateTime.Today.Year} Insire",
+
+                InternalsVisibleTo = assemblyInfoParseResult.InternalsVisibleTo,
+
+                MetaDataAttributes = new[]
+                {
                 new AssemblyInfoMetadataAttribute()
                 {
                     Key = "Platform",
@@ -51,8 +53,9 @@ public sealed class UpdateAssemblyInfo : FrostingTask<BuildContext>
                     Value = context.GitVersion.SemVer2,
                 },
             }
-        };
+            };
 
-        context.CreateAssemblyInfo(new FilePath(BuildContext.AssemblyInfoPath), settings);
+            context.CreateAssemblyInfo(new FilePath(BuildContext.AssemblyInfoPath), settings);
+        }
     }
 }

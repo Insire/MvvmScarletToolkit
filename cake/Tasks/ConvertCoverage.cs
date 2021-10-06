@@ -5,31 +5,34 @@ using Cake.Core.IO;
 using Cake.Frosting;
 using System.Linq;
 
-[Dependency(typeof(Test))]
-public sealed class ConvertCoverage : FrostingTask<BuildContext>
+namespace Build
 {
-    public override void Run(BuildContext context)
+    [Dependency(typeof(Test))]
+    public sealed class ConvertCoverage : FrostingTask<BuildContext>
     {
-        foreach (var file in context.GetFiles($"{BuildContext.ResultsPath}/coverage/**/*.coverage"))
+        public override void Run(BuildContext context)
         {
-            var codeCoverageExe = context.Tools.Resolve("CodeCoverage.exe");
-            var result = System.IO.Path.ChangeExtension(file.FullPath, ".xml");
+            foreach (var file in context.GetFiles($"{BuildContext.ResultsPath}/coverage/**/*.coverage"))
+            {
+                var codeCoverageExe = context.Tools.Resolve("CodeCoverage.exe");
+                var result = System.IO.Path.ChangeExtension(file.FullPath, ".xml");
 
-            var settings = new ProcessSettings()
-                    .UseWorkingDirectory(BuildContext.ResultsPath)
-                    .WithArguments(builder => builder
-                        .Append("analyze")
-                        .AppendSwitchQuoted(@"-output", ":", result)
-                        .Append(file.FullPath)
-                    );
+                var settings = new ProcessSettings()
+                        .UseWorkingDirectory(BuildContext.ResultsPath)
+                        .WithArguments(builder => builder
+                            .Append("analyze")
+                            .AppendSwitchQuoted(@"-output", ":", result)
+                            .Append(file.FullPath)
+                        );
 
-            context.StartProcess(codeCoverageExe, settings);
+                context.StartProcess(codeCoverageExe, settings);
+            }
         }
-    }
 
-    public override bool ShouldRun(BuildContext context)
-    {
-        return base.ShouldRun(context)
-            && context.Tools.Resolve("CodeCoverage.exe") != null;
+        public override bool ShouldRun(BuildContext context)
+        {
+            return base.ShouldRun(context)
+                && context.Tools.Resolve("CodeCoverage.exe") != null;
+        }
     }
 }
