@@ -41,7 +41,7 @@ namespace MvvmScarletToolkit.Tests
 
         public static Func<Action<bool>, IBusyStack> GetTestBusyStackFactory()
         {
-            return (lambda) => new BusyStack(lambda, GetTestDispatcher());
+            return (lambda) => new BusyStack(lambda);
         }
 
         public static IScarletCommandBuilder GetTestCommandBuilder(IScarletDispatcher dispatcher = null,

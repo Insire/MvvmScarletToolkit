@@ -17,6 +17,20 @@
         d:DataContext="{d:DesignInstance Type=local:NavigationViewModel}"
         mc:Ignorable="d">
 
+    <Window.Style>
+        <Style TargetType="{x:Type Window}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Width, RelativeSource={RelativeSource Self}, Converter={mvvm:GreaterThan 750}, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                    <Setter Property="Background" Value="LightGray" />
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding Width, RelativeSource={RelativeSource Self}, Converter={mvvm:GreaterThan}, ConverterParameter=750, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                    <Setter Property="Background" Value="DarkGray" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Style>
+
     <!--  DataContext: NavigationViewModel  -->
 
     <Grid>

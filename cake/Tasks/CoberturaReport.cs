@@ -4,17 +4,20 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 
-[Dependency(typeof(ConvertCoverage))]
-public sealed class CoberturaReport : FrostingTask<BuildContext>
+namespace Build
 {
-    public override void Run(BuildContext context)
+    [Dependency(typeof(ConvertCoverage))]
+    public sealed class CoberturaReport : FrostingTask<BuildContext>
     {
-        context.MergeReports("./Results/coverage/**/*.xml", ReportGeneratorReportType.Cobertura, "cobertura");
-    }
+        public override void Run(BuildContext context)
+        {
+            context.MergeReports("./Results/coverage/**/*.xml", ReportGeneratorReportType.Cobertura, "cobertura");
+        }
 
-    public override bool ShouldRun(BuildContext context)
-    {
-        return base.ShouldRun(context)
-            && context.GetFiles("./Results/coverage/**/*.xml").Count > 0;
+        public override bool ShouldRun(BuildContext context)
+        {
+            return base.ShouldRun(context)
+                && context.GetFiles("./Results/coverage/**/*.xml").Count > 0;
+        }
     }
 }

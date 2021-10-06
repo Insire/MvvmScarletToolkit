@@ -6,26 +6,29 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 
-public sealed class PushNuget : FrostingTask<BuildContext>
+namespace Build
 {
-    public override void Run(BuildContext context)
+    public sealed class PushNuget : FrostingTask<BuildContext>
     {
-        foreach (var package in context.GetFiles(BuildContext.PackagePath + "/*.nupkg"))
+        public override void Run(BuildContext context)
         {
-            context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
+            foreach (var package in context.GetFiles(BuildContext.PackagePath + "/*.nupkg"))
             {
-                ApiKey = context.EnvironmentVariable("NUGETORG_APIKEY"),
-                Source = "https://api.nuget.org/v3/index.json",
-                SkipDuplicate = true,
-            });
+                context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
+                {
+                    ApiKey = context.EnvironmentVariable("NUGETORG_APIKEY"),
+                    Source = "https://api.nuget.org/v3/index.json",
+                    SkipDuplicate = true,
+                });
+            }
         }
-    }
 
-    public override bool ShouldRun(BuildContext context)
-    {
-        return base.ShouldRun(context)
-            && (context.BuildSystem().IsRunningOnAzurePipelines || context.BuildSystem().IsRunningOnAzurePipelinesHosted)
-            && !string.IsNullOrEmpty(context.EnvironmentVariable("NUGETORG_APIKEY"))
-            && context.IsPublicRelease;
+        public override bool ShouldRun(BuildContext context)
+        {
+            return base.ShouldRun(context)
+                && (context.BuildSystem().IsRunningOnAzurePipelines || context.BuildSystem().IsRunningOnAzurePipelinesHosted)
+                && !string.IsNullOrEmpty(context.EnvironmentVariable("NUGETORG_APIKEY"))
+                && context.IsPublicRelease;
+        }
     }
 }

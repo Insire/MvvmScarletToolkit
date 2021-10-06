@@ -116,7 +116,7 @@ namespace MvvmScarletToolkit
             _pagedDataProvider = pagedDataProvider ?? throw new ArgumentNullException(nameof(pagedDataProvider));
 
             SelectedItems = new ObservableCollection<TViewModel>();
-            BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems, Dispatcher);
+            BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
             PageSize = 50;
 
             _loadCommand = commandBuilder

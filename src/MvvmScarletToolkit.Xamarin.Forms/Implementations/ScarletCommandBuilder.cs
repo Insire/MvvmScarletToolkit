@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit
 {
     public class ScarletCommandBuilder : IScarletCommandBuilder
     {
-        private static readonly Lazy<ScarletCommandBuilder> _default = new Lazy<ScarletCommandBuilder>(() => new ScarletCommandBuilder(ScarletDispatcher.Default, ScarletCommandManager.Default, IgnoreExceptionHandler.Default, WeakReferenceMessenger.Default, ScarletExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda, ScarletDispatcher.Default)));
+        private static readonly Lazy<ScarletCommandBuilder> _default = new Lazy<ScarletCommandBuilder>(() => new ScarletCommandBuilder(ScarletDispatcher.Default, ScarletCommandManager.Default, IgnoreExceptionHandler.Default, WeakReferenceMessenger.Default, ScarletExitService.Default, ScarletWeakEventManager.Default, (lambda) => new BusyStack(lambda)));
 
         public static IScarletCommandBuilder Default => _default.Value;
 
