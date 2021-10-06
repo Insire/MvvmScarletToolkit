@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net461;netcoreapp3.1;net5.0-windows</TargetFrameworks>
+        <TargetFrameworks>netcoreapp3.1;net5.0-windows</TargetFrameworks>
         <IsPackable>false</IsPackable>
         <LangVersion>8.0</LangVersion>
     </PropertyGroup>
@@ -12,10 +12,7 @@
         <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.14" />
 
         <PackageReference Include="nunit" Version="3.13.2" />
-        <PackageReference Include="NUnit3TestAdapter" Version="4.0.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     </ItemGroup>
 
