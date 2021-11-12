@@ -12,7 +12,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.1" />
 
-        <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.240">
+        <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.244">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
