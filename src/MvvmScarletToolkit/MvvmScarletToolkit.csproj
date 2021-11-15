@@ -3,7 +3,6 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0</TargetFrameworks>
         <OutputType>Library</OutputType>
-        <LangVersion>8.0</LangVersion>
         <Nullable>enable</Nullable>
         <Description>MvvmScarletToolkit is the main library of the MvvmScarletToolkit framework, containing classes and extensions that are being used everywhere else in the framework.</Description>
         <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,Library,.NET,OSS,OpenSource</PackageTags>

@@ -3,7 +3,6 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0</TargetFrameworks>
         <OutputType>Library</OutputType>
-        <LangVersion>8.0</LangVersion>
         <Nullable>enable</Nullable>
         <Description>MvvmScarletToolkit.Xamarin.Forms is part of the MvvmScarletToolkit framework, containing concrete implementations for Xamarin.Forms that have been abstracted away in the MvvmScarletToolkit.Abstractions library.</Description>
         <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,Xamarin.Forms,Library,.NET,OSS,OpenSource</PackageTags>
