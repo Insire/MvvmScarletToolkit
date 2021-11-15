@@ -6,7 +6,7 @@
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <PublishTrimmed>false</PublishTrimmed>
         <PublishReadyToRun>true</PublishReadyToRun>
-        <PublishSingleFile>true</PublishSingleFile>
+        <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
         <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
     </PropertyGroup>
 
