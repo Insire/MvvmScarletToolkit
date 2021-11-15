@@ -53,39 +53,38 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Column="0">
-            <ListBox x:Name="Scenes"
-                     BorderThickness="0"
-                     ItemsSource="{Binding Items}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                     SelectionMode="Single">
-                <ListBox.ItemContainerStyle>
-                    <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
-                        <Setter Property="ToolTip">
-                            <Setter.Value>
-                                <ToolTip DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext, Converter={mvvm:DebugConverter}, ConverterParameter={StaticResource Num}}">
-                                    <TextBlock>
-                                        <Run Text="Translated Value:" />
-                                        <Run Text="{Binding Localization.Value, Mode=OneWay}" />
-                                    </TextBlock>
-                                </ToolTip>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListBox.ItemContainerStyle>
+        <ListBox x:Name="Scenes"
+                 Grid.Column="0"
+                 BorderThickness="0"
+                 ItemsSource="{Binding Items}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 SelectionMode="Single">
+            <ListBox.ItemContainerStyle>
+                <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                    <Setter Property="ToolTip">
+                        <Setter.Value>
+                            <ToolTip DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext, Converter={mvvm:DebugConverter}, ConverterParameter={StaticResource Num}}">
+                                <TextBlock>
+                                    <Run Text="Translated Value:" />
+                                    <Run Text="{Binding Localization.Value, Mode=OneWay}" />
+                                </TextBlock>
+                            </ToolTip>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
 
-                <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type observables:Scene}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Margin="0,0,4,0" Text="{Binding Sequence}" />
-                            <ContentControl Content="{Binding Localization}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </DockPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type observables:Scene}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0,0,4,0" Text="{Binding Sequence}" />
+                        <ContentControl Content="{Binding Localization}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <GridSplitter Grid.Column="1"
                       Width="5"
@@ -1431,5 +1430,6 @@
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
+
     </Grid>
 </Window>

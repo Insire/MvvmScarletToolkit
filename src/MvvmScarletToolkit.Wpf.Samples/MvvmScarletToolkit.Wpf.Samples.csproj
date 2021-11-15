@@ -8,7 +8,36 @@
         <PublishReadyToRun>true</PublishReadyToRun>
         <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
         <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+        <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     </PropertyGroup>
+    <ItemGroup>
+      <None Remove="Resources\Death_to_Stock_Photography_RideorDie_8.jpg" />
+      <None Remove="Resources\Moon_Color_Hypersaturated_Stars_900.jpg" />
+      <None Remove="Resources\wallhaven-245035.jpg" />
+      <None Remove="Resources\wallhaven-319605.jpg" />
+      <None Remove="Resources\wallhaven-401406.jpg" />
+      <None Remove="Resources\wallhaven-75354.jpg" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\Death_to_Stock_Photography_RideorDie_8.jpg">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Resources\Moon_Color_Hypersaturated_Stars_900.jpg">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Resources\wallhaven-245035.jpg">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Resources\wallhaven-319605.jpg">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Resources\wallhaven-401406.jpg">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Resources\wallhaven-75354.jpg">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Jot" Version="2.1.11" />
@@ -19,24 +48,5 @@
         <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj" />
         <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
-
-        <None Update="Resources\Death_to_Stock_Photography_RideorDie_8.jpg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Resources\Moon_Color_Hypersaturated_Stars_900.jpg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Resources\wallhaven-245035.jpg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Resources\wallhaven-319605.jpg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Resources\wallhaven-401406.jpg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Resources\wallhaven-75354.jpg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 </Project>
