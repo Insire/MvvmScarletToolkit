@@ -5,7 +5,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:MvvmScarletToolkit.Wpf.Samples"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:mvvm="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Wpf"
+             xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
              d:DataContext="{d:DesignInstance Type=local:ProcessingImagesViewModel,
                                               IsDesignTimeCreatable=False}"
              mc:Ignorable="d">

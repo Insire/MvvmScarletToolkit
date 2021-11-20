@@ -10,8 +10,7 @@
         <samples:ThrowingCommandViewModel />
     </ContentPage.BindingContext>
 
-    <StackLayout Margin="30"
-                 Spacing="30">
+    <StackLayout Margin="30" Spacing="30">
 
         <Label Text="{Binding Description}" />
 

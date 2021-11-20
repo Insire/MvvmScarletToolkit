@@ -11,10 +11,6 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
-#if NET5_0_OR_GREATER
-    [System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
-#endif
-
     public sealed class FileSystemViewModelFactory : IFileSystemViewModelFactory
     {
         private readonly IScarletCommandBuilder _commandBuilder;

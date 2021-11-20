@@ -1,8 +1,8 @@
+using DynamicData;
+using DynamicData.Binding;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
-using DynamicData;
-using DynamicData.Binding;
 
 namespace MvvmScarletToolkit
 {

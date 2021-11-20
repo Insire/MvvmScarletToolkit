@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit.Commands
         }
 
         [DebuggerStepThrough]
-        public sealed override async void Execute(object parameter)
+        public override sealed async void Execute(object parameter)
         {
             await ExecuteAsync(parameter)
                 .ConfigureAwait(true); // return to UI thread here

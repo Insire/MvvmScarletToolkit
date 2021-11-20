@@ -1,5 +1,6 @@
 using MvvmScarletToolkit.Observables;
-using System.IO;
+using System;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -9,6 +10,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
 {
     public sealed class Image : ViewModelBase
     {
+        private readonly Assembly _assembly;
+
         private string _displayName;
         public string DisplayName
         {
@@ -38,6 +41,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         }
 
         private BitmapSource _source;
+
         public BitmapSource Source
         {
             get { return _source; }
@@ -46,17 +50,19 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         public ICommand LoadCommand { get; }
 
-        public Image(IScarletCommandBuilder commandBuilder)
+        public Image(IScarletCommandBuilder commandBuilder, Assembly assembly)
             : base(commandBuilder)
         {
             LoadCommand = commandBuilder.Create(Load, () => true)
                 .WithSingleExecution()
                 .Build();
+
+            _assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
         }
 
         private async Task Load(CancellationToken token)
         {
-            if (!File.Exists(_path) || _source != null)
+            if (string.IsNullOrEmpty(_path) || _source != null)
             {
                 return;
             }
@@ -65,20 +71,21 @@ namespace MvvmScarletToolkit.Wpf.Samples
             await Dispatcher.Invoke(() => Source = image).ConfigureAwait(false);
         }
 
-        private static BitmapSource GetImage(string path)
+        private BitmapSource GetImage(string resourceName)
         {
-            using var stream = File.OpenRead(path);
+            using (var stream = _assembly.GetManifestResourceStream(resourceName))
+            {
+                var img = new BitmapImage();
+                img.BeginInit();
+                img.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                img.CacheOption = BitmapCacheOption.OnLoad;
+                img.StreamSource = stream;
+                img.EndInit();
 
-            var img = new BitmapImage();
-            img.BeginInit();
-            img.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-            img.CacheOption = BitmapCacheOption.OnLoad;
-            img.StreamSource = stream;
-            img.EndInit();
+                img.Freeze();
 
-            img.Freeze();
-
-            return img;
+                return img;
+            }
         }
     }
 }
