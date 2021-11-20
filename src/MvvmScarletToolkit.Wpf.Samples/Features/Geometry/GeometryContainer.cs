@@ -1,4 +1,3 @@
-﻿using MvvmScarletToolkit.Observables;
 using System.Windows.Media;
 
 namespace MvvmScarletToolkit.Wpf.Samples

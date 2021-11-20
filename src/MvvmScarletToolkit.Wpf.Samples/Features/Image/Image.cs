@@ -3,7 +3,6 @@ using System;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
@@ -72,7 +71,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             await Dispatcher.Invoke(() => Source = image).ConfigureAwait(false);
         }
 
-        private  BitmapSource GetImage(string resourceName)
+        private BitmapSource GetImage(string resourceName)
         {
             using (var stream = _assembly.GetManifestResourceStream(resourceName))
             {

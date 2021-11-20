@@ -7,19 +7,31 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     public sealed class FileSystemOptionsViewModel : ObservableObject
     {
-        private static readonly Lazy<FileSystemOptionsViewModel> _default = new Lazy<FileSystemOptionsViewModel>(() => new FileSystemOptionsViewModel(new[] { DriveType.Fixed },
-            new[]
+        private static readonly Lazy<FileSystemOptionsViewModel> _default;
+
+        public static FileSystemOptionsViewModel Default => _default.Value;
+
+        static FileSystemOptionsViewModel()
+        {
+            var driveTypes = new[]
+            {
+                DriveType.Fixed
+            };
+
+            var fileAttributes = new[]
             {
                 System.IO.FileAttributes.Archive,
                 System.IO.FileAttributes.Archive | System.IO.FileAttributes.Normal,
                 System.IO.FileAttributes.Archive | System.IO.FileAttributes.Compressed
-            },
-            new[]
+            };
+
+            var folderAttributes = new[]
             {
                 System.IO.FileAttributes.Directory,
-            }));
+            };
 
-        public static FileSystemOptionsViewModel Default => _default.Value;
+            _default = new Lazy<FileSystemOptionsViewModel>(() => new FileSystemOptionsViewModel(driveTypes, fileAttributes, folderAttributes));
+        }
 
         public IReadOnlyCollection<DriveType> DriveTypes { get; }
         public IReadOnlyCollection<FileAttributes> FileAttributes { get; }

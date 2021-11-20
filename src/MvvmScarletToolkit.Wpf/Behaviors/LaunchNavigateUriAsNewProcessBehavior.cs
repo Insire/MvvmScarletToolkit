@@ -1,8 +1,8 @@
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Xaml.Behaviors;
 using System;
 using System.Diagnostics;
 using System.Windows.Documents;
-using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Xaml.Behaviors;
 
 namespace MvvmScarletToolkit.Wpf
 {

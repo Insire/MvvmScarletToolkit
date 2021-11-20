@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace MvvmScarletToolkit.Wpf.Samples
@@ -11,8 +10,6 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public ImageFactory(IScarletCommandBuilder commandBuilder)
         {
             _commandBuilder = commandBuilder ?? throw new System.ArgumentNullException(nameof(commandBuilder));
-
-           
         }
 
         public IEnumerable<Image> GetImageList()

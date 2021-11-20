@@ -1,8 +1,8 @@
+using Microsoft.Toolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Tests.Util;
 using NUnit.Framework;
 using System;
-using Microsoft.Toolkit.Mvvm.Messaging;
 
 namespace MvvmScarletToolkit.Tests
 {

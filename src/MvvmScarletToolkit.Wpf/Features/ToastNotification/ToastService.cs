@@ -148,7 +148,7 @@ namespace MvvmScarletToolkit.Wpf
             return Task.CompletedTask;
         }
 
-        protected async virtual Task CloseToast(IToast toast)
+        protected virtual async Task CloseToast(IToast toast)
         {
             toast.IsRemoving = true;
 

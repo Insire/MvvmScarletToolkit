@@ -10,15 +10,13 @@
         <samples:RegularCommandViewModel />
     </ContentPage.BindingContext>
 
-    <StackLayout Margin="30"
-                 Spacing="30">
+    <StackLayout Margin="30" Spacing="30">
 
         <Label Text="{Binding Description}" />
 
         <ActivityIndicator IsRunning="{Binding Command.IsBusy}" />
 
-        <Label FontSize="16"
-               HorizontalOptions="Center">
+        <Label FontSize="16" HorizontalOptions="Center">
             <Label.Triggers>
                 <DataTrigger Binding="{Binding Command.IsBusy}"
                              TargetType="{x:Type Label}"
