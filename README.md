@@ -135,6 +135,7 @@ For anyone not wishing to install that, they atleast need:
 - .net 4.6.1 (preinstalled starting with Windows 10)
 - [Net Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
 - [Net 5.0](https://dotnet.microsoft.com/download/dotnet-core/5.0)
+- [Net 6.0](https://dotnet.microsoft.com/download/dotnet-core/6.0)
 - [Visual Studio Code](https://code.visualstudio.com/) with the [C# Extension](https://github.com/OmniSharp/omnisharp-vscode) provided by Microsoft
 - [git](https://git-scm.com/)
 
