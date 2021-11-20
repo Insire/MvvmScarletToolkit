@@ -5,10 +5,6 @@ using System.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-#if NET5_0_OR_GREATER
-
-    [System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
-#endif
     public sealed class NavigationViewModel : Scenes
     {
         public NavigationViewModel(SynchronizationContext synchronizationContext, IScarletCommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)

@@ -4,10 +4,6 @@ using System.Windows.Controls;
 
 namespace MvvmScarletToolkit
 {
-#if NET5_0_OR_GREATER
-    [System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
-#endif
-
     [StyleTypedProperty(Property = nameof(WatermarkStyle), StyleTargetType = typeof(TextBox))]
     public sealed class WatermarkBehavior : Behavior<TextBox>
     {
