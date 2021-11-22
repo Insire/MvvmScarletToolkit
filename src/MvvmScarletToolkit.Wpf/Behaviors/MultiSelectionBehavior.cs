@@ -44,7 +44,7 @@ namespace MvvmScarletToolkit
         {
             base.OnAttached();
 
-            AssociatedObject.SelectionChanged += ListBoxSelectionChanged;
+            AssociatedObject.SelectionChanged += OnSelectionChanged;
 
             if (SelectedItems != null)
             {
@@ -62,13 +62,13 @@ namespace MvvmScarletToolkit
 
         protected override void OnDetaching()
         {
-            AssociatedObject.SelectionChanged -= ListBoxSelectionChanged;
+            AssociatedObject.SelectionChanged -= OnSelectionChanged;
             base.OnDetaching();
         }
 
         private static void OnSelectedItemsChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            if (!(o is MultiSelectionBehavior behavior))
+            if (o is not MultiSelectionBehavior behavior)
             {
                 return;
             }
@@ -85,7 +85,7 @@ namespace MvvmScarletToolkit
 
             if (e.NewValue is INotifyCollectionChanged newValue)
             {
-                if (e.OldValue != null) // skip setting the initial value from the UI(since thats an empty collection), as that will overwrite anything that has been set in the bound object
+                if (e.OldValue is not null) // skip setting the initial value from the UI(since thats an empty collection), as that will overwrite anything that has been set in the bound object
                 {
                     if (behavior.AssociatedObject.SelectedItems.Count > 0)
                     {
@@ -116,7 +116,7 @@ namespace MvvmScarletToolkit
             {
                 _isUpdatingTarget = true;
 
-                if (e.OldItems != null)
+                if (e.OldItems is not null)
                 {
                     foreach (var item in e.OldItems)
                     {
@@ -124,7 +124,7 @@ namespace MvvmScarletToolkit
                     }
                 }
 
-                if (e.NewItems != null)
+                if (e.NewItems is not null)
                 {
                     foreach (var item in e.NewItems)
                     {
@@ -143,9 +143,14 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private void ListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             if (_isUpdatingTarget)
+            {
+                return;
+            }
+
+            if (!ReferenceEquals(e.OriginalSource, sender))
             {
                 return;
             }
