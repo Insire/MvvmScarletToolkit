@@ -42,7 +42,7 @@
     <ItemGroup>
         <PackageReference Include="Jot" Version="2.1.11" />
         <PackageReference Include="XamlFlair.WPF" Version="1.2.13" />
-        <PackageReference Include="CompiledBindings.WPF" Version="1.0.8" />
+        <PackageReference Include="CompiledBindings.WPF" Version="1.0.9-rc1" />
     </ItemGroup>
 
     <ItemGroup>
