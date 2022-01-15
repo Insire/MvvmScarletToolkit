@@ -116,6 +116,11 @@ namespace MvvmScarletToolkit
             _sourceCache.RemoveKey(item);
         }
 
+        protected void Remove(TViewModel item)
+        {
+            _sourceCache.Remove(item);
+        }
+
         protected void Clear()
         {
             _sourceCache.Clear();

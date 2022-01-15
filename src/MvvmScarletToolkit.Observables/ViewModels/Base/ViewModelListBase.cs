@@ -330,13 +330,8 @@ namespace MvvmScarletToolkit.Observables
 
             return !IsDisposed
                 && CanClear()
-                && !(item is null)
+                && item is not null
                 && _items.Contains(item);
-        }
-
-        private bool CanRemoveRange()
-        {
-            return CanRemoveRange((IList)SelectedItems);
         }
 
         private bool CanRemove()
@@ -347,6 +342,11 @@ namespace MvvmScarletToolkit.Observables
         private Task RemoveRange()
         {
             return RemoveRange((IList)SelectedItems);
+        }
+
+        private bool CanRemoveRange()
+        {
+            return CanRemoveRange((IList)SelectedItems);
         }
 
         private void OnSelectionChanged()
