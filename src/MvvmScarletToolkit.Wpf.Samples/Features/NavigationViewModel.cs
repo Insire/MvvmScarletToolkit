@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         {
             var dataGridViewModel = new DataGridViewModel(commandBuilder, synchronizationContext);
 
-            Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder));
+            Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
             Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(commandBuilder, new ImageFactory(CommandBuilder)));
             Add("ConcurrentCommands and state changes", new AsyncStateListViewModel(commandBuilder));
             Add("MVVM Live Sorting and Grouping in bound collections", dataGridViewModel);

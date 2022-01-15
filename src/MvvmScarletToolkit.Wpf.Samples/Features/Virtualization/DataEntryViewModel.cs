@@ -21,6 +21,13 @@ namespace MvvmScarletToolkit.Wpf.Samples
             set { SetProperty(ref _createdOn, value); }
         }
 
+        private Guid _id;
+        public Guid Id
+        {
+            get { return _id; }
+            set { SetProperty(ref _id, value); }
+        }
+
         private bool _isSelected;
         public bool IsSelected
         {
@@ -31,6 +38,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public DataEntryViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
+            Id = Guid.NewGuid();
         }
 
         protected override Task UnloadInternal(CancellationToken token)
