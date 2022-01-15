@@ -1,14 +1,14 @@
 <Window x:Class="MvvmScarletToolkit.Wpf.Samples.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Incubator"
+        xmlns:local="clr-namespace:MvvmScarletToolkit.Wpf.Samples"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
         xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
-        xmlns:local="clr-namespace:MvvmScarletToolkit.Wpf.Samples"
-        xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Incubator"
-        xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
         Name="MainWindowRoot"
         Title="MvvmScarletToolkit.Wpf.Samples"
@@ -1099,90 +1099,73 @@
 
                 <DataTemplate DataType="{x:Type local:GeometryRenderViewModel}">
                     <Grid>
+                        <Grid.Resources>
+                            <Style TargetType="{x:Type Path}">
+                                <Setter Property="Height" Value="48" />
+                                <Setter Property="Margin" Value="48" />
+                                <Setter Property="Focusable" Value="False" />
+                            </Style>
+                            <Style TargetType="{x:Type ListBox}">
+                                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+                                <Setter Property="Focusable" Value="False" />
+                                <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
+                                <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Standard" />
+
+                                <Setter Property="ItemsPanel">
+                                    <Setter.Value>
+                                        <ItemsPanelTemplate>
+                                            <mvvm:VirtualizingTilePanel CanHorizontallyScroll="False"
+                                                                        CanVerticallyScroll="True"
+                                                                        ChildSize="48" />
+                                        </ItemsPanelTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="ItemContainerStyle">
+                                    <Setter.Value>
+                                        <Style TargetType="{x:Type ListBoxItem}">
+                                            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                                            <Setter Property="Focusable" Value="False" />
+                                            <Setter Property="Height" Value="48" />
+                                            <Setter Property="Margin" Value="0" />
+                                            <Setter Property="Padding" Value="0" />
+                                            <Setter Property="Width" Value="48" />
+                                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+
+                        </Grid.Resources>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <UniformGrid Columns="2" DockPanel.Dock="Top">
-                            <Button Margin="2,0"
-                                    Command="{Binding LoadCommand}"
-                                    Content="Load" />
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                            <Button Margin="2,0"
-                                    Command="{Binding UnloadCommand}"
-                                    Content="Unload" />
-                        </UniformGrid>
+                        <Button Grid.Column="0"
+                                Margin="2,0"
+                                Command="{Binding LoadCommand}"
+                                Content="Load" />
+
+                        <Button Grid.Column="1"
+                                Margin="2,0"
+                                Command="{Binding UnloadCommand}"
+                                Content="Unload" />
 
                         <ListBox Grid.Row="1"
-                                 ItemsSource="{Binding Items}"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                 VirtualizingStackPanel.IsVirtualizing="True"
-                                 VirtualizingStackPanel.VirtualizationMode="Recycling">
-
-                            <ListBox.Template>
-                                <ControlTemplate>
-                                    <ScrollViewer>
-                                        <ItemsPresenter />
-                                    </ScrollViewer>
-                                </ControlTemplate>
-                            </ListBox.Template>
-
-                            <ListBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <mvvm:VirtualizingTilePanel CanHorizontallyScroll="False"
-                                                                CanVerticallyScroll="True"
-                                                                ChildSize="50" />
-                                </ItemsPanelTemplate>
-                            </ListBox.ItemsPanel>
-
-                            <ListBox.ItemContainerStyle>
-                                <Style TargetType="{x:Type ListBoxItem}">
-                                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                                    <Setter Property="Focusable" Value="False" />
-                                    <Setter Property="Height" Value="48" />
-                                    <Setter Property="Margin" Value="0" />
-                                    <Setter Property="Padding" Value="0" />
-                                    <Setter Property="Width" Value="48" />
-                                </Style>
-                            </ListBox.ItemContainerStyle>
-
+                                 Grid.Column="0"
+                                 ItemsSource="{Binding Items}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate DataType="{x:Type local:GeometryContainer}">
                                     <ContentControl>
-                                        <ContentControl.Resources>
-                                            <Path x:Key="PathTemplate"
-                                                  Width="48"
-                                                  Height="48"
-                                                  Data="{Binding Value}"
-                                                  Fill="Black"
-                                                  Focusable="False" />
-                                            <Button x:Key="ButtonTemplate"
-                                                    Width="48"
-                                                    Height="48"
-                                                    Background="White"
-                                                    BorderBrush="{x:Null}"
-                                                    BorderThickness="0">
-                                                <Path Width="48"
-                                                      Height="48"
-                                                      Data="{Binding Value}"
-                                                      Fill="Purple"
-                                                      Focusable="False" />
-                                            </Button>
-                                        </ContentControl.Resources>
-                                        <ContentControl.Style>
-                                            <Style TargetType="{x:Type ContentControl}">
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Content" Value="{StaticResource ButtonTemplate}" />
-                                                    </Trigger>
-                                                    <Trigger Property="IsMouseOver" Value="False">
-                                                        <Setter Property="Content" Value="{StaticResource PathTemplate}" />
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ContentControl.Style>
+                                        <Path Data="{Binding Value}" Fill="Purple" />
                                     </ContentControl>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>

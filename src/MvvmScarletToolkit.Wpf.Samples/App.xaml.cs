@@ -2,6 +2,8 @@ using Jot;
 using Jot.Storage;
 using MvvmScarletToolkit.Observables;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Windows;
@@ -12,10 +14,19 @@ namespace MvvmScarletToolkit.Wpf.Samples
     public partial class App : Application
     {
         private readonly Tracker _tracker;
-
+        private readonly string _logFilePath;
         public App()
         {
+            DispatcherUnhandledException += App_DispatcherUnhandledException;
             _tracker = new Tracker(new JsonFileStore(Environment.SpecialFolder.ApplicationData));
+            var process = Process.GetCurrentProcess();
+            var filePath= process.MainModule.FileName;
+            _logFilePath = filePath.Replace( Path.GetFileName(filePath), "crash.log");
+        }
+
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            File.WriteAllText(_logFilePath, e.Exception.ToString());
         }
 
         protected override void OnStartup(StartupEventArgs e)
