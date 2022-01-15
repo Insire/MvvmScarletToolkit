@@ -30,19 +30,12 @@ namespace MvvmScarletToolkit
 
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool toggle)
+            if (value is bool toggle && toggle)
             {
-                if (toggle)
-                {
-                    return Visibility;
-                }
-                else
-                {
-                    return Visibility.Visible;
-                }
+                return Visibility;
             }
 
-            return Binding.DoNothing;
+            return Visibility.Visible;
         }
     }
 }
