@@ -8,6 +8,7 @@
         xmlns:local="clr-namespace:MvvmScarletToolkit.Wpf.Samples"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
+        xmlns:mx="http://compiledbindings.com/x"
         xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
         Name="MainWindowRoot"
@@ -15,7 +16,7 @@
         Width="1025"
         Height="350"
         d:DataContext="{d:DesignInstance Type=local:NavigationViewModel}"
-        mc:Ignorable="d">
+        mc:Ignorable="d mx">
 
     <Window.Style>
         <Style TargetType="{x:Type Window}">
@@ -1166,6 +1167,18 @@
                                 <DataTemplate DataType="{x:Type local:GeometryContainer}">
                                     <ContentControl>
                                         <Path Data="{Binding Value}" Fill="Purple" />
+                                    </ContentControl>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <ListBox Grid.Row="1"
+                                 Grid.Column="1"
+                                 ItemsSource="{x:Bind Items, IsItemsSource=true}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type local:GeometryContainer}">
+                                    <ContentControl>
+                                        <Path Data="{x:Bind Value}" Fill="Black" />
                                     </ContentControl>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
