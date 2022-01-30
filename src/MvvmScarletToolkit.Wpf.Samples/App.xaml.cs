@@ -15,6 +15,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
     {
         private readonly Tracker _tracker;
         private readonly string _logFilePath;
+
         public App()
         {
             DispatcherUnhandledException += App_DispatcherUnhandledException;

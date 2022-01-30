@@ -1,5 +1,4 @@
 using MvvmScarletToolkit.Commands;
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
@@ -69,7 +68,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(BusinessViewModelBase));
+                return;
             }
 
 #if DEBUG
@@ -99,7 +98,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(BusinessViewModelBase));
+                return;
             }
 
 #if DEBUG
@@ -129,7 +128,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(BusinessViewModelBase));
+                return;
             }
 
 #if DEBUG

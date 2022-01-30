@@ -287,22 +287,22 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <ListBox ItemsSource="{Binding Items}"
-                                 SelectedItem="{Binding SelectedItem}"
+                        <ListBox ItemsSource="{x:Bind Items, IsItemsSource=True}"
+                                 SelectedItem="{x:Bind SelectedItem}"
                                  SelectionMode="Extended"
                                  VirtualizingStackPanel.IsVirtualizing="True"
                                  VirtualizingStackPanel.VirtualizationMode="Standard">
 
                             <i:Interaction.Behaviors>
-                                <mvvm:MultiListBoxSelectionBehavior SelectedItems="{Binding SelectedItems}" />
+                                <mvvm:MultiListBoxSelectionBehavior SelectedItems="{x:Bind SelectedItems}" />
                             </i:Interaction.Behaviors>
 
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Loaded">
-                                    <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                                    <i:InvokeCommandAction Command="{x:Bind LoadCommand}" />
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="Unloaded">
-                                    <i:InvokeCommandAction Command="{Binding UnloadCommand}" />
+                                    <i:InvokeCommandAction Command="{x:Bind UnloadCommand}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
 
@@ -313,7 +313,7 @@
                             </ListBox.ItemContainerStyle>
 
                             <ListBox.ItemTemplate>
-                                <DataTemplate>
+                                <DataTemplate DataType="{x:Type local:DataEntryViewModel}">
                                     <Grid Grid.IsSharedSizeScope="True">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="Col1" />
@@ -321,15 +321,15 @@
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="Col2" />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Grid.Column="0" Text="{Binding CreatedOn}" />
-                                        <TextBlock Grid.Column="2" Text="{Binding Message}" />
+                                        <TextBlock Grid.Column="0" Text="{x:Bind CreatedOn}" />
+                                        <TextBlock Grid.Column="2" Text="{x:Bind Message}" />
 
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="Loaded">
-                                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                                                <i:InvokeCommandAction Command="{x:Bind LoadCommand}" />
                                             </i:EventTrigger>
                                             <i:EventTrigger EventName="Unloaded">
-                                                <i:InvokeCommandAction Command="{Binding UnloadCommand}" />
+                                                <i:InvokeCommandAction Command="{x:Bind UnloadCommand}" />
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                     </Grid>
@@ -337,10 +337,10 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <ItemsControl Grid.Column="2" ItemsSource="{Binding Items}">
+                        <ItemsControl Grid.Column="2" ItemsSource="{x:Bind Items, IsItemsSource=True}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel />
+                                    <WrapPanel IsItemsHost="True" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
 
@@ -388,19 +388,19 @@
 
                         <StackPanel Grid.Row="2" Orientation="Horizontal">
                             <Button Margin="0,0,4,0"
-                                    Command="{Binding AddCommand}"
+                                    Command="{x:Bind AddCommand}"
                                     Content="New" />
 
-                            <Button Command="{Binding RemoveRangeCommand}" Content="Remove" />
+                            <Button Command="{x:Bind RemoveRangeCommand}" Content="Remove" />
 
                             <Button Margin="4,0"
-                                    Command="{Binding RefreshCommand}"
+                                    Command="{x:Bind RefreshCommand}"
                                     Content="Refresh" />
 
-                            <Button Command="{Binding ClearCommand}" Content="Clear" />
+                            <Button Command="{x:Bind ClearCommand}" Content="Clear" />
 
                             <Button Margin="4,0"
-                                    Command="{Binding AddRangeCommand}"
+                                    Command="{x:Bind AddRangeCommand}"
                                     Content="AddRange" />
                         </StackPanel>
                     </Grid>

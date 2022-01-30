@@ -1,5 +1,3 @@
-using MvvmScarletToolkit.Observables;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,13 +52,18 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         protected override Task RefreshInternal(CancellationToken token)
         {
-            var viewModels = new DataEntryViewModel[1000];
-            for (var i = 0; i < 1000; i++)
+            return Task.Run(async () =>
             {
-                viewModels[i] = new DataEntryViewModel(CommandBuilder);
-            }
 
-            return AddRange(viewModels, token);
+                const long count = 10_000;
+                var viewModels = new DataEntryViewModel[count];
+                for (var i = 0; i < count; i++)
+                {
+                    viewModels[i] = new DataEntryViewModel(CommandBuilder);
+                }
+
+                await AddRange(viewModels, token);
+            }, token);
         }
 
         protected override void Dispose(bool disposing)
