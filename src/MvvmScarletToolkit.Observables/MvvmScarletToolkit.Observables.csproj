@@ -9,7 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
-        <PackageReference Include="DynamicData" Version="7.5.2" />
+        <PackageReference Include="DynamicData" Version="7.5.4" />
 
         <PackageReference Include="Roslynator.Analyzers" Version="4.0.2">
             <PrivateAssets>all</PrivateAssets>
