@@ -1,16 +1,13 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 
 namespace MvvmScarletToolkit.Observables
 {
-    public class EnumViewModel<T> : ViewModelContainer<T>
+    public partial class EnumViewModel<T> : ViewModelContainer<T>
         where T : Enum
     {
+        [ObservableProperty]
         private string _displayName;
-        public string DisplayName
-        {
-            get { return _displayName; }
-            set { SetProperty(ref _displayName, value); }
-        }
 
         public EnumViewModel(in T value, in string? displayName)
             : base(value)

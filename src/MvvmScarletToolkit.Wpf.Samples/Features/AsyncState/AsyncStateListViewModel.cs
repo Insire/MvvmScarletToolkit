@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -5,16 +6,12 @@ using System.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class AsyncStateListViewModel : ViewModelListBase<AsyncStateViewModel>
+    public sealed partial class AsyncStateListViewModel : ViewModelListBase<AsyncStateViewModel>
     {
         private readonly Timer _timer;
 
+        [ObservableProperty]
         private string _filterText;
-        public string FilterText
-        {
-            get { return _filterText; }
-            set { SetProperty(ref _filterText, value); }
-        }
 
         public Predicate<object> Filter { get; }
 

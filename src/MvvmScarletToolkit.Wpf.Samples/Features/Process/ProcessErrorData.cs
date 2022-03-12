@@ -3,7 +3,8 @@ using System;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class ProcessErrorData : ObservableObject
+    [ObservableObject]
+    public sealed partial class ProcessErrorData
     {
         public string Message { get; }
         public DateTime TimeStamp { get; }

@@ -2,7 +2,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public class ProcessingImagesViewModel : ObservableObject
+    [ObservableObject]
+    public partial class ProcessingImagesViewModel
     {
         private Images _source;
         public Images Source

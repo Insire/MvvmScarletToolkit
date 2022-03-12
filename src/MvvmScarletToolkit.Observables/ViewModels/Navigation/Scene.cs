@@ -3,28 +3,16 @@ using System;
 
 namespace MvvmScarletToolkit.Observables
 {
-    public class Scene : ObservableObject
+    public partial class Scene : ObservableObject
     {
+        [ObservableProperty]
         private object? _content;
-        public object? Content
-        {
-            get { return _content; }
-            set { SetProperty(ref _content, value); }
-        }
 
+        [ObservableProperty]
         private bool _isSelected;
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set { SetProperty(ref _isSelected, value); }
-        }
 
+        [ObservableProperty]
         public int _sequence;
-        public int Sequence
-        {
-            get { return _sequence; }
-            set { SetProperty(ref _sequence, value); }
-        }
 
         public ILocalizationViewModel Localization { get; }
 

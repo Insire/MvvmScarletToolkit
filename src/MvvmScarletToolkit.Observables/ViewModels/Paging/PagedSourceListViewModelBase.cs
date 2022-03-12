@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -9,7 +10,7 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit
 {
-    public abstract class PagedSourceListViewModelBase<TViewModel> : SourceListViewModelBase<TViewModel>
+    public abstract partial class PagedSourceListViewModelBase<TViewModel> : SourceListViewModelBase<TViewModel>
         where TViewModel : class, INotifyPropertyChanged
     {
         private readonly IPagedDataProvider<TViewModel> _pagedDataProvider;
@@ -19,13 +20,8 @@ namespace MvvmScarletToolkit
         protected readonly IScarletCommandBuilder CommandBuilder;
         protected readonly IScarletCommandManager CommandManager;
 
+        [ObservableProperty]
         private TViewModel? _selectedItem;
-        [Bindable(true, BindingDirection.TwoWay)]
-        public virtual TViewModel? SelectedItem
-        {
-            get { return _selectedItem; }
-            set { SetProperty(ref _selectedItem, value); }
-        }
 
         [Bindable(true, BindingDirection.OneWay)]
         public ObservableCollection<TViewModel> SelectedItems { get; }
@@ -46,21 +42,11 @@ namespace MvvmScarletToolkit
             protected set { SetProperty(ref _totalPageCount, value); }
         }
 
+        [ObservableProperty]
         private int _pageSize;
-        [Bindable(true, BindingDirection.TwoWay)]
-        public int PageSize
-        {
-            get { return _pageSize; }
-            set { SetProperty(ref _pageSize, value); }
-        }
 
+        [ObservableProperty]
         private int _currentPage;
-        [Bindable(true, BindingDirection.TwoWay)]
-        public int CurrentPage
-        {
-            get { return _currentPage; }
-            set { SetProperty(ref _currentPage, value); }
-        }
 
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand NextCommand { get; }

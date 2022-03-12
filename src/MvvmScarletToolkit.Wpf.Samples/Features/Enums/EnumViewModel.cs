@@ -2,13 +2,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class EnumViewModel : ObservableObject
+    [ObservableObject]
+    public sealed partial class EnumViewModel
     {
+        [ObservableProperty]
         private ViewModelEnum _value;
-        public ViewModelEnum Value
-        {
-            get { return _value; }
-            set { SetProperty(ref _value, value); }
-        }
     }
 }

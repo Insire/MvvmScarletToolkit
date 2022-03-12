@@ -8,7 +8,8 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class ObservableBusyViewModel : ObservableObject, IObservable<bool>, IDisposable
+    [ObservableObject]
+    public sealed partial class ObservableBusyViewModel : IObservable<bool>, IDisposable
     {
         private readonly ObservableBusyStack _observableBusyStack;
 
@@ -23,7 +24,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         public ICommand BeBusyCommand { get; }
 
-        public ObservableBusyViewModel(IScarletCommandBuilder commandBuilder, IScarletDispatcher dispatcher)
+        public ObservableBusyViewModel(IScarletCommandBuilder commandBuilder)
         {
             _observableBusyStack = new ObservableBusyStack(hasItems => { IsBusy = hasItems; Debug.WriteLine("ObservableBusyViewModel is busy: " + hasItems); });
 

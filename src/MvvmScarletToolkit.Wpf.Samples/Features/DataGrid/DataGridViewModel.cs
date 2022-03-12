@@ -1,9 +1,10 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class DataGridViewModel : PagedSourceListViewModelBase<DataGridRowViewModel>
+    public sealed partial class DataGridViewModel : PagedSourceListViewModelBase<DataGridRowViewModel>
     {
         public GroupingViewModel Groups { get; }
 
@@ -14,12 +15,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
             private set { SetProperty(ref _filter, value); }
         }
 
+        [ObservableProperty]
         private string _filterText;
-        public string FilterText
-        {
-            get { return _filterText; }
-            set { SetProperty(ref _filterText, value); }
-        }
 
         public DataGridViewModel(IScarletCommandBuilder commandBuilder, SynchronizationContext synchronizationContext)
             : base(commandBuilder, synchronizationContext, vm => vm.Name, new DataGridDataProvider(commandBuilder, 2000, 50))

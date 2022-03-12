@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
 using System.Threading.Tasks;
@@ -5,38 +6,22 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class ToastsViewModel : ViewModelBase
+    public sealed partial class ToastsViewModel : ViewModelBase
     {
         public ICommand ShowToastCommand { get; }
         public ICommand ShowManyToastsCommand { get; }
 
+        [ObservableProperty]
         private ToastType _toastType;
-        public ToastType ToastType
-        {
-            get { return _toastType; }
-            set { SetProperty(ref _toastType, value); }
-        }
 
+        [ObservableProperty]
         private string _title;
-        public string Title
-        {
-            get { return _title; }
-            set { SetProperty(ref _title, value); }
-        }
 
+        [ObservableProperty]
         private string _body;
-        public string Body
-        {
-            get { return _body; }
-            set { SetProperty(ref _body, value); }
-        }
 
+        [ObservableProperty]
         private bool _persist;
-        public bool Persist
-        {
-            get { return _persist; }
-            set { SetProperty(ref _persist, value); }
-        }
 
         public ToastsViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)

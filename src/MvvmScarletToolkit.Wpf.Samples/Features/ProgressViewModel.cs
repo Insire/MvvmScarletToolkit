@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Diagnostics;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class ProgressViewModel : BusinessViewModelBase
+    public sealed partial class ProgressViewModel : BusinessViewModelBase
     {
         private readonly DispatcherProgress<double> _progress;
         private readonly IProgress<double> _uiBlockingProgress;
@@ -25,12 +26,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
             private set { SetProperty(ref _maximum, value); }
         }
 
+        [ObservableProperty]
         private bool _block;
-        public bool Block
-        {
-            get { return _block; }
-            set { SetProperty(ref _block, value); }
-        }
 
         public ProgressViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)

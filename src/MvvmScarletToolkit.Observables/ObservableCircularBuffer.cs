@@ -8,25 +8,16 @@ using System.Linq;
 
 namespace MvvmScarletToolkit.Observables
 {
-    public sealed class ObservableCircularBuffer<T> : ObservableObject, IEnumerable<T>, INotifyCollectionChanged
+    public sealed partial class ObservableCircularBuffer<T> : ObservableObject, IEnumerable<T>, INotifyCollectionChanged
     {
         private readonly ObservableCollection<T> _buffer;
         private int _start;
 
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
+        [ObservableProperty]
+        [AlsoNotifyChangeFor(nameof(IsFull))]
         private int _capacity;
-        public int Capacity
-        {
-            get { return _capacity; }
-            set
-            {
-                if (SetProperty(ref _capacity, value))
-                {
-                    OnPropertyChanged(nameof(IsFull));
-                }
-            }
-        }
 
         private int _size;
         /// <summary>
