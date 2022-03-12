@@ -1,4 +1,4 @@
-using Microsoft.Toolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Input;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Threading;
