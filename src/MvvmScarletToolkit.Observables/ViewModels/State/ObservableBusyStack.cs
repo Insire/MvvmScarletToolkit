@@ -28,16 +28,6 @@ namespace MvvmScarletToolkit.Observables
             _observers = new ConcurrentDictionary<IObserver<bool>, object>();
         }
 
-        [Obsolete("The IScarletDispatcher instance is not being used here anymore")]
-        public ObservableBusyStack(in Action<bool> onChanged, in IScarletDispatcher dispatcher)
-        {
-            _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
-
-            _id = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-            _items = new ConcurrentBag<IDisposable>();
-            _observers = new ConcurrentDictionary<IObserver<bool>, object>();
-        }
-
         public Task Pull()
         {
             if (_disposed)
