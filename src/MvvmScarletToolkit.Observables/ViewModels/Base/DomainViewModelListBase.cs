@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,7 +9,7 @@ namespace MvvmScarletToolkit.Observables
     /// Collection ViewModelBase that adds support for paged loading
     /// </summary>
     /// <typeparam name="TViewModel"></typeparam>
-    public abstract class DomainViewModelListBase<TViewModel> : BusinessViewModelListBase<TViewModel>
+    public abstract partial class DomainViewModelListBase<TViewModel> : BusinessViewModelListBase<TViewModel>
         where TViewModel : class, INotifyPropertyChanged
     {
         private int _total;
@@ -19,21 +20,11 @@ namespace MvvmScarletToolkit.Observables
             protected set { SetProperty(ref _total, value); }
         }
 
+        [ObservableProperty]
         private int _pageSize;
-        [Bindable(true, BindingDirection.TwoWay)]
-        public int PageSize
-        {
-            get { return _pageSize; }
-            set { SetProperty(ref _pageSize, value); }
-        }
 
+        [ObservableProperty]
         private int _pageIndex;
-        [Bindable(true, BindingDirection.TwoWay)]
-        public int PageIndex
-        {
-            get { return _pageIndex; }
-            set { SetProperty(ref _pageIndex, value); }
-        }
 
         [Bindable(true, BindingDirection.OneWay)]
         public PagingViewModel<TViewModel> Paging { get; }

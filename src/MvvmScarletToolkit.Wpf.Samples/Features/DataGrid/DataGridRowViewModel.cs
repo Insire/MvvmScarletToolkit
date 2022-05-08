@@ -1,9 +1,10 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
 using System;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class DataGridRowViewModel : ViewModelBase
+    public sealed partial class DataGridRowViewModel : ViewModelBase
     {
         private int id;
         public int Id
@@ -64,12 +65,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
             private set { SetProperty(ref _updatedOn, value); }
         }
 
+        [ObservableProperty]
         private bool _isSelected;
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set { SetProperty(ref _isSelected, value); }
-        }
 
         public int Page { get; }
 

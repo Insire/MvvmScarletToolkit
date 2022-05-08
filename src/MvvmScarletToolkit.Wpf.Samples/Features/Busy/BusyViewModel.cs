@@ -45,7 +45,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         private async Task InternalAddChildAsync(CancellationToken token)
         {
-            var viewModel = new ObservableBusyViewModel(CommandBuilder, Dispatcher);
+            var viewModel = new ObservableBusyViewModel(CommandBuilder);
             _disposables.Add(viewModel, viewModel.Subscribe(this));
 
             await Add(viewModel, token).ConfigureAwait(false);

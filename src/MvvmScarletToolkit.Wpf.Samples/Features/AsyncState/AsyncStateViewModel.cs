@@ -1,24 +1,17 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class AsyncStateViewModel : BusinessViewModelBase
+    public sealed partial class AsyncStateViewModel : BusinessViewModelBase
     {
+        [ObservableProperty]
         private string _displayName;
-        public string DisplayName
-        {
-            get { return _displayName; }
-            set { SetProperty(ref _displayName, value); }
-        }
 
+        [ObservableProperty]
         private bool _isSelected;
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set { SetProperty(ref _isSelected, value); }
-        }
 
         public AsyncStateViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)

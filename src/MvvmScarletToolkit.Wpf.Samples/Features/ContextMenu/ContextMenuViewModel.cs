@@ -1,9 +1,10 @@
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class ContextMenuViewModel : ObservableObject
+    [ObservableObject]
+    public sealed partial class ContextMenuViewModel
     {
         public string Name { get; } = "Test";
         public ObservableCollection<ContextMenuViewModel> Items { get; }

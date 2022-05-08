@@ -1,5 +1,3 @@
-using MvvmScarletToolkit.Observables;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;

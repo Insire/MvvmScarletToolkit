@@ -1,9 +1,10 @@
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class ProcessData : ObservableObject
+    [ObservableObject]
+    public sealed partial class ProcessData
     {
         public string Message { get; }
         public DateTime TimeStamp { get; }

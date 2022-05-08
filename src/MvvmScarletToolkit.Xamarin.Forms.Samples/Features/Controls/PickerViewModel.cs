@@ -1,16 +1,13 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
 using System.Collections.ObjectModel;
 
 namespace MvvmScarletToolkit.Xamarin.Forms.Samples.Features.Controls
 {
-    internal sealed class PickerViewModel : ViewModelBase
+    internal sealed partial class PickerViewModel : ViewModelBase
     {
+        [ObservableProperty]
         private string _selectedItem;
-        public string SelectedItem
-        {
-            get { return _selectedItem; }
-            set { SetProperty(ref _selectedItem, value); }
-        }
 
         public ObservableCollection<string> Items { get; }
 
