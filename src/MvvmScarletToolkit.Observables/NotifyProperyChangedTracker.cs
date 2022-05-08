@@ -32,8 +32,17 @@ namespace MvvmScarletToolkit.Observables
         /// <inheritdoc/>
         public bool HasChanges<T>(T instance)
             where T : class, INotifyPropertyChanged
-
         {
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            if (_disposedValue)
+            {
+                throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
+            }
+
             if (_changes.TryGetValue(instance, out var changes))
             {
                 return changes.IsChanged;
@@ -45,10 +54,38 @@ namespace MvvmScarletToolkit.Observables
         }
 
         /// <inheritdoc/>
+        public int CountChanges<T>(T instance)
+            where T : class, INotifyPropertyChanged
+        {
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            if (_disposedValue)
+            {
+                throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
+            }
+
+            if (_changes.TryGetValue(instance, out var changes))
+            {
+                return changes.Count;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        /// <inheritdoc/>
         public void Track<T>(T instance)
             where T : class, INotifyPropertyChanged
-
         {
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
             if (_disposedValue)
             {
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
@@ -61,7 +98,7 @@ namespace MvvmScarletToolkit.Observables
         }
 
         /// <inheritdoc/>
-        public void StopTracking()
+        public void StopAllTracking()
         {
             if (_disposedValue)
             {
@@ -82,6 +119,11 @@ namespace MvvmScarletToolkit.Observables
             where T : class, INotifyPropertyChanged
 
         {
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
             if (_disposedValue)
             {
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
@@ -94,7 +136,7 @@ namespace MvvmScarletToolkit.Observables
         }
 
         /// <inheritdoc/>
-        public void ClearChanges()
+        public void ClearAllChanges()
         {
             if (_disposedValue)
             {
@@ -112,6 +154,11 @@ namespace MvvmScarletToolkit.Observables
             where T : class, INotifyPropertyChanged
 
         {
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
             if (_disposedValue)
             {
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
@@ -137,8 +184,12 @@ namespace MvvmScarletToolkit.Observables
         /// <inheritdoc/>
         public IDisposable SuppressChanges<T>(T instance)
             where T : class, INotifyPropertyChanged
-
         {
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
             if (_disposedValue)
             {
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
@@ -206,6 +257,7 @@ namespace MvvmScarletToolkit.Observables
         {
             private readonly HashSet<string> _changes;
 
+            public int Count => _changes.Count;
             public bool IsChanged => _changes.Count > 0;
             public bool ShouldSuppressChanges { get; set; }
 
