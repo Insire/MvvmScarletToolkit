@@ -14,8 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.vsconfig = .vsconfig
 		appveyor.yml = appveyor.yml
 		build.cake = build.cake
-		Directory.Build.targets = Directory.Build.targets
-		MvvmScarletToolkit.props = MvvmScarletToolkit.props
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
 		MvvmScarletToolkit.ruleset = MvvmScarletToolkit.ruleset
 		README.md = README.md
 	EndProjectSection
@@ -42,7 +42,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Xamarin.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Wpf.Tests", "src\MvvmScarletToolkit.Wpf.Tests\MvvmScarletToolkit.Wpf.Tests.csproj", "{A9CE017F-B4C9-40DC-A092-DC5067956994}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Observables.Tests", "src\MvvmScarletToolkit.Observables.Tests\MvvmScarletToolkit.Observables.Tests.csproj", "{F7EBB910-0AA9-4683-878B-06108492F2F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Observables.Tests", "src\MvvmScarletToolkit.Observables.Tests\MvvmScarletToolkit.Observables.Tests.csproj", "{F7EBB910-0AA9-4683-878B-06108492F2F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
