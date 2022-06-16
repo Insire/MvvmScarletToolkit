@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    [ObservableObject]
+    [INotifyPropertyChanged]
     public sealed partial class PasswordViewModel
     {
         [ObservableProperty]

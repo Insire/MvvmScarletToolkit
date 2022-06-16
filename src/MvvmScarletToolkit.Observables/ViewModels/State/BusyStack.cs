@@ -19,13 +19,6 @@ namespace MvvmScarletToolkit.Observables
             _items = new ConcurrentBag<IDisposable>();
         }
 
-        [Obsolete("The IScarletDispatcher instance is not being used here anymore")]
-        public BusyStack(in Action<bool> onChanged, in IScarletDispatcher dispatcher)
-        {
-            _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
-            _items = new ConcurrentBag<IDisposable>();
-        }
-
         public Task Pull()
         {
             var oldValue = _items.TryPeek(out _);

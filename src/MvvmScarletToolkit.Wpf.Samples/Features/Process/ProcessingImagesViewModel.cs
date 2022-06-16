@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    [ObservableObject]
+    [INotifyPropertyChanged]
     public partial class ProcessingImagesViewModel
     {
         private Images _source;

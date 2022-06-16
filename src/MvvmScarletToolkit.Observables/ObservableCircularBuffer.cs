@@ -16,7 +16,7 @@ namespace MvvmScarletToolkit.Observables
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         [ObservableProperty]
-        [AlsoNotifyChangeFor(nameof(IsFull))]
+        [NotifyPropertyChangedFor(nameof(IsFull))]
         private int _capacity;
 
         private int _size;

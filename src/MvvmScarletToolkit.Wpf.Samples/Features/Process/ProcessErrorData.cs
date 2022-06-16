@@ -3,7 +3,7 @@ using System;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    [ObservableObject]
+    [INotifyPropertyChanged]
     public sealed partial class ProcessErrorData
     {
         public string Message { get; }
