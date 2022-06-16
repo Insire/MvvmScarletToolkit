@@ -1,4 +1,4 @@
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Commands;
 using System;
 using System.ComponentModel;

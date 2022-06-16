@@ -26,10 +26,8 @@ namespace MvvmScarletToolkit
                     {
                         return DependencyProperty.UnsetValue;
                     }
-                    else
-                    {
-                        return value;
-                    }
+
+                    return value;
             }
         }
     }

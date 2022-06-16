@@ -1,20 +1,16 @@
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 
 namespace MvvmScarletToolkit.Wpf
 {
-    public class ToastViewModel : ObservableObject, IToast
+    public partial class ToastViewModel : ObservableObject, IToast
     {
-        private bool _isRemoving;
         /// <summary>
         /// This is set to true immediately when the alloted display time runs out, but the toast is not removed immediately from the toast collection,
         /// so that there is time to animate its removal
         /// </summary>
-        public bool IsRemoving
-        {
-            get { return _isRemoving; }
-            set { SetProperty(ref _isRemoving, value); }
-        }
+        [ObservableProperty]
+        private bool _isRemoving;
 
         public string Title { get; }
 

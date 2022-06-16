@@ -40,7 +40,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Jot" Version="2.1.11" />
+        <PackageReference Include="Jot" Version="2.1.13" />
         <PackageReference Include="XamlFlair.WPF" Version="1.2.13" />
     </ItemGroup>
 

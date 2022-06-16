@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -11,7 +12,7 @@ using System.Windows.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class ProcessViewModel : ViewModelBase
+    public sealed partial class ProcessViewModel : ViewModelBase
     {
         private readonly ConcurrentQueue<ProcessData> _outputQueue;
         private readonly ConcurrentQueue<ProcessErrorData> _errorQueue;
@@ -22,26 +23,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
         private readonly DispatcherTimer _timer;
         private readonly ConcurrentCommandBase _startCommand;
 
+        [ObservableProperty]
         private string _args;
-        public string Args
-        {
-            get { return _args; }
-            set { SetProperty(ref _args, value); }
-        }
 
+        [ObservableProperty]
         private string _filePath;
-        public string FilePath
-        {
-            get { return _filePath; }
-            set { SetProperty(ref _filePath, value); }
-        }
 
+        [ObservableProperty]
         private string _workingDirectory;
-        public string WorkingDirectory
-        {
-            get { return _workingDirectory; }
-            set { SetProperty(ref _workingDirectory, value); }
-        }
 
         public ICommand StartCommand => _startCommand;
 

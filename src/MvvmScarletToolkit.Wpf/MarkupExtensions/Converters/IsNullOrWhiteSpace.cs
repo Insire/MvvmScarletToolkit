@@ -20,7 +20,7 @@ namespace MvvmScarletToolkit
                 return string.IsNullOrWhiteSpace(text);
             }
 
-            return Binding.DoNothing;
+            return false;
         }
     }
 }

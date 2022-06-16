@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Observables;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,14 +5,14 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class DataEntriesViewModel : BusinessViewModelListBase<DataEntryViewModel>
+    public sealed class DataEntriesViewModel : BusinessSourceListViewModelBase<DataEntryViewModel>
     {
         public ICommand AddCommand { get; }
 
         public ICommand AddRangeCommand { get; }
 
-        public DataEntriesViewModel(IScarletCommandBuilder commandBuilder)
-            : base(commandBuilder)
+        public DataEntriesViewModel(IScarletCommandBuilder commandBuilder, SynchronizationContext synchronizationContext)
+            : base(commandBuilder, synchronizationContext, vm => vm.Id.ToString())
         {
             AddCommand = CommandBuilder.Create(AddNew, CanAddNew)
                 .WithSingleExecution()
@@ -51,20 +50,22 @@ namespace MvvmScarletToolkit.Wpf.Samples
             return Items != null;
         }
 
-        protected override async Task RefreshInternal(CancellationToken token)
+        protected override Task RefreshInternal(CancellationToken token)
         {
+            var viewModels = new DataEntryViewModel[1000];
             for (var i = 0; i < 1000; i++)
             {
-                await AddNew().ConfigureAwait(false);
+                viewModels[i] = new DataEntryViewModel(CommandBuilder);
             }
+
+            return AddRange(viewModels, token);
         }
 
-        protected override async void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 Items.Dispose();
-                await Clear().ConfigureAwait(false);
             }
 
             base.Dispose(disposing);

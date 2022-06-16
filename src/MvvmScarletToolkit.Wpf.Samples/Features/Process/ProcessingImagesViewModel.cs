@@ -1,8 +1,9 @@
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public class ProcessingImagesViewModel : ObservableObject
+    [INotifyPropertyChanged]
+    public partial class ProcessingImagesViewModel
     {
         private Images _source;
         public Images Source

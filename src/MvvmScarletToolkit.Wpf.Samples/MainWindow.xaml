@@ -387,16 +387,16 @@
 
                         <StackPanel Grid.Row="2" Orientation="Horizontal">
                             <Button Margin="0,0,4,0"
-                                    Command="{Binding LogItems.AddCommand}"
+                                    Command="{Binding AddCommand}"
                                     Content="New" />
 
-                            <Button Command="{Binding LogItems.RemoveRangeCommand}" Content="Remove" />
+                            <Button Command="{Binding RemoveRangeCommand}" Content="Remove" />
 
                             <Button Margin="4,0"
-                                    Command="{Binding LogItems.RefreshCommand}"
+                                    Command="{Binding RefreshCommand}"
                                     Content="Refresh" />
 
-                            <Button Command="{Binding LogItems.ClearCommand}" Content="Clear" />
+                            <Button Command="{Binding ClearCommand}" Content="Clear" />
 
                             <Button Margin="4,0"
                                     Command="{Binding AddRangeCommand}"

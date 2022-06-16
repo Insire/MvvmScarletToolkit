@@ -20,7 +20,7 @@ namespace MvvmScarletToolkit
                 return !boolean;
             }
 
-            return Binding.DoNothing;
+            return false;
         }
     }
 }

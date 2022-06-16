@@ -26,7 +26,7 @@ namespace MvvmScarletToolkit
         /// </summary>
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value.Equals(true) ? parameter : Binding.DoNothing;
+            return value.Equals(true) ? parameter : false;
         }
     }
 }

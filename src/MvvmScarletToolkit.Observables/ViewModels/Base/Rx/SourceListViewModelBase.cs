@@ -1,6 +1,6 @@
 using DynamicData;
 using DynamicData.Binding;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Reactive;
@@ -114,6 +114,11 @@ namespace MvvmScarletToolkit
         protected void RemoveKey(string item)
         {
             _sourceCache.RemoveKey(item);
+        }
+
+        protected void Remove(TViewModel item)
+        {
+            _sourceCache.Remove(item);
         }
 
         protected void Clear()

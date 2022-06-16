@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Threading;
@@ -5,32 +6,24 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class DataEntryViewModel : BusinessViewModelBase
+    public sealed partial class DataEntryViewModel : BusinessViewModelBase
     {
+        [ObservableProperty]
         private string _message;
-        public string Message
-        {
-            get { return _message; }
-            set { SetProperty(ref _message, value); }
-        }
 
+        [ObservableProperty]
         private DateTime _createdOn;
-        public DateTime CreatedOn
-        {
-            get { return _createdOn; }
-            set { SetProperty(ref _createdOn, value); }
-        }
 
+        [ObservableProperty]
+        private Guid _id;
+
+        [ObservableProperty]
         private bool _isSelected;
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set { SetProperty(ref _isSelected, value); }
-        }
 
         public DataEntryViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
+            Id = Guid.NewGuid();
         }
 
         protected override Task UnloadInternal(CancellationToken token)

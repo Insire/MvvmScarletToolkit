@@ -1,6 +1,6 @@
 # MvvmScarletToolkit
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Insire/Maple/blob/master/license.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Insire/MvvmScarletToolkit/blob/master/license.md)
 [![NuGet](https://img.shields.io/nuget/v/MvvmScarletToolkit.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/MvvmScarletToolkit/)
 [![Build status](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_apis/build/status/MvvmScarletToolkit-CD)](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_build/latest?definitionId=1)
 [![CodeFactor](https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit/badge)](https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit)
@@ -24,6 +24,8 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
   - INotifyPropertyChanged base classes for single instance viewmodels and collection viewmodels
   - Localization ViewModels (switching language without app restart)
   - Threadsafe busy state notifications via IBusyStack interface
+  - ChangeTracker based on INotifyPropertyChanged
+  - ChangeTracker based on PropertyChangedMessage\<T> (from CommunityToolkit.Mvvm)
   - Helper viewmodels for
     - paging
     - enums
