@@ -24,6 +24,8 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
   - INotifyPropertyChanged base classes for single instance viewmodels and collection viewmodels
   - Localization ViewModels (switching language without app restart)
   - Threadsafe busy state notifications via IBusyStack interface
+  - ChangeTracker based on INotifyPropertyChanged
+  - ChangeTracker based on PropertyChangedMessage\<T> (from CommunityToolkit.Mvvm)
   - Helper viewmodels for
     - paging
     - enums
