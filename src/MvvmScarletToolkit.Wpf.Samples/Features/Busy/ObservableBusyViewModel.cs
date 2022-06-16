@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    [ObservableObject]
+    [INotifyPropertyChanged]
     public sealed partial class ObservableBusyViewModel : IObservable<bool>, IDisposable
     {
         private readonly ObservableBusyStack _observableBusyStack;

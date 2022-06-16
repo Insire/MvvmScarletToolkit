@@ -73,7 +73,7 @@ namespace MvvmScarletToolkit.Observables.Tests
                 viewModel.PropertyChanging += ViewModel_PropertyChanging;
                 tracker.Track(viewModel);
 
-                viewModel.Property = new object();
+                viewModel.Data = string.Empty;
 
                 Assert.IsTrue(propertyChanging);
                 Assert.IsTrue(propertyChanged);
@@ -106,7 +106,8 @@ namespace MvvmScarletToolkit.Observables.Tests
                 viewModel.PropertyChanging += ViewModel_PropertyChanging;
                 tracker.Track(viewModel);
                 tracker.StopTracking(viewModel);
-                viewModel.Property = new object();
+
+                viewModel.Data = string.Empty;
 
                 Assert.IsTrue(propertyChanging);
                 Assert.IsTrue(propertyChanged);
@@ -139,7 +140,8 @@ namespace MvvmScarletToolkit.Observables.Tests
                 viewModel.PropertyChanging += ViewModel_PropertyChanging;
                 tracker.Track(viewModel);
                 tracker.StopAllTracking();
-                viewModel.Property = new object();
+
+                viewModel.Data = string.Empty;
 
                 Assert.IsTrue(propertyChanging);
                 Assert.IsTrue(propertyChanged);
@@ -172,7 +174,7 @@ namespace MvvmScarletToolkit.Observables.Tests
                 viewModel.PropertyChanging += ViewModel_PropertyChanging;
                 tracker.Track(viewModel);
 
-                viewModel.Property = new object();
+                viewModel.Data = string.Empty;
 
                 Assert.IsTrue(propertyChanging);
                 Assert.IsTrue(propertyChanged);
@@ -208,7 +210,7 @@ namespace MvvmScarletToolkit.Observables.Tests
                 viewModel.PropertyChanging += ViewModel_PropertyChanging;
                 tracker.Track(viewModel);
 
-                viewModel.Property = new object();
+                viewModel.Data = string.Empty;
 
                 Assert.IsTrue(propertyChanging);
                 Assert.IsTrue(propertyChanged);
@@ -248,8 +250,8 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 using (tracker.SuppressChanges(viewModel))
                 {
-                    viewModel.Property = new object();
-                    viewModel2.Property = new object();
+                    viewModel.Data = string.Empty;
+                    viewModel2.Data = string.Empty;
                 }
 
                 Assert.IsTrue(propertyChanging);
@@ -291,8 +293,8 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 using (tracker.SuppressAllChanges())
                 {
-                    viewModel.Property = new object();
-                    viewModel2.Property = new object();
+                    viewModel.Data = string.Empty;
+                    viewModel2.Data = string.Empty;
                 }
 
                 Assert.IsTrue(propertyChanging);

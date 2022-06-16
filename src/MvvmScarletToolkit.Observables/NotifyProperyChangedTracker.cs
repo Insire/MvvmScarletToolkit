@@ -13,20 +13,20 @@ namespace MvvmScarletToolkit.Observables
     /// </remarks>
     public sealed class NotifyProperyChangedTracker : IChangeTracker
     {
-        private readonly Dictionary<INotifyPropertyChanged, ChangeState> _changes;
+        private readonly Dictionary<INotifyPropertyChanged, ChangeState> _trackedInstances;
 
         private bool _disposedValue;
         private bool _shouldSuppressChanges;
 
         public NotifyProperyChangedTracker()
         {
-            _changes = new Dictionary<INotifyPropertyChanged, ChangeState>();
+            _trackedInstances = new Dictionary<INotifyPropertyChanged, ChangeState>();
         }
 
         /// <inheritdoc/>
         public bool HasChanges()
         {
-            return _changes.Values.Any(p => p.IsChanged);
+            return _trackedInstances.Values.Any(p => p.IsChanged);
         }
 
         /// <inheritdoc/>
@@ -43,7 +43,7 @@ namespace MvvmScarletToolkit.Observables
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
             }
 
-            if (_changes.TryGetValue(instance, out var changes))
+            if (_trackedInstances.TryGetValue(instance, out var changes))
             {
                 return changes.IsChanged;
             }
@@ -67,7 +67,7 @@ namespace MvvmScarletToolkit.Observables
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
             }
 
-            if (_changes.TryGetValue(instance, out var changes))
+            if (_trackedInstances.TryGetValue(instance, out var changes))
             {
                 return changes.Count;
             }
@@ -94,7 +94,7 @@ namespace MvvmScarletToolkit.Observables
             instance.PropertyChanged -= OnPropertyChanged;
             instance.PropertyChanged += OnPropertyChanged;
 
-            _changes[instance] = new ChangeState();
+            _trackedInstances[instance] = new ChangeState();
         }
 
         /// <inheritdoc/>
@@ -107,7 +107,7 @@ namespace MvvmScarletToolkit.Observables
 
             using (SuppressAllChanges())
             {
-                foreach (var instance in _changes.Keys)
+                foreach (var instance in _trackedInstances.Keys)
                 {
                     instance.PropertyChanged -= OnPropertyChanged;
                 }
@@ -129,7 +129,7 @@ namespace MvvmScarletToolkit.Observables
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
             }
 
-            if (_changes.TryGetValue(instance, out var changeState))
+            if (_trackedInstances.TryGetValue(instance, out var changeState))
             {
                 instance.PropertyChanged -= OnPropertyChanged;
             }
@@ -143,7 +143,7 @@ namespace MvvmScarletToolkit.Observables
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
             }
 
-            foreach (var state in _changes.Values.ToArray())
+            foreach (var state in _trackedInstances.Values.ToArray())
             {
                 state.Clear();
             }
@@ -164,7 +164,7 @@ namespace MvvmScarletToolkit.Observables
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
             }
 
-            if (_changes.TryGetValue(instance, out var state))
+            if (_trackedInstances.TryGetValue(instance, out var state))
             {
                 state.Clear();
             }
@@ -195,7 +195,7 @@ namespace MvvmScarletToolkit.Observables
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
             }
 
-            if (_changes.TryGetValue(instance, out var changes))
+            if (_trackedInstances.TryGetValue(instance, out var changes))
             {
                 return new SuppressChangesSubscription(changes);
             }
@@ -214,7 +214,7 @@ namespace MvvmScarletToolkit.Observables
 
             if (sender is INotifyPropertyChanged observable)
             {
-                if (_changes.TryGetValue(observable, out var changes))
+                if (_trackedInstances.TryGetValue(observable, out var changes))
                 {
                     if (changes.ShouldSuppressChanges)
                     {
@@ -234,12 +234,12 @@ namespace MvvmScarletToolkit.Observables
             {
                 if (disposing)
                 {
-                    foreach (var instance in _changes.Keys.ToArray())
+                    foreach (var instance in _trackedInstances.Keys.ToArray())
                     {
                         instance.PropertyChanged -= OnPropertyChanged;
                     }
 
-                    _changes.Clear();
+                    _trackedInstances.Clear();
                 }
 
                 _disposedValue = true;
