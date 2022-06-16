@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     [DebuggerDisplay("Drive: {Name} IsContainer: {IsContainer}")]
-    public sealed class ScarletDrive : BusinessViewModelListBase<IFileSystemChild>, IFileSystemDrive
+    public sealed partial class ScarletDrive : BusinessViewModelListBase<IFileSystemChild>, IFileSystemDrive
     {
         private readonly IFileSystemViewModelFactory _factory;
         private readonly IReadOnlyCollection<FileAttributes> _fileAttributes;
@@ -80,13 +81,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             private set { SetProperty(ref _fullName, value); }
         }
 
+        [ObservableProperty]
         private bool _isSelected;
-        [Bindable(true, BindingDirection.TwoWay)]
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set { SetProperty(ref _isSelected, value); }
-        }
 
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsContainer { get; }

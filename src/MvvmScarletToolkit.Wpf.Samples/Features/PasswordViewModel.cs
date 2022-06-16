@@ -1,14 +1,11 @@
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class PasswordViewModel : ObservableObject
+    [INotifyPropertyChanged]
+    public sealed partial class PasswordViewModel
     {
+        [ObservableProperty]
         private string _password;
-        public string Password
-        {
-            get { return _password; }
-            set { SetProperty(ref _password, value); }
-        }
     }
 }

@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
 using System;
 using System.Reflection;
@@ -8,40 +9,23 @@ using System.Windows.Media.Imaging;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public sealed class Image : ViewModelBase
+    public sealed partial class Image : ViewModelBase
     {
         private readonly Assembly _assembly;
 
+        [ObservableProperty]
         private string _displayName;
-        public string DisplayName
-        {
-            get { return _displayName; }
-            set { SetProperty(ref _displayName, value); }
-        }
 
+        [ObservableProperty]
         private string _path;
-        public string Path
-        {
-            get { return _path; }
-            set { SetProperty(ref _path, value); }
-        }
 
+        [ObservableProperty]
         private bool _isSelected;
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set { SetProperty(ref _isSelected, value); }
-        }
 
+        [ObservableProperty]
         private int _sequence;
-        public int Sequence
-        {
-            get { return _sequence; }
-            set { SetProperty(ref _sequence, value); }
-        }
 
         private BitmapSource _source;
-
         public BitmapSource Source
         {
             get { return _source; }

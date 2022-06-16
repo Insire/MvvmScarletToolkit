@@ -1,4 +1,5 @@
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,18 +16,13 @@ namespace MvvmScarletToolkit.Observables
     /// <summary>
     /// Collection ViewModelBase wrapping around an <see cref="ObservableCollection"/> that provides methods for threadsafe modification via the dispatcher
     /// </summary>
-    public abstract class ViewModelListBase<TViewModel> : ViewModelBase
+    public abstract partial class ViewModelListBase<TViewModel> : ViewModelBase
         where TViewModel : class, INotifyPropertyChanged
     {
         protected readonly ObservableCollection<TViewModel> _items;
 
+        [ObservableProperty]
         private TViewModel? _selectedItem;
-        [Bindable(true, BindingDirection.TwoWay)]
-        public virtual TViewModel? SelectedItem
-        {
-            get { return _selectedItem; }
-            set { SetProperty(ref _selectedItem, value); }
-        }
 
         public TViewModel this[int index]
         {
@@ -113,7 +109,7 @@ namespace MvvmScarletToolkit.Observables
         {
             switch (e.PropertyName)
             {
-                case nameof(ViewModelListBase<TViewModel>.SelectedItem):
+                case nameof(SelectedItem):
                     OnSelectionChanged();
                     break;
             }
@@ -123,7 +119,7 @@ namespace MvvmScarletToolkit.Observables
         {
             switch (e.PropertyName)
             {
-                case nameof(ViewModelListBase<TViewModel>.SelectedItem):
+                case nameof(SelectedItem):
                     OnSelectionChanging();
                     break;
             }
