@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -10,45 +9,41 @@ namespace MvvmScarletToolkit.Observables
     /// </summary>
     public sealed class BusyStack : IBusyStack
     {
-        private readonly ConcurrentBag<IDisposable> _items;
         private readonly Action<bool> _onChanged;
+
+        private int _items;
 
         public BusyStack(in Action<bool> onChanged)
         {
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
-            _items = new ConcurrentBag<IDisposable>();
         }
 
-        public Task Pull()
+        public void Pull()
         {
-            var oldValue = _items.TryPeek(out _);
-            _ = _items.TryTake(out _);
-            var newValue = _items.TryPeek(out _);
+            var oldValue = _items > 0;
+            Interlocked.Decrement(ref _items);
+            var newValue = _items > 0;
 
             if (oldValue.Equals(newValue))
             {
-                return Task.CompletedTask;
+                return;
             }
 
             InvokeOnChanged(newValue);
-
-            return Task.CompletedTask;
         }
 
-        public Task Push(IDisposable token)
+        public void Push()
         {
-            var oldValue = _items.TryPeek(out _);
-            _items.Add(token);
-            var newValue = _items.TryPeek(out _);
+            var oldValue = _items > 0;
+            Interlocked.Increment(ref _items);
+            var newValue = _items > 0;
 
             if (oldValue.Equals(newValue))
             {
-                return Task.CompletedTask;
+                return;
             }
 
             InvokeOnChanged(newValue);
-
-            return Task.CompletedTask;
         }
 
         /// <summary>

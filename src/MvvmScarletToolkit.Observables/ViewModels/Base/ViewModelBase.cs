@@ -53,7 +53,7 @@ namespace MvvmScarletToolkit.Observables
 
             if (disposing)
             {
-                BusyStack?.Dispose();
+                BusyStack.Dispose();
                 IsActive = false;
             }
 

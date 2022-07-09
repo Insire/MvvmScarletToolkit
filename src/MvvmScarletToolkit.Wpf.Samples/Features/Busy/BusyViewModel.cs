@@ -68,17 +68,17 @@ namespace MvvmScarletToolkit.Wpf.Samples
             BusyStack.GetToken();
         }
 
-        public async void OnError(Exception error)
+        public void OnError(Exception error)
         {
-            await BusyStack.Pull().ConfigureAwait(false);
+            BusyStack.Pull();
         }
 
         /// <summary>
         /// Unused
         /// </summary>
-        public async void OnCompleted()
+        public void OnCompleted()
         {
-            await BusyStack.Pull().ConfigureAwait(false);
+            BusyStack.Pull();
         }
 
         protected override void Dispose(bool disposing)

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -13,10 +13,10 @@ namespace MvvmScarletToolkit.Observables
     public sealed class ObservableBusyStack : IObservableBusyStack
     {
         private readonly string _id;
-        private readonly ConcurrentBag<IDisposable> _items;
         private readonly ConcurrentDictionary<IObserver<bool>, object> _observers;
         private readonly Action<bool> _onChanged;
 
+        private int _items;
         private bool _disposed;
 
         public ObservableBusyStack(in Action<bool> onChanged)
@@ -24,24 +24,23 @@ namespace MvvmScarletToolkit.Observables
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
 
             _id = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-            _items = new ConcurrentBag<IDisposable>();
             _observers = new ConcurrentDictionary<IObserver<bool>, object>();
         }
 
-        public Task Pull()
+        public void Pull()
         {
             if (_disposed)
             {
                 throw new ObjectDisposedException(nameof(ObservableBusyStack));
             }
 
-            var oldValue = _items.TryPeek(out _);
-            _ = _items.TryTake(out _);
-            var newValue = _items.TryPeek(out _);
+            var oldValue = _items > 0;
+            Interlocked.Decrement(ref _items);
+            var newValue = _items > 0;
 
             if (oldValue.Equals(newValue))
             {
-                return Task.CompletedTask;
+                return;
             }
 
 #if DEBUG
@@ -49,32 +48,28 @@ namespace MvvmScarletToolkit.Observables
 #endif
 
             Notify(newValue);
-
-            return Task.CompletedTask;
         }
 
-        public Task Push(IDisposable token)
+        public void Push()
         {
             if (_disposed)
             {
                 throw new ObjectDisposedException(nameof(ObservableBusyStack));
             }
 
-            var oldValue = _items.TryPeek(out _);
-            _items.Add(token);
-            var newValue = _items.TryPeek(out _);
+            var oldValue = _items > 0;
+            Interlocked.Increment(ref _items);
+            var newValue = _items > 0;
 
             if (oldValue.Equals(newValue))
             {
-                return Task.CompletedTask;
+                return;
             }
 
 #if DEBUG
             Debug.WriteLine($"ObservableBusyStack({_id}) PUSH HasItems: {newValue}");
 #endif
             Notify(newValue);
-
-            return Task.CompletedTask;
         }
 
         private void Notify(bool hasItems)
@@ -150,21 +145,13 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-            for (var i = 0; i < _items.Count; i++)
-            {
-                if (_items.TryTake(out var item))
-                {
-                    item.Dispose();
-                }
-            }
-
             _observers.Clear();
             _disposed = true;
         }
 
         public override string ToString()
         {
-            return $"{_id} HasItems: {!_items.IsEmpty}";
+            return $"{_id} HasItems: {_items > 0}";
         }
     }
 }
