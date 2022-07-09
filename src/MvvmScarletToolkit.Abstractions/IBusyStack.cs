@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit
 {
@@ -13,12 +12,12 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// remove a token from the stack
         /// </summary>
-        Task Pull();
+        void Pull();
 
         /// <summary>
         /// add a token to the stack
         /// </summary>
         /// <param name="token"></param>
-        Task Push(IDisposable token);
+        void Push();
     }
 }

@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit.Observables
             _busyStack = busyStack ?? throw new ArgumentNullException(nameof(busyStack));
             _disposed = false;
 
-            busyStack.Push(this);
+            busyStack.Push();
         }
 
         public void Dispose()
