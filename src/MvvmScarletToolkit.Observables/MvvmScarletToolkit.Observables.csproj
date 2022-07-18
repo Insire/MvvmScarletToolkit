@@ -11,7 +11,7 @@
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0-preview4" />
         <PackageReference Include="DynamicData" Version="7.9.4" />
 
-        <PackageReference Include="Nerdbank.GitVersioning" Version="3.5.107">
+        <PackageReference Include="Nerdbank.GitVersioning" Version="3.5.108">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
