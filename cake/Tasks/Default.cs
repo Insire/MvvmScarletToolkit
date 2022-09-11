@@ -2,14 +2,14 @@ using Cake.Frosting;
 
 namespace Build
 {
-    [Dependency(typeof(CleanSolution))]
-    [Dependency(typeof(UpdateAssemblyInfo))]
-    [Dependency(typeof(TestAndUploadReport))]
-    [Dependency(typeof(CleanSolutionAgain))]
-    [Dependency(typeof(BuildAndPack))]
-    [Dependency(typeof(PushNuget))]
-    [Dependency(typeof(PushGithub))]
-    [Dependency(typeof(PushLocally))]
+    [IsDependentOn(typeof(CleanSolution))]
+    [IsDependentOn(typeof(UpdateAssemblyInfo))]
+    [IsDependentOn(typeof(TestAndUploadReport))]
+    [IsDependentOn(typeof(CleanSolutionAgain))]
+    [IsDependentOn(typeof(BuildAndPack))]
+    [IsDependentOn(typeof(PushNuget))]
+    [IsDependentOn(typeof(PushGithub))]
+    [IsDependentOn(typeof(PushLocally))]
     public sealed class Default : FrostingTask<BuildContext>
     {
     }
