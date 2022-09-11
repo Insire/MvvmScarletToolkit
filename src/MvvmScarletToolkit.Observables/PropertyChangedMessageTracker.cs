@@ -1,10 +1,10 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 
 namespace MvvmScarletToolkit
 {
@@ -296,14 +296,14 @@ namespace MvvmScarletToolkit
         {
             private readonly Dictionary<string, Change> _changes;
 
-            private bool _skipChanges;
-            private IDisposable? _localChangeSkipSubscription;
+            private int _suppressedState = 0;
 
             public int Count => _changes.Count == 0
                 ? 0
                 : _changes.Values.Count(p => p.IsActualChange);
 
             public bool IsChanged => _changes.Count != 0 && _changes.Values.Any(p => p.IsActualChange);
+            public bool ShouldSuppressChanges => _suppressedState != 0;
 
             public Changes()
             {
@@ -336,7 +336,7 @@ namespace MvvmScarletToolkit
 
             public void Upsert<T>(PropertyChangedMessage<T> message)
             {
-                if (_skipChanges)
+                if (ShouldSuppressChanges)
                 {
                     return;
                 }
@@ -373,17 +373,22 @@ namespace MvvmScarletToolkit
 
             public IDisposable SkipChanges()
             {
-                if (_localChangeSkipSubscription is not null)
-                {
-                    throw new InvalidOperationException("Changes are already being skipped for this instance");
-                }
-
-                return _localChangeSkipSubscription = new IgnoreLocalChanges(this); // TODO ? either this throws or we return a nullable disposeable
+                return new IgnoreLocalChanges(this);
             }
 
             private static bool AreEqual<T>(T oldValue, T newValue)
             {
                 return EqualityComparer<T>.Default.Equals(oldValue, newValue);
+            }
+
+            public void Increment()
+            {
+                Interlocked.Increment(ref _suppressedState);
+            }
+
+            public void Decrement()
+            {
+                Interlocked.Decrement(ref _suppressedState);
             }
 
             private sealed class IgnoreLocalChanges : IDisposable
@@ -393,12 +398,12 @@ namespace MvvmScarletToolkit
                 public IgnoreLocalChanges(Changes instance)
                 {
                     _instance = instance;
-                    _instance._skipChanges = true;
+                    _instance.Increment();
                 }
 
                 public void Dispose()
                 {
-                    _instance._skipChanges = false;
+                    _instance.Decrement();
                 }
             }
         }
