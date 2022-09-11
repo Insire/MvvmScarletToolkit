@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -257,9 +258,11 @@ namespace MvvmScarletToolkit.Observables
         {
             private readonly HashSet<string> _changes;
 
+            private int _suppressedState = 0;
+
             public int Count => _changes.Count;
             public bool IsChanged => _changes.Count > 0;
-            public bool ShouldSuppressChanges { get; set; }
+            public bool ShouldSuppressChanges => _suppressedState != 0;
 
             public ChangeState()
             {
@@ -276,6 +279,16 @@ namespace MvvmScarletToolkit.Observables
                 _changes.Add(args.PropertyName);
             }
 
+            public void Increment()
+            {
+                Interlocked.Increment(ref _suppressedState);
+            }
+
+            public void Decrement()
+            {
+                Interlocked.Decrement(ref _suppressedState);
+            }
+
             public void Clear()
             {
                 _changes.Clear();
@@ -289,12 +302,12 @@ namespace MvvmScarletToolkit.Observables
             public SuppressChangesSubscription(ChangeState changeState)
             {
                 _changeState = changeState;
-                _changeState.ShouldSuppressChanges = true;
+                _changeState.Increment();
             }
 
             public void Dispose()
             {
-                _changeState.ShouldSuppressChanges = false;
+                _changeState.Decrement();
             }
         }
 

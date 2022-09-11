@@ -318,5 +318,37 @@ namespace MvvmScarletToolkit.Observables.Tests
                 propertyChanging = true;
             }
         }
+
+        [Test]
+        public void SuppressChanges_Stacked_DoesWork()
+        {
+            var propertyChanged = false;
+
+            using (var tracker = new NotifyProperyChangedTracker())
+            {
+                var viewModel = new ViewModel();
+                viewModel.PropertyChanged += ViewModel_PropertyChanged;
+                tracker.Track(viewModel);
+
+                using (tracker.SuppressAllChanges())
+                {
+                    var scope = tracker.SuppressChanges(viewModel);
+                    scope.Dispose();
+
+                    viewModel.Data = string.Empty;
+                }
+
+                Assert.IsTrue(propertyChanged);
+                Assert.IsFalse(tracker.HasChanges());
+
+                Assert.IsFalse(tracker.HasChanges(viewModel));
+                Assert.AreEqual(tracker.CountChanges(viewModel), 0);
+            }
+
+            void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+            {
+                propertyChanged = true;
+            }
+        }
     }
 }
