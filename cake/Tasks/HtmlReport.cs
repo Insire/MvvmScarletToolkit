@@ -6,7 +6,7 @@ using Cake.Frosting;
 
 namespace Build
 {
-    [Dependency(typeof(ConvertCoverage))]
+    [IsDependentOn(typeof(ConvertCoverage))]
     public sealed class HtmlReport : FrostingTask<BuildContext>
     {
         public override void Run(BuildContext context)

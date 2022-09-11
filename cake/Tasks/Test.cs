@@ -1,4 +1,4 @@
-using Cake.Common.Tools.DotNetCore;
+using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNetCore.Test;
 using Cake.Core;
 using Cake.Frosting;
@@ -27,7 +27,7 @@ namespace Build
                     .Append($"--logger:trx;"),
             };
 
-            context.DotNetCoreTest(projectFile, testSettings);
+            context.DotNetTest(projectFile, testSettings);
         }
 
         private static bool HandleExitCode(int code)

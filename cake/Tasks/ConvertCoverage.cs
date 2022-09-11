@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Build
 {
-    [Dependency(typeof(Test))]
+    [IsDependentOn(typeof(Test))]
     public sealed class ConvertCoverage : FrostingTask<BuildContext>
     {
         public override void Run(BuildContext context)

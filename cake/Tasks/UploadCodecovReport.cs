@@ -5,7 +5,7 @@ using Cake.Frosting;
 
 namespace Build
 {
-    [Dependency(typeof(CoberturaReport))]
+    [IsDependentOn(typeof(CoberturaReport))]
     public sealed class UploadCodecovReport : FrostingTask<BuildContext>
     {
         public override void Run(BuildContext context)
