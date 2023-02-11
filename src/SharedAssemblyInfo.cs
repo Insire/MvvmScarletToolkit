@@ -7,5 +7,8 @@ using System.Reflection;
 
 [assembly: AssemblyCompany("SoftThorn")]
 [assembly: AssemblyProduct("MvvmScarletToolkit")]
-[assembly: AssemblyCopyright("© 2021 Insire")]
+[assembly: AssemblyCopyright("© 2023 Insire")]
 [assembly: AssemblyTrademark("")]
+
+// Metadata Attributes
+[assembly: AssemblyMetadata("Platform", "AnyCPU")]

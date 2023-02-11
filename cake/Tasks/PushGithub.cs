@@ -31,7 +31,7 @@ namespace Build
         public override bool ShouldRun(BuildContext context)
         {
             return base.ShouldRun(context)
-                && (context.BuildSystem().IsRunningOnAzurePipelines || context.BuildSystem().IsRunningOnAzurePipelinesHosted)
+                && (context.BuildSystem().IsRunningOnAzurePipelines)
                 && !string.IsNullOrEmpty(context.EnvironmentVariable("GITHUB_APIKEY"))
                 && !context.IsPublicRelease;
         }

@@ -1,5 +1,5 @@
-using Cake.Common.Tools.DotNetCore;
-using Cake.Common.Tools.DotNetCore.Test;
+using Cake.Common.Tools.DotNet;
+using Cake.Common.Tools.DotNet.Test;
 using Cake.Core;
 using Cake.Frosting;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace Build
         public override void Run(BuildContext context)
         {
             var projectFile = @"./src/MvvmScarletToolkit.Wpf.Tests/MvvmScarletToolkit.Wpf.Tests.csproj";
-            var testSettings = new DotNetCoreTestSettings
+            var testSettings = new DotNetTestSettings
             {
                 ToolPath = context.Tools.Resolve("dotnet.exe"),
                 Configuration = "Release",
@@ -27,7 +27,7 @@ namespace Build
                     .Append($"--logger:trx;"),
             };
 
-            context.DotNetCoreTest(projectFile, testSettings);
+            context.DotNetTest(projectFile, testSettings);
         }
 
         private static bool HandleExitCode(int code)

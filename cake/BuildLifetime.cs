@@ -10,7 +10,7 @@ namespace Build
 {
     public sealed class BuildLifetime : FrostingLifetime<BuildContext>
     {
-        public override void Setup(BuildContext context)
+        public override void Setup(BuildContext context, ISetupContext info)
         {
             context.GitVersion = context.GitVersioningGetVersion();
             context.Branch = context.GitVersion().BranchName;
