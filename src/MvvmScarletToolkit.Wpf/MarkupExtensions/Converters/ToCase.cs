@@ -25,10 +25,16 @@ namespace MvvmScarletToolkit
         {
             if (value is string str)
             {
-                return Convert(str, parameter, Casing);
+                var casing = Casing;
+                if (parameter is CharacterCasing argCasing)
+                {
+                    casing = argCasing;
+                }
+
+                return Convert(str, parameter, casing);
             }
 
-            return Binding.DoNothing;
+            return value;
         }
 
         private static object Convert(string value, object parameter, CharacterCasing fallBackCasing)
