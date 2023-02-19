@@ -1,5 +1,4 @@
 using Cake.Common.Solution.Project.Properties;
-using Cake.Core.IO;
 using Cake.Frosting;
 using System;
 
@@ -9,7 +8,7 @@ namespace Build
     {
         public override void Run(BuildContext context)
         {
-            var assemblyInfoParseResult = context.ParseAssemblyInfo(BuildContext.AssemblyInfoPath);
+            var assemblyInfoParseResult = context.ParseAssemblyInfo(context.AssemblyInfoFile);
 
             var settings = new AssemblyInfoSettings()
             {
@@ -55,7 +54,7 @@ namespace Build
             }
             };
 
-            context.CreateAssemblyInfo(new FilePath(BuildContext.AssemblyInfoPath), settings);
+            context.CreateAssemblyInfo(context.AssemblyInfoFile, settings);
         }
     }
 }

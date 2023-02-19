@@ -12,7 +12,7 @@ namespace Build
     {
         public override void Run(BuildContext context)
         {
-            foreach (var package in context.GetFiles(BuildContext.PackagePath + "/*.nupkg"))
+            foreach (var package in context.GetFiles(context.PackagePath.FullPath + "/*.nupkg"))
             {
                 context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
                 {

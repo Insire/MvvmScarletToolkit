@@ -9,18 +9,20 @@ namespace Build
 {
     public sealed class PushLocally : FrostingTask<BuildContext>
     {
+        private const string LocalNugetFolder = @"D:\Drop\NuGet";
+
         public override void Run(BuildContext context)
         {
-            if (!context.NuGetHasSource(BuildContext.LocalNugetDirectoryPath))
+            if (!context.NuGetHasSource(LocalNugetFolder))
             {
-                context.NuGetAddSource("Local", BuildContext.LocalNugetDirectoryPath);
+                context.NuGetAddSource("Local", LocalNugetFolder);
             }
 
-            foreach (var package in context.GetFiles(BuildContext.PackagePath + "/*.nupkg"))
+            foreach (var package in context.GetFiles(context.PackagePath.FullPath + "/*.nupkg"))
             {
                 context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
                 {
-                    Source = BuildContext.LocalNugetDirectoryPath,
+                    Source = LocalNugetFolder,
                     SkipDuplicate = true,
                 });
             }
@@ -30,7 +32,7 @@ namespace Build
         {
             return base.ShouldRun(context)
                 && context.BuildSystem().IsLocalBuild
-                && context.DirectoryExists(BuildContext.LocalNugetDirectoryPath);
+                && context.DirectoryExists(LocalNugetFolder);
         }
     }
 }

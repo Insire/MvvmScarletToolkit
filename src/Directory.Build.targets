@@ -17,4 +17,10 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
+    <PropertyGroup Condition="'$(Environment)'=='Test'">
+        <DebugSymbols>True</DebugSymbols>
+        <DebugType>Full</DebugType>
+    </PropertyGroup>
+
 </Project>

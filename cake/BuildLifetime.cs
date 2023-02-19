@@ -33,7 +33,7 @@ namespace Build
             context.Information("GITHUB_APIKEY was {0} set.", string.IsNullOrEmpty(context.EnvironmentVariable("GITHUB_APIKEY")) ? "not" : "");
             context.Information("CODECOV_TOKEN was {0} set.", string.IsNullOrEmpty(context.EnvironmentVariable("CODECOV_TOKEN")) ? "not" : "");
 
-            context.Information("reportsFolder: {0}", context.ReportsFolder.FullPath);
+            context.Information("reportsFolder: {0}", context.ReportsPath.FullPath);
             context.Information("coberturaResultFile: {0}", context.CoberturaResultFile.FullPath);
 
             context.Information("dotnet tool: {0}", context.Tools.Resolve("dotnet.exe"));
