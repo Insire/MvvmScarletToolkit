@@ -17,14 +17,15 @@ namespace Build
                     .UseWorkingDirectory(".")
                     .WithArguments(builder => builder
                         .Append("pack")
-                        .AppendQuoted("./MvvmScarletToolkit.slnf")
+                        .AppendQuoted(project.ProjectFile.FullPath)
                         .Append($"-c {BuildContext.BuildConfiguration}")
-                        .Append($"--output \"{BuildContext.PackagePath}\"")
+                        .Append($"--output \"{context.PackagePath.FullPath}\"")
                         .Append($"-p:PackageVersion={context.GitVersion.SemVer2}")
                         .Append($"-p:PublicRelease={context.IsPublicRelease}") // Nerdbank.GitVersioning - omit git commit ID
 
                         // Creating symbol packages
-                        .Append($"-p:IncludeSymbols=true")
+                        .Append($"--include-symbols")
+                        .Append("--include-source")
                         .Append($"-p:SymbolPackageFormat=snupkg")
 
                         // enable source linking

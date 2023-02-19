@@ -1,8 +1,9 @@
+using Cake.Common.IO;
 using Cake.Common.Tools.DotNet;
-using Cake.Common.Tools.DotNetCore.Test;
+using Cake.Common.Tools.DotNet.Test;
 using Cake.Core;
 using Cake.Frosting;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Build
 {
@@ -10,29 +11,23 @@ namespace Build
     {
         public override void Run(BuildContext context)
         {
-            var projectFile = @"./src/MvvmScarletToolkit.Wpf.Tests/MvvmScarletToolkit.Wpf.Tests.csproj";
-            var testSettings = new DotNetCoreTestSettings
+            var testSettings = new DotNetTestSettings
             {
-                ToolPath = context.Tools.Resolve("dotnet.exe"),
-                Configuration = "Release",
+                Configuration = BuildContext.BuildConfiguration,
                 NoBuild = false,
                 NoRestore = false,
-                NoLogo = true,
-                HandleExitCode = HandleExitCode,
-                ArgumentCustomization = builder => builder
-                    .Append("--results-directory:./Results/coverage")
-                    .Append("-p:DebugType=full")
-                    .Append("-p:DebugSymbols=true")
-                    .AppendSwitchQuoted("--collect", ":", "\"\"Code Coverage\"\"")
-                    .Append($"--logger:trx;"),
+                NoLogo = false,
+                ResultsDirectory = context.CoveragePath,
+                Loggers = new[] { "trx" },
+                Collectors = new[] { "Code Coverage" },
+                EnvironmentVariables = new Dictionary<string, string>() { ["Environment"] = "Test" },
             };
 
-            context.DotNetTest(projectFile, testSettings);
-        }
-
-        private static bool HandleExitCode(int code)
-        {
-            return true;
+            var files = context.GetFiles(context.SourcePath.FullPath + "/*/*.Tests.csproj");
+            foreach (var file in files)
+            {
+                context.DotNetTest(file.FullPath, testSettings);
+            }
         }
     }
 }

@@ -29,12 +29,12 @@ namespace Build
                 },
             };
 
-            context.ReportGenerator(new GlobPattern(pattern), context.ReportsFolder.Combine(subFolder), ReportGeneratorSettings);
+            context.ReportGenerator(new GlobPattern(pattern), context.ReportsPath.Combine(subFolder), ReportGeneratorSettings);
         }
 
         public static void Clean(this BuildContext context, bool cleanBin, bool cleanObj, bool cleanOutput, bool cleanMisc)
         {
-            var solution = context.ParseSolution(BuildContext.SolutionPath);
+            var solution = context.ParseSolution(context.SolutionFile);
 
             foreach (var project in solution.Projects)
             {
@@ -77,8 +77,8 @@ namespace Build
             {
                 var folders = new[]
                 {
-                    BuildContext.PackagePath,
-                    BuildContext.ResultsPath,
+                    context.PackagePath,
+                    context.ResultsPath,
                 };
 
                 foreach (var folder in folders)

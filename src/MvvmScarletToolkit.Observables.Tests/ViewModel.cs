@@ -2,9 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MvvmScarletToolkit.Observables.Tests
 {
-    [ObservableObject]
-    [ObservableRecipient]
-    internal sealed partial class ViewModel
+    internal sealed partial class ViewModel : ObservableRecipient
     {
         [ObservableProperty]
         [NotifyPropertyChangedRecipients]

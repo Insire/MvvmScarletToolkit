@@ -965,8 +965,13 @@
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Grid.Row="2" Header="Clear text (ToUpper)">
-                            <TextBlock Text="{Binding Password, Converter={mvvm:ToCase Casing=Upper}}" />
+                        <GroupBox Grid.Row="2" Header="Clear text (Casing)">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{Binding Password, Converter={mvvm:ToCase}, ConverterParameter={x:Static CharacterCasing.Normal}}" />
+                                <TextBlock Text="{Binding Password, Converter={mvvm:ToCase}, ConverterParameter={x:Static CharacterCasing.Upper}}" />
+                                <TextBlock Text="{Binding Password, Converter={mvvm:ToCase}, ConverterParameter={x:Static CharacterCasing.Lower}}" />
+                                <TextBlock Text="{Binding Password, Converter={mvvm:ToCase}}" />
+                            </StackPanel>
                         </GroupBox>
 
                         <GroupBox Grid.Row="4" Header="Textbox with Watermark">

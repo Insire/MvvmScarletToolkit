@@ -2,8 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    [INotifyPropertyChanged]
-    public sealed partial class EnumViewModel
+    public sealed partial class EnumViewModel : ObservableObject
     {
         [ObservableProperty]
         private ViewModelEnum _value;

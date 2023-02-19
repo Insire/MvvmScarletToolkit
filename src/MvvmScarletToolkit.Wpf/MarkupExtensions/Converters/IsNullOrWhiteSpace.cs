@@ -15,6 +15,11 @@ namespace MvvmScarletToolkit
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value is null)
+            {
+                return true;
+            }
+
             if (value is string text)
             {
                 return string.IsNullOrWhiteSpace(text);

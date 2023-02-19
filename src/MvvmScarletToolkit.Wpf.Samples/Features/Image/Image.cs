@@ -46,12 +46,12 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         private async Task Load(CancellationToken token)
         {
-            if (string.IsNullOrEmpty(_path) || _source != null)
+            if (string.IsNullOrEmpty(Path) || _source != null)
             {
                 return;
             }
 
-            var image = await Task.Run(() => GetImage(_path), token).ConfigureAwait(false);
+            var image = await Task.Run(() => GetImage(Path), token).ConfigureAwait(false);
             await Dispatcher.Invoke(() => Source = image).ConfigureAwait(false);
         }
 

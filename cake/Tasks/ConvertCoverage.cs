@@ -12,13 +12,13 @@ namespace Build
     {
         public override void Run(BuildContext context)
         {
-            foreach (var file in context.GetFiles($"{BuildContext.ResultsPath}/coverage/**/*.coverage"))
+            foreach (var file in context.GetFiles($"{context.ResultsPath.FullPath}/coverage/**/*.coverage"))
             {
                 var codeCoverageExe = context.Tools.Resolve("CodeCoverage.exe");
                 var result = System.IO.Path.ChangeExtension(file.FullPath, ".xml");
 
                 var settings = new ProcessSettings()
-                        .UseWorkingDirectory(BuildContext.ResultsPath)
+                        .UseWorkingDirectory(context.ResultsPath)
                         .WithArguments(builder => builder
                             .Append("analyze")
                             .AppendSwitchQuoted(@"-output", ":", result)
