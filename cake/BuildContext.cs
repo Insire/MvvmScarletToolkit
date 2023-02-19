@@ -42,6 +42,7 @@ namespace Build
 
             CoveragePath = ResultsPath.Combine("coverage").MakeAbsolute(workingDirectory);
             ReportsPath = ResultsPath.Combine("reports").MakeAbsolute(workingDirectory);
+            CoberturaResultsPath = ReportsPath.Combine("cobertura").MakeAbsolute(workingDirectory);
 
             NugetPackageProjects = new[]
             {
@@ -63,7 +64,7 @@ namespace Build
 
             SolutionFile = FilePath.FromString("MvvmScarletToolkit.sln").MakeAbsolute(workingDirectory);
             AssemblyInfoFile = SourcePath.CombineWithFilePath("SharedAssemblyInfo.cs").MakeAbsolute(workingDirectory);
-            CoberturaResultFile = ReportsPath.Combine("cobertura").CombineWithFilePath("Cobertura.xml").MakeAbsolute(workingDirectory);
+            CoberturaResultFile = CoberturaResultsPath.CombineWithFilePath("Cobertura.xml").MakeAbsolute(workingDirectory);
 
             IsPublicRelease = context.EnvironmentVariable("PublicRelease", false);
         }

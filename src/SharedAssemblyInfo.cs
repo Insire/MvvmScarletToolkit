@@ -7,7 +7,6 @@ using System.Reflection;
 
 [assembly: AssemblyCompany("SoftThorn")]
 [assembly: AssemblyProduct("MvvmScarletToolkit")]
-
 [assembly: AssemblyCopyright("© 2023 Insire")]
 [assembly: AssemblyTrademark("")]
 

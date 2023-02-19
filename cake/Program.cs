@@ -8,7 +8,7 @@ namespace Build
         public static int Main(string[] args)
         {
             return new CakeHost()
-                 .InstallTool(new Uri("nuget:?package=CodecovUploader&version=0.3.2"))
+                 .InstallTool(new Uri("nuget:?package=Codecov&version=1.13.0"))
                  .InstallTool(new Uri("nuget:?package=NUnit.ConsoleRunner&version=3.16.2"))
                  .InstallTool(new Uri("nuget:?package=ReportGenerator&version=5.1.17"))
                  .InstallTool(new Uri("nuget:?package=GitVersion.CommandLine&version=5.12.0"))
