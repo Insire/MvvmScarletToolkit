@@ -250,3 +250,5 @@ ModelManifest.xml
 
 .[Vv][Ss]*
 .dotnet
+
+**/launchSettings.json
