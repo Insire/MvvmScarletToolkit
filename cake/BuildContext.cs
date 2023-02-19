@@ -45,6 +45,7 @@ namespace Build
 
             NugetPackageProjects = new[]
             {
+                (Folder: @"src\MvvmScarletToolkit", ProjectFile: "MvvmScarletToolkit.csproj"),
                 (Folder: @"src\MvvmScarletToolkit.Abstractions", ProjectFile: "MvvmScarletToolkit.Abstractions.csproj"),
                 (Folder: @"src\MvvmScarletToolkit.Commands", ProjectFile:  "MvvmScarletToolkit.Commands.csproj"),
                 (Folder: @"src\MvvmScarletToolkit.Observables", ProjectFile:  "MvvmScarletToolkit.Observables.csproj"),
