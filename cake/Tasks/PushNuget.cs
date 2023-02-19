@@ -26,7 +26,7 @@ namespace Build
         public override bool ShouldRun(BuildContext context)
         {
             return base.ShouldRun(context)
-                && (context.BuildSystem().IsRunningOnAzurePipelines)
+                && context.BuildSystem().IsRunningOnAzurePipelines
                 && !string.IsNullOrEmpty(context.EnvironmentVariable("NUGETORG_APIKEY"))
                 && context.IsPublicRelease;
         }
