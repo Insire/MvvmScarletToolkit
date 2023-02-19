@@ -3,8 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    [INotifyPropertyChanged]
-    public sealed partial class ContextMenuViewModels
+    public sealed partial class ContextMenuViewModels : ObservableObject
     {
         public ObservableCollection<ContextMenuViewModel> Items { get; }
 
