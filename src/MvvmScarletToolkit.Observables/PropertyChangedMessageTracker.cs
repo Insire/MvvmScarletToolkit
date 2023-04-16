@@ -361,7 +361,7 @@ namespace MvvmScarletToolkit
                         return;
                     }
 
-                    actualChanges.IsActualChange = true;
+                    actualChanges.IsActualChange = !AreEqual(actualChanges.InitialValue, message.NewValue);
                     actualChanges.NewValue = message.NewValue;
                 }
                 else
