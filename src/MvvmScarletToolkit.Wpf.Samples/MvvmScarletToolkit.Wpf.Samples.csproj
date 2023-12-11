@@ -1,13 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFrameworks>net7.0-windows</TargetFrameworks>
+        <TargetFrameworks>net8.0-windows</TargetFrameworks>
         <UseWPF>true</UseWPF>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <PublishTrimmed>false</PublishTrimmed>
         <PublishReadyToRun>true</PublishReadyToRun>
         <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
-        <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+        <SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     </PropertyGroup>
     <ItemGroup>
@@ -40,7 +41,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Jot" Version="2.1.13" />
+        <PackageReference Include="Jot" Version="2.1.17" />
         <PackageReference Include="XamlFlair.WPF" Version="1.2.13" />
     </ItemGroup>
 

@@ -19,31 +19,31 @@ namespace MvvmScarletToolkit.Tests
         [Test]
         public void Ctor_DoesNotThrow()
         {
-            new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object o, CancellationToken token) => Task.CompletedTask);
+            new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object _, CancellationToken __) => Task.CompletedTask);
         }
 
         [Test]
         public void Ctor_DoesThrowForNullCommandManager()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(null, Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object o, CancellationToken token) => Task.CompletedTask));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(null, Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object _, CancellationToken __) => Task.CompletedTask));
         }
 
         [Test]
         public void Ctor_DoesThrowForNullCancelCommand()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), null, Utils.GetTestBusyStackFactory(), (object o, CancellationToken token) => Task.CompletedTask));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), null, Utils.GetTestBusyStackFactory(), (object _, CancellationToken __) => Task.CompletedTask));
         }
 
         [Test]
         public void Ctor_DoesThrowForNullBusyStackFactory()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), null, (object o, CancellationToken token) => Task.CompletedTask));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), null, (object _, CancellationToken token) => Task.CompletedTask));
         }
 
         [Test]
         public void Ctor_DoesThrowForNullBusyStack()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), default(IBusyStack), (object o, CancellationToken token) => Task.CompletedTask, (object o) => true));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), default(IBusyStack), (object _, CancellationToken token) => Task.CompletedTask, (object _) => true));
         }
 
         [Test]
@@ -55,67 +55,67 @@ namespace MvvmScarletToolkit.Tests
         [Test]
         public void Ctor_DoesThrowForNullCanExecute()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object o, CancellationToken token) => Task.CompletedTask, null));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object _, CancellationToken token) => Task.CompletedTask, null));
         }
 
         [Test]
         public void Execute_IsCalledOnCommandExecution()
         {
             var executed = false;
-            var command = _builder.Create((token) => { executed = true; return Task.CompletedTask; })
+            var command = _builder.Create((_) => { executed = true; return Task.CompletedTask; })
                 .Build();
 
             command.Execute(null);
 
-            Assert.IsTrue(executed);
+            Assert.That(executed, Is.True);
         }
 
         [Test]
         public void CanExecute_IsCalledOnCommandCanExecuteCheck()
         {
             var executed = false;
-            var command = _builder.Create((object o) => { Assert.Fail(); return Task.CompletedTask; }, (o) => { executed = true; return true; })
+            var command = _builder.Create((object _) => { Assert.Fail(); return Task.CompletedTask; }, (o) => { executed = true; return true; })
                 .Build();
 
             command.CanExecute(default(object));
 
-            Assert.IsTrue(executed);
+            Assert.That(executed, Is.True);
         }
 
         [Test]
         public void Execute_IsCalledOnCommandExecutionForValueType()
         {
             var executed = false;
-            var command = _builder.Create((int o) => { executed = true; return Task.CompletedTask; })
+            var command = _builder.Create((int _) => { executed = true; return Task.CompletedTask; })
                 .Build();
 
             command.Execute(1);
 
-            Assert.IsTrue(executed);
+            Assert.That(executed, Is.True);
         }
 
         [Test]
         public void Execute_IsStillCalledOnCommandExecutionForValueTypeAndNullArgument()
         {
             var executed = false;
-            var command = _builder.Create((int o) => { executed = true; return Task.CompletedTask; })
+            var command = _builder.Create((int _) => { executed = true; return Task.CompletedTask; })
                 .Build();
 
             command.Execute(null);
 
-            Assert.IsTrue(executed);
+            Assert.That(executed, Is.True);
         }
 
         [Test]
         public void CanExecute_IsCalledOnCommandCanExecuteCheckForValueTypeAndNullArgument()
         {
             var executed = false;
-            var command = _builder.Create((int o) => { executed = true; return Task.CompletedTask; })
+            var command = _builder.Create((int _) => { executed = true; return Task.CompletedTask; })
                 .Build();
 
             command.CanExecute(null);
 
-            Assert.IsFalse(executed);
+            Assert.That(executed, Is.False);
         }
     }
 }

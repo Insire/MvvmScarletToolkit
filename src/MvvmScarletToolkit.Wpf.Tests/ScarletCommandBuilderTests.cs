@@ -35,11 +35,14 @@ namespace MvvmScarletToolkit.Tests
 
             var builder = new ScarletCommandBuilder(dispatcher, commandManager, exceptionHandler, messenger, exit, eventManager, Utils.TestBusyStackFactory);
 
-            Assert.AreEqual(dispatcher, builder.Dispatcher);
-            Assert.AreEqual(commandManager, builder.CommandManager);
-            Assert.AreEqual(messenger, builder.Messenger);
-            Assert.AreEqual(exit, builder.Exit);
-            Assert.AreEqual(eventManager, builder.WeakEventManager);
+            Assert.Multiple(() =>
+            {
+                Assert.That(builder.Dispatcher, Is.EqualTo(dispatcher));
+                Assert.That(builder.CommandManager, Is.EqualTo(commandManager));
+                Assert.That(builder.Messenger, Is.EqualTo(messenger));
+                Assert.That(builder.Exit, Is.EqualTo(exit));
+                Assert.That(builder.WeakEventManager, Is.EqualTo(eventManager));
+            });
         }
 
         [Test]
@@ -48,7 +51,7 @@ namespace MvvmScarletToolkit.Tests
             var builder = new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory);
 
             var context = builder.Create<object>((o, token) => Task.CompletedTask, (o) => true);
-            Assert.IsNotNull(context);
+            Assert.That(context, Is.Not.Null);
         }
     }
 }
