@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NSubstitute" Version="5.0.0" />
+        <PackageReference Include="NSubstitute" Version="5.1.0" />
         <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.16" />
 
         <PackageReference Include="nunit" Version="3.14.0" />
