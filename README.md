@@ -137,7 +137,7 @@ For anyone not wishing to install that, they atleast need:
 - Windows 10 (older versions work probably too, but the repository is not configured for those)
 - [Net 6.0](https://dotnet.microsoft.com/download/dotnet-core/6.0)
 - [Net 7.0](https://dotnet.microsoft.com/download/dotnet-core/7.0)
-- [Net 7.0](https://dotnet.microsoft.com/download/dotnet-core/8.0)
+- [Net 8.0](https://dotnet.microsoft.com/download/dotnet-core/8.0)
 - [Visual Studio Code](https://code.visualstudio.com/) with the [C# Extension](https://github.com/OmniSharp/omnisharp-vscode) provided by Microsoft
 - [git](https://git-scm.com/)
 
