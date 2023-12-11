@@ -35,6 +35,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             Add("MVVM ContextMenus", contextMenu);
             Add("Binding Enum values", new EnumViewModel());
             Add("MVVM Toast-Notification", new ToastsViewModel(commandBuilder));
+            Add("Input Prevention", new FormViewModel());
         }
     }
 }
