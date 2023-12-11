@@ -23,7 +23,6 @@ namespace Build
                 context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
                 {
                     Source = LocalNugetFolder,
-                    SkipDuplicate = true,
                 });
             }
         }
