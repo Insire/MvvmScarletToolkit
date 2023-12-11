@@ -28,9 +28,12 @@ namespace MvvmScarletToolkit.Tests
             var commandManager = Utils.GetTestCommandManager();
             var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
-            // should not be initialized by default, since they represent optional features
-            Assert.IsNull(context.BusyStack);
-            Assert.IsNull(context.CancelCommand);
+            Assert.Multiple(() =>
+            {
+                // should not be initialized by default, since they represent optional features
+                Assert.That(context.BusyStack, Is.Null);
+                Assert.That(context.CancelCommand, Is.Null);
+            });
         }
 
         [Test]
@@ -39,8 +42,8 @@ namespace MvvmScarletToolkit.Tests
             var commandManager = Utils.GetTestCommandManager();
             var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
-            Assert.IsNotNull(context.CommandManager);
-            Assert.AreEqual(commandManager, context.CommandManager);
+            Assert.That(context.CommandManager, Is.Not.Null);
+            Assert.That(context.CommandManager, Is.EqualTo(commandManager));
         }
 
         [Test]
@@ -50,7 +53,7 @@ namespace MvvmScarletToolkit.Tests
             var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             var command = context.Build();
-            Assert.IsNotNull(command);
+            Assert.That(command, Is.Not.Null);
         }
 
         [Test]
@@ -61,10 +64,13 @@ namespace MvvmScarletToolkit.Tests
 
             var command = context.Build();
 
-            Assert.IsNotNull(command.CancelCommand);
-            Assert.IsInstanceOf<NoCancellationCommand>(command.CancelCommand);
-            Assert.AreEqual(command.IsBusy, false);
-            Assert.AreEqual(command.Completion, Task.CompletedTask);
+            Assert.That(command.CancelCommand, Is.Not.Null);
+            Assert.That(command.CancelCommand, Is.InstanceOf<NoCancellationCommand>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(command.IsBusy, Is.EqualTo(false));
+                Assert.That(Task.CompletedTask, Is.EqualTo(command.Completion));
+            });
         }
 
         [Test]
@@ -75,8 +81,8 @@ namespace MvvmScarletToolkit.Tests
                 .WithAsyncCancellation()
                 .Build();
 
-            Assert.IsNotNull(command.CancelCommand);
-            Assert.IsInstanceOf<ConcurrentCancelCommand>(command.CancelCommand);
+            Assert.That(command.CancelCommand, Is.Not.Null);
+            Assert.That(command.CancelCommand, Is.InstanceOf<ConcurrentCancelCommand>());
         }
 
         [Test]
@@ -87,8 +93,8 @@ namespace MvvmScarletToolkit.Tests
                 .WithCancellation()
                 .Build();
 
-            Assert.IsNotNull(command.CancelCommand);
-            Assert.IsInstanceOf<CancelCommand>(command.CancelCommand);
+            Assert.That(command.CancelCommand, Is.Not.Null);
+            Assert.That(command.CancelCommand, Is.InstanceOf<CancelCommand>());
         }
 
         [Test]
@@ -100,8 +106,8 @@ namespace MvvmScarletToolkit.Tests
                 .WithCustomCancellation(customCancelCommand)
                 .Build();
 
-            Assert.IsNotNull(command.CancelCommand);
-            Assert.IsInstanceOf<ICancelCommand>(command.CancelCommand);
+            Assert.That(command.CancelCommand, Is.Not.Null);
+            Assert.That(command.CancelCommand, Is.InstanceOf<ICancelCommand>());
         }
 
         [Test]
@@ -120,14 +126,14 @@ namespace MvvmScarletToolkit.Tests
             var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             var count = 0;
-            var decoratorCount = 20;
+            const int decoratorCount = 20;
 
             for (var i = 0; i < decoratorCount; i++)
                 context.AddDecorator(DecoratorFactory);
 
             var command = context.Build();
 
-            Assert.AreEqual(decoratorCount, count);
+            Assert.That(count, Is.EqualTo(decoratorCount));
 
             ConcurrentCommandBase DecoratorFactory(ConcurrentCommandBase command)
             {
@@ -143,7 +149,7 @@ namespace MvvmScarletToolkit.Tests
             var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             var count = 0;
-            var decoratorCount = 3;
+            const int decoratorCount = 3;
 
             context.AddDecorator(DecoratorFactory1);
             context.AddDecorator(DecoratorFactory2);
@@ -151,25 +157,25 @@ namespace MvvmScarletToolkit.Tests
 
             var command = context.Build();
 
-            Assert.AreEqual(decoratorCount, count);
+            Assert.That(count, Is.EqualTo(decoratorCount));
 
             ConcurrentCommandBase DecoratorFactory1(ConcurrentCommandBase command)
             {
-                Assert.AreEqual(0, count);
+                Assert.That(count, Is.EqualTo(0));
                 count++;
                 return command;
             }
 
             ConcurrentCommandBase DecoratorFactory2(ConcurrentCommandBase command)
             {
-                Assert.AreEqual(1, count);
+                Assert.That(count, Is.EqualTo(1));
                 count++;
                 return command;
             }
 
             ConcurrentCommandBase DecoratorFactory3(ConcurrentCommandBase command)
             {
-                Assert.AreEqual(2, count);
+                Assert.That(count, Is.EqualTo(2));
                 count++;
                 return command;
             }
@@ -184,7 +190,7 @@ namespace MvvmScarletToolkit.Tests
 
             context.WithBusyNotification(customBusyStack);
 
-            Assert.IsInstanceOf<IBusyStack>(context.BusyStack);
+            Assert.That(context.BusyStack, Is.InstanceOf<IBusyStack>());
         }
 
         [Test]
@@ -204,7 +210,7 @@ namespace MvvmScarletToolkit.Tests
                 .WithSingleExecution()
                 .Build();
 
-            Assert.IsInstanceOf<SequentialAsyncCommandDecorator>(command);
+            Assert.That(command, Is.InstanceOf<SequentialAsyncCommandDecorator>());
         }
 
         [Test]

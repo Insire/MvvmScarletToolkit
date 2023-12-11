@@ -9,6 +9,7 @@ namespace MvvmScarletToolkit
     // https://github.com/reactivemarbles/DynamicData/blob/36d18e0f34457d4682fea1d68e2e65e8800f87fc/src/DynamicData/Binding/ObservableCollectionAdaptor.cs
     public class VariableThresholdObservableCollectionAdaptor<TObject, TKey> : ISortedObservableCollectionAdaptor<TObject, TKey>
         where TKey : notnull
+        where TObject : notnull
     {
         private readonly Func<int> _refreshThreshold;
 

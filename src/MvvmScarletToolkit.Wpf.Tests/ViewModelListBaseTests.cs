@@ -34,12 +34,12 @@ namespace MvvmScarletToolkit.Tests
 
             var vm = new DerivedViewModelListBase(commandBuilder);
 
-            Assert.AreEqual(false, vm.IsBusy);
+            Assert.That(vm.IsBusy, Is.EqualTo(false));
             vm.ValidateState(() =>
             {
-                Assert.AreEqual(true, vm.IsBusy);
+                Assert.That(vm.IsBusy, Is.EqualTo(true));
             });
-            Assert.AreEqual(false, vm.IsBusy);
+            Assert.That(vm.IsBusy, Is.EqualTo(false));
         }
 
         [Test]
@@ -74,8 +74,11 @@ namespace MvvmScarletToolkit.Tests
 
             vm.SelectedItem = child1;
 
-            Assert.AreEqual(true, viewModelListBaseSelectionChangedCalled);
-            Assert.AreEqual(true, ViewModelListBaseSelectionChangingCalled);
+            Assert.Multiple(() =>
+            {
+                Assert.That(viewModelListBaseSelectionChangedCalled, Is.EqualTo(true));
+                Assert.That(ViewModelListBaseSelectionChangingCalled, Is.EqualTo(true));
+            });
         }
 
         [Test]
@@ -109,7 +112,7 @@ namespace MvvmScarletToolkit.Tests
 
             vm.SelectedItems.Add(child1);
 
-            Assert.AreEqual(true, ViewModelListBaseSelectionsChangingCalled);
+            Assert.That(ViewModelListBaseSelectionsChangingCalled, Is.EqualTo(true));
         }
     }
 }
