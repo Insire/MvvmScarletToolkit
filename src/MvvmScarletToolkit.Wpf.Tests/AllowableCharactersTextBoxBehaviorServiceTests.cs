@@ -152,7 +152,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
         [TestCase(false, "MvvM", 4, 0, 0, true, "TooLong", ".*", false)]
         public void IsValid_Should_Return_Expected_Result(bool expectedResult, string originalText, int maxLength, int selectedTextLength, int caretIndex, bool isPaste, string newText, string regex, bool isInsertKeyToggled)
         {
-            Assert.AreEqual(expectedResult, AllowableCharactersTextBoxBehaviorService.IsValid(newText, isPaste, selectedTextLength, maxLength, originalText, caretIndex, regex, isInsertKeyToggled));
+            Assert.That(AllowableCharactersTextBoxBehaviorService.IsValid(newText, isPaste, selectedTextLength, maxLength, originalText, caretIndex, regex, isInsertKeyToggled), Is.EqualTo(expectedResult));
         }
     }
 }

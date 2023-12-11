@@ -18,12 +18,15 @@ namespace MvvmScarletToolkit.Tests
         public void Create_DoesReturnNewInstanceEveryTime()
         {
             var context = _builder.Create(() => Task.CompletedTask);
-            Assert.IsNotNull(context);
+            Assert.That(context, Is.Not.Null);
 
             var newContext = _builder.Create(() => Task.CompletedTask);
-            Assert.IsNotNull(newContext);
+            Assert.Multiple(() =>
+            {
+                Assert.That(newContext, Is.Not.Null);
 
-            Assert.IsFalse(object.ReferenceEquals(context, newContext));
+                Assert.That(ReferenceEquals(context, newContext), Is.False);
+            });
         }
 
         [Test]
@@ -32,47 +35,47 @@ namespace MvvmScarletToolkit.Tests
             // default object overloads:
 
             var context = _builder.Create(() => Task.CompletedTask);
-            Assert.IsNotNull(context);
+            Assert.That(context, Is.Not.Null);
 
             context = _builder.Create(() => Task.CompletedTask, () => true);
-            Assert.IsNotNull(context);
+            Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create((CancellationToken token) => Task.CompletedTask);
-            Assert.IsNotNull(context);
+            context = _builder.Create((CancellationToken _) => Task.CompletedTask);
+            Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create((CancellationToken token) => Task.CompletedTask, () => true);
-            Assert.IsNotNull(context);
+            context = _builder.Create((CancellationToken _) => Task.CompletedTask, () => true);
+            Assert.That(context, Is.Not.Null);
 
             // generic overloads ignoring argument:
 
             context = _builder.Create<object>(() => Task.CompletedTask);
-            Assert.IsNotNull(context);
+            Assert.That(context, Is.Not.Null);
 
             context = _builder.Create<object>(() => Task.CompletedTask, () => true);
-            Assert.IsNotNull(context);
+            Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create<object>((CancellationToken token) => Task.CompletedTask);
-            Assert.IsNotNull(context);
+            context = _builder.Create<object>((CancellationToken _) => Task.CompletedTask);
+            Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create<object>((CancellationToken token) => Task.CompletedTask, () => true);
-            Assert.IsNotNull(context);
+            context = _builder.Create<object>((CancellationToken _) => Task.CompletedTask, () => true);
+            Assert.That(context, Is.Not.Null);
 
             // generic overloads with argument:
 
-            context = _builder.Create<object>((object o) => Task.CompletedTask);
-            Assert.IsNotNull(context);
+            context = _builder.Create((object _) => Task.CompletedTask);
+            Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create<object>((object o) => Task.CompletedTask, (object o) => true);
-            Assert.IsNotNull(context);
+            context = _builder.Create((object _) => Task.CompletedTask, (object _) => true);
+            Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create<object>((object o) => Task.CompletedTask, () => true);
-            Assert.IsNotNull(context);
+            context = _builder.Create((object _) => Task.CompletedTask, () => true);
+            Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create<object>((object o, CancellationToken token) => Task.CompletedTask);
-            Assert.IsNotNull(context);
+            context = _builder.Create((object _, CancellationToken __) => Task.CompletedTask);
+            Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create<object>((object o, CancellationToken token) => Task.CompletedTask, (object o) => true);
-            Assert.IsNotNull(context);
+            context = _builder.Create((object _, CancellationToken __) => Task.CompletedTask, (object _) => true);
+            Assert.That(context, Is.Not.Null);
         }
     }
 }

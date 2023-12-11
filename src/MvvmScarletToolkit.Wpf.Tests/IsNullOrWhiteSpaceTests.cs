@@ -9,9 +9,12 @@ namespace MvvmScarletToolkit.Wpf.Tests
         {
             var converter = new IsNullOrWhiteSpace();
 
-            Assert.AreEqual(false, converter.Convert(new object(), null, null, null));
-            Assert.AreEqual(false, converter.Convert(1, null, null, null));
-            Assert.AreEqual(false, converter.Convert("not null or white space", null, null, null));
+            Assert.Multiple(() =>
+            {
+                Assert.That(converter.Convert(new object(), null, null, null), Is.EqualTo(false));
+                Assert.That(converter.Convert(1, null, null, null), Is.EqualTo(false));
+                Assert.That(converter.Convert("not null or white space", null, null, null), Is.EqualTo(false));
+            });
         }
 
         [Test]
@@ -19,9 +22,12 @@ namespace MvvmScarletToolkit.Wpf.Tests
         {
             var converter = new IsNullOrWhiteSpace();
 
-            Assert.AreEqual(true, converter.Convert(null, null, null, null));
-            Assert.AreEqual(true, converter.Convert(string.Empty, null, null, null));
-            Assert.AreEqual(true, converter.Convert(" ", null, null, null));
+            Assert.Multiple(() =>
+            {
+                Assert.That(converter.Convert(null, null, null, null), Is.EqualTo(true));
+                Assert.That(converter.Convert(string.Empty, null, null, null), Is.EqualTo(true));
+                Assert.That(converter.Convert(" ", null, null, null), Is.EqualTo(true));
+            });
         }
     }
 }

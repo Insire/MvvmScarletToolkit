@@ -96,10 +96,13 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 viewModel.Property = string.Empty;
 
-                Assert.IsTrue(propertyChanged);
-                Assert.IsTrue(tracker.HasChanges());
-                Assert.IsTrue(tracker.HasChanges(viewModel));
-                Assert.AreEqual(tracker.CountChanges(viewModel), 1);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(propertyChanged, Is.True);
+                    Assert.That(tracker.HasChanges(), Is.True);
+                    Assert.That(tracker.HasChanges(viewModel), Is.True);
+                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(1));
+                });
             }
 
             void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -124,10 +127,13 @@ namespace MvvmScarletToolkit.Observables.Tests
                 viewModel.Property = string.Empty;
                 viewModel.Property = null;
 
-                Assert.IsTrue(propertyChanged);
-                Assert.IsFalse(tracker.HasChanges());
-                Assert.IsFalse(tracker.HasChanges(viewModel));
-                Assert.AreEqual(tracker.CountChanges(viewModel), 0);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(propertyChanged, Is.True);
+                    Assert.That(tracker.HasChanges(), Is.False);
+                    Assert.That(tracker.HasChanges(viewModel), Is.False);
+                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
+                });
             }
 
             void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -151,10 +157,13 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 viewModel.Property = string.Empty;
 
-                Assert.IsTrue(propertyChanged);
-                Assert.IsTrue(tracker.HasChanges());
-                Assert.IsTrue(tracker.HasChanges(viewModel));
-                Assert.AreEqual(tracker.CountChanges(viewModel), 1);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(propertyChanged, Is.True);
+                    Assert.That(tracker.HasChanges(), Is.True);
+                    Assert.That(tracker.HasChanges(viewModel), Is.True);
+                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(1));
+                });
 
                 propertyChanged = false;
                 tracker.StopTracking(viewModel);
@@ -162,10 +171,13 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 viewModel.Property = null;
 
-                Assert.IsTrue(propertyChanged);
-                Assert.IsFalse(tracker.HasChanges());
-                Assert.IsFalse(tracker.HasChanges(viewModel));
-                Assert.AreEqual(tracker.CountChanges(viewModel), 0);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(propertyChanged, Is.True);
+                    Assert.That(tracker.HasChanges(), Is.False);
+                    Assert.That(tracker.HasChanges(viewModel), Is.False);
+                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
+                });
             }
 
             void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -189,10 +201,13 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 viewModel.Property = string.Empty;
 
-                Assert.IsTrue(propertyChanged);
-                Assert.IsTrue(tracker.HasChanges());
-                Assert.IsTrue(tracker.HasChanges(viewModel));
-                Assert.AreEqual(tracker.CountChanges(viewModel), 1);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(propertyChanged, Is.True);
+                    Assert.That(tracker.HasChanges(), Is.True);
+                    Assert.That(tracker.HasChanges(viewModel), Is.True);
+                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(1));
+                });
 
                 propertyChanged = false;
                 tracker.StopAllTracking();
@@ -200,10 +215,13 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 viewModel.Property = null;
 
-                Assert.IsTrue(propertyChanged);
-                Assert.IsFalse(tracker.HasChanges());
-                Assert.IsFalse(tracker.HasChanges(viewModel));
-                Assert.AreEqual(tracker.CountChanges(viewModel), 0);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(propertyChanged, Is.True);
+                    Assert.That(tracker.HasChanges(), Is.False);
+                    Assert.That(tracker.HasChanges(viewModel), Is.False);
+                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
+                });
             }
 
             void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -230,10 +248,13 @@ namespace MvvmScarletToolkit.Observables.Tests
                     viewModel.Property = string.Empty;
                 }
 
-                Assert.IsTrue(propertyChanged);
-                Assert.IsFalse(tracker.HasChanges());
-                Assert.IsFalse(tracker.HasChanges(viewModel));
-                Assert.AreEqual(tracker.CountChanges(viewModel), 0);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(propertyChanged, Is.True);
+                    Assert.That(tracker.HasChanges(), Is.False);
+                    Assert.That(tracker.HasChanges(viewModel), Is.False);
+                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
+                });
             }
 
             void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -260,10 +281,13 @@ namespace MvvmScarletToolkit.Observables.Tests
                     viewModel.Property = string.Empty;
                 }
 
-                Assert.IsTrue(propertyChanged);
-                Assert.IsFalse(tracker.HasChanges());
-                Assert.IsFalse(tracker.HasChanges(viewModel));
-                Assert.AreEqual(tracker.CountChanges(viewModel), 0);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(propertyChanged, Is.True);
+                    Assert.That(tracker.HasChanges(), Is.False);
+                    Assert.That(tracker.HasChanges(viewModel), Is.False);
+                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
+                });
             }
 
             void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -293,10 +317,13 @@ namespace MvvmScarletToolkit.Observables.Tests
                     viewModel.Property = string.Empty;
                 }
 
-                Assert.IsTrue(propertyChanged);
-                Assert.IsFalse(tracker.HasChanges());
-                Assert.IsFalse(tracker.HasChanges(viewModel));
-                Assert.AreEqual(tracker.CountChanges(viewModel), 0);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(propertyChanged, Is.True);
+                    Assert.That(tracker.HasChanges(), Is.False);
+                    Assert.That(tracker.HasChanges(viewModel), Is.False);
+                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
+                });
             }
 
             void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)

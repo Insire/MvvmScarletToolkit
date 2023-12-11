@@ -9,9 +9,12 @@ namespace MvvmScarletToolkit.Wpf.Tests
         {
             var converter = new IsNotNullOrEmpty();
 
-            Assert.AreEqual(true, converter.Convert(new object(), null, null, null));
-            Assert.AreEqual(true, converter.Convert(1, null, null, null));
-            Assert.AreEqual(true, converter.Convert("not null", null, null, null));
+            Assert.Multiple(() =>
+            {
+                Assert.That(converter.Convert(new object(), null, null, null), Is.EqualTo(true));
+                Assert.That(converter.Convert(1, null, null, null), Is.EqualTo(true));
+                Assert.That(converter.Convert("not null", null, null, null), Is.EqualTo(true));
+            });
         }
 
         [Test]
@@ -19,8 +22,11 @@ namespace MvvmScarletToolkit.Wpf.Tests
         {
             var converter = new IsNotNullOrEmpty();
 
-            Assert.AreEqual(false, converter.Convert(null, null, null, null));
-            Assert.AreEqual(false, converter.Convert(string.Empty, null, null, null));
+            Assert.Multiple(() =>
+            {
+                Assert.That(converter.Convert(null, null, null, null), Is.EqualTo(false));
+                Assert.That(converter.Convert(string.Empty, null, null, null), Is.EqualTo(false));
+            });
         }
     }
 }
