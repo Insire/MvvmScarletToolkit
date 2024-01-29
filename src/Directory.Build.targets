@@ -12,7 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
-        <PackageReference Include="Roslynator.Analyzers" Version="4.7.0">
+        <PackageReference Include="Roslynator.Analyzers" Version="4.10.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
