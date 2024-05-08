@@ -7,31 +7,62 @@ namespace MvvmScarletToolkit.Observables
     {
         private readonly Dictionary<TKey, TValue> _dictionary;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObservableDictionary{TKey, TValue}"/> class.
+        /// </summary>
         public ObservableDictionary()
             : base()
         {
             _dictionary = new Dictionary<TKey, TValue>();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObservableDictionary{TKey, TValue}"/> class
+        /// that contains elements copied from the specified <see cref="System.Collections.Generic.IDictionary{TKey, TValue}"/>.
+        /// </summary>
+        /// <param name="collection">The <see cref="System.Collections.Generic.IDictionary{TKey, TValue}"/> whose elements are copied to the new <see cref="ObservableDictionary{TKey, TValue}"/>.</param>
+        /// <exception cref="System.ArgumentNullException:">dictionary is null</exception>
+        /// <exception cref="System.ArgumentException">dictionary contains one or more duplicate keys</exception>
         public ObservableDictionary(IDictionary<TKey, TValue> collection)
             : base(collection)
         {
             _dictionary = new Dictionary<TKey, TValue>(collection);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObservableDictionary{TKey, TValue}"/> class
+        /// and uses the specified <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/>.
+        /// </summary>
+        /// <param name="equalityComparer">The <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/> implementation to use when comparing keys, or null to use the default <see cref="System.Collections.Generic.EqualityComparer{TKey}"/> for the type of the key.</param>
         public ObservableDictionary(IEqualityComparer<TKey> equalityComparer)
             : base()
         {
             _dictionary = new Dictionary<TKey, TValue>(equalityComparer);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObservableDictionary{TKey, TValue}"/> class
+        /// that is empty, has the specified initial capacity,
+        /// and uses the specified <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/>.
+        /// </summary>
+        /// <param name="capacity">The initial number of elements that the <see cref="ObservableDictionary{TKey, TValue}"/> can contain..</param>
+        /// <param name="equalityComparer">The <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/> implementation to use whencomparing keys, or null to use the default <see cref="System.Collections.Generic.EqualityComparer{TKey}"/>for the type of the key.</param>
+        /// <exception cref="System.ArgumentOutOfRangeException:">capacity is less than 0</exception>
         public ObservableDictionary(int capacity, IEqualityComparer<TKey> equalityComparer)
             : base()
         {
             _dictionary = new Dictionary<TKey, TValue>(capacity, equalityComparer);
-            _dictionary = new Dictionary<TKey, TValue>(capacity, equalityComparer);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObservableDictionary{TKey, TValue}"/> class
+        /// that contains elements copied from the specified <see cref="System.Collections.Generic.IDictionary{TKey, TValue}"/>
+        /// and uses the specified <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/>.
+        /// </summary>
+        /// <param name="collection">The <see cref="System.Collections.Generic.IDictionary{TKey, TValue}"/> whose elements are copied to the new <see cref="ObservableDictionary{TKey, TValue}"/>.</param>
+        /// <param name="equalityComparer">The <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/> implementation to use when comparing keys, or null to use the default <see cref="System.Collections.Generic.EqualityComparer{TKey}"/> for the type of the key.</param>
+        /// <exception cref="System.ArgumentNullException:">dictionary is null</exception>
+        /// <exception cref="System.ArgumentException">dictionary contains one or more duplicate keys</exception>
         public ObservableDictionary(IDictionary<TKey, TValue> collection, IEqualityComparer<TKey> equalityComparer)
             : base(collection)
         {
@@ -60,32 +91,32 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        /// <inheritdoc cref="System.Collections.Generic.Dictionary.Keys" />
+        /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}.Keys" />
         public ICollection<TKey> Keys => _dictionary.Keys;
 
-        /// <inheritdoc cref="System.Collections.Generic.Dictionary.Values" />
+        /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}.Values" />
         public ICollection<TValue> Values => _dictionary.Values;
 
-        /// <inheritdoc cref="System.Collections.Generic.Dictionary.Values" />
+        /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}.Values" />
         IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys => _dictionary.Keys;
 
-        /// <inheritdoc cref="System.Collections.Generic.Dictionary.Values" />
+        /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}.Values" />
         IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values => _dictionary.Values;
 
-        /// <inheritdoc cref="System.Collections.Generic.Dictionary.Add(TKey, TValue)" />
+        /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}.Add(TKey, TValue)" />
         public void Add(TKey key, TValue value)
         {
             _dictionary.Add(key, value);
             base.Add(new KeyValuePair<TKey, TValue>(key, value));
         }
 
-        /// <inheritdoc cref="System.Collections.Generic.Dictionary.ContainsKey(TKey)" />
+        /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}.ContainsKey(TKey)" />
         public bool ContainsKey(TKey key)
         {
             return _dictionary.ContainsKey(key);
         }
 
-        /// <inheritdoc cref="System.Collections.Generic.Dictionary.Remove(TKey)" />
+        /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}.Remove(TKey)" />
         public bool Remove(TKey key)
         {
             for (var i = 0; i < Count; i++)
@@ -101,7 +132,7 @@ namespace MvvmScarletToolkit.Observables
             return false;
         }
 
-        /// <inheritdoc cref="System.Collections.Generic.Dictionary.TryGetValue(TKey, out TValue)" />
+        /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}.TryGetValue(TKey, out TValue)" />
         public bool TryGetValue(TKey key, out TValue value)
         {
             return _dictionary.TryGetValue(key, out value);
