@@ -34,7 +34,7 @@ namespace MvvmScarletToolkit.Observables
         /// and uses the specified <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/>.
         /// </summary>
         /// <param name="equalityComparer">The <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/> implementation to use when comparing keys, or null to use the default <see cref="System.Collections.Generic.EqualityComparer{TKey}"/> for the type of the key.</param>
-        public ObservableDictionary(IEqualityComparer<TKey> equalityComparer)
+        public ObservableDictionary(IEqualityComparer<TKey>? equalityComparer)
             : base()
         {
             _dictionary = new Dictionary<TKey, TValue>(equalityComparer);
@@ -48,7 +48,7 @@ namespace MvvmScarletToolkit.Observables
         /// <param name="capacity">The initial number of elements that the <see cref="ObservableDictionary{TKey, TValue}"/> can contain..</param>
         /// <param name="equalityComparer">The <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/> implementation to use whencomparing keys, or null to use the default <see cref="System.Collections.Generic.EqualityComparer{TKey}"/>for the type of the key.</param>
         /// <exception cref="System.ArgumentOutOfRangeException:">capacity is less than 0</exception>
-        public ObservableDictionary(int capacity, IEqualityComparer<TKey> equalityComparer)
+        public ObservableDictionary(int capacity, IEqualityComparer<TKey>? equalityComparer)
             : base()
         {
             _dictionary = new Dictionary<TKey, TValue>(capacity, equalityComparer);
@@ -63,7 +63,7 @@ namespace MvvmScarletToolkit.Observables
         /// <param name="equalityComparer">The <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/> implementation to use when comparing keys, or null to use the default <see cref="System.Collections.Generic.EqualityComparer{TKey}"/> for the type of the key.</param>
         /// <exception cref="System.ArgumentNullException:">dictionary is null</exception>
         /// <exception cref="System.ArgumentException">dictionary contains one or more duplicate keys</exception>
-        public ObservableDictionary(IDictionary<TKey, TValue> collection, IEqualityComparer<TKey> equalityComparer)
+        public ObservableDictionary(IDictionary<TKey, TValue> collection, IEqualityComparer<TKey>? equalityComparer)
             : base(collection)
         {
             _dictionary = new Dictionary<TKey, TValue>(collection, equalityComparer);
@@ -79,14 +79,21 @@ namespace MvvmScarletToolkit.Observables
             set
             {
                 _dictionary[key] = value;
+                var requiresAdd = true;
                 for (var i = 0; i < Count; i++)
                 {
                     var entry = base[i];
                     if (entry.Key?.Equals(key) == true)
                     {
                         base[i] = new KeyValuePair<TKey, TValue>(key, value);
+                        requiresAdd = false;
                         break;
                     }
+                }
+
+                if (requiresAdd)
+                {
+                    base.Add(new KeyValuePair<TKey, TValue>(key, value));
                 }
             }
         }
@@ -119,12 +126,17 @@ namespace MvvmScarletToolkit.Observables
         /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}.Remove(TKey)" />
         public bool Remove(TKey key)
         {
+            if (!_dictionary.ContainsKey(key))
+            {
+                return false;
+            }
+
             for (var i = 0; i < Count; i++)
             {
                 var entry = base[i];
                 if (entry.Key?.Equals(key) == true)
                 {
-                    base.RemoveAt(i);
+                    base.Remove(entry);
                     return true;
                 }
             }
@@ -136,6 +148,38 @@ namespace MvvmScarletToolkit.Observables
         public bool TryGetValue(TKey key, out TValue value)
         {
             return _dictionary.TryGetValue(key, out value);
+        }
+
+        /// <inheritdoc/>
+        protected override void ClearItems()
+        {
+            _dictionary.Clear();
+            base.ClearItems();
+        }
+
+        /// <inheritdoc/>
+        protected override void InsertItem(int index, KeyValuePair<TKey, TValue> item)
+        {
+            _dictionary[item.Key] = item.Value;
+            base.InsertItem(index, item);
+        }
+
+        /// <inheritdoc/>
+        protected override void RemoveItem(int index)
+        {
+            var entry = base[index];
+
+            if (_dictionary.Remove(entry.Key))
+            {
+                base.RemoveItem(index);
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void SetItem(int index, KeyValuePair<TKey, TValue> item)
+        {
+            _dictionary[item.Key] = item.Value;
+            base.SetItem(index, item);
         }
     }
 }
