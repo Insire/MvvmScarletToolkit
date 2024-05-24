@@ -1558,6 +1558,29 @@
                         </GroupBox>
                     </StackPanel>
                 </DataTemplate>
+
+
+                <DataTemplate DataType="{x:Type local:ObservableDictionaryViewModel}">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                            <Button Command="{Binding AddCommand}" Content="Add" />
+                            <Button Command="{Binding RemoveCommand}" Content="Remove" Margin="4,0"/>
+                            <Button Command="{Binding ClearCommand}" Content="Clear" />
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding Items}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding Key, StringFormat='Key: {0}', Mode=OneWay}" />
+                                        <Run Text=" " />
+                                        <Run Text="{Binding Value, StringFormat='Value: {0}', Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+
+                        </ListBox>
+                    </DockPanel>
+                </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
     </Grid>
