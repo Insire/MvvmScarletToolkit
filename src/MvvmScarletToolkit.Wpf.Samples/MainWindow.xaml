@@ -686,7 +686,7 @@
                                                   IsLiveSortingRequested="True"
                                                   Source="{Binding Items}">
                                 <CollectionViewSource.SortDescriptions>
-                                    <componentmodel:SortDescription Direction="Descending" PropertyName="IsSelected" />
+                                    <componentmodel:SortDescription Direction="Descending" PropertyName="IsBusy" />
                                     <componentmodel:SortDescription Direction="Ascending" PropertyName="DisplayName" />
                                 </CollectionViewSource.SortDescriptions>
                             </CollectionViewSource>
@@ -800,7 +800,6 @@
                             </Button>
 
                             <ListBox Grid.Row="2"
-                                     Grid.RowSpan="3"
                                      Grid.Column="0"
                                      ItemTemplate="{StaticResource DemoItemTemplate}"
                                      ItemsSource="{Binding Source={StaticResource SortedViewSource}}"
@@ -817,6 +816,26 @@
                                     </Style>
                                 </ListBox.ItemContainerStyle>
                             </ListBox>
+
+                            <ListView Grid.Row="4"
+                                      Grid.Column="0"
+                                      ItemsSource="{Binding Source={StaticResource SortedViewSource}}"
+                                      SelectedItem="{Binding SelectedItem}"
+                                      SelectionMode="Extended">
+
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Width="100"
+                                                        DisplayMemberBinding="{Binding Path=DisplayName}"
+                                                        Header="DisplayName" />
+
+                                        <GridViewColumn Width="100"
+                                                        DisplayMemberBinding="{Binding Path=IsBusy}"
+                                                        Header="IsBusy" />
+
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
 
                             <TextBlock Grid.Row="2"
                                        Grid.RowSpan="3"

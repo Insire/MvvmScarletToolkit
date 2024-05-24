@@ -18,7 +18,7 @@ namespace MvvmScarletToolkit.Wpf
         public int WindowOffset { get; set; } = 12;
 
         /// <summary>
-        /// how lojg to wait, before closing the notification window
+        /// how long to wait, before closing the notification window
         /// </summary>
         public TimeSpan WindowCloseDelay { get; set; } = TimeSpan.FromSeconds(DefaultIsVisibleForInSeconds);
 
