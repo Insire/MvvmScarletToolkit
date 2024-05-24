@@ -34,10 +34,7 @@ namespace MvvmScarletToolkit.Tests
             var vm = new DerivedViewModelBase(commandBuilder);
 
             Assert.That(vm.IsBusy, Is.EqualTo(false));
-            vm.ValidateState(() =>
-            {
-                Assert.That(vm.IsBusy, Is.EqualTo(true));
-            });
+            vm.ValidateState(() => Assert.That(vm.IsBusy, Is.EqualTo(true)));
             Assert.That(vm.IsBusy, Is.EqualTo(false));
         }
     }

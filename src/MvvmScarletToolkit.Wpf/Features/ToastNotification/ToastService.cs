@@ -43,12 +43,8 @@ namespace MvvmScarletToolkit.Wpf
 
         public ToastService(ToastServiceConfiguration configuration, SynchronizationContext synchronizationContext)
         {
+            ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
             _synchronizationContext = synchronizationContext ?? throw new ArgumentNullException(nameof(synchronizationContext));
-
-            if (configuration is null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
 
             _items = new SourceList<IToast>();
             Items = new ObservableCollectionExtended<IToast>();

@@ -9,16 +9,11 @@ namespace MvvmScarletToolkit.Observables.Tests
     internal sealed class PropertyChangedMessageTrackerTests
     {
         public static List<Func<IMessenger, ITestViewModel>> ViewModelFactories
-        {
-            get
+            => new List<Func<IMessenger, ITestViewModel>>()
             {
-                return new List<Func<IMessenger, ITestViewModel>>()
-                {
-                    (m) => new AttributedBroadCastViewModel(m),
-                    (m) => new BroadCastViewModel(m),
-                };
-            }
-        }
+                (m) => new AttributedBroadCastViewModel(m),
+                (m) => new BroadCastViewModel(m),
+            };
 
         [Test]
         public void Ctor_DoesNotThrow()

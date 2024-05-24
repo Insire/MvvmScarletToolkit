@@ -158,7 +158,7 @@ namespace MvvmScarletToolkit
                 _viewport.Height = pixelMeasuredViewportSize.Height;
             }
 
-            if (!(_abstractPanel is null))
+            if (_abstractPanel is not null)
             {
                 if (Orientation == Orientation.Horizontal)
                 {
@@ -871,7 +871,7 @@ namespace MvvmScarletToolkit
             }
 
             private int _section = -1;
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC010:The property sets a different field than it returns.", Justification = "No it does not")]
+
             public int Section
             {
                 get

@@ -67,7 +67,7 @@ namespace MvvmScarletToolkit
 
         private static void OnSelectedItemsChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            if (!(o is MultiListBoxSelectionBehavior behavior))
+            if (o is not MultiListBoxSelectionBehavior behavior)
             {
                 return;
             }

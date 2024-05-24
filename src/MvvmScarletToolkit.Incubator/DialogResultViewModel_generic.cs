@@ -44,7 +44,7 @@ namespace MvvmScarletToolkit
         public async Task Show(CancellationToken token)
         {
             var tcs = new TaskCompletionSource<object>();
-            using (var registration = token.Register(() => tcs.TrySetCanceled()))
+            await using (var registration = token.Register(() => tcs.TrySetCanceled()))
             {
                 try
                 {

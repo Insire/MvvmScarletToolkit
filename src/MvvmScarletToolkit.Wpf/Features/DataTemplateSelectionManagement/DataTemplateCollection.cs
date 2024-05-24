@@ -37,10 +37,7 @@ namespace MvvmScarletToolkit
 
         private void ValidateItem(DataTemplate item)
         {
-            if (item is null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+            ArgumentNullException.ThrowIfNull(item, nameof(item));
 
             if (item.DataType is null)
             {

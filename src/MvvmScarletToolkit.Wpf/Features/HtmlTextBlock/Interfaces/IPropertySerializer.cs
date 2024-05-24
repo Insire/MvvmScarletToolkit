@@ -16,8 +16,6 @@ namespace MvvmScarletToolkit.Wpf
         /// Take a property string and return a list of tuple containing
         /// the its key and value.
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="paramDic"></param>
         IEnumerable<Tuple<string, string>> StringToProperty(string propertyString);
     }
 }

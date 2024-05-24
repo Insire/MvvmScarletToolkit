@@ -16,7 +16,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         private bool FilterByName(object obj)
         {
-            if (!(obj is IFileSystemInfo info))
+            if (obj is not IFileSystemInfo info)
             {
                 return false;
             }

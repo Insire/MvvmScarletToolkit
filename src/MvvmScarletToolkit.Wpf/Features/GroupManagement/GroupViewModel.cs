@@ -1,4 +1,5 @@
 using MvvmScarletToolkit.Observables;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Data;
@@ -9,6 +10,7 @@ namespace MvvmScarletToolkit
     public sealed class GroupViewModel : ViewModelBase
     {
         private string _name;
+
         public string Name
         {
             get { return _name; }
@@ -18,12 +20,9 @@ namespace MvvmScarletToolkit
         public PropertyGroupDescription GroupDescription { get; }
 
         public GroupViewModel(IScarletCommandBuilder commandBuilder, PropertyInfo propertyInfo)
-            : base(commandBuilder)
+        : base(commandBuilder)
         {
-            if (propertyInfo is null)
-            {
-                throw new System.ArgumentNullException(nameof(propertyInfo));
-            }
+            ArgumentNullException.ThrowIfNull(propertyInfo, nameof(propertyInfo));
 
             _name = propertyInfo.Name;
             GroupDescription = new PropertyGroupDescription(propertyInfo.Name);

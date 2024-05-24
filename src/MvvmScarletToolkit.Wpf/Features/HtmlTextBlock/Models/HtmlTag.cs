@@ -95,7 +95,7 @@ namespace MvvmScarletToolkit.Wpf
                             var propertyName = _variables["path"];
                             var property = dataContext.GetType().GetProperty(propertyName);
 
-                            if (property != null && property.CanRead == true)
+                            if (property?.CanRead == true)
                             {
                                 var value = property.GetValue(dataContext, null);
                                 result = new Run(value?.ToString() ?? "");
