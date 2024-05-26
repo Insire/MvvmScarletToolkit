@@ -15,6 +15,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         private bool _disposed;
 
         private bool _isBusy;
+
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -63,10 +64,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         private void ThrowIfDisposed()
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().FullName);
-            }
+            ObjectDisposedException.ThrowIf(_disposed, this);
         }
     }
 }

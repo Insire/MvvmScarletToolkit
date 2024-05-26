@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
     // parent observer and child at the same time
     public sealed class BusyViewModel : ViewModelListBase<INotifyPropertyChanged>, IObserver<bool>, IObservable<bool>, IDisposable
     {
-        private readonly IDictionary<INotifyPropertyChanged, IDisposable> _disposables;
+        private readonly Dictionary<INotifyPropertyChanged, IDisposable> _disposables;
 
         public ConcurrentCommandBase AddContainerCommand { get; }
         public ConcurrentCommandBase AddChildCommand { get; }

@@ -17,6 +17,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         private readonly IReadOnlyCollection<FileAttributes> _folderAttributes;
 
         private IFileSystemParent? _parent;
+
         [Bindable(true, BindingDirection.OneWay)]
         public IFileSystemParent? Parent
         {
@@ -25,6 +26,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private string _name;
+
         [Bindable(true, BindingDirection.OneWay)]
         public string Name
         {
@@ -33,6 +35,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private string _fullName;
+
         [Bindable(true, BindingDirection.OneWay)]
         public string FullName
         {
@@ -41,6 +44,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private bool _exists;
+
         [Bindable(true, BindingDirection.OneWay)]
         public bool Exists
         {
@@ -49,6 +53,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private bool _isSelected;
+
         [Bindable(true, BindingDirection.TwoWay)]
         public bool IsSelected
         {
@@ -57,6 +62,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private bool _isHidden;
+
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsHidden
         {
@@ -65,6 +71,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private DateTime? _creationTimeUtc;
+
         [Bindable(true, BindingDirection.OneWay)]
         public DateTime? CreationTimeUtc
         {
@@ -73,6 +80,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private DateTime? _lastAccessTimeUtc;
+
         [Bindable(true, BindingDirection.OneWay)]
         public DateTime? LastAccessTimeUtc
         {
@@ -81,6 +89,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private DateTime? _lastWriteTimeUtc;
+
         [Bindable(true, BindingDirection.OneWay)]
         public DateTime? LastWriteTimeUtc
         {
@@ -136,7 +145,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
             if (!IsLoaded)
             {
-                await AddRange(children);
+                await AddRange(children, token);
             }
             else
             {

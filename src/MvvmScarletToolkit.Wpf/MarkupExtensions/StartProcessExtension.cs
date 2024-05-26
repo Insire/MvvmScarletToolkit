@@ -23,10 +23,7 @@ namespace MvvmScarletToolkit
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            if (Command is null)
-            {
-                Command = new RelayCommand(StartProcess);
-            }
+            Command ??= new RelayCommand(StartProcess);
 
             return Command;
         }

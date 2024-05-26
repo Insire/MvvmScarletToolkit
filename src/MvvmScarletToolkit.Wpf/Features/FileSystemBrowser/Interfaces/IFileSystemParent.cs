@@ -1,6 +1,4 @@
 namespace MvvmScarletToolkit
 {
-    public interface IFileSystemParent : IBusinessViewModelListBase<IFileSystemChild>, IFileSystemInfo
-    {
-    }
+    public interface IFileSystemParent : IBusinessViewModelListBase<IFileSystemChild>, IFileSystemInfo;
 }

@@ -1,6 +1,4 @@
 namespace MvvmScarletToolkit
 {
-    public interface IFileSystemFile : IFileSystemInfo, IFileSystemChild
-    {
-    }
+    public interface IFileSystemFile : IFileSystemInfo, IFileSystemChild;
 }

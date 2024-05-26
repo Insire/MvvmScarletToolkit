@@ -170,7 +170,6 @@ namespace MvvmScarletToolkit.Observables.Tests
         }
 
         [Test]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "Be explicit about calling Add")]
         public void Add_DoesNotThrow_2()
         {
             var sut = new ObservableDictionary<int, object>();

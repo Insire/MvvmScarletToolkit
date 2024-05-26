@@ -35,10 +35,7 @@ namespace MvvmScarletToolkit.Tests
             var vm = new DerivedViewModelListBase(commandBuilder);
 
             Assert.That(vm.IsBusy, Is.EqualTo(false));
-            vm.ValidateState(() =>
-            {
-                Assert.That(vm.IsBusy, Is.EqualTo(true));
-            });
+            vm.ValidateState(() => Assert.That(vm.IsBusy, Is.EqualTo(true)));
             Assert.That(vm.IsBusy, Is.EqualTo(false));
         }
 
@@ -55,22 +52,13 @@ namespace MvvmScarletToolkit.Tests
             vm.Add(child1);
             vm.Add(child2);
 
-            messenger.Register<ViewModelListBaseSelectionsChanged<DerivedObjectViewModelBase>>(this, (r, m) =>
-            {
-                Assert.Fail();
-            });
+            messenger.Register<ViewModelListBaseSelectionsChanged<DerivedObjectViewModelBase>>(this, (_, __) => Assert.Fail());
 
             var viewModelListBaseSelectionChangedCalled = false;
-            messenger.Register<ViewModelListBaseSelectionChanged<DerivedObjectViewModelBase>>(this, (r, m) =>
-            {
-                viewModelListBaseSelectionChangedCalled = true;
-            });
+            messenger.Register<ViewModelListBaseSelectionChanged<DerivedObjectViewModelBase>>(this, (_, __) => viewModelListBaseSelectionChangedCalled = true);
 
             var ViewModelListBaseSelectionChangingCalled = false;
-            messenger.Register<ViewModelListBaseSelectionChanging<DerivedObjectViewModelBase>>(this, (r, m) =>
-            {
-                ViewModelListBaseSelectionChangingCalled = true;
-            });
+            messenger.Register<ViewModelListBaseSelectionChanging<DerivedObjectViewModelBase>>(this, (_, __) => ViewModelListBaseSelectionChangingCalled = true);
 
             vm.SelectedItem = child1;
 
@@ -95,20 +83,11 @@ namespace MvvmScarletToolkit.Tests
             vm.Add(child2);
 
             var ViewModelListBaseSelectionsChangingCalled = false;
-            messenger.Register<ViewModelListBaseSelectionsChanged<DerivedObjectViewModelBase>>(this, (r, m) =>
-            {
-                ViewModelListBaseSelectionsChangingCalled = true;
-            });
+            messenger.Register<ViewModelListBaseSelectionsChanged<DerivedObjectViewModelBase>>(this, (_, __) => ViewModelListBaseSelectionsChangingCalled = true);
 
-            messenger.Register<ViewModelListBaseSelectionChanged<DerivedObjectViewModelBase>>(this, (r, m) =>
-            {
-                Assert.Fail();
-            });
+            messenger.Register<ViewModelListBaseSelectionChanged<DerivedObjectViewModelBase>>(this, (_, __) => Assert.Fail());
 
-            messenger.Register<ViewModelListBaseSelectionChanging<DerivedObjectViewModelBase>>(this, (r, m) =>
-            {
-                Assert.Fail();
-            });
+            messenger.Register<ViewModelListBaseSelectionChanging<DerivedObjectViewModelBase>>(this, (_, __) => Assert.Fail());
 
             vm.SelectedItems.Add(child1);
 

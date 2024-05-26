@@ -17,7 +17,6 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// add a token to the stack
         /// </summary>
-        /// <param name="token"></param>
         void Push();
     }
 }

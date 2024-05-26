@@ -1,4 +1,5 @@
 using Jot;
+using System;
 using System.Windows;
 
 namespace MvvmScarletToolkit.Wpf.Samples
@@ -19,10 +20,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         public MainWindow(Tracker tracker, NavigationViewModel navigationViewModel)
         {
-            if (navigationViewModel is null)
-            {
-                throw new System.ArgumentNullException(nameof(navigationViewModel));
-            }
+            ArgumentNullException.ThrowIfNull(tracker, nameof(tracker));
+            ArgumentNullException.ThrowIfNull(navigationViewModel, nameof(navigationViewModel));
 
             InitializeComponent();
 

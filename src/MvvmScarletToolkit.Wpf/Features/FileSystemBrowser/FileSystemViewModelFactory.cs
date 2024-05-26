@@ -28,9 +28,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             {
                 IFileSystemDrive drive => Task.Run(() => IsDriveEmpty(drive)),
                 IFileSystemDirectory directory => Task.Run(() => IsDirectoryEmpty(directory)),
-#pragma warning disable RCS1079 // Throwing of new NotImplementedException.
                 _ => throw new NotImplementedException(),
-#pragma warning restore RCS1079 // Throwing of new NotImplementedException.
             };
         }
 

@@ -83,7 +83,7 @@ namespace MvvmScarletToolkit.Observables
 
         private int GetPrevious()
         {
-            return (_viewModel.PageIndex - 1 - _viewModel.PageSize > 0)
+            return (_viewModel.PageIndex - 1 > _viewModel.PageSize)
             ? _viewModel.PageIndex - 1
             : 0;
         }

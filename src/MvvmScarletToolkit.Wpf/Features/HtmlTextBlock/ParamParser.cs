@@ -24,14 +24,7 @@ namespace MvvmScarletToolkit.Wpf
 
             foreach (var tup in Serializer.StringToProperty(@string))
             {
-                if (!result.ContainsKey(tup.Item1))
-                {
-                    result.Add(tup.Item1, tup.Item2);
-                }
-                else
-                {
-                    result[tup.Item1] = tup.Item2;
-                }
+                result[tup.Item1] = tup.Item2;
             }
 
             return result;
