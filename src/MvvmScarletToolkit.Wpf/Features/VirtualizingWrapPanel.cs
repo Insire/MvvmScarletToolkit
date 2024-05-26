@@ -507,10 +507,7 @@ namespace MvvmScarletToolkit
                 return availableSize;
             }
 
-            if (_abstractPanel == null)
-            {
-                _abstractPanel = new WrapPanelAbstraction(_itemsControl.Items.Count);
-            }
+            _abstractPanel ??= new WrapPanelAbstraction(_itemsControl.Items.Count);
 
             _pixelMeasuredViewport = availableSize;
 
@@ -854,7 +851,6 @@ namespace MvvmScarletToolkit
 
             private int _sectionIndex = -1;
 
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", "INPC010:The property sets a different field than it returns.", Justification = "No it does not")]
             public int SectionIndex
             {
                 get

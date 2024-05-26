@@ -250,7 +250,7 @@ namespace MvvmScarletToolkit
 
         private bool CanPrevious()
         {
-            return CanRefresh() && CurrentPage - 1 > 0;
+            return CanRefresh() && CurrentPage > 1;
         }
 
         private int GetFirst()
