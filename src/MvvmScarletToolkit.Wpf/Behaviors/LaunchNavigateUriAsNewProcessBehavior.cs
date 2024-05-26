@@ -73,7 +73,7 @@ namespace MvvmScarletToolkit.Wpf
         {
             var value = AssociatedObject.NavigateUri;
 
-            return value is Uri;
+            return value is not null;
         }
     }
 }

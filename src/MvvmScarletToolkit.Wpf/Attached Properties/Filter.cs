@@ -96,7 +96,7 @@ namespace MvvmScarletToolkit
 
         private static void OnByChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(e.NewValue is Predicate<object> predicate))
+            if (e.NewValue is not Predicate<object> predicate)
             {
                 return;
             }

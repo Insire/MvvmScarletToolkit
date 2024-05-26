@@ -7,12 +7,12 @@
 
     <PropertyGroup>
         <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
-        <LangVersion>11.0</LangVersion>
+        <LangVersion>12.0</LangVersion>
         <CodeAnalysisRuleSet>..\..\MvvmScarletToolkit.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
-        <PackageReference Include="Roslynator.Analyzers" Version="4.7.0">
+        <PackageReference Include="Roslynator.Analyzers" Version="4.12.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

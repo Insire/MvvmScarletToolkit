@@ -93,10 +93,7 @@ namespace MvvmScarletToolkit
 
             foreach (var item in source)
             {
-                if (bucket == null)
-                {
-                    bucket = new TSource[size];
-                }
+                bucket ??= new TSource[size];
 
                 bucket[count++] = item;
                 if (count != size)

@@ -16,7 +16,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         protected override Task RefreshInternal(CancellationToken token)
         {
-            return AddRange(_imageFactory.GetImageList());
+            return AddRange(_imageFactory.GetImageList(), token);
         }
     }
 }

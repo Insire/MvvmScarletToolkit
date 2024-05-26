@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         {
             var drives = await _factory.GetDrives(Options.DriveTypes, Options.FileAttributes, Options.FolderAttributes).ConfigureAwait(false);
 
-            await AddRange(drives).ConfigureAwait(false);
+            await AddRange(drives, token).ConfigureAwait(false);
         }
     }
 }

@@ -89,23 +89,6 @@ Pre release nuget packages are available [here](https://pkgs.dev.azure.com/SoftT
   - Extensions
     - DependencyObjectExtensions
 
-- [MvvmScarletToolkit.Xamarin.Forms](src/MvvmScarletToolkit.Xamarin.Forms/readme.md)
-
-  - BindingProxy
-  - Converters:
-    - IsNot (negate a boolean)
-    - IsNotNull (return whether something is not null)
-    - IsNotNullOrEmpty (return whether a string is not null or empty)
-    - IsNotNullOrWhiteSpace (return whether a string is not null or whitespace)
-    - IsNull (return whether something is null)
-    - IsNullOrEmpty (return whether a string is null or empty)
-    - IsNullOrWhiteSpace (return whether a string is null or whitespace)
-  - MarkupExtension
-    - ColorToHexExtension
-  - Behaviors
-    - BehaviorBase (provides the currently associated control that also forwwards updates to the bindingcontext as it changes on the control)
-    - EventToCommandBehavior
-
 - [MvvmScarletToolkit.Abstractions](src/MvvmScarletToolkit.Abstractions/readme.md)
 
   - EnumerableExtensions

@@ -40,7 +40,7 @@ namespace MvvmScarletToolkit
 
         private static void OnFirstChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            if (!(o is FrameworkElement element) || !(e.NewValue is bool enabled))
+            if (o is not FrameworkElement element || e.NewValue is not bool enabled)
             {
                 return;
             }

@@ -37,13 +37,13 @@ namespace MvvmScarletToolkit.Tests
         [Test]
         public void Ctor_DoesThrowForNullBusyStackFactory()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), null, (object _, CancellationToken token) => Task.CompletedTask));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), null, (object _, CancellationToken __) => Task.CompletedTask));
         }
 
         [Test]
         public void Ctor_DoesThrowForNullBusyStack()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), default(IBusyStack), (object _, CancellationToken token) => Task.CompletedTask, (object _) => true));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), default, (object _, CancellationToken __) => Task.CompletedTask, (object _) => true));
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace MvvmScarletToolkit.Tests
         [Test]
         public void Ctor_DoesThrowForNullCanExecute()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object _, CancellationToken token) => Task.CompletedTask, null));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object _, CancellationToken __) => Task.CompletedTask, null));
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace MvvmScarletToolkit.Tests
         public void CanExecute_IsCalledOnCommandCanExecuteCheck()
         {
             var executed = false;
-            var command = _builder.Create((object _) => { Assert.Fail(); return Task.CompletedTask; }, (o) => { executed = true; return true; })
+            var command = _builder.Create((object _) => { Assert.Fail(); return Task.CompletedTask; }, (_) => { executed = true; return true; })
                 .Build();
 
             command.CanExecute(default(object));

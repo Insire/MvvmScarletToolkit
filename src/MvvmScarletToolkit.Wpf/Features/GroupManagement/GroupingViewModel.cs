@@ -44,6 +44,7 @@ namespace MvvmScarletToolkit
         private ListCollectionView? _view;
 
         private bool _isLiveGroupingEnabled;
+
         public bool IsLiveGroupingEnabled
         {
             get { return _isLiveGroupingEnabled; }
@@ -62,6 +63,7 @@ namespace MvvmScarletToolkit
         }
 
         private bool _isLiveSortingEnabled;
+
         public bool IsLiveSortingEnabled
         {
             get { return _isLiveSortingEnabled; }
@@ -151,12 +153,12 @@ namespace MvvmScarletToolkit
             Messenger.Send(new GroupsViewModelRemoved(item));
 
             var description = item.SelectedItem?.GroupDescription;
-            if (!(description is null))
+            if (description is not null)
             {
                 await Dispatcher.Invoke(() => _view?.GroupDescriptions.Remove(description)).ConfigureAwait(false);
             }
 
-            if (!(item.SelectedItem is null))
+            if (item.SelectedItem is not null)
             {
                 _filterCollection.TryAdd(item.SelectedItem.Name, item.SelectedItem);
             }
@@ -176,15 +178,15 @@ namespace MvvmScarletToolkit
                     .ForEach(p => _filterCollection.TryAdd(p.Key, p.Value));
 
                 _maxGroupings = _filterCollection.Count;
-            });
+            }, token);
         }
 
         private async Task Add(CancellationToken token)
         {
             var result = new GroupsViewModel(CommandBuilder, GetCollectionView);
-            await result.AddRange(_filterCollection.Values).ConfigureAwait(false);
+            await result.AddRange(_filterCollection.Values, token).ConfigureAwait(false);
 
-            await Add(result).ConfigureAwait(false);
+            await Add(result, token).ConfigureAwait(false);
         }
 
         private bool CanAdd()

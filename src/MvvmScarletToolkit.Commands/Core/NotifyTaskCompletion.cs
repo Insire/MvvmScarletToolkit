@@ -48,7 +48,6 @@ namespace MvvmScarletToolkit.Commands
             TaskCompletion = task == Task.CompletedTask ? Task.CompletedTask : WatchTaskAsync(task);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Add call to 'ConfigureAwait' (or vice versa).", Justification = "dont configureawait(false) here since we want to raise OnPropertyChanged on the ui thread if possible, but we are not going to enforce that")]
         private async Task WatchTaskAsync(Task task)
         {
             try

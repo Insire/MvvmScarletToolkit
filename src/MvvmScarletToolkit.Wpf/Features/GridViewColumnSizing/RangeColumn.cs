@@ -97,10 +97,7 @@ namespace MvvmScarletToolkit
 
         public static bool? GetRangeIsFillColumn(GridViewColumn column)
         {
-            if (column is null)
-            {
-                throw new ArgumentNullException(nameof(column));
-            }
+            ArgumentNullException.ThrowIfNull(column, nameof(column));
 
             var value = column.ReadLocalValue(IsFillColumnProperty);
             if (value != null && value.GetType() == IsFillColumnProperty.PropertyType)

@@ -50,7 +50,7 @@ namespace MvvmScarletToolkit.Wpf
 
             void AddTag(HtmlTag tag)
             {
-                while (previousNode != null && !previousNode.CanAdd(tag))
+                while (previousNode?.CanAdd(tag) == false)
                 {
                     previousNode = previousNode?.Parent;
                 }

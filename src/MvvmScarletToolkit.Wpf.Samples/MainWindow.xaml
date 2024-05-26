@@ -686,7 +686,7 @@
                                                   IsLiveSortingRequested="True"
                                                   Source="{Binding Items}">
                                 <CollectionViewSource.SortDescriptions>
-                                    <componentmodel:SortDescription Direction="Descending" PropertyName="IsSelected" />
+                                    <componentmodel:SortDescription Direction="Descending" PropertyName="IsBusy" />
                                     <componentmodel:SortDescription Direction="Ascending" PropertyName="DisplayName" />
                                 </CollectionViewSource.SortDescriptions>
                             </CollectionViewSource>
@@ -800,7 +800,6 @@
                             </Button>
 
                             <ListBox Grid.Row="2"
-                                     Grid.RowSpan="3"
                                      Grid.Column="0"
                                      ItemTemplate="{StaticResource DemoItemTemplate}"
                                      ItemsSource="{Binding Source={StaticResource SortedViewSource}}"
@@ -817,6 +816,26 @@
                                     </Style>
                                 </ListBox.ItemContainerStyle>
                             </ListBox>
+
+                            <ListView Grid.Row="4"
+                                      Grid.Column="0"
+                                      ItemsSource="{Binding Source={StaticResource SortedViewSource}}"
+                                      SelectedItem="{Binding SelectedItem}"
+                                      SelectionMode="Extended">
+
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Width="100"
+                                                        DisplayMemberBinding="{Binding Path=DisplayName}"
+                                                        Header="DisplayName" />
+
+                                        <GridViewColumn Width="100"
+                                                        DisplayMemberBinding="{Binding Path=IsBusy}"
+                                                        Header="IsBusy" />
+
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
 
                             <TextBlock Grid.Row="2"
                                        Grid.RowSpan="3"
@@ -1538,6 +1557,29 @@
                             </Grid>
                         </GroupBox>
                     </StackPanel>
+                </DataTemplate>
+
+
+                <DataTemplate DataType="{x:Type local:ObservableDictionaryViewModel}">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                            <Button Command="{Binding AddCommand}" Content="Add" />
+                            <Button Command="{Binding RemoveCommand}" Content="Remove" Margin="4,0"/>
+                            <Button Command="{Binding ClearCommand}" Content="Clear" />
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding Items}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding Key, StringFormat='Key: {0}', Mode=OneWay}" />
+                                        <Run Text=" " />
+                                        <Run Text="{Binding Value, StringFormat='Value: {0}', Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+
+                        </ListBox>
+                    </DockPanel>
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>

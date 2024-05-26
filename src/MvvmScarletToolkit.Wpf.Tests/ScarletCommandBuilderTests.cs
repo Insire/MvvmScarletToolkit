@@ -50,7 +50,7 @@ namespace MvvmScarletToolkit.Tests
         {
             var builder = new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory);
 
-            var context = builder.Create<object>((o, token) => Task.CompletedTask, (o) => true);
+            var context = builder.Create<object>((_, __) => Task.CompletedTask, (_) => true);
             Assert.That(context, Is.Not.Null);
         }
     }

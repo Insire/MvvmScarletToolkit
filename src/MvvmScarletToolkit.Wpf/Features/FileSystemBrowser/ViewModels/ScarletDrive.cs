@@ -18,6 +18,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         private readonly IReadOnlyCollection<FileAttributes> _folderAttributes;
 
         private string? _driveFormat;
+
         [Bindable(true, BindingDirection.OneWay)]
         public string? DriveFormat
         {
@@ -26,6 +27,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private DriveType _driveType;
+
         [Bindable(true, BindingDirection.OneWay)]
         public DriveType DriveType
         {
@@ -34,6 +36,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private bool _isReady;
+
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsReady
         {
@@ -42,6 +45,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private long _availableFreeSpace;
+
         [Bindable(true, BindingDirection.OneWay)]
         public long AvailableFreeSpace
         {
@@ -50,6 +54,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private long _totalFreeSpace;
+
         [Bindable(true, BindingDirection.OneWay)]
         public long TotalFreeSpace
         {
@@ -58,6 +63,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private long _totalSize;
+
         [Bindable(true, BindingDirection.OneWay)]
         public long TotalSize
         {
@@ -66,6 +72,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private string _name;
+
         [Bindable(true, BindingDirection.OneWay)]
         public string Name
         {
@@ -74,6 +81,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         }
 
         private string _fullName;
+
         [Bindable(true, BindingDirection.OneWay)]
         public string FullName
         {
@@ -128,7 +136,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
             if (!IsLoaded)
             {
-                await AddRange(children);
+                await AddRange(children, token);
             }
             else
             {

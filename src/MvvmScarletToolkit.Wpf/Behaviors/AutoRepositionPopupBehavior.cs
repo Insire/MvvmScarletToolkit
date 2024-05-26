@@ -57,7 +57,7 @@ namespace MvvmScarletToolkit
         private void AssociatedObject_Loaded(object? sender, RoutedEventArgs? e)
         {
             var root = AssociatedObject.PlacementTarget.FindParent<Window>();
-            if (!(root is Window window))
+            if (root is not Window window)
             {
                 return;
             }

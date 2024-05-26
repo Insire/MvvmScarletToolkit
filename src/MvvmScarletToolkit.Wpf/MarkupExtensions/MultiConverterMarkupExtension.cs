@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return _converter ?? (_converter = new T());
+            return _converter ??= new T();
         }
 
         public abstract object Convert(object[] values, Type targetType, object parameter, CultureInfo culture);

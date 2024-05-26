@@ -45,7 +45,7 @@ namespace MvvmScarletToolkit
 
             if (GetInvokeSynchronous())
             {
-                _dispatcherObject.Invoke(action, DispatcherPriority.Normal);
+                _dispatcherObject.Invoke(action, DispatcherPriority.Normal, token);
                 return;
             }
 

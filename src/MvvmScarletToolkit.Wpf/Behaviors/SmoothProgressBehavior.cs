@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit.Wpf
 
         private static void OnPercentageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is SmoothProgressBehavior behavior))
+            if (d is not SmoothProgressBehavior behavior)
             {
                 return;
             }
