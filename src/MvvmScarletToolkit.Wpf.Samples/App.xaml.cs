@@ -66,7 +66,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         private void ConfigureImageLoading(EnvironmentInformationProvider environmentInformationProvider)
         {
-            ImageLoader.AsyncImageLoader = new Lazy<IAsyncImageLoader<BitmapSource>>(() =>
+            var factory = new Lazy<IAsyncImageLoader<BitmapSource>>(() =>
             {
                 var loggerFactory = LoggerFactory.Create(builder => builder.AddDebug().SetMinimumLevel(LogLevel.Trace));
 
@@ -80,6 +80,9 @@ namespace MvvmScarletToolkit.Wpf.Samples
                             _memoryCache,
                             new ImageLoaderOptions() { DefaultHeight = 300, DefaultWidth = 300 });
             });
+
+            ImageLoader.AsyncImageLoader = factory;
+            AsyncImageLoadingBehavior.Loader = factory;
         }
 
         private sealed class MemoryCacheOptionsWrapper : IOptions<MemoryCacheOptions>

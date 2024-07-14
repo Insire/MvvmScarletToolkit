@@ -42,9 +42,13 @@
                                LastChildFill="True"
                                MouseMove="Element_MouseMove">
 
-                        <Image local:ImageLoader.Height="200"
-                               local:ImageLoader.Source="{Binding Path}"
-                               local:ImageLoader.Width="200" />
+                        <Image>
+                            <i:Interaction.Behaviors>
+                                <mvvm:AsyncImageLoadingBehavior Width="200"
+                                                                Height="200"
+                                                                Source="{Binding Path}" />
+                            </i:Interaction.Behaviors>
+                        </Image>
                     </DockPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -96,15 +100,32 @@
                               GiveFeedback="Element_GiveFeedback"
                               MouseMove="Element_MouseMove">
 
-                            <Image Width="200"
-                                   local:ImageLoader.Height="800"
-                                   local:ImageLoader.Source="{Binding Path}"
-                                   local:ImageLoader.Width="800" />
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
 
-                            <TextBlock Margin="0,4"
-                                       DockPanel.Dock="Top"
-                                       Text="{Binding DisplayName}"
-                                       TextAlignment="Center" />
+                            <Image Grid.RowSpan="4"
+                                   Width="400"
+                                   RenderOptions.BitmapScalingMode="HighQuality"
+                                   RenderOptions.EdgeMode="Aliased"
+                                   SnapsToDevicePixels="True">
+                                <i:Interaction.Behaviors>
+                                    <mvvm:AsyncImageLoadingBehavior Width="800"
+                                                                    Height="800"
+                                                                    Source="{Binding Path}" />
+                                </i:Interaction.Behaviors>
+                            </Image>
+
+                            <Border Grid.Row="0"
+                                    Background="Black"
+                                    Opacity="0.75">
+                                <TextBlock Margin="0,4"
+                                           DockPanel.Dock="Top"
+                                           Foreground="White"
+                                           Text="{Binding DisplayName}"
+                                           TextAlignment="Center" />
+                            </Border>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

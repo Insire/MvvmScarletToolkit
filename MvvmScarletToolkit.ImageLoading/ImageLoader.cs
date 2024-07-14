@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Microsoft.IO;
 using MvvmScarletToolkit.Abstractions.ImageLoading;
+using System.Text;
 
 namespace MvvmScarletToolkit.ImageLoading
 {
@@ -13,8 +15,10 @@ namespace MvvmScarletToolkit.ImageLoading
         private readonly IDiskCachedImageDataProvider _diskCachedImageDataProvider;
         private readonly IMemoryCachedImageDataProvider _memoryCachedImageDataProvider;
         private readonly MemoryCacheImageProvider<TImage> _memoryCacheImageProvider;
+        private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
         private readonly IMemoryCache _memoryCache;
         private readonly ImageLoaderOptions _options;
+        private readonly string _prefix;
 
         public ImageLoader(
             ILogger<ImageLoader<TImage>> logger,
@@ -24,6 +28,7 @@ namespace MvvmScarletToolkit.ImageLoading
             IMemoryCachedImageDataProvider memoryCachedImageDataProvider,
             MemoryCacheImageProvider<TImage> memoryCacheImageProvider,
             IMemoryCache memoryCache,
+            RecyclableMemoryStreamManager recyclableMemoryStreamManager,
             ImageLoaderOptions options)
         {
             _logger = logger;
@@ -33,7 +38,15 @@ namespace MvvmScarletToolkit.ImageLoading
             _memoryCachedImageDataProvider = memoryCachedImageDataProvider;
             _memoryCacheImageProvider = memoryCacheImageProvider;
             _memoryCache = memoryCache;
+            _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
             _options = options;
+
+            var bytes = Encoding.UTF8.GetBytes(GetType().Name);
+            using var resultStream = _recyclableMemoryStreamManager.GetStream(null, bytes.Length);
+            resultStream.Write(bytes, 0, bytes.Length);
+            resultStream.Seek(0, SeekOrigin.Begin);
+
+            _prefix = resultStream.CalculateMd5();
         }
 
         /// <inheritdoc />
@@ -60,9 +73,10 @@ namespace MvvmScarletToolkit.ImageLoading
             }
             else
             {
-                var cacheEntry = _memoryCache.CreateEntry(key);
-                currentLock = new SemaphoreSlim(1, 1);
-                cacheEntry.Value = currentLock;
+                using (var cacheEntry = _memoryCache.CreateEntry(key))
+                {
+                    cacheEntry.Value = currentLock = new SemaphoreSlim(1, 1);
+                }
 
                 return await ProvideImageWithLockAsync(uri, imageSize, requestedImageLoadsSlowly, currentLock, cancellationToken).ConfigureAwait(false);
             }
@@ -131,9 +145,9 @@ namespace MvvmScarletToolkit.ImageLoading
             return null;
         }
 
-        private static string CreateKey(Uri uri, ImageSize requestedImageSize)
+        private string CreateKey(Uri uri, ImageSize requestedImageSize)
         {
-            return $"{nameof(ImageLoader<TImage>)}_'{uri.OriginalString}'_w{requestedImageSize.Width}_h{requestedImageSize.Height}";
+            return $"{_prefix}_'{uri.OriginalString}'_w{requestedImageSize.Width}_h{requestedImageSize.Height}";
         }
 
         private static ImageSize GetImageSize(ImageSize? requestedImageSize, ImageLoaderOptions options)

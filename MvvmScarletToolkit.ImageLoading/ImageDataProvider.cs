@@ -20,13 +20,8 @@ namespace MvvmScarletToolkit.ImageLoading
             _httpClient = httpClient;
         }
 
-        public async Task<Stream?> GetStreamAsync(Uri? uri, CancellationToken cancellationToken = default)
+        public async Task<Stream?> GetStreamAsync(Uri uri, CancellationToken cancellationToken = default)
         {
-            if (uri is null)
-            {
-                return null;
-            }
-
             if (cancellationToken.IsCancellationRequested)
             {
                 return null;
