@@ -143,6 +143,7 @@ namespace MvvmScarletToolkit.ImageLoading
 
                 await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
                 await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+
                 await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
 
                 return image;
@@ -156,6 +157,7 @@ namespace MvvmScarletToolkit.ImageLoading
 
                 await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
                 await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+
                 await _diskCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken).ConfigureAwait(false);
                 await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
 

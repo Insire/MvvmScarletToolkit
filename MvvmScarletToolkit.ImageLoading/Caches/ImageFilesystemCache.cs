@@ -27,6 +27,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
             if (options.CreateFolder)
             {
                 Directory.CreateDirectory(options.CacheDirectoryPath);
+                Directory.Delete(options.CacheDirectoryPath, true);
+                Directory.CreateDirectory(options.CacheDirectoryPath);
             }
         }
 
