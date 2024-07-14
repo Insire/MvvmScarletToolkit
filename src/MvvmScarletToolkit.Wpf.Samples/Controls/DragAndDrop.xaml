@@ -42,7 +42,9 @@
                                LastChildFill="True"
                                MouseMove="Element_MouseMove">
 
-                        <Image local:ImageLoader.Source="{Binding Path}" />
+                        <Image local:ImageLoader.Height="200"
+                               local:ImageLoader.Source="{Binding Path}"
+                               local:ImageLoader.Width="200" />
                     </DockPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

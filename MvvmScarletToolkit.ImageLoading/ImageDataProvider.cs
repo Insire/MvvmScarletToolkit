@@ -1,0 +1,96 @@
+using Microsoft.Extensions.Logging;
+using Microsoft.IO;
+using MvvmScarletToolkit.Abstractions.ImageLoading;
+
+namespace MvvmScarletToolkit.ImageLoading
+{
+    public class ImageDataProvider : IImageDataProvider
+    {
+        private readonly ILogger<ImageDataProvider> _logger;
+        private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
+        private readonly HttpClient _httpClient;
+
+        public ImageDataProvider(
+            ILogger<ImageDataProvider> logger,
+            RecyclableMemoryStreamManager recyclableMemoryStreamManager,
+            HttpClient httpClient)
+        {
+            _logger = logger;
+            _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
+            _httpClient = httpClient;
+        }
+
+        public async Task<Stream?> GetStreamAsync(Uri? uri, CancellationToken cancellationToken = default)
+        {
+            if (uri is null)
+            {
+                return null;
+            }
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return null;
+            }
+
+            var stream = await GetImageStream(uri, cancellationToken).ConfigureAwait(false);
+
+            if (stream is null)
+            {
+                return null;
+            }
+
+            await using (stream)
+            {
+                var resultStream = _recyclableMemoryStreamManager.GetStream();
+                await stream.CopyToAsync(resultStream, cancellationToken).ConfigureAwait(false);
+
+                resultStream.Seek(0, SeekOrigin.Begin);
+
+                return resultStream;
+            }
+        }
+
+        private async Task<Stream?> GetImageStream(Uri uri, CancellationToken cancellationToken = default)
+        {
+            if (uri.Scheme.Equals("HTTPS", StringComparison.InvariantCultureIgnoreCase) || uri.Scheme.Equals("HTTP", StringComparison.InvariantCultureIgnoreCase))
+            {
+                try
+                {
+                    _logger.LogTrace("Fetching stream from {Url}", uri);
+                    return await Task.Run(() => _httpClient.GetStreamAsync(uri, cancellationToken));
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Fetching stream from web resource '{Url}' failed", uri);
+                    return null;
+                }
+            }
+
+            if (uri.Scheme.Equals("FILE", StringComparison.InvariantCultureIgnoreCase))
+            {
+                try
+                {
+                    return await Task.Run(() => File.OpenRead(uri.OriginalString));
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Fetching stream from file resource '{Url}' failed", uri);
+                    return null;
+                }
+            }
+
+            var imageStream = await GetImageStreamFromChildImplementation(uri, cancellationToken).ConfigureAwait(false);
+            if (imageStream is null)
+            {
+                throw new NotImplementedException($"{GetType().Name} does not support loading the scheme {uri.Scheme}");
+            }
+
+            return imageStream;
+        }
+
+        protected virtual Task<Stream?> GetImageStreamFromChildImplementation(Uri uri, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<Stream?>(null);
+        }
+    }
+}

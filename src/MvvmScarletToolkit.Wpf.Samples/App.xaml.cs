@@ -20,10 +20,16 @@ namespace MvvmScarletToolkit.Wpf.Samples
     public partial class App : Application
     {
         private readonly Tracker _tracker;
+        private readonly HttpClient _httpClient;
+        private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
+        private readonly MemoryCache _memoryCache;
 
         public App()
         {
             _tracker = new Tracker(new JsonFileStore(Environment.SpecialFolder.ApplicationData));
+            _httpClient = new HttpClient();
+            _recyclableMemoryStreamManager = new RecyclableMemoryStreamManager();
+            _memoryCache = new MemoryCache(new MemoryCacheOptionsWrapper(new MemoryCacheOptions()));
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -58,33 +64,22 @@ namespace MvvmScarletToolkit.Wpf.Samples
             _tracker.PersistAll();
         }
 
-        private static void ConfigureImageLoading(EnvironmentInformationProvider environmentInformationProvider)
+        private void ConfigureImageLoading(EnvironmentInformationProvider environmentInformationProvider)
         {
-            var loggerFactory = LoggerFactory.Create(builder => builder.AddDebug());
-            var logger = loggerFactory.CreateLogger<DiskCachedWebImageLoader<BitmapSource>>();
-
-            var options = new DiskCachedWebImageLoaderOptions()
+            ImageLoader.AsyncImageLoader = new Lazy<IAsyncImageLoader<BitmapSource>>(() =>
             {
-                CacheFolder = environmentInformationProvider.GetImagesFolderPath(),
-                CreateFolder = true,
-                DisposeHttpClient = true,
-            };
+                var loggerFactory = LoggerFactory.Create(builder => builder.AddDebug().SetMinimumLevel(LogLevel.Trace));
 
-            var httpClient = new HttpClient();
-            var manager = new RecyclableMemoryStreamManager();
-            var imageFactory = new ImageFactory();
-            var memoryCache = new MemoryCache(new MemoryCacheOptionsWrapper(new MemoryCacheOptions()));
-            var imageLoader = new DiskCachedWebImageLoader<BitmapSource>(
-                logger,
-                memoryCache,
-                httpClient,
-                manager,
-                imageFactory,
-                options);
-
-            ImageLoader.Manager = manager;
-            ImageLoader.ImageFactory = imageFactory;
-            ImageLoader.AsyncImageLoader = new Lazy<IAsyncImageLoader<BitmapSource>>(imageLoader);
+                return new ImageLoader<BitmapSource>(
+                            loggerFactory.CreateLogger<ImageLoader<BitmapSource>>(),
+                            new ImageFactory(),
+                            new ImageDataProvider(loggerFactory.CreateLogger<ImageDataProvider>(), _recyclableMemoryStreamManager, _httpClient),
+                            new DiskCacheImageDataProvider(loggerFactory.CreateLogger<DiskCacheImageDataProvider>(), _recyclableMemoryStreamManager, new DiskCacheImageDataProviderOptions() { CacheDirectoryPath = environmentInformationProvider.GetImagesFolderPath(), CreateFolder = true, IsEnabled = true }),
+                            new MemoryCacheImageDataProvider(loggerFactory.CreateLogger<MemoryCacheImageDataProvider>(), _memoryCache, _recyclableMemoryStreamManager, new MemoryCacheImageDataProviderOptions() { IsEnabled = true }),
+                            new MemoryCacheImageProvider<BitmapSource>(loggerFactory.CreateLogger<MemoryCacheImageProvider<BitmapSource>>(), _memoryCache, _recyclableMemoryStreamManager, new MemoryCacheImageProviderOptions() { IsEnabled = true }),
+                            _memoryCache,
+                            new ImageLoaderOptions() { DefaultHeight = 300, DefaultWidth = 300 });
+            });
         }
 
         private sealed class MemoryCacheOptionsWrapper : IOptions<MemoryCacheOptions>

@@ -1,4 +1,3 @@
-using Microsoft.IO;
 using MvvmScarletToolkit.Abstractions.ImageLoading;
 using System;
 using System.Windows;
@@ -10,8 +9,6 @@ namespace MvvmScarletToolkit.Wpf.Samples
     // original idea and code from: https://github.com/AvaloniaUtils/AsyncImageLoader.Avalonia
     public static class ImageLoader
     {
-        public static RecyclableMemoryStreamManager Manager { get; set; } = default!;
-        public static IImageFactory<BitmapSource> ImageFactory { get; set; } = default!;
         public static Lazy<IAsyncImageLoader<BitmapSource>> AsyncImageLoader { get; set; } = default!;
 
         public static readonly DependencyProperty SourceProperty = DependencyProperty.RegisterAttached(
@@ -24,7 +21,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         /// <param name="image"><see cref="Image"/> to read <see cref="SourceProperty"/> from.</param>
         /// <returns>First property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(Image))]
-        public static Uri? GetSource(Image image)
+        public static Uri? GetSource(FrameworkElement image)
         {
             return (Uri?)image.GetValue(SourceProperty);
         }
@@ -32,7 +29,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         /// <summary>Helper for setting <see cref="FirstProperty"/> on <paramref name="image"/>.</summary>
         /// <param name="image"><see cref="FrameworkElement"/> to set <see cref="SourceProperty"/> on.</param>
         /// <param name="value">First property value.</param>
-        public static void SetSource(Image image, Uri? value)
+        public static void SetSource(FrameworkElement image, Uri? value)
         {
             image.SetValue(SourceProperty, value);
         }
@@ -47,7 +44,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         /// <param name="image"><see cref="FrameworkElement"/> to read <see cref="IsLoadingProperty"/> from.</param>
         /// <returns>First property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(Image))]
-        public static bool GetIsLoading(Image image)
+        public static bool GetIsLoading(FrameworkElement image)
         {
             return (bool)image.GetValue(IsLoadingProperty);
         }
@@ -55,7 +52,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         /// <summary>Helper for setting <see cref="IsLoadingProperty"/> on <paramref name="frameworkElement"/>.</summary>
         /// <param name="frameworkElement"><see cref="Image"/> to set <see cref="IsLoadingProperty"/> on.</param>
         /// <param name="value">First property value.</param>
-        public static void SetIsLoading(Image frameworkElement, bool value)
+        public static void SetIsLoading(FrameworkElement frameworkElement, bool value)
         {
             frameworkElement.SetValue(IsLoadingProperty, value);
         }
@@ -64,11 +61,11 @@ namespace MvvmScarletToolkit.Wpf.Samples
             "Width",
             typeof(int?),
             typeof(ImageLoader),
-            new PropertyMetadata(null));
+            new PropertyMetadata(null, OnWidthChanged));
 
         /// <summary>Helper for setting <see cref="WidthProperty"/> on <paramref name="image"/>.</summary>
         /// <param name="image"><see cref="Image"/> to set <see cref="WidthProperty"/> on.</param>
-        public static int? GetWidth(Image image)
+        public static int? GetWidth(FrameworkElement image)
         {
             return (int?)image.GetValue(WidthProperty);
         }
@@ -77,7 +74,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         /// <param name="image"><see cref="Image"/> to read <see cref="WidthProperty"/> from.</param>
         /// <returns>First property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(Image))]
-        public static void SetWidth(Image image, int? value)
+        public static void SetWidth(FrameworkElement image, int? value)
         {
             image.SetValue(WidthProperty, value);
         }
@@ -86,11 +83,11 @@ namespace MvvmScarletToolkit.Wpf.Samples
             "Height",
             typeof(int?),
             typeof(ImageLoader),
-            new PropertyMetadata(null));
+            new PropertyMetadata(null, OnHeightChanged));
 
         /// <summary>Helper for setting <see cref="HeightProperty"/> on <paramref name="image"/>.</summary>
         /// <param name="image"><see cref="FrameworkElement"/> to set <see cref="HeightProperty"/> on.</param>
-        public static int? GetHeight(Image image)
+        public static int? GetHeight(FrameworkElement image)
         {
             return (int?)image.GetValue(HeightProperty);
         }
@@ -99,38 +96,74 @@ namespace MvvmScarletToolkit.Wpf.Samples
         /// <param name="image"><see cref="Image"/> to read <see cref="HeightProperty"/> from.</param>
         /// <returns>First property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(Image))]
-        public static void SetHeight(Image image, int? value)
+        public static void SetHeight(FrameworkElement image, int? value)
         {
             image.SetValue(HeightProperty, value);
         }
 
         private static void OnSourceChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            if (o is Image image)
+            if (o is not Image image)
             {
-                if (e.NewValue is Uri uri)
-                {
-                    OnSourceChanged(image, uri);
-                }
-                else
-                {
-                    OnSourceChanged(image, null);
-                }
+                return;
+            }
+
+            if (e.NewValue is Uri uri)
+            {
+                OnChanged(image, uri, GetWidth(image), GetHeight(image));
+            }
+            else
+            {
+                OnChanged(image, null, GetWidth(image), GetHeight(image));
             }
         }
 
-        private static async void OnSourceChanged(Image sender, Uri? url)
+        private static void OnWidthChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            if (o is not Image image)
+            {
+                return;
+            }
+
+            if (e.NewValue is int width)
+            {
+                OnChanged(image, GetSource(image), width, GetHeight(image));
+            }
+            else
+            {
+                OnChanged(image, GetSource(image), null, GetHeight(image));
+            }
+        }
+
+        private static void OnHeightChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            if (o is not Image image)
+            {
+                return;
+            }
+
+            if (e.NewValue is int height)
+            {
+                OnChanged(image, GetSource(image), GetWidth(image), height);
+            }
+            else
+            {
+                OnChanged(image, GetSource(image), GetWidth(image), null);
+            }
+        }
+
+        private static async void OnChanged(Image sender, Uri? url, int? width, int? height)
         {
             if (GetSource(sender) != url)
             {
                 return;
             }
 
-            var height = GetHeight(sender);
-            var width = GetWidth(sender);
             var size = GetSize(width, height);
 
-            sender.Source = await AsyncImageLoader.Value.ProvideImageAsync(url, size, (isloading) => sender.Dispatcher.Invoke(() => SetIsLoading(sender, isloading)));
+            sender.Source = await AsyncImageLoader.Value
+                .ProvideImageAsync(url, size, (isloading) => sender.Dispatcher.Invoke(() => SetIsLoading(sender, isloading)))
+                .ConfigureAwait(true);
 
             SetIsLoading(sender, false);
         }
@@ -140,28 +173,6 @@ namespace MvvmScarletToolkit.Wpf.Samples
             if (height is not null && width is not null)
             {
                 return new ImageSize(width.Value, height.Value);
-            }
-            else
-            {
-                if (height is null)
-                {
-                    if (width is null)
-                    {
-                        return null;
-                    }
-
-                    return new ImageSize(width.Value, 300);
-                }
-
-                if (width is null)
-                {
-                    if (height is null)
-                    {
-                        return null;
-                    }
-
-                    return new ImageSize(300, height.Value);
-                }
             }
 
             return null;

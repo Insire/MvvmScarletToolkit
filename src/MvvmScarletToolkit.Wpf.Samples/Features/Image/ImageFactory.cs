@@ -1,8 +1,7 @@
+using ImageMagick;
 using MvvmScarletToolkit.Abstractions.ImageLoading;
 using System.IO;
-using System;
 using System.Windows.Media.Imaging;
-using ImageMagick;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
@@ -11,22 +10,6 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public BitmapSource From(Stream stream, ImageSize requestedSize)
         {
             var img = Resize(new MagickImage(stream), requestedSize);
-            img.Freeze();
-
-            return img;
-        }
-
-        public BitmapSource From(Uri uri, ImageSize requestedSize)
-        {
-            var img = Resize(new MagickImage(uri.OriginalString), requestedSize);
-            img.Freeze();
-
-            return img;
-        }
-
-        public BitmapSource From(string uri, ImageSize requestedSize)
-        {
-            var img = Resize(new MagickImage(uri), requestedSize);
             img.Freeze();
 
             return img;
