@@ -1,31 +1,30 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
-using MvvmScarletToolkit.Abstractions.ImageLoading;
 using System.Text;
 
 namespace MvvmScarletToolkit.ImageLoading
 {
-    public sealed class MemoryCacheImageDataProvider : IMemoryCachedImageDataProvider
+    public sealed class ImageDataMemoryCache : IImageDataMemoryCache
     {
         private readonly IMemoryCache _memoryCache;
-        private readonly MemoryCacheImageDataProviderOptions _options;
-        private readonly ILogger<MemoryCacheImageDataProvider> _logger;
+        private readonly ImageDataMemoryCacheOptions _options;
+        private readonly ILogger<ImageDataMemoryCache> _logger;
         private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
         private readonly string _prefix;
 
-        public MemoryCacheImageDataProvider(
-            ILogger<MemoryCacheImageDataProvider> logger,
+        public ImageDataMemoryCache(
+            ILogger<ImageDataMemoryCache> logger,
             IMemoryCache memoryCache,
             RecyclableMemoryStreamManager recyclableMemoryStreamManager,
-            MemoryCacheImageDataProviderOptions options)
+            ImageDataMemoryCacheOptions options)
         {
             _memoryCache = memoryCache;
             _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
             _options = options;
             _logger = logger;
 
-            var bytes = Encoding.UTF8.GetBytes(nameof(MemoryCacheImageDataProvider));
+            var bytes = Encoding.UTF8.GetBytes(nameof(ImageDataMemoryCache));
             using var resultStream = _recyclableMemoryStreamManager.GetStream(null, bytes.Length);
             resultStream.Write(bytes, 0, bytes.Length);
             resultStream.Seek(0, SeekOrigin.Begin);

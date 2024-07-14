@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Abstractions.ImageLoading
+namespace MvvmScarletToolkit
 {
-    public interface ICachedImageDataProvider
+    public interface IImageDataCache
     {
         Task<Stream?> GetStreamAsync(Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default);
 

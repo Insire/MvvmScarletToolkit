@@ -1,4 +1,3 @@
-using MvvmScarletToolkit.Abstractions.ImageLoading;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,7 +8,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
     // original idea and code from: https://github.com/AvaloniaUtils/AsyncImageLoader.Avalonia
     public static class ImageLoader
     {
-        public static Lazy<IAsyncImageLoader<BitmapSource>> AsyncImageLoader { get; set; } = default!;
+        public static Lazy<IImageService<BitmapSource>> AsyncImageLoader { get; set; } = default!;
 
         public static readonly DependencyProperty SourceProperty = DependencyProperty.RegisterAttached(
             "Source",

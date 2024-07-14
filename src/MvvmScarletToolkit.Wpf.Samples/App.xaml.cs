@@ -4,7 +4,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IO;
-using MvvmScarletToolkit.Abstractions.ImageLoading;
 using MvvmScarletToolkit.ImageLoading;
 using MvvmScarletToolkit.Observables;
 using System;
@@ -66,19 +65,22 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         private void ConfigureImageLoading(EnvironmentInformationProvider environmentInformationProvider)
         {
-            var factory = new Lazy<IAsyncImageLoader<BitmapSource>>(() =>
+            var factory = new Lazy<IImageService<BitmapSource>>(() =>
             {
                 var loggerFactory = LoggerFactory.Create(builder => builder.AddDebug().SetMinimumLevel(LogLevel.Trace));
+                var factory = new ImageFactory();
 
-                return new ImageLoader<BitmapSource>(
-                            loggerFactory.CreateLogger<ImageLoader<BitmapSource>>(),
-                            new ImageFactory(),
+                return new ImageService<BitmapSource>(
+                            loggerFactory.CreateLogger<ImageService<BitmapSource>>(),
+                            factory,
                             new ImageDataProvider(loggerFactory.CreateLogger<ImageDataProvider>(), _recyclableMemoryStreamManager, _httpClient),
-                            new DiskCacheImageDataProvider(loggerFactory.CreateLogger<DiskCacheImageDataProvider>(), _recyclableMemoryStreamManager, new DiskCacheImageDataProviderOptions() { CacheDirectoryPath = environmentInformationProvider.GetImagesFolderPath(), CreateFolder = true, IsEnabled = true }),
-                            new MemoryCacheImageDataProvider(loggerFactory.CreateLogger<MemoryCacheImageDataProvider>(), _memoryCache, _recyclableMemoryStreamManager, new MemoryCacheImageDataProviderOptions() { IsEnabled = true }),
-                            new MemoryCacheImageProvider<BitmapSource>(loggerFactory.CreateLogger<MemoryCacheImageProvider<BitmapSource>>(), _memoryCache, _recyclableMemoryStreamManager, new MemoryCacheImageProviderOptions() { IsEnabled = true }),
+                            new ImageDataFileystemCache(loggerFactory.CreateLogger<ImageDataFileystemCache>(), _recyclableMemoryStreamManager, new ImageDataFileystemCacheOptions() { CacheDirectoryPath = environmentInformationProvider.GetRawImagesFolderPath(), CreateFolder = true, IsEnabled = true }),
+                            new ImageFilesystemCache<BitmapSource>(loggerFactory.CreateLogger<ImageFilesystemCache<BitmapSource>>(), factory, _recyclableMemoryStreamManager, new ImageFilesystemCacheOptions() { IsEnabled = true, CacheDirectoryPath = environmentInformationProvider.GetEncodedImagesFolderPath(), CreateFolder = true }),
+                            new ImageDataMemoryCache(loggerFactory.CreateLogger<ImageDataMemoryCache>(), _memoryCache, _recyclableMemoryStreamManager, new ImageDataMemoryCacheOptions() { IsEnabled = true }),
+                            new ImageMemoryCache<BitmapSource>(loggerFactory.CreateLogger<ImageMemoryCache<BitmapSource>>(), _memoryCache, _recyclableMemoryStreamManager, new ImageMemoryCacheOptions() { IsEnabled = true }),
                             _memoryCache,
-                            new ImageLoaderOptions() { DefaultHeight = 300, DefaultWidth = 300 });
+                            _recyclableMemoryStreamManager,
+                            new ImageServiceOptions() { DefaultHeight = 300, DefaultWidth = 300 });
             });
 
             ImageLoader.AsyncImageLoader = factory;

@@ -1,40 +1,42 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
-using MvvmScarletToolkit.Abstractions.ImageLoading;
 using System.Text;
 
 namespace MvvmScarletToolkit.ImageLoading
 {
-    public sealed class ImageLoader<TImage> : IAsyncImageLoader<TImage>
+    public sealed class ImageService<TImage> : IImageService<TImage>
         where TImage : class
     {
-        private readonly ILogger<ImageLoader<TImage>> _logger;
+        private readonly ILogger<ImageService<TImage>> _logger;
         private readonly IImageFactory<TImage> _imageFactory;
         private readonly IImageDataProvider _imageDataProvider;
-        private readonly IDiskCachedImageDataProvider _diskCachedImageDataProvider;
-        private readonly IMemoryCachedImageDataProvider _memoryCachedImageDataProvider;
-        private readonly MemoryCacheImageProvider<TImage> _memoryCacheImageProvider;
+        private readonly IImageDataFileystemCache _diskCachedImageDataProvider;
+        private readonly IImageFilesystemCache<TImage> _diskCachedImageProvider;
+        private readonly IImageDataMemoryCache _memoryCachedImageDataProvider;
+        private readonly ImageMemoryCache<TImage> _memoryCacheImageProvider;
         private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
         private readonly IMemoryCache _memoryCache;
-        private readonly ImageLoaderOptions _options;
+        private readonly ImageServiceOptions _options;
         private readonly string _prefix;
 
-        public ImageLoader(
-            ILogger<ImageLoader<TImage>> logger,
+        public ImageService(
+            ILogger<ImageService<TImage>> logger,
             IImageFactory<TImage> imageFactory,
             IImageDataProvider imageDataProvider,
-            IDiskCachedImageDataProvider diskCachedImageDataProvider,
-            IMemoryCachedImageDataProvider memoryCachedImageDataProvider,
-            MemoryCacheImageProvider<TImage> memoryCacheImageProvider,
+            IImageDataFileystemCache diskCachedImageDataProvider,
+            IImageFilesystemCache<TImage> diskCachedImageProvider,
+            IImageDataMemoryCache memoryCachedImageDataProvider,
+            ImageMemoryCache<TImage> memoryCacheImageProvider,
             IMemoryCache memoryCache,
             RecyclableMemoryStreamManager recyclableMemoryStreamManager,
-            ImageLoaderOptions options)
+            ImageServiceOptions options)
         {
             _logger = logger;
             _imageFactory = imageFactory;
             _imageDataProvider = imageDataProvider;
             _diskCachedImageDataProvider = diskCachedImageDataProvider;
+            _diskCachedImageProvider = diskCachedImageProvider;
             _memoryCachedImageDataProvider = memoryCachedImageDataProvider;
             _memoryCacheImageProvider = memoryCacheImageProvider;
             _memoryCache = memoryCache;
@@ -103,20 +105,37 @@ namespace MvvmScarletToolkit.ImageLoading
 
         private async Task<TImage?> ProvideImageAsync(Uri uri, ImageSize requestedSize, Action<bool> requestedImageLoadsSlowly, CancellationToken cancellationToken)
         {
+            // memory image
             var image = await _memoryCacheImageProvider.GetImageAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
             if (image is not null)
             {
+                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+
                 return image;
             }
 
+            // memory image data
             var stream = await _memoryCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
             if (stream is not null)
             {
                 image = _imageFactory.From(stream, requestedSize);
 
                 await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
             }
 
+            requestedImageLoadsSlowly(true);
+
+            // filesystem image
+            image = await _diskCachedImageProvider.GetImageAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+            if (image is not null)
+            {
+                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+
+                return image;
+            }
+
+            // filesystem data
             stream = await _diskCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
             if (stream is not null)
             {
@@ -124,12 +143,12 @@ namespace MvvmScarletToolkit.ImageLoading
 
                 await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
                 await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
 
                 return image;
             }
 
-            requestedImageLoadsSlowly(true);
-
+            // remote (web) or filesystem data
             stream = await _imageDataProvider.GetStreamAsync(uri, cancellationToken).ConfigureAwait(false);
             if (stream is not null)
             {
@@ -138,6 +157,7 @@ namespace MvvmScarletToolkit.ImageLoading
                 await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
                 await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken).ConfigureAwait(false);
                 await _diskCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
 
                 return image;
             }
@@ -150,7 +170,7 @@ namespace MvvmScarletToolkit.ImageLoading
             return $"{_prefix}_'{uri.OriginalString}'_w{requestedImageSize.Width}_h{requestedImageSize.Height}";
         }
 
-        private static ImageSize GetImageSize(ImageSize? requestedImageSize, ImageLoaderOptions options)
+        private static ImageSize GetImageSize(ImageSize? requestedImageSize, ImageServiceOptions options)
         {
             if (requestedImageSize is null)
             {

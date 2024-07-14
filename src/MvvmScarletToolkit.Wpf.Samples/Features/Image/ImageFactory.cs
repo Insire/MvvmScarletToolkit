@@ -1,5 +1,4 @@
 using ImageMagick;
-using MvvmScarletToolkit.Abstractions.ImageLoading;
 using System.IO;
 using System.Windows.Media.Imaging;
 
@@ -13,6 +12,16 @@ namespace MvvmScarletToolkit.Wpf.Samples
             img.Freeze();
 
             return img;
+        }
+
+        public void To(Stream stream, BitmapSource image)
+        {
+            var encoder = new PngBitmapEncoder
+            {
+                Interlace = PngInterlaceOption.On
+            };
+            encoder.Frames.Add(BitmapFrame.Create(image));
+            encoder.Save(stream);
         }
 
         private static BitmapSource Resize(MagickImage magickImage, ImageSize requestedSize)

@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
-using MvvmScarletToolkit.Abstractions.ImageLoading;
 
 namespace MvvmScarletToolkit.ImageLoading
 {

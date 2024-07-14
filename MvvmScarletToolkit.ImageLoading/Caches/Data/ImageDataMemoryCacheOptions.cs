@@ -1,6 +1,6 @@
 namespace MvvmScarletToolkit.ImageLoading
 {
-    public sealed class MemoryCacheImageProviderOptions
+    public sealed class ImageDataMemoryCacheOptions
     {
         public bool IsEnabled { get; init; } = false;
 

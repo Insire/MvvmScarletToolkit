@@ -1,20 +1,19 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
-using MvvmScarletToolkit.Abstractions.ImageLoading;
 using System.Text;
 
 namespace MvvmScarletToolkit.ImageLoading
 {
-    public sealed class DiskCacheImageDataProvider : IDiskCachedImageDataProvider
+    public sealed class ImageDataFileystemCache : IImageDataFileystemCache
     {
-        private readonly ILogger<DiskCacheImageDataProvider> _logger;
+        private readonly ILogger<ImageDataFileystemCache> _logger;
         private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
-        private readonly DiskCacheImageDataProviderOptions _options;
+        private readonly ImageDataFileystemCacheOptions _options;
 
-        public DiskCacheImageDataProvider(
-            ILogger<DiskCacheImageDataProvider> logger,
+        public ImageDataFileystemCache(
+            ILogger<ImageDataFileystemCache> logger,
             RecyclableMemoryStreamManager recyclableMemoryStreamManager,
-            DiskCacheImageDataProviderOptions options)
+            ImageDataFileystemCacheOptions options)
         {
             _logger = logger;
             _recyclableMemoryStreamManager = recyclableMemoryStreamManager;

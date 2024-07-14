@@ -1,5 +1,4 @@
 using Microsoft.Xaml.Behaviors;
-using MvvmScarletToolkit.Abstractions.ImageLoading;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace MvvmScarletToolkit
     // </ i:Interaction.Behaviors>
     public sealed class AsyncImageLoadingBehavior : Behavior<Image>
     {
-        public static Lazy<IAsyncImageLoader<BitmapSource>>? Loader { get; set; }
+        public static Lazy<IImageService<BitmapSource>>? Loader { get; set; }
 
         private CancellationTokenSource? _cancellationTokenSource;
         private bool _isEnabled;

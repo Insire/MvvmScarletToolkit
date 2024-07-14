@@ -1,25 +1,23 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
-using MvvmScarletToolkit.Abstractions.ImageLoading;
 using System.Text;
 
 namespace MvvmScarletToolkit.ImageLoading
 {
-    public sealed class MemoryCacheImageProvider<TImage>
-        where TImage : class
+    public sealed class ImageMemoryCache<TImage> : IImageMemoryCache<TImage> where TImage : class
     {
-        private readonly ILogger<MemoryCacheImageProvider<TImage>> _logger;
+        private readonly ILogger<ImageMemoryCache<TImage>> _logger;
         private readonly IMemoryCache _memoryCache;
         private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
-        private readonly MemoryCacheImageProviderOptions _options;
+        private readonly ImageMemoryCacheOptions _options;
         private readonly string _prefix;
 
-        public MemoryCacheImageProvider(
-            ILogger<MemoryCacheImageProvider<TImage>> logger,
+        public ImageMemoryCache(
+            ILogger<ImageMemoryCache<TImage>> logger,
             IMemoryCache memoryCache,
             RecyclableMemoryStreamManager recyclableMemoryStreamManager,
-            MemoryCacheImageProviderOptions options)
+            ImageMemoryCacheOptions options)
         {
             _logger = logger;
             _memoryCache = memoryCache;

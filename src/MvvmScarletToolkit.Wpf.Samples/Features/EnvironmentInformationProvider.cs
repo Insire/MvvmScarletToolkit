@@ -21,9 +21,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
             return Path.Combine(_exeDirectoryPath, "Resources");
         }
 
-        public string GetImagesFolderPath()
+        public string GetRawImagesFolderPath()
         {
-            return Path.Combine(_exeDirectoryPath, "images");
+            return Path.Combine(_exeDirectoryPath, "images", "raw");
+        }
+
+        public string GetEncodedImagesFolderPath()
+        {
+            return Path.Combine(_exeDirectoryPath, "images", "encoded");
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace MvvmScarletToolkit.Abstractions.ImageLoading
+namespace MvvmScarletToolkit
 {
     public readonly record struct ImageSize(int Width, int Height);
 }

@@ -1,6 +1,6 @@
 namespace MvvmScarletToolkit.ImageLoading
 {
-    public sealed class ImageLoaderOptions
+    public sealed class ImageServiceOptions
     {
         public int DefaultHeight { get; init; } = 300;
 
