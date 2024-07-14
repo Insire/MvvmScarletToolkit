@@ -7,13 +7,17 @@ namespace MvvmScarletToolkit.Wpf.Samples
 {
     public sealed class NavigationViewModel : Scenes
     {
-        public NavigationViewModel(SynchronizationContext synchronizationContext, IScarletCommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)
+        public NavigationViewModel(
+            SynchronizationContext synchronizationContext,
+            IScarletCommandBuilder commandBuilder,
+            LocalizationsViewModel localizationsViewModel,
+            EnvironmentInformationProvider environmentInformationProvider)
             : base(commandBuilder, localizationsViewModel)
         {
             var dataGridViewModel = new DataGridViewModel(commandBuilder, synchronizationContext);
 
             Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
-            Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(commandBuilder, new ImageFactory(CommandBuilder)));
+            Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(commandBuilder, new ImageViewModelProvider(CommandBuilder, environmentInformationProvider)));
             Add("ConcurrentCommands and state changes", new AsyncStateListViewModel(commandBuilder));
             Add("MVVM Live Sorting and Grouping in bound collections", dataGridViewModel);
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));

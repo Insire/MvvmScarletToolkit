@@ -7,6 +7,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
     public sealed partial class DataGridRowViewModel : ViewModelBase
     {
         private int id;
+
         public int Id
         {
             get { return id; }
@@ -19,8 +20,9 @@ namespace MvvmScarletToolkit.Wpf.Samples
             }
         }
 
-        private string _name;
-        public string Name
+        private string? _name;
+
+        public string? Name
         {
             get { return _name; }
             set
@@ -32,8 +34,9 @@ namespace MvvmScarletToolkit.Wpf.Samples
             }
         }
 
-        private string _color;
-        public string Color
+        private string? _color;
+
+        public string? Color
         {
             get { return _color; }
             set
@@ -46,6 +49,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         }
 
         private DateTime _createdOn;
+
         public DateTime CreatedOn
         {
             get { return _createdOn; }
@@ -59,6 +63,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         }
 
         private DateTime _updatedOn;
+
         public DateTime UpdatedOn
         {
             get { return _updatedOn; }
@@ -66,7 +71,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         }
 
         [ObservableProperty]
-        private bool _isSelected;
+        private bool? _isSelected;
 
         public int Page { get; }
 

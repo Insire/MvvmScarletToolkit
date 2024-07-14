@@ -4,24 +4,24 @@ namespace MvvmScarletToolkit.Wpf.Samples
 {
     public partial class ProcessingImagesViewModel : ObservableObject
     {
-        private Images _source;
-        public Images Source
+        private ImagesViewModel _source;
+        public ImagesViewModel Source
         {
             get { return _source; }
             private set { SetProperty(ref _source, value); }
         }
 
-        private Images _target;
-        public Images Target
+        private ImagesViewModel _target;
+        public ImagesViewModel Target
         {
             get { return _target; }
             private set { SetProperty(ref _target, value); }
         }
 
-        public ProcessingImagesViewModel(IScarletCommandBuilder commandBuilder, ImageFactory imageFactory)
+        public ProcessingImagesViewModel(IScarletCommandBuilder commandBuilder, ImageViewModelProvider imageFactory)
         {
-            Source = new Images(commandBuilder, imageFactory);
-            Target = new Images(commandBuilder, imageFactory);
+            Source = new ImagesViewModel(commandBuilder, imageFactory);
+            Target = new ImagesViewModel(commandBuilder, imageFactory);
         }
     }
 }

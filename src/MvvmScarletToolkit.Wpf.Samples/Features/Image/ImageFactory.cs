@@ -1,36 +1,56 @@
-using System.Collections.Generic;
+using MvvmScarletToolkit.Abstractions.ImageLoading;
 using System.IO;
+using System;
+using System.Windows.Media.Imaging;
+using ImageMagick;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
-    public class ImageFactory
+    public sealed class ImageFactory : IImageFactory<BitmapSource>
     {
-        private readonly IScarletCommandBuilder _commandBuilder;
-
-        public ImageFactory(IScarletCommandBuilder commandBuilder)
+        public BitmapSource From(Stream stream, ImageSize requestedSize)
         {
-            _commandBuilder = commandBuilder ?? throw new System.ArgumentNullException(nameof(commandBuilder));
+            var img = Resize(new MagickImage(stream), requestedSize);
+            img.Freeze();
+
+            return img;
         }
 
-        public IEnumerable<Image> GetImageList()
+        public BitmapSource From(Uri uri, ImageSize requestedSize)
         {
-            var assembly = typeof(ImageFactory).Assembly;
+            var img = Resize(new MagickImage(uri.OriginalString), requestedSize);
+            img.Freeze();
 
-            var index = 0;
-            foreach (var name in assembly.GetManifestResourceNames())
+            return img;
+        }
+
+        public BitmapSource From(string uri, ImageSize requestedSize)
+        {
+            var img = Resize(new MagickImage(uri), requestedSize);
+            img.Freeze();
+
+            return img;
+        }
+
+        private static BitmapSource Resize(MagickImage magickImage, ImageSize requestedSize)
+        {
+            // Read from file
+            using (magickImage)
             {
-                if (name.EndsWith(".jpg"))
+                var size = new MagickGeometry(requestedSize.Width, requestedSize.Height)
                 {
-                    yield return new Image(_commandBuilder, assembly)
-                    {
-                        IsSelected = index == 0,
-                        DisplayName = Path.GetFileName(name),
-                        Path = name,
-                        Sequence = index,
-                    };
+                    Less = false,
+                    Greater = true,
 
-                    index++;
-                }
+                    // This will resize the image to a fixed size without maintaining the aspect ratio.
+                    // Normally an image will be resized to fit inside the specified size.
+                    IgnoreAspectRatio = false
+                };
+
+                magickImage.Resize(size);
+
+                // Save the result
+                return magickImage.ToBitmapSource();
             }
         }
     }

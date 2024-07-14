@@ -34,7 +34,7 @@
             </i:Interaction.Triggers>
 
             <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type local:Image}">
+                <DataTemplate DataType="{x:Type local:ImageViewModel}">
                     <DockPanel Width="90"
                                Height="90"
                                Background="LightGray"
@@ -42,12 +42,7 @@
                                LastChildFill="True"
                                MouseMove="Element_MouseMove">
 
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Loaded">
-                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <Image Source="{Binding Source}" />
+                        <Image local:ImageLoader.Source="{Binding Path}" />
                     </DockPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -92,19 +87,23 @@
                 </ListBox.ItemsPanel>
 
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type local:Image}">
-                        <DockPanel Width="200"
-                                   Height="200"
-                                   Background="LightGray"
-                                   GiveFeedback="Element_GiveFeedback"
-                                   MouseMove="Element_MouseMove">
+                    <DataTemplate DataType="{x:Type local:ImageViewModel}">
+                        <Grid Width="200"
+                              Height="200"
+                              Background="LightGray"
+                              GiveFeedback="Element_GiveFeedback"
+                              MouseMove="Element_MouseMove">
+
+                            <Image Width="200"
+                                   local:ImageLoader.Height="800"
+                                   local:ImageLoader.Source="{Binding Path}"
+                                   local:ImageLoader.Width="800" />
+
                             <TextBlock Margin="0,4"
                                        DockPanel.Dock="Top"
                                        Text="{Binding DisplayName}"
                                        TextAlignment="Center" />
-
-                            <Image Source="{Binding Source}" />
-                        </DockPanel>
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

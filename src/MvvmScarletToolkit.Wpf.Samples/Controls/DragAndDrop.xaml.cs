@@ -49,9 +49,9 @@ namespace MvvmScarletToolkit.Wpf.Samples
             base.OnDrop(e);
 
             // If the DataObject contains string data, extract it.
-            if (e.Data.GetDataPresent(typeof(Image)))
+            if (e.Data.GetDataPresent(typeof(ImageViewModel)))
             {
-                var image = (Image)e.Data.GetData(typeof(Image));
+                var image = (ImageViewModel)e.Data.GetData(typeof(ImageViewModel));
 
                 if (DataContext is ProcessingImagesViewModel vm)
                 {
@@ -80,9 +80,9 @@ namespace MvvmScarletToolkit.Wpf.Samples
             base.OnDrop(e);
 
             // If the DataObject contains string data, extract it.
-            if (e.Data.GetDataPresent(typeof(Image)))
+            if (e.Data.GetDataPresent(typeof(ImageViewModel)))
             {
-                var image = (Image)e.Data.GetData(typeof(Image));
+                var image = (ImageViewModel)e.Data.GetData(typeof(ImageViewModel));
 
                 if (DataContext is ProcessingImagesViewModel vm)
                 {
