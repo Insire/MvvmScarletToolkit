@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DynamicData" Version="8.4.1" />
+        <PackageReference Include="DynamicData" Version="9.0.1" />
 
         <PackageReference Include="Nerdbank.GitVersioning" Version="3.6.133">
             <PrivateAssets>all</PrivateAssets>
