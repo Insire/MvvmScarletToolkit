@@ -14,48 +14,48 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Jot" Version="2.1.17" />
-        <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
-        <PackageReference Include="morelinq" Version="4.3.0" />
-        <PackageReference Include="XamlFlair.WPF" Version="1.2.13" />
-        <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="13.9.1" />
-        <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="7.2.6" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+        <PackageReference Include="Jot"/>
+        <PackageReference Include="Microsoft.IO.RecyclableMemoryStream"/>
+        <PackageReference Include="morelinq"/>
+        <PackageReference Include="XamlFlair.WPF"/>
+        <PackageReference Include="Magick.NET-Q8-AnyCPU"/>
+        <PackageReference Include="Magick.NET.SystemWindowsMedia"/>
+        <PackageReference Include="Microsoft.Extensions.Logging"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj" />
-        <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj" />
-        <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj" />
-        <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
+        <ProjectReference Include="..\..\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj"/>
+        <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj"/>
+        <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj"/>
+        <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Resources\Death_to_Stock_Photography_RideorDie_8.jpg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Resources\Moon_Color_Hypersaturated_Stars_900.jpg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Resources\wallhaven-245035.jpg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Resources\wallhaven-319605.jpg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Resources\wallhaven-401406.jpg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Resources\wallhaven-75354.jpg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Update="Resources\Death_to_Stock_Photography_RideorDie_8.jpg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Resources\Moon_Color_Hypersaturated_Stars_900.jpg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Resources\wallhaven-245035.jpg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Resources\wallhaven-319605.jpg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Resources\wallhaven-401406.jpg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Resources\wallhaven-75354.jpg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Update="Roslynator.Analyzers" Version="4.12.4">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
+        <PackageReference Update="Roslynator.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 </Project>

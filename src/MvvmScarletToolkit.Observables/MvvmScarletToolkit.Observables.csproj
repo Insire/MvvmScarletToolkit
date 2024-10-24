@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0</TargetFrameworks>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <OutputType>Library</OutputType>
         <Nullable>enable</Nullable>
         <Description>MvvmScarletToolkit.Observables is part of the MvvmScarletToolkit framework, containing opinionated base classes for viewmodels of the MVVM pattern.</Description>
@@ -8,13 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DynamicData" Version="8.4.1" />
+        <PackageReference Include="DynamicData" />
 
-        <PackageReference Include="Nerdbank.GitVersioning" Version="3.6.133">
+        <PackageReference Include="Nerdbank.GitVersioning">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+        <PackageReference Include="Microsoft.SourceLink.GitHub">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

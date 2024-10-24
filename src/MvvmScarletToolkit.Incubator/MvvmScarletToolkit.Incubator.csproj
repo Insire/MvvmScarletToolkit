@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DynamicData" Version="8.4.1" />
-        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
-        <PackageReference Include="System.Drawing.Common" Version="8.0.5" />
+        <PackageReference Include="DynamicData"/>
+        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf"/>
+        <PackageReference Include="System.Drawing.Common"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
+        <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj"/>
     </ItemGroup>
 </Project>
