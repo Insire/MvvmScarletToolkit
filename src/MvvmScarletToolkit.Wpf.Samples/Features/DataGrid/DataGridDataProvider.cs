@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
 {
     public sealed class DataGridDataProvider : IPagedDataProvider<DataGridRowViewModel>
     {

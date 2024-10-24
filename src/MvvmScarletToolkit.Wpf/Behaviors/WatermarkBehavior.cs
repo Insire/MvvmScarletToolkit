@@ -27,8 +27,8 @@ namespace MvvmScarletToolkit
         /// </summary>
         public string? Watermark
         {
-            get { return (string?)GetValue(WatermarkProperty); }
-            set { SetValue(WatermarkProperty, value); }
+            get => (string?)GetValue(WatermarkProperty);
+            set => SetValue(WatermarkProperty, value);
         }
 
         /// <summary>Identifies the <see cref="Watermark"/> dependency property.</summary>
@@ -43,8 +43,8 @@ namespace MvvmScarletToolkit
         /// </summary>
         public Style? WatermarkStyle
         {
-            get { return (Style?)GetValue(WatermarkStyleProperty); }
-            set { SetValue(WatermarkStyleProperty, value); }
+            get => (Style?)GetValue(WatermarkStyleProperty);
+            set => SetValue(WatermarkStyleProperty, value);
         }
 
         /// <summary>Identifies the <see cref="WatermarkStyle"/> dependency property.</summary>

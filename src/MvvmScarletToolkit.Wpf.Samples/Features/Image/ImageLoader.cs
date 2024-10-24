@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 {
     // original idea and code from: https://github.com/AvaloniaUtils/AsyncImageLoader.Avalonia
     public static class ImageLoader
@@ -19,7 +19,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         /// <summary>Helper for getting <see cref="SourceProperty"/> from <paramref name="image"/>.</summary>
         /// <param name="image"><see cref="Image"/> to read <see cref="SourceProperty"/> from.</param>
         /// <returns>First property value.</returns>
-        [AttachedPropertyBrowsableForType(typeof(Image))]
+        [AttachedPropertyBrowsableForType(typeof(System.Windows.Controls.Image))]
         public static Uri? GetSource(FrameworkElement image)
         {
             return (Uri?)image.GetValue(SourceProperty);
@@ -42,7 +42,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         /// <summary>Helper for getting <see cref="IsLoadingProperty"/> from <paramref name="image"/>.</summary>
         /// <param name="image"><see cref="FrameworkElement"/> to read <see cref="IsLoadingProperty"/> from.</param>
         /// <returns>First property value.</returns>
-        [AttachedPropertyBrowsableForType(typeof(Image))]
+        [AttachedPropertyBrowsableForType(typeof(System.Windows.Controls.Image))]
         public static bool GetIsLoading(FrameworkElement image)
         {
             return (bool)image.GetValue(IsLoadingProperty);
@@ -72,7 +72,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         /// <summary>Helper for getting <see cref="WidthProperty"/> from <paramref name="image"/>.</summary>
         /// <param name="image"><see cref="Image"/> to read <see cref="WidthProperty"/> from.</param>
         /// <returns>First property value.</returns>
-        [AttachedPropertyBrowsableForType(typeof(Image))]
+        [AttachedPropertyBrowsableForType(typeof(System.Windows.Controls.Image))]
         public static void SetWidth(FrameworkElement image, int? value)
         {
             image.SetValue(WidthProperty, value);
@@ -94,7 +94,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         /// <summary>Helper for getting <see cref="HeightProperty"/> from <paramref name="image"/>.</summary>
         /// <param name="image"><see cref="Image"/> to read <see cref="HeightProperty"/> from.</param>
         /// <returns>First property value.</returns>
-        [AttachedPropertyBrowsableForType(typeof(Image))]
+        [AttachedPropertyBrowsableForType(typeof(System.Windows.Controls.Image))]
         public static void SetHeight(FrameworkElement image, int? value)
         {
             image.SetValue(HeightProperty, value);
@@ -102,7 +102,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         private static void OnSourceChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            if (o is not Image image)
+            if (o is not System.Windows.Controls.Image image)
             {
                 return;
             }
@@ -119,7 +119,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         private static void OnWidthChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            if (o is not Image image)
+            if (o is not System.Windows.Controls.Image image)
             {
                 return;
             }
@@ -136,7 +136,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         private static void OnHeightChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            if (o is not Image image)
+            if (o is not System.Windows.Controls.Image image)
             {
                 return;
             }
@@ -151,7 +151,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             }
         }
 
-        private static async void OnChanged(Image sender, Uri? url, int? width, int? height)
+        private static async void OnChanged(System.Windows.Controls.Image sender, Uri? url, int? width, int? height)
         {
             if (GetSource(sender) != url)
             {

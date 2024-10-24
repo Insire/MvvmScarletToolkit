@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit
         [ConstructorArgument("enumType")]
         public Type? EnumType
         {
-            get { return _enumType; }
+            get => _enumType;
             set
             {
                 if (value != _enumType)

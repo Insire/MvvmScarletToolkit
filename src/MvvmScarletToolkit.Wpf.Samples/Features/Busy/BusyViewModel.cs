@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.Busy
 {
     // parent observer and child at the same time
     public sealed class BusyViewModel : ViewModelListBase<INotifyPropertyChanged>, IObserver<bool>, IObservable<bool>, IDisposable

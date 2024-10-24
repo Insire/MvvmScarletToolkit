@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
     public sealed partial class ProgressViewModel : BusinessViewModelBase
     {
@@ -15,15 +15,15 @@ namespace MvvmScarletToolkit.Wpf.Samples
         private double _percentage;
         public double Percentage
         {
-            get { return _percentage; }
-            private set { SetProperty(ref _percentage, value); }
+            get => _percentage;
+            private set => SetProperty(ref _percentage, value);
         }
 
         private double _maximum;
         public double Maximum
         {
-            get { return _maximum; }
-            private set { SetProperty(ref _maximum, value); }
+            get => _maximum;
+            private set => SetProperty(ref _maximum, value);
         }
 
         [ObservableProperty]
@@ -33,11 +33,11 @@ namespace MvvmScarletToolkit.Wpf.Samples
             : base(commandBuilder)
         {
             Maximum = 100;
-            _progress = new DispatcherProgress<double>(Dispatcher, killTheUIWithWork, TimeSpan.FromMilliseconds(50));
-            _uiBlockingProgress = new Progress<double>(killTheUIWithWork);
+            _progress = new DispatcherProgress<double>(Dispatcher, KillTheUiWithWork, TimeSpan.FromMilliseconds(50));
+            _uiBlockingProgress = new Progress<double>(KillTheUiWithWork);
 
             /// overwhelms the dispatcher and the UI thread with property changed notifications
-            void killTheUIWithWork(double i) => Dispatcher.Invoke(() => Percentage = i).ConfigureAwait(false);
+            void KillTheUiWithWork(double i) => Dispatcher.Invoke(() => Percentage = i).ConfigureAwait(false);
         }
 
         protected override Task UnloadInternal(CancellationToken token)

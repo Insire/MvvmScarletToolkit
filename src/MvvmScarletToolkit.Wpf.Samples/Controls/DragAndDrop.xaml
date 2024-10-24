@@ -6,7 +6,9 @@
              xmlns:local="clr-namespace:MvvmScarletToolkit.Wpf.Samples"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
-             d:DataContext="{d:DesignInstance Type=local:ProcessingImagesViewModel,
+             xmlns:process="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Process"
+             xmlns:image="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Image"
+             d:DataContext="{d:DesignInstance Type=process:ProcessingImagesViewModel,
                                               IsDesignTimeCreatable=False}"
              mc:Ignorable="d">
 
@@ -34,7 +36,7 @@
             </i:Interaction.Triggers>
 
             <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type local:ImageViewModel}">
+                <DataTemplate DataType="{x:Type image:ImageViewModel}">
                     <DockPanel Width="90"
                                Height="90"
                                Background="LightGray"
@@ -93,7 +95,7 @@
                 </ListBox.ItemsPanel>
 
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type local:ImageViewModel}">
+                    <DataTemplate DataType="{x:Type image:ImageViewModel}">
                         <Grid Width="200"
                               Height="200"
                               Background="LightGray"

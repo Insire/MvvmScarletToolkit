@@ -2,7 +2,7 @@ using ImageMagick;
 using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 {
     public sealed class ImageFactory : IImageFactory<BitmapSource>
     {

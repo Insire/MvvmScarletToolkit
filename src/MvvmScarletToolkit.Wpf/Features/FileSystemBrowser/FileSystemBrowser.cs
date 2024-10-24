@@ -36,8 +36,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         public string Filter
         {
-            get { return (string)GetValue(FilterProperty); }
-            set { SetValue(FilterProperty, value); }
+            get => (string)GetValue(FilterProperty);
+            set => SetValue(FilterProperty, value);
         }
 
         /// <summary>Identifies the <see cref="Filter"/> dependency property.</summary>
@@ -49,8 +49,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         public Predicate<object>? FilterAction
         {
-            get { return (Predicate<object>?)GetValue(FilterActionProperty); }
-            set { SetValue(FilterActionProperty, value); }
+            get => (Predicate<object>?)GetValue(FilterActionProperty);
+            set => SetValue(FilterActionProperty, value);
         }
 
         /// <summary>Identifies the <see cref="FilterAction"/> dependency property.</summary>
@@ -62,8 +62,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         public Predicate<object>? NoFilesFilter
         {
-            get { return (Predicate<object>?)GetValue(NoFilesFilterProperty); }
-            set { SetValue(NoFilesFilterProperty, value); }
+            get => (Predicate<object>?)GetValue(NoFilesFilterProperty);
+            set => SetValue(NoFilesFilterProperty, value);
         }
 
         /// <summary>Identifies the <see cref="NoFilesFilter"/> dependency property.</summary>
@@ -75,8 +75,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         public IFileSystemInfo? SelectedItem
         {
-            get { return (IFileSystemInfo?)GetValue(SelectedItemProperty); }
-            set { SetValue(SelectedItemProperty, value); }
+            get => (IFileSystemInfo?)GetValue(SelectedItemProperty);
+            set => SetValue(SelectedItemProperty, value);
         }
 
         /// <summary>Identifies the <see cref="SelectedItem"/> dependency property.</summary>
@@ -88,8 +88,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         public FileSystemViewModel? FileSystemViewModel
         {
-            get { return (FileSystemViewModel?)GetValue(FileSystemViewModelProperty); }
-            set { SetValue(FileSystemViewModelProperty, value); }
+            get => (FileSystemViewModel?)GetValue(FileSystemViewModelProperty);
+            set => SetValue(FileSystemViewModelProperty, value);
         }
 
         /// <summary>Identifies the <see cref="FileSystemViewModel"/> dependency property.</summary>
@@ -101,8 +101,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         public bool DisplayListView
         {
-            get { return (bool)GetValue(DisplayListViewProperty); }
-            set { SetValue(DisplayListViewProperty, value); }
+            get => (bool)GetValue(DisplayListViewProperty);
+            set => SetValue(DisplayListViewProperty, value);
         }
 
         /// <summary>Identifies the <see cref="DisplayListView"/> dependency property.</summary>

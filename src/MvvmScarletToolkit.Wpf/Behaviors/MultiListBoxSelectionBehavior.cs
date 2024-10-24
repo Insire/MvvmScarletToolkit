@@ -28,8 +28,8 @@ namespace MvvmScarletToolkit
     {
         public IList? SelectedItems
         {
-            get { return (IList?)GetValue(SelectedItemsProperty); }
-            set { SetValue(SelectedItemsProperty, value); }
+            get => (IList?)GetValue(SelectedItemsProperty);
+            set => SetValue(SelectedItemsProperty, value);
         }
 
         /// <summary>Identifies the <see cref="SelectedItems"/> dependency property.</summary>

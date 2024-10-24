@@ -6,6 +6,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.IO;
 using MvvmScarletToolkit.ImageLoading;
 using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Wpf.Samples.Features;
+using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using System;
 using System.Net.Http;
 using System.Runtime.Versioning;

@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.Busy
 {
     public sealed partial class ObservableBusyViewModel : ObservableObject, IObservable<bool>, IDisposable
     {
@@ -18,8 +18,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         public bool IsBusy
         {
-            get { return _isBusy; }
-            private set { SetProperty(ref _isBusy, value); }
+            get => _isBusy;
+            private set => SetProperty(ref _isBusy, value);
         }
 
         public ICommand BeBusyCommand { get; }

@@ -1,7 +1,6 @@
-using System.Diagnostics;
 using System.IO;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
     public sealed class EnvironmentInformationProvider
     {
@@ -9,7 +8,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         public EnvironmentInformationProvider()
         {
-            using var process = Process.GetCurrentProcess();
+            using var process = System.Diagnostics.Process.GetCurrentProcess();
             var exeFilePath = process.MainModule!.FileName;
 
             var exeFileName = Path.GetFileName(exeFilePath);

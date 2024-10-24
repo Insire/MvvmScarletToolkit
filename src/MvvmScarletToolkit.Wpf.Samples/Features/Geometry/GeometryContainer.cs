@@ -1,10 +1,8 @@
-using System.Windows.Media;
-
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.Geometry
 {
-    public sealed class GeometryContainer : ViewModelContainer<Geometry>
+    public sealed class GeometryContainer : ViewModelContainer<System.Windows.Media.Geometry>
     {
-        public GeometryContainer(Geometry value)
+        public GeometryContainer(System.Windows.Media.Geometry value)
             : base(value)
         {
         }

@@ -33,21 +33,21 @@ namespace MvvmScarletToolkit
         [TypeConverter(typeof(LengthConverter))]
         public double ItemHeight
         {
-            get { return (double)GetValue(ItemHeightProperty); }
-            set { SetValue(ItemHeightProperty, value); }
+            get => (double)GetValue(ItemHeightProperty);
+            set => SetValue(ItemHeightProperty, value);
         }
 
         [TypeConverter(typeof(LengthConverter))]
         public double ItemWidth
         {
-            get { return (double)GetValue(ItemWidthProperty); }
-            set { SetValue(ItemWidthProperty, value); }
+            get => (double)GetValue(ItemWidthProperty);
+            set => SetValue(ItemWidthProperty, value);
         }
 
         public Orientation Orientation
         {
-            get { return (Orientation)GetValue(OrientationProperty); }
-            set { SetValue(OrientationProperty, value); }
+            get => (Orientation)GetValue(OrientationProperty);
+            set => SetValue(OrientationProperty, value);
         }
 
         /// <summary>Identifies the <see cref="ItemHeight"/> dependency property.</summary>
@@ -853,10 +853,7 @@ namespace MvvmScarletToolkit
 
             public int SectionIndex
             {
-                get
-                {
-                    return _sectionIndex == -1 ? (Index % _panel.AverageItemsPerSection) - 1 : _sectionIndex;
-                }
+                get => _sectionIndex == -1 ? (Index % _panel.AverageItemsPerSection) - 1 : _sectionIndex;
                 set
                 {
                     if (_sectionIndex == -1)
@@ -870,10 +867,7 @@ namespace MvvmScarletToolkit
 
             public int Section
             {
-                get
-                {
-                    return _section == -1 ? Index / _panel.AverageItemsPerSection : _section;
-                }
+                get => _section == -1 ? Index / _panel.AverageItemsPerSection : _section;
                 set
                 {
                     if (_section == -1)
@@ -957,10 +951,7 @@ namespace MvvmScarletToolkit
                 }
             }
 
-            public ItemAbstraction this[int index]
-            {
-                get { return _items[index]; }
-            }
+            public ItemAbstraction this[int index] => _items[index];
 
             public IEnumerator<ItemAbstraction> GetEnumerator()
             {

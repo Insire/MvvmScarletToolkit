@@ -4,35 +4,41 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageVersion Include="Jot" Version="2.1.17" />
-        <PackageVersion Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
-        <PackageVersion Include="morelinq" Version="4.3.0" />
-        <PackageVersion Include="XamlFlair.WPF" Version="1.2.13" />
-        <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="13.9.1" />
-        <PackageVersion Include="Magick.NET.SystemWindowsMedia" Version="7.2.6" />
-        <PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-        <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+        <!-- sample -->
+        <PackageVersion Include="Jot" Version="2.1.17"/>
+        <PackageVersion Include="XamlFlair.WPF" Version="1.2.13"/>
+        <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="13.9.1"/>
+        <PackageVersion Include="Magick.NET.SystemWindowsMedia" Version="7.2.6"/>
+        <PackageVersion Include="morelinq" Version="4.3.0"/>
+        <PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.0"/>
+        <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
+        <PackageVersion Include="System.Drawing.Common" Version="8.0.5"/>
 
-        <PackageVersion Include="Roslynator.Analyzers" Version="4.12.3"/>
-        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1"/>
+        <!-- WPF -->
+        <PackageVersion Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77"/>
+
+        <!-- required 3rd party dependencies -->
+        <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.3.2"/>
+        <PackageVersion Include="DynamicData" Version="8.4.1"/>
+        <PackageVersion Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1"/>
         <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="8.0.5"/>
+        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1"/>
 
+        <!-- code quality -->
+        <PackageVersion Include="Roslynator.Analyzers" Version="4.12.3"/>
+
+        <!-- CD/CD -->
+        <PackageVersion Include="Nerdbank.GitVersioning" Version="3.6.133"/>
+        <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0"/>
+
+        <!-- testing -->
         <PackageVersion Include="NSubstitute" Version="5.1.0"/>
         <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17"/>
-
         <PackageVersion Include="nunit" Version="4.1.0"/>
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
         <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0"/>
         <PackageVersion Include="NUnit.Analyzers" Version="4.2.0"/>
-
-        <PackageVersion Include="Nerdbank.GitVersioning" Version="3.6.133"/>
-        <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0"/>
-
-        <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.3.2" />
-        <PackageVersion Include="DynamicData" Version="8.4.1" />
-        <PackageVersion Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
-        <PackageVersion Include="System.Drawing.Common" Version="8.0.5" />
     </ItemGroup>
 
 </Project>

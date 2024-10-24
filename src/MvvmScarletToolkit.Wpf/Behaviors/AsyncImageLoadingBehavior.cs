@@ -41,8 +41,8 @@ namespace MvvmScarletToolkit
 
         public Uri? Source
         {
-            get { return (Uri?)GetValue(SourceProperty); }
-            set { SetValue(SourceProperty, value); }
+            get => (Uri?)GetValue(SourceProperty);
+            set => SetValue(SourceProperty, value);
         }
 
         public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
@@ -53,8 +53,8 @@ namespace MvvmScarletToolkit
 
         public bool IsLoading
         {
-            get { return (bool)GetValue(IsLoadingProperty); }
-            set { SetValue(IsLoadingProperty, value); }
+            get => (bool)GetValue(IsLoadingProperty);
+            set => SetValue(IsLoadingProperty, value);
         }
 
         public static readonly DependencyProperty IsLoadingProperty = DependencyProperty.Register(
@@ -65,8 +65,8 @@ namespace MvvmScarletToolkit
 
         public int? Width
         {
-            get { return (int?)GetValue(WidthProperty); }
-            set { SetValue(WidthProperty, value); }
+            get => (int?)GetValue(WidthProperty);
+            set => SetValue(WidthProperty, value);
         }
 
         public static readonly DependencyProperty WidthProperty = DependencyProperty.Register(
@@ -77,8 +77,8 @@ namespace MvvmScarletToolkit
 
         public int? Height
         {
-            get { return (int?)GetValue(HeightProperty); }
-            set { SetValue(HeightProperty, value); }
+            get => (int?)GetValue(HeightProperty);
+            set => SetValue(HeightProperty, value);
         }
 
         public static readonly DependencyProperty HeightProperty = DependencyProperty.Register(

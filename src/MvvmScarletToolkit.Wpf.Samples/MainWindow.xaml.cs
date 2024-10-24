@@ -1,4 +1,5 @@
 using Jot;
+using MvvmScarletToolkit.Wpf.Samples.Features;
 using System;
 using System.Windows;
 
@@ -8,8 +9,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
     {
         public Tracker Tracker
         {
-            get { return (Tracker)GetValue(TrackerProperty); }
-            set { SetValue(TrackerProperty, value); }
+            get => (Tracker)GetValue(TrackerProperty);
+            set => SetValue(TrackerProperty, value);
         }
 
         public static readonly DependencyProperty TrackerProperty = DependencyProperty.Register(

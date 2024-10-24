@@ -2,7 +2,7 @@ using MvvmScarletToolkit.Observables;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 {
     public sealed class ImagesViewModel : BusinessViewModelListBase<ImageViewModel>
     {

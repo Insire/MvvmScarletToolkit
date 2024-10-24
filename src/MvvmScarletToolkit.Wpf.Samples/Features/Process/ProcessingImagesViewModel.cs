@@ -1,27 +1,28 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.Process
 {
     public partial class ProcessingImagesViewModel : ObservableObject
     {
         private ImagesViewModel _source;
         public ImagesViewModel Source
         {
-            get { return _source; }
-            private set { SetProperty(ref _source, value); }
+            get => _source;
+            private set => SetProperty(ref _source, value);
         }
 
         private ImagesViewModel _target;
         public ImagesViewModel Target
         {
-            get { return _target; }
-            private set { SetProperty(ref _target, value); }
+            get => _target;
+            private set => SetProperty(ref _target, value);
         }
 
         public ProcessingImagesViewModel(IScarletCommandBuilder commandBuilder, ImageViewModelProvider imageFactory)
         {
-            Source = new ImagesViewModel(commandBuilder, imageFactory);
-            Target = new ImagesViewModel(commandBuilder, imageFactory);
+            _source = new ImagesViewModel(commandBuilder, imageFactory);
+            _target = new ImagesViewModel(commandBuilder, imageFactory);
         }
     }
 }

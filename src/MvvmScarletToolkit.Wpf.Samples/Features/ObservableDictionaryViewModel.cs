@@ -4,7 +4,7 @@ using MvvmScarletToolkit.Observables;
 using System;
 using System.Linq;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
     internal sealed partial class ObservableDictionaryViewModel : ObservableObject
     {

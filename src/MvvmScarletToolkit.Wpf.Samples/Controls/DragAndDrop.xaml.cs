@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Wpf.Samples.Features.Process;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -49,9 +50,9 @@ namespace MvvmScarletToolkit.Wpf.Samples
             base.OnDrop(e);
 
             // If the DataObject contains string data, extract it.
-            if (e.Data.GetDataPresent(typeof(ImageViewModel)))
+            if (e.Data.GetDataPresent(typeof(Features.Image.ImageViewModel)))
             {
-                var image = (ImageViewModel)e.Data.GetData(typeof(ImageViewModel));
+                var image = (Features.Image.ImageViewModel)e.Data.GetData(typeof(Features.Image.ImageViewModel));
 
                 if (DataContext is ProcessingImagesViewModel vm)
                 {
@@ -80,9 +81,9 @@ namespace MvvmScarletToolkit.Wpf.Samples
             base.OnDrop(e);
 
             // If the DataObject contains string data, extract it.
-            if (e.Data.GetDataPresent(typeof(ImageViewModel)))
+            if (e.Data.GetDataPresent(typeof(Features.Image.ImageViewModel)))
             {
-                var image = (ImageViewModel)e.Data.GetData(typeof(ImageViewModel));
+                var image = (Features.Image.ImageViewModel)e.Data.GetData(typeof(Features.Image.ImageViewModel));
 
                 if (DataContext is ProcessingImagesViewModel vm)
                 {

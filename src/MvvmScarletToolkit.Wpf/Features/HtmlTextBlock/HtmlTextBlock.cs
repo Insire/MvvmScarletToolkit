@@ -14,8 +14,8 @@ namespace MvvmScarletToolkit.Wpf
 
         public string Html
         {
-            get { return (string)GetValue(HtmlProperty); }
-            set { SetValue(HtmlProperty, value); }
+            get => (string)GetValue(HtmlProperty);
+            set => SetValue(HtmlProperty, value);
         }
 
         /// <summary>When overridden in a derived class, is invoked whenever application code or internal processes call <see cref="M:System.Windows.FrameworkElement.ApplyTemplate" />.</summary>

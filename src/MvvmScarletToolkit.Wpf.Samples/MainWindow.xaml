@@ -10,11 +10,20 @@
         xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
         xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        xmlns:features="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features"
+        xmlns:process="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Process"
+        xmlns:enums="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Enums"
+        xmlns:contextMenu="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.ContextMenu"
+        xmlns:virtualization="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Virtualization"
+        xmlns:dataGrid="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.DataGrid"
+        xmlns:asyncState="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.AsyncState"
+        xmlns:busy="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Busy"
+        xmlns:geometry="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Geometry"
         Name="MainWindowRoot"
         Title="MvvmScarletToolkit.Wpf.Samples"
         Width="1025"
         Height="450"
-        d:DataContext="{d:DesignInstance Type=local:NavigationViewModel}"
+        d:DataContext="{d:DesignInstance Type=features:NavigationViewModel}"
         mc:Ignorable="d">
 
     <Window.Style>
@@ -65,7 +74,7 @@
                     <Setter Property="IsSelected" Value="{Binding IsSelected}" />
                     <Setter Property="ToolTip">
                         <Setter.Value>
-                            <ToolTip DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext, Converter={mvvm:DebugConverter}, ConverterParameter={StaticResource Num}}">
+                            <ToolTip DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext}">
                                 <TextBlock>
                                     <Run Text="Translated Value:" />
                                     <Run Text="{Binding Localization.Value, Mode=OneWay}" />
@@ -97,7 +106,7 @@
                         Content="{Binding ElementName=Scenes, Path=SelectedItem.Content, Converter={mvvm:DebugConverter}}">
             <ContentControl.Resources>
 
-                <DataTemplate DataType="{x:Type local:ProcessViewModel}">
+                <DataTemplate DataType="{x:Type process:ProcessViewModel}">
                     <Grid>
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="OutputProxy" Data="{Binding Output}" />
@@ -174,7 +183,7 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type local:ProcessData}">
+                                    <DataTemplate DataType="{x:Type process:ProcessData}">
                                         <TextBlock>
                                             <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
                                             <Run Text="{Binding Message, Mode=OneWay}" />
@@ -195,7 +204,7 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type local:ProcessErrorData}">
+                                    <DataTemplate DataType="{x:Type process:ProcessErrorData}">
                                         <TextBlock TextWrapping="Wrap">
                                             <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
                                             <Run Text="{Binding Message, Mode=OneWay}" />
@@ -216,13 +225,13 @@
                                       VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding Source={StaticResource CompositeCollection}}">
                                 <ItemsControl.Resources>
-                                    <DataTemplate DataType="{x:Type local:ProcessData}">
+                                    <DataTemplate DataType="{x:Type process:ProcessData}">
                                         <TextBlock Foreground="Blue">
                                             <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
                                             <Run Text="{Binding Message, Mode=OneWay}" />
                                         </TextBlock>
                                     </DataTemplate>
-                                    <DataTemplate DataType="{x:Type local:ProcessErrorData}">
+                                    <DataTemplate DataType="{x:Type process:ProcessErrorData}">
                                         <TextBlock Foreground="Red" TextWrapping="Wrap">
                                             <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
                                             <Run Text="{Binding Message, Mode=OneWay}" />
@@ -239,14 +248,14 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:EnumViewModel}">
+                <DataTemplate DataType="{x:Type enums:EnumViewModel}">
                     <DockPanel>
                         <StackPanel VerticalAlignment="Center"
                                     DockPanel.Dock="Left"
                                     Orientation="Vertical">
-                            <RadioButton Content="None" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static local:ViewModelEnum.None}}" />
-                            <RadioButton Content="AnotherValue" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static local:ViewModelEnum.AnotherValue}}" />
-                            <RadioButton Content="SomeValue" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static local:ViewModelEnum.SomeValue}}" />
+                            <RadioButton Content="None" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static enums:ViewModelEnum.None}}" />
+                            <RadioButton Content="AnotherValue" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static enums:ViewModelEnum.AnotherValue}}" />
+                            <RadioButton Content="SomeValue" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static enums:ViewModelEnum.SomeValue}}" />
                         </StackPanel>
                         <Border HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -257,12 +266,12 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:ContextMenuViewModels}">
+                <DataTemplate DataType="{x:Type contextMenu:ContextMenuViewModels}">
                     <Grid Background="DarkGray">
                         <Grid.ContextMenu>
                             <ContextMenu ItemsSource="{Binding Items}">
                                 <ContextMenu.ItemTemplate>
-                                    <HierarchicalDataTemplate DataType="{x:Type local:ContextMenuViewModel}" ItemsSource="{Binding Items}">
+                                    <HierarchicalDataTemplate DataType="{x:Type contextMenu:ContextMenuViewModel}" ItemsSource="{Binding Items}">
                                         <MenuItem Header="{Binding Name}" />
                                     </HierarchicalDataTemplate>
                                 </ContextMenu.ItemTemplate>
@@ -271,7 +280,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:DataEntriesViewModel}">
+                <DataTemplate DataType="{x:Type virtualization:DataEntriesViewModel}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
@@ -344,7 +353,7 @@
                             </ItemsControl.ItemsPanel>
 
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type local:DataEntryViewModel}">
+                                <DataTemplate DataType="{x:Type virtualization:DataEntryViewModel}">
                                     <Rectangle Width="10"
                                                Height="10"
                                                Margin="1">
@@ -405,7 +414,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:DataGridViewModel}">
+                <DataTemplate DataType="{x:Type dataGrid:DataGridViewModel}">
                     <Grid>
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding Groups}" />
@@ -595,7 +604,7 @@
 
                         <ContentControl Grid.Row="8" Content="{Binding SelectedItem}">
                             <ContentControl.ContentTemplate>
-                                <DataTemplate DataType="{x:Type local:DataGridRowViewModel}">
+                                <DataTemplate DataType="{x:Type dataGrid:DataGridRowViewModel}">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -677,7 +686,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:AsyncStateListViewModel}">
+                <DataTemplate DataType="{x:Type asyncState:AsyncStateListViewModel}">
                     <DockPanel>
                         <DockPanel.Resources>
                             <CollectionViewSource x:Key="SortedViewSource"
@@ -691,7 +700,7 @@
                                 </CollectionViewSource.SortDescriptions>
                             </CollectionViewSource>
 
-                            <DataTemplate x:Key="DemoItemTemplate" DataType="{x:Type local:AsyncStateViewModel}">
+                            <DataTemplate x:Key="DemoItemTemplate" DataType="{x:Type asyncState:AsyncStateViewModel}">
                                 <StackPanel Orientation="Horizontal">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="Loaded">
@@ -857,7 +866,7 @@
                                     </ItemsControl.ItemsPanel>
 
                                     <ItemsControl.ItemTemplate>
-                                        <DataTemplate DataType="{x:Type local:AsyncStateViewModel}">
+                                        <DataTemplate DataType="{x:Type asyncState:AsyncStateViewModel}">
                                             <TextBlock Margin="4,0"
                                                        VerticalAlignment="Center"
                                                        Text="{Binding DisplayName}">
@@ -887,7 +896,7 @@
                                             Grid.Column="2"
                                             Content="{Binding SelectedItem}">
                                 <ContentControl.ContentTemplate>
-                                    <DataTemplate DataType="{x:Type local:AsyncStateViewModel}">
+                                    <DataTemplate DataType="{x:Type asyncState:AsyncStateViewModel}">
                                         <Border BorderBrush="Black" BorderThickness="0.5">
 
                                             <StackPanel Margin="4" Orientation="Vertical">
@@ -906,7 +915,7 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:ProcessingImagesViewModel}">
+                <DataTemplate DataType="{x:Type process:ProcessingImagesViewModel}">
                     <local:DragAndDrop />
                 </DataTemplate>
 
@@ -937,7 +946,7 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:PasswordViewModel}">
+                <DataTemplate DataType="{x:Type features:PasswordViewModel}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -1009,7 +1018,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:ProgressViewModel}">
+                <DataTemplate DataType="{x:Type features:ProgressViewModel}">
                     <DockPanel>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Unloaded">
@@ -1051,7 +1060,7 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:BusyViewModel}">
+                <DataTemplate DataType="{x:Type busy:BusyViewModel}">
                     <TreeView ItemsSource="{Binding Items}">
                         <TreeView.ContextMenu>
                             <ContextMenu>
@@ -1070,7 +1079,7 @@
                                 <Setter Property="Margin" Value="2" />
                             </Style>
 
-                            <DataTemplate DataType="{x:Type local:ObservableBusyViewModel}">
+                            <DataTemplate DataType="{x:Type busy:ObservableBusyViewModel}">
                                 <Border>
                                     <Border.ContextMenu>
                                         <ContextMenu>
@@ -1093,7 +1102,7 @@
                                     <TextBlock Text="{Binding}" />
                                 </Border>
                             </DataTemplate>
-                            <HierarchicalDataTemplate DataType="{x:Type local:BusyViewModel}" ItemsSource="{Binding Items}">
+                            <HierarchicalDataTemplate DataType="{x:Type busy:BusyViewModel}" ItemsSource="{Binding Items}">
                                 <Border>
                                     <Border.ContextMenu>
                                         <ContextMenu>
@@ -1121,7 +1130,7 @@
                     </TreeView>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:GeometryRenderViewModel}">
+                <DataTemplate DataType="{x:Type geometry:GeometryRenderViewModel}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -1173,7 +1182,7 @@
                             </ListBox.ItemContainerStyle>
 
                             <ListBox.ItemTemplate>
-                                <DataTemplate DataType="{x:Type local:GeometryContainer}">
+                                <DataTemplate DataType="{x:Type geometry:GeometryContainer}">
                                     <ContentControl>
                                         <ContentControl.Resources>
                                             <Path x:Key="PathTemplate"
@@ -1319,7 +1328,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:DialogViewModel}">
+                <DataTemplate DataType="{x:Type features:DialogViewModel}">
                     <Grid>
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
@@ -1390,7 +1399,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:ToastsViewModel}">
+                <DataTemplate DataType="{x:Type features:ToastsViewModel}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -1453,7 +1462,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:FormViewModel}">
+                <DataTemplate DataType="{x:Type features:FormViewModel}">
                     <StackPanel Orientation="Vertical">
 
                         <GroupBox Header="Bound AllowableCharactersTextBoxBehavior">
@@ -1560,11 +1569,13 @@
                 </DataTemplate>
 
 
-                <DataTemplate DataType="{x:Type local:ObservableDictionaryViewModel}">
+                <DataTemplate DataType="{x:Type features:ObservableDictionaryViewModel}">
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                             <Button Command="{Binding AddCommand}" Content="Add" />
-                            <Button Command="{Binding RemoveCommand}" Content="Remove" Margin="4,0"/>
+                            <Button Margin="4,0"
+                                    Command="{Binding RemoveCommand}"
+                                    Content="Remove" />
                             <Button Command="{Binding ClearCommand}" Content="Clear" />
                         </StackPanel>
                         <ListBox ItemsSource="{Binding Items}">

@@ -14,8 +14,8 @@ namespace MvvmScarletToolkit
 
         public event EventHandler RequerySuggested
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
 
         public ScarletCommandManager()

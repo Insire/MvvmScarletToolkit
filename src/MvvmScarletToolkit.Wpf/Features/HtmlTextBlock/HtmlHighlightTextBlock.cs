@@ -14,8 +14,8 @@ namespace MvvmScarletToolkit.Wpf
 
         public string Highlight
         {
-            get { return (string)GetValue(HighlightProperty); }
-            set { SetValue(HighlightProperty, value); }
+            get => (string)GetValue(HighlightProperty);
+            set => SetValue(HighlightProperty, value);
         }
 
         public override void OnApplyTemplate()
