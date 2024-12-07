@@ -11,13 +11,13 @@ namespace Build
     {
         public override void Run(BuildContext context)
         {
-            context.MergeReports("./Results/coverage/**/*.xml", ReportGeneratorReportType.Html, "html");
+            context.MergeReports("./results/coverage/**/*.xml", ReportGeneratorReportType.Html, "html");
         }
 
         public override bool ShouldRun(BuildContext context)
         {
-            return base.ShouldRun(context)
-                && context.GetFiles("./Results/coverage/**/*.xml").Count > 0;
+            var files = context.GetFiles("./results/coverage/**/*.xml");
+            return files.Count > 0;
         }
     }
 }
