@@ -1,61 +1,56 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <OutputType>WinExe</OutputType>
-        <TargetFramework>net8.0-windows</TargetFramework>
-        <UseWPF>true</UseWPF>
-        <Nullable>enable</Nullable>
-        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-        <PublishTrimmed>false</PublishTrimmed>
-        <PublishReadyToRun>true</PublishReadyToRun>
-        <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
-        <SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
-        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-        <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-    </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net9.0-windows</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
+    <SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Resources\Death_to_Stock_Photography_RideorDie_8.jpg" />
+    <None Remove="Resources\Moon_Color_Hypersaturated_Stars_900.jpg" />
+    <None Remove="Resources\wallhaven-245035.jpg" />
+    <None Remove="Resources\wallhaven-319605.jpg" />
+    <None Remove="Resources\wallhaven-401406.jpg" />
+    <None Remove="Resources\wallhaven-75354.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Death_to_Stock_Photography_RideorDie_8.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Moon_Color_Hypersaturated_Stars_900.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\wallhaven-245035.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\wallhaven-319605.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\wallhaven-401406.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\wallhaven-75354.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Jot"/>
-        <PackageReference Include="Microsoft.IO.RecyclableMemoryStream"/>
-        <PackageReference Include="morelinq"/>
-        <PackageReference Include="XamlFlair.WPF"/>
-        <PackageReference Include="Magick.NET-Q8-AnyCPU"/>
-        <PackageReference Include="Magick.NET.SystemWindowsMedia"/>
-        <PackageReference Include="Microsoft.Extensions.Logging"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug"/>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Jot" />
+    <PackageReference Include="System.Net.Http" />
+    <PackageReference Include="System.Private.Uri" />
+    <PackageReference Include="System.Text.RegularExpressions" />
+    <PackageReference Include="XamlFlair.WPF" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\..\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj"/>
-        <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj"/>
-        <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj"/>
-        <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Update="Resources\Death_to_Stock_Photography_RideorDie_8.jpg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Resources\Moon_Color_Hypersaturated_Stars_900.jpg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Resources\wallhaven-245035.jpg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Resources\wallhaven-319605.jpg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Resources\wallhaven-401406.jpg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Resources\wallhaven-75354.jpg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Update="Roslynator.Analyzers">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
+  </ItemGroup>
 </Project>

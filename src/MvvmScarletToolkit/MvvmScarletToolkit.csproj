@@ -1,26 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
-        <OutputType>Library</OutputType>
-        <Nullable>enable</Nullable>
-        <Description>MvvmScarletToolkit is the main library of the MvvmScarletToolkit framework, containing classes and extensions that are being used everywhere else in the framework.</Description>
-        <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,Library,.NET,OSS,OpenSource</PackageTags>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <OutputType>Library</OutputType>
+    <Nullable>enable</Nullable>
+    <Description>MvvmScarletToolkit is the main library of the MvvmScarletToolkit framework, containing classes and extensions that are being used everywhere else in the framework.</Description>
+    <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,Library,.NET,OSS,OpenSource</PackageTags>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Mvvm"/>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
 
-        <PackageReference Include="Nerdbank.GitVersioning">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.SourceLink.GitHub">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj"/>
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
+  </ItemGroup>
 </Project>

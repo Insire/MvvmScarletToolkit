@@ -1,9 +1,6 @@
 using Cake.Codecov;
 using Cake.Common;
-using Cake.Common.Build;
-using Cake.Common.Diagnostics;
 using Cake.Common.IO;
-using Cake.Core;
 using Cake.Frosting;
 
 namespace Build
@@ -15,10 +12,8 @@ namespace Build
         {
             var settings = new CodecovSettings()
             {
-                Required = true,
                 Verbose = true,
                 WorkingDirectory = context.CoberturaResultsPath,
-                DisableNetwork = true,
                 Files = new[] { context.CoberturaResultFile.FullPath },
                 Token = context.EnvironmentVariable("CODECOV_TOKEN"),
             };
