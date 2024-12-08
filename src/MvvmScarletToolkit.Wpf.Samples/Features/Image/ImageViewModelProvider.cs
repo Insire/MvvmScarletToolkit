@@ -75,6 +75,26 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
         {
             var directoryPath = _environmentInformationProvider.GetResourceFolderPath();
 
+            var files = Directory.GetFiles(directoryPath, searchPattern: "*.jpg", SearchOption.TopDirectoryOnly);
+            if (files.Length == 0)
+            {
+                var assembly = typeof(ImageViewModelProvider).Assembly;
+                foreach (var name in assembly.GetManifestResourceNames().Where(p => p.EndsWith(".jpg")))
+                {
+                    using (var resourceStream = assembly.GetManifestResourceStream(name))
+                    {
+                        if (resourceStream != null)
+                        {
+                            var filePath = Path.Combine(directoryPath, name);
+                            using (var fileStream = File.OpenWrite(filePath))
+                            {
+                                resourceStream.CopyTo(fileStream);
+                            }
+                        }
+                    }
+                }
+            }
+
             foreach (var filePath in Directory.GetFiles(directoryPath, searchPattern: "*.jpg", SearchOption.TopDirectoryOnly))
             {
                 yield return new ImageViewModel(_commandBuilder)

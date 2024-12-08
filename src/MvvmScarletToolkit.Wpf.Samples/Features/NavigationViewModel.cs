@@ -24,8 +24,8 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
         {
             var dataGridViewModel = new DataGrid.DataGridViewModel(commandBuilder, synchronizationContext);
 
-            Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
             Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(CommandBuilder, new ImageViewModelProvider(CommandBuilder, environmentInformationProvider, httpClient)));
+            Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
             Add("ConcurrentCommands and state changes", new AsyncState.AsyncStateListViewModel(commandBuilder));
             Add("MVVM Live Sorting and Grouping in bound collections", dataGridViewModel);
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));
@@ -35,7 +35,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             Add("Binding Passwordbox", new PasswordViewModel());
             Add("MVVM Grouping", GroupingViewModel.Create(commandBuilder, dataGridViewModel.Items));
             Add("Dialog-ViewModel", new DialogViewModel(commandBuilder));
-            Add("MVVM Terminal/Console", new Process.ProcessViewModel(commandBuilder));
+            Add("MVVM Terminal/Console", new ProcessViewModel(commandBuilder));
 
             var contextMenu = new ContextMenuViewModels();
             var menuitem = new ContextMenuViewModel();
@@ -49,6 +49,8 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             Add("MVVM Toast-Notification", new ToastsViewModel(commandBuilder));
             Add("Input Prevention", new FormViewModel());
             Add("ObservableDictionary", new ObservableDictionaryViewModel());
+
+            Items[0].IsSelected = true;
         }
     }
 }

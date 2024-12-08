@@ -1,4 +1,4 @@
-using MvvmScarletToolkit.Wpf.Samples.Features.Process;
+using MvvmScarletToolkit.Wpf.Samples.Features;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -68,7 +68,10 @@ namespace MvvmScarletToolkit.Wpf.Samples
                     {
                         e.Effects = DragDropEffects.Move;
                         await vm.Source.Remove(image).ConfigureAwait(false);
-                        await vm.Target.Add(image).ConfigureAwait(false);
+                        if (!vm.Target.Items.Contains(image))
+                        {
+                            await vm.Target.Add(image).ConfigureAwait(false);
+                        }
                     }
                 }
             }
@@ -98,8 +101,12 @@ namespace MvvmScarletToolkit.Wpf.Samples
                     else
                     {
                         e.Effects = DragDropEffects.Move;
+
                         await vm.Target.Remove(image).ConfigureAwait(false);
-                        await vm.Source.Add(image).ConfigureAwait(false);
+                        if (!vm.Source.Items.Contains(image))
+                        {
+                            await vm.Source.Add(image).ConfigureAwait(false);
+                        }
                     }
                 }
             }

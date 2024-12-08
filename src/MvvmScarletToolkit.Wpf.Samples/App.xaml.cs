@@ -8,8 +8,9 @@ using MvvmScarletToolkit.ImageLoading;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Samples.Features;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
-using MvvmScarletToolkit.Wpf.Samples.Features.Process;
+using Serilog;
 using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Versioning;
@@ -26,6 +27,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         private readonly HttpClient _httpClient;
         private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
         private readonly MemoryCache _memoryCache;
+        private readonly EnvironmentInformationProvider _environmentInformationProvider;
 
         public App()
         {
@@ -33,6 +35,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
             _httpClient = new HttpClient();
             _recyclableMemoryStreamManager = new RecyclableMemoryStreamManager();
             _memoryCache = new MemoryCache(new MemoryCacheOptionsWrapper(new MemoryCacheOptions()));
+            _environmentInformationProvider = new EnvironmentInformationProvider();
+
+            var logs = Path.Combine(_environmentInformationProvider.GetLogsFolderPath(), "logs.txt");
+
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Debug()
+                .WriteTo.File(logs)
+                .CreateLogger();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -45,17 +55,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
             .PersistOn(nameof(Window.Closing))
                 .StopTrackingOn(nameof(Window.Closing));
 
-            var environmentInformationProvider = new EnvironmentInformationProvider();
-            ConfigureImageLoading(environmentInformationProvider);
-
-            var httpClient = new HttpClient();
+            ConfigureImageLoading(_environmentInformationProvider);
 
             var navigation = new NavigationViewModel(
                 SynchronizationContext.Current!,
                 ScarletCommandBuilder.Default,
                 new LocalizationsViewModel(new ScarletLocalizationProvider()),
-                environmentInformationProvider,
-                httpClient);
+                _environmentInformationProvider,
+                _httpClient);
 
             var processingImagesViewModel = navigation.Items
                 .Where(p => p.Content?.GetType() == typeof(ProcessingImagesViewModel))
@@ -75,13 +82,15 @@ namespace MvvmScarletToolkit.Wpf.Samples
             await ScarletExitService.Default.ShutDown().ConfigureAwait(false);
 
             _tracker.PersistAll();
+
+            Log.CloseAndFlush();
         }
 
         private void ConfigureImageLoading(EnvironmentInformationProvider environmentInformationProvider)
         {
             var factory = new Lazy<IImageService<BitmapSource>>(() =>
             {
-                var loggerFactory = LoggerFactory.Create(builder => builder.AddDebug().SetMinimumLevel(LogLevel.Trace));
+                var loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog(Log.Logger).SetMinimumLevel(LogLevel.Trace));
                 var factory = new ImageFactory(loggerFactory.CreateLogger<ImageFactory>(), new SemaphoreSlim(Environment.ProcessorCount));
 
                 return new ImageService<BitmapSource>(

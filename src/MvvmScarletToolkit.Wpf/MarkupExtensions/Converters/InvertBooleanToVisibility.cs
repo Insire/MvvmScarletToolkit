@@ -2,7 +2,6 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Markup;
 
 namespace MvvmScarletToolkit
 {
@@ -13,26 +12,13 @@ namespace MvvmScarletToolkit
     /// <c>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</c>
     /// </remarks>
     [ValueConversion(typeof(bool), typeof(Visibility))]
-    public sealed class InvertBooleanToVisibilityConverter : ConverterMarkupExtension<InvertBooleanToVisibilityConverter>
+    public sealed class InvertBooleanToVisibility : ConverterMarkupExtension<InvertBooleanToVisibility>
     {
-        [ConstructorArgument("visibility")]
-        public Visibility Visibility { get; set; }
-
-        public InvertBooleanToVisibilityConverter()
-        {
-            Visibility = Visibility.Hidden;
-        }
-
-        public InvertBooleanToVisibilityConverter(Visibility visibility)
-        {
-            Visibility = visibility;
-        }
-
         public override object Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
         {
             if (value is bool toggle && toggle)
             {
-                return Visibility;
+                return Visibility.Hidden;
             }
 
             return Visibility.Visible;

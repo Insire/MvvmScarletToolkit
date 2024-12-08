@@ -29,20 +29,36 @@ namespace MvvmScarletToolkit
 
             _isEnabled = true;
 
-            OnChanged(AssociatedObject, Source, Width, Height);
+            AssociatedObject.Initialized -= OnInitialized;
+            AssociatedObject.Initialized += OnInitialized;
+            AssociatedObject.Unloaded -= OnUnloaded;
+            AssociatedObject.Unloaded += OnUnloaded;
         }
 
         protected override void OnDetaching()
         {
             _isEnabled = false;
 
+            AssociatedObject.Unloaded -= OnUnloaded;
+
             base.OnDetaching();
+        }
+
+        private void OnInitialized(object? sender, EventArgs e)
+        {
+            OnChanged(AssociatedObject, Source, Width, Height);
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _cancellationTokenSource?.Cancel();
+            OnChanged(AssociatedObject, null, Width, Height);
         }
 
         public Uri? Source
         {
-            get => (Uri?)GetValue(SourceProperty);
-            set => SetValue(SourceProperty, value);
+            get { return (Uri?)GetValue(SourceProperty); }
+            set { SetValue(SourceProperty, value); }
         }
 
         public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
@@ -53,8 +69,8 @@ namespace MvvmScarletToolkit
 
         public bool IsLoading
         {
-            get => (bool)GetValue(IsLoadingProperty);
-            set => SetValue(IsLoadingProperty, value);
+            get { return (bool)GetValue(IsLoadingProperty); }
+            set { SetValue(IsLoadingProperty, value); }
         }
 
         public static readonly DependencyProperty IsLoadingProperty = DependencyProperty.Register(
@@ -65,8 +81,8 @@ namespace MvvmScarletToolkit
 
         public uint? Width
         {
-            get => (uint?)GetValue(WidthProperty);
-            set => SetValue(WidthProperty, value);
+            get { return (uint?)GetValue(WidthProperty); }
+            set { SetValue(WidthProperty, value); }
         }
 
         public static readonly DependencyProperty WidthProperty = DependencyProperty.Register(
@@ -77,8 +93,8 @@ namespace MvvmScarletToolkit
 
         public uint? Height
         {
-            get => (uint?)GetValue(HeightProperty);
-            set => SetValue(HeightProperty, value);
+            get { return (uint?)GetValue(HeightProperty); }
+            set { SetValue(HeightProperty, value); }
         }
 
         public static readonly DependencyProperty HeightProperty = DependencyProperty.Register(
@@ -160,12 +176,20 @@ namespace MvvmScarletToolkit
                 return;
             }
 
-            var previousCts = _cancellationTokenSource;
-            var currentCts = _cancellationTokenSource = new CancellationTokenSource();
-            if (previousCts is not null)
+            if (url is null && sender.Source is null)
             {
-                previousCts.Cancel();
+                return;
             }
+
+            if (!sender.IsInitialized)
+            {
+                return;
+            }
+
+            var currentCts = new CancellationTokenSource();
+
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource = currentCts;
 
             var size = GetSize(width, height);
 
@@ -175,20 +199,26 @@ namespace MvvmScarletToolkit
                     .ProvideImageAsync(url, size, SetIsLoading, currentCts.Token)
                     .ConfigureAwait(true);
 
-                SetCurrentValue(IsLoadingProperty, false);
+                SetIsLoadingOnUiThread(false);
             }
             catch (TaskCanceledException)
             {
             }
             finally
             {
+                _cancellationTokenSource = null;
                 currentCts.Dispose();
             }
         }
 
         private void SetIsLoading(bool isloading)
         {
-            AssociatedObject.Dispatcher.Invoke(() => SetCurrentValue(IsLoadingProperty, isloading));
+            AssociatedObject.Dispatcher.BeginInvoke(() => SetIsLoadingOnUiThread(isloading));
+        }
+
+        private void SetIsLoadingOnUiThread(bool isloading)
+        {
+            SetCurrentValue(IsLoadingProperty, isloading);
         }
 
         private static ImageSize? GetSize(uint? width, uint? height)

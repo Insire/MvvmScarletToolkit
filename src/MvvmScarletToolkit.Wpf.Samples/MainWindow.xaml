@@ -915,7 +915,7 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type process:ProcessingImagesViewModel}">
+                <DataTemplate DataType="{x:Type features:ProcessingImagesViewModel}">
                     <local:DragAndDrop />
                 </DataTemplate>
 

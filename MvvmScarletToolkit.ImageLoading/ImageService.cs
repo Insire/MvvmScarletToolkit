@@ -157,6 +157,10 @@ namespace MvvmScarletToolkit.ImageLoading
                 {
                     image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken).ConfigureAwait(false);
                 }
+                catch(TaskCanceledException)
+                {
+                    return null;
+                }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Loading image from {Uri} failed unexpectedly", uri.OriginalString);

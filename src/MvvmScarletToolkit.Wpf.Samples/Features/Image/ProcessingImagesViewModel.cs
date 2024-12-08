@@ -1,9 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using System.Threading.Tasks;
 using System.Threading;
+using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Process
+namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
     public sealed class ProcessingImagesViewModel : ObservableObject
     {

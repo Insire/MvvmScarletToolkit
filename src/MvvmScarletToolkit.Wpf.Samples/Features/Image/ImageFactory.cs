@@ -25,10 +25,13 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             {
                 await _semaphore.WaitAsync(cancellationToken);
 
-                var img = Resize(new MagickImage(stream), requestedSize);
-                img.Freeze();
+                using (var image = new MagickImage(stream))
+                {
+                    var bitmapSource = ToResizedBitmapSource(image, requestedSize);
+                    bitmapSource.Freeze();
 
-                return img;
+                    return bitmapSource;
+                }
             }
             finally
             {
@@ -59,10 +62,9 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             }
         }
 
-        private static BitmapSource Resize(MagickImage magickImage, ImageSize requestedSize)
+        private static BitmapSource ToResizedBitmapSource(MagickImage magickImage, ImageSize requestedSize)
         {
-            // Read from file
-            using (magickImage)
+            if (magickImage.Width != requestedSize.Width || magickImage.Height != requestedSize.Height)
             {
                 var size = new MagickGeometry(requestedSize.Width, requestedSize.Height)
                 {
@@ -75,10 +77,10 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
                 };
 
                 magickImage.Resize(size);
-
-                // Save the result
-                return magickImage.ToBitmapSource();
             }
+
+            // convert
+            return magickImage.ToBitmapSource();
         }
     }
 }

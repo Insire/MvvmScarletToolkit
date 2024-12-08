@@ -29,5 +29,10 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
         {
             return Path.Combine(_exeDirectoryPath, "images", "encoded");
         }
+
+        public string GetLogsFolderPath()
+        {
+            return Path.Combine(_exeDirectoryPath, "logs");
+        }
     }
 }
