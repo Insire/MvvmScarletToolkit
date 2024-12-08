@@ -33,31 +33,39 @@ namespace MvvmScarletToolkit.ImageLoading
         }
 
         /// <inheritdoc />
-        public Task<Stream?> GetStreamAsync(Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
+        public Task<Stream> GetStreamAsync(Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                return Task.FromResult<Stream?>(null);
+                return Task.FromResult(Stream.Null);
             }
 
             if (_options.IsEnabled == false)
             {
-                return Task.FromResult<Stream?>(null);
+                return Task.FromResult(Stream.Null);
             }
 
             var key = CreateKey(uri, requestedSize);
-            if (_memoryCache.TryGetValue(key, out Stream? cachedImage))
+            if (_memoryCache.TryGetValue(key, out Stream? cachedImageStream))
             {
-                _logger.LogDebug("Resource with {Key} was found in memory", key);
+                if (cachedImageStream is Stream nonNullStream)
+                {
+                    _logger.LogDebug("Resource with {Key} was found in memory", key);
+                    nonNullStream.Seek(0, SeekOrigin.Begin);
 
-                cachedImage!.Seek(0, SeekOrigin.Begin);
+                    return Task.FromResult(nonNullStream);
+                }
+                else
+                {
+                    _logger.LogDebug("Resource with {Key} was found in memory, but it was null", key);
 
-                return Task.FromResult<Stream?>(cachedImage);
+                    return Task.FromResult(Stream.Null);
+                }
             }
 
             _logger.LogDebug("Resource with {Key} could not be found in memory", key);
 
-            return Task.FromResult<Stream?>(null);
+            return Task.FromResult(Stream.Null);
         }
 
         /// <inheritdoc />

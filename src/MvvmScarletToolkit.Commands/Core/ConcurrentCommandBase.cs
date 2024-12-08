@@ -20,6 +20,7 @@ namespace MvvmScarletToolkit.Commands
         public abstract Task Completion { get; }
 
         private ICommand? _cancelCommand;
+
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand? CancelCommand
         {
@@ -28,6 +29,7 @@ namespace MvvmScarletToolkit.Commands
         }
 
         private bool _isBusy;
+
         [Bindable(true, BindingDirection.OneWay)]
         public virtual bool IsBusy
         {
@@ -44,11 +46,11 @@ namespace MvvmScarletToolkit.Commands
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsNotBusy => !IsBusy;
 
-        public abstract void Execute(object parameter);
+        public abstract void Execute(object? parameter);
 
-        public abstract bool CanExecute(object parameter);
+        public abstract bool CanExecute(object? parameter);
 
-        public abstract Task ExecuteAsync(object parameter);
+        public abstract Task ExecuteAsync(object? parameter);
 
         public event EventHandler CanExecuteChanged
         {

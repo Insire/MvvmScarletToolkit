@@ -191,3 +191,6 @@ csharp_style_prefer_primary_constructors = false
 dotnet_diagnostic.IDE0028.severity = none
 # IDE0301: Simplify collection initialization
 dotnet_style_prefer_collection_expression = never
+
+# rider/resharper
+resharper_arrange_type_member_modifiers_highlighting = none

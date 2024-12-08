@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit
     [ValueConversion(typeof(string), typeof(object))]
     public sealed class IgnoreNullOrEmptyStrings : ConverterMarkupExtension<IgnoreNullOrEmptyStrings>
     {
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
         {
             switch (value)
             {

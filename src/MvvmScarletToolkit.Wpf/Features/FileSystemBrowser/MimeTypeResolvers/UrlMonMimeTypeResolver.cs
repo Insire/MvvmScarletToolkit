@@ -23,7 +23,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 }
                 else
                 {
-                    fileStream.Read(byteBuffer, 0, (int)fileStream.Length);
+                    _ = fileStream.Read(byteBuffer, 0, (int)fileStream.Length);
                 }
             }
 

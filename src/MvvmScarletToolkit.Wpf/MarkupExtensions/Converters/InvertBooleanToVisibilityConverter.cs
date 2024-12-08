@@ -28,7 +28,7 @@ namespace MvvmScarletToolkit
             Visibility = visibility;
         }
 
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
         {
             if (value is bool toggle && toggle)
             {

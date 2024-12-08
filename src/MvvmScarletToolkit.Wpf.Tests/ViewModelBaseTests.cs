@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Tests
         [Test]
         public void Ctor_DoesNotAcceptNullArgument()
         {
-            Assert.Throws<ArgumentNullException>(() => new DerivedViewModelBase(null));
+            Assert.Throws<ArgumentNullException>(() => new DerivedViewModelBase(null!));
         }
 
         [Test]

@@ -11,6 +11,6 @@ namespace MvvmScarletToolkit
     /// </summary>
     public interface IImageDataProvider
     {
-        Task<Stream?> GetStreamAsync(Uri uri, CancellationToken cancellationToken = default);
+        Task<Stream> GetStreamAsync(Uri uri, CancellationToken cancellationToken = default);
     }
 }

@@ -75,12 +75,19 @@ namespace MvvmScarletToolkit.Wpf.Samples
             var key = await CreateKey(uri, requestedSize, cancellationToken).ConfigureAwait(false);
 
             var path = Path.Combine(_options.CacheDirectoryPath, key);
-            await using (var fileStream = File.OpenWrite(path))
+            try
             {
-                _imageFactory.To(fileStream, image);
-            }
+                await using (var fileStream = File.OpenWrite(path))
+                {
+                    _imageFactory.To(fileStream, image);
+                }
 
-            _logger.LogDebug("Image with {Key} has been cached on disk", key);
+                _logger.LogDebug("Image with {Key} has been cached on disk", key);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Opening file {FilePath} failed unexpectedly", path);
+            }
         }
 
         private async Task<string> CreateKey(Uri? input, ImageSize imageSize, CancellationToken cancellationToken)

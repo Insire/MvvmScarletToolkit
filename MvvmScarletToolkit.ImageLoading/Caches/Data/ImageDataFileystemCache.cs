@@ -28,16 +28,16 @@ namespace MvvmScarletToolkit.ImageLoading
         }
 
         /// <inheritdoc />
-        public async Task<Stream?> GetStreamAsync(Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
+        public async Task<Stream> GetStreamAsync(Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                return null;
+                return Stream.Null;
             }
 
             if (_options.IsEnabled == false)
             {
-                return null;
+                return Stream.Null;
             }
 
             var key = await CreateKey(uri, requestedSize, cancellationToken).ConfigureAwait(false);
@@ -51,7 +51,7 @@ namespace MvvmScarletToolkit.ImageLoading
 
             _logger.LogDebug("Resource with {Key} could not be found on disk", key);
 
-            return null;
+            return Stream.Null;
         }
 
         /// <inheritdoc />

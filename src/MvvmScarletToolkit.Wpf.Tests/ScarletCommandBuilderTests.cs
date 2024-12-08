@@ -15,12 +15,12 @@ namespace MvvmScarletToolkit.Tests
         [Test]
         public void Ctor_ThrowsWithNullDependencies()
         {
-            Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(null, Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory));
-            Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(Utils.GetTestDispatcher(), null, Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory));
-            Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), null, Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory));
-            Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), null, Utils.GetTestEventManager(), Utils.TestBusyStackFactory));
-            Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), null, Utils.TestBusyStackFactory));
-            Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), null));
+            Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(null!, Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory));
+            Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(Utils.GetTestDispatcher(), null!, Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory));
+            Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), null!, Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory));
+            Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), null!, Utils.GetTestEventManager(), Utils.TestBusyStackFactory));
+            Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), null!, Utils.TestBusyStackFactory));
+            Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), null!));
         }
 
         [Test]

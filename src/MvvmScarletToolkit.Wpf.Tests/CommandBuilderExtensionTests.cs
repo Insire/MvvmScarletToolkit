@@ -48,33 +48,33 @@ namespace MvvmScarletToolkit.Tests
 
             // generic overloads ignoring argument:
 
-            context = _builder.Create<object>(() => Task.CompletedTask);
+            context = _builder.Create<object?>(() => Task.CompletedTask);
             Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create<object>(() => Task.CompletedTask, () => true);
+            context = _builder.Create<object?>(() => Task.CompletedTask, () => true);
             Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create<object>((CancellationToken _) => Task.CompletedTask);
+            context = _builder.Create<object?>((CancellationToken _) => Task.CompletedTask);
             Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create<object>((CancellationToken _) => Task.CompletedTask, () => true);
+            context = _builder.Create<object?>((CancellationToken _) => Task.CompletedTask, () => true);
             Assert.That(context, Is.Not.Null);
 
             // generic overloads with argument:
 
-            context = _builder.Create((object _) => Task.CompletedTask);
+            context = _builder.Create((object? _) => Task.CompletedTask);
             Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create((object _) => Task.CompletedTask, (object _) => true);
+            context = _builder.Create((object? _) => Task.CompletedTask, (object? _) => true);
             Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create((object _) => Task.CompletedTask, () => true);
+            context = _builder.Create((object? _) => Task.CompletedTask, () => true);
             Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create((object _, CancellationToken __) => Task.CompletedTask);
+            context = _builder.Create((object? _, CancellationToken __) => Task.CompletedTask);
             Assert.That(context, Is.Not.Null);
 
-            context = _builder.Create((object _, CancellationToken __) => Task.CompletedTask, (object _) => true);
+            context = _builder.Create((object? _, CancellationToken __) => Task.CompletedTask, (object? _) => true);
             Assert.That(context, Is.Not.Null);
         }
     }

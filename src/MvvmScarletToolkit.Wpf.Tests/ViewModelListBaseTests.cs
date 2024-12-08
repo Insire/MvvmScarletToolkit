@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit.Tests
         [Test]
         public void Ctor_DoesNotAcceptNullArgument()
         {
-            Assert.Throws<ArgumentNullException>(() => new DerivedViewModelListBase(null));
+            Assert.Throws<ArgumentNullException>(() => new DerivedViewModelListBase(null!));
         }
 
         [Test]
@@ -77,8 +77,8 @@ namespace MvvmScarletToolkit.Tests
             var commandBuilder = Utils.GetTestCommandBuilder(messenger: messenger);
 
             var vm = new DerivedViewModelListBase(commandBuilder);
-            var child1 = new DerivedObjectViewModelBase(commandBuilder, null);
-            var child2 = new DerivedObjectViewModelBase(commandBuilder, null);
+            var child1 = new DerivedObjectViewModelBase(commandBuilder, new object());
+            var child2 = new DerivedObjectViewModelBase(commandBuilder, new object());
             vm.Add(child1);
             vm.Add(child2);
 

@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace MvvmScarletToolkit.Observables
 {
+    // TODO write tests for this
     public abstract class ObservableCollectionUpdater<TViewModel, TKey>(Func<TViewModel, TKey> keyAccessor, IViewModelMerger<TViewModel> viewModelMerger, IEqualityComparer<TKey>? equalityComparer = null)
         where TViewModel : class, INotifyCollectionChanged
     {

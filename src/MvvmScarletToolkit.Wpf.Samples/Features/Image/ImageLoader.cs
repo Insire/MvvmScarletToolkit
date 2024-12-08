@@ -1,6 +1,5 @@
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
@@ -58,44 +57,44 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 
         public static readonly DependencyProperty WidthProperty = DependencyProperty.RegisterAttached(
             "Width",
-            typeof(int?),
+            typeof(uint?),
             typeof(ImageLoader),
             new PropertyMetadata(null, OnWidthChanged));
 
         /// <summary>Helper for setting <see cref="WidthProperty"/> on <paramref name="image"/>.</summary>
         /// <param name="image"><see cref="Image"/> to set <see cref="WidthProperty"/> on.</param>
-        public static int? GetWidth(FrameworkElement image)
+        public static uint? GetWidth(FrameworkElement image)
         {
-            return (int?)image.GetValue(WidthProperty);
+            return (uint?)image.GetValue(WidthProperty);
         }
 
         /// <summary>Helper for getting <see cref="WidthProperty"/> from <paramref name="image"/>.</summary>
         /// <param name="image"><see cref="Image"/> to read <see cref="WidthProperty"/> from.</param>
         /// <returns>First property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(System.Windows.Controls.Image))]
-        public static void SetWidth(FrameworkElement image, int? value)
+        public static void SetWidth(FrameworkElement image, uint? value)
         {
             image.SetValue(WidthProperty, value);
         }
 
         public static readonly DependencyProperty HeightProperty = DependencyProperty.RegisterAttached(
             "Height",
-            typeof(int?),
+            typeof(uint?),
             typeof(ImageLoader),
             new PropertyMetadata(null, OnHeightChanged));
 
         /// <summary>Helper for setting <see cref="HeightProperty"/> on <paramref name="image"/>.</summary>
         /// <param name="image"><see cref="FrameworkElement"/> to set <see cref="HeightProperty"/> on.</param>
-        public static int? GetHeight(FrameworkElement image)
+        public static uint? GetHeight(FrameworkElement image)
         {
-            return (int?)image.GetValue(HeightProperty);
+            return (uint?)image.GetValue(HeightProperty);
         }
 
         /// <summary>Helper for getting <see cref="HeightProperty"/> from <paramref name="image"/>.</summary>
         /// <param name="image"><see cref="Image"/> to read <see cref="HeightProperty"/> from.</param>
         /// <returns>First property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(System.Windows.Controls.Image))]
-        public static void SetHeight(FrameworkElement image, int? value)
+        public static void SetHeight(FrameworkElement image, uint? value)
         {
             image.SetValue(HeightProperty, value);
         }
@@ -124,7 +123,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
                 return;
             }
 
-            if (e.NewValue is int width)
+            if (e.NewValue is uint width)
             {
                 OnChanged(image, GetSource(image), width, GetHeight(image));
             }
@@ -141,7 +140,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
                 return;
             }
 
-            if (e.NewValue is int height)
+            if (e.NewValue is uint height)
             {
                 OnChanged(image, GetSource(image), GetWidth(image), height);
             }
@@ -151,7 +150,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             }
         }
 
-        private static async void OnChanged(System.Windows.Controls.Image sender, Uri? url, int? width, int? height)
+        private static async void OnChanged(System.Windows.Controls.Image sender, Uri? url, uint? width, uint? height)
         {
             if (GetSource(sender) != url)
             {
@@ -167,7 +166,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             SetIsLoading(sender, false);
         }
 
-        private static ImageSize? GetSize(int? width, int? height)
+        private static ImageSize? GetSize(uint? width, uint? height)
         {
             if (height is not null && width is not null)
             {

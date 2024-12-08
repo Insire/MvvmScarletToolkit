@@ -63,29 +63,29 @@ namespace MvvmScarletToolkit
             typeof(AsyncImageLoadingBehavior),
             new PropertyMetadata(false));
 
-        public int? Width
+        public uint? Width
         {
-            get => (int?)GetValue(WidthProperty);
+            get => (uint?)GetValue(WidthProperty);
             set => SetValue(WidthProperty, value);
         }
 
         public static readonly DependencyProperty WidthProperty = DependencyProperty.Register(
             nameof(Width),
-            typeof(int),
+            typeof(uint?),
             typeof(AsyncImageLoadingBehavior),
-            new PropertyMetadata(null));
+            new PropertyMetadata(null, OnWidthChanged));
 
-        public int? Height
+        public uint? Height
         {
-            get => (int?)GetValue(HeightProperty);
+            get => (uint?)GetValue(HeightProperty);
             set => SetValue(HeightProperty, value);
         }
 
         public static readonly DependencyProperty HeightProperty = DependencyProperty.Register(
-            "Height",
-            typeof(int?),
+            nameof(Height),
+            typeof(uint?),
             typeof(AsyncImageLoadingBehavior),
-            new PropertyMetadata(null));
+            new PropertyMetadata(null, OnHeightChanged));
 
         private static void OnSourceChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
@@ -121,7 +121,7 @@ namespace MvvmScarletToolkit
 
         private void OnWidthChanged(DependencyPropertyChangedEventArgs e)
         {
-            if (e.NewValue is int width)
+            if (e.NewValue is uint width)
             {
                 OnChanged(AssociatedObject, Source, width, Height);
             }
@@ -143,7 +143,7 @@ namespace MvvmScarletToolkit
 
         private void OnHeightChanged(DependencyPropertyChangedEventArgs e)
         {
-            if (e.NewValue is int height)
+            if (e.NewValue is uint height)
             {
                 OnChanged(AssociatedObject, Source, Width, height);
             }
@@ -153,7 +153,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private async void OnChanged(Image sender, Uri? url, int? width, int? height)
+        private async void OnChanged(Image sender, Uri? url, uint? width, uint? height)
         {
             if (Loader is null || !_isEnabled)
             {
@@ -191,7 +191,7 @@ namespace MvvmScarletToolkit
             AssociatedObject.Dispatcher.Invoke(() => SetCurrentValue(IsLoadingProperty, isloading));
         }
 
-        private static ImageSize? GetSize(int? width, int? height)
+        private static ImageSize? GetSize(uint? width, uint? height)
         {
             if (height is not null && width is not null)
             {

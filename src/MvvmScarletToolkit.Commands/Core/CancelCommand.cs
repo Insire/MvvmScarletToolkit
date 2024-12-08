@@ -37,12 +37,12 @@ namespace MvvmScarletToolkit.Commands
             RaiseCanExecuteChanged();
         }
 
-        bool ICommand.CanExecute(object parameter)
+        bool ICommand.CanExecute(object? parameter)
         {
             return _commandExecuting && _cts?.IsCancellationRequested != true;
         }
 
-        void ICommand.Execute(object parameter)
+        void ICommand.Execute(object? parameter)
         {
             _cts?.Cancel();
             _cts?.Dispose();

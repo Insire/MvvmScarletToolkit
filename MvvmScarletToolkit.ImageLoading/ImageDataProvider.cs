@@ -19,18 +19,28 @@ namespace MvvmScarletToolkit.ImageLoading
             _httpClient = httpClient;
         }
 
-        public async Task<Stream?> GetStreamAsync(Uri uri, CancellationToken cancellationToken = default)
+        public async Task<Stream> GetStreamAsync(Uri uri, CancellationToken cancellationToken = default)
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                return null;
+                return Stream.Null;
             }
 
             var stream = await GetImageStream(uri, cancellationToken).ConfigureAwait(false);
 
-            if (stream is null)
+            if (stream == Stream.Null)
             {
-                return null;
+                return stream;
+            }
+
+            if (!stream.CanRead)
+            {
+                return Stream.Null;
+            }
+
+            if (stream.CanSeek && stream.Length == 0)
+            {
+                return Stream.Null;
             }
 
             await using (stream)
@@ -44,7 +54,7 @@ namespace MvvmScarletToolkit.ImageLoading
             }
         }
 
-        private async Task<Stream?> GetImageStream(Uri uri, CancellationToken cancellationToken = default)
+        private async Task<Stream> GetImageStream(Uri uri, CancellationToken cancellationToken = default)
         {
             if (uri.Scheme.Equals("HTTPS", StringComparison.InvariantCultureIgnoreCase) || uri.Scheme.Equals("HTTP", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -56,7 +66,7 @@ namespace MvvmScarletToolkit.ImageLoading
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Fetching stream from web resource '{Url}' failed", uri);
-                    return null;
+                    return Stream.Null;
                 }
             }
 
@@ -69,7 +79,7 @@ namespace MvvmScarletToolkit.ImageLoading
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Fetching stream from file resource '{Url}' failed", uri);
-                    return null;
+                    return Stream.Null;
                 }
             }
 
@@ -82,9 +92,9 @@ namespace MvvmScarletToolkit.ImageLoading
             return imageStream;
         }
 
-        protected virtual Task<Stream?> GetImageStreamFromChildImplementation(Uri uri, CancellationToken cancellationToken = default)
+        protected virtual Task<Stream> GetImageStreamFromChildImplementation(Uri uri, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult<Stream?>(null);
+            return Task.FromResult(Stream.Null);
         }
     }
 }

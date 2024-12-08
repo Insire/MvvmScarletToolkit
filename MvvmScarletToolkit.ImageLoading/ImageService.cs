@@ -116,7 +116,7 @@ namespace MvvmScarletToolkit.ImageLoading
 
             // memory image data
             var stream = await _memoryCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
-            if (stream is not null)
+            if (stream != Stream.Null)
             {
                 image = _imageFactory.From(stream, requestedSize);
 
@@ -137,7 +137,7 @@ namespace MvvmScarletToolkit.ImageLoading
 
             // filesystem data
             stream = await _diskCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
-            if (stream is not null)
+            if (stream != Stream.Null)
             {
                 image = _imageFactory.From(stream, requestedSize);
 
@@ -151,9 +151,17 @@ namespace MvvmScarletToolkit.ImageLoading
 
             // remote (web) or filesystem data
             stream = await _imageDataProvider.GetStreamAsync(uri, cancellationToken).ConfigureAwait(false);
-            if (stream is not null)
+            if (stream != Stream.Null)
             {
-                image = _imageFactory.From(stream, requestedSize);
+                try
+                {
+                    image = _imageFactory.From(stream, requestedSize);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Loading image from {Uri} failed unexpectedly", uri.OriginalString);
+                    return null;
+                }
 
                 await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
                 await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken).ConfigureAwait(false);

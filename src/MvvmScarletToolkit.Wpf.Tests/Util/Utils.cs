@@ -44,13 +44,13 @@ namespace MvvmScarletToolkit.Tests
             return (lambda) => new BusyStack(lambda);
         }
 
-        public static IScarletCommandBuilder GetTestCommandBuilder(IScarletDispatcher dispatcher = null,
-                                                                   IScarletCommandManager commandManager = null,
-                                                                   IScarletExceptionHandler exceptionHandler = null,
-                                                                   IMessenger messenger = null,
-                                                                   IExitService exitService = null,
-                                                                   IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> eventManager = null,
-                                                                   Func<Action<bool>, IBusyStack> busyStackFactory = null)
+        public static IScarletCommandBuilder GetTestCommandBuilder(IScarletDispatcher? dispatcher = null,
+                                                                   IScarletCommandManager? commandManager = null,
+                                                                   IScarletExceptionHandler? exceptionHandler = null,
+                                                                   IMessenger? messenger = null,
+                                                                   IExitService? exitService = null,
+                                                                   IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs>? eventManager = null,
+                                                                   Func<Action<bool>, IBusyStack>? busyStackFactory = null)
         {
             return new ScarletCommandBuilder(dispatcher ?? GetTestDispatcher(),
                                              commandManager ?? GetTestCommandManager(),

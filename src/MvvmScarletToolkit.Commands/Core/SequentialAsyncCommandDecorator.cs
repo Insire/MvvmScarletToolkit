@@ -22,7 +22,7 @@ namespace MvvmScarletToolkit.Commands
             }
         }
 
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             if (Completion?.IsCompleted == false)
             {
@@ -40,7 +40,7 @@ namespace MvvmScarletToolkit.Commands
             }
         }
 
-        public override async Task ExecuteAsync(object parameter)
+        public override async Task ExecuteAsync(object? parameter)
         {
             var shouldExecute = await ShouldExecute().ConfigureAwait(false);
 

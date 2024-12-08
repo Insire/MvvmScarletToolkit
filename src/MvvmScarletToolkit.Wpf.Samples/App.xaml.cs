@@ -70,7 +70,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             var factory = new Lazy<IImageService<BitmapSource>>(() =>
             {
                 var loggerFactory = LoggerFactory.Create(builder => builder.AddDebug().SetMinimumLevel(LogLevel.Trace));
-                var factory = new ImageFactory();
+                var factory = new ImageFactory(loggerFactory.CreateLogger<ImageFactory>());
 
                 return new ImageService<BitmapSource>(
                             loggerFactory.CreateLogger<ImageService<BitmapSource>>(),

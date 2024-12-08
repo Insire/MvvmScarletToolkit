@@ -1,4 +1,6 @@
 using ImageMagick;
+using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 
@@ -6,6 +8,13 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 {
     public sealed class ImageFactory : IImageFactory<BitmapSource>
     {
+        private readonly ILogger<ImageFactory> _logger;
+
+        public ImageFactory(ILogger<ImageFactory> logger)
+        {
+            _logger = logger;
+        }
+
         public BitmapSource From(Stream stream, ImageSize requestedSize)
         {
             var img = Resize(new MagickImage(stream), requestedSize);
@@ -16,12 +25,19 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 
         public void To(Stream stream, BitmapSource image)
         {
-            var encoder = new PngBitmapEncoder
+            try
             {
-                Interlace = PngInterlaceOption.On
-            };
-            encoder.Frames.Add(BitmapFrame.Create(image));
-            encoder.Save(stream);
+                var encoder = new PngBitmapEncoder
+                {
+                    Interlace = PngInterlaceOption.On
+                };
+                encoder.Frames.Add(BitmapFrame.Create(image));
+                encoder.Save(stream);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Saving BitmapSource to stream failed unexpectedly");
+            }
         }
 
         private static BitmapSource Resize(MagickImage magickImage, ImageSize requestedSize)

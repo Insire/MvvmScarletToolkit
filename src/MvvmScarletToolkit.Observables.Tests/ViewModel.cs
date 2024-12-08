@@ -6,6 +6,6 @@ namespace MvvmScarletToolkit.Observables.Tests
     {
         [ObservableProperty]
         [NotifyPropertyChangedRecipients]
-        private string _data;
+        private string? _data;
     }
 }

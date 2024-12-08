@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit
     [ValueConversion(typeof(bool), typeof(object))]
     public sealed class IsNotNull : ConverterMarkupExtension<IsNotNull>
     {
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
         {
             return value is not null;
         }
