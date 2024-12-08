@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
 using MvvmScarletToolkit.ImageLoading;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace MvvmScarletToolkit.Wpf.Samples
@@ -12,6 +13,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         private readonly IImageFactory<TImage> _imageFactory;
         private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
         private readonly ImageFilesystemCacheOptions _options;
+        private readonly ConditionalWeakTable<string, ImageFileSemaphore> _lockDictionary;
 
         public ImageFilesystemCache(
             ILogger<ImageFilesystemCache<TImage>> logger,
@@ -23,13 +25,16 @@ namespace MvvmScarletToolkit.Wpf.Samples
             _imageFactory = imageFactory;
             _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
             _options = options;
+            _lockDictionary = new ConditionalWeakTable<string, ImageFileSemaphore>();
 
-            if (options.CreateFolder)
+            if (!options.CreateFolder)
             {
-                Directory.CreateDirectory(options.CacheDirectoryPath);
-                Directory.Delete(options.CacheDirectoryPath, true);
-                Directory.CreateDirectory(options.CacheDirectoryPath);
+                return;
             }
+
+            Directory.CreateDirectory(options.CacheDirectoryPath);
+            Directory.Delete(options.CacheDirectoryPath, true);
+            Directory.CreateDirectory(options.CacheDirectoryPath);
         }
 
         /// <inheritdoc />
@@ -51,7 +56,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             {
                 _logger.LogDebug("Image with {Key} was found on disk", key);
 
-                return await Task.Run(() => _imageFactory.From(File.OpenRead(path), requestedSize), cancellationToken).ConfigureAwait(false);
+                return await Task.Run(() => ReadImage(path, requestedSize, cancellationToken), cancellationToken).ConfigureAwait(false);
             }
 
             _logger.LogDebug("Image with {Key} could not be found on disk", key);
@@ -77,10 +82,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             var path = Path.Combine(_options.CacheDirectoryPath, key);
             try
             {
-                await using (var fileStream = File.OpenWrite(path))
-                {
-                    _imageFactory.To(fileStream, image);
-                }
+                await WriteImage(path, image, cancellationToken).ConfigureAwait(false);
 
                 _logger.LogDebug("Image with {Key} has been cached on disk", key);
             }
@@ -106,6 +108,52 @@ namespace MvvmScarletToolkit.Wpf.Samples
             resultStream.Seek(0, SeekOrigin.Begin);
 
             return await resultStream.CalculateMd5Async(token: cancellationToken).ConfigureAwait(false);
+        }
+
+        private async Task<TImage> ReadImage(string path, ImageSize requestedSize, CancellationToken token)
+        {
+            var semaphore = _lockDictionary.GetOrCreateValue(path);
+
+            try
+            {
+                await semaphore.WaitAsync(token);
+
+                await using (var stream = File.OpenRead(path))
+                {
+                    return _imageFactory.From(stream, requestedSize);
+                }
+            }
+            finally
+            {
+                semaphore.Release();
+            }
+        }
+
+        private async Task WriteImage(string path, TImage image, CancellationToken token)
+        {
+            var semaphore = _lockDictionary.GetOrCreateValue(path);
+
+            try
+            {
+                await semaphore.WaitAsync(token);
+
+                await using (var fileStream = File.OpenWrite(path))
+                {
+                    _imageFactory.To(fileStream, image);
+                }
+            }
+            finally
+            {
+                semaphore.Release();
+            }
+        }
+    }
+
+    public sealed class ImageFileSemaphore : SemaphoreSlim
+    {
+        public ImageFileSemaphore()
+            : base(1, 1)
+        {
         }
     }
 }
