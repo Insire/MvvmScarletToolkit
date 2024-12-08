@@ -8,18 +8,17 @@ using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features.Busy
 {
-    public sealed partial class ObservableBusyViewModel : ObservableObject, IObservable<bool>, IDisposable
+    public sealed class ObservableBusyViewModel : ObservableObject, IObservable<bool>, IDisposable
     {
         private readonly ObservableBusyStack _observableBusyStack;
 
         private bool _disposed;
 
         private bool _isBusy;
-
         public bool IsBusy
         {
-            get => _isBusy;
-            private set => SetProperty(ref _isBusy, value);
+            get { return _isBusy; }
+            private set { SetProperty(ref _isBusy, value); }
         }
 
         public ICommand BeBusyCommand { get; }

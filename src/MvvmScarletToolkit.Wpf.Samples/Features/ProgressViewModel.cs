@@ -15,15 +15,15 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
         private double _percentage;
         public double Percentage
         {
-            get => _percentage;
-            private set => SetProperty(ref _percentage, value);
+            get { return _percentage; }
+            private set { SetProperty(ref _percentage, value); }
         }
 
         private double _maximum;
         public double Maximum
         {
-            get => _maximum;
-            private set => SetProperty(ref _maximum, value);
+            get { return _maximum; }
+            private set { SetProperty(ref _maximum, value); }
         }
 
         [ObservableProperty]

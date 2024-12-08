@@ -7,6 +7,7 @@ using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using MvvmScarletToolkit.Wpf.Samples.Features.Process;
 using MvvmScarletToolkit.Wpf.Samples.Features.Virtualization;
+using System.Net.Http;
 using System.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features
@@ -17,13 +18,14 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             SynchronizationContext synchronizationContext,
             IScarletCommandBuilder commandBuilder,
             LocalizationsViewModel localizationsViewModel,
-            EnvironmentInformationProvider environmentInformationProvider)
+            EnvironmentInformationProvider environmentInformationProvider,
+            HttpClient httpClient)
             : base(commandBuilder, localizationsViewModel)
         {
             var dataGridViewModel = new DataGrid.DataGridViewModel(commandBuilder, synchronizationContext);
 
             Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
-            Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(commandBuilder, new ImageViewModelProvider(CommandBuilder, environmentInformationProvider)));
+            Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(CommandBuilder, new ImageViewModelProvider(CommandBuilder, environmentInformationProvider, httpClient)));
             Add("ConcurrentCommands and state changes", new AsyncState.AsyncStateListViewModel(commandBuilder));
             Add("MVVM Live Sorting and Grouping in bound collections", dataGridViewModel);
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));

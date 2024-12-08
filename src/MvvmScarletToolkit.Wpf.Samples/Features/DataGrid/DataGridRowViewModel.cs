@@ -7,10 +7,9 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
     public sealed partial class DataGridRowViewModel : ViewModelBase
     {
         private int _id;
-
         public int Id
         {
-            get => _id;
+            get { return _id; }
             set
             {
                 if (SetProperty(ref _id, value))
@@ -21,10 +20,9 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
         }
 
         private string _name;
-
         public string Name
         {
-            get => _name;
+            get { return _name; }
             set
             {
                 if (SetProperty(ref _name, value))
@@ -35,10 +33,9 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
         }
 
         private string? _color;
-
         public string? Color
         {
-            get => _color;
+            get { return _color; }
             set
             {
                 if (SetProperty(ref _color, value))
@@ -49,10 +46,9 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
         }
 
         private DateTime _createdOn;
-
         public DateTime CreatedOn
         {
-            get => _createdOn;
+            get { return _createdOn; }
             set
             {
                 if (SetProperty(ref _createdOn, value))
@@ -63,11 +59,13 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
         }
 
         private DateTime _updatedOn;
-
         public DateTime UpdatedOn
         {
-            get => _updatedOn;
-            private set => SetProperty(ref _updatedOn, value);
+            get { return _updatedOn; }
+            private set
+            {
+                SetProperty(ref _updatedOn, value);
+            }
         }
 
         [ObservableProperty]

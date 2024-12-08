@@ -9,8 +9,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
     {
         public Tracker Tracker
         {
-            get => (Tracker)GetValue(TrackerProperty);
-            set => SetValue(TrackerProperty, value);
+            get { return (Tracker)GetValue(TrackerProperty); }
+            set { SetValue(TrackerProperty, value); }
         }
 
         public static readonly DependencyProperty TrackerProperty = DependencyProperty.Register(

@@ -11,8 +11,11 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
         private Predicate<object>? _filter;
         public Predicate<object>? Filter
         {
-            get => _filter;
-            private set => SetProperty(ref _filter, value);
+            get { return _filter; }
+            private set
+            {
+                SetProperty(ref _filter, value);
+            }
         }
 
         [ObservableProperty]

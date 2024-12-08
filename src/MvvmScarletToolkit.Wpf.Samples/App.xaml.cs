@@ -8,7 +8,9 @@ using MvvmScarletToolkit.ImageLoading;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Samples.Features;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
+using MvvmScarletToolkit.Wpf.Samples.Features.Process;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.Versioning;
 using System.Threading;
@@ -33,7 +35,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             _memoryCache = new MemoryCache(new MemoryCacheOptionsWrapper(new MemoryCacheOptions()));
         }
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
@@ -46,11 +48,21 @@ namespace MvvmScarletToolkit.Wpf.Samples
             var environmentInformationProvider = new EnvironmentInformationProvider();
             ConfigureImageLoading(environmentInformationProvider);
 
+            var httpClient = new HttpClient();
+
             var navigation = new NavigationViewModel(
                 SynchronizationContext.Current!,
                 ScarletCommandBuilder.Default,
                 new LocalizationsViewModel(new ScarletLocalizationProvider()),
-                environmentInformationProvider);
+                environmentInformationProvider,
+                httpClient);
+
+            var processingImagesViewModel = navigation.Items
+                .Where(p => p.Content.GetType() == typeof(ProcessingImagesViewModel))
+                .Select(p => (ProcessingImagesViewModel)p.Content)
+                .Single();
+
+            await processingImagesViewModel.Initialize(CancellationToken.None);
 
             var window = new MainWindow(_tracker, navigation);
             window.Show();
