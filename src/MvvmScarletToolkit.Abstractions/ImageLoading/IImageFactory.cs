@@ -1,4 +1,6 @@
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit
 {
@@ -9,8 +11,8 @@ namespace MvvmScarletToolkit
     public interface IImageFactory<TImage>
         where TImage : class
     {
-        TImage From(Stream stream, ImageSize requestedSize);
+        Task<TImage> FromAsync(Stream stream, ImageSize requestedSize, CancellationToken cancellationToken = default);
 
-        void To(Stream stream, TImage image);
+        Task ToAsync(Stream stream, TImage image, CancellationToken cancellationToken = default);
     }
 }

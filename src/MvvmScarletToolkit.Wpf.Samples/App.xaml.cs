@@ -58,8 +58,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 httpClient);
 
             var processingImagesViewModel = navigation.Items
-                .Where(p => p.Content.GetType() == typeof(ProcessingImagesViewModel))
-                .Select(p => (ProcessingImagesViewModel)p.Content)
+                .Where(p => p.Content?.GetType() == typeof(ProcessingImagesViewModel))
+                .Select(static p => (ProcessingImagesViewModel)p.Content!)
                 .Single();
 
             await processingImagesViewModel.Initialize(CancellationToken.None);
@@ -82,7 +82,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             var factory = new Lazy<IImageService<BitmapSource>>(() =>
             {
                 var loggerFactory = LoggerFactory.Create(builder => builder.AddDebug().SetMinimumLevel(LogLevel.Trace));
-                var factory = new ImageFactory(loggerFactory.CreateLogger<ImageFactory>());
+                var factory = new ImageFactory(loggerFactory.CreateLogger<ImageFactory>(), new SemaphoreSlim(Environment.ProcessorCount));
 
                 return new ImageService<BitmapSource>(
                             loggerFactory.CreateLogger<ImageService<BitmapSource>>(),

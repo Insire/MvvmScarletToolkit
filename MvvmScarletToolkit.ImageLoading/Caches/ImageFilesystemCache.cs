@@ -9,6 +9,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
     public sealed class ImageFilesystemCache<TImage> : IImageFilesystemCache<TImage>
         where TImage : class
     {
+        public sealed class ImageFileSemaphore : SemaphoreSlim
+        {
+            public ImageFileSemaphore()
+                : base(1, 1)
+            {
+            }
+        }
+
         private readonly ILogger<ImageFilesystemCache<TImage>> _logger;
         private readonly IImageFactory<TImage> _imageFactory;
         private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
@@ -120,7 +128,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
                 await using (var stream = File.OpenRead(path))
                 {
-                    return _imageFactory.From(stream, requestedSize);
+                    return await _imageFactory.FromAsync(stream, requestedSize, token).ConfigureAwait(false);
                 }
             }
             finally
@@ -139,21 +147,13 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
                 await using (var fileStream = File.OpenWrite(path))
                 {
-                    _imageFactory.To(fileStream, image);
+                    await _imageFactory.ToAsync(fileStream, image, token).ConfigureAwait(false);
                 }
             }
             finally
             {
                 semaphore.Release();
             }
-        }
-    }
-
-    public sealed class ImageFileSemaphore : SemaphoreSlim
-    {
-        public ImageFileSemaphore()
-            : base(1, 1)
-        {
         }
     }
 }

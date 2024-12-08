@@ -118,7 +118,7 @@ namespace MvvmScarletToolkit.ImageLoading
             var stream = await _memoryCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
             if (stream != Stream.Null)
             {
-                image = _imageFactory.From(stream, requestedSize);
+                image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken).ConfigureAwait(false);
 
                 await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
                 await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
@@ -139,7 +139,7 @@ namespace MvvmScarletToolkit.ImageLoading
             stream = await _diskCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
             if (stream != Stream.Null)
             {
-                image = _imageFactory.From(stream, requestedSize);
+                image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken).ConfigureAwait(false);
 
                 await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
                 await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken).ConfigureAwait(false);
@@ -155,7 +155,7 @@ namespace MvvmScarletToolkit.ImageLoading
             {
                 try
                 {
-                    image = _imageFactory.From(stream, requestedSize);
+                    image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
