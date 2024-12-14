@@ -32,5 +32,10 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
             DataContext = navigationViewModel;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            GC.Collect();
+        }
     }
 }

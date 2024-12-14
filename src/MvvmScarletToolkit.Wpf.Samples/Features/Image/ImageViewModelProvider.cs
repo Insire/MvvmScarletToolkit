@@ -49,7 +49,10 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
         private readonly HttpClient _httpClient;
         private int _index;
 
-        public ImageViewModelProvider(IScarletCommandBuilder commandBuilder, EnvironmentInformationProvider environmentInformationProvider, HttpClient httpClient)
+        public ImageViewModelProvider(
+            IScarletCommandBuilder commandBuilder,
+            EnvironmentInformationProvider environmentInformationProvider,
+            HttpClient httpClient)
         {
             _commandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
             _environmentInformationProvider = environmentInformationProvider;
@@ -66,12 +69,12 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             }
         }
 
-        public IEnumerable<ImageViewModel> GetImages()
+        public IEnumerable<ImageViewModel> GetImages(SourceImagesViewModel source, TargetImagesViewModel target)
         {
-            return GetLocalImages().Interleave(GetWebImages(), GetRandomWebImages());
+            return GetLocalImages(source, target).Interleave(GetWebImages(source, target), GetRandomWebImages(source, target));
         }
 
-        private IEnumerable<ImageViewModel> GetLocalImages()
+        private IEnumerable<ImageViewModel> GetLocalImages(SourceImagesViewModel source, TargetImagesViewModel target)
         {
             var directoryPath = _environmentInformationProvider.GetResourceFolderPath();
 
@@ -97,44 +100,48 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 
             foreach (var filePath in Directory.GetFiles(directoryPath, searchPattern: "*.jpg", SearchOption.TopDirectoryOnly))
             {
-                yield return new ImageViewModel(_commandBuilder)
+                var index = Interlocked.Increment(ref _index);
+
+                yield return new ImageViewModel(_commandBuilder, target, source)
                 {
-                    IsSelected = _index == 0,
+                    IsSelected = index == 0,
                     DisplayName = Path.GetFileName(filePath),
                     Path = filePath,
-                    Sequence = _index,
+                    Sequence = index,
                 };
-
-                _index++;
             }
         }
 
-        private IEnumerable<ImageViewModel> GetWebImages()
+        private IEnumerable<ImageViewModel> GetWebImages(SourceImagesViewModel source, TargetImagesViewModel target)
         {
             for (var i = 0; i < _urls.Length; i++)
             {
-                yield return new ImageViewModel(_commandBuilder)
+                var index = Interlocked.Increment(ref _index);
+
+                yield return new ImageViewModel(_commandBuilder, target, source)
                 {
-                    IsSelected = _index == 0,
-                    DisplayName = $"Image {i}",
+                    IsSelected = index == 0,
+                    DisplayName = $"Image {index}",
                     Path = _urls[i],
-                    Sequence = _index,
+                    Sequence = index,
                 };
             }
         }
 
-        private IEnumerable<ImageViewModel> GetRandomWebImages()
+        private IEnumerable<ImageViewModel> GetRandomWebImages(SourceImagesViewModel source, TargetImagesViewModel target)
         {
             var randomWebUrls = _randomWebUrls.ToArray();
 
             for (var i = 0; i < randomWebUrls.Length; i++)
             {
-                yield return new ImageViewModel(_commandBuilder)
+                var index = Interlocked.Increment(ref _index);
+
+                yield return new ImageViewModel(_commandBuilder, target, source)
                 {
-                    IsSelected = _index == 0,
-                    DisplayName = $"Image {i}",
+                    IsSelected = index == 0,
+                    DisplayName = $"Image {index}",
                     Path = randomWebUrls[i],
-                    Sequence = _index,
+                    Sequence = index,
                 };
             }
         }

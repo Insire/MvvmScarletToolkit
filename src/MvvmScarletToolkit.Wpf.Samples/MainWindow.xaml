@@ -1,24 +1,24 @@
 <Window x:Class="MvvmScarletToolkit.Wpf.Samples.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:asyncState="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.AsyncState"
+        xmlns:busy="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Busy"
         xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:contextMenu="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.ContextMenu"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:dataGrid="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.DataGrid"
+        xmlns:enums="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Enums"
+        xmlns:features="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features"
+        xmlns:geometry="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Geometry"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Incubator"
         xmlns:local="clr-namespace:MvvmScarletToolkit.Wpf.Samples"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
         xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
-        xmlns:system="clr-namespace:System;assembly=System.Runtime"
-        xmlns:features="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features"
         xmlns:process="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Process"
-        xmlns:enums="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Enums"
-        xmlns:contextMenu="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.ContextMenu"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
         xmlns:virtualization="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Virtualization"
-        xmlns:dataGrid="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.DataGrid"
-        xmlns:asyncState="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.AsyncState"
-        xmlns:busy="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Busy"
-        xmlns:geometry="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Geometry"
         Name="MainWindowRoot"
         Title="MvvmScarletToolkit.Wpf.Samples"
         Width="1025"
@@ -59,10 +59,13 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
+            <RowDefinition Height="4" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
         </Grid.RowDefinitions>
 
         <ListBox x:Name="Scenes"
+                 Grid.Row="0"
                  Grid.Column="0"
                  BorderThickness="0"
                  ItemsSource="{Binding Items}"
@@ -95,14 +98,18 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <GridSplitter Grid.Column="1"
+        <GridSplitter Grid.Row="0"
+                      Grid.RowSpan="3"
+                      Grid.Column="1"
                       Width="5"
+                      Margin="4,0"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Stretch" />
 
         <!--  fill a contentcontrol with the content from the selected scene  -->
-        <ContentControl Grid.Column="2"
-                        Margin="4,0"
+        <ContentControl Grid.Row="0"
+                        Grid.RowSpan="4"
+                        Grid.Column="2"
                         Content="{Binding ElementName=Scenes, Path=SelectedItem.Content, Converter={mvvm:DebugConverter}}">
             <ContentControl.Resources>
 
@@ -1594,5 +1601,9 @@
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
+
+        <Button Grid.Row="2" Click="Button_Click">
+            <TextBlock Text="Clear GC" />
+        </Button>
     </Grid>
 </Window>

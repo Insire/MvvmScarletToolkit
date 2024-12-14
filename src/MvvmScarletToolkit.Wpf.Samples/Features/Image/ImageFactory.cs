@@ -24,14 +24,12 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             try
             {
                 await _semaphore.WaitAsync(cancellationToken);
+                using var image = new MagickImage(stream);
 
-                using (var image = new MagickImage(stream))
-                {
-                    var bitmapSource = ToResizedBitmapSource(image, requestedSize);
-                    bitmapSource.Freeze();
+                var bitmapSource = ToResizedBitmapSource(image, requestedSize);
+                bitmapSource.Freeze();
 
-                    return bitmapSource;
-                }
+                return bitmapSource;
             }
             finally
             {
@@ -44,7 +42,6 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             try
             {
                 await _semaphore.WaitAsync(cancellationToken);
-
                 var encoder = new PngBitmapEncoder
                 {
                     Interlace = PngInterlaceOption.On

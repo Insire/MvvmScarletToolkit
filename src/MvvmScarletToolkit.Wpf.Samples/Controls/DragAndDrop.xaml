@@ -16,53 +16,152 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="130" />
+            <ColumnDefinition Width="500" />
             <ColumnDefinition Width="4" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+        </Grid.RowDefinitions>
 
         <ListBox x:Name="SourceList"
                  Grid.Column="0"
                  HorizontalContentAlignment="Center"
                  AllowDrop="True"
+                 Background="White"
                  Drop="SourceList_Drop"
-                 ItemsSource="{Binding Source.Items}"
-                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-                 SelectedItem="{Binding Source.SelectedItem}">
-
+                 ItemsSource="{Binding Source.Items, Mode=OneTime}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Loaded">
-                    <i:InvokeCommandAction Command="{Binding Source.LoadCommand}" />
+                    <i:InvokeCommandAction Command="{Binding Source.LoadCommand, Mode=OneWay}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
-            <ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                </Style>
+            </ListBox.ItemContainerStyle>
+
+            <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type image:ImageViewModel}">
-                    <DockPanel GiveFeedback="Element_GiveFeedback"
-                               LastChildFill="True"
-                               MouseMove="Element_MouseMove">
-                        <controls:ImagePlaceholder Width="90" Height="90" />
-                    </DockPanel>
+                    <Grid GiveFeedback="Element_GiveFeedback" MouseMove="Element_MouseMove">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="4" />
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="4" />
+                            <ColumnDefinition Width="250" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Button Grid.Row="1"
+                                Command="{Binding MoveToTargetCommand, Mode=OneWay}"
+                                Content="&gt;" />
+
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="4"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis">
+                            <Run Text="{Binding DisplayName, Mode=OneWay}" />
+                            <LineBreak />
+                            <Run Text="{Binding Path, Mode=OneWay}" />
+                        </TextBlock>
+
+                        <controls:ImagePlaceholder Grid.Row="1"
+                                                   Grid.Column="2"
+                                                   Width="90"
+                                                   Height="90" />
+                    </Grid>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
+            </ItemsControl.ItemTemplate>
+
+            <!--<ItemsControl.Template>
+                <ControlTemplate TargetType="ItemsControl">
+                    <Border Padding="{TemplateBinding Control.Padding}"
+                            Background="{TemplateBinding Panel.Background}"
+                            BorderBrush="{TemplateBinding Border.BorderBrush}"
+                            BorderThickness="{TemplateBinding Border.BorderThickness}"
+                            SnapsToDevicePixels="True">
+                        <ScrollViewer Padding="{TemplateBinding Control.Padding}"
+                                      CanContentScroll="true"
+                                      Focusable="False"
+                                      IsDeferredScrollingEnabled="false">
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </ItemsControl.Template>-->
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel IsItemsHost="True"
+                                            IsVirtualizing="True"
+                                            Orientation="Vertical"
+                                            VirtualizationMode="Standard" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
         </ListBox>
 
-        <DockPanel Grid.Column="2"
-                   DataContext="{Binding Target}"
-                   LastChildFill="True">
-            <StackPanel Margin="0,4"
+
+        <TextBlock Grid.Row="2"
+                   HorizontalAlignment="Right"
+                   Text="{Binding Source.Count, StringFormat='{}{0} Images'}" />
+
+        <Grid Grid.RowSpan="3"
+              Grid.Column="2"
+              DataContext="{Binding Target, Mode=OneTime}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="4" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="4" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="4" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="2"
                         DockPanel.Dock="Bottom"
                         Orientation="Horizontal">
                 <Button Margin="0,0,4,0"
-                        Command="{Binding RemoveRangeCommand}"
+                        Command="{Binding RemoveRangeCommand, Mode=OneWay}"
                         CommandParameter="{Binding ElementName=TargetList, Path=SelectedItems}"
                         Content="Remove" />
-                <Button Command="{Binding ClearCommand}" Content="Clear" />
+                <Button Command="{Binding ClearCommand, Mode=OneWay}" Content="Clear" />
             </StackPanel>
 
-            <Grid DataContext="{Binding SelectedItem}" DockPanel.Dock="Right">
-                <controls:ImagePlaceholder Width="800" Height="800" />
+            <Grid Grid.RowSpan="4"
+                  Grid.Column="2"
+                  DataContext="{Binding SelectedItem}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="800" />
+                    <RowDefinition Height="4" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <controls:ImagePlaceholder Grid.Row="0"
+                                           Width="800"
+                                           Height="800" />
+
+                <TextBlock Grid.Row="2" TextTrimming="CharacterEllipsis">
+                    <Run FontWeight="DemiBold" Text="DisplayName: " />
+                    <Run Text="{Binding DisplayName, Mode=OneWay}" />
+                    <LineBreak />
+                    <Run FontWeight="DemiBold" Text="Path: " />
+                    <Run Text="{Binding Path, Mode=OneWay}" />
+                </TextBlock>
             </Grid>
 
             <ListBox x:Name="TargetList"
@@ -123,6 +222,6 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-        </DockPanel>
+        </Grid>
     </Grid>
 </UserControl>

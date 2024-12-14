@@ -4,6 +4,8 @@ namespace MvvmScarletToolkit.ImageLoading
     {
         public string CacheDirectoryPath { get; init; } = "cache/images/raw/";
 
+        public bool ClearCacheDirectoryOnInit { get; init; } = false;
+
         public bool CreateFolder { get; init; } = false;
 
         public bool IsEnabled { get; init; } = false;

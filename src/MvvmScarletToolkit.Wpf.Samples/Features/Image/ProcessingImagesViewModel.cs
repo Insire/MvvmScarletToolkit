@@ -1,24 +1,23 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Threading.Tasks;
-using System.Threading;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
-    public sealed class ProcessingImagesViewModel : ObservableObject
+    public sealed partial class ProcessingImagesViewModel : ObservableObject
     {
         private readonly ImageViewModelProvider _imageFactory;
 
-        private ImagesViewModel _source;
-        public ImagesViewModel Source
+        private SourceImagesViewModel _source;
+        public SourceImagesViewModel Source
         {
             get { return _source; }
             private set { SetProperty(ref _source, value); }
         }
 
-        private ImagesViewModel _target;
-
-        public ImagesViewModel Target
+        private TargetImagesViewModel _target;
+        public TargetImagesViewModel Target
         {
             get { return _target; }
             private set { SetProperty(ref _target, value); }
@@ -26,8 +25,8 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
 
         public ProcessingImagesViewModel(IScarletCommandBuilder commandBuilder, ImageViewModelProvider imageFactory)
         {
-            _source = new ImagesViewModel(commandBuilder, imageFactory);
-            _target = new ImagesViewModel(commandBuilder, imageFactory);
+            _target = new TargetImagesViewModel(commandBuilder);
+            _source = new SourceImagesViewModel(commandBuilder, imageFactory, _target);
             _imageFactory = imageFactory;
         }
 

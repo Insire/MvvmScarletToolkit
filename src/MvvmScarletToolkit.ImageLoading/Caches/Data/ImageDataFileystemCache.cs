@@ -19,12 +19,18 @@ namespace MvvmScarletToolkit.ImageLoading
             _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
             _options = options;
 
-            if (options.CreateFolder)
+            if (!options.CreateFolder)
+            {
+                return;
+            }
+
+            if (options.ClearCacheDirectoryOnInit)
             {
                 Directory.CreateDirectory(options.CacheDirectoryPath);
                 Directory.Delete(options.CacheDirectoryPath, true);
-                Directory.CreateDirectory(options.CacheDirectoryPath);
             }
+
+            Directory.CreateDirectory(options.CacheDirectoryPath);
         }
 
         /// <inheritdoc />

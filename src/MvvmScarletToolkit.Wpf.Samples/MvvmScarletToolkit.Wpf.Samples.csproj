@@ -60,7 +60,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />

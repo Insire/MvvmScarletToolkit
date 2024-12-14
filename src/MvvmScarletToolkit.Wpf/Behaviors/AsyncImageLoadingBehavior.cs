@@ -1,5 +1,6 @@
 using Microsoft.Xaml.Behaviors;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -46,13 +47,13 @@ namespace MvvmScarletToolkit
 
         private void OnInitialized(object? sender, EventArgs e)
         {
-            OnChanged(AssociatedObject, Source, Width, Height);
+            OnChanged("OnInitialized", AssociatedObject, null, Source, null, Width, null, Height);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _cancellationTokenSource?.Cancel();
-            OnChanged(AssociatedObject, null, Width, Height);
+            OnChanged("OnUnloaded", AssociatedObject, Source, null, Width, null, Height, null);
         }
 
         public Uri? Source
@@ -117,11 +118,11 @@ namespace MvvmScarletToolkit
         {
             if (e.NewValue is Uri uri)
             {
-                OnChanged(AssociatedObject, uri, Width, Height);
+                OnChanged("OnSourceChanged", AssociatedObject, e.OldValue as Uri, uri, Width, Width, Height, Height);
             }
             else
             {
-                OnChanged(AssociatedObject, null, Width, Height);
+                OnChanged("OnSourceChanged", AssociatedObject, e.OldValue as Uri, null, Width, Width, Height, Height);
             }
         }
 
@@ -139,11 +140,11 @@ namespace MvvmScarletToolkit
         {
             if (e.NewValue is uint width)
             {
-                OnChanged(AssociatedObject, Source, width, Height);
+                OnChanged("OnWidthChanged", AssociatedObject, Source, Source, e.OldValue as uint?, width, Height, Height);
             }
             else
             {
-                OnChanged(AssociatedObject, Source, null, Height);
+                OnChanged("OnWidthChanged", AssociatedObject, Source, Source, e.OldValue as uint?, null, Height, Height);
             }
         }
 
@@ -161,22 +162,22 @@ namespace MvvmScarletToolkit
         {
             if (e.NewValue is uint height)
             {
-                OnChanged(AssociatedObject, Source, Width, height);
+                OnChanged("OnHeightChanged", AssociatedObject, Source, Source, Width, Width, e.OldValue as uint?, height);
             }
             else
             {
-                OnChanged(AssociatedObject, Source, Width, null);
+                OnChanged("OnHeightChanged", AssociatedObject, Source, Source, Width, Width, e.OldValue as uint?, null);
             }
         }
 
-        private async void OnChanged(Image sender, Uri? url, uint? width, uint? height)
+        private async void OnChanged(string scope, Image sender, Uri? oldUrl, Uri? newUrl, uint? oldWidth, uint? newWidth, uint? oldHeight, uint? newHeight)
         {
             if (Loader is null || !_isEnabled)
             {
                 return;
             }
 
-            if (url is null && sender.Source is null)
+            if (newUrl is null && sender.Source is null)
             {
                 return;
             }
@@ -191,18 +192,21 @@ namespace MvvmScarletToolkit
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource = currentCts;
 
-            var size = GetSize(width, height);
+            var size = GetSize(newWidth, newHeight);
 
             try
             {
+                Debug.WriteLine($"OnChanged: scope:\"{scope}\", url:\"{oldUrl}\" -> \"{newUrl}\" width: \"{oldWidth}\"->\"{newWidth}\" height: \"{oldHeight}\"->\"{newHeight}\"");
+
                 sender.Source = await Loader.Value
-                    .ProvideImageAsync(url, size, SetIsLoading, currentCts.Token)
-                    .ConfigureAwait(true);
+                    .ProvideImageAsync(newUrl, size, SetIsLoading, currentCts.Token);
 
                 SetIsLoadingOnUiThread(false);
             }
             catch (TaskCanceledException)
             {
+                SetCurrentValue(IsLoadingProperty, false);
+                Debug.WriteLine($"Loading url:\"{newUrl}\" cancelled");
             }
             finally
             {

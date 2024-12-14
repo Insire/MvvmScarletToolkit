@@ -9,6 +9,7 @@ using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Samples.Features;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using Serilog;
+using Serilog.Core;
 using System;
 using System.IO;
 using System.Linq;
@@ -17,6 +18,7 @@ using System.Runtime.Versioning;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using static System.Net.WebRequestMethods;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
@@ -28,6 +30,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
         private readonly MemoryCache _memoryCache;
         private readonly EnvironmentInformationProvider _environmentInformationProvider;
+        private readonly Logger _logger;
 
         public App()
         {
@@ -39,10 +42,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
             var logs = Path.Combine(_environmentInformationProvider.GetLogsFolderPath(), "logs.txt");
 
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Debug()
-                .WriteTo.File(logs)
+            Log.Logger = _logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .Enrich.FromLogContext()
+                .WriteTo.Debug(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{SourceContext}> {Message:lj}{NewLine}{Exception}")
+                .WriteTo.File(logs, outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] <{SourceContext}> {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
+
+            ConfigureImageLoading(_environmentInformationProvider);
         }
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -54,8 +61,6 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 .Properties(w => new { w.Height, w.Width, w.Left, w.Top, w.WindowState })
             .PersistOn(nameof(Window.Closing))
                 .StopTrackingOn(nameof(Window.Closing));
-
-            ConfigureImageLoading(_environmentInformationProvider);
 
             var navigation = new NavigationViewModel(
                 SynchronizationContext.Current!,
@@ -83,14 +88,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
             _tracker.PersistAll();
 
-            Log.CloseAndFlush();
+            _logger.Dispose();
         }
 
         private void ConfigureImageLoading(EnvironmentInformationProvider environmentInformationProvider)
         {
             var factory = new Lazy<IImageService<BitmapSource>>(() =>
             {
-                var loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog(Log.Logger).SetMinimumLevel(LogLevel.Trace));
+                var loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog(_logger));
                 var factory = new ImageFactory(loggerFactory.CreateLogger<ImageFactory>(), new SemaphoreSlim(Environment.ProcessorCount));
 
                 return new ImageService<BitmapSource>(
@@ -106,7 +111,6 @@ namespace MvvmScarletToolkit.Wpf.Samples
                             new ImageServiceOptions() { DefaultHeight = 300, DefaultWidth = 300 });
             });
 
-            ImageLoader.AsyncImageLoader = factory;
             AsyncImageLoadingBehavior.Loader = factory;
         }
 

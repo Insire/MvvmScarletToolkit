@@ -38,7 +38,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Wpf.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Observables.Tests", "src\MvvmScarletToolkit.Observables.Tests\MvvmScarletToolkit.Observables.Tests.csproj", "{F7EBB910-0AA9-4683-878B-06108492F2F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.ImageLoading", "MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj", "{E1EC419A-14EE-4D2B-893C-ACE90B04CC2C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.ImageLoading", "src\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj", "{E1EC419A-14EE-4D2B-893C-ACE90B04CC2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

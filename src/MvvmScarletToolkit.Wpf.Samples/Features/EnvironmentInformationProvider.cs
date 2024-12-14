@@ -17,22 +17,38 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
 
         public string GetResourceFolderPath()
         {
-            return Path.Combine(_exeDirectoryPath, "Resources");
+            var directory = Path.Combine(_exeDirectoryPath, "Resources");
+
+            Directory.CreateDirectory(directory);
+
+            return directory;
         }
 
         public string GetRawImagesFolderPath()
         {
-            return Path.Combine(_exeDirectoryPath, "images", "raw");
+            var directory = Path.Combine(_exeDirectoryPath, "images", "raw");
+
+            Directory.CreateDirectory(directory);
+
+            return directory;
         }
 
         public string GetEncodedImagesFolderPath()
         {
-            return Path.Combine(_exeDirectoryPath, "images", "encoded");
+            var directory = Path.Combine(_exeDirectoryPath, "images", "encoded");
+
+            Directory.CreateDirectory(directory);
+
+            return directory;
         }
 
         public string GetLogsFolderPath()
         {
-            return Path.Combine(_exeDirectoryPath, "logs");
+            var directory = Path.Combine(_exeDirectoryPath, "logs");
+
+            Directory.CreateDirectory(directory);
+
+            return directory;
         }
     }
 }

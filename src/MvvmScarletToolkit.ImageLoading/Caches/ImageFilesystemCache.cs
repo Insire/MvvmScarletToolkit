@@ -40,8 +40,12 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 return;
             }
 
-            Directory.CreateDirectory(options.CacheDirectoryPath);
-            Directory.Delete(options.CacheDirectoryPath, true);
+            if (options.ClearCacheDirectoryOnInit)
+            {
+                Directory.CreateDirectory(options.CacheDirectoryPath);
+                Directory.Delete(options.CacheDirectoryPath, true);
+            }
+
             Directory.CreateDirectory(options.CacheDirectoryPath);
         }
 
@@ -62,12 +66,12 @@ namespace MvvmScarletToolkit.Wpf.Samples
             var path = Path.Combine(_options.CacheDirectoryPath, key);
             if (File.Exists(path))
             {
-                _logger.LogDebug("Image with {Key} was found on disk", key);
+                _logger.LogDebug("Image with {Key} was found on disk at {Path}", key, path);
 
                 return await Task.Run(() => ReadImage(path, requestedSize, cancellationToken), cancellationToken).ConfigureAwait(false);
             }
 
-            _logger.LogDebug("Image with {Key} could not be found on disk", key);
+            _logger.LogDebug("Image with {Key} could not be found on disk at {Path}", key, path);
 
             return null;
         }
@@ -92,7 +96,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             {
                 await WriteImage(path, image, cancellationToken).ConfigureAwait(false);
 
-                _logger.LogDebug("Image with {Key} has been cached on disk", key);
+                _logger.LogDebug("Image with {Key} has been cached on disk at {Path}", key, path);
             }
             catch (Exception ex)
             {
@@ -147,7 +151,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
                 await using (var fileStream = File.OpenWrite(path))
                 {
-                    await _imageFactory.ToAsync(fileStream, image, token).ConfigureAwait(false);
+                    await Task.Run(() => _imageFactory.ToAsync(fileStream, image, token), token).ConfigureAwait(false);
                 }
             }
             finally
