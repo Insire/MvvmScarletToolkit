@@ -20,7 +20,7 @@
     <PackageVersion Include="nunit" Version="4.2.2" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
-    <PackageVersion Include="NUnit.Analyzers" Version="4.4.0" />
+    <PackageVersion Include="NUnit.Analyzers" Version="4.5.0" />
     <PackageVersion Include="Cake.Codecov" Version="3.0.0" />
     <PackageVersion Include="Cake.Frosting" Version="5.0.0" />
     <PackageVersion Include="Cake.GitVersioning" Version="3.6.146" />
