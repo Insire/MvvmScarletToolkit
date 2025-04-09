@@ -63,7 +63,7 @@ namespace MvvmScarletToolkit.ImageLoading
                     _logger.LogTrace("Fetching stream from {Url}", uri);
                     return await Task.Run(() => _httpClient.GetStreamAsync(uri, cancellationToken));
                 }
-                catch (TaskCanceledException ex)
+                catch (TaskCanceledException)
                 {
                     return Stream.Null;
                 }

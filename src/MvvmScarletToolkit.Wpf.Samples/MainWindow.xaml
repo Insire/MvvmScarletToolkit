@@ -149,9 +149,15 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="FilePath" />
-                        <TextBlock Grid.Row="2" Text="Args" />
-                        <TextBlock Grid.Row="4" Text="WorkingDirectory" />
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="0"
+                                   Text="FilePath" />
+                        <TextBlock Grid.Row="2"
+                                   Grid.Column="0"
+                                   Text="Args" />
+                        <TextBlock Grid.Row="4"
+                                   Grid.Column="0"
+                                   Text="WorkingDirectory" />
 
                         <TextBox Grid.Row="0"
                                  Grid.Column="2"
@@ -352,7 +358,9 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <ItemsControl Grid.Column="2" ItemsSource="{Binding Items}">
+                        <ItemsControl Grid.Row="0"
+                                      Grid.Column="2"
+                                      ItemsSource="{Binding Items}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel />
@@ -401,7 +409,9 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                        <StackPanel Grid.Row="2"
+                                    Grid.Column="0"
+                                    Orientation="Horizontal">
                             <Button Margin="0,0,4,0"
                                     Command="{Binding AddCommand}"
                                     Content="New" />
@@ -632,11 +642,14 @@
                                             </Grid.RowDefinitions>
 
                                             <TextBlock Text="IsSelected" />
-                                            <CheckBox Grid.Column="2"
-                                                      Grid.ColumnSpan="4"
+                                            <CheckBox Grid.Row="0"
+                                                      Grid.Column="2"
+                                                      Grid.ColumnSpan="3"
                                                       IsChecked="{Binding IsSelected}" />
 
-                                            <TextBlock Grid.Row="2" Text="Color" />
+                                            <TextBlock Grid.Row="2"
+                                                       Grid.Column="0"
+                                                       Text="Color" />
                                             <TextBox Grid.Row="2"
                                                      Grid.Column="2"
                                                      VerticalAlignment="Top"
@@ -645,7 +658,9 @@
                                                        Grid.Column="4"
                                                        Fill="{Binding Color}" />
 
-                                            <TextBlock Grid.Row="4" Text="Name" />
+                                            <TextBlock Grid.Row="4"
+                                                       Grid.Column="0"
+                                                       Text="Name" />
                                             <TextBox Grid.Row="4"
                                                      Grid.Column="2"
                                                      VerticalAlignment="Top"
@@ -657,7 +672,9 @@
                                                       IsChecked="{Binding Name, Converter={mvvm:IsNotNullOrWhiteSpace}}"
                                                       IsHitTestVisible="False" />
 
-                                            <TextBlock Grid.Row="6" Text="CreatedOn" />
+                                            <TextBlock Grid.Row="6"
+                                                       Grid.Column="0"
+                                                       Text="CreatedOn" />
                                             <Calendar Grid.Row="6"
                                                       Grid.Column="2"
                                                       DisplayDate="{Binding CreatedOn}"
@@ -766,7 +783,7 @@
                                          Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged, Delay=150}" />
                             </DockPanel>
 
-                            <DockPanel Grid.Column="2">
+                            <DockPanel Grid.Row="0" Grid.Column="2">
                                 <ToggleButton Content="Generate Items and Auto-Scroll">
                                     <ToggleButton.Style>
                                         <Style TargetType="{x:Type ToggleButton}">
@@ -1602,7 +1619,9 @@
             </ContentControl.Resources>
         </ContentControl>
 
-        <Button Grid.Row="2" Click="Button_Click">
+        <Button Grid.Row="2"
+                Grid.Column="0"
+                Click="Button_Click">
             <TextBlock Text="Clear GC" />
         </Button>
     </Grid>

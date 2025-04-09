@@ -20,6 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		version.json = version.json
 		Directory.Packages.props = Directory.Packages.props
 		nuget.config = nuget.config
+		.XamlStyler = .XamlStyler
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Incubator", "src\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj", "{67E41CB4-774B-455B-B0FC-86EF13677FB7}"
