@@ -3,7 +3,9 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="BenchmarkDotNet" Version="0.14.0" />
     <PackageVersion Include="Jot" Version="2.1.17" />
+    <PackageVersion Include="MediatR" Version="12.5.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />
