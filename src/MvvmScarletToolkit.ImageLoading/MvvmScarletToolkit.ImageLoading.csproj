@@ -4,7 +4,7 @@
     <OutputType>Library</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Description>MvvmScarletToolkit.ImageLoading is part of the MvvmScarletToolkit framework, containing TBD.</Description>
+    <Description>MvvmScarletToolkit.ImageLoading is part of the MvvmScarletToolkit framework, containing services and platform abstractions for loading and caching images from remote resources like the web.</Description>
     <PackageTags>MvvmScarletToolkit,C#,Toolkit,Scarlet,Library,.NET,OSS,OpenSource</PackageTags>
   </PropertyGroup>
 
