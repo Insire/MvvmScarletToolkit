@@ -66,6 +66,7 @@
   </ItemGroup>
 
   <ItemGroup Label="core dependencies">
+    <PackageVersion Include="Avalonia" Version="11.3.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.4" />
