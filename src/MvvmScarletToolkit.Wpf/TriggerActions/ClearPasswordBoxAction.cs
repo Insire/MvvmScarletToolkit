@@ -15,8 +15,8 @@ namespace MvvmScarletToolkit
 
         public PasswordBox? Target
         {
-            get { return (PasswordBox?)GetValue(TargetProperty); }
-            set { SetValue(TargetProperty, value); }
+            get => (PasswordBox?)GetValue(TargetProperty);
+            set => SetValue(TargetProperty, value);
         }
 
         protected override void Invoke(object parameter)

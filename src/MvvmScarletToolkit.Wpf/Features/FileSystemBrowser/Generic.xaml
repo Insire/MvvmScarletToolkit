@@ -746,7 +746,7 @@
                                                                                                ContextMenu="{StaticResource DefaultViewModelContextMenu}"
                                                                                                Text="{Binding Name}">
                                                                                         <TextBlock.InputBindings>
-                                                                                            <MouseBinding Command="{Binding Data.SelectCommand, Source={StaticResource FileSystemViewModelProxy}, Converter={local:IgnoreNullOrEmptyStrings}}"
+                                                                                            <MouseBinding Command="{Binding Data.SelectCommand, Source={StaticResource FileSystemViewModelProxy}, Converter={local:IgnoreNullOrEmptyString}}"
                                                                                                           CommandParameter="{Binding}"
                                                                                                           Gesture="LeftDoubleClick" />
                                                                                         </TextBlock.InputBindings>
@@ -812,7 +812,7 @@
                                                                             <DataTemplate DataType="{x:Type browser:ScarletDirectory}">
                                                                                 <DockPanel Width="100" ContextMenu="{StaticResource DefaultViewModelContextMenu}">
                                                                                     <DockPanel.InputBindings>
-                                                                                        <MouseBinding Command="{Binding Data.SelectCommand, Source={StaticResource FileSystemViewModelProxy}, Converter={local:IgnoreNullOrEmptyStrings}}"
+                                                                                        <MouseBinding Command="{Binding Data.SelectCommand, Source={StaticResource FileSystemViewModelProxy}, Converter={local:IgnoreNullOrEmptyString}}"
                                                                                                       CommandParameter="{Binding}"
                                                                                                       Gesture="LeftDoubleClick" />
                                                                                     </DockPanel.InputBindings>
@@ -851,7 +851,7 @@
                                                                             <DataTemplate DataType="{x:Type browser:ScarletDirectory}">
                                                                                 <DockPanel Width="100" ContextMenu="{StaticResource DefaultViewModelContextMenu}">
                                                                                     <DockPanel.InputBindings>
-                                                                                        <MouseBinding Command="{Binding Data.SelectCommand, Source={StaticResource FileSystemViewModelProxy}, Converter={local:IgnoreNullOrEmptyStrings}}"
+                                                                                        <MouseBinding Command="{Binding Data.SelectCommand, Source={StaticResource FileSystemViewModelProxy}, Converter={local:IgnoreNullOrEmptyString}}"
                                                                                                       CommandParameter="{Binding}"
                                                                                                       Gesture="LeftDoubleClick" />
                                                                                     </DockPanel.InputBindings>

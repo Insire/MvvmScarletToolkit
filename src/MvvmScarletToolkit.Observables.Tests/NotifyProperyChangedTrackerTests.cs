@@ -38,7 +38,7 @@ namespace MvvmScarletToolkit.Observables.Tests
         [Test]
         public void NullChecks()
         {
-            var viewModel = default(ViewModel);
+            var viewModel = default(ViewModel)!;
             using (var instance = new NotifyProperyChangedTracker())
             {
                 Assert.Throws<ArgumentNullException>(() => instance.HasChanges(viewModel));
@@ -85,12 +85,12 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
 
-            void ViewModel_PropertyChanging(object sender, System.ComponentModel.PropertyChangingEventArgs e)
+            void ViewModel_PropertyChanging(object? sender, System.ComponentModel.PropertyChangingEventArgs e)
             {
                 propertyChanging = true;
             }
@@ -125,12 +125,12 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
 
-            void ViewModel_PropertyChanging(object sender, System.ComponentModel.PropertyChangingEventArgs e)
+            void ViewModel_PropertyChanging(object? sender, System.ComponentModel.PropertyChangingEventArgs e)
             {
                 propertyChanging = true;
             }
@@ -165,12 +165,12 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
 
-            void ViewModel_PropertyChanging(object sender, System.ComponentModel.PropertyChangingEventArgs e)
+            void ViewModel_PropertyChanging(object? sender, System.ComponentModel.PropertyChangingEventArgs e)
             {
                 propertyChanging = true;
             }
@@ -204,12 +204,12 @@ namespace MvvmScarletToolkit.Observables.Tests
                 Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
             }
 
-            void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
 
-            void ViewModel_PropertyChanging(object sender, System.ComponentModel.PropertyChangingEventArgs e)
+            void ViewModel_PropertyChanging(object? sender, System.ComponentModel.PropertyChangingEventArgs e)
             {
                 propertyChanging = true;
             }
@@ -243,12 +243,12 @@ namespace MvvmScarletToolkit.Observables.Tests
                 Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
             }
 
-            void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
 
-            void ViewModel_PropertyChanging(object sender, System.ComponentModel.PropertyChangingEventArgs e)
+            void ViewModel_PropertyChanging(object? sender, System.ComponentModel.PropertyChangingEventArgs e)
             {
                 propertyChanging = true;
             }
@@ -292,12 +292,12 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
 
-            void ViewModel_PropertyChanging(object sender, System.ComponentModel.PropertyChangingEventArgs e)
+            void ViewModel_PropertyChanging(object? sender, System.ComponentModel.PropertyChangingEventArgs e)
             {
                 propertyChanging = true;
             }
@@ -341,12 +341,12 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
 
-            void ViewModel_PropertyChanging(object sender, System.ComponentModel.PropertyChangingEventArgs e)
+            void ViewModel_PropertyChanging(object? sender, System.ComponentModel.PropertyChangingEventArgs e)
             {
                 propertyChanging = true;
             }
@@ -381,7 +381,7 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }

@@ -40,7 +40,7 @@ namespace MvvmScarletToolkit.Observables.Tests
         [Test]
         public void Ctor_DoesThrow_1()
         {
-            Assert.Throws<ArgumentNullException>(() => new ObservableDictionary<object, object>(default(Dictionary<object, object>)));
+            Assert.Throws<ArgumentNullException>(() => new ObservableDictionary<object, object>(default(Dictionary<object, object>)!));
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace MvvmScarletToolkit.Observables.Tests
         [Test]
         public void Ctor_DoesThrow_3()
         {
-            Assert.Throws<ArgumentNullException>(() => new ObservableDictionary<object, object>(default(Dictionary<object, object>), default(IEqualityComparer<object>)));
+            Assert.Throws<ArgumentNullException>(() => new ObservableDictionary<object, object>(default(Dictionary<object, object>)!, default(IEqualityComparer<object>)));
         }
 
         [Test]
@@ -196,7 +196,7 @@ namespace MvvmScarletToolkit.Observables.Tests
                 [new object()] = new object(),
             };
 
-            Assert.Throws<ArgumentNullException>(() => sut.Add(null, new object()));
+            Assert.Throws<ArgumentNullException>(() => sut.Add(null!, new object()));
         }
 
         [Test]

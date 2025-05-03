@@ -54,7 +54,7 @@ namespace MvvmScarletToolkit.Observables.Tests
             var messenger = new WeakReferenceMessenger();
             using (var instance = new PropertyChangedMessageTracker(messenger))
             {
-                var viewModel = default(AttributedBroadCastViewModel);
+                var viewModel = default(AttributedBroadCastViewModel)!;
                 Assert.Throws<ArgumentNullException>(() => instance.HasChanges(viewModel));
                 Assert.Throws<ArgumentNullException>(() => instance.CountChanges(viewModel));
                 Assert.Throws<ArgumentNullException>(() => instance.Track<AttributedBroadCastViewModel, object>(viewModel));
@@ -100,7 +100,7 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
@@ -131,7 +131,7 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
@@ -175,7 +175,7 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
@@ -219,7 +219,7 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
@@ -252,7 +252,7 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
@@ -285,7 +285,7 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }
@@ -321,7 +321,7 @@ namespace MvvmScarletToolkit.Observables.Tests
                 });
             }
 
-            void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
             {
                 propertyChanged = true;
             }

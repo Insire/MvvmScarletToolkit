@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.Process
 {
     public sealed partial class ProcessErrorData : ObservableObject
     {

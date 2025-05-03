@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.ContextMenu
 {
     public sealed partial class ContextMenuViewModel : ObservableObject
     {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.Geometry
 {
     public sealed class GeometryRenderViewModel : BusinessViewModelListBase<GeometryContainer>
     {
@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
                                     .ToArray();
         }
 
-        private static Geometry BuildGeometry(string charachters, Typeface typeface, NumberSubstitution numberSubstitution)
+        private static System.Windows.Media.Geometry BuildGeometry(string charachters, Typeface typeface, NumberSubstitution numberSubstitution)
         {
             var result = new FormattedText(charachters, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, 24, Brushes.Black, numberSubstitution, TextFormattingMode.Display, 90)
                             .BuildGeometry(new Point(9, 9));

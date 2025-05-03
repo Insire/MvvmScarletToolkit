@@ -43,10 +43,6 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-#if DEBUG
-            Debug.WriteLine($"ObservableBusyStack({_id}) PULL HasItems: {newValue}");
-#endif
-
             Notify(newValue);
         }
 
@@ -66,9 +62,6 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-#if DEBUG
-            Debug.WriteLine($"ObservableBusyStack({_id}) PUSH HasItems: {newValue}");
-#endif
             Notify(newValue);
         }
 

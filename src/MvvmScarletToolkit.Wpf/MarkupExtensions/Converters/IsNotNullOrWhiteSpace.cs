@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit
     [ValueConversion(typeof(string), typeof(bool))]
     public sealed class IsNotNullOrWhiteSpace : ConverterMarkupExtension<IsNotNullOrWhiteSpace>
     {
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
         {
             if (value is null)
             {

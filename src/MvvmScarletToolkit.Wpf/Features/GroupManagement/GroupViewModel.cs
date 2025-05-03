@@ -13,8 +13,8 @@ namespace MvvmScarletToolkit
 
         public string Name
         {
-            get { return _name; }
-            private set { SetProperty(ref _name, value); }
+            get => _name;
+            private set => SetProperty(ref _name, value);
         }
 
         public PropertyGroupDescription GroupDescription { get; }

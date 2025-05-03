@@ -16,7 +16,7 @@ namespace MvvmScarletToolkit
     {
         private readonly Action<string> Logger = (message) => Debug.WriteLine(message);
 
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object? Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
         {
             if (parameter is null)
             {

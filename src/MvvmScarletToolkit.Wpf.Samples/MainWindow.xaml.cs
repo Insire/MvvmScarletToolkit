@@ -1,4 +1,5 @@
 using Jot;
+using MvvmScarletToolkit.Wpf.Samples.Features;
 using System;
 using System.Windows;
 
@@ -30,6 +31,11 @@ namespace MvvmScarletToolkit.Wpf.Samples
             SetCurrentValue(TrackerProperty, tracker);
 
             DataContext = navigationViewModel;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            GC.Collect();
         }
     }
 }

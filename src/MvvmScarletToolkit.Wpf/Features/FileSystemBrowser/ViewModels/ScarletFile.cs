@@ -15,72 +15,72 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         [Bindable(true, BindingDirection.OneWay)]
         public IFileSystemParent? Parent
         {
-            get { return _parent; }
-            private set { SetProperty(ref _parent, value); }
+            get => _parent;
+            private set => SetProperty(ref _parent, value);
         }
 
         private string _name;
         [Bindable(true, BindingDirection.OneWay)]
         public string Name
         {
-            get { return _name; }
-            private set { SetProperty(ref _name, value); }
+            get => _name;
+            private set => SetProperty(ref _name, value);
         }
 
         private string _fullName;
         [Bindable(true, BindingDirection.OneWay)]
         public string FullName
         {
-            get { return _fullName; }
-            private set { SetProperty(ref _fullName, value); }
+            get => _fullName;
+            private set => SetProperty(ref _fullName, value);
         }
 
         private bool _exists;
         [Bindable(true, BindingDirection.OneWay)]
         public bool Exists
         {
-            get { return _exists; }
-            private set { SetProperty(ref _exists, value); }
+            get => _exists;
+            private set => SetProperty(ref _exists, value);
         }
 
         private bool _isSelected;
         [Bindable(true, BindingDirection.TwoWay)]
         public bool IsSelected
         {
-            get { return _isSelected; }
-            set { SetProperty(ref _isSelected, value); }
+            get => _isSelected;
+            set => SetProperty(ref _isSelected, value);
         }
 
         private bool _isHidden;
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsHidden
         {
-            get { return _isHidden; }
-            private set { SetProperty(ref _isHidden, value); }
+            get => _isHidden;
+            private set => SetProperty(ref _isHidden, value);
         }
 
         private DateTime? _creationTimeUtc;
         [Bindable(true, BindingDirection.OneWay)]
         public DateTime? CreationTimeUtc
         {
-            get { return _creationTimeUtc; }
-            private set { SetProperty(ref _creationTimeUtc, value); }
+            get => _creationTimeUtc;
+            private set => SetProperty(ref _creationTimeUtc, value);
         }
 
         private DateTime? _lastAccessTimeUtc;
         [Bindable(true, BindingDirection.OneWay)]
         public DateTime? LastAccessTimeUtc
         {
-            get { return _lastAccessTimeUtc; }
-            private set { SetProperty(ref _lastAccessTimeUtc, value); }
+            get => _lastAccessTimeUtc;
+            private set => SetProperty(ref _lastAccessTimeUtc, value);
         }
 
         private DateTime? _lastWriteTimeUtc;
         [Bindable(true, BindingDirection.OneWay)]
         public DateTime? LastWriteTimeUtc
         {
-            get { return _lastWriteTimeUtc; }
-            private set { SetProperty(ref _lastWriteTimeUtc, value); }
+            get => _lastWriteTimeUtc;
+            private set => SetProperty(ref _lastWriteTimeUtc, value);
         }
 
         [Bindable(true, BindingDirection.OneWay)]

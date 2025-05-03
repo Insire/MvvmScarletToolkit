@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.Virtualization
 {
     public sealed partial class DataEntryViewModel : BusinessViewModelBase
     {
@@ -24,6 +24,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             : base(commandBuilder)
         {
             Id = Guid.NewGuid();
+            _message = string.Empty;
         }
 
         protected override Task UnloadInternal(CancellationToken token)

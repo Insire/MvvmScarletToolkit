@@ -1,20 +1,29 @@
 <Window x:Class="MvvmScarletToolkit.Wpf.Samples.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:asyncState="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.AsyncState"
+        xmlns:busy="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Busy"
         xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:contextMenu="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.ContextMenu"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:dataGrid="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.DataGrid"
+        xmlns:enums="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Enums"
+        xmlns:features="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features"
+        xmlns:geometry="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Geometry"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Incubator"
         xmlns:local="clr-namespace:MvvmScarletToolkit.Wpf.Samples"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
         xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
+        xmlns:process="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Process"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        xmlns:virtualization="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Virtualization"
         Name="MainWindowRoot"
         Title="MvvmScarletToolkit.Wpf.Samples"
         Width="1025"
         Height="450"
-        d:DataContext="{d:DesignInstance Type=local:NavigationViewModel}"
+        d:DataContext="{d:DesignInstance Type=features:NavigationViewModel}"
         mc:Ignorable="d">
 
     <Window.Style>
@@ -50,10 +59,13 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
+            <RowDefinition Height="4" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
         </Grid.RowDefinitions>
 
         <ListBox x:Name="Scenes"
+                 Grid.Row="0"
                  Grid.Column="0"
                  BorderThickness="0"
                  ItemsSource="{Binding Items}"
@@ -65,7 +77,7 @@
                     <Setter Property="IsSelected" Value="{Binding IsSelected}" />
                     <Setter Property="ToolTip">
                         <Setter.Value>
-                            <ToolTip DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext, Converter={mvvm:DebugConverter}, ConverterParameter={StaticResource Num}}">
+                            <ToolTip DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext}">
                                 <TextBlock>
                                     <Run Text="Translated Value:" />
                                     <Run Text="{Binding Localization.Value, Mode=OneWay}" />
@@ -86,18 +98,22 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <GridSplitter Grid.Column="1"
+        <GridSplitter Grid.Row="0"
+                      Grid.RowSpan="3"
+                      Grid.Column="1"
                       Width="5"
+                      Margin="4,0"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Stretch" />
 
         <!--  fill a contentcontrol with the content from the selected scene  -->
-        <ContentControl Grid.Column="2"
-                        Margin="4,0"
+        <ContentControl Grid.Row="0"
+                        Grid.RowSpan="4"
+                        Grid.Column="2"
                         Content="{Binding ElementName=Scenes, Path=SelectedItem.Content, Converter={mvvm:DebugConverter}}">
             <ContentControl.Resources>
 
-                <DataTemplate DataType="{x:Type local:ProcessViewModel}">
+                <DataTemplate DataType="{x:Type process:ProcessViewModel}">
                     <Grid>
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="OutputProxy" Data="{Binding Output}" />
@@ -133,9 +149,15 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="FilePath" />
-                        <TextBlock Grid.Row="2" Text="Args" />
-                        <TextBlock Grid.Row="4" Text="WorkingDirectory" />
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="0"
+                                   Text="FilePath" />
+                        <TextBlock Grid.Row="2"
+                                   Grid.Column="0"
+                                   Text="Args" />
+                        <TextBlock Grid.Row="4"
+                                   Grid.Column="0"
+                                   Text="WorkingDirectory" />
 
                         <TextBox Grid.Row="0"
                                  Grid.Column="2"
@@ -174,7 +196,7 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type local:ProcessData}">
+                                    <DataTemplate DataType="{x:Type process:ProcessData}">
                                         <TextBlock>
                                             <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
                                             <Run Text="{Binding Message, Mode=OneWay}" />
@@ -195,7 +217,7 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type local:ProcessErrorData}">
+                                    <DataTemplate DataType="{x:Type process:ProcessErrorData}">
                                         <TextBlock TextWrapping="Wrap">
                                             <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
                                             <Run Text="{Binding Message, Mode=OneWay}" />
@@ -216,13 +238,13 @@
                                       VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding Source={StaticResource CompositeCollection}}">
                                 <ItemsControl.Resources>
-                                    <DataTemplate DataType="{x:Type local:ProcessData}">
+                                    <DataTemplate DataType="{x:Type process:ProcessData}">
                                         <TextBlock Foreground="Blue">
                                             <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
                                             <Run Text="{Binding Message, Mode=OneWay}" />
                                         </TextBlock>
                                     </DataTemplate>
-                                    <DataTemplate DataType="{x:Type local:ProcessErrorData}">
+                                    <DataTemplate DataType="{x:Type process:ProcessErrorData}">
                                         <TextBlock Foreground="Red" TextWrapping="Wrap">
                                             <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
                                             <Run Text="{Binding Message, Mode=OneWay}" />
@@ -239,14 +261,14 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:EnumViewModel}">
+                <DataTemplate DataType="{x:Type enums:EnumViewModel}">
                     <DockPanel>
                         <StackPanel VerticalAlignment="Center"
                                     DockPanel.Dock="Left"
                                     Orientation="Vertical">
-                            <RadioButton Content="None" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static local:ViewModelEnum.None}}" />
-                            <RadioButton Content="AnotherValue" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static local:ViewModelEnum.AnotherValue}}" />
-                            <RadioButton Content="SomeValue" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static local:ViewModelEnum.SomeValue}}" />
+                            <RadioButton Content="None" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static enums:ViewModelEnum.None}}" />
+                            <RadioButton Content="AnotherValue" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static enums:ViewModelEnum.AnotherValue}}" />
+                            <RadioButton Content="SomeValue" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static enums:ViewModelEnum.SomeValue}}" />
                         </StackPanel>
                         <Border HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -257,12 +279,12 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:ContextMenuViewModels}">
+                <DataTemplate DataType="{x:Type contextMenu:ContextMenuViewModels}">
                     <Grid Background="DarkGray">
                         <Grid.ContextMenu>
                             <ContextMenu ItemsSource="{Binding Items}">
                                 <ContextMenu.ItemTemplate>
-                                    <HierarchicalDataTemplate DataType="{x:Type local:ContextMenuViewModel}" ItemsSource="{Binding Items}">
+                                    <HierarchicalDataTemplate DataType="{x:Type contextMenu:ContextMenuViewModel}" ItemsSource="{Binding Items}">
                                         <MenuItem Header="{Binding Name}" />
                                     </HierarchicalDataTemplate>
                                 </ContextMenu.ItemTemplate>
@@ -271,7 +293,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:DataEntriesViewModel}">
+                <DataTemplate DataType="{x:Type virtualization:DataEntriesViewModel}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
@@ -336,7 +358,9 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <ItemsControl Grid.Column="2" ItemsSource="{Binding Items}">
+                        <ItemsControl Grid.Row="0"
+                                      Grid.Column="2"
+                                      ItemsSource="{Binding Items}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel />
@@ -344,7 +368,7 @@
                             </ItemsControl.ItemsPanel>
 
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type local:DataEntryViewModel}">
+                                <DataTemplate DataType="{x:Type virtualization:DataEntryViewModel}">
                                     <Rectangle Width="10"
                                                Height="10"
                                                Margin="1">
@@ -385,7 +409,9 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                        <StackPanel Grid.Row="2"
+                                    Grid.Column="0"
+                                    Orientation="Horizontal">
                             <Button Margin="0,0,4,0"
                                     Command="{Binding AddCommand}"
                                     Content="New" />
@@ -405,7 +431,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:DataGridViewModel}">
+                <DataTemplate DataType="{x:Type dataGrid:DataGridViewModel}">
                     <Grid>
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding Groups}" />
@@ -595,7 +621,7 @@
 
                         <ContentControl Grid.Row="8" Content="{Binding SelectedItem}">
                             <ContentControl.ContentTemplate>
-                                <DataTemplate DataType="{x:Type local:DataGridRowViewModel}">
+                                <DataTemplate DataType="{x:Type dataGrid:DataGridRowViewModel}">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -616,11 +642,14 @@
                                             </Grid.RowDefinitions>
 
                                             <TextBlock Text="IsSelected" />
-                                            <CheckBox Grid.Column="2"
-                                                      Grid.ColumnSpan="4"
+                                            <CheckBox Grid.Row="0"
+                                                      Grid.Column="2"
+                                                      Grid.ColumnSpan="3"
                                                       IsChecked="{Binding IsSelected}" />
 
-                                            <TextBlock Grid.Row="2" Text="Color" />
+                                            <TextBlock Grid.Row="2"
+                                                       Grid.Column="0"
+                                                       Text="Color" />
                                             <TextBox Grid.Row="2"
                                                      Grid.Column="2"
                                                      VerticalAlignment="Top"
@@ -629,7 +658,9 @@
                                                        Grid.Column="4"
                                                        Fill="{Binding Color}" />
 
-                                            <TextBlock Grid.Row="4" Text="Name" />
+                                            <TextBlock Grid.Row="4"
+                                                       Grid.Column="0"
+                                                       Text="Name" />
                                             <TextBox Grid.Row="4"
                                                      Grid.Column="2"
                                                      VerticalAlignment="Top"
@@ -641,7 +672,9 @@
                                                       IsChecked="{Binding Name, Converter={mvvm:IsNotNullOrWhiteSpace}}"
                                                       IsHitTestVisible="False" />
 
-                                            <TextBlock Grid.Row="6" Text="CreatedOn" />
+                                            <TextBlock Grid.Row="6"
+                                                       Grid.Column="0"
+                                                       Text="CreatedOn" />
                                             <Calendar Grid.Row="6"
                                                       Grid.Column="2"
                                                       DisplayDate="{Binding CreatedOn}"
@@ -677,7 +710,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:AsyncStateListViewModel}">
+                <DataTemplate DataType="{x:Type asyncState:AsyncStateListViewModel}">
                     <DockPanel>
                         <DockPanel.Resources>
                             <CollectionViewSource x:Key="SortedViewSource"
@@ -691,7 +724,7 @@
                                 </CollectionViewSource.SortDescriptions>
                             </CollectionViewSource>
 
-                            <DataTemplate x:Key="DemoItemTemplate" DataType="{x:Type local:AsyncStateViewModel}">
+                            <DataTemplate x:Key="DemoItemTemplate" DataType="{x:Type asyncState:AsyncStateViewModel}">
                                 <StackPanel Orientation="Horizontal">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="Loaded">
@@ -750,7 +783,7 @@
                                          Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged, Delay=150}" />
                             </DockPanel>
 
-                            <DockPanel Grid.Column="2">
+                            <DockPanel Grid.Row="0" Grid.Column="2">
                                 <ToggleButton Content="Generate Items and Auto-Scroll">
                                     <ToggleButton.Style>
                                         <Style TargetType="{x:Type ToggleButton}">
@@ -857,7 +890,7 @@
                                     </ItemsControl.ItemsPanel>
 
                                     <ItemsControl.ItemTemplate>
-                                        <DataTemplate DataType="{x:Type local:AsyncStateViewModel}">
+                                        <DataTemplate DataType="{x:Type asyncState:AsyncStateViewModel}">
                                             <TextBlock Margin="4,0"
                                                        VerticalAlignment="Center"
                                                        Text="{Binding DisplayName}">
@@ -887,7 +920,7 @@
                                             Grid.Column="2"
                                             Content="{Binding SelectedItem}">
                                 <ContentControl.ContentTemplate>
-                                    <DataTemplate DataType="{x:Type local:AsyncStateViewModel}">
+                                    <DataTemplate DataType="{x:Type asyncState:AsyncStateViewModel}">
                                         <Border BorderBrush="Black" BorderThickness="0.5">
 
                                             <StackPanel Margin="4" Orientation="Vertical">
@@ -906,7 +939,7 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:ProcessingImagesViewModel}">
+                <DataTemplate DataType="{x:Type features:ProcessingImagesViewModel}">
                     <local:DragAndDrop />
                 </DataTemplate>
 
@@ -937,7 +970,7 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:PasswordViewModel}">
+                <DataTemplate DataType="{x:Type features:PasswordViewModel}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -1009,7 +1042,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:ProgressViewModel}">
+                <DataTemplate DataType="{x:Type features:ProgressViewModel}">
                     <DockPanel>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Unloaded">
@@ -1051,7 +1084,7 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:BusyViewModel}">
+                <DataTemplate DataType="{x:Type busy:BusyViewModel}">
                     <TreeView ItemsSource="{Binding Items}">
                         <TreeView.ContextMenu>
                             <ContextMenu>
@@ -1070,7 +1103,7 @@
                                 <Setter Property="Margin" Value="2" />
                             </Style>
 
-                            <DataTemplate DataType="{x:Type local:ObservableBusyViewModel}">
+                            <DataTemplate DataType="{x:Type busy:ObservableBusyViewModel}">
                                 <Border>
                                     <Border.ContextMenu>
                                         <ContextMenu>
@@ -1093,7 +1126,7 @@
                                     <TextBlock Text="{Binding}" />
                                 </Border>
                             </DataTemplate>
-                            <HierarchicalDataTemplate DataType="{x:Type local:BusyViewModel}" ItemsSource="{Binding Items}">
+                            <HierarchicalDataTemplate DataType="{x:Type busy:BusyViewModel}" ItemsSource="{Binding Items}">
                                 <Border>
                                     <Border.ContextMenu>
                                         <ContextMenu>
@@ -1121,7 +1154,7 @@
                     </TreeView>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:GeometryRenderViewModel}">
+                <DataTemplate DataType="{x:Type geometry:GeometryRenderViewModel}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -1173,7 +1206,7 @@
                             </ListBox.ItemContainerStyle>
 
                             <ListBox.ItemTemplate>
-                                <DataTemplate DataType="{x:Type local:GeometryContainer}">
+                                <DataTemplate DataType="{x:Type geometry:GeometryContainer}">
                                     <ContentControl>
                                         <ContentControl.Resources>
                                             <Path x:Key="PathTemplate"
@@ -1319,7 +1352,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:DialogViewModel}">
+                <DataTemplate DataType="{x:Type features:DialogViewModel}">
                     <Grid>
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
@@ -1390,7 +1423,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:ToastsViewModel}">
+                <DataTemplate DataType="{x:Type features:ToastsViewModel}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -1453,7 +1486,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:FormViewModel}">
+                <DataTemplate DataType="{x:Type features:FormViewModel}">
                     <StackPanel Orientation="Vertical">
 
                         <GroupBox Header="Bound AllowableCharactersTextBoxBehavior">
@@ -1560,11 +1593,13 @@
                 </DataTemplate>
 
 
-                <DataTemplate DataType="{x:Type local:ObservableDictionaryViewModel}">
+                <DataTemplate DataType="{x:Type features:ObservableDictionaryViewModel}">
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                             <Button Command="{Binding AddCommand}" Content="Add" />
-                            <Button Command="{Binding RemoveCommand}" Content="Remove" Margin="4,0"/>
+                            <Button Margin="4,0"
+                                    Command="{Binding RemoveCommand}"
+                                    Content="Remove" />
                             <Button Command="{Binding ClearCommand}" Content="Clear" />
                         </StackPanel>
                         <ListBox ItemsSource="{Binding Items}">
@@ -1583,5 +1618,11 @@
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
+
+        <Button Grid.Row="2"
+                Grid.Column="0"
+                Click="Button_Click">
+            <TextBlock Text="Clear GC" />
+        </Button>
     </Grid>
 </Window>

@@ -6,16 +6,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.Busy
 {
-    public sealed partial class ObservableBusyViewModel : ObservableObject, IObservable<bool>, IDisposable
+    public sealed class ObservableBusyViewModel : ObservableObject, IObservable<bool>, IDisposable
     {
         private readonly ObservableBusyStack _observableBusyStack;
 
         private bool _disposed;
 
         private bool _isBusy;
-
         public bool IsBusy
         {
             get { return _isBusy; }

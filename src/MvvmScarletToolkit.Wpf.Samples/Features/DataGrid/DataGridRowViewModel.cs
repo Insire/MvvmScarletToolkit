@@ -2,17 +2,17 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
 using System;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
 {
     public sealed partial class DataGridRowViewModel : ViewModelBase
     {
-        private int id;
+        private int _id;
         public int Id
         {
-            get { return id; }
+            get { return _id; }
             set
             {
-                if (SetProperty(ref id, value))
+                if (SetProperty(ref _id, value))
                 {
                     UpdatedOn = DateTime.Now;
                 }
@@ -32,8 +32,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
             }
         }
 
-        private string _color;
-        public string Color
+        private string? _color;
+        public string? Color
         {
             get { return _color; }
             set
@@ -62,11 +62,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public DateTime UpdatedOn
         {
             get { return _updatedOn; }
-            private set { SetProperty(ref _updatedOn, value); }
+            private set
+            {
+                SetProperty(ref _updatedOn, value);
+            }
         }
 
         [ObservableProperty]
-        private bool _isSelected;
+        private bool? _isSelected;
 
         public int Page { get; }
 
@@ -74,6 +77,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             : base(commandBuilder)
         {
             Page = page;
+            _name = string.Empty;
         }
     }
 }

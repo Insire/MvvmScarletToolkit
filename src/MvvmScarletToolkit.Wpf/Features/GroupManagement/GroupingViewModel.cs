@@ -47,7 +47,7 @@ namespace MvvmScarletToolkit
 
         public bool IsLiveGroupingEnabled
         {
-            get { return _isLiveGroupingEnabled; }
+            get => _isLiveGroupingEnabled;
             set
             {
                 if (SetProperty(ref _isLiveGroupingEnabled, value))
@@ -66,7 +66,7 @@ namespace MvvmScarletToolkit
 
         public bool IsLiveSortingEnabled
         {
-            get { return _isLiveSortingEnabled; }
+            get => _isLiveSortingEnabled;
             set
             {
                 if (SetProperty(ref _isLiveSortingEnabled, value))

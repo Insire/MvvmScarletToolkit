@@ -53,6 +53,7 @@ namespace Build
                 (Folder: @"src\MvvmScarletToolkit.Wpf", ProjectFile:  "MvvmScarletToolkit.Wpf.csproj"),
                 (Folder: @"src\MvvmScarletToolkit.Mediator", ProjectFile:  "MvvmScarletToolkit.Mediator.csproj"),
                 (Folder: @"src\MvvmScarletToolkit.Avalonia", ProjectFile:  "MvvmScarletToolkit.Avalonia.csproj"),
+                (Folder: @"src\MvvmScarletToolkit.ImageLoading", ProjectFile:  "MvvmScarletToolkit.ImageLoading.csproj"),
             }
             .Select(p =>
             {

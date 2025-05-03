@@ -1,3 +1,4 @@
+using MvvmScarletToolkit.Wpf.Samples.Features;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -49,9 +50,9 @@ namespace MvvmScarletToolkit.Wpf.Samples
             base.OnDrop(e);
 
             // If the DataObject contains string data, extract it.
-            if (e.Data.GetDataPresent(typeof(Image)))
+            if (e.Data.GetDataPresent(typeof(Features.Image.ImageViewModel)))
             {
-                var image = (Image)e.Data.GetData(typeof(Image));
+                var image = (Features.Image.ImageViewModel)e.Data.GetData(typeof(Features.Image.ImageViewModel));
 
                 if (DataContext is ProcessingImagesViewModel vm)
                 {
@@ -67,7 +68,10 @@ namespace MvvmScarletToolkit.Wpf.Samples
                     {
                         e.Effects = DragDropEffects.Move;
                         await vm.Source.Remove(image).ConfigureAwait(false);
-                        await vm.Target.Add(image).ConfigureAwait(false);
+                        if (!vm.Target.Items.Contains(image))
+                        {
+                            await vm.Target.Add(image).ConfigureAwait(false);
+                        }
                     }
                 }
             }
@@ -80,9 +84,9 @@ namespace MvvmScarletToolkit.Wpf.Samples
             base.OnDrop(e);
 
             // If the DataObject contains string data, extract it.
-            if (e.Data.GetDataPresent(typeof(Image)))
+            if (e.Data.GetDataPresent(typeof(Features.Image.ImageViewModel)))
             {
-                var image = (Image)e.Data.GetData(typeof(Image));
+                var image = (Features.Image.ImageViewModel)e.Data.GetData(typeof(Features.Image.ImageViewModel));
 
                 if (DataContext is ProcessingImagesViewModel vm)
                 {
@@ -97,8 +101,12 @@ namespace MvvmScarletToolkit.Wpf.Samples
                     else
                     {
                         e.Effects = DragDropEffects.Move;
+
                         await vm.Target.Remove(image).ConfigureAwait(false);
-                        await vm.Source.Add(image).ConfigureAwait(false);
+                        if (!vm.Source.Items.Contains(image))
+                        {
+                            await vm.Source.Add(image).ConfigureAwait(false);
+                        }
                     }
                 }
             }

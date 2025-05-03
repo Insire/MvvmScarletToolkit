@@ -1,4 +1,4 @@
-﻿namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.Enums
 {
     public enum ViewModelEnum
     {

@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit
             Casing = CharacterCasing.Upper;
         }
 
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object? Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
         {
             if (value is string str)
             {
@@ -37,7 +37,7 @@ namespace MvvmScarletToolkit
             return value;
         }
 
-        private static object Convert(string value, object parameter, CharacterCasing fallBackCasing)
+        private static object Convert(string value, object? parameter, CharacterCasing fallBackCasing)
         {
             if (parameter is CharacterCasing characterCasing)
             {

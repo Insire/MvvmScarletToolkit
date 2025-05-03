@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace MvvmScarletToolkit
         [ConstructorArgument("separator")]
         public string Separator { get; set; } = ", ";
 
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
         {
             if (value is IEnumerable<string> strings)
             {

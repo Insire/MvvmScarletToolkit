@@ -4,7 +4,7 @@ using MvvmScarletToolkit.Observables;
 using System;
 using System.Threading;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.AsyncState
 {
     public sealed partial class AsyncStateListViewModel : ViewModelListBase<AsyncStateViewModel>
     {
@@ -21,6 +21,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public AsyncStateListViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
+            _filterText = string.Empty;
             for (var i = 0; i < 10; i++)
             {
                 AddUnchecked(new AsyncStateViewModel(commandBuilder)
@@ -39,7 +40,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             DisableGenerationCommand = new RelayCommand(() => _timer.Change(Timeout.InfiniteTimeSpan, TimeSpan.FromSeconds(1)));
         }
 
-        private static void OnTimerElapsed(object state)
+        private static void OnTimerElapsed(object? state)
         {
             if (state is AsyncStateListViewModel viewModel)
             {

@@ -56,12 +56,12 @@ namespace MvvmScarletToolkit.Commands
         }
 
         [DebuggerStepThrough]
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             return CanExecuteInternal(parameter);
         }
 
-        private bool CanExecuteInternal(object parameter)
+        private bool CanExecuteInternal(object? parameter)
         {
             if (_canExecute is null)
             {
@@ -78,13 +78,13 @@ namespace MvvmScarletToolkit.Commands
         }
 
         [DebuggerStepThrough]
-        public override async void Execute(object parameter)
+        public override async void Execute(object? parameter)
         {
             await ExecuteAsync(parameter)
                 .ConfigureAwait(false);
         }
 
-        public override async Task ExecuteAsync(object parameter)
+        public override async Task ExecuteAsync(object? parameter)
         {
             if (IsBusy)
             {

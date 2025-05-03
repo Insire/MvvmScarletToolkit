@@ -1,20 +1,32 @@
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.FileSystemBrowser;
+using MvvmScarletToolkit.Wpf.Samples.Features.Busy;
+using MvvmScarletToolkit.Wpf.Samples.Features.ContextMenu;
+using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
+using MvvmScarletToolkit.Wpf.Samples.Features.Image;
+using MvvmScarletToolkit.Wpf.Samples.Features.Process;
+using MvvmScarletToolkit.Wpf.Samples.Features.Virtualization;
+using System.Net.Http;
 using System.Threading;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
     public sealed class NavigationViewModel : Scenes
     {
-        public NavigationViewModel(SynchronizationContext synchronizationContext, IScarletCommandBuilder commandBuilder, LocalizationsViewModel localizationsViewModel)
+        public NavigationViewModel(
+            SynchronizationContext synchronizationContext,
+            IScarletCommandBuilder commandBuilder,
+            LocalizationsViewModel localizationsViewModel,
+            EnvironmentInformationProvider environmentInformationProvider,
+            HttpClient httpClient)
             : base(commandBuilder, localizationsViewModel)
         {
-            var dataGridViewModel = new DataGridViewModel(commandBuilder, synchronizationContext);
+            var dataGridViewModel = new DataGrid.DataGridViewModel(commandBuilder, synchronizationContext);
 
+            Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(CommandBuilder, new ImageViewModelProvider(CommandBuilder, environmentInformationProvider, httpClient)));
             Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
-            Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(commandBuilder, new ImageFactory(CommandBuilder)));
-            Add("ConcurrentCommands and state changes", new AsyncStateListViewModel(commandBuilder));
+            Add("ConcurrentCommands and state changes", new AsyncState.AsyncStateListViewModel(commandBuilder));
             Add("MVVM Live Sorting and Grouping in bound collections", dataGridViewModel);
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));
             Add("FileSystemBrowser", new FileSystemViewModel(commandBuilder, new FileSystemViewModelFactory(commandBuilder), FileSystemOptionsViewModel.Default));
@@ -33,10 +45,12 @@ namespace MvvmScarletToolkit.Wpf.Samples
             contextMenu.Items[0].Items.Add(menuitem);
 
             Add("MVVM ContextMenus", contextMenu);
-            Add("Binding Enum values", new EnumViewModel());
+            Add("Binding Enum values", new Enums.EnumViewModel());
             Add("MVVM Toast-Notification", new ToastsViewModel(commandBuilder));
             Add("Input Prevention", new FormViewModel());
             Add("ObservableDictionary", new ObservableDictionaryViewModel());
+
+            Items[0].IsSelected = true;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace MvvmScarletToolkit
 {
     public abstract class DialogResultViewModel : ViewModelBase
     {
-        protected EventHandler DialogClosed;
+        protected EventHandler? DialogClosed;
 
         public ICommand CloseCommand { get; }
 
@@ -44,7 +44,7 @@ namespace MvvmScarletToolkit
 
         public async Task Show(CancellationToken token)
         {
-            var tcs = new TaskCompletionSource<object>();
+            var tcs = new TaskCompletionSource<object?>();
             await using (var registration = token.Register(() => tcs.TrySetCanceled()))
             {
                 try
@@ -58,7 +58,7 @@ namespace MvvmScarletToolkit
                     DialogClosed -= OnClosed;
                 }
 
-                void OnClosed(object sender, EventArgs e)
+                void OnClosed(object? sender, EventArgs e)
                 {
                     tcs.TrySetResult(null);
                 }

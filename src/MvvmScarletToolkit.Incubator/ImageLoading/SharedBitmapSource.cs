@@ -25,7 +25,7 @@ namespace MvvmScarletToolkit.Wpf
 
         public override System.Windows.Media.PixelFormat Format => ConvertPixelFormat(Bitmap.PixelFormat);
 
-        public override BitmapPalette Palette => null;
+        public override BitmapPalette? Palette => null;
 
         public SharedBitmapSource(int width, int height, System.Drawing.Imaging.PixelFormat sourceFormat)
             : this(new Bitmap(width, height, sourceFormat))
@@ -56,7 +56,7 @@ namespace MvvmScarletToolkit.Wpf
             Bitmap.UnlockBits(sourceData);
         }
 
-        protected override Freezable CreateInstanceCore()
+        protected override Freezable? CreateInstanceCore()
         {
             var instance = Activator.CreateInstance(GetType());
             if (instance is Freezable freezable)

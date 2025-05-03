@@ -1,4 +1,4 @@
-﻿namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit
 {
     public sealed class BoolDialogResultViewModel : DialogResultViewModel<bool>
     {
