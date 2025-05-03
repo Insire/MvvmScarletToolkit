@@ -14,8 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.vsconfig = .vsconfig
 		src\Directory.Build.props = src\Directory.Build.props
 		src\Directory.Build.targets = src\Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
 		global.json = global.json
 		MvvmScarletToolkit.ruleset = MvvmScarletToolkit.ruleset
+		nuget.config = nuget.config
 		README.md = README.md
 		version.json = version.json
 	EndProjectSection
@@ -35,6 +37,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Wpf.Tests", "src\MvvmScarletToolkit.Wpf.Tests\MvvmScarletToolkit.Wpf.Tests.csproj", "{A9CE017F-B4C9-40DC-A092-DC5067956994}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Observables.Tests", "src\MvvmScarletToolkit.Observables.Tests\MvvmScarletToolkit.Observables.Tests.csproj", "{F7EBB910-0AA9-4683-878B-06108492F2F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Mediator", "src\MvvmScarletToolkit.Mediator\MvvmScarletToolkit.Mediator.csproj", "{F30ECD4B-A048-451A-ADFA-950C6F44D953}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Mediator.Tests", "src\MvvmScarletToolkit.Mediator.Tests\MvvmScarletToolkit.Mediator.Tests.csproj", "{F3E95F6E-E637-4642-9355-20CE44D5B051}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Mediator.Benchmark", "src\MvvmScarletToolkit.Mediator.Benchmark\MvvmScarletToolkit.Mediator.Benchmark.csproj", "{82B2F833-791A-4420-822F-769DB924625B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

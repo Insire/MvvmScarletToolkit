@@ -3,7 +3,11 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="BenchmarkDotNet" Version="0.14.0" />
     <PackageVersion Include="Jot" Version="2.1.17" />
+    <PackageVersion Include="MediatR" Version="12.5.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
     <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
@@ -23,12 +27,13 @@
     <PackageVersion Include="NUnit.Analyzers" Version="4.7.0" />
     <PackageVersion Include="Cake.Codecov" Version="3.0.0" />
     <PackageVersion Include="Cake.Frosting" Version="5.0.0" />
-    <PackageVersion Include="Cake.GitVersioning" Version="3.6.146" />
+    <PackageVersion Include="Cake.GitVersioning" Version="3.7.115" />
     <PackageVersion Include="Cake.Incubator" Version="8.0.0" />
     <PackageVersion Include="Codecov" Version="1.13.0" />
     <PackageVersion Include="GitVersion.CommandLine" Version="5.12.0" />
-    <PackageVersion Include="Microsoft.CodeCoverage" Version="17.12.0" />
-    <PackageVersion Include="NUnit.ConsoleRunner" Version="3.18.3" />
-    <PackageVersion Include="ReportGenerator" Version="5.4.1" />
+    <PackageVersion Include="Microsoft.CodeCoverage" Version="17.13.0" />
+    <PackageVersion Include="NUnit.ConsoleRunner" Version="3.20.0" />
+    <PackageVersion Include="ReportGenerator" Version="5.4.5" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
   </ItemGroup>
 </Project>
