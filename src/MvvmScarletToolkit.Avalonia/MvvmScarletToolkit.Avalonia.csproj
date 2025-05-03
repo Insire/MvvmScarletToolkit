@@ -1,15 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows;net9.0-windows</TargetFrameworks>
     <OutputType>Library</OutputType>
     <Nullable>enable</Nullable>
-    <Description>MvvmScarletToolkit.Commands is part of the MvvmScarletToolkit framework, containing asynchrnous and synchronous implementations of the ICommand interface for .NET.</Description>
-    <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,Library,.NET,OSS,OpenSource</PackageTags>
+    <Description>MvvmScarletToolkit.Implementations is part of the MvvmScarletToolkit framework, containing concrete implementations for Avalonia that have been abstracted away in the MvvmScarletToolkit.Abstractions library.</Description>
+    <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,Avalonia,Library,.NET,OSS,OpenSource</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" />
-
+    <PackageReference Include="Avalonia" />
     <PackageReference Include="Nerdbank.GitVersioning">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -22,5 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
   </ItemGroup>
 </Project>

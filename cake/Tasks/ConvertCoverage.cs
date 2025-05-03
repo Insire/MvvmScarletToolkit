@@ -12,27 +12,31 @@ namespace Build
     {
         public override void Run(BuildContext context)
         {
+            var dotnetExe = context.Tools.Resolve("dotnet.exe");
+            var codeCoverageExe = context.Tools.Resolve("dotnet-coverage.dll");
+
             foreach (var file in context.GetFiles($"{context.ResultsPath.FullPath}/coverage/**/*.coverage"))
             {
-                var codeCoverageExe = context.Tools.Resolve("CodeCoverage.exe");
                 var result = System.IO.Path.ChangeExtension(file.FullPath, ".xml");
 
                 var settings = new ProcessSettings()
                         .UseWorkingDirectory(context.ResultsPath)
                         .WithArguments(builder => builder
-                            .Append("analyze")
-                            .AppendSwitchQuoted(@"-output", ":", result)
+                            .AppendQuoted(codeCoverageExe.FullPath)
+                            .Append("merge")
+                            .Append("--remove-input-files")
+                            .AppendSwitchQuoted(@"--output", " ", result)
+                            .AppendSwitch("--output-format", "xml")
                             .Append(file.FullPath)
                         );
 
-                context.StartProcess(codeCoverageExe, settings);
+                context.StartProcess(dotnetExe.FullPath, settings);
             }
         }
 
         public override bool ShouldRun(BuildContext context)
         {
-            return base.ShouldRun(context)
-                && context.Tools.Resolve("CodeCoverage.exe") != null;
+            return context.Tools.Resolve("dotnet-coverage.dll") != null;
         }
     }
 }

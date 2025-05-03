@@ -10,7 +10,5 @@ namespace Build
     [IsDependentOn(typeof(PushNuget))]
     [IsDependentOn(typeof(PushGithub))]
     [IsDependentOn(typeof(PushLocally))]
-    public sealed class Default : FrostingTask<BuildContext>
-    {
-    }
+    public sealed class Default : FrostingTask<BuildContext>;
 }

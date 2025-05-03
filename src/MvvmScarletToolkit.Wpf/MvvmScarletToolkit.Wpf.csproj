@@ -1,29 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
-        <OutputType>Library</OutputType>
-        <UseWPF>true</UseWPF>
-        <Nullable>enable</Nullable>
-        <Description>MvvmScarletToolkit.Implementations is part of the MvvmScarletToolkit framework, containing concrete implementations for WPF that have been abstracted away in the MvvmScarletToolkit.Abstractions library.</Description>
-        <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,WPF,Library,.NET,OSS,OpenSource</PackageTags>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>net8.0-windows;net9.0-windows</TargetFrameworks>
+    <OutputType>Library</OutputType>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <Description>MvvmScarletToolkit.Implementations is part of the MvvmScarletToolkit framework, containing concrete implementations for WPF that have been abstracted away in the MvvmScarletToolkit.Abstractions library.</Description>
+    <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,WPF,Library,.NET,OSS,OpenSource</PackageTags>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Nerdbank.GitVersioning" Version="3.6.133">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
 
-        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
-    </ItemGroup>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
-        <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
-        <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
+  </ItemGroup>
 </Project>

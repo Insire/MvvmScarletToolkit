@@ -19,7 +19,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             {
                 if (fileStream.Length >= 256)
                 {
-                    fileStream.Read(byteBuffer, 0, 256);
+                    fileStream.ReadExactly(byteBuffer);
                 }
                 else
                 {
