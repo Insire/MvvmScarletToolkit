@@ -1,5 +1,7 @@
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit
@@ -14,6 +16,10 @@ namespace MvvmScarletToolkit
 
         Task<bool> IsEmpty(IFileSystemParent parent);
 
-        Task<bool> CanAccess(IFileSystemChild child);
+        Task<ScarletFileInfo?> GetFileInfo(string filePath, CancellationToken token);
+
+        Task<ScarletDriveInfo?> GetDriveInfo(string filePath, CancellationToken token);
+
+        Task<ScarletDirectoryInfo?> GetDirectoryInfo(string filePath, CancellationToken token);
     }
 }

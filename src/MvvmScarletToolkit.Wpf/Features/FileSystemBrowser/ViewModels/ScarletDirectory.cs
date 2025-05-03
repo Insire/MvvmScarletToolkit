@@ -1,4 +1,6 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,146 +12,110 @@ using System.Threading.Tasks;
 namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     [DebuggerDisplay("Directory: {Name} IsContainer: {IsContainer}")]
-    public sealed class ScarletDirectory : BusinessViewModelListBase<IFileSystemChild>, IFileSystemDirectory
+    public sealed partial class ScarletDirectory : BusinessViewModelListBase<IFileSystemChild>, IFileSystemDirectory
     {
-        private readonly IFileSystemViewModelFactory _factory;
-        private readonly IReadOnlyCollection<FileAttributes> _fileAttributes;
-        private readonly IReadOnlyCollection<FileAttributes> _folderAttributes;
+        private readonly Mapper _mapper;
 
-        private IFileSystemParent? _parent;
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial IFileSystemParent? Parent { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string Name { get; private set; } = string.Empty;
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string FullName { get; private set; }= string.Empty;
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool Exists { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial bool IsSelected { get; set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsHidden { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial DateTime? CreationTimeUtc { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial DateTime? LastAccessTimeUtc { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial DateTime? LastWriteTimeUtc { get; private set; }
 
-        [Bindable(true, BindingDirection.OneWay)]
-        public IFileSystemParent? Parent
-        {
-            get => _parent;
-            private set => SetProperty(ref _parent, value);
-        }
+        [Bindable(true, BindingDirection.OneWay)] public bool IsContainer => true;
 
-        private string _name;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public string Name
-        {
-            get => _name;
-            private set => SetProperty(ref _name, value);
-        }
-
-        private string _fullName;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public string FullName
-        {
-            get => _fullName;
-            private set => SetProperty(ref _fullName, value);
-        }
-
-        private bool _exists;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool Exists
-        {
-            get => _exists;
-            private set => SetProperty(ref _exists, value);
-        }
-
-        private bool _isSelected;
-
-        [Bindable(true, BindingDirection.TwoWay)]
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set => SetProperty(ref _isSelected, value);
-        }
-
-        private bool _isHidden;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsHidden
-        {
-            get => _isHidden;
-            private set => SetProperty(ref _isHidden, value);
-        }
-
-        private DateTime? _creationTimeUtc;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public DateTime? CreationTimeUtc
-        {
-            get => _creationTimeUtc;
-            private set => SetProperty(ref _creationTimeUtc, value);
-        }
-
-        private DateTime? _lastAccessTimeUtc;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public DateTime? LastAccessTimeUtc
-        {
-            get => _lastAccessTimeUtc;
-            private set => SetProperty(ref _lastAccessTimeUtc, value);
-        }
-
-        private DateTime? _lastWriteTimeUtc;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public DateTime? LastWriteTimeUtc
-        {
-            get => _lastWriteTimeUtc;
-            private set => SetProperty(ref _lastWriteTimeUtc, value);
-        }
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsContainer { get; }
-
-        public ScarletDirectory(DirectoryInfo info, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes, IFileSystemParent parent, IScarletCommandBuilder commandBuilder, IFileSystemViewModelFactory factory)
+        public ScarletDirectory(
+            ScarletDirectoryInfo info,
+            IReadOnlyCollection<FileAttributes> fileAttributes,
+            IReadOnlyCollection<FileAttributes> folderAttributes,
+            IFileSystemParent parent,
+            IScarletCommandBuilder commandBuilder,
+            IFileSystemViewModelFactory factory)
             : base(commandBuilder)
         {
-            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            _name = info.Name ?? throw new ArgumentException(nameof(info.Name));
-            _fullName = info.FullName ?? throw new ArgumentException(info.FullName);
-            _parent = parent ?? throw new ArgumentNullException(nameof(parent));
+            ArgumentNullException.ThrowIfNull(info);
+            ArgumentNullException.ThrowIfNull(parent);
 
-            _fileAttributes = fileAttributes;
-            _folderAttributes = folderAttributes;
-            IsContainer = true;
+            Parent = parent;
 
-            Set(info);
+            _mapper = new Mapper(this, info,fileAttributes,folderAttributes, factory);
         }
 
-        private void Set(DirectoryInfo info)
+        protected override Task RefreshInternal(CancellationToken token)
         {
-            Exists = info.Exists;
-            IsHidden = (info.Attributes & FileAttributes.Hidden) != 0;
-            CreationTimeUtc = info.CreationTimeUtc;
-            LastAccessTimeUtc = info.LastAccessTimeUtc;
-            LastWriteTimeUtc = info.LastWriteTimeUtc;
+            return _mapper.Refresh(token);
         }
 
-        protected override async Task RefreshInternal(CancellationToken token)
+
+        public sealed class Mapper : IViewModelMapper
         {
-            var info = await Task.Run(() => new DirectoryInfo(FullName), token);
-            await Dispatcher.Invoke(() => Set(info));
+            private readonly ScarletDirectory _viewModel;
+            private readonly IReadOnlyCollection<FileAttributes> _fileAttributes;
+            private readonly IReadOnlyCollection<FileAttributes> _folderAttributes;
+            private readonly string _fullName;
+            private readonly IFileSystemViewModelFactory _fileSystemViewModelFactory;
 
-            if (!Exists)
+            public Mapper(
+                ScarletDirectory viewModel,
+                ScarletDirectoryInfo info,
+                IReadOnlyCollection<FileAttributes> fileAttributes,
+                IReadOnlyCollection<FileAttributes> folderAttributes,
+                IFileSystemViewModelFactory fileSystemViewModelFactory)
             {
-                return;
+                ArgumentNullException.ThrowIfNull(viewModel);
+                ArgumentNullException.ThrowIfNull(info);
+                ArgumentNullException.ThrowIfNull(fileSystemViewModelFactory);
+
+                _viewModel = viewModel;
+                _fileAttributes = fileAttributes;
+                _folderAttributes = folderAttributes;
+                _fileSystemViewModelFactory = fileSystemViewModelFactory;
+                _fullName = info.FullName;
+                Set(info);
             }
 
-            var isEmpty = await _factory.IsEmpty(this);
-            if (isEmpty)
+            private void Set(ScarletDirectoryInfo info)
             {
-                await Clear(token);
-                return;
+                _viewModel.Name = info.Name;
+                _viewModel.FullName = info.FullName;
+                _viewModel.Exists = info.Exists;
+                _viewModel.IsHidden = info.IsHidden;
+                _viewModel.CreationTimeUtc = info.CreationTimeUtc;
+                _viewModel.LastAccessTimeUtc = info.LastAccessTimeUtc;
+                _viewModel.LastWriteTimeUtc = info.LastWriteTimeUtc;
             }
 
-            var children = await _factory.GetChildren(this, _fileAttributes, _folderAttributes);
+            public async Task Refresh(CancellationToken token)
+            {
+                var info = await _fileSystemViewModelFactory.GetDirectoryInfo(_fullName, token);
+                if (info is null)
+                {
+                    return;
+                }
 
-            if (!IsLoaded)
-            {
-                await AddRange(children, token);
-            }
-            else
-            {
-                await Dispatcher.Invoke(() => Items.UpdateItems(children, FileSystemViewModelFactoryExtensions.IFileSystemChildComparer, FileSystemViewModelFactoryExtensions.IFileSystemChildMapper));
+                Set(info);
+
+                var isEmpty = await _fileSystemViewModelFactory.IsEmpty(_viewModel);
+                if (isEmpty)
+                {
+                    await _viewModel.Clear(token);
+                    return;
+                }
+
+                var children = await _fileSystemViewModelFactory.GetChildren(_viewModel, _fileAttributes, _folderAttributes);
+
+                if (!_viewModel.IsLoaded)
+                {
+                    await _viewModel.AddRange(children, token);
+                }
+                else
+                {
+                    await _viewModel.Dispatcher.Invoke(() => _viewModel.Items.UpdateItems(children, FileSystemViewModelFactoryExtensions.IFileSystemChildComparer, FileSystemViewModelFactoryExtensions.IFileSystemChildMapper));
+                }
             }
         }
     }

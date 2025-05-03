@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,134 +14,96 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
     [DebuggerDisplay("Drive: {Name} IsContainer: {IsContainer}")]
     public sealed partial class ScarletDrive : BusinessViewModelListBase<IFileSystemChild>, IFileSystemDrive
     {
-        private readonly IFileSystemViewModelFactory _factory;
+        private readonly Mapper _mapper;
         private readonly IReadOnlyCollection<FileAttributes> _fileAttributes;
         private readonly IReadOnlyCollection<FileAttributes> _folderAttributes;
 
-        private string? _driveFormat;
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string? DriveFormat { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial DriveType DriveType { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsReady { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial long AvailableFreeSpace { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial long TotalFreeSpace { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial long TotalSize { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string Name { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string FullName { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial bool IsSelected { get; set; }
 
-        [Bindable(true, BindingDirection.OneWay)]
-        public string? DriveFormat
-        {
-            get => _driveFormat;
-            private set => SetProperty(ref _driveFormat, value);
-        }
+        [Bindable(true, BindingDirection.OneWay)] public bool IsContainer => true;
 
-        private DriveType _driveType;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public DriveType DriveType
-        {
-            get => _driveType;
-            private set => SetProperty(ref _driveType, value);
-        }
-
-        private bool _isReady;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsReady
-        {
-            get => _isReady;
-            private set => SetProperty(ref _isReady, value);
-        }
-
-        private long _availableFreeSpace;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public long AvailableFreeSpace
-        {
-            get => _availableFreeSpace;
-            private set => SetProperty(ref _availableFreeSpace, value);
-        }
-
-        private long _totalFreeSpace;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public long TotalFreeSpace
-        {
-            get => _totalFreeSpace;
-            private set => SetProperty(ref _totalFreeSpace, value);
-        }
-
-        private long _totalSize;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public long TotalSize
-        {
-            get => _totalSize;
-            private set => SetProperty(ref _totalSize, value);
-        }
-
-        private string _name;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public string Name
-        {
-            get => _name;
-            private set => SetProperty(ref _name, value);
-        }
-
-        private string _fullName;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public string FullName
-        {
-            get => _fullName;
-            private set => SetProperty(ref _fullName, value);
-        }
-
-        [ObservableProperty]
-        private bool _isSelected;
-
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsContainer { get; }
-
-        public ScarletDrive(DriveInfo info, IScarletCommandBuilder commandBuilder, IFileSystemViewModelFactory factory, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
+        public ScarletDrive(ScarletDriveInfo info, IScarletCommandBuilder commandBuilder, IFileSystemViewModelFactory factory, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
             : base(commandBuilder)
         {
-            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            _name = info.Name ?? throw new ArgumentException(nameof(info.Name));
+            ArgumentNullException.ThrowIfNull(info);
 
-            _fullName = info.Name;
+
             _fileAttributes = fileAttributes;
             _folderAttributes = folderAttributes;
-
-            IsContainer = true;
-
-            Set(info);
+            _mapper = new Mapper(this, info, factory);
         }
 
-        private void Set(DriveInfo info)
+        protected override Task RefreshInternal(CancellationToken token)
         {
-            DriveFormat = info.DriveFormat;
-            DriveType = info.DriveType;
-            IsReady = info.IsReady;
-            AvailableFreeSpace = info.AvailableFreeSpace;
-            TotalFreeSpace = info.TotalFreeSpace;
-            TotalSize = info.TotalSize;
+            return _mapper.Refresh(token);
         }
 
-        protected override async Task RefreshInternal(CancellationToken token)
+        public sealed class Mapper : IViewModelMapper
         {
-            var info = await Task.Run(() => new DriveInfo(FullName), token);
-            await Dispatcher.Invoke(() => Set(info));
+            private readonly ScarletDrive _viewModel;
+            private readonly string _fullName;
+            private readonly IFileSystemViewModelFactory _fileSystemViewModelFactory;
 
-            var isEmpty = await _factory.IsEmpty(this);
-            if (isEmpty)
+            public Mapper(ScarletDrive viewModel, ScarletDriveInfo info, IFileSystemViewModelFactory fileSystemViewModelFactory)
             {
-                await Clear(token);
-                return;
+                ArgumentNullException.ThrowIfNull(viewModel);
+                ArgumentNullException.ThrowIfNull(info);
+                ArgumentNullException.ThrowIfNull(fileSystemViewModelFactory);
+
+                _viewModel = viewModel;
+                _fileSystemViewModelFactory = fileSystemViewModelFactory;
+                _fullName = info.FullName;
+                Set(info);
             }
 
-            var children = await _factory.GetChildren(this, _fileAttributes, _folderAttributes);
-
-            if (!IsLoaded)
+            private void Set(ScarletDriveInfo info)
             {
-                await AddRange(children, token);
+                _viewModel.Name = info.Name;
+                _viewModel.FullName = info.FullName;
+                _viewModel.DriveFormat = info.DriveFormat;
+                _viewModel.DriveType = info.DriveType;
+                _viewModel.IsReady = info.IsReady;
+                _viewModel.AvailableFreeSpace = info.AvailableFreeSpace;
+                _viewModel.TotalFreeSpace = info.TotalFreeSpace;
+                _viewModel.TotalSize = info.TotalSize;
+                _viewModel.FullName = info.FullName;
             }
-            else
+
+            public async Task Refresh(CancellationToken token)
             {
-                await Dispatcher.Invoke(() => Items.UpdateItems(children, FileSystemViewModelFactoryExtensions.IFileSystemChildComparer, FileSystemViewModelFactoryExtensions.IFileSystemChildMapper));
+                var info = await _fileSystemViewModelFactory.GetDriveInfo(_fullName, token);
+                if (info is null)
+                {
+                    return;
+                }
+
+                Set(info);
+
+                var isEmpty = await _fileSystemViewModelFactory.IsEmpty(_viewModel);
+                if (isEmpty)
+                {
+                    await _viewModel.Clear(token);
+                    return;
+                }
+
+                var children = await _fileSystemViewModelFactory.GetChildren(_viewModel, _viewModel._fileAttributes, _viewModel._folderAttributes);
+
+                if (!_viewModel.IsLoaded)
+                {
+                    await _viewModel.AddRange(children, token);
+                }
+                else
+                {
+                    await _viewModel.Dispatcher.Invoke(() => _viewModel.Items.UpdateItems(children, FileSystemViewModelFactoryExtensions.IFileSystemChildComparer, FileSystemViewModelFactoryExtensions.IFileSystemChildMapper));
+                }
             }
         }
     }

@@ -9,12 +9,6 @@ namespace MvvmScarletToolkit
     {
         public static async Task<IReadOnlyCollection<IFileSystemChild>> GetChildren(this IFileSystemViewModelFactory factory, IFileSystemDirectory parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
         {
-            var canAccess = await factory.CanAccess(parent);
-            if (!canAccess)
-            {
-                return Enumerable.Empty<IFileSystemChild>().ToList();
-            }
-
             return await factory.GetChildren((IFileSystemParent)parent, fileAttributes, folderAttributes);
         }
 
