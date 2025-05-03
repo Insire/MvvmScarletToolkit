@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit
 {
     public sealed class ScarletExitService : IExitService
     {
-        private static readonly Lazy<ScarletExitService> _default = new Lazy<ScarletExitService>(() => new ScarletExitService(Application.Current.ApplicationLifetime!, ScarletDispatcher.InternalDefault));
+        private static readonly Lazy<ScarletExitService> _default = new Lazy<ScarletExitService>(() => new ScarletExitService(Application.Current!.ApplicationLifetime!, ScarletDispatcher.InternalDefault));
         public static IExitService Default => _default.Value;
 
         private readonly IClassicDesktopStyleApplicationLifetime _app;
@@ -20,7 +20,7 @@ namespace MvvmScarletToolkit
 
         private Task _shutDown = Task.CompletedTask;
 
-        public ScarletExitService(in IApplicationLifetime app, in ScarletDispatcher dispatcher)
+        public ScarletExitService(IApplicationLifetime app, ScarletDispatcher dispatcher)
         {
             _viewModels = new ConcurrentQueue<IVirtualizationViewModel>();
 

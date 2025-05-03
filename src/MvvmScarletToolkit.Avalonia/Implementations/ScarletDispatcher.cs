@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MvvmScarletToolkit
 {
     [Bindable(false)]
-    public sealed class ScarletDispatcher : IScarletDispatcher
+    public sealed class ScarletDispatcher(Dispatcher dispatcher) : IScarletDispatcher
     {
         private static readonly Lazy<ScarletDispatcher> _default = new Lazy<ScarletDispatcher>(() => new ScarletDispatcher(Dispatcher.UIThread));
 
@@ -16,14 +16,9 @@ namespace MvvmScarletToolkit
 
         private readonly DispatcherPriority Priority = DispatcherPriority.Input;
 
-        private readonly Dispatcher _dispatcherObject;
+        private readonly Dispatcher _dispatcherObject = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
         private bool invokeSynchronous;
-
-        public ScarletDispatcher(Dispatcher dispatcher)
-        {
-            _dispatcherObject = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-        }
 
         internal bool GetInvokeSynchronous()
         {

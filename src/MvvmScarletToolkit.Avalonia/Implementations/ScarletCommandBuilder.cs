@@ -27,13 +27,14 @@ namespace MvvmScarletToolkit
         public IExitService Exit { get; }
         public IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager { get; }
 
-        public ScarletCommandBuilder(in IScarletDispatcher dispatcher,
-                                     in IScarletCommandManager commandManager,
-                                     in IScarletExceptionHandler exceptionHandler,
-                                     in IMessenger messenger,
-                                     in IExitService exitService,
-                                     in IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager,
-                                     in Func<Action<bool>, IBusyStack> busyStackFactory)
+        public ScarletCommandBuilder(
+            IScarletDispatcher dispatcher,
+            IScarletCommandManager commandManager,
+            IScarletExceptionHandler exceptionHandler,
+            IMessenger messenger,
+            IExitService exitService,
+            IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> weakEventManager,
+            Func<Action<bool>, IBusyStack> busyStackFactory)
         {
             Dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
