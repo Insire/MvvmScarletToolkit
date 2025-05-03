@@ -9,10 +9,10 @@ namespace Build
         {
             return new CakeHost()
                  .InstallTool(new Uri("nuget:?package=Codecov&version=1.13.0"))
-                 .InstallTool(new Uri("nuget:?package=NUnit.ConsoleRunner&version=3.18.3"))
-                 .InstallTool(new Uri("nuget:?package=ReportGenerator&version=5.4.1"))
+                 .InstallTool(new Uri("nuget:?package=NUnit.ConsoleRunner&version=3.20.0"))
+                 .InstallTool(new Uri("nuget:?package=ReportGenerator&version=5.4.5"))
                  .InstallTool(new Uri("nuget:?package=GitVersion.CommandLine&version=5.12.0"))
-                 .InstallTool(new Uri("nuget:?package=nuget.commandline&version=6.12.1"))
+                 .InstallTool(new Uri("nuget:?package=nuget.commandline&version=6.13.2"))
                  .InstallTool(new Uri("nuget:?package=dotnet-coverage&version=17.13.1"))
                  .UseContext<BuildContext>()
                  .UseLifetime<BuildLifetime>()
