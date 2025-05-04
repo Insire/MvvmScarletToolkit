@@ -40,6 +40,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 _viewModel.Name = info.Name;
                 _viewModel.FullName = info.FullName;
                 _viewModel.Extension = info.Extension;
+                _viewModel.MimeType = info.MimeType;
                 _viewModel.Exists = info.Exists;
                 _viewModel.IsHidden = info.IsHidden;
                 _viewModel.CreationTimeUtc = info.CreationTimeUtc;
@@ -49,6 +50,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 var index = 1;
 
                 PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(FileSystemType), _viewModel.FileSystemType.ToString());
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(MimeType), _viewModel.MimeType);
                 PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(Name), info.Name);
                 PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(FullName), info.FullName);
                 PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(Extension), info.Extension);

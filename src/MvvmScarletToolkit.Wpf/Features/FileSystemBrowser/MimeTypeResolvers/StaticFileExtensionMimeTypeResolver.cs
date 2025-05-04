@@ -5,13 +5,14 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     public sealed class StaticFileExtensionMimeTypeResolver : IMimeTypeResolver
     {
-        public string? Get(IFileSystemFile fileInfo)
+        public string? Get(FileInfo fileInfo)
         {
             if (!fileInfo.Exists)
             {
                 return null;
             }
-            var extension = Path.GetExtension(fileInfo.Name);
+
+            var extension = fileInfo.Extension;
 
             if (string.IsNullOrEmpty(extension) || !_mimeTypes.ContainsKey(extension))
             {

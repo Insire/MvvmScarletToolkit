@@ -1,7 +1,9 @@
+using System.IO;
+
 namespace MvvmScarletToolkit
 {
     public interface IMimeTypeResolver
     {
-        string? Get(IFileSystemFile fileInfo);
+        string? Get(FileInfo fileInfo);
     }
 }

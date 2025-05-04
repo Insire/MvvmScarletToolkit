@@ -5,7 +5,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
     public sealed record ScarletFileInfo
     {
-        public ScarletFileInfo(FileInfo info)
+        public ScarletFileInfo(FileInfo info, string mimeType)
         {
             FullName = info.FullName;
             Name = info.Name;
@@ -16,6 +16,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             LastAccessTimeUtc = info.LastAccessTimeUtc;
             LastWriteTimeUtc = info.LastWriteTimeUtc;
             IsAccessProhibited = false;
+            MimeType = mimeType;
         }
 
         public ScarletFileInfo()
@@ -23,11 +24,13 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             Name = string.Empty;
             FullName = string.Empty;
             Extension = string.Empty;
+            MimeType = string.Empty;
         }
 
         public string Name { get; init; }
         public string FullName { get; init; }
         public string Extension { get; init; }
+        public string MimeType { get; init; }
         public bool Exists { get; init; }
         public bool IsHidden { get; init; }
         public DateTime? CreationTimeUtc { get; init; }

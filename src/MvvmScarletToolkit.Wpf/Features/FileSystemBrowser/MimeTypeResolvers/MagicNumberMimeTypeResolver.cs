@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
     // TODO implement
     public sealed class MagicNumberMimeTypeResolver : IMimeTypeResolver
     {
-        public string Get(IFileSystemFile fileInfo)
+        public string Get(FileInfo fileInfo)
         {
             var byteBuffer = new byte[256];
             using (var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))

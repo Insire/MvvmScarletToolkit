@@ -6,7 +6,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 {
     public sealed class UrlMonMimeTypeResolver : IMimeTypeResolver
     {
-        public string? Get(IFileSystemFile fileInfo)
+        public string? Get(FileInfo fileInfo)
         {
             if (!fileInfo.Exists)
             {

@@ -17,6 +17,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         private readonly ILogger<FileSystemViewModelFactory> _logger;
         private readonly IScheduler _scheduler;
         private readonly ConcurrentDictionary<string, string> _noAccessLookup;
+        private readonly IReadOnlyList<IMimeTypeResolver> _mimetypeResolvers;
 
         public IMessenger Messenger { get; }
 
@@ -26,6 +27,13 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             _scheduler = scheduler;
             Messenger = new WeakReferenceMessenger();
             _noAccessLookup = new ConcurrentDictionary<string, string>();
+            _mimetypeResolvers = new List<IMimeTypeResolver>()
+            {
+                new MagicNumberMimeTypeResolver(),
+                new RegistryFileExtensionMimeTypeResolver(),
+                new UrlMonMimeTypeResolver(),
+                new StaticFileExtensionMimeTypeResolver(),
+            };
         }
 
         public async Task<ScarletFileInfo?> GetFileInfo(string filePath, CancellationToken token)
@@ -33,7 +41,9 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             try
             {
                 var info = await Task.Run(() => new FileInfo(filePath), token);
-                return new ScarletFileInfo(info);
+                var mimeType = await Task.Run(() => GetMimeType(info), token);
+
+                return new ScarletFileInfo(info, mimeType ?? string.Empty);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -204,6 +214,31 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             };
         }
 
+        private string? GetMimeType(FileInfo fileInfo)
+        {
+            foreach (var mimeTypeResolver in _mimetypeResolvers)
+            {
+                var mimeType = string.Empty;
+
+                try
+                {
+                    mimeType = mimeTypeResolver.Get(fileInfo);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to get mimetype from file");
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(mimeType))
+                {
+                    return mimeType;
+                }
+            }
+
+            return null;
+        }
+
         private static bool IsDriveEmpty(IFileSystemDrive drive)
         {
             return drive.DriveType == DriveType.NoRootDirectory || drive.DriveType == DriveType.Unknown;
@@ -325,11 +360,25 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             {
                 var fileInfos = Directory
                     .GetFiles(parent.FullName)
-                    .Select(p => new FileInfo(p));
+                    .Select(file => new FileInfo(file))
+                    .Where(p => fileAttributes.Any(q => p.Attributes.HasFlag(q)))
+                    .Select(info =>
+                    {
+                        var mimeType = string.Empty;
+                        try
+                        {
+                            mimeType = GetMimeType(info);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Failed to get mimetype from file");
+                        }
+
+                        return new ScarletFileInfo(info, mimeType ?? string.Empty);
+                    });
 
                 return fileInfos
-                    .Where(p => fileAttributes.Any(q => p.Attributes.HasFlag(q)))
-                    .Select(p => new ScarletFile(_scheduler, new ScarletFileInfo(p), parent, this));
+                    .Select(p => new ScarletFile(_scheduler, p, parent, this));
             }
             catch (UnauthorizedAccessException ex)
             {

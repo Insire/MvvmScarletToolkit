@@ -26,8 +26,8 @@
                 </DataTrigger>
 
                 <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                    <Setter Property="Fill" Value="#999" />
-                    <Setter Property="Stroke" Value="#999" />
+                    <Setter Property="Fill" Value="#CCC" />
+                    <Setter Property="Stroke" Value="#CCC" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
