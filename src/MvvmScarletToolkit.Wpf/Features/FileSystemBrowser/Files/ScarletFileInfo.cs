@@ -17,6 +17,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             LastWriteTimeUtc = info.LastWriteTimeUtc;
             IsAccessProhibited = false;
             MimeType = mimeType;
+            IsImage = mimeType.StartsWith("image", StringComparison.InvariantCultureIgnoreCase);
         }
 
         public ScarletFileInfo()
@@ -33,6 +34,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         public string MimeType { get; init; }
         public bool Exists { get; init; }
         public bool IsHidden { get; init; }
+        public bool IsImage { get; init; }
         public DateTime? CreationTimeUtc { get; init; }
         public DateTime? LastAccessTimeUtc { get; init; }
         public DateTime? LastWriteTimeUtc { get; init; }

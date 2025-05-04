@@ -86,7 +86,7 @@
             <ColumnDefinition Width="8" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="8" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -395,7 +395,33 @@
                                 <ContentPresenter Content="{Binding SelectedDetail}">
                                     <ContentPresenter.Resources>
                                         <DataTemplate DataType="{x:Type mvvm:ScarletFile}">
-                                            <ContentControl Content="{StaticResource PropertyList}" />
+                                            <DockPanel LastChildFill="True">
+                                                <ContentControl Content="{StaticResource PropertyList}" DockPanel.Dock="Top" />
+
+                                                <Image RenderOptions.BitmapScalingMode="HighQuality"
+                                                       RenderOptions.EdgeMode="Aliased"
+                                                       SnapsToDevicePixels="True"
+                                                       Stretch="Uniform"
+                                                       StretchDirection="Both">
+                                                    <i:Interaction.Behaviors>
+                                                        <mvvm:AsyncImageLoadingBehavior Width="800"
+                                                                                        Height="800"
+                                                                                        Source="{Binding FullName}" />
+                                                    </i:Interaction.Behaviors>
+
+                                                    <Image.Style>
+                                                        <Style TargetType="{x:Type Image}">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsImage}" Value="true">
+
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Image.Style>
+                                                </Image>
+                                            </DockPanel>
                                         </DataTemplate>
 
                                         <DataTemplate DataType="{x:Type mvvm:ScarletDirectory}">

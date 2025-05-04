@@ -34,7 +34,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         private static string GetInternal(byte[] file, string extension)
         {
-            var mime = "application/octet-stream";
+            var mime = "";
             if (file.Take(2).SequenceEqual(BMP))
             {
                 mime = "image/bmp";

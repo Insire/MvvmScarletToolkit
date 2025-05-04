@@ -46,6 +46,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 _viewModel.CreationTimeUtc = info.CreationTimeUtc;
                 _viewModel.LastAccessTimeUtc = info.LastAccessTimeUtc;
                 _viewModel.LastWriteTimeUtc = info.LastWriteTimeUtc;
+                _viewModel.IsImage = info.IsImage;
 
                 var index = 1;
 
@@ -56,6 +57,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(Extension), info.Extension);
                 PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(Exists), info.Exists ? bool.TrueString : bool.FalseString);
                 PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(IsHidden), info.IsHidden ? bool.TrueString : bool.FalseString);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(IsImage), info.IsImage ? bool.TrueString : bool.FalseString);
                 PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(IsAccessProhibited), info.IsAccessProhibited ? bool.TrueString : bool.FalseString);
                 PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(CreationTimeUtc), info.CreationTimeUtc?.ToString() ?? string.Empty);
                 PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(LastAccessTimeUtc), info.LastAccessTimeUtc?.ToString() ?? string.Empty);

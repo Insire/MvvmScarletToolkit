@@ -42,6 +42,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsLoaded { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsAccessProhibited { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsBusy { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsImage { get; private set; }
 
         [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<PropertyViewModel> Properties { get; }
 
