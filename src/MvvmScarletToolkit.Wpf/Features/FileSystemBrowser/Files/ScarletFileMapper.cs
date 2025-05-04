@@ -23,6 +23,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
             private void Set(ScarletFileInfo info)
             {
+                _viewModel.Name = info.Name;
+                _viewModel.FullName = info.FullName;
                 _viewModel.Exists = info.Exists;
                 _viewModel.IsHidden = info.IsHidden;
                 _viewModel.CreationTimeUtc = info.CreationTimeUtc;

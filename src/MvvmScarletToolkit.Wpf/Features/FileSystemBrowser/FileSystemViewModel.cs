@@ -23,6 +23,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsLoaded { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial IFileSystemParent? SelectedContainer { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial IFileSystemChild? SelectedChild { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial IFileSystemParent? SelectedDetail { get; private set; }
 
         [Bindable(true, BindingDirection.OneWay)] public FileSystemOptionsViewModel Options { get; }
         [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<IFileSystemDrive> Items { get; }

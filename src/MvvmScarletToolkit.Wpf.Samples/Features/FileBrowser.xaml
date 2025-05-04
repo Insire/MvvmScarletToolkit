@@ -10,6 +10,38 @@
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <PathGeometry x:Key="FilePath">M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48z</PathGeometry>
+        <PathGeometry x:Key="FolderPath">M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z</PathGeometry>
+        <PathGeometry x:Key="DrivePath">M567.403 235.642L462.323 84.589A48 48 0 0 0 422.919 64H153.081a48 48 0 0 0-39.404 20.589L8.597 235.642A48.001 48.001 0 0 0 0 263.054V400c0 26.51 21.49 48 48 48h480c26.51 0 48-21.49 48-48V263.054c0-9.801-3-19.366-8.597-27.412zM153.081 112h269.838l77.913 112H75.168l77.913-112zM528 400H48V272h480v128zm-32-64c0 17.673-14.327 32-32 32s-32-14.327-32-32 14.327-32 32-32 32 14.327 32 32zm-96 0c0 17.673-14.327 32-32 32s-32-14.327-32-32 14.327-32 32-32 32 14.327 32 32z</PathGeometry>
+
+        <DataTemplate x:Key="FolderIconPath" DataType="{x:Type mvvm:ScarletDirectory}">
+            <Path Width="16"
+                  Height="16"
+                  Data="{StaticResource FolderPath}"
+                  Stretch="Uniform"
+                  Stroke="#777"
+                  StrokeThickness="1" />
+        </DataTemplate>
+        <DataTemplate x:Key="FileIconPath" DataType="{x:Type mvvm:ScarletFile}">
+            <Path Width="16"
+                  Height="16"
+                  Data="{StaticResource FilePath}"
+                  Stretch="Uniform"
+                  Stroke="#777"
+                  StrokeThickness="1" />
+        </DataTemplate>
+        <DataTemplate x:Key="DriveIconPath" DataType="{x:Type mvvm:ScarletDrive}">
+            <Path Width="16"
+                  Height="16"
+                  Data="{StaticResource DrivePath}"
+                  Stretch="Uniform"
+                  Stroke="#777"
+                  StrokeThickness="1" />
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -27,35 +59,6 @@
                   Grid.Column="0"
                   ItemsSource="{Binding Items}">
             <TreeView.Resources>
-                <PathGeometry x:Key="FilePath">M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48z</PathGeometry>
-                <PathGeometry x:Key="FolderPath">M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z</PathGeometry>
-                <PathGeometry x:Key="DrivePath">M567.403 235.642L462.323 84.589A48 48 0 0 0 422.919 64H153.081a48 48 0 0 0-39.404 20.589L8.597 235.642A48.001 48.001 0 0 0 0 263.054V400c0 26.51 21.49 48 48 48h480c26.51 0 48-21.49 48-48V263.054c0-9.801-3-19.366-8.597-27.412zM153.081 112h269.838l77.913 112H75.168l77.913-112zM528 400H48V272h480v128zm-32-64c0 17.673-14.327 32-32 32s-32-14.327-32-32 14.327-32 32-32 32 14.327 32 32zm-96 0c0 17.673-14.327 32-32 32s-32-14.327-32-32 14.327-32 32-32 32 14.327 32 32z</PathGeometry>
-
-                <DataTemplate x:Key="FolderIconPath" DataType="{x:Type mvvm:ScarletDirectory}">
-                    <Path Width="16"
-                          Height="16"
-                          Data="{StaticResource FolderPath}"
-                          Stretch="Uniform"
-                          Stroke="#777"
-                          StrokeThickness="1" />
-                </DataTemplate>
-                <DataTemplate x:Key="FileIconPath" DataType="{x:Type mvvm:ScarletFile}">
-                    <Path Width="16"
-                          Height="16"
-                          Data="{StaticResource FilePath}"
-                          Stretch="Uniform"
-                          Stroke="#777"
-                          StrokeThickness="1" />
-                </DataTemplate>
-                <DataTemplate x:Key="DriveIconPath" DataType="{x:Type mvvm:ScarletDrive}">
-                    <Path Width="16"
-                          Height="16"
-                          Data="{StaticResource DrivePath}"
-                          Stretch="Uniform"
-                          Stroke="#777"
-                          StrokeThickness="1" />
-                </DataTemplate>
-
                 <Style x:Key="{x:Type TreeViewItem}"
                        BasedOn="{StaticResource {x:Type TreeViewItem}}"
                        TargetType="{x:Type TreeViewItem}">
@@ -188,16 +191,127 @@
             </i:Interaction.Triggers>
         </TreeView>
 
-        <ContentControl Grid.Row="0"
-                        Grid.Column="2"
-                        Content="{Binding SelectedChild}" />
+        <ContentControl Grid.Row="0" Grid.Column="2">
+            <ContentControl.Style>
+                <Style TargetType="{x:Type ContentControl}">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Text="nothing selected..." />
+                        </Setter.Value>
+                    </Setter>
+
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ContentControl}">
+                                <ContentPresenter Content="{Binding SelectedDetail}">
+                                    <ContentPresenter.Resources>
+                                        <DataTemplate DataType="{x:Type mvvm:ScarletFile}">
+                                            <DockPanel Width="100">
+                                                <TextBlock HorizontalAlignment="Center"
+                                                           DockPanel.Dock="Bottom"
+                                                           Text="{Binding Name}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <Path Width="66"
+                                                      Height="66"
+                                                      Data="{StaticResource FilePath}"
+                                                      Fill="#777"
+                                                      Stretch="Uniform"
+                                                      Stroke="#777"
+                                                      StrokeThickness="1" />
+                                            </DockPanel>
+                                        </DataTemplate>
+
+                                        <DataTemplate DataType="{x:Type mvvm:ScarletDirectory}">
+                                            <ListBox ItemsSource="{Binding Items}"
+                                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                     SelectionMode="Extended">
+                                                <ListBox.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                    </ContextMenu>
+                                                </ListBox.ContextMenu>
+                                                <ListBox.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <mvvm:VirtualizingWrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ListBox.ItemsPanel>
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="{x:Type ListBoxItem}">
+                                                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                                                    </Style>
+                                                </ListBox.ItemContainerStyle>
+                                                <ListBox.Resources>
+                                                    <DataTemplate DataType="{x:Type mvvm:ScarletDirectory}">
+                                                        <DockPanel Width="100">
+
+                                                            <TextBlock HorizontalAlignment="Center"
+                                                                       DockPanel.Dock="Bottom"
+                                                                       Text="{Binding Name}"
+                                                                       TextTrimming="CharacterEllipsis" />
+                                                            <Path Width="66"
+                                                                  Height="66"
+                                                                  Data="{StaticResource FolderPath}"
+                                                                  Fill="#777"
+                                                                  Stretch="Uniform"
+                                                                  Stroke="#777"
+                                                                  StrokeThickness="1" />
+                                                        </DockPanel>
+                                                    </DataTemplate>
+                                                </ListBox.Resources>
+                                            </ListBox>
+                                        </DataTemplate>
+
+                                        <DataTemplate DataType="{x:Type mvvm:ScarletDrive}">
+                                            <ListBox ItemsSource="{Binding Items}"
+                                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                     SelectionMode="Extended">
+                                                <ListBox.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                    </ContextMenu>
+                                                </ListBox.ContextMenu>
+                                                <ListBox.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <mvvm:VirtualizingWrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ListBox.ItemsPanel>
+
+                                                <ListBox.Resources>
+                                                    <DataTemplate DataType="{x:Type mvvm:ScarletDirectory}">
+                                                        <DockPanel Width="100">
+                                                            <TextBlock HorizontalAlignment="Center"
+                                                                       DockPanel.Dock="Bottom"
+                                                                       Text="{Binding Name}"
+                                                                       TextTrimming="CharacterEllipsis" />
+                                                            <Path Width="66"
+                                                                  Height="66"
+                                                                  Data="{StaticResource FolderPath}"
+                                                                  Fill="#777"
+                                                                  Stretch="Uniform"
+                                                                  Stroke="#777"
+                                                                  StrokeThickness="1" />
+                                                        </DockPanel>
+                                                    </DataTemplate>
+                                                </ListBox.Resources>
+                                            </ListBox>
+                                        </DataTemplate>
+                                    </ContentPresenter.Resources>
+                                </ContentPresenter>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
 
         <StatusBar Grid.Row="2"
                    Grid.Column="0"
                    Grid.ColumnSpan="3">
             <StatusBarItem Content="Status" />
-            <StatusBarItem Content="{Binding SelectedContainer}" />
-            <StatusBarItem Content="{Binding SelectedChild}" />
+            <StatusBarItem Content="{Binding SelectedContainer.Name, FallbackValue='No container selected'}" />
+            <StatusBarItem Content="{Binding SelectedChild.Name, FallbackValue='No child selected'}" />
         </StatusBar>
     </Grid>
 </UserControl>

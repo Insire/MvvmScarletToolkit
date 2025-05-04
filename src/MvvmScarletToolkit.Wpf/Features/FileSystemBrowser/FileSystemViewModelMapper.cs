@@ -28,6 +28,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             {
                 _viewModel.SelectedChild = message.Directory;
                 _viewModel.SelectedContainer = message.Directory;
+                _viewModel.SelectedDetail = message.Directory;
             }
 
             public void Receive(ScarletFileSelected message)
@@ -38,6 +39,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             public void Receive(ScarletDriveSelected message)
             {
                 _viewModel.SelectedContainer = message.Drive;
+                _viewModel.SelectedDetail = message.Drive;
             }
 
             public async Task Refresh(CancellationToken token)

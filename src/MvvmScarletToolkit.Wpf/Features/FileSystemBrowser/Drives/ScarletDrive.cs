@@ -115,6 +115,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             if (value && IsLoaded == false)
             {
                 await Refresh(CancellationToken.None);
+
+                IsToggled = true;
             }
         }
 
