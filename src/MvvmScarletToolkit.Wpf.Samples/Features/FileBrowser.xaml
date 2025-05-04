@@ -244,67 +244,83 @@
                                 <ContentPresenter Content="{Binding SelectedTreeDetail}">
                                     <ContentPresenter.Resources>
                                         <DataTemplate DataType="{x:Type mvvm:ScarletFile}">
-                                            <Grid Width="100"
-                                                  Background="Transparent"
-                                                  ToolTip="{StaticResource PropertyTooltip}">
-                                                <Grid.InputBindings>
+                                            <DockPanel Width="100"
+                                                       Background="Transparent"
+                                                       ToolTip="{StaticResource PropertyTooltip}">
+                                                <DockPanel.InputBindings>
                                                     <MouseBinding Command="{Binding SelectCommand}" MouseAction="LeftDoubleClick" />
-                                                </Grid.InputBindings>
-
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="*" />
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-
-                                                <Path Grid.Row="0"
-                                                      Width="66"
-                                                      Height="66"
-                                                      Data="{StaticResource FilePath}"
-                                                      Stretch="Uniform"
-                                                      StrokeThickness="1">
-                                                    <Path.Style>
-                                                        <Style BasedOn="{StaticResource PathStyle}" TargetType="{x:Type Path}">
-                                                            <Setter Property="Visibility" Value="Collapsed" />
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding IsImage}" Value="false">
-                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Path.Style>
-                                                </Path>
-
-                                                <Image Grid.Row="0"
-                                                       Width="66"
-                                                       Height="66"
-                                                       RenderOptions.BitmapScalingMode="HighQuality"
-                                                       RenderOptions.EdgeMode="Aliased"
-                                                       SnapsToDevicePixels="True"
-                                                       Stretch="Uniform"
-                                                       StretchDirection="Both">
-                                                    <i:Interaction.Behaviors>
-                                                        <mvvm:AsyncImageLoadingBehavior Width="122"
-                                                                                        Height="122"
-                                                                                        Source="{Binding FullName}" />
-                                                    </i:Interaction.Behaviors>
-
-                                                    <Image.Style>
-                                                        <Style TargetType="{x:Type Image}">
-                                                            <Setter Property="Visibility" Value="Collapsed" />
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding IsImage}" Value="true">
-                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Image.Style>
-                                                </Image>
+                                                </DockPanel.InputBindings>
 
                                                 <TextBlock Grid.Row="1"
                                                            HorizontalAlignment="Center"
+                                                           DockPanel.Dock="Bottom"
                                                            Text="{Binding Name}"
                                                            TextTrimming="CharacterEllipsis" />
-                                            </Grid>
+
+                                                <ContentControl Grid.Row="0"
+                                                                Width="66"
+                                                                Height="66">
+                                                    <ContentControl.Style>
+                                                        <Style TargetType="{x:Type ContentControl}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsImage}" Value="false">
+                                                                    <Setter Property="Content">
+                                                                        <Setter.Value>
+                                                                            <Path Width="66"
+                                                                                  Height="66"
+                                                                                  Data="{StaticResource FilePath}"
+                                                                                  Stretch="Uniform"
+                                                                                  StrokeThickness="1">
+                                                                                <Path.Style>
+                                                                                    <Style BasedOn="{StaticResource PathStyle}" TargetType="{x:Type Path}">
+                                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                                        <Style.Triggers>
+                                                                                            <DataTrigger Binding="{Binding IsImage}" Value="false">
+                                                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                                            </DataTrigger>
+                                                                                        </Style.Triggers>
+                                                                                    </Style>
+                                                                                </Path.Style>
+                                                                            </Path>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </DataTrigger>
+
+                                                                <DataTrigger Binding="{Binding IsImage}" Value="true">
+                                                                    <Setter Property="Content">
+                                                                        <Setter.Value>
+                                                                            <Image Width="66"
+                                                                                   Height="66"
+                                                                                   RenderOptions.BitmapScalingMode="HighQuality"
+                                                                                   RenderOptions.EdgeMode="Aliased"
+                                                                                   SnapsToDevicePixels="True"
+                                                                                   Stretch="Uniform"
+                                                                                   StretchDirection="Both">
+                                                                                <i:Interaction.Behaviors>
+                                                                                    <mvvm:AsyncImageLoadingBehavior Width="122"
+                                                                                                                    Height="122"
+                                                                                                                    Source="{Binding FullName}" />
+                                                                                </i:Interaction.Behaviors>
+
+                                                                                <Image.Style>
+                                                                                    <Style TargetType="{x:Type Image}">
+                                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                                        <Style.Triggers>
+                                                                                            <DataTrigger Binding="{Binding IsImage}" Value="true">
+                                                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                                            </DataTrigger>
+                                                                                        </Style.Triggers>
+                                                                                    </Style>
+                                                                                </Image.Style>
+                                                                            </Image>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ContentControl.Style>
+                                                </ContentControl>
+                                            </DockPanel>
                                         </DataTemplate>
 
                                         <DataTemplate DataType="{x:Type mvvm:ScarletDirectory}">
