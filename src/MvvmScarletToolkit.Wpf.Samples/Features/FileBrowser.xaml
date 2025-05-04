@@ -58,6 +58,7 @@
         </DataTemplate>
 
         <ItemsControl x:Key="PropertyList"
+                      x:Shared="false"
                       Grid.IsSharedSizeScope="True"
                       ItemsSource="{Binding Properties}">
             <ItemsControl.ItemTemplate>
