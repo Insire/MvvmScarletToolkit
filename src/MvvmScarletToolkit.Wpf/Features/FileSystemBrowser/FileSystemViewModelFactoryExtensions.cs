@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit
     {
         public static async Task<IReadOnlyCollection<IFileSystemChild>> GetChildren(this IFileSystemViewModelFactory factory, IFileSystemDirectory parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes, CancellationToken token)
         {
-            return await factory.GetChildren((IFileSystemParent)parent, fileAttributes, folderAttributes,token);
+            return await factory.GetChildren((IFileSystemParent)parent, fileAttributes, folderAttributes, token);
         }
 
         public static async Task<IReadOnlyCollection<IFileSystemChild>> GetChildren(this IFileSystemViewModelFactory factory, IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes, CancellationToken token)
@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit
             }
 
             var directories = factory.GetDirectories(parent, fileAttributes, folderAttributes, token);
-            var files = factory.GetFiles(parent, fileAttributes,token);
+            var files = factory.GetFiles(parent, fileAttributes, token);
 
             await Task.WhenAll(directories, files);
 
@@ -30,16 +30,6 @@ namespace MvvmScarletToolkit
             results.AddRange(files.Result);
 
             return results;
-        }
-
-        internal static bool IFileSystemChildComparer(this IFileSystemChild current, IFileSystemChild other)
-        {
-            return current.FullName == other.FullName && current.Exists == other.Exists;
-        }
-
-        internal static IFileSystemChild IFileSystemChildMapper(this IFileSystemChild child)
-        {
-            return child;
         }
     }
 }

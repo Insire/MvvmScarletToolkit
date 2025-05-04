@@ -1,4 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using DynamicData;
+using System;
 using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
@@ -19,6 +21,19 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 DisplayName = displayName,
                 Sequence = sequence
             };
+        }
+
+        public static void AddUpdateOrUpdateCache(SourceCache<PropertyViewModel, string> cache, int sequence, string key, string value)
+        {
+            var found = cache.Lookup(key);
+            if (found.HasValue)
+            {
+                found.Value.Value = value;
+            }
+            else
+            {
+                cache.AddOrUpdate(Create(key, value, sequence));
+            }
         }
 
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string Key { get; private set; }

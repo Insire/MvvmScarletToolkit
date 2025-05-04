@@ -36,7 +36,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             _progress = new DispatcherProgress<double>(Dispatcher, KillTheUiWithWork, TimeSpan.FromMilliseconds(50));
             _uiBlockingProgress = new Progress<double>(KillTheUiWithWork);
 
-            /// overwhelms the dispatcher and the UI thread with property changed notifications
+            // overwhelms the dispatcher and the UI thread with property changed notifications
             void KillTheUiWithWork(double i) => Dispatcher.Invoke(() => Percentage = i).ConfigureAwait(false);
         }
 

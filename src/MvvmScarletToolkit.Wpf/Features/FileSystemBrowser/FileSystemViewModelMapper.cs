@@ -28,18 +28,20 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             {
                 _viewModel.SelectedChild = message.Directory;
                 _viewModel.SelectedContainer = message.Directory;
+                _viewModel.SelectedTreeDetail = message.Directory;
                 _viewModel.SelectedDetail = message.Directory;
             }
 
             public void Receive(ScarletFileSelected message)
             {
                 _viewModel.SelectedChild = message.File;
+                _viewModel.SelectedDetail = message.File;
             }
 
             public void Receive(ScarletDriveSelected message)
             {
                 _viewModel.SelectedContainer = message.Drive;
-                _viewModel.SelectedDetail = message.Drive;
+                _viewModel.SelectedTreeDetail = message.Drive;
             }
 
             public async Task Refresh(CancellationToken token)

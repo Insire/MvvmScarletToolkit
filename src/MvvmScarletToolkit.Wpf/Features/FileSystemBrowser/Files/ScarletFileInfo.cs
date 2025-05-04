@@ -9,6 +9,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         {
             FullName = info.FullName;
             Name = info.Name;
+            Extension = info.Extension;
             Exists = info.Exists;
             IsHidden = (info.Attributes & FileAttributes.Hidden) != 0;
             CreationTimeUtc = info.CreationTimeUtc;
@@ -21,10 +22,12 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         {
             Name = string.Empty;
             FullName = string.Empty;
+            Extension = string.Empty;
         }
 
-        public string FullName { get; init; }
         public string Name { get; init; }
+        public string FullName { get; init; }
+        public string Extension { get; init; }
         public bool Exists { get; init; }
         public bool IsHidden { get; init; }
         public DateTime? CreationTimeUtc { get; init; }

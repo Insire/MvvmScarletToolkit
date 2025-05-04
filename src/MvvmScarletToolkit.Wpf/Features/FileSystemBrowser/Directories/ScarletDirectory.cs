@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using DynamicData.Binding;
+using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         private readonly SourceCache<PropertyViewModel, string> _propertiesCache;
         private readonly ScarletDirectoryMapper _mapper;
         private readonly CompositeDisposable _compositeDisposable;
+        private readonly IObservableBusyStack _busyStack;
 
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string Name { get; private set; } = string.Empty;
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string FullName { get; private set; } = string.Empty;
@@ -43,11 +45,14 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsLoaded { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial bool IsToggled { get; set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsAccessProhibited { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsBusy { get; private set; }
 
         [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<IFileSystemChild> Items { get; }
         [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<IFileSystemChild> Containers { get; }
         [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<PropertyViewModel> Properties { get; }
+
         [Bindable(true, BindingDirection.OneWay)] public bool IsContainer => true;
+        [Bindable(true, BindingDirection.OneWay)] public FileSystemType FileSystemType { get; } = FileSystemType.Directory;
 
         public ScarletDirectory(
             IScheduler scheduler,
@@ -61,6 +66,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             ArgumentNullException.ThrowIfNull(info);
             ArgumentNullException.ThrowIfNull(parent);
 
+            _busyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
             _containers = new ObservableCollectionExtended<IFileSystemChild>();
             _items = new ObservableCollectionExtended<IFileSystemChild>();
             _properties = new ObservableCollectionExtended<PropertyViewModel>();
@@ -93,6 +99,12 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             IsActive = true;
         }
 
+        [RelayCommand]
+        private void Select()
+        {
+            IsSelected = true;
+        }
+
         [RelayCommand(AllowConcurrentExecutions = false)]
         private Task Refresh(CancellationToken token)
         {
@@ -109,6 +121,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
         async partial void OnIsSelectedChanged(bool value)
         {
+            PropertyViewModel.AddUpdateOrUpdateCache(_propertiesCache, 0, nameof(IsSelected), IsSelected ? bool.TrueString : bool.FalseString);
+
             if (value)
             {
                 Messenger.Send(new ScarletDirectorySelected(this));

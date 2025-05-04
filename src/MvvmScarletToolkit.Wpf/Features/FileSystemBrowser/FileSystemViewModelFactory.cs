@@ -329,7 +329,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
                 return fileInfos
                     .Where(p => fileAttributes.Any(q => p.Attributes.HasFlag(q)))
-                    .Select(p => new ScarletFile(new ScarletFileInfo(p), parent, this));
+                    .Select(p => new ScarletFile(_scheduler, new ScarletFileInfo(p), parent, this));
             }
             catch (UnauthorizedAccessException ex)
             {

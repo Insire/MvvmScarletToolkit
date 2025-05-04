@@ -38,9 +38,11 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 Set(info);
             }
 
-            public async Task Refresh(CancellationToken token)
+            public async Task Refresh(CancellationToken cancellationToken)
             {
-                var info = await _fileSystemViewModelFactory.GetDirectoryInfo(_fullName, token);
+                using var token = _viewModel._busyStack.GetToken();
+
+                var info = await _fileSystemViewModelFactory.GetDirectoryInfo(_fullName, cancellationToken);
                 if (info is null)
                 {
                     _viewModel.IsAccessProhibited = true;
@@ -49,14 +51,14 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
                 Set(info);
 
-                var isEmpty = await _fileSystemViewModelFactory.IsEmpty(_viewModel, token);
+                var isEmpty = await _fileSystemViewModelFactory.IsEmpty(_viewModel, cancellationToken);
                 if (isEmpty)
                 {
                     _viewModel._items.Clear();
                     return;
                 }
 
-                var children = await _fileSystemViewModelFactory.GetChildren(_viewModel, _fileAttributes, _folderAttributes, token);
+                var children = await _fileSystemViewModelFactory.GetChildren(_viewModel, _fileAttributes, _folderAttributes, cancellationToken);
 
                 if (!_viewModel.IsLoaded)
                 {
@@ -79,85 +81,17 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 _viewModel.LastAccessTimeUtc = info.LastAccessTimeUtc;
                 _viewModel.LastWriteTimeUtc = info.LastWriteTimeUtc;
 
-                var found = _viewModel._propertiesCache.Lookup(nameof(Name));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.Name;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(Name), info.Name, 1));
-                }
+                var index = 1;
 
-                found = _viewModel._propertiesCache.Lookup(nameof(FullName));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.FullName;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(FullName), info.FullName, 2));
-                }
-
-                found = _viewModel._propertiesCache.Lookup(nameof(Exists));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.Exists ? bool.TrueString : bool.FalseString;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(Exists), info.Exists ? bool.TrueString : bool.FalseString, 3));
-                }
-
-                found = _viewModel._propertiesCache.Lookup(nameof(IsHidden));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.IsHidden ? bool.TrueString : bool.FalseString;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(IsHidden), info.IsHidden ? bool.TrueString : bool.FalseString, 4));
-                }
-
-                found = _viewModel._propertiesCache.Lookup(nameof(IsAccessProhibited));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.IsAccessProhibited ? bool.TrueString : bool.FalseString;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(IsAccessProhibited), info.IsAccessProhibited ? bool.TrueString : bool.FalseString, 4));
-                }
-
-                found = _viewModel._propertiesCache.Lookup(nameof(CreationTimeUtc));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.CreationTimeUtc?.ToString() ?? string.Empty;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(CreationTimeUtc), info.CreationTimeUtc?.ToString() ?? string.Empty, 5));
-                }
-
-                found = _viewModel._propertiesCache.Lookup(nameof(LastAccessTimeUtc));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.LastAccessTimeUtc?.ToString() ?? string.Empty;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(LastAccessTimeUtc), info.LastAccessTimeUtc?.ToString() ?? string.Empty, 6));
-                }
-
-                found = _viewModel._propertiesCache.Lookup(nameof(LastWriteTimeUtc));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.LastWriteTimeUtc?.ToString() ?? string.Empty;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(LastWriteTimeUtc), info.LastWriteTimeUtc?.ToString() ?? string.Empty, 7));
-                }
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(FileSystemType), _viewModel.FileSystemType.ToString());
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(Name), info.Name);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(FullName), info.FullName);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(Exists), info.Exists ? bool.TrueString : bool.FalseString);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(IsHidden), info.IsHidden ? bool.TrueString : bool.FalseString);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(IsAccessProhibited), info.IsAccessProhibited ? bool.TrueString : bool.FalseString);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(CreationTimeUtc), info.CreationTimeUtc?.ToString() ?? string.Empty);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(LastAccessTimeUtc), info.LastAccessTimeUtc?.ToString() ?? string.Empty);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(LastWriteTimeUtc), info.LastWriteTimeUtc?.ToString() ?? string.Empty);
             }
         }
     }

@@ -38,9 +38,11 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 Set(info);
             }
 
-            public async Task Refresh(CancellationToken token)
+            public async Task Refresh(CancellationToken cancellationToken)
             {
-                var info = await _fileSystemViewModelFactory.GetDriveInfo(_fullName, token);
+                using var token = _viewModel._busyStack.GetToken();
+
+                var info = await _fileSystemViewModelFactory.GetDriveInfo(_fullName, cancellationToken);
                 if (info is null)
                 {
                     _viewModel.IsAccessProhibited = true;
@@ -49,14 +51,14 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
 
                 Set(info);
 
-                var isEmpty = await _fileSystemViewModelFactory.IsEmpty(_viewModel, token);
+                var isEmpty = await _fileSystemViewModelFactory.IsEmpty(_viewModel, cancellationToken);
                 if (isEmpty)
                 {
                     _viewModel._cache.Clear();
                     return;
                 }
 
-                var children = await _fileSystemViewModelFactory.GetChildren(_viewModel, _fileAttributes, _folderAttributes, token);
+                var children = await _fileSystemViewModelFactory.GetChildren(_viewModel, _fileAttributes, _folderAttributes, cancellationToken);
 
                 if (!_viewModel.IsLoaded)
                 {
@@ -79,97 +81,22 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 _viewModel.AvailableFreeSpace = info.AvailableFreeSpace;
                 _viewModel.TotalFreeSpace = info.TotalFreeSpace;
                 _viewModel.TotalSize = info.TotalSize;
-                _viewModel.FullName = info.FullName;
 
-                var found = _viewModel._propertiesCache.Lookup(nameof(Name));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.Name;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(Name), info.Name, 1));
-                }
+                var index = 1;
 
-                found = _viewModel._propertiesCache.Lookup(nameof(FullName));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.FullName;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(FullName), info.FullName, 2));
-                }
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(FileSystemType), _viewModel.FileSystemType.ToString());
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(Name), info.Name);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(FullName), info.FullName);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(DriveFormat), info.DriveFormat ?? string.Empty);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(DriveType), info.DriveType.ToString());
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(Exists), _viewModel.Exists ? bool.TrueString : bool.FalseString);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(IsReady), info.IsReady ? bool.TrueString : bool.FalseString);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(IsBusy), _viewModel.IsBusy ? bool.TrueString : bool.FalseString);
 
-                found = _viewModel._propertiesCache.Lookup(nameof(IsAccessProhibited));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.IsAccessProhibited ? bool.TrueString : bool.FalseString;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(IsAccessProhibited), info.IsAccessProhibited ? bool.TrueString : bool.FalseString, 3));
-                }
-
-                found = _viewModel._propertiesCache.Lookup(nameof(DriveFormat));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.DriveFormat ?? string.Empty;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(DriveFormat), info.DriveFormat ?? string.Empty, 4));
-                }
-
-                found = _viewModel._propertiesCache.Lookup(nameof(DriveType));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.DriveType.ToString();
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(DriveType), info.DriveType.ToString(), 5));
-                }
-
-                found = _viewModel._propertiesCache.Lookup(nameof(AvailableFreeSpace));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.AvailableFreeSpace.ToString();
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(AvailableFreeSpace), info.AvailableFreeSpace.ToString(), 6));
-                }
-
-                found = _viewModel._propertiesCache.Lookup(nameof(TotalFreeSpace));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.TotalFreeSpace.ToString();
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(TotalFreeSpace), info.TotalFreeSpace.ToString(), 7));
-                }
-
-                found = _viewModel._propertiesCache.Lookup(nameof(TotalSize));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.TotalSize.ToString();
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(TotalSize), info.TotalSize.ToString(), 8));
-                }
-
-                found = _viewModel._propertiesCache.Lookup(nameof(IsReady));
-                if (found.HasValue)
-                {
-                    found.Value.Value = _viewModel.IsReady ? bool.TrueString : bool.FalseString;
-                }
-                else
-                {
-                    _viewModel._propertiesCache.AddOrUpdate(PropertyViewModel.Create(nameof(IsReady), info.IsReady ? bool.TrueString : bool.FalseString, 3));
-                }
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(IsAccessProhibited), info.IsAccessProhibited ? bool.TrueString : bool.FalseString);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(AvailableFreeSpace), info.AvailableFreeSpace.ToString());
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(TotalFreeSpace), info.TotalFreeSpace.ToString());
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(TotalSize), info.TotalSize.ToString());
             }
         }
     }

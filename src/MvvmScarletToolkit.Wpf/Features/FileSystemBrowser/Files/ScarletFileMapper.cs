@@ -21,20 +21,11 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 Set(info);
             }
 
-            private void Set(ScarletFileInfo info)
+            public async Task Refresh(CancellationToken cancellationToken)
             {
-                _viewModel.Name = info.Name;
-                _viewModel.FullName = info.FullName;
-                _viewModel.Exists = info.Exists;
-                _viewModel.IsHidden = info.IsHidden;
-                _viewModel.CreationTimeUtc = info.CreationTimeUtc;
-                _viewModel.LastAccessTimeUtc = info.LastAccessTimeUtc;
-                _viewModel.LastWriteTimeUtc = info.LastWriteTimeUtc;
-            }
+                using var token = _viewModel._busyStack.GetToken();
 
-            public async Task Refresh(CancellationToken token)
-            {
-                var info = await _fileSystemViewModelFactory.GetFileInfo(_fullName, token);
+                var info = await _fileSystemViewModelFactory.GetFileInfo(_fullName, cancellationToken);
                 if (info is null)
                 {
                     _viewModel.IsAccessProhibited = true;
@@ -42,6 +33,31 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 }
 
                 Set(info);
+            }
+
+            private void Set(ScarletFileInfo info)
+            {
+                _viewModel.Name = info.Name;
+                _viewModel.FullName = info.FullName;
+                _viewModel.Extension = info.Extension;
+                _viewModel.Exists = info.Exists;
+                _viewModel.IsHidden = info.IsHidden;
+                _viewModel.CreationTimeUtc = info.CreationTimeUtc;
+                _viewModel.LastAccessTimeUtc = info.LastAccessTimeUtc;
+                _viewModel.LastWriteTimeUtc = info.LastWriteTimeUtc;
+
+                var index = 1;
+
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(FileSystemType), _viewModel.FileSystemType.ToString());
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(Name), info.Name);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(FullName), info.FullName);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(Extension), info.Extension);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(Exists), info.Exists ? bool.TrueString : bool.FalseString);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(IsHidden), info.IsHidden ? bool.TrueString : bool.FalseString);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(IsAccessProhibited), info.IsAccessProhibited ? bool.TrueString : bool.FalseString);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(CreationTimeUtc), info.CreationTimeUtc?.ToString() ?? string.Empty);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(LastAccessTimeUtc), info.LastAccessTimeUtc?.ToString() ?? string.Empty);
+                PropertyViewModel.AddUpdateOrUpdateCache(_viewModel._propertiesCache, index++, nameof(LastWriteTimeUtc), info.LastWriteTimeUtc?.ToString() ?? string.Empty);
             }
         }
     }

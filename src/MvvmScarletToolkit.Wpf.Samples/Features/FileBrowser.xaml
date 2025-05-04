@@ -16,37 +16,76 @@
         <PathGeometry x:Key="FolderPath">M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z</PathGeometry>
         <PathGeometry x:Key="DrivePath">M567.403 235.642L462.323 84.589A48 48 0 0 0 422.919 64H153.081a48 48 0 0 0-39.404 20.589L8.597 235.642A48.001 48.001 0 0 0 0 263.054V400c0 26.51 21.49 48 48 48h480c26.51 0 48-21.49 48-48V263.054c0-9.801-3-19.366-8.597-27.412zM153.081 112h269.838l77.913 112H75.168l77.913-112zM528 400H48V272h480v128zm-32-64c0 17.673-14.327 32-32 32s-32-14.327-32-32 14.327-32 32-32 32 14.327 32 32zm-96 0c0 17.673-14.327 32-32 32s-32-14.327-32-32 14.327-32 32-32 32 14.327 32 32z</PathGeometry>
 
+        <Style x:Key="PathStyle" TargetType="{x:Type Path}">
+            <Setter Property="Fill" Value="#777" />
+            <Setter Property="Stroke" Value="#777" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsAccessProhibited}" Value="True">
+                    <Setter Property="Fill" Value="Red" />
+                    <Setter Property="Stroke" Value="Red" />
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                    <Setter Property="Fill" Value="#999" />
+                    <Setter Property="Stroke" Value="#999" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
         <DataTemplate x:Key="FolderIconPath" DataType="{x:Type mvvm:ScarletDirectory}">
             <Path Width="16"
                   Height="16"
                   Data="{StaticResource FolderPath}"
                   Stretch="Uniform"
-                  Stroke="#777"
-                  StrokeThickness="1" />
+                  StrokeThickness="1"
+                  Style="{StaticResource PathStyle}" />
         </DataTemplate>
         <DataTemplate x:Key="FileIconPath" DataType="{x:Type mvvm:ScarletFile}">
             <Path Width="16"
                   Height="16"
                   Data="{StaticResource FilePath}"
                   Stretch="Uniform"
-                  Stroke="#777"
-                  StrokeThickness="1" />
+                  StrokeThickness="1"
+                  Style="{StaticResource PathStyle}" />
         </DataTemplate>
         <DataTemplate x:Key="DriveIconPath" DataType="{x:Type mvvm:ScarletDrive}">
             <Path Width="16"
                   Height="16"
                   Data="{StaticResource DrivePath}"
                   Stretch="Uniform"
-                  Stroke="#777"
-                  StrokeThickness="1" />
+                  StrokeThickness="1"
+                  Style="{StaticResource PathStyle}" />
         </DataTemplate>
+
+        <ItemsControl x:Key="PropertyList"
+                      Grid.IsSharedSizeScope="True"
+                      ItemsSource="{Binding Properties}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type mvvm:PropertyViewModel}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="PropertyDisplayName" />
+                            <ColumnDefinition Width="4" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="{Binding DisplayName, Mode=OneWay, StringFormat={}{0}:}" />
+                        <TextBlock Grid.Column="2" Text="{Binding Value, Mode=OneWay}" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <ToolTip x:Key="PropertyTooltip" Content="{StaticResource PropertyList}" />
     </UserControl.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="4" />
-            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="8" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="8" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -57,7 +96,10 @@
 
         <TreeView Grid.Row="0"
                   Grid.Column="0"
-                  ItemsSource="{Binding Items}">
+                  HorizontalAlignment="Stretch"
+                  ItemsSource="{Binding Items}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto">
             <TreeView.Resources>
                 <Style x:Key="{x:Type TreeViewItem}"
                        BasedOn="{StaticResource {x:Type TreeViewItem}}"
@@ -103,29 +145,7 @@
                                                 <Style TargetType="{x:Type ContentPresenter}">
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsLoaded, Mode=OneWay}" Value="True">
-                                                            <Setter Property="ToolTip">
-                                                                <Setter.Value>
-                                                                    <ToolTip>
-
-                                                                        <ItemsControl Grid.IsSharedSizeScope="True" ItemsSource="{Binding Properties}">
-                                                                            <ItemsControl.ItemTemplate>
-                                                                                <DataTemplate DataType="{x:Type mvvm:PropertyViewModel}">
-                                                                                    <Grid>
-                                                                                        <Grid.ColumnDefinitions>
-                                                                                            <ColumnDefinition Width="Auto" SharedSizeGroup="PropertyDisplayName" />
-                                                                                            <ColumnDefinition Width="4" />
-                                                                                            <ColumnDefinition Width="*" />
-                                                                                        </Grid.ColumnDefinitions>
-
-                                                                                        <TextBlock Grid.Column="0" Text="{Binding DisplayName, Mode=OneWay, StringFormat={}{0}:}" />
-                                                                                        <TextBlock Grid.Column="2" Text="{Binding Value, Mode=OneWay}" />
-                                                                                    </Grid>
-                                                                                </DataTemplate>
-                                                                            </ItemsControl.ItemTemplate>
-                                                                        </ItemsControl>
-                                                                    </ToolTip>
-                                                                </Setter.Value>
-                                                            </Setter>
+                                                            <Setter Property="ToolTip" Value="{StaticResource PropertyTooltip}" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsLoaded, Mode=OneWay}" Value="False">
                                                             <Setter Property="ToolTip">
@@ -167,7 +187,7 @@
                 </Style>
 
                 <HierarchicalDataTemplate DataType="{x:Type mvvm:ScarletDirectory}" ItemsSource="{Binding Containers}">
-                    <DockPanel>
+                    <DockPanel ToolTip="{StaticResource PropertyTooltip}">
                         <ContentControl ContentTemplate="{StaticResource FolderIconPath}" DockPanel.Dock="Left" />
                         <TextBlock Margin="5 0 0 0"
                                    Text="{Binding Name}"
@@ -176,7 +196,7 @@
                 </HierarchicalDataTemplate>
 
                 <HierarchicalDataTemplate DataType="{x:Type mvvm:ScarletDrive}" ItemsSource="{Binding Containers}">
-                    <DockPanel>
+                    <DockPanel ToolTip="{StaticResource PropertyTooltip}">
                         <ContentControl ContentTemplate="{StaticResource DriveIconPath}" DockPanel.Dock="Left" />
                         <TextBlock Margin="5 0 0 0"
                                    Text="{Binding Name}"
@@ -184,6 +204,7 @@
                     </DockPanel>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>
+
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Loaded">
                     <i:InvokeCommandAction Command="{Binding RefreshCommand}" />
@@ -191,24 +212,42 @@
             </i:Interaction.Triggers>
         </TreeView>
 
+        <GridSplitter Grid.Row="0"
+                      Grid.Column="1"
+                      Width="8"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Stretch" />
+
         <ContentControl Grid.Row="0" Grid.Column="2">
             <ContentControl.Style>
                 <Style TargetType="{x:Type ContentControl}">
-                    <Setter Property="Content">
-                        <Setter.Value>
-                            <TextBlock HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Text="nothing selected..." />
-                        </Setter.Value>
-                    </Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedTreeDetail, Converter={mvvm:IsNull}}" Value="True">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ContentControl}">
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Text="nothing selected..." />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
 
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type ContentControl}">
-                                <ContentPresenter Content="{Binding SelectedDetail}">
+                                <ContentPresenter Content="{Binding SelectedTreeDetail}">
                                     <ContentPresenter.Resources>
                                         <DataTemplate DataType="{x:Type mvvm:ScarletFile}">
-                                            <DockPanel Width="100">
+                                            <DockPanel Width="100"
+                                                       Background="Transparent"
+                                                       ToolTip="{StaticResource PropertyTooltip}">
+                                                <DockPanel.InputBindings>
+                                                    <MouseBinding Command="{Binding SelectCommand}" MouseAction="LeftDoubleClick" />
+                                                </DockPanel.InputBindings>
+
                                                 <TextBlock HorizontalAlignment="Center"
                                                            DockPanel.Dock="Bottom"
                                                            Text="{Binding Name}"
@@ -216,10 +255,9 @@
                                                 <Path Width="66"
                                                       Height="66"
                                                       Data="{StaticResource FilePath}"
-                                                      Fill="#777"
                                                       Stretch="Uniform"
-                                                      Stroke="#777"
-                                                      StrokeThickness="1" />
+                                                      StrokeThickness="1"
+                                                      Style="{StaticResource PathStyle}" />
                                             </DockPanel>
                                         </DataTemplate>
 
@@ -232,19 +270,31 @@
                                                         <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
                                                     </ContextMenu>
                                                 </ListBox.ContextMenu>
+
                                                 <ListBox.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <mvvm:VirtualizingWrapPanel IsItemsHost="True" Orientation="Horizontal" />
                                                     </ItemsPanelTemplate>
                                                 </ListBox.ItemsPanel>
+
                                                 <ListBox.ItemContainerStyle>
                                                     <Style TargetType="{x:Type ListBoxItem}">
-                                                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                                                        <Setter Property="ToolTip" Value="{StaticResource PropertyTooltip}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsBusy}" Value="true">
+                                                                <Setter Property="IsEnabled" Value="False" />
+                                                                <Setter Property="IsHitTestVisible" Value="False" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
                                                     </Style>
                                                 </ListBox.ItemContainerStyle>
+
                                                 <ListBox.Resources>
                                                     <DataTemplate DataType="{x:Type mvvm:ScarletDirectory}">
-                                                        <DockPanel Width="100">
+                                                        <DockPanel Width="100" Background="Transparent">
+                                                            <DockPanel.InputBindings>
+                                                                <MouseBinding Command="{Binding SelectCommand}" MouseAction="LeftDoubleClick" />
+                                                            </DockPanel.InputBindings>
 
                                                             <TextBlock HorizontalAlignment="Center"
                                                                        DockPanel.Dock="Bottom"
@@ -253,10 +303,9 @@
                                                             <Path Width="66"
                                                                   Height="66"
                                                                   Data="{StaticResource FolderPath}"
-                                                                  Fill="#777"
                                                                   Stretch="Uniform"
-                                                                  Stroke="#777"
-                                                                  StrokeThickness="1" />
+                                                                  StrokeThickness="1"
+                                                                  Style="{StaticResource PathStyle}" />
                                                         </DockPanel>
                                                     </DataTemplate>
                                                 </ListBox.Resources>
@@ -272,15 +321,26 @@
                                                         <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
                                                     </ContextMenu>
                                                 </ListBox.ContextMenu>
+
                                                 <ListBox.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <mvvm:VirtualizingWrapPanel IsItemsHost="True" Orientation="Horizontal" />
                                                     </ItemsPanelTemplate>
                                                 </ListBox.ItemsPanel>
 
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="{x:Type ListBoxItem}">
+                                                        <Setter Property="ToolTip" Value="{StaticResource PropertyTooltip}" />
+                                                    </Style>
+                                                </ListBox.ItemContainerStyle>
+
                                                 <ListBox.Resources>
                                                     <DataTemplate DataType="{x:Type mvvm:ScarletDirectory}">
-                                                        <DockPanel Width="100">
+                                                        <DockPanel Width="100" Background="Transparent">
+                                                            <DockPanel.InputBindings>
+                                                                <MouseBinding Command="{Binding SelectCommand}" MouseAction="LeftDoubleClick" />
+                                                            </DockPanel.InputBindings>
+
                                                             <TextBlock HorizontalAlignment="Center"
                                                                        DockPanel.Dock="Bottom"
                                                                        Text="{Binding Name}"
@@ -288,10 +348,9 @@
                                                             <Path Width="66"
                                                                   Height="66"
                                                                   Data="{StaticResource FolderPath}"
-                                                                  Fill="#777"
                                                                   Stretch="Uniform"
-                                                                  Stroke="#777"
-                                                                  StrokeThickness="1" />
+                                                                  StrokeThickness="1"
+                                                                  Style="{StaticResource PathStyle}" />
                                                         </DockPanel>
                                                     </DataTemplate>
                                                 </ListBox.Resources>
@@ -306,9 +365,53 @@
             </ContentControl.Style>
         </ContentControl>
 
+        <GridSplitter Grid.Row="0"
+                      Grid.Column="3"
+                      Width="8"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Stretch" />
+
+        <ContentControl Grid.Row="0" Grid.Column="4">
+            <ContentControl.Style>
+                <Style TargetType="{x:Type ContentControl}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedDetail, Converter={mvvm:IsNull}}" Value="True">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ContentControl}">
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Text="nothing selected..." />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ContentControl}">
+                                <ContentPresenter Content="{Binding SelectedDetail}">
+                                    <ContentPresenter.Resources>
+                                        <DataTemplate DataType="{x:Type mvvm:ScarletFile}">
+                                            <ContentControl Content="{StaticResource PropertyList}" />
+                                        </DataTemplate>
+
+                                        <DataTemplate DataType="{x:Type mvvm:ScarletDirectory}">
+                                            <ContentControl Content="{StaticResource PropertyList}" />
+                                        </DataTemplate>
+                                    </ContentPresenter.Resources>
+                                </ContentPresenter>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+
         <StatusBar Grid.Row="2"
                    Grid.Column="0"
-                   Grid.ColumnSpan="3">
+                   Grid.ColumnSpan="5">
             <StatusBarItem Content="Status" />
             <StatusBarItem Content="{Binding SelectedContainer.Name, FallbackValue='No container selected'}" />
             <StatusBarItem Content="{Binding SelectedChild.Name, FallbackValue='No child selected'}" />
