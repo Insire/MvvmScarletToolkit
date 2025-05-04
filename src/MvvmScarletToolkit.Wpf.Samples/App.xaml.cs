@@ -1,82 +1,121 @@
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Jot;
 using Jot.Storage;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IO;
 using MvvmScarletToolkit.ImageLoading;
 using MvvmScarletToolkit.Observables;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
+using MvvmScarletToolkit.Wpf.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.Samples.Features;
+using MvvmScarletToolkit.Wpf.Samples.Features.AsyncState;
+using MvvmScarletToolkit.Wpf.Samples.Features.Busy;
+using MvvmScarletToolkit.Wpf.Samples.Features.DataGrid;
+using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
+using MvvmScarletToolkit.Wpf.Samples.Features.Process;
+using MvvmScarletToolkit.Wpf.Samples.Features.Virtualization;
 using Serilog;
-using Serilog.Core;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reactive.Concurrency;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using static System.Net.WebRequestMethods;
 
 namespace MvvmScarletToolkit.Wpf.Samples
 {
     [SupportedOSPlatform("windows7.0")]
     public partial class App : Application
     {
-        private readonly Tracker _tracker;
-        private readonly HttpClient _httpClient;
-        private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
-        private readonly MemoryCache _memoryCache;
-        private readonly EnvironmentInformationProvider _environmentInformationProvider;
-        private readonly Logger _logger;
-
         public App()
         {
-            _tracker = new Tracker(new JsonFileStore(Environment.SpecialFolder.ApplicationData));
-            _httpClient = new HttpClient();
-            _recyclableMemoryStreamManager = new RecyclableMemoryStreamManager();
-            _memoryCache = new MemoryCache(new MemoryCacheOptionsWrapper(new MemoryCacheOptions()));
-            _environmentInformationProvider = new EnvironmentInformationProvider();
+            Ioc.Default.ConfigureServices(ConfigureServices());
 
-            var logs = Path.Combine(_environmentInformationProvider.GetLogsFolderPath(), "logs.txt");
+            AsyncImageLoadingBehavior.Loader = Ioc.Default.GetRequiredService<Lazy<IImageService<BitmapSource>>>();
+        }
 
-            Log.Logger = _logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .Enrich.FromLogContext()
-                .WriteTo.Debug(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{SourceContext}> {Message:lj}{NewLine}{Exception}")
-                .WriteTo.File(logs, outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] <{SourceContext}> {Message:lj}{NewLine}{Exception}")
-                .CreateLogger();
+        private static ServiceProvider ConfigureServices()
+        {
+            var serviceCollection = new ServiceCollection();
 
-            ConfigureImageLoading(_environmentInformationProvider);
+            var environmentInformationProvider = new EnvironmentInformationProvider();
+            var tracker = new Tracker(new JsonFileStore(Environment.SpecialFolder.ApplicationData));
+
+            tracker.Configure<MainWindow>()
+                .Id(w => w.Name, $"[Width={SystemParameters.VirtualScreenWidth},Height{SystemParameters.VirtualScreenHeight}]")
+                .Properties(w => new { w.Height, w.Width, w.Left, w.Top, w.WindowState })
+                .PersistOn(nameof(Window.Closing))
+                .StopTrackingOn(nameof(Window.Closing));
+
+            serviceCollection.AddSingleton<MainWindow>();
+            serviceCollection.AddSingleton<NavigationViewModel>();
+            serviceCollection.AddSingleton<DataGridViewModel>();
+            serviceCollection.AddSingleton<ImageViewModelProvider>();
+            serviceCollection.AddSingleton<LocalizationsViewModel>();
+            serviceCollection.AddSingleton<ProcessingImagesViewModel>();
+            serviceCollection.AddSingleton<DataEntriesViewModel>();
+            serviceCollection.AddSingleton<AsyncStateListViewModel>();
+            serviceCollection.AddSingleton<ProgressViewModel>();
+            serviceCollection.AddSingleton<FileSystemViewModel>();
+            serviceCollection.AddSingleton<IFileSystemViewModelFactory, FileSystemViewModelFactory>();
+            serviceCollection.AddSingleton(FileSystemOptionsViewModel.Default);
+            serviceCollection.AddSingleton<BusyViewModel>();
+            serviceCollection.AddSingleton<GeometryRenderViewModel>();
+            serviceCollection.AddSingleton<PasswordViewModel>();
+            serviceCollection.AddSingleton<DialogViewModel>();
+            serviceCollection.AddSingleton<ProcessViewModel>();
+            serviceCollection.AddSingleton<ToastsViewModel>();
+
+            serviceCollection.AddSingleton<IScheduler>(_ => new SynchronizationContextScheduler(SynchronizationContext.Current!));
+            serviceCollection.AddSingleton<ILocalizationProvider, ScarletLocalizationProvider>();
+            serviceCollection.AddSingleton(_ => SynchronizationContext.Current!);
+            serviceCollection.AddSingleton(ScarletCommandBuilder.Default);
+            serviceCollection.AddSingleton(tracker);
+            serviceCollection.AddSingleton<HttpClient>();
+            serviceCollection.AddSingleton<RecyclableMemoryStreamManager>();
+            serviceCollection.AddSingleton(new MemoryCache(new MemoryCacheOptionsWrapper(new MemoryCacheOptions())));
+            serviceCollection.AddSingleton(environmentInformationProvider);
+            serviceCollection.AddLogging(builder =>
+                builder.AddSerilog(new LoggerConfiguration()
+                    .MinimumLevel.Verbose()
+                    .Enrich.FromLogContext()
+                    .WriteTo.Debug(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{SourceContext}> {Message:lj}{NewLine}{Exception}")
+                    .WriteTo.File(Path.Combine(environmentInformationProvider.GetLogsFolderPath(), "logs.txt"), outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] <{SourceContext}> {Message:lj}{NewLine}{Exception}")
+                    .CreateLogger(), dispose: true));
+
+            serviceCollection.AddSingleton<ImageService<BitmapSource>>();
+            serviceCollection.AddSingleton<IImageDataProvider, ImageDataProvider>();
+            serviceCollection.AddSingleton<IImageFactory<BitmapSource>, ImageFactory>();
+            serviceCollection.AddSingleton<IImageDataFileystemCache, ImageDataFileystemCache>();
+            serviceCollection.AddSingleton<IImageFilesystemCache<BitmapSource>, ImageFilesystemCache<BitmapSource>>();
+            serviceCollection.AddSingleton<IImageDataMemoryCache, ImageDataMemoryCache>();
+            serviceCollection.AddSingleton<IImageMemoryCache<BitmapSource>, ImageMemoryCache<BitmapSource>>();
+            serviceCollection.AddSingleton(new SemaphoreSlim(Environment.ProcessorCount));
+            serviceCollection.AddSingleton(new ImageDataFileystemCacheOptions() { CacheDirectoryPath = environmentInformationProvider.GetRawImagesFolderPath(), CreateFolder = true, IsEnabled = true });
+            serviceCollection.AddSingleton(new ImageFilesystemCacheOptions() { IsEnabled = true, CacheDirectoryPath = environmentInformationProvider.GetEncodedImagesFolderPath(), CreateFolder = true });
+            serviceCollection.AddSingleton(new ImageDataMemoryCacheOptions() { IsEnabled = true });
+            serviceCollection.AddSingleton(new ImageMemoryCacheOptions() { IsEnabled = true });
+            serviceCollection.AddSingleton(new ImageServiceOptions() { DefaultHeight = 300, DefaultWidth = 300 });
+            serviceCollection.AddSingleton(provider => new Lazy<IImageService<BitmapSource>>(() => provider.GetRequiredService<ImageService<BitmapSource>>()));
+            serviceCollection.AddMemoryCache();
+
+            return serviceCollection.BuildServiceProvider();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            _tracker.Configure<MainWindow>()
-                .Id(w => w.Name, $"[Width={SystemParameters.VirtualScreenWidth},Height{SystemParameters.VirtualScreenHeight}]")
-                .Properties(w => new { w.Height, w.Width, w.Left, w.Top, w.WindowState })
-            .PersistOn(nameof(Window.Closing))
-                .StopTrackingOn(nameof(Window.Closing));
-
-            var navigation = new NavigationViewModel(
-                SynchronizationContext.Current!,
-                ScarletCommandBuilder.Default,
-                new LocalizationsViewModel(new ScarletLocalizationProvider()),
-                _environmentInformationProvider,
-                _httpClient);
-
-            var processingImagesViewModel = navigation.Items
-                .Where(p => p.Content?.GetType() == typeof(ProcessingImagesViewModel))
-                .Select(static p => (ProcessingImagesViewModel)p.Content!)
-                .Single();
-
+            var processingImagesViewModel = Ioc.Default.GetRequiredService<ProcessingImagesViewModel>();
             await processingImagesViewModel.Initialize(CancellationToken.None);
 
-            var window = new MainWindow(_tracker, navigation);
+            var window = Ioc.Default.GetRequiredService<MainWindow>();
             window.Show();
         }
 
@@ -85,33 +124,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             base.OnExit(e);
 
             await ScarletExitService.Default.ShutDown().ConfigureAwait(false);
-
-            _tracker.PersistAll();
-
-            _logger.Dispose();
-        }
-
-        private void ConfigureImageLoading(EnvironmentInformationProvider environmentInformationProvider)
-        {
-            var factory = new Lazy<IImageService<BitmapSource>>(() =>
-            {
-                var loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog(_logger));
-                var factory = new ImageFactory(loggerFactory.CreateLogger<ImageFactory>(), new SemaphoreSlim(Environment.ProcessorCount));
-
-                return new ImageService<BitmapSource>(
-                            loggerFactory.CreateLogger<ImageService<BitmapSource>>(),
-                            factory,
-                            new ImageDataProvider(loggerFactory.CreateLogger<ImageDataProvider>(), _recyclableMemoryStreamManager, _httpClient),
-                            new ImageDataFileystemCache(loggerFactory.CreateLogger<ImageDataFileystemCache>(), _recyclableMemoryStreamManager, new ImageDataFileystemCacheOptions() { CacheDirectoryPath = environmentInformationProvider.GetRawImagesFolderPath(), CreateFolder = true, IsEnabled = true }),
-                            new ImageFilesystemCache<BitmapSource>(loggerFactory.CreateLogger<ImageFilesystemCache<BitmapSource>>(), factory, _recyclableMemoryStreamManager, new ImageFilesystemCacheOptions() { IsEnabled = true, CacheDirectoryPath = environmentInformationProvider.GetEncodedImagesFolderPath(), CreateFolder = true }),
-                            new ImageDataMemoryCache(loggerFactory.CreateLogger<ImageDataMemoryCache>(), _memoryCache, _recyclableMemoryStreamManager, new ImageDataMemoryCacheOptions() { IsEnabled = true }),
-                            new ImageMemoryCache<BitmapSource>(loggerFactory.CreateLogger<ImageMemoryCache<BitmapSource>>(), _memoryCache, _recyclableMemoryStreamManager, new ImageMemoryCacheOptions() { IsEnabled = true }),
-                            _memoryCache,
-                            _recyclableMemoryStreamManager,
-                            new ImageServiceOptions() { DefaultHeight = 300, DefaultWidth = 300 });
-            });
-
-            AsyncImageLoadingBehavior.Loader = factory;
+            Ioc.Default.GetRequiredService<Tracker>().PersistAll();
         }
 
         private sealed class MemoryCacheOptionsWrapper : IOptions<MemoryCacheOptions>

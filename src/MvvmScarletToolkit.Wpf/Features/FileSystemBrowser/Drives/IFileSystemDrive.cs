@@ -1,8 +1,9 @@
+using System;
 using System.IO;
 
 namespace MvvmScarletToolkit
 {
-    public interface IFileSystemDrive : IFileSystemParent
+    public interface IFileSystemDrive : IFileSystemParent, IDisposable
     {
         string? DriveFormat { get; }
         DriveType DriveType { get; }

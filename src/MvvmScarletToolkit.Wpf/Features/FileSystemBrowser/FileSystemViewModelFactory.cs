@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,14 +14,14 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
     public sealed class FileSystemViewModelFactory : IFileSystemViewModelFactory
     {
-        private readonly IScarletCommandBuilder _commandBuilder;
         private readonly ILogger<FileSystemViewModelFactory> _logger;
+        private readonly IScheduler _scheduler;
         private readonly ConcurrentDictionary<string, string> _noAccessLookup;
 
-        public FileSystemViewModelFactory(IScarletCommandBuilder commandBuilder, ILogger<FileSystemViewModelFactory> logger)
+        public FileSystemViewModelFactory(ILogger<FileSystemViewModelFactory> logger, IScheduler scheduler)
         {
-            _commandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
             _logger = logger;
+            _scheduler = scheduler;
             _noAccessLookup = new ConcurrentDictionary<string, string>();
         }
 
@@ -70,12 +71,12 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return null;
         }
 
-        public Task<bool> IsEmpty(IFileSystemParent parent)
+        public Task<bool> IsEmpty(IFileSystemParent parent, CancellationToken token)
         {
             return parent switch
             {
-                IFileSystemDrive drive => Task.Run(() => IsDriveEmpty(drive)),
-                IFileSystemDirectory directory => Task.Run(() => IsDirectoryEmpty(directory)),
+                IFileSystemDrive drive => Task.Run(() => IsDriveEmpty(drive), token),
+                IFileSystemDirectory directory => Task.Run(() => IsDirectoryEmpty(directory), token),
                 _ => throw new NotImplementedException(),
             };
         }
@@ -117,12 +118,19 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return result;
         }
 
-        public Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(IReadOnlyCollection<DriveType> types, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
+        public Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(
+            IReadOnlyCollection<DriveType> types,
+            IReadOnlyCollection<FileAttributes> fileAttributes,
+            IReadOnlyCollection<FileAttributes> folderAttributes,
+            CancellationToken token)
         {
-            return Task.Run<IReadOnlyCollection<IFileSystemDrive>>(() => GetDrivesInternal(types, fileAttributes, folderAttributes).ToList());
+            return Task.Run<IReadOnlyCollection<IFileSystemDrive>>(() => GetDrivesInternal(types, fileAttributes, folderAttributes).ToList(), token);
         }
 
-        private IEnumerable<IFileSystemDrive> GetDrivesInternal(IReadOnlyCollection<DriveType> types, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
+        private IEnumerable<IFileSystemDrive> GetDrivesInternal(
+            IReadOnlyCollection<DriveType> types,
+            IReadOnlyCollection<FileAttributes> fileAttributes,
+            IReadOnlyCollection<FileAttributes> folderAttributes)
         {
             if (types.Count == 0)
             {
@@ -139,12 +147,16 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
             return drives
                 .Where(p => p.IsReady && types.Any(q => q == p.DriveType))
-                .Select(p => new ScarletDrive(new ScarletDriveInfo(p), _commandBuilder, this, fileAttributes, folderAttributes));
+                .Select(p => new ScarletDrive(_scheduler, new ScarletDriveInfo(p), this, fileAttributes, folderAttributes));
         }
 
-        public Task<IReadOnlyCollection<IFileSystemDirectory>> GetDirectories(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
+        public Task<IReadOnlyCollection<IFileSystemDirectory>> GetDirectories(
+            IFileSystemParent parent,
+            IReadOnlyCollection<FileAttributes> fileAttributes,
+            IReadOnlyCollection<FileAttributes> folderAttributes,
+            CancellationToken token)
         {
-            return Task.Run<IReadOnlyCollection<IFileSystemDirectory>>(() => GetDirectoriesInternal(parent, fileAttributes, folderAttributes).ToList());
+            return Task.Run<IReadOnlyCollection<IFileSystemDirectory>>(() => GetDirectoriesInternal(parent, fileAttributes, folderAttributes).ToList(), token);
         }
 
         private IEnumerable<IFileSystemDirectory> GetDirectoriesInternal(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
@@ -162,7 +174,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
                 return directoryInfos
                     .Where(p => folderAttributes.Any(q => p.Attributes.HasFlag(q)))
-                    .Select(p => new ScarletDirectory(new ScarletDirectoryInfo(p), fileAttributes, folderAttributes, parent, _commandBuilder, this));
+                    .Select(p => new ScarletDirectory(_scheduler, new ScarletDirectoryInfo(p), fileAttributes, folderAttributes, parent, this));
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -174,9 +186,9 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return Enumerable.Empty<IFileSystemDirectory>();
         }
 
-        public Task<IReadOnlyCollection<IFileSystemFile>> GetFiles(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes)
+        public Task<IReadOnlyCollection<IFileSystemFile>> GetFiles(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, CancellationToken token)
         {
-            return Task.Run<IReadOnlyCollection<IFileSystemFile>>(() => GetFilesInternal(parent, fileAttributes).ToList());
+            return Task.Run<IReadOnlyCollection<IFileSystemFile>>(() => GetFilesInternal(parent, fileAttributes).ToList(), token);
         }
 
         private IEnumerable<IFileSystemFile> GetFilesInternal(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes)
@@ -194,7 +206,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
                 return fileInfos
                     .Where(p => fileAttributes.Any(q => p.Attributes.HasFlag(q)))
-                    .Select(p => new ScarletFile(new ScarletFileInfo(p), parent, _commandBuilder, this));
+                    .Select(p => new ScarletFile(new ScarletFileInfo(p), parent, this));
             }
             catch (UnauthorizedAccessException ex)
             {

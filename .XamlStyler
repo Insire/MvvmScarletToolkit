@@ -3,11 +3,12 @@
     "KeepFirstAttributeOnSameLine": true,
     "MaxAttributeCharactersPerLine": 0,
     "MaxAttributesPerLine": 1,
-    "NewlineExemptionElements": "RadialGradientBrush, GradientStop, LinearGradientBrush, ScaleTransfom, SkewTransform, RotateTransform, TranslateTransform, Trigger, Condition, Setter",
+    "NewlineExemptionElements": "RadialGradientBrush, GradientStop, LinearGradientBrush, ScaleTransform, SkewTransform, RotateTransform, TranslateTransform, Trigger, Condition, Setter",
     "SeparateByGroups": false,
     "AttributeIndentation": 0,
     "AttributeIndentationStyle": 1,
     "RemoveDesignTimeReferences":  false,
+    "IgnoreDesignTimeReferencePrefix": false,
     "EnableAttributeReordering": true,
     "AttributeOrderingRuleGroups": [
         "x:Class",
@@ -20,7 +21,6 @@
         "*:*, *",
         "PageSource, PageIndex, Offset, Color, TargetName, Property, Value, StartPoint, EndPoint",
         "mc:Ignorable, d:IsDataSource, d:LayoutOverrides, d:IsStaticText",
-        "options:Freeze, op:Freeze, o:Freeze, mc:Ignorable, d:IsDataSource, d:LayoutOverrides, d:IsStaticText",
         "Storyboard.*, From, To, Duration"
     ],
     "FirstLineAttributes": "",
@@ -37,6 +37,6 @@
     "NoNewLineMarkupExtensions": "x:Bind, Binding",
     "ThicknessSeparator": 1,
     "ThicknessAttributes": "Margin, Padding, BorderThickness, ThumbnailClipMargin",
-    "FormatOnSave": false,
-    "CommentPadding": 2,
+    "FormatOnSave": true,
+    "CommentPadding": 2
 }

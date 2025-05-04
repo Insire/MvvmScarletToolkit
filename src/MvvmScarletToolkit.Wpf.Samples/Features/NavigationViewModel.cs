@@ -1,13 +1,13 @@
 using MvvmScarletToolkit.Observables;
-using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.FileSystemBrowser;
+using MvvmScarletToolkit.Wpf.Samples.Features.AsyncState;
 using MvvmScarletToolkit.Wpf.Samples.Features.Busy;
 using MvvmScarletToolkit.Wpf.Samples.Features.ContextMenu;
+using MvvmScarletToolkit.Wpf.Samples.Features.DataGrid;
 using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using MvvmScarletToolkit.Wpf.Samples.Features.Process;
 using MvvmScarletToolkit.Wpf.Samples.Features.Virtualization;
-using System.Net.Http;
 using System.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features
@@ -15,27 +15,36 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
     public sealed class NavigationViewModel : Scenes
     {
         public NavigationViewModel(
+            DataGridViewModel dataGridViewModel,
+            ImageViewModelProvider imageViewModelProvider,
             SynchronizationContext synchronizationContext,
+            ProcessingImagesViewModel processingImagesViewModel,
+            DataEntriesViewModel dataEntriesViewModel,
+            AsyncStateListViewModel asyncStateListViewModel,
+            ProgressViewModel progressViewModel,
+            FileSystemViewModel fileSystemViewModel,
+            BusyViewModel busyViewModel,
+            GeometryRenderViewModel geometryRenderViewModel,
+            PasswordViewModel passwordViewModel,
+            DialogViewModel dialogViewModel,
+            ProcessViewModel processViewModel,
+            ToastsViewModel toastsViewModel,
             IScarletCommandBuilder commandBuilder,
-            LocalizationsViewModel localizationsViewModel,
-            EnvironmentInformationProvider environmentInformationProvider,
-            HttpClient httpClient)
+            LocalizationsViewModel localizationsViewModel)
             : base(commandBuilder, localizationsViewModel)
         {
-            var dataGridViewModel = new DataGrid.DataGridViewModel(commandBuilder, synchronizationContext);
-
-            Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(CommandBuilder, new ImageViewModelProvider(CommandBuilder, environmentInformationProvider, httpClient)));
-            Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
-            Add("ConcurrentCommands and state changes", new AsyncState.AsyncStateListViewModel(commandBuilder));
+            Add("Image Loading + Drag and Drop", processingImagesViewModel);
+            Add("Lazy Loading / Data-Virtualization", dataEntriesViewModel);
+            Add("ConcurrentCommands and state changes", asyncStateListViewModel);
             Add("MVVM Live Sorting and Grouping in bound collections", dataGridViewModel);
-            Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));
-            Add("FileSystemBrowser", new FileSystemViewModel(commandBuilder, new FileSystemViewModelFactory(commandBuilder), FileSystemOptionsViewModel.Default));
-            Add("State changes in a tree structure", new BusyViewModel(commandBuilder));
-            Add("Geometry rendering", new GeometryRenderViewModel(commandBuilder));
-            Add("Binding Passwordbox", new PasswordViewModel());
+            Add("Progress, -notification and dispatcher throtteling", progressViewModel);
+            Add("File Browser", fileSystemViewModel);
+            Add("State changes in a tree structure", busyViewModel);
+            Add("Geometry rendering", geometryRenderViewModel);
+            Add("Binding Passwordbox", passwordViewModel);
             Add("MVVM Grouping", GroupingViewModel.Create(commandBuilder, dataGridViewModel.Items));
-            Add("Dialog-ViewModel", new DialogViewModel(commandBuilder));
-            Add("MVVM Terminal/Console", new ProcessViewModel(commandBuilder));
+            Add("Dialog-ViewModel", dialogViewModel);
+            Add("MVVM Terminal/Console", processViewModel);
 
             var contextMenu = new ContextMenuViewModels();
             var menuitem = new ContextMenuViewModel();
@@ -46,11 +55,11 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
 
             Add("MVVM ContextMenus", contextMenu);
             Add("Binding Enum values", new Enums.EnumViewModel());
-            Add("MVVM Toast-Notification", new ToastsViewModel(commandBuilder));
+            Add("MVVM Toast-Notification", toastsViewModel);
             Add("Input Prevention", new FormViewModel());
             Add("ObservableDictionary", new ObservableDictionaryViewModel());
 
-            Items[0].IsSelected = true;
+            Items[5].IsSelected = true;
         }
     }
 }

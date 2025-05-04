@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Linq;
 
@@ -27,8 +26,8 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
             }
 
             var extension = Path.GetExtension(fileInfo.Name) is null
-                   ? string.Empty
-                   : Path.GetExtension(fileInfo.Name).ToUpper();
+                ? string.Empty
+                : Path.GetExtension(fileInfo.Name).ToUpper();
 
             return GetInternal(byteBuffer, extension);
         }

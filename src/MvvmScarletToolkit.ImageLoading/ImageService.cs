@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit.ImageLoading
         private readonly IImageDataFileystemCache _diskCachedImageDataProvider;
         private readonly IImageFilesystemCache<TImage> _diskCachedImageProvider;
         private readonly IImageDataMemoryCache _memoryCachedImageDataProvider;
-        private readonly ImageMemoryCache<TImage> _memoryCacheImageProvider;
+        private readonly IImageMemoryCache<TImage> _memoryCacheImageProvider;
         private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
         private readonly IMemoryCache _memoryCache;
         private readonly ImageServiceOptions _options;
@@ -27,7 +27,7 @@ namespace MvvmScarletToolkit.ImageLoading
             IImageDataFileystemCache diskCachedImageDataProvider,
             IImageFilesystemCache<TImage> diskCachedImageProvider,
             IImageDataMemoryCache memoryCachedImageDataProvider,
-            ImageMemoryCache<TImage> memoryCacheImageProvider,
+            IImageMemoryCache<TImage> memoryCacheImageProvider,
             IMemoryCache memoryCache,
             RecyclableMemoryStreamManager recyclableMemoryStreamManager,
             ImageServiceOptions options)
@@ -157,7 +157,7 @@ namespace MvvmScarletToolkit.ImageLoading
                 {
                     image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken).ConfigureAwait(false);
                 }
-                catch(TaskCanceledException)
+                catch (TaskCanceledException)
                 {
                     return null;
                 }

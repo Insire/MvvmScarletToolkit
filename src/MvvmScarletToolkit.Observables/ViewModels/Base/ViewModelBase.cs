@@ -7,7 +7,7 @@ namespace MvvmScarletToolkit.Observables
     /// <summary>
     /// BaseViewModel that serves as service aggregate and caches <see cref="INotifyPropertyChanged"/> EventArgs
     /// </summary>
-    public abstract class ViewModelBase : ObservableRecipient, IDisposable
+    public abstract partial class ViewModelBase : ObservableRecipient, IDisposable
     {
         protected readonly IObservableBusyStack BusyStack;
         protected readonly IScarletCommandBuilder CommandBuilder;
@@ -16,13 +16,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly IExitService Exit;
         protected readonly IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> WeakEventManager;
 
-        private bool _isBusy;
-        [Bindable(true, BindingDirection.OneWay)]
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            protected set { SetProperty(ref _isBusy, value); }
-        }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsBusy { get; protected set; }
 
         protected bool IsDisposed { get; private set; }
 

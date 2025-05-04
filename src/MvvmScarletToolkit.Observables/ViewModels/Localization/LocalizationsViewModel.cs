@@ -31,7 +31,7 @@ namespace MvvmScarletToolkit.Observables
             ? LocalizationProvider.Languages
             : Enumerable.Empty<CultureInfo>();
 
-        public LocalizationsViewModel(in ILocalizationProvider provider)
+        public LocalizationsViewModel(ILocalizationProvider provider)
         {
             LocalizationProvider = provider ?? throw new ArgumentNullException(nameof(provider));
 
