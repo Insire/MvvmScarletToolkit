@@ -31,7 +31,6 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             {
                 new MagicNumberMimeTypeResolver(),
                 new RegistryFileExtensionMimeTypeResolver(),
-                new UrlMonMimeTypeResolver(),
                 new StaticFileExtensionMimeTypeResolver(),
             };
         }
