@@ -1,19 +1,19 @@
-using ImageMagick;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
+namespace MvvmScarletToolkit.Wpf
 {
-    public sealed class ImageFactory : IImageFactory<BitmapSource>
+    public sealed class WpfImageFactory : IImageFactory<BitmapSource>
     {
-        private readonly ILogger<ImageFactory> _logger;
+        private readonly ILogger<WpfImageFactory> _logger;
         private readonly SemaphoreSlim _semaphore;
 
-        public ImageFactory(ILogger<ImageFactory> logger, SemaphoreSlim semaphore)
+        public WpfImageFactory(ILogger<WpfImageFactory> logger, SemaphoreSlim semaphore)
         {
             _logger = logger;
             _semaphore = semaphore;
@@ -24,7 +24,15 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             try
             {
                 await _semaphore.WaitAsync(cancellationToken);
-                using var image = new MagickImage(stream);
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.StreamSource = stream;
+                image.StreamSource.Flush();
+                image.EndInit();
+                image.Freeze();
+
+                image.StreamSource.Dispose();
 
                 var bitmapSource = ToResizedBitmapSource(image, requestedSize);
                 bitmapSource.Freeze();
@@ -59,25 +67,15 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             }
         }
 
-        private static BitmapSource ToResizedBitmapSource(MagickImage magickImage, ImageSize requestedSize)
+        private static BitmapSource ToResizedBitmapSource(BitmapImage image, ImageSize requestedSize)
         {
-            if (magickImage.Width != requestedSize.Width || magickImage.Height != requestedSize.Height)
+            if (image.Width != requestedSize.Width || image.Height != requestedSize.Height)
             {
-                var size = new MagickGeometry(requestedSize.Width, requestedSize.Height)
-                {
-                    Less = false,
-                    Greater = true,
-
-                    // This will resize the image to a fixed size without maintaining the aspect ratio.
-                    // Normally an image will be resized to fit inside the specified size.
-                    IgnoreAspectRatio = false
-                };
-
-                magickImage.Resize(size);
+                return new TransformedBitmap(image, new ScaleTransform(0.5, 0.5));
             }
 
             // convert
-            return magickImage.ToBitmapSource();
+            return image;
         }
     }
 }

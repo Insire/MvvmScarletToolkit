@@ -2,7 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
+namespace MvvmScarletToolkit.Wpf
 {
     // original idea and code from: https://github.com/AvaloniaUtils/AsyncImageLoader.Avalonia
     public static class ImageLoader

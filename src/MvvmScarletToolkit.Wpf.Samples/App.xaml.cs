@@ -92,7 +92,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
             serviceCollection.AddSingleton<ImageService<BitmapSource>>();
             serviceCollection.AddSingleton<IImageDataProvider, ImageDataProvider>();
-            serviceCollection.AddSingleton<IImageFactory<BitmapSource>, ImageFactory>();
+            serviceCollection.AddSingleton<IImageFactory<BitmapSource>, WpfImageFactory>();
             serviceCollection.AddSingleton<IImageDataFileystemCache, ImageDataFileystemCache>();
             serviceCollection.AddSingleton<IImageFilesystemCache<BitmapSource>, ImageFilesystemCache<BitmapSource>>();
             serviceCollection.AddSingleton<IImageDataMemoryCache, ImageDataMemoryCache>();
