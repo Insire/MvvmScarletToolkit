@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +9,8 @@ namespace MvvmScarletToolkit
 {
     public interface IFileSystemViewModelFactory
     {
+        IMessenger Messenger { get; }
+
         Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(
             IReadOnlyCollection<DriveType> types,
             IReadOnlyCollection<FileAttributes> fileAttributes,

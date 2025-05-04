@@ -1,9 +1,9 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using MvvmScarletToolkit.Wpf.FileSystemBrowser;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
@@ -18,10 +18,13 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         private readonly IScheduler _scheduler;
         private readonly ConcurrentDictionary<string, string> _noAccessLookup;
 
+        public IMessenger Messenger { get; }
+
         public FileSystemViewModelFactory(ILogger<FileSystemViewModelFactory> logger, IScheduler scheduler)
         {
             _logger = logger;
             _scheduler = scheduler;
+            Messenger = new WeakReferenceMessenger();
             _noAccessLookup = new ConcurrentDictionary<string, string>();
         }
 
@@ -32,12 +35,60 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 var info = await Task.Run(() => new FileInfo(filePath), token);
                 return new ScarletFileInfo(info);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, "Failed to get file info");
+
+                return new ScarletFileInfo()
+                {
+                    CreationTimeUtc = null,
+                    Exists = true,
+                    FullName = filePath,
+                    IsHidden = false,
+                    LastAccessTimeUtc = null,
+                    LastWriteTimeUtc = null,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
+            catch (FileNotFoundException ex)
+            {
+                _logger.LogError(ex, "Failed to get file info");
+
+                return new ScarletFileInfo()
+                {
+                    CreationTimeUtc = null,
+                    Exists = false,
+                    FullName = filePath,
+                    IsHidden = false,
+                    LastAccessTimeUtc = null,
+                    LastWriteTimeUtc = null,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "Failed to get file info");
+
+                return new ScarletFileInfo()
+                {
+                    CreationTimeUtc = null,
+                    Exists = false,
+                    FullName = filePath,
+                    IsHidden = false,
+                    LastAccessTimeUtc = null,
+                    LastWriteTimeUtc = null,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to get file info");
-            }
 
-            return null;
+                return null;
+            }
         }
 
         public async Task<ScarletDirectoryInfo?> GetDirectoryInfo(string filePath, CancellationToken token)
@@ -47,6 +98,54 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 var info = await Task.Run(() => new DirectoryInfo(filePath), token);
 
                 return new ScarletDirectoryInfo(info);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, "Failed to get directory info");
+
+                return new ScarletDirectoryInfo()
+                {
+                    CreationTimeUtc = null,
+                    Exists = true,
+                    FullName = filePath,
+                    IsHidden = false,
+                    LastAccessTimeUtc = null,
+                    LastWriteTimeUtc = null,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                _logger.LogError(ex, "Failed to get directory info");
+
+                return new ScarletDirectoryInfo()
+                {
+                    CreationTimeUtc = null,
+                    Exists = false,
+                    FullName = filePath,
+                    IsHidden = false,
+                    LastAccessTimeUtc = null,
+                    LastWriteTimeUtc = null,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "Failed to get directory info");
+
+                return new ScarletDirectoryInfo()
+                {
+                    CreationTimeUtc = null,
+                    Exists = true,
+                    FullName = filePath,
+                    IsHidden = false,
+                    LastAccessTimeUtc = null,
+                    LastWriteTimeUtc = null,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
             }
             catch (Exception ex)
             {
@@ -62,6 +161,30 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             {
                 var info = await Task.Run(() => new DriveInfo(filePath), token);
                 return new ScarletDriveInfo(info);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, "Failed to get drive info");
+                return new ScarletDriveInfo()
+                {
+                    AvailableFreeSpace = 0,
+                    DriveFormat = null,
+                    DriveType = DriveType.Unknown,
+                    IsReady = false,
+                    TotalFreeSpace = 0,
+                    TotalSize = 0,
+                    FullName = filePath,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
+            catch (DriveNotFoundException ex)
+            {
+                _logger.LogError(ex, "Failed to get drive info");
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "Failed to get drive info");
             }
             catch (Exception ex)
             {
@@ -112,7 +235,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             {
                 _noAccessLookup.TryAdd(directoryPath, directoryPath);
 
-                Debug.WriteLine(ex.Message);
+                _logger.LogError(ex, "Failed to get directory info");
             }
 
             return result;
@@ -178,7 +301,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             }
             catch (UnauthorizedAccessException ex)
             {
-                Debug.WriteLine(ex.Message);
+                _logger.LogError(ex, "Failed to get directory info");
 
                 _noAccessLookup.TryAdd(parent.FullName, parent.FullName);
             }
@@ -210,7 +333,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             }
             catch (UnauthorizedAccessException ex)
             {
-                Debug.WriteLine(ex.Message);
+                _logger.LogError(ex, "Failed to get file info");
 
                 _noAccessLookup.TryAdd(parent.FullName, parent.FullName);
             }

@@ -16,6 +16,12 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             LastWriteTimeUtc = info.LastWriteTimeUtc;
         }
 
+        public ScarletDirectoryInfo()
+        {
+            Name = string.Empty;
+            FullName = string.Empty;
+        }
+
         public string Name { get; init; }
         public string FullName { get; init; }
         public bool Exists { get; init; }
@@ -23,5 +29,6 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         public DateTime? CreationTimeUtc { get; init; }
         public DateTime? LastAccessTimeUtc { get; init; }
         public DateTime? LastWriteTimeUtc { get; init; }
+        public bool IsAccessProhibited { get; init; }
     }
 }

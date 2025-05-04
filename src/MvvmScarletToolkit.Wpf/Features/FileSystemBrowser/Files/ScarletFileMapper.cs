@@ -35,6 +35,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 var info = await _fileSystemViewModelFactory.GetFileInfo(_fullName, token);
                 if (info is null)
                 {
+                    _viewModel.IsAccessProhibited = true;
                     return;
                 }
 

@@ -16,6 +16,12 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             IsReady = info.IsReady;
         }
 
+        public ScarletDriveInfo()
+        {
+            Name = string.Empty;
+            FullName = string.Empty;
+        }
+
         public string Name { get; init; }
         public string FullName { get; init; }
         public string? DriveFormat { get; init; }
@@ -24,5 +30,6 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         public long TotalFreeSpace { get; init; }
         public long TotalSize { get; init; }
         public bool IsReady { get; init; }
+        public bool IsAccessProhibited { get; init; }
     }
 }

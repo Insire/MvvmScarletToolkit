@@ -9,6 +9,5 @@ namespace MvvmScarletToolkit
         DateTime? CreationTimeUtc { get; }
         bool IsHidden { get; }
         IFileSystemParent? Parent { get; }
-        bool Exists { get; }
     }
 }
