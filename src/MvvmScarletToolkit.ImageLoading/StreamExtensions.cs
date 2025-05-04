@@ -8,7 +8,7 @@ namespace MvvmScarletToolkit.ImageLoading
         {
             using (var instance = MD5.Create())
             {
-                var hashBytes = await instance.ComputeHashAsync(data, token).ConfigureAwait(false);
+                var hashBytes = await instance.ComputeHashAsync(data, token);
 
                 return Convert.ToHexString(hashBytes);
             }

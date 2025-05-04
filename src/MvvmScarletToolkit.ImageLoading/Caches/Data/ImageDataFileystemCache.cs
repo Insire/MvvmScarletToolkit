@@ -46,13 +46,13 @@ namespace MvvmScarletToolkit.ImageLoading
                 return Stream.Null;
             }
 
-            var key = await CreateKey(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+            var key = await CreateKey(uri, requestedSize, cancellationToken);
             var path = Path.Combine(_options.CacheDirectoryPath, key);
             if (File.Exists(path))
             {
                 _logger.LogDebug("Resource with {Key} was found on disk", key);
 
-                return await Task.Run(() => File.OpenRead(path), cancellationToken).ConfigureAwait(false);
+                return await Task.Run(() => File.OpenRead(path), cancellationToken);
             }
 
             _logger.LogDebug("Resource with {Key} could not be found on disk", key);
@@ -73,14 +73,14 @@ namespace MvvmScarletToolkit.ImageLoading
                 return;
             }
 
-            var key = await CreateKey(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+            var key = await CreateKey(uri, requestedSize, cancellationToken);
 
             imageDataStream.Seek(0, SeekOrigin.Begin);
 
             var path = Path.Combine(_options.CacheDirectoryPath, key);
             await using (var fileStream = File.OpenWrite(path))
             {
-                await imageDataStream.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
+                await imageDataStream.CopyToAsync(fileStream, cancellationToken);
             }
 
             _logger.LogDebug("Resource with {Key} has been cached on disk", key);
@@ -101,7 +101,7 @@ namespace MvvmScarletToolkit.ImageLoading
             resultStream.Write(bytes, 0, bytes.Length);
             resultStream.Seek(0, SeekOrigin.Begin);
 
-            return await resultStream.CalculateMd5Async(token: cancellationToken).ConfigureAwait(false);
+            return await resultStream.CalculateMd5Async(token: cancellationToken);
         }
     }
 }

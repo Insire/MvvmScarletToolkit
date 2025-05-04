@@ -26,7 +26,7 @@ namespace MvvmScarletToolkit.ImageLoading
                 return Stream.Null;
             }
 
-            var stream = await GetImageStream(uri, cancellationToken).ConfigureAwait(false);
+            var stream = await GetImageStream(uri, cancellationToken);
 
             if (stream == Stream.Null)
             {
@@ -46,7 +46,7 @@ namespace MvvmScarletToolkit.ImageLoading
             await using (stream)
             {
                 var resultStream = _recyclableMemoryStreamManager.GetStream();
-                await stream.CopyToAsync(resultStream, cancellationToken).ConfigureAwait(false);
+                await stream.CopyToAsync(resultStream, cancellationToken);
 
                 resultStream.Seek(0, SeekOrigin.Begin);
 
@@ -87,7 +87,7 @@ namespace MvvmScarletToolkit.ImageLoading
                 }
             }
 
-            var imageStream = await GetImageStreamFromChildImplementation(uri, cancellationToken).ConfigureAwait(false);
+            var imageStream = await GetImageStreamFromChildImplementation(uri, cancellationToken);
             if (imageStream is null)
             {
                 throw new NotImplementedException($"{GetType().Name} does not support loading the scheme {uri.Scheme}");

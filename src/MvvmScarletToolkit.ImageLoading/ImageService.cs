@@ -52,7 +52,7 @@ namespace MvvmScarletToolkit.ImageLoading
         }
 
         /// <inheritdoc />
-        public async Task<TImage?> ProvideImageAsync(Uri? uri, ImageSize? requestedSize, Action<bool> requestedImageLoadsSlowly, CancellationToken cancellationToken = default)
+        public async Task<TImage?> ProvideImageAsync(Uri? uri, ImageSize? requestedSize, Func<bool, Task> requestedImageLoadsSlowly, CancellationToken cancellationToken = default)
         {
             if (uri is null)
             {
@@ -71,7 +71,7 @@ namespace MvvmScarletToolkit.ImageLoading
 
             if (_memoryCache.TryGetValue(key, out var cachedLock) && cachedLock is SemaphoreSlim currentLock)
             {
-                return await ProvideImageWithLockAsync(uri, imageSize, requestedImageLoadsSlowly, currentLock, cancellationToken).ConfigureAwait(false);
+                return await ProvideImageWithLockAsync(uri, imageSize, requestedImageLoadsSlowly, currentLock, cancellationToken);
             }
             else
             {
@@ -80,22 +80,22 @@ namespace MvvmScarletToolkit.ImageLoading
                     cacheEntry.Value = currentLock = new SemaphoreSlim(1, 1);
                 }
 
-                return await ProvideImageWithLockAsync(uri, imageSize, requestedImageLoadsSlowly, currentLock, cancellationToken).ConfigureAwait(false);
+                return await ProvideImageWithLockAsync(uri, imageSize, requestedImageLoadsSlowly, currentLock, cancellationToken);
             }
         }
 
         private async Task<TImage?> ProvideImageWithLockAsync(
             Uri uri,
             ImageSize requestedSize,
-            Action<bool> requestedImageLoadsSlowly,
+            Func<bool, Task> requestedImageLoadsSlowly,
             SemaphoreSlim currentLock,
             CancellationToken cancellationToken)
         {
             try
             {
-                await currentLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+                await currentLock.WaitAsync(cancellationToken);
 
-                return await ProvideImageAsync(uri, requestedSize, requestedImageLoadsSlowly, cancellationToken).ConfigureAwait(false);
+                return await ProvideImageAsync(uri, requestedSize, requestedImageLoadsSlowly, cancellationToken);
             }
             finally
             {
@@ -103,59 +103,59 @@ namespace MvvmScarletToolkit.ImageLoading
             }
         }
 
-        private async Task<TImage?> ProvideImageAsync(Uri uri, ImageSize requestedSize, Action<bool> requestedImageLoadsSlowly, CancellationToken cancellationToken)
+        private async Task<TImage?> ProvideImageAsync(Uri uri, ImageSize requestedSize, Func<bool, Task> requestedImageLoadsSlowly, CancellationToken cancellationToken)
         {
             // memory image
-            var image = await _memoryCacheImageProvider.GetImageAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+            var image = await _memoryCacheImageProvider.GetImageAsync(uri, requestedSize, cancellationToken);
             if (image is not null)
             {
-                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
 
                 return image;
             }
 
             // memory image data
-            var stream = await _memoryCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+            var stream = await _memoryCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken);
             if (stream != Stream.Null)
             {
-                image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken).ConfigureAwait(false);
+                image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken);
 
-                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
-                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
             }
 
-            requestedImageLoadsSlowly(true);
+            await requestedImageLoadsSlowly(true);
 
             // filesystem image
-            image = await _diskCachedImageProvider.GetImageAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+            image = await _diskCachedImageProvider.GetImageAsync(uri, requestedSize, cancellationToken);
             if (image is not null)
             {
-                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
 
                 return image;
             }
 
             // filesystem data
-            stream = await _diskCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+            stream = await _diskCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken);
             if (stream != Stream.Null)
             {
-                image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken).ConfigureAwait(false);
+                image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken);
 
-                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
-                await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+                await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken);
 
-                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
 
                 return image;
             }
 
             // remote (web) or filesystem data
-            stream = await _imageDataProvider.GetStreamAsync(uri, cancellationToken).ConfigureAwait(false);
+            stream = await _imageDataProvider.GetStreamAsync(uri, cancellationToken);
             if (stream != Stream.Null)
             {
                 try
                 {
-                    image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken).ConfigureAwait(false);
+                    image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken);
                 }
                 catch (TaskCanceledException)
                 {
@@ -167,11 +167,11 @@ namespace MvvmScarletToolkit.ImageLoading
                     return null;
                 }
 
-                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
-                await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+                await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken);
 
-                await _diskCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken).ConfigureAwait(false);
-                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken).ConfigureAwait(false);
+                await _diskCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken);
+                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
 
                 return image;
             }

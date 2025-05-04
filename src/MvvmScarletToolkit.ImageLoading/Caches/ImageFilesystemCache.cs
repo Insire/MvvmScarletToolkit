@@ -62,13 +62,13 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 return null;
             }
 
-            var key = await CreateKey(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+            var key = await CreateKey(uri, requestedSize, cancellationToken);
             var path = Path.Combine(_options.CacheDirectoryPath, key);
             if (File.Exists(path))
             {
                 _logger.LogDebug("Image with {Key} was found on disk at {Path}", key, path);
 
-                return await Task.Run(() => ReadImage(path, requestedSize, cancellationToken), cancellationToken).ConfigureAwait(false);
+                return await Task.Run(() => ReadImage(path, requestedSize, cancellationToken), cancellationToken);
             }
 
             _logger.LogDebug("Image with {Key} could not be found on disk at {Path}", key, path);
@@ -89,12 +89,12 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 return;
             }
 
-            var key = await CreateKey(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+            var key = await CreateKey(uri, requestedSize, cancellationToken);
 
             var path = Path.Combine(_options.CacheDirectoryPath, key);
             try
             {
-                await WriteImage(path, image, cancellationToken).ConfigureAwait(false);
+                await WriteImage(path, image, cancellationToken);
 
                 _logger.LogDebug("Image with {Key} has been cached on disk at {Path}", key, path);
             }
@@ -119,7 +119,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             resultStream.Write(bytes, 0, bytes.Length);
             resultStream.Seek(0, SeekOrigin.Begin);
 
-            return await resultStream.CalculateMd5Async(token: cancellationToken).ConfigureAwait(false);
+            return await resultStream.CalculateMd5Async(token: cancellationToken);
         }
 
         private async Task<TImage> ReadImage(string path, ImageSize requestedSize, CancellationToken token)
@@ -132,7 +132,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
                 await using (var stream = File.OpenRead(path))
                 {
-                    return await _imageFactory.FromAsync(stream, requestedSize, token).ConfigureAwait(false);
+                    return await _imageFactory.FromAsync(stream, requestedSize, token);
                 }
             }
             finally
@@ -151,7 +151,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
                 await using (var fileStream = File.OpenWrite(path))
                 {
-                    await Task.Run(() => _imageFactory.ToAsync(fileStream, image, token), token).ConfigureAwait(false);
+                    await Task.Run(() => _imageFactory.ToAsync(fileStream, image, token), token);
                 }
             }
             finally

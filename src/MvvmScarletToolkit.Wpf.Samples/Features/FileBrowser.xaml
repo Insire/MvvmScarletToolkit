@@ -252,8 +252,8 @@
                                                 </Grid.InputBindings>
 
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition />
-                                                    <RowDefinition />
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="Auto" />
                                                 </Grid.RowDefinitions>
 
                                                 <Path Grid.Row="0"

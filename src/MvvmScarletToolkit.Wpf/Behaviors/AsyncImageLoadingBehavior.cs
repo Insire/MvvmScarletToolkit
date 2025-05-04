@@ -215,9 +215,9 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private void SetIsLoading(bool isloading)
+        private async Task SetIsLoading(bool isloading)
         {
-            AssociatedObject.Dispatcher.BeginInvoke(() => SetIsLoadingOnUiThread(isloading));
+            await AssociatedObject.Dispatcher.BeginInvoke(() => SetIsLoadingOnUiThread(isloading));
         }
 
         private void SetIsLoadingOnUiThread(bool isloading)

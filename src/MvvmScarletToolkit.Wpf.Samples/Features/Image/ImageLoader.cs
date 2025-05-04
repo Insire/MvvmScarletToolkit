@@ -160,7 +160,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             var size = GetSize(width, height);
 
             sender.Source = await AsyncImageLoader.Value
-                .ProvideImageAsync(url, size, (isloading) => sender.Dispatcher.Invoke(() => SetIsLoading(sender, isloading)))
+                .ProvideImageAsync(url, size, async (isloading) => await sender.Dispatcher.BeginInvoke(() => SetIsLoading(sender, isloading)))
                 .ConfigureAwait(true);
 
             SetIsLoading(sender, false);

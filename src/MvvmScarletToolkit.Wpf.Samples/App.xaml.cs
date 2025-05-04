@@ -73,7 +73,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             serviceCollection.AddSingleton<ProcessViewModel>();
             serviceCollection.AddSingleton<ToastsViewModel>();
 
-            serviceCollection.AddSingleton<IScheduler>(_ => new SynchronizationContextScheduler(SynchronizationContext.Current!));
+            serviceCollection.AddSingleton<IScheduler>(provider => new SynchronizationContextScheduler(provider.GetRequiredService<SynchronizationContext>()));
             serviceCollection.AddSingleton<ILocalizationProvider, ScarletLocalizationProvider>();
             serviceCollection.AddSingleton(_ => SynchronizationContext.Current!);
             serviceCollection.AddSingleton(ScarletCommandBuilder.Default);
