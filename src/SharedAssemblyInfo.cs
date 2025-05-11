@@ -7,7 +7,7 @@ using System.Reflection;
 
 [assembly: AssemblyCompany("SoftThorn")]
 [assembly: AssemblyProduct("MvvmScarletToolkit")]
-[assembly: AssemblyCopyright("© 2024 Insire")]
+[assembly: AssemblyCopyright("© 2025 Insire")]
 [assembly: AssemblyTrademark("")]
 
 // Metadata Attributes
