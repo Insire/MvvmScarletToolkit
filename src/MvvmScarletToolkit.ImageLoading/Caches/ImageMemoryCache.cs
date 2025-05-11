@@ -3,13 +3,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IO;
 using System.Text;
 
-namespace MvvmScarletToolkit.ImageLoading
+namespace MvvmScarletToolkit.ImageLoading.Caches
 {
     public sealed class ImageMemoryCache<TImage> : IImageMemoryCache<TImage> where TImage : class
     {
         private readonly ILogger<ImageMemoryCache<TImage>> _logger;
         private readonly IMemoryCache _memoryCache;
-        private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
         private readonly ImageMemoryCacheOptions _options;
         private readonly string _prefix;
 
@@ -21,11 +20,10 @@ namespace MvvmScarletToolkit.ImageLoading
         {
             _logger = logger;
             _memoryCache = memoryCache;
-            _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
             _options = options;
 
             var bytes = Encoding.UTF8.GetBytes(GetType().Name);
-            using var resultStream = _recyclableMemoryStreamManager.GetStream(null, bytes.Length);
+            using var resultStream = recyclableMemoryStreamManager.GetStream(null, bytes.Length);
             resultStream.Write(bytes, 0, bytes.Length);
             resultStream.Seek(0, SeekOrigin.Begin);
 
@@ -35,12 +33,7 @@ namespace MvvmScarletToolkit.ImageLoading
         /// <inheritdoc />
         public Task<TImage?> GetImageAsync(Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return Task.FromResult<TImage?>(null);
-            }
-
-            if (_options.IsEnabled == false)
+            if (cancellationToken.IsCancellationRequested || !_options.IsEnabled)
             {
                 return Task.FromResult<TImage?>(null);
             }
@@ -61,12 +54,7 @@ namespace MvvmScarletToolkit.ImageLoading
         /// <inheritdoc />
         public Task CacheImageAsync(TImage image, Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return Task.CompletedTask;
-            }
-
-            if (_options.IsEnabled == false)
+            if (cancellationToken.IsCancellationRequested || !_options.IsEnabled)
             {
                 return Task.CompletedTask;
             }

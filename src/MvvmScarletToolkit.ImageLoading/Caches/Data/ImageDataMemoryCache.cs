@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IO;
 using System.Text;
 
-namespace MvvmScarletToolkit.ImageLoading
+namespace MvvmScarletToolkit.ImageLoading.Caches.Data
 {
     public sealed class ImageDataMemoryCache : IImageDataMemoryCache
     {

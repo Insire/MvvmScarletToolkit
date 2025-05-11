@@ -61,20 +61,22 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 
         private static BitmapSource ToResizedBitmapSource(MagickImage magickImage, ImageSize requestedSize)
         {
-            if (magickImage.Width != requestedSize.Width || magickImage.Height != requestedSize.Height)
+            if (magickImage.Width == requestedSize.Width && magickImage.Height == requestedSize.Height)
             {
-                var size = new MagickGeometry(requestedSize.Width, requestedSize.Height)
-                {
-                    Less = false,
-                    Greater = true,
-
-                    // This will resize the image to a fixed size without maintaining the aspect ratio.
-                    // Normally an image will be resized to fit inside the specified size.
-                    IgnoreAspectRatio = false
-                };
-
-                magickImage.Resize(size);
+                return magickImage.ToBitmapSource();
             }
+
+            var size = new MagickGeometry(requestedSize.Width, requestedSize.Height)
+            {
+                Less = false,
+                Greater = true,
+
+                // This will resize the image to a fixed size without maintaining the aspect ratio.
+                // Normally an image will be resized to fit inside the specified size.
+                IgnoreAspectRatio = false
+            };
+
+            magickImage.Resize(size);
 
             // convert
             return magickImage.ToBitmapSource();

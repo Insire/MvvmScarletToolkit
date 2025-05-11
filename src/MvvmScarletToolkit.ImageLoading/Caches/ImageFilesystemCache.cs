@@ -1,21 +1,14 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
-using MvvmScarletToolkit.ImageLoading;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.ImageLoading.Caches
 {
     public sealed class ImageFilesystemCache<TImage> : IImageFilesystemCache<TImage>
         where TImage : class
     {
-        public sealed class ImageFileSemaphore : SemaphoreSlim
-        {
-            public ImageFileSemaphore()
-                : base(1, 1)
-            {
-            }
-        }
+        public sealed class ImageFileSemaphore() : SemaphoreSlim(1, 1);
 
         private readonly ILogger<ImageFilesystemCache<TImage>> _logger;
         private readonly IImageFactory<TImage> _imageFactory;
@@ -57,7 +50,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 return null;
             }
 
-            if (_options.IsEnabled == false)
+            if (!_options.IsEnabled)
             {
                 return null;
             }
@@ -84,7 +77,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 return;
             }
 
-            if (_options.IsEnabled == false)
+            if (!_options.IsEnabled)
             {
                 return;
             }
@@ -130,10 +123,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
             {
                 await semaphore.WaitAsync(token);
 
-                await using (var stream = File.OpenRead(path))
-                {
-                    return await _imageFactory.FromAsync(stream, requestedSize, token);
-                }
+                await using var stream = File.OpenRead(path);
+                return await _imageFactory.FromAsync(stream, requestedSize, token);
             }
             finally
             {
@@ -149,10 +140,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
             {
                 await semaphore.WaitAsync(token);
 
-                await using (var fileStream = File.OpenWrite(path))
-                {
-                    await Task.Run(() => _imageFactory.ToAsync(fileStream, image, token), token);
-                }
+                await using var fileStream = File.OpenWrite(path);
+                await Task.Run(() => _imageFactory.ToAsync(fileStream, image, token), token);
             }
             finally
             {

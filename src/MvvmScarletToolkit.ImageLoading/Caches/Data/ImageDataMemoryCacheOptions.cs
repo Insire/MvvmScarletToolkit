@@ -1,4 +1,4 @@
-namespace MvvmScarletToolkit.ImageLoading
+namespace MvvmScarletToolkit.ImageLoading.Caches.Data
 {
     public sealed class ImageDataMemoryCacheOptions
     {

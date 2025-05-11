@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IO;
 using MvvmScarletToolkit.ImageLoading;
+using MvvmScarletToolkit.ImageLoading.Caches;
+using MvvmScarletToolkit.ImageLoading.Caches.Data;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;

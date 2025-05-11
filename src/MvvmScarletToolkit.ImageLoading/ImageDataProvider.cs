@@ -19,6 +19,7 @@ namespace MvvmScarletToolkit.ImageLoading
             _httpClient = httpClient;
         }
 
+        /// <inheritdoc />
         public async Task<Stream> GetStreamAsync(Uri uri, CancellationToken cancellationToken = default)
         {
             if (cancellationToken.IsCancellationRequested)
@@ -33,12 +34,7 @@ namespace MvvmScarletToolkit.ImageLoading
                 return stream;
             }
 
-            if (!stream.CanRead)
-            {
-                return Stream.Null;
-            }
-
-            if (stream.CanSeek && stream.Length == 0)
+            if (!stream.CanRead || stream is { CanSeek: true, Length: 0 })
             {
                 return Stream.Null;
             }
@@ -61,7 +57,7 @@ namespace MvvmScarletToolkit.ImageLoading
                 try
                 {
                     _logger.LogTrace("Fetching stream from {Url}", uri);
-                    return await Task.Run(() => _httpClient.GetStreamAsync(uri, cancellationToken));
+                    return await Task.Run(() => _httpClient.GetStreamAsync(uri, cancellationToken), cancellationToken);
                 }
                 catch (TaskCanceledException)
                 {
@@ -78,7 +74,7 @@ namespace MvvmScarletToolkit.ImageLoading
             {
                 try
                 {
-                    return await Task.Run(() => File.OpenRead(uri.OriginalString));
+                    return await Task.Run(() => File.OpenRead(uri.OriginalString), cancellationToken);
                 }
                 catch (Exception ex)
                 {

@@ -10,17 +10,10 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
         private readonly TargetImagesViewModel _target;
         private readonly SourceImagesViewModel _source;
 
-        [ObservableProperty]
-        private string? _displayName;
-
-        [ObservableProperty]
-        private string? _path;
-
-        [ObservableProperty]
-        private bool _isSelected;
-
-        [ObservableProperty]
-        private int _sequence;
+        [ObservableProperty] public partial string? DisplayName { get; set; }
+        [ObservableProperty] public partial string? Path { get; set; }
+        [ObservableProperty] public partial bool IsSelected { get; set; }
+        [ObservableProperty] public partial int Sequence { get; set; }
 
         public ImageViewModel(IScarletCommandBuilder commandBuilder, TargetImagesViewModel target, SourceImagesViewModel source)
             : base(commandBuilder)

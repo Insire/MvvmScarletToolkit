@@ -1,4 +1,4 @@
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.ImageLoading.Caches
 {
     public sealed class ImageFilesystemCacheOptions
     {

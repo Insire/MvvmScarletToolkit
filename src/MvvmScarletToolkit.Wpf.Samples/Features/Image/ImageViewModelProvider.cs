@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 {
     public sealed class ImageViewModelProvider
     {
+        [UsedImplicitly]
         private sealed class ImageDto
         {
             [JsonPropertyName("id")]
@@ -84,17 +86,15 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
                 var assembly = typeof(ImageViewModelProvider).Assembly;
                 foreach (var name in assembly.GetManifestResourceNames().Where(p => p.EndsWith(".jpg")))
                 {
-                    using (var resourceStream = assembly.GetManifestResourceStream(name))
+                    using var resourceStream = assembly.GetManifestResourceStream(name);
+                    if (resourceStream == null)
                     {
-                        if (resourceStream != null)
-                        {
-                            var filePath = Path.Combine(directoryPath, name);
-                            using (var fileStream = File.OpenWrite(filePath))
-                            {
-                                resourceStream.CopyTo(fileStream);
-                            }
-                        }
+                        continue;
                     }
+
+                    var filePath = Path.Combine(directoryPath, name);
+                    using var fileStream = File.OpenWrite(filePath);
+                    resourceStream.CopyTo(fileStream);
                 }
             }
 

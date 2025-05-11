@@ -15,7 +15,6 @@ namespace MvvmScarletToolkit.ImageLoading
         private readonly IImageFilesystemCache<TImage> _diskCachedImageProvider;
         private readonly IImageDataMemoryCache _memoryCachedImageDataProvider;
         private readonly IImageMemoryCache<TImage> _memoryCacheImageProvider;
-        private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
         private readonly IMemoryCache _memoryCache;
         private readonly ImageServiceOptions _options;
         private readonly string _prefix;
@@ -40,11 +39,10 @@ namespace MvvmScarletToolkit.ImageLoading
             _memoryCachedImageDataProvider = memoryCachedImageDataProvider;
             _memoryCacheImageProvider = memoryCacheImageProvider;
             _memoryCache = memoryCache;
-            _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
             _options = options;
 
             var bytes = Encoding.UTF8.GetBytes(GetType().Name);
-            using var resultStream = _recyclableMemoryStreamManager.GetStream(null, bytes.Length);
+            using var resultStream = recyclableMemoryStreamManager.GetStream(null, bytes.Length);
             resultStream.Write(bytes, 0, bytes.Length);
             resultStream.Seek(0, SeekOrigin.Begin);
 
@@ -151,32 +149,32 @@ namespace MvvmScarletToolkit.ImageLoading
 
             // remote (web) or filesystem data
             stream = await _imageDataProvider.GetStreamAsync(uri, cancellationToken);
-            if (stream != Stream.Null)
+            if (stream == Stream.Null)
             {
-                try
-                {
-                    image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken);
-                }
-                catch (TaskCanceledException)
-                {
-                    return null;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Loading image from {Uri} failed unexpectedly", uri.OriginalString);
-                    return null;
-                }
-
-                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
-                await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken);
-
-                await _diskCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken);
-                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
-
-                return image;
+                return null;
             }
 
-            return null;
+            try
+            {
+                image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken);
+            }
+            catch (TaskCanceledException)
+            {
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Loading image from {Uri} failed unexpectedly", uri.OriginalString);
+                return null;
+            }
+
+            await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+            await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken);
+
+            await _diskCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken);
+            await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+
+            return image;
         }
 
         private string CreateKey(Uri uri, ImageSize requestedImageSize)
@@ -186,12 +184,9 @@ namespace MvvmScarletToolkit.ImageLoading
 
         private static ImageSize GetImageSize(ImageSize? requestedImageSize, ImageServiceOptions options)
         {
-            if (requestedImageSize is null)
-            {
-                return new ImageSize(options.DefaultWidth, options.DefaultHeight);
-            }
-
-            return new ImageSize(requestedImageSize.Value.Width, requestedImageSize.Value.Height);
+            return requestedImageSize is null
+                ? new ImageSize(options.DefaultWidth, options.DefaultHeight)
+                : new ImageSize(requestedImageSize.Value.Width, requestedImageSize.Value.Height);
         }
     }
 }
