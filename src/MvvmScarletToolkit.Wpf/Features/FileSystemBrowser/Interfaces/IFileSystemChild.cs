@@ -1,6 +1,6 @@
 using System;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces
 {
     public interface IFileSystemChild : IFileSystemInfo
     {

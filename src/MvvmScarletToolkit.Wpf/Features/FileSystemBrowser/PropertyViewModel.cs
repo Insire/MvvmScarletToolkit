@@ -1,9 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
-using System;
 using System.ComponentModel;
 
-namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
     public sealed partial class PropertyViewModel : ObservableObject
     {

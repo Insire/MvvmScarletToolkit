@@ -1,7 +1,8 @@
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System.Collections.Generic;
 using System.IO;
 
-namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
 {
     public sealed class StaticFileExtensionMimeTypeResolver : IMimeTypeResolver
     {

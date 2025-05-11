@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces
 {
     public interface IMimeTypeResolver
     {

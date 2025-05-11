@@ -1,10 +1,14 @@
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
     public sealed partial class FileSystemViewModel
     {
@@ -30,18 +34,28 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 _viewModel.SelectedContainer = message.Directory;
                 _viewModel.SelectedTreeDetail = message.Directory;
                 _viewModel.SelectedDetail = message.Directory;
+                _viewModel.SelectedDirectory = message.Directory;
+
+                _viewModel.SelectedFile = null;
             }
 
             public void Receive(ScarletFileSelected message)
             {
                 _viewModel.SelectedChild = message.File;
                 _viewModel.SelectedDetail = message.File;
+                _viewModel.SelectedFile = message.File;
+
+                _viewModel.SelectedDirectory = null;
             }
 
             public void Receive(ScarletDriveSelected message)
             {
                 _viewModel.SelectedContainer = message.Drive;
                 _viewModel.SelectedTreeDetail = message.Drive;
+
+                _viewModel.SelectedChild = null;
+                _viewModel.SelectedFile = null;
+                _viewModel.SelectedDirectory = null;
             }
 
             public async Task Refresh(CancellationToken token)

@@ -32,8 +32,6 @@ namespace MvvmScarletToolkit.Wpf
                 image.EndInit();
                 image.Freeze();
 
-                image.StreamSource.Dispose();
-
                 var bitmapSource = ToResizedBitmapSource(image, requestedSize);
                 bitmapSource.Freeze();
 

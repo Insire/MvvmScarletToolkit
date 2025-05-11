@@ -1,12 +1,12 @@
 using DynamicData;
-using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives
 {
     public sealed partial class ScarletDrive
     {

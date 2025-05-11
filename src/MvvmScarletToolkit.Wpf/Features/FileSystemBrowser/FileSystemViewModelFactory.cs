@@ -1,6 +1,10 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
-using MvvmScarletToolkit.Wpf.FileSystemBrowser;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,6 +13,9 @@ using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading;
 using System.Threading.Tasks;
+using ScarletDirectory = MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories.ScarletDirectory;
+using ScarletDrive = MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives.ScarletDrive;
+using ScarletFile = MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files.ScarletFile;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {

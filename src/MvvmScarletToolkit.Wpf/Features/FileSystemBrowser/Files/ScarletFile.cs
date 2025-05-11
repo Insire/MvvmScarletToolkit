@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using DynamicData.Binding;
 using MvvmScarletToolkit.Observables;
-using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -15,7 +15,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files
 {
     public sealed record ScarletFileSelected(ScarletFile File);
 

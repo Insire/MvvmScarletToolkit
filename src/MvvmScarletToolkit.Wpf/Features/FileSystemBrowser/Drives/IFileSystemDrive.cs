@@ -1,7 +1,8 @@
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System;
 using System.IO;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives
 {
     public interface IFileSystemDrive : IFileSystemParent, IDisposable
     {

@@ -1,8 +1,8 @@
-using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files
 {
     public sealed partial class ScarletFile
     {

@@ -1,7 +1,8 @@
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System.IO;
 using System.Linq;
 
-namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
 {
     // https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files
     // https://en.wikipedia.org/wiki/List_of_file_signatures

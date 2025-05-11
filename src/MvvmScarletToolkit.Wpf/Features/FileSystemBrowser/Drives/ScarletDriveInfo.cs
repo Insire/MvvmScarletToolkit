@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives
 {
     public sealed record ScarletDriveInfo
     {

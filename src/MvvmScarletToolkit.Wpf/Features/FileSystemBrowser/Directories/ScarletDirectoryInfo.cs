@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
 {
     public sealed record ScarletDirectoryInfo
     {

@@ -26,4 +26,4 @@ using System.Windows.Markup;
 // map clr namespaces to a single xaml namespace
 [assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit")]
 [assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Wpf")]
-[assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Wpf.FileSystemBrowser")]
+[assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Wpf.Features.FileSystemBrowser")]

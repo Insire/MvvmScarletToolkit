@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Controls
 {
     public partial class DragAndDrop : UserControl
     {

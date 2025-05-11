@@ -1,8 +1,6 @@
-using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
-using MvvmScarletToolkit.Wpf.FileSystemBrowser;
 using System.Collections.ObjectModel;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces
 {
     public interface IFileSystemInfo
     {

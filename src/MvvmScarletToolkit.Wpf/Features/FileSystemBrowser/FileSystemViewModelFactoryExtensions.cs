@@ -1,10 +1,12 @@
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
     public static class FileSystemViewModelFactoryExtensions
     {

@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features
+namespace MvvmScarletToolkit.Wpf.Samples.Controls
 {
     /// <summary>
-    /// Interaction logic for FileBrowser.xaml
+    /// Interaction logic for FilePicker.xaml
     /// </summary>
-    public partial class FileBrowser : UserControl
+    public partial class FilePicker : UserControl
     {
-        public FileBrowser()
+        public FilePicker()
         {
             InitializeComponent();
         }

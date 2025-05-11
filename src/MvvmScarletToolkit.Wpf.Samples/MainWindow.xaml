@@ -5,10 +5,12 @@
         xmlns:busy="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Busy"
         xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:contextMenu="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.ContextMenu"
+        xmlns:controls="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:dataGrid="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.DataGrid"
         xmlns:enums="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Enums"
         xmlns:features="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features"
+        xmlns:filesystembrowser="clr-namespace:MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;assembly=MvvmScarletToolkit.Wpf"
         xmlns:geometry="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Geometry"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Incubator"
@@ -939,10 +941,10 @@
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type features:ProcessingImagesViewModel}">
-                    <local:DragAndDrop />
+                    <controls:DragAndDrop />
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type mvvm:FileSystemViewModel}">
+                <DataTemplate DataType="{x:Type filesystembrowser:FileSystemViewModel}">
                     <DockPanel>
                         <Menu DockPanel.Dock="Top">
                             <MenuItem Header="File">
@@ -966,7 +968,63 @@
                             </MenuItem>
                         </Menu>
 
-                        <features:FileBrowser />
+                        <controls:FileSystemBrowser />
+                    </DockPanel>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type filesystembrowser:FilePickerViewModel}">
+                    <DockPanel>
+                        <Menu DockPanel.Dock="Top">
+                            <MenuItem Header="File">
+                                <MenuItem Header="Open" />
+                                <MenuItem Header="Delete" />
+                                <MenuItem Header="Refresh" />
+                                <MenuItem Header="Copy">
+                                    <MenuItem Header="As File" />
+                                    <MenuItem Header="As Path" />
+                                </MenuItem>
+                                <MenuItem Header="Move" />
+                            </MenuItem>
+                            <MenuItem Header="View">
+                                <!--<MenuItem Command="{Binding Options.DisplayDetailsAsListCommand}" Header="As List" />
+                                <MenuItem Command="{Binding Options.DisplayDetailsAsIconsCommand}" Header="As Icons" />-->
+                            </MenuItem>
+                            <MenuItem Header="Options" />
+                            <MenuItem Header="Help">
+                                <MenuItem Header="License" />
+                                <MenuItem Header="Credits" />
+                            </MenuItem>
+                        </Menu>
+
+                        <controls:FilePicker />
+                    </DockPanel>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type filesystembrowser:FolderPickerViewModel}">
+                    <DockPanel>
+                        <Menu DockPanel.Dock="Top">
+                            <MenuItem Header="File">
+                                <MenuItem Header="Open" />
+                                <MenuItem Header="Delete" />
+                                <MenuItem Header="Refresh" />
+                                <MenuItem Header="Copy">
+                                    <MenuItem Header="As File" />
+                                    <MenuItem Header="As Path" />
+                                </MenuItem>
+                                <MenuItem Header="Move" />
+                            </MenuItem>
+                            <MenuItem Header="View">
+                                <!--<MenuItem Command="{Binding Options.DisplayDetailsAsListCommand}" Header="As List" />
+                                <MenuItem Command="{Binding Options.DisplayDetailsAsIconsCommand}" Header="As Icons" />-->
+                            </MenuItem>
+                            <MenuItem Header="Options" />
+                            <MenuItem Header="Help">
+                                <MenuItem Header="License" />
+                                <MenuItem Header="Credits" />
+                            </MenuItem>
+                        </Menu>
+
+                        <controls:FolderPicker />
                     </DockPanel>
                 </DataTemplate>
 

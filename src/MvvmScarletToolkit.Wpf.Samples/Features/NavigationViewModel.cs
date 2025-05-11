@@ -1,5 +1,5 @@
 using MvvmScarletToolkit.Observables;
-using MvvmScarletToolkit.Wpf.FileSystemBrowser;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.Samples.Features.AsyncState;
 using MvvmScarletToolkit.Wpf.Samples.Features.Busy;
 using MvvmScarletToolkit.Wpf.Samples.Features.ContextMenu;
@@ -16,13 +16,13 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
     {
         public NavigationViewModel(
             DataGridViewModel dataGridViewModel,
-            ImageViewModelProvider imageViewModelProvider,
-            SynchronizationContext synchronizationContext,
             ProcessingImagesViewModel processingImagesViewModel,
             DataEntriesViewModel dataEntriesViewModel,
             AsyncStateListViewModel asyncStateListViewModel,
             ProgressViewModel progressViewModel,
             FileSystemViewModel fileSystemViewModel,
+            FilePickerViewModel filePickerViewModel,
+            FolderPickerViewModel folderPickerViewModel,
             BusyViewModel busyViewModel,
             GeometryRenderViewModel geometryRenderViewModel,
             PasswordViewModel passwordViewModel,
@@ -37,11 +37,13 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             Add("Lazy Loading / Data-Virtualization", dataEntriesViewModel);
             Add("ConcurrentCommands and state changes", asyncStateListViewModel);
             Add("MVVM Live Sorting and Grouping in bound collections", dataGridViewModel);
-            Add("Progress, -notification and dispatcher throtteling", progressViewModel);
+            Add("Progress, -notification and dispatcher throttling", progressViewModel);
             Add("File Browser", fileSystemViewModel);
+            Add("File Picker", filePickerViewModel);
+            Add("Folder Picker", folderPickerViewModel);
             Add("State changes in a tree structure", busyViewModel);
             Add("Geometry rendering", geometryRenderViewModel);
-            Add("Binding Passwordbox", passwordViewModel);
+            Add("Binding PasswordBox", passwordViewModel);
             Add("MVVM Grouping", GroupingViewModel.Create(commandBuilder, dataGridViewModel.Items));
             Add("Dialog-ViewModel", dialogViewModel);
             Add("MVVM Terminal/Console", processViewModel);
