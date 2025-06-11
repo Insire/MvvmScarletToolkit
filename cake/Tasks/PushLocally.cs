@@ -1,28 +1,35 @@
+using Cake.Common;
 using Cake.Common.Build;
 using Cake.Common.IO;
+using Cake.Common.Tools.DotNet;
+using Cake.Common.Tools.DotNet.NuGet.Push;
+using Cake.Common.Tools.DotNet.NuGet.Source;
 using Cake.Common.Tools.NuGet;
-using Cake.Core;
-using Cake.Core.IO;
 using Cake.Frosting;
 
 namespace Build
 {
     public sealed class PushLocally : FrostingTask<BuildContext>
     {
-        private const string LocalNugetFolder = @"D:\Drop\NuGet";
+        private const string LocalNugetServer = @"http://localhost:5555/v3/index.json";
 
         public override void Run(BuildContext context)
         {
-            if (!context.NuGetHasSource(LocalNugetFolder))
+            if (!context.DotNetNuGetHasSource(LocalNugetServer))
             {
-                context.NuGetAddSource("Local", LocalNugetFolder);
+                context.DotNetNuGetAddSource("Local",new DotNetNuGetAddSourceSettings()
+                {
+                    Source = LocalNugetServer,
+                    HandleExitCode = exitCode => true,
+                });
             }
 
             foreach (var package in context.GetFiles(context.PackagePath.FullPath + "/*.nupkg"))
             {
-                context.NuGetPush(package, new Cake.Common.Tools.NuGet.Push.NuGetPushSettings()
+                context.DotNetNuGetPush(package, new DotNetNuGetPushSettings()
                 {
-                    Source = LocalNugetFolder,
+                    Source = LocalNugetServer,
+                    ApiKey = context.EnvironmentVariable("LOCALNUGETSERVER_APIKEY")
                 });
             }
         }
@@ -30,8 +37,7 @@ namespace Build
         public override bool ShouldRun(BuildContext context)
         {
             return base.ShouldRun(context)
-                && context.BuildSystem().IsLocalBuild
-                && context.DirectoryExists(LocalNugetFolder);
+                && context.BuildSystem().IsLocalBuild;
         }
     }
 }

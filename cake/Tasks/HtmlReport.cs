@@ -1,7 +1,5 @@
 using Cake.Common.IO;
 using Cake.Common.Tools.ReportGenerator;
-using Cake.Core;
-using Cake.Core.IO;
 using Cake.Frosting;
 
 namespace Build

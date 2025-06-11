@@ -1,4 +1,3 @@
-using Cake.Common.IO;
 using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNet.Test;
 using Cake.Core;
@@ -23,11 +22,12 @@ namespace Build
                 EnvironmentVariables = new Dictionary<string, string>() { ["Environment"] = "Test" },
             };
 
-            var files = context.GetFiles(context.SourcePath.FullPath + "/*/*.Tests.csproj");
-            foreach (var file in files)
-            {
-                context.DotNetTest(file.FullPath, testSettings);
-            }
+            // var files = context.GetFiles(context.SourcePath.FullPath + "/*/*.Tests.csproj");
+            // foreach (var file in files)
+            // {
+            var slnFile = context.Environment.Platform.IsWindows() ? context.SolutionFile : context.XPlatSolutionFile;
+                context.DotNetTest(slnFile.FullPath, testSettings);
+            // }
         }
     }
 }

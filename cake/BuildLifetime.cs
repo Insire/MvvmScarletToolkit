@@ -30,13 +30,14 @@ namespace Build
             context.Information("Platform: {0} ({1})", context.Environment.Platform.Family, context.Environment.Platform.Is64Bit ? "x64" : "x86");
 
             context.Information("NUGETORG_APIKEY was {0} set.", string.IsNullOrEmpty(context.EnvironmentVariable("NUGETORG_APIKEY")) ? "not" : "");
+            context.Information("LOCALNUGETSERVER_APIKEY was {0} set.", string.IsNullOrEmpty(context.EnvironmentVariable("LOCALNUGETSERVER_APIKEY")) ? "not" : "");
             context.Information("GITHUB_APIKEY was {0} set.", string.IsNullOrEmpty(context.EnvironmentVariable("GITHUB_APIKEY")) ? "not" : "");
             context.Information("CODECOV_TOKEN was {0} set.", string.IsNullOrEmpty(context.EnvironmentVariable("CODECOV_TOKEN")) ? "not" : "");
 
             context.Information("reportsFolder: {0}", context.ReportsPath.FullPath);
             context.Information("coberturaResultFile: {0}", context.CoberturaResultFile.FullPath);
 
-            context.Information("dotnet tool: {0}", context.Tools.Resolve("dotnet.exe"));
+            context.Information("dotnet tool: {0}", context.Tools.Resolve(context.DotnetExeName));
         }
 
         public override void Teardown(BuildContext context, ITeardownContext info)

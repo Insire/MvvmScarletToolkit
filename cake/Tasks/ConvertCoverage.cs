@@ -3,7 +3,6 @@ using Cake.Common.IO;
 using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
-using System.Linq;
 
 namespace Build
 {
@@ -12,7 +11,7 @@ namespace Build
     {
         public override void Run(BuildContext context)
         {
-            var dotnetExe = context.Tools.Resolve("dotnet.exe");
+            var dotnetExe = context.Tools.Resolve(context.DotnetExeName);
             var codeCoverageExe = context.Tools.Resolve("dotnet-coverage.dll");
 
             foreach (var file in context.GetFiles($"{context.ResultsPath.FullPath}/coverage/**/*.coverage"))
