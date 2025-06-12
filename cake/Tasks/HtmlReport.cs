@@ -2,7 +2,7 @@ using Cake.Common.IO;
 using Cake.Common.Tools.ReportGenerator;
 using Cake.Frosting;
 
-namespace Build
+namespace Build.Tasks
 {
     [IsDependentOn(typeof(ConvertCoverage))]
     public sealed class HtmlReport : FrostingTask<BuildContext>

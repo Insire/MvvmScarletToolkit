@@ -4,7 +4,7 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 
-namespace Build
+namespace Build.Tasks
 {
     [IsDependentOn(typeof(Test))]
     public sealed class ConvertCoverage : FrostingTask<BuildContext>

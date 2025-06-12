@@ -4,10 +4,9 @@ using Cake.Common.IO;
 using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNet.NuGet.Push;
 using Cake.Common.Tools.DotNet.NuGet.Source;
-using Cake.Common.Tools.NuGet;
 using Cake.Frosting;
 
-namespace Build
+namespace Build.Tasks
 {
     public sealed class PushLocally : FrostingTask<BuildContext>
     {

@@ -4,7 +4,7 @@ using Cake.Common.IO;
 using Cake.Common.Tools.NuGet;
 using Cake.Frosting;
 
-namespace Build
+namespace Build.Tasks
 {
     public sealed class PushNuget : FrostingTask<BuildContext>
     {

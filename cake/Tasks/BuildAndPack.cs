@@ -3,7 +3,7 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 
-namespace Build
+namespace Build.Tasks
 {
     public sealed class BuildAndPack : FrostingTask<BuildContext>
     {

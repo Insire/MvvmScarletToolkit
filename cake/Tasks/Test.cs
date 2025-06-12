@@ -4,7 +4,7 @@ using Cake.Core;
 using Cake.Frosting;
 using System.Collections.Generic;
 
-namespace Build
+namespace Build.Tasks
 {
     public sealed class Test : FrostingTask<BuildContext>
     {
