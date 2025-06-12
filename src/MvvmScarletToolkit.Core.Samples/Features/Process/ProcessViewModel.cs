@@ -1,14 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features.Process
 {
@@ -20,7 +16,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Process
         private readonly ObservableCollection<ProcessData> _output;
         private readonly ObservableCollection<ProcessErrorData> _errors;
 
-        private readonly DispatcherTimer _timer;
+        private readonly PeriodicTimer _timer;
         private readonly ConcurrentCommandBase _startCommand;
 
         [ObservableProperty]
@@ -53,9 +49,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Process
             Output = new ReadOnlyObservableCollection<ProcessData>(_output);
             Errors = new ReadOnlyObservableCollection<ProcessErrorData>(_errors);
 
-            _timer = new DispatcherTimer();
-            _timer.Tick += OnTimerTick;
-            _timer.Interval = TimeSpan.FromMilliseconds(500);
+            _timer = new PeriodicTimer(TimeSpan.FromMilliseconds(500));
 
             _startCommand = commandBuilder.Create(Start, CanStart)
                 .WithAsyncCancellation()
@@ -63,7 +57,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Process
                 .Build();
         }
 
-        private async void OnTimerTick(object? sender, EventArgs e)
+        private async Task OnTimerTick()
         {
             var count = Math.Max(_outputQueue.Count, 10);
             while (count > 0)
@@ -121,12 +115,21 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Process
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
 
-            _timer.Start();
+            var timerTask = Task.Run(async () =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    await _timer.WaitForNextTickAsync(token);
+                    await OnTimerTick();
+                }
+            });
 
             await using (token.Register(() => Task.Run(() => tcs.TrySetCanceled(), token)))
             {
                 await tcs.Task.ConfigureAwait(false);
             }
+
+            await timerTask;
 
             void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
             {

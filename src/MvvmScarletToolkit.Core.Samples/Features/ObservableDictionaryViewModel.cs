@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
-    internal sealed partial class ObservableDictionaryViewModel : ObservableObject
+    public sealed partial class ObservableDictionaryViewModel : ObservableObject
     {
         public ObservableDictionary<int, Guid> Items { get; }
 
