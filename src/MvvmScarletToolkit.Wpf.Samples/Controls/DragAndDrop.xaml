@@ -1,4 +1,4 @@
-<UserControl x:Class="MvvmScarletToolkit.Wpf.Samples.DragAndDrop"
+﻿<UserControl x:Class="MvvmScarletToolkit.Wpf.Samples.DragAndDrop"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Controls"
@@ -67,6 +67,11 @@
                                 Command="{Binding MoveToTargetCommand, Mode=OneWay}"
                                 Content="&gt;" />
 
+                        <controls:ImagePlaceholder Grid.Row="1"
+                                                   Grid.Column="2"
+                                                   Width="90"
+                                                   Height="90" />
+
                         <TextBlock Grid.Row="1"
                                    Grid.Column="4"
                                    VerticalAlignment="Center"
@@ -75,11 +80,6 @@
                             <LineBreak />
                             <Run Text="{Binding Path, Mode=OneWay}" />
                         </TextBlock>
-
-                        <controls:ImagePlaceholder Grid.Row="1"
-                                                   Grid.Column="2"
-                                                   Width="90"
-                                                   Height="90" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -111,11 +111,6 @@
             </ItemsControl.ItemsPanel>
         </ListBox>
 
-
-        <TextBlock Grid.Row="2"
-                   HorizontalAlignment="Right"
-                   Text="{Binding Source.Count, StringFormat='{}{0} Images'}" />
-
         <Grid Grid.RowSpan="3"
               Grid.Column="2"
               DataContext="{Binding Target, Mode=OneTime}">
@@ -131,38 +126,6 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="4" />
             </Grid.RowDefinitions>
-
-            <StackPanel Grid.Row="2"
-                        DockPanel.Dock="Bottom"
-                        Orientation="Horizontal">
-                <Button Margin="0,0,4,0"
-                        Command="{Binding RemoveRangeCommand, Mode=OneWay}"
-                        CommandParameter="{Binding ElementName=TargetList, Path=SelectedItems}"
-                        Content="Remove" />
-                <Button Command="{Binding ClearCommand, Mode=OneWay}" Content="Clear" />
-            </StackPanel>
-
-            <Grid Grid.RowSpan="4"
-                  Grid.Column="2"
-                  DataContext="{Binding SelectedItem}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="800" />
-                    <RowDefinition Height="4" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <controls:ImagePlaceholder Grid.Row="0"
-                                           Width="800"
-                                           Height="800" />
-
-                <TextBlock Grid.Row="2" TextTrimming="CharacterEllipsis">
-                    <Run FontWeight="DemiBold" Text="DisplayName: " />
-                    <Run Text="{Binding DisplayName, Mode=OneWay}" />
-                    <LineBreak />
-                    <Run FontWeight="DemiBold" Text="Path: " />
-                    <Run Text="{Binding Path, Mode=OneWay}" />
-                </TextBlock>
-            </Grid>
 
             <ListBox x:Name="TargetList"
                      AllowDrop="True"
@@ -212,7 +175,7 @@
                             <Border Grid.Row="0"
                                     Background="Black"
                                     Opacity="0.75">
-                                <TextBlock Margin="0,4"
+                                <TextBlock Margin="0 4"
                                            DockPanel.Dock="Top"
                                            Foreground="White"
                                            Text="{Binding DisplayName}"
@@ -222,6 +185,43 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+
+            <Grid Grid.RowSpan="4"
+                  Grid.Column="2"
+                  DataContext="{Binding SelectedItem}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="800" />
+                    <RowDefinition Height="4" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <controls:ImagePlaceholder Grid.Row="0"
+                                           Width="800"
+                                           Height="800" />
+
+                <TextBlock Grid.Row="2" TextTrimming="CharacterEllipsis">
+                    <Run FontWeight="DemiBold" Text="DisplayName: " />
+                    <Run Text="{Binding DisplayName, Mode=OneWay}" />
+                    <LineBreak />
+                    <Run FontWeight="DemiBold" Text="Path: " />
+                    <Run Text="{Binding Path, Mode=OneWay}" />
+                </TextBlock>
+            </Grid>
+
+            <StackPanel Grid.Row="2"
+                        DockPanel.Dock="Bottom"
+                        Orientation="Horizontal">
+                <Button Margin="0 0 4 0"
+                        Command="{Binding RemoveRangeCommand, Mode=OneWay}"
+                        CommandParameter="{Binding ElementName=TargetList, Path=SelectedItems}"
+                        Content="Remove" />
+                <Button Command="{Binding ClearCommand, Mode=OneWay}" Content="Clear" />
+            </StackPanel>
         </Grid>
+
+
+        <TextBlock Grid.Row="2"
+                   HorizontalAlignment="Right"
+                   Text="{Binding Source.Count, StringFormat='{}{0} Images'}" />
     </Grid>
 </UserControl>

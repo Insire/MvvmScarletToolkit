@@ -1,10 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Virtualization
+namespace MvvmScarletToolkit.Core.Samples.Features.Virtualization
 {
     public sealed partial class DataEntryViewModel : BusinessViewModelBase
     {

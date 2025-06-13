@@ -1,6 +1,4 @@
-using System.IO;
-
-namespace MvvmScarletToolkit.Wpf.Samples.Features
+namespace MvvmScarletToolkit.Core.Samples.Features
 {
     public sealed class EnvironmentInformationProvider
     {

@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+      <OutputType>Library</OutputType>
       <TargetFramework>net9.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+      <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,14 +15,13 @@
       <EmbeddedResource Include="Resources\wallhaven-75354.jpg" />
     </ItemGroup>
 
-
   <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="System.Net.Http" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />

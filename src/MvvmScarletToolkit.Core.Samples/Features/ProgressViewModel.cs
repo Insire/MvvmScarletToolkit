@@ -1,11 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
-using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features
+namespace MvvmScarletToolkit.Core.Samples.Features
 {
     public sealed partial class ProgressViewModel : BusinessViewModelBase
     {

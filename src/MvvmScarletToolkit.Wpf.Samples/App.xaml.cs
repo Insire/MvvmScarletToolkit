@@ -4,6 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IO;
+using MvvmScarletToolkit.Core.Samples.Features;
 using MvvmScarletToolkit.ImageLoading;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Samples.Features;

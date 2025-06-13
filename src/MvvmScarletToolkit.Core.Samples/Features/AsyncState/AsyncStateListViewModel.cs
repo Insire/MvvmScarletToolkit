@@ -1,10 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MvvmScarletToolkit.Observables;
-using System;
-using System.Threading;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.AsyncState
+namespace MvvmScarletToolkit.Core.Samples.Features.AsyncState
 {
     public sealed partial class AsyncStateListViewModel : ViewModelListBase<AsyncStateViewModel>
     {

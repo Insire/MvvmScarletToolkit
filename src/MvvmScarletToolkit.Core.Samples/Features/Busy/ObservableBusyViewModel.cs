@@ -1,12 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
-using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Busy
+namespace MvvmScarletToolkit.Core.Samples.Features.Busy
 {
     public sealed class ObservableBusyViewModel : ObservableObject, IObservable<bool>, IDisposable
     {

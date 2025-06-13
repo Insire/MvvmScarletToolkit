@@ -1,9 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.AsyncState
+namespace MvvmScarletToolkit.Core.Samples.Features.AsyncState
 {
     public sealed partial class AsyncStateViewModel : BusinessViewModelBase
     {

@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using JetBrains.Annotations;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.Collections.Concurrent;
@@ -6,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Process
+namespace MvvmScarletToolkit.Core.Samples.Features.Process
 {
     public sealed partial class ProcessViewModel : ViewModelBase
     {
@@ -28,9 +29,13 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Process
         [ObservableProperty]
         private string _workingDirectory;
 
+        [UsedImplicitly]
         public ICommand StartCommand => _startCommand;
 
-        public ReadOnlyObservableCollection<ProcessData> Output { get; }
+        [UsedImplicitly]
+        public ReadOnlyObservableCollection<ProcessData> Output {  get; }
+
+        [UsedImplicitly]
         public ReadOnlyObservableCollection<ProcessErrorData> Errors { get; }
 
         public ProcessViewModel(IScarletCommandBuilder commandBuilder)
@@ -122,7 +127,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Process
                     await _timer.WaitForNextTickAsync(token);
                     await OnTimerTick();
                 }
-            });
+            }, token);
 
             await using (token.Register(() => Task.Run(() => tcs.TrySetCanceled(), token)))
             {
@@ -167,7 +172,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Process
         private bool CanStart()
         {
             return !_startCommand.IsBusy
-                && FilePath?.Length > 0;
+                && FilePath.Length > 0;
         }
     }
 }

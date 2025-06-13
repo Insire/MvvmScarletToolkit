@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Enums
+namespace MvvmScarletToolkit.Core.Samples.Features.Enums
 {
     public sealed partial class EnumViewModel : ObservableObject
     {

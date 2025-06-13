@@ -1,4 +1,5 @@
 using MoreLinq;
+using MvvmScarletToolkit.Core.Samples.Features;
 using System;
 using System.Collections.Generic;
 using System.IO;

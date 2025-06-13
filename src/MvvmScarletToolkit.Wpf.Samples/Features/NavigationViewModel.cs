@@ -1,14 +1,19 @@
+using MvvmScarletToolkit.Core.Samples.Features;
+using MvvmScarletToolkit.Core.Samples.Features.AsyncState;
+using MvvmScarletToolkit.Core.Samples.Features.Busy;
+using MvvmScarletToolkit.Core.Samples.Features.ContextMenu;
+using MvvmScarletToolkit.Core.Samples.Features.Process;
+using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.FileSystemBrowser;
-using MvvmScarletToolkit.Wpf.Samples.Features.Busy;
-using MvvmScarletToolkit.Wpf.Samples.Features.ContextMenu;
 using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using MvvmScarletToolkit.Wpf.Samples.Features.Process;
 using MvvmScarletToolkit.Wpf.Samples.Features.Virtualization;
 using System.Net.Http;
 using System.Threading;
+using EnumViewModel = MvvmScarletToolkit.Core.Samples.Features.Enums.EnumViewModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
@@ -26,7 +31,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
 
             Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(CommandBuilder, new ImageViewModelProvider(CommandBuilder, environmentInformationProvider, httpClient)));
             Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
-            Add("ConcurrentCommands and state changes", new AsyncState.AsyncStateListViewModel(commandBuilder));
+            Add("ConcurrentCommands and state changes", new AsyncStateListViewModel(commandBuilder));
             Add("MVVM Live Sorting and Grouping in bound collections", dataGridViewModel);
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));
             Add("FileSystemBrowser", new FileSystemViewModel(commandBuilder, new FileSystemViewModelFactory(commandBuilder), FileSystemOptionsViewModel.Default));
@@ -45,7 +50,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             contextMenu.Items[0].Items.Add(menuitem);
 
             Add("MVVM ContextMenus", contextMenu);
-            Add("Binding Enum values", new Enums.EnumViewModel());
+            Add("Binding Enum values", new EnumViewModel());
             Add("MVVM Toast-Notification", new ToastsViewModel(commandBuilder));
             Add("Input Prevention", new FormViewModel());
             Add("ObservableDictionary", new ObservableDictionaryViewModel());

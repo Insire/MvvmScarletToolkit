@@ -1,9 +1,6 @@
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Virtualization
+namespace MvvmScarletToolkit.Core.Samples.Features.Virtualization
 {
     public sealed class DataEntriesViewModel : BusinessSourceListViewModelBase<DataEntryViewModel>
     {
