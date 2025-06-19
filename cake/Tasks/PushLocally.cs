@@ -16,7 +16,7 @@ namespace Build.Tasks
         {
             if (!context.DotNetNuGetHasSource(LocalNugetServer))
             {
-                context.DotNetNuGetAddSource("Local",new DotNetNuGetAddSourceSettings()
+                context.DotNetNuGetAddSource("Local", new DotNetNuGetAddSourceSettings()
                 {
                     Source = LocalNugetServer,
                     HandleExitCode = exitCode => true,
@@ -36,7 +36,8 @@ namespace Build.Tasks
         public override bool ShouldRun(BuildContext context)
         {
             return base.ShouldRun(context)
-                && context.BuildSystem().IsLocalBuild;
+                && context.BuildSystem().IsLocalBuild
+                && !string.IsNullOrEmpty(context.EnvironmentVariable("LOCALNUGETSERVER_APIKEY"));
         }
     }
 }
