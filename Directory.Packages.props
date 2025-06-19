@@ -21,7 +21,6 @@
     <PackageVersion Include="Avalonia.Desktop" Version="11.3.1" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.1" />
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.1" />
-    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.1"/>
     <PackageVersion Include="HotAvalonia" Version="3.0.0" />
   </ItemGroup>
