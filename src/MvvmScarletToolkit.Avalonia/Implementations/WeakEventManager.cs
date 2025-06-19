@@ -24,8 +24,7 @@ namespace MvvmScarletToolkit
             if (string.IsNullOrEmpty(eventName))
                 throw new ArgumentNullException(nameof(eventName));
 
-            if (handler is null)
-                throw new ArgumentNullException(nameof(handler));
+            ArgumentNullException.ThrowIfNull(handler);
 
             AddEventHandler(eventName, handler.Target, handler.GetMethodInfo());
         }
@@ -40,8 +39,7 @@ namespace MvvmScarletToolkit
             if (string.IsNullOrEmpty(eventName))
                 throw new ArgumentNullException(nameof(eventName));
 
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            ArgumentNullException.ThrowIfNull(handler);
 
             AddEventHandler(eventName, handler.Target, handler.GetMethodInfo());
         }
@@ -88,8 +86,8 @@ namespace MvvmScarletToolkit
 
             for (var i = 0; i < toRaise.Count; i++)
             {
-                (var subscriber, var handler) = toRaise[i];
-                handler.Invoke(subscriber, new[] { sender, args });
+                var (subscriber, handler) = toRaise[i];
+                handler.Invoke(subscriber, [sender, args]);
             }
         }
 
@@ -105,8 +103,7 @@ namespace MvvmScarletToolkit
             if (string.IsNullOrEmpty(eventName))
                 throw new ArgumentNullException(nameof(eventName));
 
-            if (handler is null)
-                throw new ArgumentNullException(nameof(handler));
+            ArgumentNullException.ThrowIfNull(handler);
 
             RemoveEventHandler(eventName, handler.Target, handler.GetMethodInfo());
         }
@@ -121,8 +118,7 @@ namespace MvvmScarletToolkit
             if (string.IsNullOrEmpty(eventName))
                 throw new ArgumentNullException(nameof(eventName));
 
-            if (handler is null)
-                throw new ArgumentNullException(nameof(handler));
+            ArgumentNullException.ThrowIfNull(handler);
 
             RemoveEventHandler(eventName, handler.Target, handler.GetMethodInfo());
         }
@@ -162,16 +158,10 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private struct Subscription
+        private record struct Subscription(WeakReference? Subscriber, MethodInfo Handler)
         {
-            public Subscription(WeakReference? subscriber, MethodInfo handler)
-            {
-                Subscriber = subscriber;
-                Handler = handler ?? throw new ArgumentNullException(nameof(handler));
-            }
-
-            public readonly WeakReference? Subscriber;
-            public readonly MethodInfo Handler;
+            public readonly WeakReference? Subscriber = Subscriber;
+            public readonly MethodInfo Handler = Handler ?? throw new ArgumentNullException(nameof(Handler));
         }
     }
 }

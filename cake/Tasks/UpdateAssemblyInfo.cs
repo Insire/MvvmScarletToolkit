@@ -2,7 +2,7 @@ using Cake.Common.Solution.Project.Properties;
 using Cake.Frosting;
 using System;
 
-namespace Build
+namespace Build.Tasks
 {
     public sealed class UpdateAssemblyInfo : FrostingTask<BuildContext>
     {

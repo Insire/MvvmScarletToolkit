@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
     <Nullable>enable</Nullable>
     <Description>MvvmScarletToolkit.Observables is part of the MvvmScarletToolkit framework, containing opinionated base classes for viewmodels of the MVVM pattern.</Description>

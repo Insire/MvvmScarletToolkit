@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit
         public static IScarletDispatcher Default => InternalDefault;
         internal static ScarletDispatcher InternalDefault => _default.Value;
 
-        private readonly DispatcherPriority Priority = DispatcherPriority.Input;
+        private readonly DispatcherPriority _priority = DispatcherPriority.Input;
 
         private readonly Dispatcher _dispatcherObject = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
@@ -43,7 +43,7 @@ namespace MvvmScarletToolkit
                 return;
             }
 
-            await _dispatcherObject.InvokeAsync(action, Priority, token);
+            await _dispatcherObject.InvokeAsync(action, _priority, token);
         }
 
         public async Task<T> Invoke<T>(Func<T> action, CancellationToken token)
@@ -58,7 +58,7 @@ namespace MvvmScarletToolkit
                 return _dispatcherObject.Invoke(action, DispatcherPriority.Normal);
             }
 
-            return await _dispatcherObject.InvokeAsync(action, Priority, token);
+            return await _dispatcherObject.InvokeAsync(action, _priority, token);
         }
     }
 }

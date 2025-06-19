@@ -1,6 +1,6 @@
 using Cake.Frosting;
 
-namespace Build
+namespace Build.Tasks
 {
     [IsDependentOn(typeof(HtmlReport))]
     [IsDependentOn(typeof(UploadCodecovReport))]

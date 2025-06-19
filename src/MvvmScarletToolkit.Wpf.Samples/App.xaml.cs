@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IO;
+using MvvmScarletToolkit.Core.Samples.Features;
 using MvvmScarletToolkit.ImageLoading;
 using MvvmScarletToolkit.ImageLoading.Caches;
 using MvvmScarletToolkit.ImageLoading.Caches.Data;

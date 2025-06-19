@@ -1,0 +1,19 @@
+services:
+  nuget-server:
+    image: loicsharma/baget:latest
+    build: .
+    ports:
+      - "5555:80"
+    volumes:
+      - baget-data:/var/baget
+    environment:
+      Storage__Type: "FileSystem"
+      Storage__Path: "/var/baget/packages"
+      Database__Type: "Sqlite"
+      Database__ConnectionString: "Data Source=/var/baget/baget.db"
+      Search__Type: "Database"
+      ApiKey: ${ApiKey}
+volumes:
+  baget-data:
+
+# run with: docker compose up -d

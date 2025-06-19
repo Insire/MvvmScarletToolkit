@@ -5,7 +5,7 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 
-namespace Build
+namespace Build.Tasks
 {
     public sealed class PushGithub : FrostingTask<BuildContext>
     {

@@ -1,3 +1,9 @@
+using MvvmScarletToolkit.Core.Samples.Features;
+using MvvmScarletToolkit.Core.Samples.Features.AsyncState;
+using MvvmScarletToolkit.Core.Samples.Features.Busy;
+using MvvmScarletToolkit.Core.Samples.Features.ContextMenu;
+using MvvmScarletToolkit.Core.Samples.Features.Process;
+using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.Samples.Features.AsyncState;
@@ -9,6 +15,7 @@ using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using MvvmScarletToolkit.Wpf.Samples.Features.Process;
 using MvvmScarletToolkit.Wpf.Samples.Features.Virtualization;
 using System.Threading;
+using EnumViewModel = MvvmScarletToolkit.Core.Samples.Features.Enums.EnumViewModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
