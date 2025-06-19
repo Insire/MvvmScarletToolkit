@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.BusyView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:features="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Busy;assembly=MvvmScarletToolkit.Core.Samples"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="features:BusyViewModel"
+             mc:Ignorable="d">
+
+    <TreeView Background="#333" ItemsSource="{Binding Items}">
+        <TreeView.ContextMenu>
+            <ContextMenu>
+                <MenuItem Command="{Binding AddChildCommand}" Header="Add Child" />
+                <MenuItem Command="{Binding AddContainerCommand}" Header="Add Container" />
+            </ContextMenu>
+        </TreeView.ContextMenu>
+        <TreeView.DataTemplates>
+            <DataTemplate DataType="features:BusyViewModel">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding IsBusy}" />
+                    <TextBlock VerticalAlignment="Center" Text="Container" />
+                    <StackPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding AddChildCommand}" Header="Add Child" />
+                            <MenuItem Command="{Binding AddContainerCommand}" Header="Add Container" />
+                        </ContextMenu>
+                    </StackPanel.ContextMenu>
+                </StackPanel>
+            </DataTemplate>
+
+            <DataTemplate DataType="features:ObservableBusyViewModel">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding IsBusy}" />
+                    <TextBlock VerticalAlignment="Center" Text="Child" />
+
+                    <StackPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding BeBusyCommand}" Header="Be Busy" />
+                        </ContextMenu>
+                    </StackPanel.ContextMenu>
+                </StackPanel>
+            </DataTemplate>
+        </TreeView.DataTemplates>
+    </TreeView>
+</UserControl>
+
