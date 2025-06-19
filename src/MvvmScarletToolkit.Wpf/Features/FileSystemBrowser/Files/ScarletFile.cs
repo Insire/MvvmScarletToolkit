@@ -99,6 +99,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files
 
         public void Dispose()
         {
+            _compositeDisposable.Dispose();
             IsActive = false;
         }
     }
