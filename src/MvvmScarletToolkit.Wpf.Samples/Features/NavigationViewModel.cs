@@ -6,16 +6,8 @@ using MvvmScarletToolkit.Core.Samples.Features.Process;
 using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
-using MvvmScarletToolkit.Wpf.Samples.Features.AsyncState;
-using MvvmScarletToolkit.Wpf.Samples.Features.Busy;
-using MvvmScarletToolkit.Wpf.Samples.Features.ContextMenu;
 using MvvmScarletToolkit.Wpf.Samples.Features.DataGrid;
 using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
-using MvvmScarletToolkit.Wpf.Samples.Features.Image;
-using MvvmScarletToolkit.Wpf.Samples.Features.Process;
-using MvvmScarletToolkit.Wpf.Samples.Features.Virtualization;
-using System.Threading;
-using EnumViewModel = MvvmScarletToolkit.Core.Samples.Features.Enums.EnumViewModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
@@ -63,7 +55,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             contextMenu.Items[0].Items.Add(menuitem);
 
             Add("MVVM ContextMenus", contextMenu);
-            Add("Binding Enum values", new Enums.EnumViewModel());
+            Add("Binding Enum values", new EnumViewModel());
             Add("MVVM Toast-Notification", toastsViewModel);
             Add("Input Prevention", new FormViewModel());
             Add("ObservableDictionary", new ObservableDictionaryViewModel());
