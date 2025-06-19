@@ -14,10 +14,11 @@ namespace MvvmScarletToolkit.Avalonia.Samples.Features
         public NavigationViewModel(in IScarletCommandBuilder commandBuilder, in LocalizationsViewModel localizationsViewModel, SynchronizationContext synchronizationContext)
             : base(in commandBuilder, in localizationsViewModel)
         {
+            Add("State changes in a tree structure", new BusyViewModel(commandBuilder));
+            Add("Binding Enum values", new EnumViewModel());
             Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
             Add("ConcurrentCommands and state changes", new AsyncStateListViewModel(commandBuilder));
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));
-            Add("State changes in a tree structure", new BusyViewModel(commandBuilder));
             Add("Binding Passwordbox", new PasswordViewModel());
             Add("MVVM Terminal/Console", new ProcessViewModel(commandBuilder));
 
@@ -29,11 +30,11 @@ namespace MvvmScarletToolkit.Avalonia.Samples.Features
             contextMenu.Items[0].Items.Add(menuitem);
 
             Add("MVVM ContextMenus", contextMenu);
-            Add("Binding Enum values", new EnumViewModel());
             Add("Input Prevention", new FormViewModel());
             Add("ObservableDictionary", new ObservableDictionaryViewModel());
 
             Items[0].IsSelected = true;
+            SelectedItem = Items[0];
         }
     }
 }
