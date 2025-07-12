@@ -6,7 +6,6 @@ using MvvmScarletToolkit.Core.Samples.Features.Busy;
 using MvvmScarletToolkit.Core.Samples.Features.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Avalonia.Samples
 {
@@ -21,17 +20,17 @@ namespace MvvmScarletToolkit.Avalonia.Samples
                 // [typeof(DataEntriesViewModel)]=typeof(),
                 // [typeof(AsyncStateListViewModel)]=typeof(),
                 // [typeof(ProgressViewModel)]=typeof(),
-                 [typeof(BusyViewModel)]=typeof(BusyView),
+                [typeof(BusyViewModel)] = typeof(BusyView),
                 // [typeof(PasswordViewModel)]=typeof(),
                 // [typeof(ProcessViewModel)]=typeof(),
                 // [typeof(ContextMenuViewModels)]=typeof(),
-                [typeof(EnumViewModel)]=typeof(EnumsView),
+                [typeof(EnumViewModel)] = typeof(EnumsView),
                 // [typeof(FormViewModel)]=typeof(),
                 // [typeof(ObservableDictionaryViewModel)]=typeof(),
             };
         }
 
-        public Control Build(object viewmodel)
+        public Control? Build(object? viewmodel)
         {
             if (viewmodel is null)
             {
@@ -47,7 +46,7 @@ namespace MvvmScarletToolkit.Avalonia.Samples
             return (Control)Activator.CreateInstance(viewType)!;
         }
 
-        public bool Match(object data)
+        public bool Match(object? data)
         {
             return data is ObservableObject;
         }

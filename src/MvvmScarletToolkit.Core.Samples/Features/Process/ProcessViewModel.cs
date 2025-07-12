@@ -33,7 +33,7 @@ namespace MvvmScarletToolkit.Core.Samples.Features.Process
         public ICommand StartCommand => _startCommand;
 
         [UsedImplicitly]
-        public ReadOnlyObservableCollection<ProcessData> Output {  get; }
+        public ReadOnlyObservableCollection<ProcessData> Output { get; }
 
         [UsedImplicitly]
         public ReadOnlyObservableCollection<ProcessErrorData> Errors { get; }

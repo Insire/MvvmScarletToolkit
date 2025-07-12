@@ -5,18 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (WpfApp)",
-            "type": "coreclr",
+            "name": "WpfSample",
+            "type": "dotnet",
             "request": "launch",
-            "preLaunchTask": "build",
-            // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/DemoApp/bin/Debug/netcoreapp3.1/win10-x64/DemoApp.exe",
-            "args": [],
-            "externalConsole": true,
-            "cwd": "${workspaceFolder}/DemoApp",
-            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-            "console": "internalConsole",
-            "stopAtEntry": false
+            "projectPath": "${workspaceFolder}/src/MvvmScarletToolkit.Wpf.Samples/MvvmScarletToolkit.Wpf.Samples.csproj"
+        },
+        {
+            "name": "AvaloniaSample",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/src/MvvmScarletToolkit.Avalonia.Samples/MvvmScarletToolkit.Avalonia.Samples.csproj"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "BothSamples",
+            "configurations": [
+                "WpfSample",
+                "AvaloniaSample"
+            ]
         }
     ]
 }

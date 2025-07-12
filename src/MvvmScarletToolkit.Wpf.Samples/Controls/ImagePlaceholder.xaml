@@ -51,7 +51,6 @@
             </Image.Style>
         </Image>
 
-
         <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontSize="40"

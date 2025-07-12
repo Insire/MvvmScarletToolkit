@@ -1,19 +1,11 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
 using MvvmScarletToolkit.Avalonia.Samples.Features;
 using MvvmScarletToolkit.Avalonia.Samples.Views;
-using MvvmScarletToolkit.Core.Samples.Features;
-using MvvmScarletToolkit.Core.Samples.Features.AsyncState;
-using MvvmScarletToolkit.Core.Samples.Features.Busy;
-using MvvmScarletToolkit.Core.Samples.Features.ContextMenu;
-using MvvmScarletToolkit.Core.Samples.Features.Process;
-using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.Observables;
-using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace MvvmScarletToolkit.Avalonia.Samples;
@@ -43,7 +35,7 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private void DisableAvaloniaDataAnnotationValidation()
+    private static void DisableAvaloniaDataAnnotationValidation()
     {
         // Get an array of plugins to remove
         var dataValidationPluginsToRemove =

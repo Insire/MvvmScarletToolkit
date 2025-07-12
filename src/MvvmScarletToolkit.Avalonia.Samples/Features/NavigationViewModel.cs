@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace MvvmScarletToolkit.Avalonia.Samples.Features
 {
-    public sealed class NavigationViewModel:Scenes
+    public sealed class NavigationViewModel : Scenes
     {
         public NavigationViewModel(in IScarletCommandBuilder commandBuilder, in LocalizationsViewModel localizationsViewModel, SynchronizationContext synchronizationContext)
             : base(in commandBuilder, in localizationsViewModel)
