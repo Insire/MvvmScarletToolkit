@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit
 {
     public static class DependencyObjectExtensions
     {
-        public static IEnumerable<DependencyObject> GetVisualDescendants(this DependencyObject visual)
+        public static IEnumerable<DependencyObject> GetVisualDescendants(this DependencyObject? visual)
         {
             if (visual is null)
             {
@@ -28,32 +28,37 @@ namespace MvvmScarletToolkit
             }
         }
 
-        public static DependencyObject? FindTopMostParent(this DependencyObject dependencyObject)
+        public static DependencyObject? FindTopMostParent(this DependencyObject? dependencyObject)
         {
             while (dependencyObject != null)
             {
-                var isVisual = dependencyObject is Visual || dependencyObject is Visual3D;
-                dependencyObject = isVisual ? VisualTreeHelper.GetParent(dependencyObject) : LogicalTreeHelper.GetParent(dependencyObject);
+                var isVisual = dependencyObject is Visual or Visual3D;
+                dependencyObject = isVisual
+                    ? VisualTreeHelper.GetParent(dependencyObject)
+                    : LogicalTreeHelper.GetParent(dependencyObject);
             }
 
-            return default;
+            return null;
         }
 
         public static T? FindParent<T>(this DependencyObject dependencyObject)
             where T : DependencyObject
         {
-            while (dependencyObject != null)
+            var parent = dependencyObject;
+            while (parent != null)
             {
-                if (dependencyObject is T result)
+                if (parent is T result)
                 {
                     return result;
                 }
 
-                var isVisual = dependencyObject is Visual || dependencyObject is Visual3D;
-                dependencyObject = isVisual ? VisualTreeHelper.GetParent(dependencyObject) : LogicalTreeHelper.GetParent(dependencyObject);
+                var isVisual = parent is Visual or Visual3D;
+                parent = isVisual
+                    ? VisualTreeHelper.GetParent(dependencyObject)
+                    : LogicalTreeHelper.GetParent(dependencyObject);
             }
 
-            return default;
+            return null;
         }
 
         public static T? FindVisualChildBreadthFirst<T>(this DependencyObject dependencyObject)
@@ -72,8 +77,9 @@ namespace MvvmScarletToolkit
         /// Gets all children of the specified visual in the visual tree recursively.
         /// </summary>
         /// <param name="dependencyObject">The visual to get the visual children for.</param>
+        /// <param name="filter"></param>
         /// <returns>All children of the specified visual in the visual tree recursively.</returns>
-        public static IEnumerable<T> FindVisualChildrenBreadthFirst<T>(this DependencyObject dependencyObject, Func<T, bool>? filter = null)
+        public static IEnumerable<T> FindVisualChildrenBreadthFirst<T>(this DependencyObject? dependencyObject, Func<T, bool>? filter)
             where T : DependencyObject
         {
             if (dependencyObject is null)
@@ -141,7 +147,7 @@ namespace MvvmScarletToolkit
         /// </summary>
         /// <param name="dependencyObject">The visual to get the visual children for.</param>
         /// <returns>All children of the specified visual in the visual tree recursively.</returns>
-        public static IEnumerable<T> FindVisualChildrenDepthFirst<T>(this DependencyObject dependencyObject, Func<T, bool>? filter = null)
+        public static IEnumerable<T> FindVisualChildrenDepthFirst<T>(this DependencyObject? dependencyObject, Func<T, bool>? filter = null)
             where T : DependencyObject
         {
             if (dependencyObject is null)

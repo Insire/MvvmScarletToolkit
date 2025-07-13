@@ -90,29 +90,33 @@ namespace MvvmScarletToolkit
 
         private void LostFocus(object? sender, RoutedEventArgs? e)
         {
-            if (AssociatedObject.Text?.Length == 0)
+            if (AssociatedObject.Text?.Length != 0)
             {
-                _isTextFromWatermark = true;
-                AssociatedObject.SetCurrentValue(TextBox.TextProperty, Watermark);
-
-                SetStyle(true, WatermarkStyle);
+                return;
             }
+
+            _isTextFromWatermark = true;
+            AssociatedObject.SetCurrentValue(TextBox.TextProperty, Watermark);
+
+            SetStyle(true, WatermarkStyle);
         }
 
         private void GotFocus(object sender, RoutedEventArgs e)
         {
-            if (AssociatedObject.Text == Watermark)
+            if (AssociatedObject.Text != Watermark)
             {
-                if (_isTextFromWatermark)
-                {
-                    _skipTextReset = true;
-                    AssociatedObject.SetCurrentValue(TextBox.TextProperty, string.Empty);
-                    _skipTextReset = false;
-                    _isTextFromWatermark = false;
-                }
-
-                SetStyle(true, _cachedStyle);
+                return;
             }
+
+            if (_isTextFromWatermark)
+            {
+                _skipTextReset = true;
+                AssociatedObject.SetCurrentValue(TextBox.TextProperty, string.Empty);
+                _skipTextReset = false;
+                _isTextFromWatermark = false;
+            }
+
+            SetStyle(true, _cachedStyle);
         }
 
         private void SetStyle(bool setLocally, Style? style)
@@ -124,11 +128,11 @@ namespace MvvmScarletToolkit
                     _cachedStyle = AssociatedObject.Style;
                 }
 
-                AssociatedObject.SetValue(TextBox.StyleProperty, style);
+                AssociatedObject.SetValue(FrameworkElement.StyleProperty, style);
             }
             else
             {
-                AssociatedObject.SetValue(TextBox.StyleProperty, style);
+                AssociatedObject.SetValue(FrameworkElement.StyleProperty, style);
             }
         }
 

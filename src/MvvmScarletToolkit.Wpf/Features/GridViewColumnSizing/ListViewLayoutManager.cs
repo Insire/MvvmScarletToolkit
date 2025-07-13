@@ -148,7 +148,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private static GridViewColumn? FindParentColumn(DependencyObject element)
+        private static GridViewColumn? FindParentColumn(DependencyObject? element)
         {
             if (element is null)
             {

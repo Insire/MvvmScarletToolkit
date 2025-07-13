@@ -48,6 +48,8 @@ namespace MvvmScarletToolkit.Wpf
             }
             while (afterTag.Length > 0);
 
+            return;
+
             void AddTag(HtmlTag tag)
             {
                 while (previousNode?.CanAdd(tag) == false)
@@ -81,7 +83,7 @@ namespace MvvmScarletToolkit.Wpf
             else
             {
                 var tag = input.Substring(startIndex + 1, endIndex - startIndex - 1);
-                beforeTag = input.Substring(0, startIndex);
+                beforeTag = input[..startIndex];
                 afterTag = input.Substring(endIndex + 1, input.Length - endIndex - 1);
 
                 var pos3 = tag.IndexOf(' ');
@@ -103,7 +105,7 @@ namespace MvvmScarletToolkit.Wpf
 
                 if ((name.Length < 6) || (!name.EndsWith("--")))
                 {
-                    var pos4 = afterTag.IndexOf("-->");
+                    var pos4 = afterTag.IndexOf("-->", StringComparison.Ordinal);
                     if (pos4 != -1)
                     {
                         afterTag = afterTag.Substring(pos4 + 2, afterTag.Length - pos4 - 1);
