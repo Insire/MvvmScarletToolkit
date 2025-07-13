@@ -28,20 +28,6 @@
         d:DataContext="{d:DesignInstance Type=features:NavigationViewModel}"
         mc:Ignorable="d">
 
-    <Window.Style>
-        <Style TargetType="{x:Type Window}">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding Width, RelativeSource={RelativeSource Self}, Converter={mvvm:GreaterThan 750}, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                    <Setter Property="Background" Value="LightGray" />
-                </DataTrigger>
-
-                <DataTrigger Binding="{Binding Width, RelativeSource={RelativeSource Self}, Converter={mvvm:GreaterThan}, ConverterParameter=750, UpdateSourceTrigger=PropertyChanged}" Value="False">
-                    <Setter Property="Background" Value="DarkGray" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </Window.Style>
-
     <!--  DataContext: NavigationViewModel  -->
 
     <Grid>
@@ -199,7 +185,6 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="{x:Type process:ProcessData}">
                                         <TextBlock>
-                                            <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
                                             <Run Text="{Binding Message, Mode=OneWay}" />
                                         </TextBlock>
                                     </DataTemplate>
@@ -220,7 +205,6 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="{x:Type process:ProcessErrorData}">
                                         <TextBlock TextWrapping="Wrap">
-                                            <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
                                             <Run Text="{Binding Message, Mode=OneWay}" />
                                         </TextBlock>
                                     </DataTemplate>
@@ -241,13 +225,11 @@
                                 <ItemsControl.Resources>
                                     <DataTemplate DataType="{x:Type process:ProcessData}">
                                         <TextBlock Foreground="Blue">
-                                            <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
                                             <Run Text="{Binding Message, Mode=OneWay}" />
                                         </TextBlock>
                                     </DataTemplate>
                                     <DataTemplate DataType="{x:Type process:ProcessErrorData}">
                                         <TextBlock Foreground="Red" TextWrapping="Wrap">
-                                            <Run Foreground="LightGray" Text="{Binding TimeStamp, Mode=OneWay}" />
                                             <Run Text="{Binding Message, Mode=OneWay}" />
                                         </TextBlock>
                                     </DataTemplate>
@@ -281,7 +263,7 @@
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type contextmenu:ContextMenuViewModels}">
-                    <Grid Background="DarkGray">
+                    <Grid Background="Transparent">
                         <Grid.ContextMenu>
                             <ContextMenu ItemsSource="{Binding Items}">
                                 <ContextMenu.ItemTemplate>
@@ -476,8 +458,6 @@
                                                     <DataTemplate DataType="{x:Type mvvm:GroupsViewModel}">
                                                         <Border Margin="0 0 8 0"
                                                                 Padding="4"
-                                                                Background="#FCFCFC"
-                                                                BorderBrush="#EEE"
                                                                 BorderThickness="1">
 
                                                             <DockPanel MinWidth="150">
@@ -1048,7 +1028,6 @@
                                 <Button Margin="0 0 4 0"
                                         Padding="4 0"
                                         HorizontalAlignment="Right"
-                                        Background="Transparent"
                                         BorderThickness="0"
                                         Content="X"
                                         ToolTip="Clear">
@@ -1275,7 +1254,6 @@
                                             <Button x:Key="ButtonTemplate"
                                                     Width="48"
                                                     Height="48"
-                                                    Background="White"
                                                     BorderBrush="{x:Null}"
                                                     BorderThickness="0">
                                                 <Path Width="48"

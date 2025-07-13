@@ -23,9 +23,6 @@
             </TextBlock>
         </Grid.ToolTip>
 
-        <Rectangle Width="{Binding Width, ElementName=this}"
-                   Height="{Binding Height, ElementName=this}"
-                   Fill="LightGray" />
 
         <Image Width="{Binding Width, ElementName=this}"
                Height="{Binding Height, ElementName=this}"

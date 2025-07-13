@@ -31,7 +31,6 @@
                  Grid.Column="0"
                  HorizontalContentAlignment="Center"
                  AllowDrop="True"
-                 Background="White"
                  Drop="SourceList_Drop"
                  ItemsSource="{Binding Source.Items, Mode=OneTime}">
             <i:Interaction.Triggers>
@@ -171,12 +170,9 @@
                                                        Width="200"
                                                        Height="200" />
 
-                            <Border Grid.Row="0"
-                                    Background="Black"
-                                    Opacity="0.75">
+                            <Border Grid.Row="0" Opacity="0.75">
                                 <TextBlock Margin="0 4"
                                            DockPanel.Dock="Top"
-                                           Foreground="White"
                                            Text="{Binding DisplayName}"
                                            TextAlignment="Center" />
                             </Border>
