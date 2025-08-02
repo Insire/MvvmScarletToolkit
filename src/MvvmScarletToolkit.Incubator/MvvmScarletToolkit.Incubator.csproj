@@ -4,6 +4,7 @@
     <OutputType>Library</OutputType>
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
   <ItemGroup>

@@ -2,6 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PublishTrimmed>false</PublishTrimmed>
