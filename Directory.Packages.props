@@ -70,7 +70,7 @@
   <ItemGroup Label="core dependencies">
     <PackageVersion Include="Avalonia" Version="11.3.2" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.6" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.6" />
     <PackageVersion Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
