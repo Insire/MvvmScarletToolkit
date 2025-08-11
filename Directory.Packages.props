@@ -38,7 +38,7 @@
   <ItemGroup Label="nuget">
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.7.115" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.13.1" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.14.0" />
   </ItemGroup>
   <!-- tests -->
   <ItemGroup Label="tests">
