@@ -6,10 +6,11 @@ using MvvmScarletToolkit.Core.Samples.Features.Process;
 using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
-using MvvmScarletToolkit.Wpf.FileSystemBrowser;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using System.Net.Http;
+using System.Reactive.Concurrency;
 using System.Threading;
 using EnumViewModel = MvvmScarletToolkit.Core.Samples.Features.Enums.EnumViewModel;
 
@@ -18,6 +19,8 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
     public sealed class NavigationViewModel : Scenes
     {
         public NavigationViewModel(
+            IScheduler scheduler,
+            IFileSystemViewModelFactory factory,
             SynchronizationContext synchronizationContext,
             IScarletCommandBuilder commandBuilder,
             LocalizationsViewModel localizationsViewModel,
@@ -32,7 +35,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             Add("ConcurrentCommands and state changes", new AsyncStateListViewModel(commandBuilder));
             Add("MVVM Live Sorting and Grouping in bound collections", dataGridViewModel);
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));
-            Add("FileSystemBrowser", new FileSystemViewModel(commandBuilder, new FileSystemViewModelFactory(commandBuilder), FileSystemOptionsViewModel.Default));
+            Add("FileSystemBrowser", new FileSystemViewModel(scheduler, factory, FileSystemOptionsViewModel.Default));
             Add("State changes in a tree structure", new BusyViewModel(commandBuilder));
             Add("Geometry rendering", new GeometryRenderViewModel(commandBuilder));
             Add("Binding Passwordbox", new PasswordViewModel());
