@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using System.Collections.ObjectModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features
@@ -14,9 +13,9 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
         {
             Children = new ObservableCollection<SelectionViewModel>();
 
-            for (var i = 0; i < Random.Shared.Next(1, 20); i++)
+            for (var i = 1; i < 20; i++)
             {
-                Children.Add(new SelectionViewModel());
+                Children.Add(new SelectionViewModel(i));
             }
 
             Children[0].IsSelected = true;

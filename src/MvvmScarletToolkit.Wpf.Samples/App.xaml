@@ -1,9 +1,9 @@
 <Application x:Class="MvvmScarletToolkit.Wpf.Samples.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             ThemeMode="System"
              xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
-             xmlns:xf="clr-namespace:XamlFlair;assembly=XamlFlair.WPF">
+             xmlns:xf="clr-namespace:XamlFlair;assembly=XamlFlair.WPF"
+             ThemeMode="System">
 
     <Application.Resources>
         <ResourceDictionary>

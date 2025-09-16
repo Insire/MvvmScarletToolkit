@@ -1,16 +1,22 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
+using System.Diagnostics;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public sealed partial class SelectionChildViewModel : ObservableObject
     {
         [ObservableProperty] private bool? _isSelected;
-        [ObservableProperty] private int _index;
+        public int Index { get; }
 
-        public SelectionChildViewModel()
+        public SelectionChildViewModel(int index)
         {
-            Index = Random.Shared.Next(1, 100);
+            Index = index;
+        }
+
+        private string GetDebuggerDisplay()
+        {
+            return Index.ToString();
         }
     }
 }
