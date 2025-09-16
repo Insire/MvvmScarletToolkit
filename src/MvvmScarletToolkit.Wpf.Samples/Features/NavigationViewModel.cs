@@ -52,6 +52,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             Add("MVVM Toast-Notification", new ToastsViewModel(commandBuilder));
             Add("Input Prevention", new FormViewModel());
             Add("ObservableDictionary", new ObservableDictionaryViewModel());
+            Add("Nested Selection", new SelectionsViewModel());
 
             Items[0].IsSelected = true;
         }

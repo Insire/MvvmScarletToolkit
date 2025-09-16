@@ -1649,6 +1649,20 @@
                         </ListBox>
                     </DockPanel>
                 </DataTemplate>
+
+                <DataTemplate DataType="{x:Type features:SelectionsViewModel}">
+                    <DockPanel LastChildFill="False">
+                        <ComboBox DisplayMemberPath="Index"
+                                  DockPanel.Dock="Top"
+                                  ItemsSource="{Binding Children}"
+                                  SelectedItem="{Binding SelectedChild}" />
+                        <ComboBox Margin="0 8"
+                                  DisplayMemberPath="Index"
+                                  DockPanel.Dock="Top"
+                                  ItemsSource="{Binding SelectedChild.Children}"
+                                  SelectedItem="{Binding SelectedChild.SelectedChild}" />
+                    </DockPanel>
+                </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
 
