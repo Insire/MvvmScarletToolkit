@@ -4,6 +4,7 @@ using System;
 
 namespace MvvmScarletToolkit.Tests
 {
+    [TraceTest]
     public sealed class ViewModelBaseTests
     {
         [Fact]

@@ -1,7 +1,6 @@
-using Xunit;
-
 namespace MvvmScarletToolkit.Wpf.Tests
 {
+    [TraceTest]
     public sealed class IsNullOrWhiteSpaceTests
     {
         [Fact]
@@ -11,7 +10,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.Equal(false, converter.Convert(new object (), null, null, null));
+                Assert.Equal(false, converter.Convert(new object(), null, null, null));
                 Assert.Equal(false, converter.Convert(1, null, null, null));
                 Assert.Equal(false, converter.Convert("not null or white space", null, null, null));
             });

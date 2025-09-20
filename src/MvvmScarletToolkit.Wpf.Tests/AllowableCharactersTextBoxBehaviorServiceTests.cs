@@ -1,5 +1,6 @@
 namespace MvvmScarletToolkit.Wpf.Tests
 {
+    [TraceTest]
     public sealed class AllowableCharactersTextBoxBehaviorServiceTests
     {
         [Theory]

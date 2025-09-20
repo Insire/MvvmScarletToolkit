@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace MvvmScarletToolkit.Observables.Tests
 {
+    [TraceTest]
     public sealed class ObservableDictionaryTests
     {
         [Fact]

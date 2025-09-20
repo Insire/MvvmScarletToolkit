@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Tests
 {
+    [TraceTest]
     public sealed class ViewModelListBaseTests
     {
         [Fact]

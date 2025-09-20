@@ -1,7 +1,6 @@
-using Xunit;
-
 namespace MvvmScarletToolkit.Wpf.Tests
 {
+    [TraceTest]
     public sealed class IsNotNullTests
     {
         [Fact]
@@ -11,7 +10,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.Equal(true, converter.Convert(new object (), null, null, null));
+                Assert.Equal(true, converter.Convert(new object(), null, null, null));
                 Assert.Equal(true, converter.Convert(1, null, null, null));
             });
         }

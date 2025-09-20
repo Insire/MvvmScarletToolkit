@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Tests
 {
+    [TraceTest]
     public sealed class CommandBuilderContextTests
     {
         [Fact]

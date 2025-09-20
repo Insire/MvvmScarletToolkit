@@ -16,11 +16,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
-    <PackageReference Include="coverlet.collector">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     
@@ -41,11 +38,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\MvvmScarletToolkit.Test.Tracing\MvvmScarletToolkit.Test.Tracing.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.Mediator\MvvmScarletToolkit.Mediator.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <Using Include="Xunit.v3" />
+    <Using Include="MvvmScarletToolkit.Mediator.Tests.Otel" />
   </ItemGroup>
 
 </Project>

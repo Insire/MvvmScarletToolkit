@@ -1,9 +1,9 @@
-using Xunit;
 using System;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Tests
 {
+    [TraceTest]
     public sealed class ScarletCommandBuilderTests
     {
         [Fact]

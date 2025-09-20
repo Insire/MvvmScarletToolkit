@@ -6,6 +6,7 @@ using Xunit.Sdk;
 
 namespace MvvmScarletToolkit.Observables.Tests
 {
+    [TraceTest]
     public sealed class PropertyChangedMessageTrackerTests
     {
         public sealed class XunitDataModel : IXunitSerializable

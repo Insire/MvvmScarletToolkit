@@ -2,6 +2,7 @@ using System;
 
 namespace MvvmScarletToolkit.Observables.Tests
 {
+    [TraceTest]
     public sealed class NotifyProperyChangedTrackerTests
     {
         [Fact]
