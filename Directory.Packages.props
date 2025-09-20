@@ -46,14 +46,12 @@
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.3" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />
-    <PackageVersion Include="nunit" Version="4.4.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageVersion Include="NUnit3TestAdapter" Version="5.1.0" />
-    <PackageVersion Include="NUnit.Analyzers" Version="4.10.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageVersion>
-    <PackageVersion Include="NUnit.ConsoleRunner" Version="3.20.0" />
+    <PackageVersion Include="xunit.v3" Version="3.0.1" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <PackageVersion Include="xunit.v3.runner.console" Version="3.0.1" />
+    <PackageVersion Include="xunit.analyzers" Version="1.24.0" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.14.2" />
   </ItemGroup>
   <!-- cake -->
   <ItemGroup Label="cake">

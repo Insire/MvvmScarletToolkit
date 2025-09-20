@@ -1,67 +1,66 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace MvvmScarletToolkit.Observables.Tests
 {
-    internal sealed class ObservableDictionaryTests
+    public sealed class ObservableDictionaryTests
     {
-        [Test]
+        [Fact]
         public void Ctor_DoesNotThrow_1()
         {
             new ObservableDictionary<object, object>();
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesNotThrow_2()
         {
             new ObservableDictionary<object, object>(new Dictionary<object, object>());
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesNotThrow_3()
         {
             new ObservableDictionary<object, object>(EqualityComparer<object>.Default);
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesNotThrow_4()
         {
             new ObservableDictionary<object, object>(0, EqualityComparer<object>.Default);
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesNotThrow_5()
         {
             new ObservableDictionary<object, object>(new Dictionary<object, object>(), EqualityComparer<object>.Default);
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesThrow_1()
         {
             Assert.Throws<ArgumentNullException>(() => new ObservableDictionary<object, object>(default(Dictionary<object, object>)!));
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesNotThrow_6()
         {
             new ObservableDictionary<object, object>(default(IEqualityComparer<object>));
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesThrow_2()
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => new ObservableDictionary<object, object>(-1, default(IEqualityComparer<object>)));
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesThrow_3()
         {
             Assert.Throws<ArgumentNullException>(() => new ObservableDictionary<object, object>(default(Dictionary<object, object>)!, default(IEqualityComparer<object>)));
         }
 
-        [Test]
+        [Fact]
         public void Ctor_Does_Initialize_With_Expected_Data_1()
         {
             var sut = new ObservableDictionary<int, object>()
@@ -72,21 +71,21 @@ namespace MvvmScarletToolkit.Observables.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.That(sut, Has.Count.EqualTo(2));
-                Assert.That(sut.Keys, Has.Count.EqualTo(2));
-                Assert.That(sut.Values, Has.Count.EqualTo(2));
+                Assert.Equal(2, sut.Count);
+                Assert.Equal(2, sut.Keys.Count);
+                Assert.Equal(2, sut.Values.Count);
             });
 
             IReadOnlyDictionary<int, object> castedSut = sut;
 
             Assert.Multiple(() =>
             {
-                Assert.That(castedSut.Keys.Count(), Is.EqualTo(2));
-                Assert.That(castedSut.Values.Count(), Is.EqualTo(2));
+                Assert.Equal(2, castedSut.Keys.Count());
+                Assert.Equal(2, castedSut.Values.Count());
             });
         }
 
-        [Test]
+        [Fact]
         public void Ctor_Does_Initialize_With_Expected_Data_2()
         {
             var sut = new ObservableDictionary<int, object>(new Dictionary<int, object>()
@@ -97,21 +96,21 @@ namespace MvvmScarletToolkit.Observables.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.That(sut, Has.Count.EqualTo(2));
-                Assert.That(sut.Keys, Has.Count.EqualTo(2));
-                Assert.That(sut.Values, Has.Count.EqualTo(2));
+                Assert.Equal(2, sut.Count);
+                Assert.Equal(2, sut.Keys.Count);
+                Assert.Equal(2, sut.Values.Count);
             });
 
             IReadOnlyDictionary<int, object> castedSut = sut;
 
             Assert.Multiple(() =>
             {
-                Assert.That(castedSut.Keys.Count(), Is.EqualTo(2));
-                Assert.That(castedSut.Values.Count(), Is.EqualTo(2));
+                Assert.Equal(2, castedSut.Keys.Count());
+                Assert.Equal(2, castedSut.Values.Count());
             });
         }
 
-        [Test]
+        [Fact]
         public void Indexer_DoesThrow_Get()
         {
             var sut = new ObservableDictionary<int, object>()
@@ -122,7 +121,7 @@ namespace MvvmScarletToolkit.Observables.Tests
             Assert.Throws<KeyNotFoundException>(() => _ = sut[2]);
         }
 
-        [Test]
+        [Fact]
         public void Indexer_DoesNotThrow_Get()
         {
             var data = new object();
@@ -131,10 +130,10 @@ namespace MvvmScarletToolkit.Observables.Tests
                 [1] = data,
             };
 
-            Assert.That(data, Is.EqualTo(sut[1]));
+            Assert.Equal(sut[1], data);
         }
 
-        [Test]
+        [Fact]
         public void Indexer_DoesNotThrow_Set_1()
         {
             var sut = new ObservableDictionary<int, object>()
@@ -145,7 +144,7 @@ namespace MvvmScarletToolkit.Observables.Tests
             sut[2] = new object();
         }
 
-        [Test]
+        [Fact]
         public void Indexer_DoesNotThrow_Set_2()
         {
             var sut = new ObservableDictionary<int, object>()
@@ -157,7 +156,7 @@ namespace MvvmScarletToolkit.Observables.Tests
             sut[1] = new object();
         }
 
-        [Test]
+        [Fact]
         public void Add_DoesNotThrow_1()
         {
             var sut = new ObservableDictionary<int, object>()
@@ -169,7 +168,7 @@ namespace MvvmScarletToolkit.Observables.Tests
             sut.Add(3, new object());
         }
 
-        [Test]
+        [Fact]
         public void Add_DoesNotThrow_2()
         {
             var sut = new ObservableDictionary<int, object>();
@@ -177,7 +176,7 @@ namespace MvvmScarletToolkit.Observables.Tests
             sut.Add(1, new object());
         }
 
-        [Test]
+        [Fact]
         public void Add_DoesThrow_1()
         {
             var sut = new ObservableDictionary<int, object>()
@@ -188,7 +187,7 @@ namespace MvvmScarletToolkit.Observables.Tests
             Assert.Throws<ArgumentException>(() => sut.Add(1, new object()));
         }
 
-        [Test]
+        [Fact]
         public void Add_DoesThrow_2()
         {
             var sut = new ObservableDictionary<object, object>()
@@ -199,7 +198,7 @@ namespace MvvmScarletToolkit.Observables.Tests
             Assert.Throws<ArgumentNullException>(() => sut.Add(null!, new object()));
         }
 
-        [Test]
+        [Fact]
         public void ContainsKey_DoesNotThrow_1()
         {
             var sut = new ObservableDictionary<int, object>()
@@ -208,10 +207,10 @@ namespace MvvmScarletToolkit.Observables.Tests
                 [2] = new object(),
             };
 
-            Assert.That(sut.ContainsKey(3), Is.EqualTo(false));
+            Assert.False(sut.ContainsKey(3));
         }
 
-        [Test]
+        [Fact]
         public void ContainsKey_DoesNotThrow_2()
         {
             var sut = new ObservableDictionary<int, object>()
@@ -220,10 +219,10 @@ namespace MvvmScarletToolkit.Observables.Tests
                 [2] = new object(),
             };
 
-            Assert.That(sut.ContainsKey(2), Is.EqualTo(true));
+            Assert.True(sut.ContainsKey(2));
         }
 
-        [Test]
+        [Fact]
         public void Clear_Does_Empty_Collection()
         {
             var sut = new ObservableDictionary<int, object>(new Dictionary<int, object>()
@@ -236,21 +235,21 @@ namespace MvvmScarletToolkit.Observables.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.That(sut, Is.Empty);
-                Assert.That(sut.Keys, Is.Empty);
-                Assert.That(sut.Values, Is.Empty);
+                Assert.Empty(sut);
+                Assert.Empty(sut.Keys);
+                Assert.Empty(sut.Values);
             });
 
             IReadOnlyDictionary<int, object> castedSut = sut;
 
             Assert.Multiple(() =>
             {
-                Assert.That(castedSut.Keys.Count(), Is.EqualTo(0));
-                Assert.That(castedSut.Values.Count(), Is.EqualTo(0));
+                Assert.Empty(castedSut.Keys);
+                Assert.Empty(castedSut.Values);
             });
         }
 
-        [Test]
+        [Fact]
         public void Clear_Does_Work_On_Empty_Collection()
         {
             var sut = new ObservableDictionary<int, object>();
@@ -259,21 +258,21 @@ namespace MvvmScarletToolkit.Observables.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.That(sut, Is.Empty);
-                Assert.That(sut.Keys, Is.Empty);
-                Assert.That(sut.Values, Is.Empty);
+                Assert.Empty(sut);
+                Assert.Empty(sut.Keys);
+                Assert.Empty(sut.Values);
             });
 
             IReadOnlyDictionary<int, object> castedSut = sut;
 
             Assert.Multiple(() =>
             {
-                Assert.That(castedSut.Keys.Count(), Is.EqualTo(0));
-                Assert.That(castedSut.Values.Count(), Is.EqualTo(0));
+                Assert.Empty(castedSut.Keys);
+                Assert.Empty(castedSut.Values);
             });
         }
 
-        [Test]
+        [Fact]
         public void Remove_Does_Work()
         {
             var sut = new ObservableDictionary<int, object>(new Dictionary<int, object>()
@@ -284,24 +283,24 @@ namespace MvvmScarletToolkit.Observables.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.That(sut.Remove(2), Is.EqualTo(true));
-                Assert.That(sut, Has.Count.EqualTo(1));
-                Assert.That(sut.Keys, Has.Count.EqualTo(1));
-                Assert.That(sut.Values, Has.Count.EqualTo(1));
+                Assert.True(sut.Remove(2));
+                Assert.Single(sut);
+                Assert.Single(sut.Keys);
+                Assert.Single(sut.Values);
             });
 
             IReadOnlyDictionary<int, object> castedSut = sut;
 
             Assert.Multiple(() =>
             {
-                Assert.That(castedSut.Keys.Count(), Is.EqualTo(1));
-                Assert.That(castedSut.Values.Count(), Is.EqualTo(1));
+                Assert.Single(castedSut.Keys);
+                Assert.Single(castedSut.Values);
 
-                Assert.That(sut.Remove(2), Is.EqualTo(false));
+                Assert.False(sut.Remove(2));
             });
         }
 
-        [Test]
+        [Fact]
         public void Remove_Does_Not_Throw_1()
         {
             var sut = new ObservableDictionary<int, object>(new Dictionary<int, object>()
@@ -311,24 +310,24 @@ namespace MvvmScarletToolkit.Observables.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.That(sut.Remove(2), Is.EqualTo(false));
-                Assert.That(sut, Has.Count.EqualTo(1));
-                Assert.That(sut.Keys, Has.Count.EqualTo(1));
-                Assert.That(sut.Values, Has.Count.EqualTo(1));
+                Assert.False(sut.Remove(2));
+                Assert.Single(sut);
+                Assert.Single(sut.Keys);
+                Assert.Single(sut.Values);
             });
 
             IReadOnlyDictionary<int, object> castedSut = sut;
 
             Assert.Multiple(() =>
             {
-                Assert.That(castedSut.Keys.Count(), Is.EqualTo(1));
-                Assert.That(castedSut.Values.Count(), Is.EqualTo(1));
+                Assert.Single(castedSut.Keys);
+                Assert.Single(castedSut.Values);
 
-                Assert.That(sut.Remove(2), Is.EqualTo(false));
+                Assert.False(sut.Remove(2));
             });
         }
 
-        [Test]
+        [Fact]
         public void Remove_Does_Not_Throw_2()
         {
             var sut = new ObservableDictionary<int, object>(new Dictionary<int, object>()
@@ -338,32 +337,32 @@ namespace MvvmScarletToolkit.Observables.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.That(sut.Remove(1), Is.EqualTo(true));
-                Assert.That(sut, Is.Empty);
-                Assert.That(sut.Keys, Is.Empty);
-                Assert.That(sut.Values, Is.Empty);
+                Assert.True(sut.Remove(1));
+                Assert.Empty(sut);
+                Assert.Empty(sut.Keys);
+                Assert.Empty(sut.Values);
             });
 
             IReadOnlyDictionary<int, object> castedSut = sut;
 
             Assert.Multiple(() =>
             {
-                Assert.That(castedSut.Keys.Count(), Is.EqualTo(0));
-                Assert.That(castedSut.Values.Count(), Is.EqualTo(0));
+                Assert.Empty(castedSut.Keys);
+                Assert.Empty(castedSut.Values);
 
-                Assert.That(sut.Remove(1), Is.EqualTo(false));
+                Assert.False(sut.Remove(1));
             });
         }
 
-        [Test]
+        [Fact]
         public void Remove_Does_Not_Throw_3()
         {
             var sut = new ObservableDictionary<int, object>();
 
-            Assert.That(sut.Remove(2), Is.EqualTo(false));
+            Assert.False(sut.Remove(2));
         }
 
-        [Test]
+        [Fact]
         public void TryGetValue_Does_Work_1()
         {
             var expectedResult = new object();
@@ -375,12 +374,12 @@ namespace MvvmScarletToolkit.Observables.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.That(sut.TryGetValue(2, out var result), Is.EqualTo(true));
-                Assert.That(result, Is.EqualTo(expectedResult));
+                Assert.True(sut.TryGetValue(2, out var result));
+                Assert.Equal(expectedResult, result);
             });
         }
 
-        [Test]
+        [Fact]
         public void TryGetValue_Does_Work_2()
         {
             var expectedResult = new object();
@@ -392,8 +391,8 @@ namespace MvvmScarletToolkit.Observables.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.That(sut.TryGetValue(3, out var result), Is.EqualTo(false));
-                Assert.That(result, Is.EqualTo(null));
+                Assert.False(sut.TryGetValue(3, out var result));
+                Assert.Null(result);
             });
         }
     }

@@ -1,64 +1,72 @@
 using MvvmScarletToolkit.Commands;
-using NUnit.Framework;
+using Xunit;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Tests
 {
-    public sealed class ConcurrentCommandTests
+    public sealed class ConcurrentCommandTests : IAsyncLifetime
     {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         private static ScarletCommandBuilder _builder;
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-        [OneTimeSetUp]
-        public static void Setup()
+        public ValueTask InitializeAsync()
         {
             _builder = new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory);
+
+            return ValueTask.CompletedTask;
         }
 
-        [Test]
+        public ValueTask DisposeAsync()
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        [Fact]
         public void Ctor_DoesNotThrow()
         {
             new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object _, CancellationToken __) => Task.CompletedTask);
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesThrowForNullCommandManager()
         {
             Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(null!, Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object _, CancellationToken __) => Task.CompletedTask));
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesThrowForNullCancelCommand()
         {
             Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), null!, Utils.GetTestBusyStackFactory(), (object _, CancellationToken __) => Task.CompletedTask));
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesThrowForNullBusyStackFactory()
         {
             Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), null!, (object _, CancellationToken __) => Task.CompletedTask));
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesThrowForNullBusyStack()
         {
             Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), default!, (object _, CancellationToken __) => Task.CompletedTask, (object _) => true));
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesThrowForNullExecute()
         {
             Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), null!));
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesThrowForNullCanExecute()
         {
             Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (object _, CancellationToken __) => Task.CompletedTask, null!));
         }
 
-        [Test]
+        [Fact]
         public void Execute_IsCalledOnCommandExecution()
         {
             var executed = false;
@@ -67,10 +75,10 @@ namespace MvvmScarletToolkit.Tests
 
             command.Execute(default);
 
-            Assert.That(executed, Is.True);
+            Assert.True(executed);
         }
 
-        [Test]
+        [Fact]
         public void CanExecute_IsCalledOnCommandCanExecuteCheck()
         {
             var executed = false;
@@ -79,10 +87,10 @@ namespace MvvmScarletToolkit.Tests
 
             command.CanExecute(default);
 
-            Assert.That(executed, Is.True);
+            Assert.True(executed);
         }
 
-        [Test]
+        [Fact]
         public void Execute_IsCalledOnCommandExecutionForValueType()
         {
             var executed = false;
@@ -91,10 +99,10 @@ namespace MvvmScarletToolkit.Tests
 
             command.Execute(1);
 
-            Assert.That(executed, Is.True);
+            Assert.True(executed);
         }
 
-        [Test]
+        [Fact]
         public void Execute_IsStillCalledOnCommandExecutionForValueTypeAndNullArgument()
         {
             var executed = false;
@@ -103,10 +111,10 @@ namespace MvvmScarletToolkit.Tests
 
             command.Execute(null);
 
-            Assert.That(executed, Is.True);
+            Assert.True(executed);
         }
 
-        [Test]
+        [Fact]
         public void CanExecute_IsCalledOnCommandCanExecuteCheckForValueTypeAndNullArgument()
         {
             var executed = false;
@@ -115,7 +123,7 @@ namespace MvvmScarletToolkit.Tests
 
             command.CanExecute(null);
 
-            Assert.That(executed, Is.False);
+            Assert.False(executed);
         }
     }
 }

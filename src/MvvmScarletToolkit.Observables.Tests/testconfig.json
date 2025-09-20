@@ -1,0 +1,9 @@
+{
+  "xUnit": {
+    "culture": "de-DE",
+    "parallelizeTestCollections": true,
+    "maxParallelThreads":12,
+    "parallelAlgorithm":"aggressive",
+    "showLiveOutput": true
+  }
+}

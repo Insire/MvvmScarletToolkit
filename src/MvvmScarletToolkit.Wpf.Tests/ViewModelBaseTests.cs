@@ -1,31 +1,30 @@
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Tests.Util;
-using NUnit.Framework;
 using System;
 
 namespace MvvmScarletToolkit.Tests
 {
-    internal sealed class ViewModelBaseTests
+    public sealed class ViewModelBaseTests
     {
-        [Test]
+        [Fact]
         public void Ctor_DoesNotAcceptNullArgument()
         {
             Assert.Throws<ArgumentNullException>(() => new DerivedViewModelBase(null!));
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesNotThrow()
         {
             new DerivedViewModelBase(Utils.GetTestCommandBuilder());
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesNotThrowForNullModel()
         {
             new DerivedObjectViewModelBase(Utils.GetTestCommandBuilder(), null);
         }
 
-        [Test]
+        [Fact]
         public void ShouldBeBusyWhenUsingBusyStack()
         {
             var dispatcher = new TestDispatcher();
@@ -33,9 +32,9 @@ namespace MvvmScarletToolkit.Tests
 
             var vm = new DerivedViewModelBase(commandBuilder);
 
-            Assert.That(vm.IsBusy, Is.EqualTo(false));
-            vm.ValidateState(() => Assert.That(vm.IsBusy, Is.EqualTo(true)));
-            Assert.That(vm.IsBusy, Is.EqualTo(false));
+            Assert.False(vm.IsBusy);
+            vm.ValidateState(() => Assert.True(vm.IsBusy));
+            Assert.False(vm.IsBusy);
         }
     }
 }

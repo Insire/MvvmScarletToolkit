@@ -1,4 +1,4 @@
-using NUnit.Framework;
+using Xunit;
 using System;
 using System.Threading.Tasks;
 
@@ -6,13 +6,13 @@ namespace MvvmScarletToolkit.Tests
 {
     public sealed class ScarletCommandBuilderTests
     {
-        [Test]
+        [Fact]
         public void Ctor_DoesntThrow()
         {
             new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory);
         }
 
-        [Test]
+        [Fact]
         public void Ctor_ThrowsWithNullDependencies()
         {
             Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(null!, Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory));
@@ -23,7 +23,7 @@ namespace MvvmScarletToolkit.Tests
             Assert.Throws<ArgumentNullException>(() => new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), null!));
         }
 
-        [Test]
+        [Fact]
         public void Ctor_ShouldInitializeDependencyProperties()
         {
             var dispatcher = Utils.GetTestDispatcher();
@@ -37,21 +37,21 @@ namespace MvvmScarletToolkit.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.That(builder.Dispatcher, Is.EqualTo(dispatcher));
-                Assert.That(builder.CommandManager, Is.EqualTo(commandManager));
-                Assert.That(builder.Messenger, Is.EqualTo(messenger));
-                Assert.That(builder.Exit, Is.EqualTo(exit));
-                Assert.That(builder.WeakEventManager, Is.EqualTo(eventManager));
+                Assert.Equal(dispatcher, builder.Dispatcher);
+                Assert.Equal(commandManager, builder.CommandManager);
+                Assert.Equal(messenger, builder.Messenger);
+                Assert.Equal(exit, builder.Exit);
+                Assert.Equal(eventManager, builder.WeakEventManager);
             });
         }
 
-        [Test]
+        [Fact]
         public void Create_DoesReturnValidContextInstance()
         {
             var builder = new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory);
 
             var context = builder.Create<object>((_, __) => Task.CompletedTask, (_) => true);
-            Assert.That(context, Is.Not.Null);
+            Assert.NotNull(context);
         }
     }
 }

@@ -1,19 +1,39 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net8.0-windows;net9.0-windows</TargetFrameworks>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <IsPackable>false</IsPackable>
+    <OutputType>Exe</OutputType>
+    
+    <!--To enable the Microsoft Testing Platform 'dotnet test' experience, add property:-->
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+
+    <!--To enable the Microsoft Testing Platform native command line experience, add property:-->
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+
+    <!--For more information on Microsoft Testing Platform support in xUnit.net, please visit:-->
+    <!--https://xunit.net/docs/getting-started/v3/microsoft-testing-platform-->
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="NSubstitute.Analyzers.CSharp" />
-
-    <PackageReference Include="nunit" />
+    
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
 
-    <PackageReference Include="NUnit3TestAdapter" />
-    <PackageReference Include="NUnit.Analyzers">
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="xunit.analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3.runner.console">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -23,5 +43,10 @@
     <ProjectReference Include="..\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="NSubstitute" />
   </ItemGroup>
 </Project>
