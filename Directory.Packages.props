@@ -9,7 +9,7 @@
     <PackageVersion Include="Jot" Version="2.1.17" />
     <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="14.8.2" />
     <PackageVersion Include="Magick.NET.SystemWindowsMedia" Version="8.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.9" />
     <PackageVersion Include="morelinq" Version="4.4.0" />
     <PackageVersion Include="Serilog" Version="4.3.0" />
     <PackageVersion Include="Serilog.Extensions.Logging" Version="9.0.2" />
@@ -27,7 +27,7 @@
   <!-- WPF -->
   <ItemGroup Label="Wpf">
     <PackageVersion Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
-    <PackageVersion Include="System.Drawing.Common" Version="9.0.6" />
+    <PackageVersion Include="System.Drawing.Common" Version="9.0.9" />
   </ItemGroup>
   <!-- transient packages fixing vulnerabilities -->
   <ItemGroup Label="transient packages fixing vulnerabilities">
@@ -42,8 +42,8 @@
   </ItemGroup>
   <!-- tests -->
   <ItemGroup Label="tests">
-    <PackageVersion Include="MediatR" Version="12.5.0" />
-    <PackageVersion Include="BenchmarkDotNet" Version="0.15.2" />
+    <PackageVersion Include="MediatR" Version="13.0.0" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.15.3" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />
     <PackageVersion Include="nunit" Version="4.4.0" />
@@ -69,12 +69,12 @@
   </ItemGroup>
   <ItemGroup Label="core dependencies">
     <PackageVersion Include="Avalonia" Version="11.3.6" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.6" />
-    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
     <PackageVersion Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
-    <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="9.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="9.0.9" />
     <PackageVersion Include="DynamicData" Version="9.4.1" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
   </ItemGroup>
