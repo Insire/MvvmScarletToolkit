@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../targetframeworks.props" />
+  <Import Project="../test-libraries.props" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\shared\MvvmScarletToolkit.Test.Tracing\MvvmScarletToolkit.Test.Tracing.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Mediator\MvvmScarletToolkit.Mediator.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="MvvmScarletToolkit.Mediator.Tests.Otel" />
+  </ItemGroup>
+
+</Project>

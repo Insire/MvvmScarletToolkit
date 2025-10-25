@@ -3,8 +3,6 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 using Nerdbank.GitVersioning;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Build
 {
@@ -23,12 +21,11 @@ namespace Build
         public DirectoryPath ReportsPath { get; }
 
         public FilePath SolutionFile { get; }
-        public FilePath XPlatSolutionFile { get; }
         public FilePath AssemblyInfoFile { get; }
         public FilePath CoberturaResultFile { get; }
 
-        public VersionOracle GitVersion { get; internal set; }
-        public string Branch { get; internal set; }
+        public VersionOracle? GitVersion { get; internal set; }
+        public string? Branch { get; internal set; }
 
         public bool IsPublicRelease { get; internal set; }
 
@@ -60,9 +57,7 @@ namespace Build
             })
             .ToList();
 
-            XPlatSolutionFile = FilePath.FromString("MvvmScarletToolkit.XPlat.slnf").MakeAbsolute(workingDirectory);
-
-            SolutionFile = FilePath.FromString("MvvmScarletToolkit.sln").MakeAbsolute(workingDirectory);
+            SolutionFile = FilePath.FromString("MvvmScarletToolkit.slnx").MakeAbsolute(workingDirectory);
             AssemblyInfoFile = SourcePath.CombineWithFilePath("SharedAssemblyInfo.cs").MakeAbsolute(workingDirectory);
             CoberturaResultFile = CoberturaResultsPath.CombineWithFilePath("Cobertura.xml").MakeAbsolute(workingDirectory);
 
@@ -98,14 +93,15 @@ namespace Build
             ];
         }
 
-        internal static IEnumerable<(string Folder, string ProjectFile, string[] Frameworks)> GetTestProjects()
+        internal IEnumerable<(string Folder, string ProjectFile, string[] Frameworks)> GetTestProjects()
         {
-            return
-            [
-                (Folder: @"src\MvvmScarletToolkit.Mediator.Tests", ProjectFile: "MvvmScarletToolkit.Mediator.Tests.csproj",["net9.0"]),
-                (Folder: @"src\MvvmScarletToolkit.Observables.Tests", ProjectFile: "MvvmScarletToolkit.Observables.Tests.csproj",["net9.0"]),
-                (Folder: @"src\MvvmScarletToolkit.Wpf.Tests", ProjectFile:  "MvvmScarletToolkit.Wpf.Tests.csproj",["net8.0-windows", "net9.0-windows"]),
-            ];
+            yield return (Folder: @"tests\MvvmScarletToolkit.Mediator.Tests", ProjectFile: "MvvmScarletToolkit.Mediator.Tests.csproj", ["net9.0"]);
+            yield return   (Folder: @"tests\MvvmScarletToolkit.Observables.Tests", ProjectFile: "MvvmScarletToolkit.Observables.Tests.csproj",["net9.0"]);
+
+            if (Environment.Platform.IsWindows())
+            {
+                yield return (Folder: @"tests\MvvmScarletToolkit.Wpf.Tests", ProjectFile:  "MvvmScarletToolkit.Wpf.Tests.csproj",["net8.0-windows", "net9.0-windows"]);
+            }
         }
     }
 }

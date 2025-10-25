@@ -2,7 +2,7 @@
 
 ## Goals
 
-This library aims to provide implementations for wpf specific classes used by the framework.
+This library aims to provide implementations for avalonia specific classes used by the framework.
 
 ## Contents
 

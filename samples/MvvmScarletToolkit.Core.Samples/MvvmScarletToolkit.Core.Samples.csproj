@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="../../targetframeworks.props" />
+
+    <PropertyGroup>
+      <OutputType>Library</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\Death_to_Stock_Photography_RideorDie_8.jpg" />
+      <EmbeddedResource Include="Resources\Moon_Color_Hypersaturated_Stars_900.jpg" />
+      <EmbeddedResource Include="Resources\wallhaven-245035.jpg" />
+      <EmbeddedResource Include="Resources\wallhaven-319605.jpg" />
+      <EmbeddedResource Include="Resources\wallhaven-401406.jpg" />
+      <EmbeddedResource Include="Resources\wallhaven-75354.jpg" />
+    </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
+  </ItemGroup>
+</Project>

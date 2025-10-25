@@ -1,11 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../targetframeworks.props" />
+  <Import Project="../../package.props" />
+
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-    <OutputType>Library</OutputType>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <Description>MvvmScarletToolkit.ImageLoading is part of the MvvmScarletToolkit framework, containing services and platform abstractions for loading and caching images from remote resources like the web.</Description>
-    <PackageTags>MvvmScarletToolkit,C#,Toolkit,Scarlet,Library,.NET,OSS,OpenSource</PackageTags>
+    <PackageTags>MvvmScarletToolkit,C#,Toolkit,Scarlet,Library,.NET,OSS,OpenSource,Image,Caching</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
