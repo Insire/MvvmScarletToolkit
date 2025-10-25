@@ -15,5 +15,6 @@
 
   <ItemGroup>
     <Using Include="MvvmScarletToolkit.Test.Tracing.Otel.Attributes" />
+    <Using Include="MvvmScarletToolkit.Test.Tracing" />
   </ItemGroup>
 </Project>

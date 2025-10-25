@@ -1,10 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
-using MvvmScarletToolkit.Test.Tracing.Otel.Attributes;
 
 namespace MvvmScarletToolkit.Mediator.Tests;
 
-[TraceTest]
-public sealed class MediatorTests : IAsyncLifetime
+public sealed class MediatorTests : TraceTestBase, IAsyncLifetime
 {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     private IServiceCollection _services;

@@ -1,11 +1,9 @@
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Tests.Util;
-using System;
 
 namespace MvvmScarletToolkit.Tests
 {
-    [TraceTest]
-    public sealed class ViewModelBaseTests
+    public sealed class ViewModelBaseTests : TraceTestBase
     {
         [Fact]
         public void Ctor_DoesNotAcceptNullArgument()

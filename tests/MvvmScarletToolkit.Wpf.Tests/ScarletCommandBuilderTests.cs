@@ -1,10 +1,6 @@
-using System;
-using System.Threading.Tasks;
-
 namespace MvvmScarletToolkit.Tests
 {
-    [TraceTest]
-    public sealed class ScarletCommandBuilderTests
+    public sealed class ScarletCommandBuilderTests : TraceTestBase
     {
         [Fact]
         public void Ctor_DoesntThrow()

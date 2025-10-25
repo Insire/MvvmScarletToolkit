@@ -1,13 +1,10 @@
 using CommunityToolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Tests.Util;
-using System;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Tests
 {
-    [TraceTest]
-    public sealed class ViewModelListBaseTests
+    public sealed class ViewModelListBaseTests : TraceTestBase
     {
         [Fact]
         public void Ctor_DoesNotAcceptNullArgument()

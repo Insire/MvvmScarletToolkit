@@ -2,8 +2,7 @@ using MvvmScarletToolkit.Commands;
 
 namespace MvvmScarletToolkit.Tests
 {
-    [TraceTest]
-    public sealed class CommandBuilderContextTests
+    public sealed class CommandBuilderContextTests : TraceTestBase
     {
         [Fact]
         public void Ctor_DoesntThrow()

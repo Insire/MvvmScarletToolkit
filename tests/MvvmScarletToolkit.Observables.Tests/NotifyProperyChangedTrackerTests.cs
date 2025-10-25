@@ -1,9 +1,6 @@
-using MvvmScarletToolkit.Test.Tracing.Otel.Attributes;
-
 namespace MvvmScarletToolkit.Observables.Tests
 {
-    [TraceTest]
-    public sealed class NotifyProperyChangedTrackerTests
+    public sealed class NotifyProperyChangedTrackerTests : TraceTestBase
     {
         [Fact]
         public void Ctor_DoesNotThrow()

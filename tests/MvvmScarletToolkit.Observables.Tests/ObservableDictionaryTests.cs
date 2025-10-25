@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace MvvmScarletToolkit.Observables.Tests
 {
-    [TraceTest]
-    public sealed class ObservableDictionaryTests
+    public sealed class ObservableDictionaryTests : TraceTestBase
     {
         [Fact]
         public void Ctor_DoesNotThrow_1()

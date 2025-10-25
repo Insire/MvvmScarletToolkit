@@ -1,7 +1,6 @@
 namespace MvvmScarletToolkit.Wpf.Tests
 {
-    [TraceTest]
-    public sealed class IsNullOrEmptyTests
+    public sealed class IsNullOrEmptyTests : TraceTestBase
     {
         [Fact]
         public void Convert_Should_Return_False_For_Unsupported_DataType()
