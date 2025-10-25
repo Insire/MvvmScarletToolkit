@@ -33,6 +33,8 @@
     <File Path="README.md" />
     <File Path="targetframeworks-windows.props" />
     <File Path="targetframeworks.props" />
+    <File Path="tests/test-libraries.props" />
+    <File Path="tests/xunit.runner.json" />
     <File Path="version.json" />
   </Folder>
   <Folder Name="/src/">
