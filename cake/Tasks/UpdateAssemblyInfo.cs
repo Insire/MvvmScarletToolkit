@@ -1,6 +1,5 @@
 using Cake.Common.Solution.Project.Properties;
 using Cake.Frosting;
-using System;
 
 namespace Build.Tasks
 {

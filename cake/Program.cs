@@ -1,5 +1,4 @@
 using Cake.Frosting;
-using System;
 
 namespace Build
 {

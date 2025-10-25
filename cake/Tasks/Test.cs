@@ -2,7 +2,6 @@ using Cake.Common;
 using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
-using System.Collections.Generic;
 
 namespace Build.Tasks
 {

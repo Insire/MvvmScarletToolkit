@@ -3,8 +3,6 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 using Nerdbank.GitVersioning;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Build
 {
