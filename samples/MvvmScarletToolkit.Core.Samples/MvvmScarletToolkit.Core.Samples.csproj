@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj" />
-    <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
-    <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
   </ItemGroup>
 </Project>

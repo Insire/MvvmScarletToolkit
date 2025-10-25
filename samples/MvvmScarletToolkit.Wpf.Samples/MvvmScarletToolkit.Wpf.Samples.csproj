@@ -30,8 +30,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MvvmScarletToolkit.Core.Samples\MvvmScarletToolkit.Core.Samples.csproj" />
-    <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj" />
-    <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
-    <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj" />
   </ItemGroup>
 </Project>
