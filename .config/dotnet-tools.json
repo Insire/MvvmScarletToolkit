@@ -10,14 +10,14 @@
       "rollForward": false
     },
     "dotnet-reportgenerator-globaltool": {
-      "version": "5.4.13",
+      "version": "5.4.17",
       "commands": [
         "reportgenerator"
       ],
       "rollForward": false
     },
     "nuget-license": {
-      "version": "3.1.4",
+      "version": "4.0.0",
       "commands": [
         "nuget-license"
       ],

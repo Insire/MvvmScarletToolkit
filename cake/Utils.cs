@@ -16,7 +16,7 @@ namespace Build
                 AssemblyFilters = new[]
                 {
                     "-MvvmScarletToolkit.Tests*",
-                    "-nunit3*",
+                    "-xunit*",
                 },
                 ClassFilters = new[]
                 {
