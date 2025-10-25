@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="../../targetframeworks-windows.props" />
+  <Import Project="../../targetframeworks.props" />
   <Import Project="../test-libraries.props" />
 
   <ItemGroup>

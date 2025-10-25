@@ -20,37 +20,37 @@ namespace Build.Tasks
 
                 MetaDataAttributes = new[]
                 {
-                new AssemblyInfoMetadataAttribute()
-                {
-                    Key = "Platform",
-                    Value = BuildContext.Platform,
-                },
-                new AssemblyInfoMetadataAttribute()
-                {
-                    Key = "CompileDate",
-                    Value = "[UTC]" + DateTime.UtcNow.ToString(),
-                },
-                new AssemblyInfoMetadataAttribute()
-                {
-                    Key = "PublicRelease",
-                    Value = context.IsPublicRelease.ToString(),
-                },
-                new AssemblyInfoMetadataAttribute()
-                {
-                    Key = "Branch",
-                    Value = context.Branch,
-                },
-                new AssemblyInfoMetadataAttribute()
-                {
-                    Key = "Commit",
-                    Value = context.GitVersion.GitCommitId,
-                },
-                new AssemblyInfoMetadataAttribute()
-                {
-                    Key = "Version",
-                    Value = context.GitVersion.SemVer2,
-                },
-            }
+                    new AssemblyInfoMetadataAttribute()
+                    {
+                        Key = "Platform",
+                        Value = BuildContext.Platform,
+                    },
+                    new AssemblyInfoMetadataAttribute()
+                    {
+                        Key = "CompileDate",
+                        Value = "[UTC]" + DateTime.UtcNow.ToString(),
+                    },
+                    new AssemblyInfoMetadataAttribute()
+                    {
+                        Key = "PublicRelease",
+                        Value = context.IsPublicRelease.ToString(),
+                    },
+                    new AssemblyInfoMetadataAttribute()
+                    {
+                        Key = "Branch",
+                        Value = context.Branch,
+                    },
+                    new AssemblyInfoMetadataAttribute()
+                    {
+                        Key = "Commit",
+                        Value = context.GitVersion?.GitCommitId ?? "",
+                    },
+                    new AssemblyInfoMetadataAttribute()
+                    {
+                        Key = "Version",
+                        Value = context.GitVersion?.SemVer2 ?? "",
+                    },
+                }
             };
 
             context.CreateAssemblyInfo(context.AssemblyInfoFile, settings);

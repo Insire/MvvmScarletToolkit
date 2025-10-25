@@ -25,8 +25,8 @@ namespace Build
         public FilePath AssemblyInfoFile { get; }
         public FilePath CoberturaResultFile { get; }
 
-        public VersionOracle GitVersion { get; internal set; }
-        public string Branch { get; internal set; }
+        public VersionOracle? GitVersion { get; internal set; }
+        public string? Branch { get; internal set; }
 
         public bool IsPublicRelease { get; internal set; }
 
@@ -60,7 +60,7 @@ namespace Build
 
             XPlatSolutionFile = FilePath.FromString("MvvmScarletToolkit.XPlat.slnf").MakeAbsolute(workingDirectory);
 
-            SolutionFile = FilePath.FromString("MvvmScarletToolkit.sln").MakeAbsolute(workingDirectory);
+            SolutionFile = FilePath.FromString("MvvmScarletToolkit.slnx").MakeAbsolute(workingDirectory);
             AssemblyInfoFile = SourcePath.CombineWithFilePath("SharedAssemblyInfo.cs").MakeAbsolute(workingDirectory);
             CoberturaResultFile = CoberturaResultsPath.CombineWithFilePath("Cobertura.xml").MakeAbsolute(workingDirectory);
 
@@ -100,9 +100,9 @@ namespace Build
         {
             return
             [
-                (Folder: @"src\MvvmScarletToolkit.Mediator.Tests", ProjectFile: "MvvmScarletToolkit.Mediator.Tests.csproj",["net9.0"]),
-                (Folder: @"src\MvvmScarletToolkit.Observables.Tests", ProjectFile: "MvvmScarletToolkit.Observables.Tests.csproj",["net9.0"]),
-                (Folder: @"src\MvvmScarletToolkit.Wpf.Tests", ProjectFile:  "MvvmScarletToolkit.Wpf.Tests.csproj",["net8.0-windows", "net9.0-windows"]),
+                (Folder: @"tests\MvvmScarletToolkit.Mediator.Tests", ProjectFile: "MvvmScarletToolkit.Mediator.Tests.csproj",["net9.0"]),
+                (Folder: @"tests\MvvmScarletToolkit.Observables.Tests", ProjectFile: "MvvmScarletToolkit.Observables.Tests.csproj",["net9.0"]),
+                (Folder: @"tests\MvvmScarletToolkit.Wpf.Tests", ProjectFile:  "MvvmScarletToolkit.Wpf.Tests.csproj",["net8.0-windows", "net9.0-windows"]),
             ];
         }
     }

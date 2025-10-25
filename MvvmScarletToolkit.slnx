@@ -15,6 +15,7 @@
     <Project Path="samples/MvvmScarletToolkit.Wpf.Samples/MvvmScarletToolkit.Wpf.Samples.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
+    <File Path=".config/dotnet-tools.json" />
     <File Path=".editorconfig" />
     <File Path=".vsconfig" />
     <File Path=".XamlStyler" />
