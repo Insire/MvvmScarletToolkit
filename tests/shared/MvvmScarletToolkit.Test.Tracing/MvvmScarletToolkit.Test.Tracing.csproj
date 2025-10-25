@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../../targetframeworks.props" />
+
+  <PropertyGroup>
+
+    <RootNamespace>MvvmScarletToolkit.Test.Tracing</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.analyzers" />
+    <PackageReference Include="xunit.v3.extensibility.core" />
+
+    <PackageReference Include="OpenTelemetry.Exporter.Console" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="Xunit.v3" />
+  </ItemGroup>
+</Project>

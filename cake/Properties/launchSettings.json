@@ -1,0 +1,16 @@
+{
+    "profiles": {
+        "Default": {
+            "commandName": "Project",
+            "commandLineArgs": "-v diagnostic"
+        },
+        "Test": {
+            "commandName": "Project",
+            "commandLineArgs": "-v diagnostic --target=Test"
+        },
+        "BuildAndPack": {
+            "commandName": "Project",
+            "commandLineArgs": "-v diagnostic --target=BuildAndPack"
+        }
+    }
+}

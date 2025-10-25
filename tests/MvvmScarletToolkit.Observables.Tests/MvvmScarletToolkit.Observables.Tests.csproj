@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../targetframeworks.props" />
+  <Import Project="../test-libraries.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\shared\MvvmScarletToolkit.Test.Tracing\MvvmScarletToolkit.Test.Tracing.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="MvvmScarletToolkit.Mediator.Tests.Otel" />
+  </ItemGroup>
+</Project>

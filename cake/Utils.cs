@@ -3,7 +3,6 @@ using Cake.Common.Solution;
 using Cake.Common.Tools.ReportGenerator;
 using Cake.Core.IO;
 using Cake.Incubator.Project;
-using System.Linq;
 
 namespace Build
 {

@@ -9,9 +9,14 @@ namespace Build.Tasks
     {
         public override void Run(BuildContext context)
         {
+            var semver = context.GitVersion?.SemVer2;
+            if (semver is null)
+            {
+                return;
+            }
+
             foreach (var project in context.NugetPackageProjects)
             {
-                var semver = context.GitVersion.SemVer2;
                 var settings = new ProcessSettings()
                     .UseWorkingDirectory(".")
                     .WithArguments(builder => builder
@@ -19,7 +24,7 @@ namespace Build.Tasks
                         .AppendQuoted(project.ProjectFile.FullPath)
                         .Append($"-c {BuildContext.BuildConfiguration}")
                         .Append($"--output \"{context.PackagePath.FullPath}\"")
-                        .Append($"-p:PackageVersion={context.GitVersion.SemVer2}")
+                        .Append($"-p:PackageVersion={semver}")
                         .Append($"-p:PublicRelease={context.IsPublicRelease}") // Nerdbank.GitVersioning - omit git commit ID
 
                         // Creating symbol packages

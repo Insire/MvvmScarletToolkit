@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+        <LangVersion>preview</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
+        <PackageReference Include="Roslynator.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <PropertyGroup Condition="'$(Environment)'=='Test'">
+        <DebugSymbols>True</DebugSymbols>
+        <DebugType>Full</DebugType>
+    </PropertyGroup>
+</Project>

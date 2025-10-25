@@ -117,7 +117,7 @@ This library uses SDK-style project files, which means you are required to use [
 
 For anyone not wishing to install that, they atleast need:
 
-- Windows 10 (older versions work probably too, but the repository is not configured for those)
+- Windows 10 (older versions work probably too, but the repository is not configured for those) or linux (only building, no running of the windows specific parts (samples and tests) in here)
 - [Net 8.0](https://dotnet.microsoft.com/download/dotnet-core/8.0)
 - [Net 9.0](https://dotnet.microsoft.com/download/dotnet-core/9.0)
 - [Visual Studio Code](https://code.visualstudio.com/) with the [C# Extension](https://github.com/OmniSharp/omnisharp-vscode) provided by Microsoft

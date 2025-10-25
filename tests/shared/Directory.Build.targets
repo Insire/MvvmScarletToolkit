@@ -3,6 +3,6 @@
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" Condition="'' != $([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
 
     <PropertyGroup>
-        <CodeAnalysisRuleSet>..\..\MvvmScarletToolkit.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>..\..\..\MvvmScarletToolkit.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 </Project>
