@@ -1,6 +1,4 @@
 using MvvmScarletToolkit.Commands;
-using System;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Tests
 {

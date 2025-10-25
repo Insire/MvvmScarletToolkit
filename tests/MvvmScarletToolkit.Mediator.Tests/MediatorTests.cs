@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using System.Threading;
-using System.Threading.Tasks;
+using MvvmScarletToolkit.Test.Tracing.Otel.Attributes;
 
 namespace MvvmScarletToolkit.Mediator.Tests;
 

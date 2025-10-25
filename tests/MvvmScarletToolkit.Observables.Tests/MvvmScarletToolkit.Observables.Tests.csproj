@@ -10,6 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="MvvmScarletToolkit.Mediator.Tests.Otel" />
+    <Using Include="MvvmScarletToolkit.Test.Tracing.Otel.Attributes" />
   </ItemGroup>
 </Project>

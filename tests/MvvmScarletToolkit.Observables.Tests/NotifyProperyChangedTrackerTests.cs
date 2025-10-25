@@ -1,4 +1,4 @@
-using System;
+using MvvmScarletToolkit.Test.Tracing.Otel.Attributes;
 
 namespace MvvmScarletToolkit.Observables.Tests
 {

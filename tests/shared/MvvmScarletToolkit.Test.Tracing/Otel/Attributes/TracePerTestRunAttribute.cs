@@ -1,7 +1,8 @@
+using MvvmScarletToolkit.Test.Tracing.Otel.Fixtures;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace MvvmScarletToolkit.Mediator.Tests.Otel
+namespace MvvmScarletToolkit.Test.Tracing.Otel.Attributes
 {
     public sealed class TracePerTestRunAttribute : BeforeAfterTestAttribute
     {

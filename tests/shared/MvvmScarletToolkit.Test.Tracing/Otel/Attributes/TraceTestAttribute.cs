@@ -1,7 +1,9 @@
+using MvvmScarletToolkit.Mediator.Tests.Otel;
+using MvvmScarletToolkit.Test.Tracing.Otel.Fixtures;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace MvvmScarletToolkit.Mediator.Tests.Otel
+namespace MvvmScarletToolkit.Test.Tracing.Otel.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public sealed class TraceTestAttribute : BaseTraceTestAttribute
