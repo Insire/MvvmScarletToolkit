@@ -9,7 +9,7 @@ namespace Build.Tasks
     {
         public override void Run(BuildContext context)
         {
-            foreach (var (folder, projectFile, frameworks) in BuildContext.GetTestProjects())
+            foreach (var (folder, projectFile, frameworks) in context.GetTestProjects())
             {
                 var projectFilePath = context.Environment.WorkingDirectory.Combine(folder).CombineWithFilePath(projectFile);
 

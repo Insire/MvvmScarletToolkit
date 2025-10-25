@@ -21,7 +21,6 @@ namespace Build
         public DirectoryPath ReportsPath { get; }
 
         public FilePath SolutionFile { get; }
-        public FilePath XPlatSolutionFile { get; }
         public FilePath AssemblyInfoFile { get; }
         public FilePath CoberturaResultFile { get; }
 
@@ -57,8 +56,6 @@ namespace Build
                 return (folder, projectFile);
             })
             .ToList();
-
-            XPlatSolutionFile = FilePath.FromString("MvvmScarletToolkit.XPlat.slnf").MakeAbsolute(workingDirectory);
 
             SolutionFile = FilePath.FromString("MvvmScarletToolkit.slnx").MakeAbsolute(workingDirectory);
             AssemblyInfoFile = SourcePath.CombineWithFilePath("SharedAssemblyInfo.cs").MakeAbsolute(workingDirectory);
@@ -96,14 +93,15 @@ namespace Build
             ];
         }
 
-        internal static IEnumerable<(string Folder, string ProjectFile, string[] Frameworks)> GetTestProjects()
+        internal IEnumerable<(string Folder, string ProjectFile, string[] Frameworks)> GetTestProjects()
         {
-            return
-            [
-                (Folder: @"tests\MvvmScarletToolkit.Mediator.Tests", ProjectFile: "MvvmScarletToolkit.Mediator.Tests.csproj",["net9.0"]),
-                (Folder: @"tests\MvvmScarletToolkit.Observables.Tests", ProjectFile: "MvvmScarletToolkit.Observables.Tests.csproj",["net9.0"]),
-                (Folder: @"tests\MvvmScarletToolkit.Wpf.Tests", ProjectFile:  "MvvmScarletToolkit.Wpf.Tests.csproj",["net8.0-windows", "net9.0-windows"]),
-            ];
+            yield return (Folder: @"tests\MvvmScarletToolkit.Mediator.Tests", ProjectFile: "MvvmScarletToolkit.Mediator.Tests.csproj", ["net9.0"]);
+            yield return   (Folder: @"tests\MvvmScarletToolkit.Observables.Tests", ProjectFile: "MvvmScarletToolkit.Observables.Tests.csproj",["net9.0"]);
+
+            if (Environment.Platform.IsWindows())
+            {
+                yield return (Folder: @"tests\MvvmScarletToolkit.Wpf.Tests", ProjectFile:  "MvvmScarletToolkit.Wpf.Tests.csproj",["net8.0-windows", "net9.0-windows"]);
+            }
         }
     }
 }
