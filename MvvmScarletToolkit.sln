@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.32421.90
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11012.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit", "src\MvvmScarletToolkit\MvvmScarletToolkit.csproj", "{D555C0FD-335D-4C64-B80B-8999E66402B8}"
 EndProject
@@ -13,6 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		.vsconfig = .vsconfig
 		.XamlStyler = .XamlStyler
+		build.ps1 = build.ps1
+		build.sh = build.sh
+		compose.yaml = compose.yaml
 		src\Directory.Build.props = src\Directory.Build.props
 		src\Directory.Build.targets = src\Directory.Build.targets
 		Directory.Packages.props = Directory.Packages.props
@@ -21,9 +24,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		nuget.config = nuget.config
 		README.md = README.md
 		version.json = version.json
-		compose.yaml = compose.yaml
-		build.ps1 = build.ps1
-		build.sh = build.sh
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmScarletToolkit.Incubator", "src\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj", "{67E41CB4-774B-455B-B0FC-86EF13677FB7}"
@@ -55,6 +55,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Avalonia.Samples", "src\MvvmScarletToolkit.Avalonia.Samples\MvvmScarletToolkit.Avalonia.Samples.csproj", "{5227784B-E4E2-4DC4-BFB2-2E2C5D3A5D9C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Core.Samples", "src\MvvmScarletToolkit.Core.Samples\MvvmScarletToolkit.Core.Samples.csproj", "{1663811D-340E-4C10-9047-DE9E7321F00B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Test.Tracing", "MvvmScarletToolkit.Test.Tracing\MvvmScarletToolkit.Test.Tracing.csproj", "{5606FFE7-0971-48CD-8FFC-94AB9417417E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -456,6 +458,30 @@ Global
 		{1663811D-340E-4C10-9047-DE9E7321F00B}.Release|x64.Build.0 = Release|Any CPU
 		{1663811D-340E-4C10-9047-DE9E7321F00B}.Release|x86.ActiveCfg = Release|Any CPU
 		{1663811D-340E-4C10-9047-DE9E7321F00B}.Release|x86.Build.0 = Release|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Debug|ARM.Build.0 = Debug|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Debug|x64.Build.0 = Debug|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Debug|x86.Build.0 = Debug|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Release|ARM.ActiveCfg = Release|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Release|ARM.Build.0 = Release|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Release|iPhone.Build.0 = Release|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Release|x64.ActiveCfg = Release|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Release|x64.Build.0 = Release|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Release|x86.ActiveCfg = Release|Any CPU
+		{5606FFE7-0971-48CD-8FFC-94AB9417417E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

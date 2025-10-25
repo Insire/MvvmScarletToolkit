@@ -15,7 +15,6 @@
     <PackageReference Include="Cake.Incubator" />
     <PackageReference Include="Codecov" />
     <PackageReference Include="Microsoft.CodeCoverage" />
-    <PackageReference Include="NUnit.ConsoleRunner" />
     <PackageReference Include="ReportGenerator" />
   </ItemGroup>
 </Project>
