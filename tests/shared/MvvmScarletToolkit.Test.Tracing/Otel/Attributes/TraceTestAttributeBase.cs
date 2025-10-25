@@ -1,9 +1,9 @@
 using MvvmScarletToolkit.Test.Tracing.Otel.Fixtures;
 using System.Diagnostics;
 
-namespace MvvmScarletToolkit.Mediator.Tests.Otel
+namespace MvvmScarletToolkit.Test.Tracing.Otel.Attributes
 {
-    public abstract class BaseTraceTestAttribute : BeforeAfterTestAttribute
+    public abstract class TraceTestAttributeBase : BeforeAfterTestAttribute
     {
         internal static Activity? ActivityForTestRun = OpenTelemetryMonitoredFixture.ActivitySource.StartActivity("TestRun");
     }
