@@ -29,11 +29,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Observab
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.ImageLoading", "src\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj", "{88684AFA-1CC0-457B-95B0-CB7728BC7645}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Incubator", "src\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj", "{EF47A05C-28FC-4C41-8E1C-C0760168C6E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Incubator", "samples\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj", "{EF47A05C-28FC-4C41-8E1C-C0760168C6E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Mediator", "src\MvvmScarletToolkit.Mediator\MvvmScarletToolkit.Mediator.csproj", "{A4A51CC0-4526-4AC4-9EDE-EE1FDA814CB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Mediator.Benchmark", "src\MvvmScarletToolkit.Mediator.Benchmark\MvvmScarletToolkit.Mediator.Benchmark.csproj", "{79DD46A7-35FE-480D-A987-B94C84D76686}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Mediator.Benchmark", "samples\MvvmScarletToolkit.Mediator.Benchmark\MvvmScarletToolkit.Mediator.Benchmark.csproj", "{79DD46A7-35FE-480D-A987-B94C84D76686}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Wpf", "src\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj", "{4486B5D6-109E-4BDB-835F-149A978AE24C}"
 EndProject
