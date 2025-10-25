@@ -14,6 +14,26 @@
     <Project Path="samples/MvvmScarletToolkit.Mediator.Benchmark/MvvmScarletToolkit.Mediator.Benchmark.csproj" />
     <Project Path="samples/MvvmScarletToolkit.Wpf.Samples/MvvmScarletToolkit.Wpf.Samples.csproj" />
   </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".vsconfig" />
+    <File Path=".XamlStyler" />
+    <File Path="build.ps1" />
+    <File Path="build.sh" />
+    <File Path="codecov.yml" />
+    <File Path="compose.yaml" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="LICENSE.md" />
+    <File Path="MvvmScarletToolkit.ruleset" />
+    <File Path="nuget.config" />
+    <File Path="package.props" />
+    <File Path="README.md" />
+    <File Path="targetframeworks-windows.props" />
+    <File Path="targetframeworks.props" />
+    <File Path="version.json" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/MvvmScarletToolkit.Abstractions/MvvmScarletToolkit.Abstractions.csproj" />
     <Project Path="src/MvvmScarletToolkit.Avalonia/MvvmScarletToolkit.Avalonia.csproj" />
