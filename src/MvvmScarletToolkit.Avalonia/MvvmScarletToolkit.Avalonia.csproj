@@ -1,21 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../targetframeworks.props" />
+  <Import Project="../../package.props" />
+
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-    <OutputType>Library</OutputType>
     <Description>MvvmScarletToolkit.Implementations is part of the MvvmScarletToolkit framework, containing concrete implementations for Avalonia that have been abstracted away in the MvvmScarletToolkit.Abstractions library.</Description>
     <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,Avalonia,Library,.NET,OSS,OpenSource</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia" />
-    <PackageReference Include="Nerdbank.GitVersioning">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.SourceLink.GitHub">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
