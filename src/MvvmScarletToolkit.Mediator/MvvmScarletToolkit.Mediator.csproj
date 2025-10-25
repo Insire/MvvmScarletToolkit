@@ -1,7 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../targetframeworks.props" />
   <Import Project="../../package.props" />
-
+  
+  <PropertyGroup>
+    <Description>MvvmScarletToolkit.Mediator is part of the MvvmScarletToolkit framework, containing a simple implementation of the mediator pattern.</Description>
+    <PackageTags>MvvmScarletToolkit,C#,Toolkit,Scarlet,Library,.NET,OSS,OpenSource,Mediator</PackageTags>
+  </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
