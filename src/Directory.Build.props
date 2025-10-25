@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <PropertyGroup>
-        <Product>MvvmScarletToolkit</Product>
-        <Company>SoftThorn</Company>
-        <Authors>Peter Vietense</Authors>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/Insire/MvvmScarletToolkit</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/Insire/MvvmScarletToolkit</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <PackageReleaseNotes></PackageReleaseNotes>
-    </PropertyGroup>
+  <PropertyGroup>
+    <Product>MvvmScarletToolkit</Product>
+    <Company>SoftThorn</Company>
+    <Authors>Peter Vietense</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Insire/MvvmScarletToolkit</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Insire/MvvmScarletToolkit</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes></PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+  </ItemGroup>
 </Project>

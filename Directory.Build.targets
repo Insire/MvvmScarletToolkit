@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-    <ItemGroup>
-        <Compile Include="..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
-    </ItemGroup>
-
     <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
         <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
         <LangVersion>preview</LangVersion>
         <Nullable>enable</Nullable>
@@ -23,5 +19,4 @@
         <DebugSymbols>True</DebugSymbols>
         <DebugType>Full</DebugType>
     </PropertyGroup>
-
 </Project>
