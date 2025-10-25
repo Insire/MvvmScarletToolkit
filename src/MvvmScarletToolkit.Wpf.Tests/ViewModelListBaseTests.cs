@@ -1,32 +1,33 @@
 using CommunityToolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Tests.Util;
-using NUnit.Framework;
 using System;
+using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Tests
 {
-    internal sealed class ViewModelListBaseTests
+    [TraceTest]
+    public sealed class ViewModelListBaseTests
     {
-        [Test]
+        [Fact]
         public void Ctor_DoesNotAcceptNullArgument()
         {
             Assert.Throws<ArgumentNullException>(() => new DerivedViewModelListBase(null!));
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesNotThrow()
         {
             new DerivedViewModelListBase(Utils.GetTestCommandBuilder());
         }
 
-        [Test]
+        [Fact]
         public void Ctor_DoesNotThrowForNullModel()
         {
             new DerivedViewModelListBase(Utils.GetTestCommandBuilder());
         }
 
-        [Test]
+        [Fact]
         public void ShouldBeBusyWhenUsingBusyStack()
         {
             var dispatcher = new TestDispatcher();
@@ -34,13 +35,13 @@ namespace MvvmScarletToolkit.Tests
 
             var vm = new DerivedViewModelListBase(commandBuilder);
 
-            Assert.That(vm.IsBusy, Is.EqualTo(false));
-            vm.ValidateState(() => Assert.That(vm.IsBusy, Is.EqualTo(true)));
-            Assert.That(vm.IsBusy, Is.EqualTo(false));
+            Assert.False(vm.IsBusy);
+            vm.ValidateState(() => Assert.True(vm.IsBusy));
+            Assert.False(vm.IsBusy);
         }
 
-        [Test]
-        public void ShouldSendSelectionChangedMessage()
+        [Fact]
+        public async Task ShouldSendSelectionChangedMessage()
         {
             var messenger = new WeakReferenceMessenger();
 
@@ -49,8 +50,8 @@ namespace MvvmScarletToolkit.Tests
             var vm = new DerivedViewModelListBase(commandBuilder);
             var child1 = new DerivedObjectViewModelBase(commandBuilder, null);
             var child2 = new DerivedObjectViewModelBase(commandBuilder, null);
-            vm.Add(child1);
-            vm.Add(child2);
+            await vm.Add(child1, TestContext.Current.CancellationToken);
+            await vm.Add(child2, TestContext.Current.CancellationToken);
 
             messenger.Register<ViewModelListBaseSelectionsChanged<DerivedObjectViewModelBase>>(this, (_, __) => Assert.Fail());
 
@@ -64,13 +65,13 @@ namespace MvvmScarletToolkit.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.That(viewModelListBaseSelectionChangedCalled, Is.EqualTo(true));
-                Assert.That(ViewModelListBaseSelectionChangingCalled, Is.EqualTo(true));
+                Assert.True(viewModelListBaseSelectionChangedCalled);
+                Assert.True(ViewModelListBaseSelectionChangingCalled);
             });
         }
 
-        [Test]
-        public void ShouldSendSelectionsChangedMessage()
+        [Fact]
+        public async Task ShouldSendSelectionsChangedMessage()
         {
             var messenger = new WeakReferenceMessenger();
 
@@ -79,8 +80,8 @@ namespace MvvmScarletToolkit.Tests
             var vm = new DerivedViewModelListBase(commandBuilder);
             var child1 = new DerivedObjectViewModelBase(commandBuilder, new object());
             var child2 = new DerivedObjectViewModelBase(commandBuilder, new object());
-            vm.Add(child1);
-            vm.Add(child2);
+            await vm.Add(child1, TestContext.Current.CancellationToken);
+            await vm.Add(child2, TestContext.Current.CancellationToken);
 
             var ViewModelListBaseSelectionsChangingCalled = false;
             messenger.Register<ViewModelListBaseSelectionsChanged<DerivedObjectViewModelBase>>(this, (_, __) => ViewModelListBaseSelectionsChangingCalled = true);
@@ -91,7 +92,7 @@ namespace MvvmScarletToolkit.Tests
 
             vm.SelectedItems.Add(child1);
 
-            Assert.That(ViewModelListBaseSelectionsChangingCalled, Is.EqualTo(true));
+            Assert.True(ViewModelListBaseSelectionsChangingCalled);
         }
     }
 }

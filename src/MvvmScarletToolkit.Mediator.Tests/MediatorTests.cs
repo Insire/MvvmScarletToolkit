@@ -1,17 +1,18 @@
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Mediator.Tests;
 
-public sealed class MediatorTests : IDisposable
+[TraceTest]
+public sealed class MediatorTests : IAsyncLifetime
 {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     private IServiceCollection _services;
     private ServiceProvider _serviceProvider;
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-    [SetUp]
-    public void Setup()
+    public ValueTask InitializeAsync()
     {
         var registrator = new SimpleMediatorRegistrator();
         registrator.RegisterRequest<RequestStruct, RequestStructHandler>();
@@ -21,28 +22,31 @@ public sealed class MediatorTests : IDisposable
         _services.RegisterSimpleMediator(registrator);
 
         _serviceProvider = _services.BuildServiceProvider();
+
+        return ValueTask.CompletedTask;
     }
 
-    [TearDown]
-    public void Dispose()
+    public ValueTask DisposeAsync()
     {
         _serviceProvider.Dispose();
+
+        return ValueTask.CompletedTask;
     }
 
-    [Test]
+    [Fact]
     public async Task Send_Request_Should_Return_Expected_Reponse()
     {
         var mediator = _serviceProvider.GetRequiredService<ISimpleMediator>();
-        var response = await mediator.Send<RequestStructWithResponse, ResponseStruct>(new RequestStructWithResponse(true));
+        var response = await mediator.Send<RequestStructWithResponse, ResponseStruct>(new RequestStructWithResponse(true), TestContext.Current.CancellationToken);
 
-        Assert.That(response.Value, Is.True);
+        Assert.True(response.Value);
     }
 
-    [Test]
+    [Fact]
     public async Task Send_Request_Should_Handle()
     {
         var mediator = _serviceProvider.GetRequiredService<ISimpleMediator>();
-        await mediator.Send(new RequestStruct(true));
+        await mediator.Send(new RequestStruct(true), TestContext.Current.CancellationToken);
     }
 
     public readonly record struct RequestStruct(bool Value) : ISimpleRequest;

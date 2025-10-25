@@ -37,7 +37,7 @@ namespace Build
         public BuildContext(ICakeContext context)
             : base(context)
         {
-            DotnetExeName= Environment.Platform.IsWindows() ? "dotnet.exe" : "dotnet";
+            DotnetExeName = Environment.Platform.IsWindows() ? "dotnet.exe" : "dotnet";
             var workingDirectory = context.Environment.WorkingDirectory;
 
             SourcePath = new DirectoryPath("src").MakeAbsolute(workingDirectory);
@@ -95,6 +95,16 @@ namespace Build
                 (Folder: @"src\MvvmScarletToolkit.Mediator", ProjectFile:  "MvvmScarletToolkit.Mediator.csproj"),
                 (Folder: @"src\MvvmScarletToolkit.Avalonia", ProjectFile:  "MvvmScarletToolkit.Avalonia.csproj"),
                 (Folder: @"src\MvvmScarletToolkit.ImageLoading", ProjectFile:  "MvvmScarletToolkit.ImageLoading.csproj")
+            ];
+        }
+
+        internal static IEnumerable<(string Folder, string ProjectFile, string[] Frameworks)> GetTestProjects()
+        {
+            return
+            [
+                (Folder: @"src\MvvmScarletToolkit.Mediator.Tests", ProjectFile: "MvvmScarletToolkit.Mediator.Tests.csproj",["net9.0"]),
+                (Folder: @"src\MvvmScarletToolkit.Observables.Tests", ProjectFile: "MvvmScarletToolkit.Observables.Tests.csproj",["net9.0"]),
+                (Folder: @"src\MvvmScarletToolkit.Wpf.Tests", ProjectFile:  "MvvmScarletToolkit.Wpf.Tests.csproj",["net8.0-windows", "net9.0-windows"]),
             ];
         }
     }

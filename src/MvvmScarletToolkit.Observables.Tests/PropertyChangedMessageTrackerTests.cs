@@ -1,42 +1,58 @@
 using CommunityToolkit.Mvvm.Messaging;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Xunit.Sdk;
 
 namespace MvvmScarletToolkit.Observables.Tests
 {
-    internal sealed class PropertyChangedMessageTrackerTests
+    [TraceTest]
+    public sealed class PropertyChangedMessageTrackerTests
     {
-        public static List<Func<IMessenger, ITestViewModel>> ViewModelFactories
-            =>
+        public sealed class XunitDataModel : IXunitSerializable
+        {
+            required public Func<IMessenger, ITestViewModel> Factory { get; set; }
+
+            public void Deserialize(IXunitSerializationInfo info)
+            {
+                Factory = info.GetValue<Func<IMessenger, ITestViewModel>>(nameof(Factory))!;
+            }
+
+            public void Serialize(IXunitSerializationInfo info)
+            {
+                info.AddValue(nameof(Factory), Factory);
+            }
+        }
+
+        public static IEnumerable<TheoryDataRow<XunitDataModel>> ViewModelFactories =
             [
-                (m) => new AttributedBroadCastViewModel(m),
-                (m) => new BroadCastViewModel(m),
+               new XunitDataModel {Factory =  (m) => new AttributedBroadCastViewModel(m) },
+               new XunitDataModel {Factory = (m) => new BroadCastViewModel(m) },
             ];
 
-        [Test]
+        [Fact]
         public void Ctor_DoesNotThrow()
         {
             var messenger = new WeakReferenceMessenger();
             new PropertyChangedMessageTracker(messenger);
         }
 
-        [Test]
+        [Fact]
         public void Dispose_DoesNotThrow()
         {
             var messenger = new WeakReferenceMessenger();
             new PropertyChangedMessageTracker(messenger).Dispose();
         }
 
-        [TestCaseSource(nameof(ViewModelFactories))]
-        public void Dispose_DoesWork(Func<IMessenger, ITestViewModel> factory)
+        [Theory]
+        [MemberData(nameof(ViewModelFactories))]
+        public void Dispose_DoesWork(XunitDataModel data)
         {
             var messenger = new WeakReferenceMessenger();
             var instance = new PropertyChangedMessageTracker(messenger);
             instance.Dispose();
 
-            var viewModel = factory(messenger);
+            var viewModel = data.Factory(messenger);
             Assert.Throws<ObjectDisposedException>(() => instance.HasChanges(viewModel));
             Assert.Throws<ObjectDisposedException>(() => instance.CountChanges(viewModel));
             Assert.Throws<ObjectDisposedException>(() => instance.Track<INotifyPropertyChanged, object>(viewModel));
@@ -48,7 +64,7 @@ namespace MvvmScarletToolkit.Observables.Tests
             Assert.Throws<ObjectDisposedException>(() => instance.SuppressChanges(viewModel));
         }
 
-        [Test]
+        [Fact]
         public void NullChecks()
         {
             var messenger = new WeakReferenceMessenger();
@@ -64,28 +80,28 @@ namespace MvvmScarletToolkit.Observables.Tests
             }
         }
 
-        [Test]
-        [TestCaseSource(nameof(ViewModelFactories))]
-        public void Track_DoesNotThrow(Func<IMessenger, ITestViewModel> factory)
+        [Theory]
+        [MemberData(nameof(ViewModelFactories))]
+        public void Track_DoesNotThrow(XunitDataModel data)
         {
             var messenger = new WeakReferenceMessenger();
             using (var tracker = new PropertyChangedMessageTracker(messenger))
             {
-                var viewModel = factory(messenger);
+                var viewModel = data.Factory(messenger);
                 tracker.Track<ITestViewModel, object>(viewModel);
             }
         }
 
-        [Test]
-        [TestCaseSource(nameof(ViewModelFactories))]
-        public void Track_DoesWork(Func<IMessenger, ITestViewModel> factory)
+        [Theory]
+        [MemberData(nameof(ViewModelFactories))]
+        public void Track_DoesWork(XunitDataModel data)
         {
             var propertyChanged = false;
 
             var messenger = new WeakReferenceMessenger();
             using (var tracker = new PropertyChangedMessageTracker(messenger))
             {
-                var viewModel = factory(messenger);
+                var viewModel = data.Factory(messenger);
                 viewModel.PropertyChanged += ViewModel_PropertyChanged;
                 tracker.Track<ITestViewModel, string>(viewModel);
 
@@ -93,10 +109,10 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(propertyChanged, Is.True);
-                    Assert.That(tracker.HasChanges(), Is.True);
-                    Assert.That(tracker.HasChanges(viewModel), Is.True);
-                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(1));
+                    Assert.True(propertyChanged);
+                    Assert.True(tracker.HasChanges());
+                    Assert.True(tracker.HasChanges(viewModel));
+                    Assert.Equal(1, tracker.CountChanges(viewModel));
                 });
             }
 
@@ -106,16 +122,16 @@ namespace MvvmScarletToolkit.Observables.Tests
             }
         }
 
-        [Test]
-        [TestCaseSource(nameof(ViewModelFactories))]
-        public void Track_With_Reset_Values_DoesWork(Func<IMessenger, ITestViewModel> factory)
+        [Theory]
+        [MemberData(nameof(ViewModelFactories))]
+        public void Track_With_Reset_Values_DoesWork(XunitDataModel data)
         {
             var propertyChanged = false;
 
             var messenger = new WeakReferenceMessenger();
             using (var tracker = new PropertyChangedMessageTracker(messenger))
             {
-                var viewModel = factory(messenger);
+                var viewModel = data.Factory(messenger);
                 viewModel.PropertyChanged += ViewModel_PropertyChanged;
                 tracker.Track<ITestViewModel, string>(viewModel);
 
@@ -124,10 +140,10 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(propertyChanged, Is.True);
-                    Assert.That(tracker.HasChanges(), Is.False);
-                    Assert.That(tracker.HasChanges(viewModel), Is.False);
-                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
+                    Assert.True(propertyChanged);
+                    Assert.False(tracker.HasChanges());
+                    Assert.False(tracker.HasChanges(viewModel));
+                    Assert.Equal(0, tracker.CountChanges(viewModel));
                 });
             }
 
@@ -137,16 +153,16 @@ namespace MvvmScarletToolkit.Observables.Tests
             }
         }
 
-        [Test]
-        [TestCaseSource(nameof(ViewModelFactories))]
-        public void StopTracking_DoesWork(Func<IMessenger, ITestViewModel> factory)
+        [Theory]
+        [MemberData(nameof(ViewModelFactories))]
+        public void StopTracking_DoesWork(XunitDataModel data)
         {
             var propertyChanged = false;
 
             var messenger = new WeakReferenceMessenger();
             using (var tracker = new PropertyChangedMessageTracker(messenger))
             {
-                var viewModel = factory(messenger);
+                var viewModel = data.Factory(messenger);
                 viewModel.PropertyChanged += ViewModel_PropertyChanged;
                 tracker.Track<ITestViewModel, string>(viewModel);
 
@@ -154,10 +170,10 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(propertyChanged, Is.True);
-                    Assert.That(tracker.HasChanges(), Is.True);
-                    Assert.That(tracker.HasChanges(viewModel), Is.True);
-                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(1));
+                    Assert.True(propertyChanged);
+                    Assert.True(tracker.HasChanges());
+                    Assert.True(tracker.HasChanges(viewModel));
+                    Assert.Equal(1, tracker.CountChanges(viewModel));
                 });
 
                 propertyChanged = false;
@@ -168,10 +184,10 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(propertyChanged, Is.True);
-                    Assert.That(tracker.HasChanges(), Is.False);
-                    Assert.That(tracker.HasChanges(viewModel), Is.False);
-                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
+                    Assert.True(propertyChanged);
+                    Assert.False(tracker.HasChanges());
+                    Assert.False(tracker.HasChanges(viewModel));
+                    Assert.Equal(0, tracker.CountChanges(viewModel));
                 });
             }
 
@@ -181,16 +197,16 @@ namespace MvvmScarletToolkit.Observables.Tests
             }
         }
 
-        [Test]
-        [TestCaseSource(nameof(ViewModelFactories))]
-        public void StopAllTracking_DoesWork(Func<IMessenger, ITestViewModel> factory)
+        [Theory]
+        [MemberData(nameof(ViewModelFactories))]
+        public void StopAllTracking_DoesWork(XunitDataModel data)
         {
             var propertyChanged = false;
 
             var messenger = new WeakReferenceMessenger();
             using (var tracker = new PropertyChangedMessageTracker(messenger))
             {
-                var viewModel = factory(messenger);
+                var viewModel = data.Factory(messenger);
                 viewModel.PropertyChanged += ViewModel_PropertyChanged;
                 tracker.Track<ITestViewModel, string>(viewModel);
 
@@ -198,10 +214,10 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(propertyChanged, Is.True);
-                    Assert.That(tracker.HasChanges(), Is.True);
-                    Assert.That(tracker.HasChanges(viewModel), Is.True);
-                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(1));
+                    Assert.True(propertyChanged);
+                    Assert.True(tracker.HasChanges());
+                    Assert.True(tracker.HasChanges(viewModel));
+                    Assert.Equal(1, tracker.CountChanges(viewModel));
                 });
 
                 propertyChanged = false;
@@ -212,10 +228,10 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(propertyChanged, Is.True);
-                    Assert.That(tracker.HasChanges(), Is.False);
-                    Assert.That(tracker.HasChanges(viewModel), Is.False);
-                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
+                    Assert.True(propertyChanged);
+                    Assert.False(tracker.HasChanges());
+                    Assert.False(tracker.HasChanges(viewModel));
+                    Assert.Equal(0, tracker.CountChanges(viewModel));
                 });
             }
 
@@ -225,16 +241,16 @@ namespace MvvmScarletToolkit.Observables.Tests
             }
         }
 
-        [Test]
-        [TestCaseSource(nameof(ViewModelFactories))]
-        public void SuppressChanges_DoesWork(Func<IMessenger, ITestViewModel> factory)
+        [Theory]
+        [MemberData(nameof(ViewModelFactories))]
+        public void SuppressChanges_DoesWork(XunitDataModel data)
         {
             var propertyChanged = false;
 
             var messenger = new WeakReferenceMessenger();
             using (var tracker = new PropertyChangedMessageTracker(messenger))
             {
-                var viewModel = factory(messenger);
+                var viewModel = data.Factory(messenger);
                 viewModel.PropertyChanged += ViewModel_PropertyChanged;
                 tracker.Track<ITestViewModel, string>(viewModel);
 
@@ -245,10 +261,10 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(propertyChanged, Is.True);
-                    Assert.That(tracker.HasChanges(), Is.False);
-                    Assert.That(tracker.HasChanges(viewModel), Is.False);
-                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
+                    Assert.True(propertyChanged);
+                    Assert.False(tracker.HasChanges());
+                    Assert.False(tracker.HasChanges(viewModel));
+                    Assert.Equal(0, tracker.CountChanges(viewModel));
                 });
             }
 
@@ -258,16 +274,16 @@ namespace MvvmScarletToolkit.Observables.Tests
             }
         }
 
-        [Test]
-        [TestCaseSource(nameof(ViewModelFactories))]
-        public void SuppressAllChanges_DoesWork(Func<IMessenger, ITestViewModel> factory)
+        [Theory]
+        [MemberData(nameof(ViewModelFactories))]
+        public void SuppressAllChanges_DoesWork(XunitDataModel data)
         {
             var propertyChanged = false;
 
             var messenger = new WeakReferenceMessenger();
             using (var tracker = new PropertyChangedMessageTracker(messenger))
             {
-                var viewModel = factory(messenger);
+                var viewModel = data.Factory(messenger);
                 viewModel.PropertyChanged += ViewModel_PropertyChanged;
                 tracker.Track<ITestViewModel, string>(viewModel);
 
@@ -278,10 +294,10 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(propertyChanged, Is.True);
-                    Assert.That(tracker.HasChanges(), Is.False);
-                    Assert.That(tracker.HasChanges(viewModel), Is.False);
-                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
+                    Assert.True(propertyChanged);
+                    Assert.False(tracker.HasChanges());
+                    Assert.False(tracker.HasChanges(viewModel));
+                    Assert.Equal(0, tracker.CountChanges(viewModel));
                 });
             }
 
@@ -291,16 +307,16 @@ namespace MvvmScarletToolkit.Observables.Tests
             }
         }
 
-        [Test]
-        [TestCaseSource(nameof(ViewModelFactories))]
-        public void SuppressChanges_Stacked_DoesWork(Func<IMessenger, ITestViewModel> factory)
+        [Theory]
+        [MemberData(nameof(ViewModelFactories))]
+        public void SuppressChanges_Stacked_DoesWork(XunitDataModel data)
         {
             var propertyChanged = false;
 
             var messenger = new WeakReferenceMessenger();
             using (var tracker = new PropertyChangedMessageTracker(messenger))
             {
-                var viewModel = factory(messenger);
+                var viewModel = data.Factory(messenger);
                 viewModel.PropertyChanged += ViewModel_PropertyChanged;
                 tracker.Track<ITestViewModel, string>(viewModel);
 
@@ -314,10 +330,10 @@ namespace MvvmScarletToolkit.Observables.Tests
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(propertyChanged, Is.True);
-                    Assert.That(tracker.HasChanges(), Is.False);
-                    Assert.That(tracker.HasChanges(viewModel), Is.False);
-                    Assert.That(tracker.CountChanges(viewModel), Is.EqualTo(0));
+                    Assert.True(propertyChanged);
+                    Assert.False(tracker.HasChanges());
+                    Assert.False(tracker.HasChanges(viewModel));
+                    Assert.Equal(0, tracker.CountChanges(viewModel));
                 });
             }
 

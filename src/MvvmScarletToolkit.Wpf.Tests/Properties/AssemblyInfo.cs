@@ -15,3 +15,4 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("b64b25eb-275b-4fbb-98a1-88c4f0035642")]
+[assembly: AssemblyFixture(typeof(OpenTelemetryMonitoredFixture))]

@@ -1,36 +1,35 @@
-using NUnit.Framework;
-
 namespace MvvmScarletToolkit.Wpf.Tests
 {
+    [TraceTest]
     public sealed class IsNotTests
     {
-        [Test]
+        [Fact]
         public void Convert_Should_Return_False_For_Unsupported_DataType()
         {
             var converter = new IsNot();
 
             Assert.Multiple(() =>
             {
-                Assert.That(converter.Convert(new object(), null, null, null), Is.EqualTo(false));
-                Assert.That(converter.Convert(null, null, null, null), Is.EqualTo(false));
-                Assert.That(converter.Convert(1, null, null, null), Is.EqualTo(false));
+                Assert.Equal(false, converter.Convert(new object(), null, null, null));
+                Assert.Equal(false, converter.Convert(null, null, null, null));
+                Assert.Equal(false, converter.Convert(1, null, null, null));
             });
         }
 
-        [Test]
+        [Fact]
         public void Convert_Should_Return_True_For_False()
         {
             var converter = new IsNot();
 
-            Assert.That(converter.Convert(false, null, null, null), Is.EqualTo(true));
+            Assert.Equal(true, converter.Convert(false, null, null, null));
         }
 
-        [Test]
+        [Fact]
         public void Convert_Should_Return_False_For_True()
         {
             var converter = new IsNot();
 
-            Assert.That(converter.Convert(false, null, null, null), Is.EqualTo(true));
+            Assert.Equal(true, converter.Convert(false, null, null, null));
         }
     }
 }
