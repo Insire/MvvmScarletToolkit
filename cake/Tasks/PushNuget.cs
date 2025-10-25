@@ -2,11 +2,9 @@ using Cake.Common;
 using Cake.Common.Build;
 using Cake.Common.IO;
 using Cake.Common.Tools.NuGet;
-using Cake.Core;
-using Cake.Core.IO;
 using Cake.Frosting;
 
-namespace Build
+namespace Build.Tasks
 {
     public sealed class PushNuget : FrostingTask<BuildContext>
     {

@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net8.0-windows;net9.0-windows</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <OutputType>Library</OutputType>
-    <Nullable>enable</Nullable>
     <Description>MvvmScarletToolkit.Implementations is part of the MvvmScarletToolkit framework, containing concrete implementations for Avalonia that have been abstracted away in the MvvmScarletToolkit.Abstractions library.</Description>
     <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,Avalonia,Library,.NET,OSS,OpenSource</PackageTags>
   </PropertyGroup>

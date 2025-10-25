@@ -1,8 +1,8 @@
-using System;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System.IO;
 using System.Linq;
 
-namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
 {
     // https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files
     // https://en.wikipedia.org/wiki/List_of_file_signatures
@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
     // TODO implement
     public sealed class MagicNumberMimeTypeResolver : IMimeTypeResolver
     {
-        public string Get(IFileSystemFile fileInfo)
+        public string Get(FileInfo fileInfo)
         {
             var byteBuffer = new byte[256];
             using (var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -22,20 +22,20 @@ namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
                 }
                 else
                 {
-                    fileStream.Read(byteBuffer, 0, (int)fileStream.Length);
+                    _ = fileStream.Read(byteBuffer, 0, (int)fileStream.Length);
                 }
             }
 
             var extension = Path.GetExtension(fileInfo.Name) is null
-                   ? string.Empty
-                   : Path.GetExtension(fileInfo.Name).ToUpper();
+                ? string.Empty
+                : Path.GetExtension(fileInfo.Name).ToUpper();
 
             return GetInternal(byteBuffer, extension);
         }
 
         private static string GetInternal(byte[] file, string extension)
         {
-            var mime = "application/octet-stream";
+            var mime = "";
             if (file.Take(2).SequenceEqual(BMP))
             {
                 mime = "image/bmp";

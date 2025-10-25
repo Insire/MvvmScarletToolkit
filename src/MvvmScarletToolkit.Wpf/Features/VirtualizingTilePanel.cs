@@ -25,8 +25,8 @@ namespace MvvmScarletToolkit
 
         public double ChildSize
         {
-            get { return (double)GetValue(ChildSizeProperty); }
-            set { SetValue(ChildSizeProperty, value); }
+            get => (double)GetValue(ChildSizeProperty);
+            set => SetValue(ChildSizeProperty, value);
         }
 
         public ScrollViewer? ScrollOwner { get; set; }
@@ -63,8 +63,7 @@ namespace MvvmScarletToolkit
             UpdateScrollInfo(availableSize);
 
             // Figure out range that's visible based on layout algorithm
-            int firstVisibleItemIndex, lastVisibleItemIndex;
-            GetVisibleRange(out firstVisibleItemIndex, out lastVisibleItemIndex);
+            GetVisibleRange(out var firstVisibleItemIndex, out var lastVisibleItemIndex);
 
             // We need to access InternalChildren before the generator to work around a bug
             var children = InternalChildren;
@@ -84,34 +83,34 @@ namespace MvvmScarletToolkit
                     itemIndex <= lastVisibleItemIndex;
                     ++itemIndex, ++childIndex)
                 {
-                    bool newlyRealized;
-
                     // Get or create the child
-                    if (generator.GenerateNext(out newlyRealized) is UIElement child)
+                    if (generator.GenerateNext(out var newlyRealized) is not UIElement child)
                     {
-                        if (newlyRealized)
-                        {
-                            // Figure out if we need to insert the child at the end or somewhere in the middle
-                            if (childIndex >= children.Count)
-                            {
-                                base.AddInternalChild(child);
-                            }
-                            else
-                            {
-                                base.InsertInternalChild(childIndex, child);
-                            }
+                        continue;
+                    }
 
-                            generator.PrepareItemContainer(child);
+                    if (newlyRealized)
+                    {
+                        // Figure out if we need to insert the child at the end or somewhere in the middle
+                        if (childIndex >= children.Count)
+                        {
+                            AddInternalChild(child);
                         }
                         else
                         {
-                            // The child has already been created, let's be sure it's in the right spot
-                            Debug.Assert(child == children[childIndex], "Wrong child was generated");
+                            InsertInternalChild(childIndex, child);
                         }
 
-                        // Measurements will depend on layout algorithm
-                        child.Measure(GetChildSize());
+                        generator.PrepareItemContainer(child);
                     }
+                    else
+                    {
+                        // The child has already been created, let's be sure it's in the right spot
+                        Debug.Assert(child == children[childIndex], "Wrong child was generated");
+                    }
+
+                    // Measurements will depend on layout algorithm
+                    child.Measure(GetChildSize());
                 }
             }
 
@@ -253,7 +252,7 @@ namespace MvvmScarletToolkit
         private int CalculateChildrenPerRow(Size availableSize)
         {
             // Figure out how many children fit on each row
-            if (availableSize.Width == double.PositiveInfinity)
+            if (double.IsPositiveInfinity(availableSize.Width))
             {
                 return Children.Count;
             }

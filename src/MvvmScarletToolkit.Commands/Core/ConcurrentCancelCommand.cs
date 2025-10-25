@@ -42,18 +42,18 @@ namespace MvvmScarletToolkit.Commands
             _cts?.Dispose();
         }
 
-        public override async void Execute(object parameter)
+        public override async void Execute(object? parameter)
         {
             await ExecuteAsync(parameter)
                 .ConfigureAwait(false);
         }
 
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             return IsBusy && _cts?.IsCancellationRequested != true;
         }
 
-        public override async Task ExecuteAsync(object parameter)
+        public override async Task ExecuteAsync(object? parameter)
         {
             Execution = new NotifyTaskCompletion(Task.Run(() =>
             {

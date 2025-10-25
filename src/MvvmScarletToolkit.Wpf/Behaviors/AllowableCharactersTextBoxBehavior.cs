@@ -36,8 +36,8 @@ namespace MvvmScarletToolkit
 
         public string RegularExpression
         {
-            get { return (string)GetValue(RegularExpressionProperty); }
-            set { SetValue(RegularExpressionProperty, value); }
+            get => (string)GetValue(RegularExpressionProperty);
+            set => SetValue(RegularExpressionProperty, value);
         }
 
         /// <summary>Identifies the <see cref="MaxLength"/> dependency property.</summary>
@@ -49,8 +49,8 @@ namespace MvvmScarletToolkit
 
         public int MaxLength
         {
-            get { return (int)GetValue(MaxLengthProperty); }
-            set { SetValue(MaxLengthProperty, value); }
+            get => (int)GetValue(MaxLengthProperty);
+            set => SetValue(MaxLengthProperty, value);
         }
 
         /// <summary>Identifies the <see cref="AllowWhitespace"/> dependency property.</summary>
@@ -62,8 +62,8 @@ namespace MvvmScarletToolkit
 
         public bool AllowWhitespace
         {
-            get { return (bool)GetValue(AllowWhitespaceProperty); }
-            set { SetValue(AllowWhitespaceProperty, value); }
+            get => (bool)GetValue(AllowWhitespaceProperty);
+            set => SetValue(AllowWhitespaceProperty, value);
         }
 
         protected override void OnAttached()

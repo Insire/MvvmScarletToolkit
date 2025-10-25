@@ -1,32 +1,38 @@
-using Cake.Common.IO;
-using Cake.Common.Tools.DotNet;
-using Cake.Common.Tools.DotNet.Test;
+using Cake.Common;
 using Cake.Core;
+using Cake.Core.IO;
 using Cake.Frosting;
 using System.Collections.Generic;
 
-namespace Build
+namespace Build.Tasks
 {
     public sealed class Test : FrostingTask<BuildContext>
     {
         public override void Run(BuildContext context)
         {
-            var testSettings = new DotNetTestSettings
+            foreach (var (folder, projectFile, frameworks) in BuildContext.GetTestProjects())
             {
-                Configuration = BuildContext.BuildConfiguration,
-                NoBuild = false,
-                NoRestore = false,
-                NoLogo = false,
-                ResultsDirectory = context.CoveragePath,
-                Loggers = new[] { "trx" },
-                Collectors = new[] { "Code Coverage" },
-                EnvironmentVariables = new Dictionary<string, string>() { ["Environment"] = "Test" },
-            };
+                var projectFilePath = context.Environment.WorkingDirectory.Combine(folder).CombineWithFilePath(projectFile);
 
-            var files = context.GetFiles(context.SourcePath.FullPath + "/*/*.Tests.csproj");
-            foreach (var file in files)
-            {
-                context.DotNetTest(file.FullPath, testSettings);
+                foreach (var framework in frameworks)
+                {
+                    var projectCoverage = context.CoveragePath.CombineWithFilePath(System.IO.Path.GetFileNameWithoutExtension(projectFile) + $"_{framework}_" + ".coverage");
+                    var settings = new ProcessSettings()
+                        .UseWorkingDirectory(".")
+                        .WithArguments(builder => builder
+                            .Append("run")
+                            .AppendSwitchQuoted("--project", " ", projectFilePath.FullPath)
+                            .Append($"-c {BuildContext.BuildConfiguration}")
+                            .AppendSwitch($"--framework", " ", framework)
+                            .Append($"--coverage")
+                            .Append($"--coverage-output-format cobertura")
+                            .AppendSwitchQuoted($"--coverage-output", " ", projectCoverage.FullPath)
+                        );
+
+                    settings.EnvironmentVariables = new Dictionary<string, string>() { ["Environment"] = "Test" };
+
+                    context.StartProcess("dotnet", settings);
+                }
             }
         }
     }

@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "gitversion.tool": {
+      "version": "6.4.0",
+      "commands": [
+        "dotnet-gitversion"
+      ],
+      "rollForward": false
+    },
+    "dotnet-reportgenerator-globaltool": {
+      "version": "5.4.17",
+      "commands": [
+        "reportgenerator"
+      ],
+      "rollForward": false
+    },
+    "nuget-license": {
+      "version": "4.0.0",
+      "commands": [
+        "nuget-license"
+      ],
+      "rollForward": false
+    },
+    "xamlstyler.console": {
+      "version": "3.2501.8",
+      "commands": [
+        "xstyler"
+      ],
+      "rollForward": false
+    }
+  }
+}

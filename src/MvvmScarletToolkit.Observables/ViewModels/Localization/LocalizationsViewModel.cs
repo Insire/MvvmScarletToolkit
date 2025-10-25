@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit.Observables
     /// </summary>
     public class LocalizationsViewModel : ObservableObject, ILocalizationService
     {
-        protected readonly ILocalizationProvider LocalizationProvider;
+        protected ILocalizationProvider LocalizationProvider { get; }
 
         private CultureInfo? _currentLanguage;
         public CultureInfo? CurrentLanguage
@@ -31,30 +31,31 @@ namespace MvvmScarletToolkit.Observables
             ? LocalizationProvider.Languages
             : Enumerable.Empty<CultureInfo>();
 
-        public LocalizationsViewModel(in ILocalizationProvider provider)
+        public LocalizationsViewModel(ILocalizationProvider provider)
         {
             LocalizationProvider = provider ?? throw new ArgumentNullException(nameof(provider));
 
             CurrentLanguage = LocalizationProvider.Languages.FirstOrDefault(p => p.LCID == Thread.CurrentThread.CurrentUICulture.LCID)
-                ?? LocalizationProvider.Languages.FirstOrDefault()
-                ?? Thread.CurrentThread.CurrentUICulture;
+                              ?? LocalizationProvider.Languages.FirstOrDefault()
+                              ?? Thread.CurrentThread.CurrentUICulture;
         }
 
         public string Translate(string key)
         {
-            if (LocalizationProvider != null && CurrentLanguage != null)
+            if (CurrentLanguage == null)
             {
-                if (Thread.CurrentThread.CurrentUICulture != CurrentLanguage)
-                    Thread.CurrentThread.CurrentUICulture = CurrentLanguage;
-
-                var translatedValue = LocalizationProvider.Translate(key, CurrentLanguage);
-                if (!string.IsNullOrEmpty(translatedValue))
-                {
-                    return translatedValue;
-                }
+                return $"!{key}!";
             }
 
-            return $"!{key}!";
+            if (Thread.CurrentThread.CurrentUICulture.Equals(CurrentLanguage))
+            {
+                Thread.CurrentThread.CurrentUICulture = CurrentLanguage;
+            }
+
+            var translatedValue = LocalizationProvider.Translate(key, CurrentLanguage);
+            return string.IsNullOrEmpty(translatedValue)
+                ? $"!{key}!"
+                : translatedValue;
         }
     }
 }

@@ -1,0 +1,192 @@
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using Microsoft.IO;
+using System.Text;
+
+namespace MvvmScarletToolkit.ImageLoading
+{
+    public sealed class ImageService<TImage> : IImageService<TImage>
+        where TImage : class
+    {
+        private readonly ILogger<ImageService<TImage>> _logger;
+        private readonly IImageFactory<TImage> _imageFactory;
+        private readonly IImageDataProvider _imageDataProvider;
+        private readonly IImageDataFileystemCache _diskCachedImageDataProvider;
+        private readonly IImageFilesystemCache<TImage> _diskCachedImageProvider;
+        private readonly IImageDataMemoryCache _memoryCachedImageDataProvider;
+        private readonly IImageMemoryCache<TImage> _memoryCacheImageProvider;
+        private readonly IMemoryCache _memoryCache;
+        private readonly ImageServiceOptions _options;
+        private readonly string _prefix;
+
+        public ImageService(
+            ILogger<ImageService<TImage>> logger,
+            IImageFactory<TImage> imageFactory,
+            IImageDataProvider imageDataProvider,
+            IImageDataFileystemCache diskCachedImageDataProvider,
+            IImageFilesystemCache<TImage> diskCachedImageProvider,
+            IImageDataMemoryCache memoryCachedImageDataProvider,
+            IImageMemoryCache<TImage> memoryCacheImageProvider,
+            IMemoryCache memoryCache,
+            RecyclableMemoryStreamManager recyclableMemoryStreamManager,
+            ImageServiceOptions options)
+        {
+            _logger = logger;
+            _imageFactory = imageFactory;
+            _imageDataProvider = imageDataProvider;
+            _diskCachedImageDataProvider = diskCachedImageDataProvider;
+            _diskCachedImageProvider = diskCachedImageProvider;
+            _memoryCachedImageDataProvider = memoryCachedImageDataProvider;
+            _memoryCacheImageProvider = memoryCacheImageProvider;
+            _memoryCache = memoryCache;
+            _options = options;
+
+            var bytes = Encoding.UTF8.GetBytes(GetType().Name);
+            using var resultStream = recyclableMemoryStreamManager.GetStream(null, bytes.Length);
+            resultStream.Write(bytes, 0, bytes.Length);
+            resultStream.Seek(0, SeekOrigin.Begin);
+
+            _prefix = resultStream.CalculateMd5();
+        }
+
+        /// <inheritdoc />
+        public async Task<TImage?> ProvideImageAsync(Uri? uri, ImageSize? requestedSize, Func<bool, Task> requestedImageLoadsSlowly, CancellationToken cancellationToken = default)
+        {
+            if (uri is null)
+            {
+                return null;
+            }
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return null;
+            }
+
+            _logger.LogDebug("Image with {@Size} requested", requestedSize);
+
+            var imageSize = GetImageSize(requestedSize, _options);
+            var key = CreateKey(uri, imageSize);
+
+            if (_memoryCache.TryGetValue(key, out var cachedLock) && cachedLock is SemaphoreSlim currentLock)
+            {
+                return await ProvideImageWithLockAsync(uri, imageSize, requestedImageLoadsSlowly, currentLock, cancellationToken);
+            }
+            else
+            {
+                using (var cacheEntry = _memoryCache.CreateEntry(key))
+                {
+                    cacheEntry.Value = currentLock = new SemaphoreSlim(1, 1);
+                }
+
+                return await ProvideImageWithLockAsync(uri, imageSize, requestedImageLoadsSlowly, currentLock, cancellationToken);
+            }
+        }
+
+        private async Task<TImage?> ProvideImageWithLockAsync(
+            Uri uri,
+            ImageSize requestedSize,
+            Func<bool, Task> requestedImageLoadsSlowly,
+            SemaphoreSlim currentLock,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                await currentLock.WaitAsync(cancellationToken);
+
+                return await ProvideImageAsync(uri, requestedSize, requestedImageLoadsSlowly, cancellationToken);
+            }
+            finally
+            {
+                currentLock.Release();
+            }
+        }
+
+        private async Task<TImage?> ProvideImageAsync(Uri uri, ImageSize requestedSize, Func<bool, Task> requestedImageLoadsSlowly, CancellationToken cancellationToken)
+        {
+            // memory image
+            var image = await _memoryCacheImageProvider.GetImageAsync(uri, requestedSize, cancellationToken);
+            if (image is not null)
+            {
+                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+
+                return image;
+            }
+
+            // memory image data
+            var stream = await _memoryCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken);
+            if (stream != Stream.Null)
+            {
+                image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken);
+
+                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+            }
+
+            await requestedImageLoadsSlowly(true);
+
+            // filesystem image
+            image = await _diskCachedImageProvider.GetImageAsync(uri, requestedSize, cancellationToken);
+            if (image is not null)
+            {
+                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+
+                return image;
+            }
+
+            // filesystem data
+            stream = await _diskCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken);
+            if (stream != Stream.Null)
+            {
+                image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken);
+
+                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+                await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken);
+
+                await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+
+                return image;
+            }
+
+            // remote (web) or filesystem data
+            stream = await _imageDataProvider.GetStreamAsync(uri, cancellationToken);
+            if (stream == Stream.Null)
+            {
+                return null;
+            }
+
+            try
+            {
+                image = await _imageFactory.FromAsync(stream, requestedSize, cancellationToken);
+            }
+            catch (TaskCanceledException)
+            {
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Loading image from {Uri} failed unexpectedly", uri.OriginalString);
+                return null;
+            }
+
+            await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+            await _memoryCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken);
+
+            await _diskCachedImageDataProvider.CacheStreamAsync(stream, uri, requestedSize, cancellationToken);
+            await _diskCachedImageProvider.CacheImageAsync(image, uri, requestedSize, cancellationToken);
+
+            return image;
+        }
+
+        private string CreateKey(Uri uri, ImageSize requestedImageSize)
+        {
+            return $"{_prefix}_'{uri.OriginalString}'_w{requestedImageSize.Width}_h{requestedImageSize.Height}";
+        }
+
+        private static ImageSize GetImageSize(ImageSize? requestedImageSize, ImageServiceOptions options)
+        {
+            return requestedImageSize is null
+                ? new ImageSize(options.DefaultWidth, options.DefaultHeight)
+                : new ImageSize(requestedImageSize.Value.Width, requestedImageSize.Value.Height);
+        }
+    }
+}

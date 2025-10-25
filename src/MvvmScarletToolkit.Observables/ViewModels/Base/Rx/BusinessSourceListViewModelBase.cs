@@ -156,63 +156,6 @@ namespace MvvmScarletToolkit
             Exit.UnloadOnExit(this);
         }
 
-        protected BusinessSourceListViewModelBase(IScarletCommandBuilder commandBuilder, SynchronizationContext synchronizationContext, Func<TViewModel, string> selector, IComparer<TViewModel>? comparer, INotifyRefreshRequired? notifyRefreshRequired)
-            : base(synchronizationContext, selector, comparer, notifyRefreshRequired)
-        {
-            CommandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
-            Dispatcher = commandBuilder.Dispatcher ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Dispatcher));
-            CommandManager = commandBuilder.CommandManager ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.CommandManager));
-            Exit = commandBuilder.Exit ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.Exit));
-            WeakEventManager = commandBuilder.WeakEventManager ?? throw new ArgumentNullException(nameof(IScarletCommandBuilder.WeakEventManager));
-
-            BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
-            SelectedItems = new ObservableCollection<TViewModel>();
-
-            _loadCommand = commandBuilder
-                .Create(Load, CanLoad)
-                .WithSingleExecution()
-                .WithBusyNotification(BusyStack)
-                .WithAsyncCancellation()
-                .Build();
-
-            _refreshCommand = commandBuilder
-                .Create(Refresh, CanRefresh)
-                .WithSingleExecution()
-                .WithBusyNotification(BusyStack)
-                .WithAsyncCancellation()
-                .Build();
-
-            _unloadCommand = commandBuilder
-                .Create(Unload, CanUnload)
-                .WithSingleExecution()
-                .WithBusyNotification(BusyStack)
-                .WithAsyncCancellation()
-                .Build();
-
-            _removeCommand = commandBuilder
-                .Create(Remove, CanRemove)
-                .WithSingleExecution()
-                .WithBusyNotification(BusyStack)
-                .WithAsyncCancellation()
-                .Build();
-
-            _removeRangeCommand = commandBuilder
-                .Create(RemoveRange, CanRemoveRange)
-                .WithSingleExecution()
-                .WithBusyNotification(BusyStack)
-                .WithAsyncCancellation()
-                .Build();
-
-            _clearCommand = commandBuilder
-                .Create(() => Clear(), CanClear)
-                .WithSingleExecution()
-                .WithBusyNotification(BusyStack)
-                .WithAsyncCancellation()
-                .Build();
-
-            Exit.UnloadOnExit(this);
-        }
-
         protected virtual Task LoadInternal(CancellationToken token)
         {
             return RefreshInternal(token);

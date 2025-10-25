@@ -2,17 +2,20 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Threading;
 
-namespace MvvmScarletToolkit.Wpf.Samples
+namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
 {
     public sealed partial class DataGridViewModel : PagedSourceListViewModelBase<DataGridRowViewModel>
     {
         public GroupingViewModel Groups { get; }
 
-        private Predicate<object> _filter;
-        public Predicate<object> Filter
+        private Predicate<object>? _filter;
+        public Predicate<object>? Filter
         {
             get { return _filter; }
-            private set { SetProperty(ref _filter, value); }
+            private set
+            {
+                SetProperty(ref _filter, value);
+            }
         }
 
         [ObservableProperty]
@@ -21,6 +24,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
         public DataGridViewModel(IScarletCommandBuilder commandBuilder, SynchronizationContext synchronizationContext)
             : base(commandBuilder, synchronizationContext, vm => vm.Name, new DataGridDataProvider(commandBuilder, 2000, 50))
         {
+            _filterText = string.Empty;
             Groups = GroupingViewModel.Create(Items);
             Filter = IsMatch;
 

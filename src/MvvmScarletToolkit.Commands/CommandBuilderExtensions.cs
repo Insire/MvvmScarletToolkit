@@ -7,24 +7,24 @@ namespace MvvmScarletToolkit
 {
     public static class CommandBuilderExtensions
     {
-        public static CommandBuilderContext<object> Create(this IScarletCommandBuilder builder, Func<Task> execute)
+        public static CommandBuilderContext<object?> Create(this IScarletCommandBuilder builder, Func<Task> execute)
         {
-            return builder.Create<object>((_, __) => execute(), (_) => true);
+            return builder.Create<object?>((_, __) => execute(), (_) => true);
         }
 
-        public static CommandBuilderContext<object> Create(this IScarletCommandBuilder builder, Func<Task> execute, Func<bool> canExecute)
+        public static CommandBuilderContext<object?> Create(this IScarletCommandBuilder builder, Func<Task> execute, Func<bool> canExecute)
         {
-            return builder.Create<object>((_, __) => execute(), (_) => canExecute());
+            return builder.Create<object?>((_, __) => execute(), (_) => canExecute());
         }
 
-        public static CommandBuilderContext<object> Create(this IScarletCommandBuilder builder, Func<CancellationToken, Task> execute)
+        public static CommandBuilderContext<object?> Create(this IScarletCommandBuilder builder, Func<CancellationToken, Task> execute)
         {
-            return builder.Create<object>((_, token) => execute(token), (_) => true);
+            return builder.Create<object?>((_, token) => execute(token), (_) => true);
         }
 
-        public static CommandBuilderContext<object> Create(this IScarletCommandBuilder builder, Func<CancellationToken, Task> execute, Func<bool> canExecute)
+        public static CommandBuilderContext<object?> Create(this IScarletCommandBuilder builder, Func<CancellationToken, Task> execute, Func<bool> canExecute)
         {
-            return builder.Create<object>((_, token) => execute(token), (_) => canExecute());
+            return builder.Create<object?>((_, token) => execute(token), (_) => canExecute());
         }
 
         public static CommandBuilderContext<TArgument> Create<TArgument>(this IScarletCommandBuilder builder, Func<Task> execute)

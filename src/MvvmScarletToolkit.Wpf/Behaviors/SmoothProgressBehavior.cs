@@ -17,8 +17,8 @@ namespace MvvmScarletToolkit.Wpf
     {
         public double Percentage
         {
-            get { return (double)GetValue(PercentageProperty); }
-            set { SetValue(PercentageProperty, value); }
+            get => (double)GetValue(PercentageProperty);
+            set => SetValue(PercentageProperty, value);
         }
 
         public static readonly DependencyProperty PercentageProperty = DependencyProperty.Register(

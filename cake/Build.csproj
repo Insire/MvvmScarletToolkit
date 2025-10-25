@@ -14,12 +14,7 @@
     <PackageReference Include="Cake.GitVersioning" />
     <PackageReference Include="Cake.Incubator" />
     <PackageReference Include="Codecov" />
-    <PackageReference Include="GitVersion.CommandLine">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.CodeCoverage" />
-    <PackageReference Include="NUnit.ConsoleRunner" />
     <PackageReference Include="ReportGenerator" />
   </ItemGroup>
 </Project>

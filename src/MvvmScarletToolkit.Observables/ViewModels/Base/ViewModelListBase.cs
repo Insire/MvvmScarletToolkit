@@ -22,7 +22,7 @@ namespace MvvmScarletToolkit.Observables
         protected readonly ObservableCollection<TViewModel> _items;
 
         [ObservableProperty]
-        private TViewModel? _selectedItem;
+        public partial TViewModel? SelectedItem { get; set; }
 
         public TViewModel this[int index]
         {
@@ -168,9 +168,12 @@ namespace MvvmScarletToolkit.Observables
 
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => _items.Add(item), token).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count)), token).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(HasItems)), token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() =>
+                {
+                    _items.Add(item);
+                    OnPropertyChanged(nameof(Count));
+                    OnPropertyChanged(nameof(HasItems));
+                }, token).ConfigureAwait(false);
             }
         }
 
@@ -226,9 +229,12 @@ namespace MvvmScarletToolkit.Observables
 
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => _items.Remove(item), token).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count)), token).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(HasItems)), token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() =>
+                {
+                    _items.Remove(item);
+                    OnPropertyChanged(nameof(Count));
+                    OnPropertyChanged(nameof(HasItems));
+                }, token).ConfigureAwait(false);
             }
         }
 
@@ -279,9 +285,12 @@ namespace MvvmScarletToolkit.Observables
 
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => _items.Clear(), token).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(Count)), token).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => OnPropertyChanged(nameof(HasItems)), token).ConfigureAwait(false);
+                await Dispatcher.Invoke(() =>
+                {
+                    _items.Clear();
+                    OnPropertyChanged(nameof(Count));
+                    OnPropertyChanged(nameof(HasItems));
+                }, token).ConfigureAwait(false);
             }
         }
 

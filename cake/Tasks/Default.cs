@@ -1,6 +1,6 @@
 using Cake.Frosting;
 
-namespace Build
+namespace Build.Tasks
 {
     [IsDependentOn(typeof(CleanSolution))]
     [IsDependentOn(typeof(UpdateAssemblyInfo))]

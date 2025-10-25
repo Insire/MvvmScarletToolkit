@@ -1,4 +1,7 @@
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces
 {
-    public interface IFileSystemParent : IBusinessViewModelListBase<IFileSystemChild>, IFileSystemInfo;
+    public interface IFileSystemParent : IFileSystemInfo
+    {
+        bool IsToggled { get; set; }
+    }
 }

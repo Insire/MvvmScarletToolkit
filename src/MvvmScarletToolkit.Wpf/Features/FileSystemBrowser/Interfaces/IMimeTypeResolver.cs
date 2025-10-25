@@ -1,7 +1,9 @@
-namespace MvvmScarletToolkit
+using System.IO;
+
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces
 {
     public interface IMimeTypeResolver
     {
-        string? Get(IFileSystemFile fileInfo);
+        string? Get(FileInfo fileInfo);
     }
 }

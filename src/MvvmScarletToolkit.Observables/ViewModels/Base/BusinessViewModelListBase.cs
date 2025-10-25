@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Commands;
 using System;
 using System.ComponentModel;
@@ -11,19 +12,15 @@ namespace MvvmScarletToolkit.Observables
     /// Collection ViewModelBase that bootstraps loading, unloading and refreshing of its content
     /// </summary>
     /// <typeparam name="TViewModel"></typeparam>
-    public abstract class BusinessViewModelListBase<TViewModel> : ViewModelListBase<TViewModel>, IBusinessViewModelListBase<TViewModel>
+    public abstract partial class BusinessViewModelListBase<TViewModel> : ViewModelListBase<TViewModel>, IBusinessViewModelListBase<TViewModel>
         where TViewModel : class, INotifyPropertyChanged
     {
-        private bool _isLoaded;
         /// <summary>
         /// Indicates whether <see cref="Load"/> has been called already
         /// </summary>
+        [ObservableProperty]
         [Bindable(true, BindingDirection.OneWay)]
-        public bool IsLoaded
-        {
-            get { return _isLoaded; }
-            protected set { SetProperty(ref _isLoaded, value); }
-        }
+        public partial bool IsLoaded { get; protected set; }
 
         private readonly ConcurrentCommandBase _loadCommand;
         /// <summary>

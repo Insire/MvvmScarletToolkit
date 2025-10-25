@@ -2,9 +2,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Markup;
 
-#if NET5_0_OR_GREATER
 [assembly: System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
-#endif
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -28,4 +26,4 @@ using System.Windows.Markup;
 // map clr namespaces to a single xaml namespace
 [assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit")]
 [assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Wpf")]
-[assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Wpf.FileSystemBrowser")]
+[assembly: XmlnsDefinition("http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared", "MvvmScarletToolkit.Wpf.Features.FileSystemBrowser")]

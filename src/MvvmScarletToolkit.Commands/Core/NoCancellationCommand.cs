@@ -15,9 +15,10 @@ namespace MvvmScarletToolkit.Commands
 
         private NoCancellationCommand()
         {
+            Token = CancellationToken.None;
         }
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             return false;
         }
@@ -26,7 +27,7 @@ namespace MvvmScarletToolkit.Commands
         {
         }
 
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
         }
 

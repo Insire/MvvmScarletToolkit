@@ -1,17 +1,19 @@
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System.Collections.Generic;
 using System.IO;
 
-namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
 {
     public sealed class StaticFileExtensionMimeTypeResolver : IMimeTypeResolver
     {
-        public string? Get(IFileSystemFile fileInfo)
+        public string? Get(FileInfo fileInfo)
         {
             if (!fileInfo.Exists)
             {
                 return null;
             }
-            var extension = Path.GetExtension(fileInfo.Name);
+
+            var extension = fileInfo.Extension;
 
             if (string.IsNullOrEmpty(extension) || !_mimeTypes.ContainsKey(extension))
             {

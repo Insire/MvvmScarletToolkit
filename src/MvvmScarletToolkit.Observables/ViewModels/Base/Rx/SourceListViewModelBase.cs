@@ -1,9 +1,8 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
 using DynamicData.Binding;
-using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
-using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
@@ -25,11 +24,6 @@ namespace MvvmScarletToolkit
         public IObservableCollection<TViewModel> Items { get; }
 
         protected SourceListViewModelBase(SynchronizationContext synchronizationContext, Func<TViewModel, string> selector)
-            : this(synchronizationContext, selector, null, null)
-        {
-        }
-
-        protected SourceListViewModelBase(SynchronizationContext synchronizationContext, Func<TViewModel, string> selector, IComparer<TViewModel>? comparer, INotifyRefreshRequired? notifyRefreshRequired)
         {
             if (selector is null)
             {
@@ -45,35 +39,11 @@ namespace MvvmScarletToolkit
                 .ObserveOn(TaskPoolScheduler.Default)
                 .DistinctUntilChanged();
 
-            if (comparer != null && notifyRefreshRequired != null)
-            {
-                _subscription = observable
-                    .Sort(comparer, notifyRefreshRequired.GetObservable())
-                    .ObserveOn(SynchronizationContext)
-                    .Bind(Items, new VariableThresholdObservableCollectionAdaptor<TViewModel, string>(() => Threshold))
-                    .DisposeMany()
-                    .Subscribe();
-            }
-            else
-            {
-                if (comparer != null) // order does not change, so we dont need to re-sort
-                {
-                    _subscription = observable
-                        .Sort(comparer, Observable.Empty<Unit>())
-                        .ObserveOn(SynchronizationContext)
-                        .Bind(Items, new VariableThresholdObservableCollectionAdaptor<TViewModel, string>(() => Threshold))
-                        .DisposeMany()
-                        .Subscribe();
-                }
-                else
-                {
-                    _subscription = observable
-                        .ObserveOn(SynchronizationContext)
-                        .Bind(Items)
-                        .DisposeMany()
-                        .Subscribe();
-                }
-            }
+            _subscription = observable
+                .ObserveOn(SynchronizationContext)
+                .Bind(Items)
+                .DisposeMany()
+                .Subscribe();
         }
 
         public IObservable<IChangeSet<TViewModel, string>> Connect()

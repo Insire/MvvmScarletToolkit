@@ -44,14 +44,14 @@ namespace MvvmScarletToolkit.Wpf
 
         public ICommand Command
         {
-            get { return (ICommand)GetValue(CommandProperty); }
-            set { SetValue(CommandProperty, value); }
+            get => (ICommand)GetValue(CommandProperty);
+            set => SetValue(CommandProperty, value);
         }
 
         public TimeSpan Interval
         {
-            get { return (TimeSpan)GetValue(IntervalProperty); }
-            set { SetValue(IntervalProperty, value); }
+            get => (TimeSpan)GetValue(IntervalProperty);
+            set => SetValue(IntervalProperty, value);
         }
 
         private readonly IScheduler _scheduler;

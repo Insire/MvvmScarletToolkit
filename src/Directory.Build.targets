@@ -7,7 +7,8 @@
 
     <PropertyGroup>
         <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
-        <LangVersion>13</LangVersion>
+        <LangVersion>preview</LangVersion>
+        <Nullable>enable</Nullable>
         <CodeAnalysisRuleSet>..\..\MvvmScarletToolkit.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 

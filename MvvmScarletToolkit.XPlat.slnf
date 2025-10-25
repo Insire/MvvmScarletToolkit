@@ -1,0 +1,19 @@
+﻿{
+  "solution": {
+    "path": "MvvmScarletToolkit.sln",
+    "projects": [
+      "src\\MvvmScarletToolkit.Abstractions\\MvvmScarletToolkit.Abstractions.csproj",
+      "src\\MvvmScarletToolkit.Avalonia.Samples\\MvvmScarletToolkit.Avalonia.Samples.csproj",
+      "src\\MvvmScarletToolkit.Avalonia\\MvvmScarletToolkit.Avalonia.csproj",
+      "src\\MvvmScarletToolkit.Commands\\MvvmScarletToolkit.Commands.csproj",
+      "src\\MvvmScarletToolkit.Core.Samples\\MvvmScarletToolkit.Core.Samples.csproj",
+      "src\\MvvmScarletToolkit.ImageLoading\\MvvmScarletToolkit.ImageLoading.csproj",
+      "src\\MvvmScarletToolkit.Mediator.Benchmark\\MvvmScarletToolkit.Mediator.Benchmark.csproj",
+      "src\\MvvmScarletToolkit.Mediator.Tests\\MvvmScarletToolkit.Mediator.Tests.csproj",
+      "src\\MvvmScarletToolkit.Mediator\\MvvmScarletToolkit.Mediator.csproj",
+      "src\\MvvmScarletToolkit.Observables.Tests\\MvvmScarletToolkit.Observables.Tests.csproj",
+      "src\\MvvmScarletToolkit.Observables\\MvvmScarletToolkit.Observables.csproj",
+      "src\\MvvmScarletToolkit\\MvvmScarletToolkit.csproj"
+    ]
+  }
+}

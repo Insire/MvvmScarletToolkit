@@ -11,7 +11,6 @@ namespace MvvmScarletToolkit.Observables
         /// Initializes a new instance of the <see cref="ObservableDictionary{TKey, TValue}"/> class.
         /// </summary>
         public ObservableDictionary()
-            : base()
         {
             _dictionary = new Dictionary<TKey, TValue>();
         }
@@ -21,7 +20,7 @@ namespace MvvmScarletToolkit.Observables
         /// that contains elements copied from the specified <see cref="System.Collections.Generic.IDictionary{TKey, TValue}"/>.
         /// </summary>
         /// <param name="collection">The <see cref="System.Collections.Generic.IDictionary{TKey, TValue}"/> whose elements are copied to the new <see cref="ObservableDictionary{TKey, TValue}"/>.</param>
-        /// <exception cref="System.ArgumentNullException:">dictionary is null</exception>
+        /// <exception cref="System.ArgumentNullException">dictionary is null</exception>
         /// <exception cref="System.ArgumentException">dictionary contains one or more duplicate keys</exception>
         public ObservableDictionary(IDictionary<TKey, TValue> collection)
             : base(collection)
@@ -35,7 +34,6 @@ namespace MvvmScarletToolkit.Observables
         /// </summary>
         /// <param name="equalityComparer">The <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/> implementation to use when comparing keys, or null to use the default <see cref="System.Collections.Generic.EqualityComparer{TKey}"/> for the type of the key.</param>
         public ObservableDictionary(IEqualityComparer<TKey>? equalityComparer)
-            : base()
         {
             _dictionary = new Dictionary<TKey, TValue>(equalityComparer);
         }
@@ -47,9 +45,8 @@ namespace MvvmScarletToolkit.Observables
         /// </summary>
         /// <param name="capacity">The initial number of elements that the <see cref="ObservableDictionary{TKey, TValue}"/> can contain..</param>
         /// <param name="equalityComparer">The <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/> implementation to use whencomparing keys, or null to use the default <see cref="System.Collections.Generic.EqualityComparer{TKey}"/>for the type of the key.</param>
-        /// <exception cref="System.ArgumentOutOfRangeException:">capacity is less than 0</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">capacity is less than 0</exception>
         public ObservableDictionary(int capacity, IEqualityComparer<TKey>? equalityComparer)
-            : base()
         {
             _dictionary = new Dictionary<TKey, TValue>(capacity, equalityComparer);
         }
@@ -61,7 +58,7 @@ namespace MvvmScarletToolkit.Observables
         /// </summary>
         /// <param name="collection">The <see cref="System.Collections.Generic.IDictionary{TKey, TValue}"/> whose elements are copied to the new <see cref="ObservableDictionary{TKey, TValue}"/>.</param>
         /// <param name="equalityComparer">The <see cref="System.Collections.Generic.IEqualityComparer{TKey}"/> implementation to use when comparing keys, or null to use the default <see cref="System.Collections.Generic.EqualityComparer{TKey}"/> for the type of the key.</param>
-        /// <exception cref="System.ArgumentNullException:">dictionary is null</exception>
+        /// <exception cref="System.ArgumentNullException">dictionary is null</exception>
         /// <exception cref="System.ArgumentException">dictionary contains one or more duplicate keys</exception>
         public ObservableDictionary(IDictionary<TKey, TValue> collection, IEqualityComparer<TKey>? equalityComparer)
             : base(collection)
@@ -83,12 +80,14 @@ namespace MvvmScarletToolkit.Observables
                 for (var i = 0; i < Count; i++)
                 {
                     var entry = base[i];
-                    if (entry.Key?.Equals(key) == true)
+                    if (entry.Key?.Equals(key) != true)
                     {
-                        base[i] = new KeyValuePair<TKey, TValue>(key, value);
-                        requiresAdd = false;
-                        break;
+                        continue;
                     }
+
+                    base[i] = new KeyValuePair<TKey, TValue>(key, value);
+                    requiresAdd = false;
+                    break;
                 }
 
                 if (requiresAdd)

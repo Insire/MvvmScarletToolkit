@@ -1,6 +1,6 @@
 using Cake.Frosting;
 
-namespace Build
+namespace Build.Tasks
 {
     public sealed class CleanSolution : FrostingTask<BuildContext>
     {

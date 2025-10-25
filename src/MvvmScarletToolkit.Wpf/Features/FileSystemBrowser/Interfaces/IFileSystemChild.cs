@@ -1,6 +1,6 @@
 using System;
 
-namespace MvvmScarletToolkit
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces
 {
     public interface IFileSystemChild : IFileSystemInfo
     {
@@ -9,6 +9,5 @@ namespace MvvmScarletToolkit
         DateTime? CreationTimeUtc { get; }
         bool IsHidden { get; }
         IFileSystemParent? Parent { get; }
-        bool Exists { get; }
     }
 }

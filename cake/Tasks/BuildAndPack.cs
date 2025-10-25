@@ -2,9 +2,8 @@ using Cake.Common;
 using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
-using System.Linq;
 
-namespace Build
+namespace Build.Tasks
 {
     public sealed class BuildAndPack : FrostingTask<BuildContext>
     {

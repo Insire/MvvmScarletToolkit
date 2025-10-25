@@ -26,8 +26,8 @@ namespace MvvmScarletToolkit
     {
         public string? ClearTextPassword
         {
-            get { return (string?)GetValue(ClearTextPasswordProperty); }
-            set { SetValue(ClearTextPasswordProperty, value); }
+            get => (string?)GetValue(ClearTextPasswordProperty);
+            set => SetValue(ClearTextPasswordProperty, value);
         }
 
         /// <summary>Identifies the <see cref="ClearTextPassword"/> dependency property.</summary>

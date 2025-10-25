@@ -63,10 +63,7 @@ namespace MvvmScarletToolkit.Wpf
             return _variables.ContainsKey(key);
         }
 
-        public string this[string key]
-        {
-            get { return _variables[key]; }
-        }
+        public string this[string key] => _variables[key];
 
         public Inline CreateInline(TextBlock textBlock, InlineCreationContext currentStateType)
         {

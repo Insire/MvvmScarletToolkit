@@ -1,11 +1,12 @@
 using Microsoft.Win32;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System.IO;
 
-namespace MvvmScarletToolkit.Wpf.FileSystemBrowser
+namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
 {
     public sealed class RegistryFileExtensionMimeTypeResolver : IMimeTypeResolver
     {
-        public string? Get(IFileSystemFile fileInfo)
+        public string? Get(FileInfo fileInfo)
         {
             if (!fileInfo.Exists)
             {

@@ -1,10 +1,8 @@
 using Cake.Common.IO;
 using Cake.Common.Tools.ReportGenerator;
-using Cake.Core;
-using Cake.Core.IO;
 using Cake.Frosting;
 
-namespace Build
+namespace Build.Tasks
 {
     [IsDependentOn(typeof(ConvertCoverage))]
     public sealed class CoberturaReport : FrostingTask<BuildContext>

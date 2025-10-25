@@ -15,8 +15,8 @@ namespace MvvmScarletToolkit
 
         public TextBox? Target
         {
-            get { return (TextBox?)GetValue(TargetProperty); }
-            set { SetValue(TargetProperty, value); }
+            get => (TextBox?)GetValue(TargetProperty);
+            set => SetValue(TargetProperty, value);
         }
 
         protected override void Invoke(object parameter)

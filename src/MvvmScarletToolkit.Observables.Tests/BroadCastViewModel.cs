@@ -5,8 +5,8 @@ namespace MvvmScarletToolkit.Observables.Tests
 {
     internal sealed partial class BroadCastViewModel : ObservableRecipient, ITestViewModel
     {
-        private string property;
-        public string Property
+        private string? property;
+        public string? Property
         {
             get { return property; }
             set { SetProperty(ref property, value, true); }

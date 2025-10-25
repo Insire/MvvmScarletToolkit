@@ -3,7 +3,7 @@ using Cake.Common;
 using Cake.Common.IO;
 using Cake.Frosting;
 
-namespace Build
+namespace Build.Tasks
 {
     [IsDependentOn(typeof(CoberturaReport))]
     public sealed class UploadCodecovReport : FrostingTask<BuildContext>

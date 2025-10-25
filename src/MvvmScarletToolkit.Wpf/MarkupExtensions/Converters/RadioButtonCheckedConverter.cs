@@ -16,9 +16,9 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// A converted value. If the method returns null, the valid null value is used.
         /// </summary>
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object? Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
         {
-            return value.Equals(parameter);
+            return value?.Equals(parameter);
         }
 
         /// <summary>

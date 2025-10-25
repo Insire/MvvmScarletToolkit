@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net9.0-windows</TargetFrameworks>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PublishTrimmed>false</PublishTrimmed>
@@ -11,46 +12,26 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Resources\Death_to_Stock_Photography_RideorDie_8.jpg" />
-    <None Remove="Resources\Moon_Color_Hypersaturated_Stars_900.jpg" />
-    <None Remove="Resources\wallhaven-245035.jpg" />
-    <None Remove="Resources\wallhaven-319605.jpg" />
-    <None Remove="Resources\wallhaven-401406.jpg" />
-    <None Remove="Resources\wallhaven-75354.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Death_to_Stock_Photography_RideorDie_8.jpg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Moon_Color_Hypersaturated_Stars_900.jpg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\wallhaven-245035.jpg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\wallhaven-319605.jpg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\wallhaven-401406.jpg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\wallhaven-75354.jpg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Jot" />
+    <PackageReference Include="Magick.NET-Q8-AnyCPU" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="morelinq" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Extensions.Logging" />
+    <PackageReference Include="Serilog.Formatting.Compact" />
+    <PackageReference Include="Serilog.Sinks.Debug" />
+    <PackageReference Include="Serilog.Sinks.File" />
     <PackageReference Include="System.Net.Http" />
-    <PackageReference Include="System.Private.Uri" />
-    <PackageReference Include="System.Text.RegularExpressions" />
     <PackageReference Include="XamlFlair.WPF" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MvvmScarletToolkit.Core.Samples\MvvmScarletToolkit.Core.Samples.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.Incubator\MvvmScarletToolkit.Incubator.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.Wpf\MvvmScarletToolkit.Wpf.csproj" />
-    <ProjectReference Include="..\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
   </ItemGroup>
 </Project>

@@ -1,35 +1,248 @@
-using MvvmScarletToolkit.Wpf.FileSystemBrowser;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Security.Permissions;
+using System.Reactive.Concurrency;
+using System.Threading;
 using System.Threading.Tasks;
+using ScarletDirectory = MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories.ScarletDirectory;
+using ScarletDrive = MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives.ScarletDrive;
+using ScarletFile = MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files.ScarletFile;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
     public sealed class FileSystemViewModelFactory : IFileSystemViewModelFactory
     {
-        private readonly IScarletCommandBuilder _commandBuilder;
+        private readonly ILogger<FileSystemViewModelFactory> _logger;
+        private readonly IScheduler _scheduler;
         private readonly ConcurrentDictionary<string, string> _noAccessLookup;
+        private readonly IReadOnlyList<IMimeTypeResolver> _mimetypeResolvers;
 
-        public FileSystemViewModelFactory(IScarletCommandBuilder commandBuilder)
+        public IMessenger Messenger { get; }
+
+        public FileSystemViewModelFactory(ILogger<FileSystemViewModelFactory> logger, IScheduler scheduler)
         {
-            _commandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
+            _logger = logger;
+            _scheduler = scheduler;
+            Messenger = new WeakReferenceMessenger();
             _noAccessLookup = new ConcurrentDictionary<string, string>();
+            _mimetypeResolvers = new List<IMimeTypeResolver>()
+            {
+                new MagicNumberMimeTypeResolver(),
+                new RegistryFileExtensionMimeTypeResolver(),
+                new StaticFileExtensionMimeTypeResolver(),
+            };
         }
 
-        public Task<bool> IsEmpty(IFileSystemParent parent)
+        public async Task<ScarletFileInfo?> GetFileInfo(string filePath, CancellationToken token)
+        {
+            try
+            {
+                var info = await Task.Run(() => new FileInfo(filePath), token);
+                var mimeType = await Task.Run(() => GetMimeType(info), token);
+
+                return new ScarletFileInfo(info, mimeType ?? string.Empty);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, "Failed to get file info");
+
+                return new ScarletFileInfo()
+                {
+                    CreationTimeUtc = null,
+                    Exists = true,
+                    FullName = filePath,
+                    IsHidden = false,
+                    LastAccessTimeUtc = null,
+                    LastWriteTimeUtc = null,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
+            catch (FileNotFoundException ex)
+            {
+                _logger.LogError(ex, "Failed to get file info");
+
+                return new ScarletFileInfo()
+                {
+                    CreationTimeUtc = null,
+                    Exists = false,
+                    FullName = filePath,
+                    IsHidden = false,
+                    LastAccessTimeUtc = null,
+                    LastWriteTimeUtc = null,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "Failed to get file info");
+
+                return new ScarletFileInfo()
+                {
+                    CreationTimeUtc = null,
+                    Exists = false,
+                    FullName = filePath,
+                    IsHidden = false,
+                    LastAccessTimeUtc = null,
+                    LastWriteTimeUtc = null,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get file info");
+
+                return null;
+            }
+        }
+
+        public async Task<ScarletDirectoryInfo?> GetDirectoryInfo(string filePath, CancellationToken token)
+        {
+            try
+            {
+                var info = await Task.Run(() => new DirectoryInfo(filePath), token);
+
+                return new ScarletDirectoryInfo(info);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, "Failed to get directory info");
+
+                return new ScarletDirectoryInfo()
+                {
+                    CreationTimeUtc = null,
+                    Exists = true,
+                    FullName = filePath,
+                    IsHidden = false,
+                    LastAccessTimeUtc = null,
+                    LastWriteTimeUtc = null,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                _logger.LogError(ex, "Failed to get directory info");
+
+                return new ScarletDirectoryInfo()
+                {
+                    CreationTimeUtc = null,
+                    Exists = false,
+                    FullName = filePath,
+                    IsHidden = false,
+                    LastAccessTimeUtc = null,
+                    LastWriteTimeUtc = null,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "Failed to get directory info");
+
+                return new ScarletDirectoryInfo()
+                {
+                    CreationTimeUtc = null,
+                    Exists = true,
+                    FullName = filePath,
+                    IsHidden = false,
+                    LastAccessTimeUtc = null,
+                    LastWriteTimeUtc = null,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get directory info");
+            }
+
+            return null;
+        }
+
+        public async Task<ScarletDriveInfo?> GetDriveInfo(string filePath, CancellationToken token)
+        {
+            try
+            {
+                var info = await Task.Run(() => new DriveInfo(filePath), token);
+                return new ScarletDriveInfo(info);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, "Failed to get drive info");
+                return new ScarletDriveInfo()
+                {
+                    AvailableFreeSpace = 0,
+                    DriveFormat = null,
+                    DriveType = DriveType.Unknown,
+                    IsReady = false,
+                    TotalFreeSpace = 0,
+                    TotalSize = 0,
+                    FullName = filePath,
+                    Name = Path.GetFileName(filePath),
+                    IsAccessProhibited = true,
+                };
+            }
+            catch (DriveNotFoundException ex)
+            {
+                _logger.LogError(ex, "Failed to get drive info");
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "Failed to get drive info");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get drive info");
+            }
+
+            return null;
+        }
+
+        public Task<bool> IsEmpty(IFileSystemParent parent, CancellationToken token)
         {
             return parent switch
             {
-                IFileSystemDrive drive => Task.Run(() => IsDriveEmpty(drive)),
-                IFileSystemDirectory directory => Task.Run(() => IsDirectoryEmpty(directory)),
+                IFileSystemDrive drive => Task.Run(() => IsDriveEmpty(drive), token),
+                IFileSystemDirectory directory => Task.Run(() => IsDirectoryEmpty(directory), token),
                 _ => throw new NotImplementedException(),
             };
+        }
+
+        private string? GetMimeType(FileInfo fileInfo)
+        {
+            foreach (var mimeTypeResolver in _mimetypeResolvers)
+            {
+                var mimeType = string.Empty;
+
+                try
+                {
+                    mimeType = mimeTypeResolver.Get(fileInfo);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to get mimetype from file");
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(mimeType))
+                {
+                    return mimeType;
+                }
+            }
+
+            return null;
         }
 
         private static bool IsDriveEmpty(IFileSystemDrive drive)
@@ -63,53 +276,25 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             {
                 _noAccessLookup.TryAdd(directoryPath, directoryPath);
 
-                Debug.WriteLine(ex.Message);
+                _logger.LogError(ex, "Failed to get directory info");
             }
 
             return result;
         }
 
-        public Task<bool> CanAccess(IFileSystemChild child)
+        public Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(
+            IReadOnlyCollection<DriveType> types,
+            IReadOnlyCollection<FileAttributes> fileAttributes,
+            IReadOnlyCollection<FileAttributes> folderAttributes,
+            CancellationToken token)
         {
-            return Task.Run(() => CanAccess(child.FullName));
+            return Task.Run<IReadOnlyCollection<IFileSystemDrive>>(() => GetDrivesInternal(types, fileAttributes, folderAttributes).ToList(), token);
         }
 
-        private bool CanAccess(string path)
-        {
-            if (_noAccessLookup.ContainsKey(path))
-            {
-                return false;
-            }
-
-#if NET5_0_OR_GREATER
-#pragma warning disable SYSLIB0003 // Type or member is obsolete
-#endif
-            var permission = new FileIOPermission(FileIOPermissionAccess.Read, AccessControlActions.View, path);
-#if NET5_0_OR_GREATER
-#pragma warning restore SYSLIB0003 // Type or member is obsolete
-#endif
-
-            try
-            {
-                permission.Demand();
-                return true;
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                _noAccessLookup.TryAdd(path, path);
-
-                Debug.WriteLine(ex.Message);
-
-                return false;
-            }
-        }
-
-        public Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(IReadOnlyCollection<DriveType> types, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
-        {
-            return Task.Run<IReadOnlyCollection<IFileSystemDrive>>(() => GetDrivesInternal(types, fileAttributes, folderAttributes).ToList());
-        }
-
-        private IEnumerable<IFileSystemDrive> GetDrivesInternal(IReadOnlyCollection<DriveType> types, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
+        private IEnumerable<IFileSystemDrive> GetDrivesInternal(
+            IReadOnlyCollection<DriveType> types,
+            IReadOnlyCollection<FileAttributes> fileAttributes,
+            IReadOnlyCollection<FileAttributes> folderAttributes)
         {
             if (types.Count == 0)
             {
@@ -126,12 +311,16 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
             return drives
                 .Where(p => p.IsReady && types.Any(q => q == p.DriveType))
-                .Select(p => new ScarletDrive(p, _commandBuilder, this, fileAttributes, folderAttributes));
+                .Select(p => new ScarletDrive(_scheduler, new ScarletDriveInfo(p), this, fileAttributes, folderAttributes));
         }
 
-        public Task<IReadOnlyCollection<IFileSystemDirectory>> GetDirectories(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
+        public Task<IReadOnlyCollection<IFileSystemDirectory>> GetDirectories(
+            IFileSystemParent parent,
+            IReadOnlyCollection<FileAttributes> fileAttributes,
+            IReadOnlyCollection<FileAttributes> folderAttributes,
+            CancellationToken token)
         {
-            return Task.Run<IReadOnlyCollection<IFileSystemDirectory>>(() => GetDirectoriesInternal(parent, fileAttributes, folderAttributes).ToList());
+            return Task.Run<IReadOnlyCollection<IFileSystemDirectory>>(() => GetDirectoriesInternal(parent, fileAttributes, folderAttributes).ToList(), token);
         }
 
         private IEnumerable<IFileSystemDirectory> GetDirectoriesInternal(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes)
@@ -149,11 +338,11 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
                 return directoryInfos
                     .Where(p => folderAttributes.Any(q => p.Attributes.HasFlag(q)))
-                    .Select(p => new ScarletDirectory(p, fileAttributes, folderAttributes, parent, _commandBuilder, this));
+                    .Select(p => new ScarletDirectory(_scheduler, new ScarletDirectoryInfo(p), fileAttributes, folderAttributes, parent, this));
             }
             catch (UnauthorizedAccessException ex)
             {
-                Debug.WriteLine(ex.Message);
+                _logger.LogError(ex, "Failed to get directory info");
 
                 _noAccessLookup.TryAdd(parent.FullName, parent.FullName);
             }
@@ -161,9 +350,9 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return Enumerable.Empty<IFileSystemDirectory>();
         }
 
-        public Task<IReadOnlyCollection<IFileSystemFile>> GetFiles(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes)
+        public Task<IReadOnlyCollection<IFileSystemFile>> GetFiles(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, CancellationToken token)
         {
-            return Task.Run<IReadOnlyCollection<IFileSystemFile>>(() => GetFilesInternal(parent, fileAttributes).ToList());
+            return Task.Run<IReadOnlyCollection<IFileSystemFile>>(() => GetFilesInternal(parent, fileAttributes).ToList(), token);
         }
 
         private IEnumerable<IFileSystemFile> GetFilesInternal(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes)
@@ -177,15 +366,29 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             {
                 var fileInfos = Directory
                     .GetFiles(parent.FullName)
-                    .Select(p => new FileInfo(p));
+                    .Select(file => new FileInfo(file))
+                    .Where(p => fileAttributes.Any(q => p.Attributes.HasFlag(q)))
+                    .Select(info =>
+                    {
+                        var mimeType = string.Empty;
+                        try
+                        {
+                            mimeType = GetMimeType(info);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Failed to get mimetype from file");
+                        }
+
+                        return new ScarletFileInfo(info, mimeType ?? string.Empty);
+                    });
 
                 return fileInfos
-                    .Where(p => fileAttributes.Any(q => p.Attributes.HasFlag(q)))
-                    .Select(p => new ScarletFile(p, parent, _commandBuilder));
+                    .Select(p => new ScarletFile(_scheduler, p, parent, this));
             }
             catch (UnauthorizedAccessException ex)
             {
-                Debug.WriteLine(ex.Message);
+                _logger.LogError(ex, "Failed to get file info");
 
                 _noAccessLookup.TryAdd(parent.FullName, parent.FullName);
             }
