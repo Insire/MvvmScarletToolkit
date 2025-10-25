@@ -5,7 +5,6 @@
         <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
         <LangVersion>preview</LangVersion>
         <Nullable>enable</Nullable>
-        <CodeAnalysisRuleSet>..\..\MvvmScarletToolkit.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
