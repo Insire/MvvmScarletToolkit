@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MvvmScarletToolkit.Test.Tracing\MvvmScarletToolkit.Test.Tracing.csproj" />
+    <ProjectReference Include="..\MvvmScarletToolkit.Test.Tracing\MvvmScarletToolkit.Test.Tracing.csproj" />
     <ProjectReference Include="..\MvvmScarletToolkit.Mediator\MvvmScarletToolkit.Mediator.csproj" />
   </ItemGroup>
 

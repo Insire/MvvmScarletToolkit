@@ -56,7 +56,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Avalonia
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Core.Samples", "src\MvvmScarletToolkit.Core.Samples\MvvmScarletToolkit.Core.Samples.csproj", "{1663811D-340E-4C10-9047-DE9E7321F00B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Test.Tracing", "MvvmScarletToolkit.Test.Tracing\MvvmScarletToolkit.Test.Tracing.csproj", "{5606FFE7-0971-48CD-8FFC-94AB9417417E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmScarletToolkit.Test.Tracing", "src\MvvmScarletToolkit.Test.Tracing\MvvmScarletToolkit.Test.Tracing.csproj", "{5606FFE7-0971-48CD-8FFC-94AB9417417E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
