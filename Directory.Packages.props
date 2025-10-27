@@ -68,7 +68,7 @@
     <PackageVersion Include="Codecov" Version="1.13.0" />
     <PackageVersion Include="GitVersion.CommandLine" Version="5.12.0" />
     <PackageVersion Include="Microsoft.CodeCoverage" Version="18.0.0" />
-    <PackageVersion Include="ReportGenerator" Version="5.4.17" />
+    <PackageVersion Include="ReportGenerator" Version="5.4.18" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
   </ItemGroup>
   <ItemGroup Label="core dependencies">
