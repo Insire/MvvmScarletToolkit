@@ -7,7 +7,7 @@
   <ItemGroup Label="samples">
     <PackageVersion Include="JetBrains.Annotations" Version="2025.2.2" />
     <PackageVersion Include="Jot" Version="2.1.17" />
-    <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="14.9.0" />
+    <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="14.9.1" />
     <PackageVersion Include="Magick.NET.SystemWindowsMedia" Version="8.0.12" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.10" />
     <PackageVersion Include="morelinq" Version="4.4.0" />
