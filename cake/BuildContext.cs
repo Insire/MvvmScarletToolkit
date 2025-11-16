@@ -95,12 +95,12 @@ namespace Build
 
         internal IEnumerable<(string Folder, string ProjectFile, string[] Frameworks)> GetTestProjects()
         {
-            yield return (Folder: @"tests\MvvmScarletToolkit.Mediator.Tests", ProjectFile: "MvvmScarletToolkit.Mediator.Tests.csproj", ["net9.0"]);
-            yield return   (Folder: @"tests\MvvmScarletToolkit.Observables.Tests", ProjectFile: "MvvmScarletToolkit.Observables.Tests.csproj",["net9.0"]);
+            yield return (Folder: @"tests\MvvmScarletToolkit.Mediator.Tests", ProjectFile: "MvvmScarletToolkit.Mediator.Tests.csproj", ["net10.0"]);
+            yield return (Folder: @"tests\MvvmScarletToolkit.Observables.Tests", ProjectFile: "MvvmScarletToolkit.Observables.Tests.csproj", ["net10.0"]);
 
             if (Environment.Platform.IsWindows())
             {
-                yield return (Folder: @"tests\MvvmScarletToolkit.Wpf.Tests", ProjectFile:  "MvvmScarletToolkit.Wpf.Tests.csproj",["net8.0-windows", "net9.0-windows"]);
+                yield return (Folder: @"tests\MvvmScarletToolkit.Wpf.Tests", ProjectFile: "MvvmScarletToolkit.Wpf.Tests.csproj", ["net8.0-windows", "net10.0-windows"]);
             }
         }
     }
