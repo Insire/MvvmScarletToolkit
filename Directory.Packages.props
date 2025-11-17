@@ -45,11 +45,12 @@
   </ItemGroup>
   <!-- tests -->
   <ItemGroup Label="tests">
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="[17.14.1]" />
-    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="[17.14.2]" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.1.0" />
     <PackageVersion Include="xunit.analyzers" Version="1.25.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="xunit.v3" Version="3.2.0" />
+    <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.0" />
     <PackageVersion Include="xunit.v3.runner.console" Version="3.2.0" />
     <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />

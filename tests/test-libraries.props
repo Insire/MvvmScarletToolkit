@@ -3,8 +3,6 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <OutputType>Exe</OutputType>
-    <!--To enable the Microsoft Testing Platform 'dotnet test' experience, add property:-->
-    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
     <!--To enable the Microsoft Testing Platform native command line experience, add property:-->
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
     <!--For more information on Microsoft Testing Platform support in xUnit.net, please visit:-->
@@ -17,7 +15,7 @@
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="NSubstitute.Analyzers.CSharp" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="xunit.analyzers">
       <PrivateAssets>all</PrivateAssets>
