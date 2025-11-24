@@ -73,7 +73,7 @@
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
   </ItemGroup>
   <ItemGroup Label="core dependencies">
-    <PackageVersion Include="Avalonia" Version="11.3.8" />
+    <PackageVersion Include="Avalonia" Version="11.3.9" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
