@@ -62,7 +62,7 @@
   </ItemGroup>
   <!-- cake -->
   <ItemGroup Label="cake">
-    <PackageVersion Include="Cake.Codecov" Version="3.0.0" />
+    <PackageVersion Include="Cake.Codecov" Version="6.0.0" />
     <PackageVersion Include="Cake.Frosting" Version="6.0.0" />
     <PackageVersion Include="Cake.GitVersioning" Version="3.9.50" />
     <PackageVersion Include="Cake.Incubator" Version="10.0.0" />
