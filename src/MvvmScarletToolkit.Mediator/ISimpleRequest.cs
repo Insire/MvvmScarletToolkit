@@ -21,7 +21,6 @@ namespace MvvmScarletToolkit.Mediator
     /// Defines a handler for a request with a void response.
     /// </summary>
     /// <typeparam name="TRequest">The type of request being handled</typeparam>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0040:Add accessibility modifiers", Justification = "<Pending>")]
     public interface ISimpleRequestHandler<in TRequest>
         where TRequest : ISimpleRequest
     {
@@ -39,7 +38,6 @@ namespace MvvmScarletToolkit.Mediator
     /// </summary>
     /// <typeparam name="TRequest">The type of request being handled</typeparam>
     /// <typeparam name="TResponse">The type of response from the handler</typeparam>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0040:Add accessibility modifiers", Justification = "<Pending>")]
     public interface ISimpleRequestHandler<in TRequest, TResponse>
         where TRequest : ISimpleRequest<TResponse>
     {

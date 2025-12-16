@@ -224,8 +224,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         {
             foreach (var mimeTypeResolver in _mimetypeResolvers)
             {
-                var mimeType = string.Empty;
-
+                string? mimeType;
                 try
                 {
                     mimeType = mimeTypeResolver.Get(fileInfo);

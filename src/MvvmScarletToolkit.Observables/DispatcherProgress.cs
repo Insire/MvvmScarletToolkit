@@ -38,7 +38,7 @@ namespace MvvmScarletToolkit
         {
             if (_disposed)
             {
-                throw new ObjectDisposedException(nameof(DispatcherProgress<T>));
+                throw new ObjectDisposedException(nameof(DispatcherProgress<>));
             }
 
             // queue the new value on the observable
@@ -49,7 +49,7 @@ namespace MvvmScarletToolkit
         {
             if (_disposed)
             {
-                throw new ObjectDisposedException(nameof(DispatcherProgress<T>));
+                throw new ObjectDisposedException(nameof(DispatcherProgress<>));
             }
 
             await _dispatcher.Invoke(() => _callback.Invoke(value), CancellationToken.None).ConfigureAwait(false);

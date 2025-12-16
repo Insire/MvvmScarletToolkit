@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit.Core.Samples.Features
         }
 
         [ObservableProperty]
-        private bool _block;
+        public partial bool Block { get; set; }
 
         public ProgressViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)

@@ -7,9 +7,11 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public sealed partial class SelectionViewModel : ObservableObject
     {
-        [ObservableProperty] private bool? _isSelected;
-        [ObservableProperty] private SelectionChildViewModel _selectedChild;
+        [ObservableProperty]
+        public partial bool? IsSelected { get; set; }
 
+        [ObservableProperty]
+        public partial SelectionChildViewModel SelectedChild { get; set; }
         public int Index { get; }
         public ObservableCollection<SelectionChildViewModel> Children { get; }
 

@@ -44,10 +44,10 @@ namespace MvvmScarletToolkit.Tests
             context = _builder.Create(() => Task.CompletedTask, () => true);
             Assert.NotNull(context);
 
-            context = _builder.Create((CancellationToken _) => Task.CompletedTask);
+            context = _builder.Create(_ => Task.CompletedTask);
             Assert.NotNull(context);
 
-            context = _builder.Create((CancellationToken _) => Task.CompletedTask, () => true);
+            context = _builder.Create(_ => Task.CompletedTask, () => true);
             Assert.NotNull(context);
 
             // generic overloads ignoring argument:
@@ -69,7 +69,7 @@ namespace MvvmScarletToolkit.Tests
             context = _builder.Create((object? _) => Task.CompletedTask);
             Assert.NotNull(context);
 
-            context = _builder.Create((object? _) => Task.CompletedTask, (object? _) => true);
+            context = _builder.Create(_ => Task.CompletedTask, (object? _) => true);
             Assert.NotNull(context);
 
             context = _builder.Create((object? _) => Task.CompletedTask, () => true);
@@ -78,7 +78,7 @@ namespace MvvmScarletToolkit.Tests
             context = _builder.Create((object? _, CancellationToken __) => Task.CompletedTask);
             Assert.NotNull(context);
 
-            context = _builder.Create((object? _, CancellationToken __) => Task.CompletedTask, (object? _) => true);
+            context = _builder.Create((_, __) => Task.CompletedTask, (object? _) => true);
             Assert.NotNull(context);
         }
     }

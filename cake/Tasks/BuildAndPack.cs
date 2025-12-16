@@ -28,18 +28,18 @@ namespace Build.Tasks
                         .Append($"-p:PublicRelease={context.IsPublicRelease}") // Nerdbank.GitVersioning - omit git commit ID
 
                         // Creating symbol packages
-                        .Append($"--include-symbols")
+                        .Append("--include-symbols")
                         .Append("--include-source")
-                        .Append($"-p:SymbolPackageFormat=snupkg")
+                        .Append("-p:SymbolPackageFormat=snupkg")
 
                         // enable source linking
-                        .Append($"-p:PublishRepositoryUrl=true")
+                        .Append("-p:PublishRepositoryUrl=true")
 
                         // Deterministic Builds
-                        .Append($"-p:EmbedUntrackedSources=true")
+                        .Append("-p:EmbedUntrackedSources=true")
 
-                        .Append($"-p:DebugType=portable")
-                        .Append($"-p:DebugSymbols=true")
+                        .Append("-p:DebugType=portable")
+                        .Append("-p:DebugSymbols=true")
                     );
 
                 context.StartProcess("dotnet", settings);

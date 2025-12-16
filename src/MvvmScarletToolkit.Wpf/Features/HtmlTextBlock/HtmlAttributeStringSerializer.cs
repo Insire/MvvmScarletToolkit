@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace MvvmScarletToolkit.Wpf
 {
     internal sealed class HtmlAttributeStringSerializer : IPropertySerializer
@@ -39,7 +36,7 @@ namespace MvvmScarletToolkit.Wpf
             var pos1 = working.IndexOf('=');
             if (pos1 != -1)
             {
-                name = working.Substring(0, pos1);
+                name = working[..pos1];
                 var quoteIndex = working.IndexOf(Quote);
                 var spaceIndex = working.IndexOf(' ');
                 var equalsIndex = working.IndexOf('=');
@@ -70,7 +67,7 @@ namespace MvvmScarletToolkit.Wpf
 
                     if (quoteIndex != -1)
                     {
-                        value = working.Substring(0, quoteIndex);
+                        value = working[..quoteIndex];
                         working = working.Substring(quoteIndex + 1, working.Length - quoteIndex - 1);
                     }
                 }

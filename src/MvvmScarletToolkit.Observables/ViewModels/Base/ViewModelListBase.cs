@@ -143,7 +143,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             if (item is null)
@@ -158,7 +158,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             if (item is null)
@@ -181,7 +181,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             return AddRange(items, CancellationToken.None);
@@ -191,7 +191,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             if (items is null)
@@ -209,7 +209,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             if (item is null)
@@ -224,7 +224,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             using (BusyStack.GetToken())
@@ -242,7 +242,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             return RemoveRange(items, CancellationToken.None);
@@ -252,7 +252,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             if (items is null)
@@ -270,7 +270,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             return Clear(CancellationToken.None);
@@ -280,7 +280,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             using (BusyStack.GetToken())
@@ -388,7 +388,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             if (disposing)

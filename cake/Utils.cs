@@ -83,7 +83,7 @@ namespace Build
                 foreach (var folder in folders)
                 {
                     context.EnsureDirectoryExists(folder);
-                    context.CleanDirectory(folder, (file) => !file.Path.Segments.Last().Contains(".gitignore"));
+                    context.CleanDirectory(folder, (file) => !file.Path.Segments[^1].Contains(".gitignore"));
                 }
             }
         }

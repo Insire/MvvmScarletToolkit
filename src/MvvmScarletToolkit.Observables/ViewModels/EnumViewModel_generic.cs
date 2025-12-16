@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -7,12 +6,12 @@ namespace MvvmScarletToolkit.Observables
         where T : Enum
     {
         [ObservableProperty]
-        private string _displayName;
+        public partial string DisplayName { get; set; }
 
         public EnumViewModel(in T value, in string? displayName)
             : base(value)
         {
-            _displayName = displayName ?? "Undefined";
+            DisplayName = displayName ?? "Undefined";
         }
     }
 }

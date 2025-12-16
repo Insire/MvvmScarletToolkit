@@ -1,10 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -17,7 +14,7 @@ namespace MvvmScarletToolkit.Observables
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsFull))]
-        private int _capacity;
+        public partial int Capacity { get; set; }
 
         private int _size;
         /// <summary>
@@ -64,8 +61,7 @@ namespace MvvmScarletToolkit.Observables
             _start = 0;
             _buffer = new ObservableCollection<T>(items);
             _buffer.CollectionChanged += (o, e) => OnCollectionChanged(e);
-
-            _capacity = capacity;
+            Capacity = capacity;
         }
 
         public void Push(in T item)

@@ -9,8 +9,7 @@ namespace MvvmScarletToolkit.Core.Samples.Features.AsyncState
         private readonly Timer _timer;
 
         [ObservableProperty]
-        private string _filterText;
-
+        public partial string FilterText { get; set; }
         public Predicate<object> Filter { get; }
 
         public RelayCommand EnableGenerationCommand { get; }
@@ -19,7 +18,7 @@ namespace MvvmScarletToolkit.Core.Samples.Features.AsyncState
         public AsyncStateListViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            _filterText = string.Empty;
+            FilterText = string.Empty;
             for (var i = 0; i < 10; i++)
             {
                 AddUnchecked(new AsyncStateViewModel(commandBuilder)

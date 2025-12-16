@@ -5,13 +5,13 @@ namespace MvvmScarletToolkit.Core.Samples.Features
     public sealed partial class FormViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _maxLengthInput;
+        public partial string MaxLengthInput { get; set; }
 
         [ObservableProperty]
-        private int _maxLength;
+        public partial int MaxLength { get; set; }
 
         [ObservableProperty]
-        private string _regex;
+        public partial string Regex { get; set; }
 
         partial void OnMaxLengthInputChanged(string value)
         {

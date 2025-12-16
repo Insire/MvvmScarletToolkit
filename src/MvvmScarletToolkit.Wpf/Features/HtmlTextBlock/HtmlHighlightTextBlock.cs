@@ -1,4 +1,3 @@
-using System;
 using System.Windows;
 
 namespace MvvmScarletToolkit.Wpf
@@ -33,7 +32,7 @@ namespace MvvmScarletToolkit.Wpf
                 var index = html.IndexOf(Highlight, StringComparison.InvariantCultureIgnoreCase);
                 while (index != -1)
                 {
-                    html = string.Format("{0}[b]{1}[/b]{2}", html.Substring(0, index), html.Substring(index, Highlight.Length), html.Substring(index + Highlight.Length));
+                    html = string.Format("{0}[b]{1}[/b]{2}", html[..index], html.Substring(index, Highlight.Length), html[(index + Highlight.Length)..]);
                     index = html.IndexOf(Highlight, index + 7 + Highlight.Length, StringComparison.InvariantCultureIgnoreCase);
                 }
             }

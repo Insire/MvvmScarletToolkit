@@ -41,7 +41,7 @@ namespace MvvmScarletToolkit.ImageLoading.Caches.Data
                 return Stream.Null;
             }
 
-            if (_options.IsEnabled == false)
+            if (!_options.IsEnabled)
             {
                 return Stream.Null;
             }
@@ -68,7 +68,7 @@ namespace MvvmScarletToolkit.ImageLoading.Caches.Data
                 return;
             }
 
-            if (_options.IsEnabled == false)
+            if (!_options.IsEnabled)
             {
                 return;
             }

@@ -7,7 +7,8 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
     {
         public ObservableCollection<SelectionViewModel> Children { get; }
 
-        [ObservableProperty] private SelectionViewModel _selectedChild;
+        [ObservableProperty]
+        public partial SelectionViewModel SelectedChild { get; set; }
 
         public SelectionsViewModel()
         {

@@ -67,21 +67,18 @@ namespace MvvmScarletToolkit.Tests
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for testcases")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1163:Unused parameter.", Justification = "Method signature required for testcases")]
         public static IBusyStack TestBusyStackFactory(Action<bool> lambda)
         {
             return NSubstitute.Substitute.For<IBusyStack>();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for testcases")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1163:Unused parameter.", Justification = "Method signature required for testcases")]
         public static Task TestExecute(object arg, CancellationToken token)
         {
             return Task.CompletedTask;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for testcases")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1163:Unused parameter.", Justification = "Method signature required for testcases")]
         public static bool TestCanExecute(object arg)
         {
             return true;

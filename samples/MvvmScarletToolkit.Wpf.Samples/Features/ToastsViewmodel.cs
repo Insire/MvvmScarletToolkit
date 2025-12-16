@@ -12,16 +12,16 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
         public ICommand ShowManyToastsCommand { get; }
 
         [ObservableProperty]
-        private ToastType _toastType;
+        public partial ToastType ToastType { get; set; }
 
         [ObservableProperty]
-        private string _title;
+        public partial string Title { get; set; }
 
         [ObservableProperty]
-        private string _body;
+        public partial string Body { get; set; }
 
         [ObservableProperty]
-        private bool _persist;
+        public partial bool Persist { get; set; }
 
         public ToastsViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
@@ -33,10 +33,9 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             ShowManyToastsCommand = commandBuilder
                 .Create(ShowManyToastsImpl)
                 .Build();
-
-            _title = "Toast-Title";
-            _body = "Toast-Body";
-            _toastType = ToastType.Success;
+            Title = "Toast-Title";
+            Body = "Toast-Body";
+            ToastType = ToastType.Success;
         }
 
         private Task ShowToastImpl(CancellationToken token)

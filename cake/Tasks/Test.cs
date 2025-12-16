@@ -22,10 +22,10 @@ namespace Build.Tasks
                             .Append("run")
                             .AppendSwitchQuoted("--project", " ", projectFilePath.FullPath)
                             .Append($"-c {BuildContext.BuildConfiguration}")
-                            .AppendSwitch($"--framework", " ", framework)
-                            .Append($"--coverage")
-                            .Append($"--coverage-output-format cobertura")
-                            .AppendSwitchQuoted($"--coverage-output", " ", projectCoverage.FullPath)
+                            .AppendSwitch("--framework", " ", framework)
+                            .Append("--coverage")
+                            .Append("--coverage-output-format cobertura")
+                            .AppendSwitchQuoted("--coverage-output", " ", projectCoverage.FullPath)
                         );
 
                     settings.EnvironmentVariables = new Dictionary<string, string>() { ["Environment"] = "Test" };

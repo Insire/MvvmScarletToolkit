@@ -89,7 +89,7 @@ namespace MvvmScarletToolkit.Wpf
                 var pos3 = tag.IndexOf(' ');
                 if ((pos3 != -1) && (tag != string.Empty))
                 {
-                    name = tag.Substring(0, pos3);
+                    name = tag[..pos3];
                     vars = tag.Substring(pos3 + 1, tag.Length - pos3 - 1);
                 }
                 else

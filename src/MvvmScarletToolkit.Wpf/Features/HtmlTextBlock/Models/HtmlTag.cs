@@ -44,7 +44,7 @@ namespace MvvmScarletToolkit.Wpf
             Name = name.ToLower();
 
             _id = new Lazy<int>(() => builtinTags.FindIndex(tagInfo => tagInfo.Html.Equals(Name.TrimStart('/'))));
-            _isEndTag = new Lazy<bool>(() => (Name.IndexOf('/') == 0) || _variables.ContainsKey("/"));
+            _isEndTag = new Lazy<bool>(() => Name.StartsWith('/') || _variables.ContainsKey("/"));
             _level = new Lazy<int>(() => ID == -1 ? 0 : builtinTags[ID].TagLevel);
         }
 

@@ -24,7 +24,7 @@ namespace Build.Tasks
                             .AppendQuoted(codeCoverageExe.FullPath)
                             .Append("merge")
                             .Append("--remove-input-files")
-                            .AppendSwitchQuoted(@"--output", " ", result)
+                            .AppendSwitchQuoted("--output", " ", result)
                             .AppendSwitch("--output-format", "xml")
                             .Append(file.FullPath)
                         );

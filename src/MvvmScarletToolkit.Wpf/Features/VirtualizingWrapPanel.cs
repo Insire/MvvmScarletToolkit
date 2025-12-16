@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -887,8 +884,12 @@ namespace MvvmScarletToolkit
         private sealed class WrapPanelAbstraction : IEnumerable<ItemAbstraction>
         {
             private readonly ReadOnlyCollection<ItemAbstraction> _items;
-            private readonly object _syncRoot = new object();
+#if NET10_0_OR_GREATER
 
+            private readonly Lock _syncRoot = new Lock();
+#else
+            private readonly object _syncRoot = new object();
+#endif
             private int _currentSetSection = -1;
             private int _currentSetItemIndex = -1;
             private int _itemsInCurrentSecction;

@@ -9,11 +9,11 @@ namespace MvvmScarletToolkit
     public partial class ViewModelContainer<T> : ObservableObject
     {
         [ObservableProperty]
-        private T _value;
+        public partial T Value { get; set; }
 
         public ViewModelContainer(in T value)
         {
-            _value = value;
+            Value = value;
         }
     }
 }

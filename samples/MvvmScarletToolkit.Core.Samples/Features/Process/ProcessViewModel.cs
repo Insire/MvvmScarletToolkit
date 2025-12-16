@@ -21,13 +21,13 @@ namespace MvvmScarletToolkit.Core.Samples.Features.Process
         private readonly ConcurrentCommandBase _startCommand;
 
         [ObservableProperty]
-        private string _args;
+        public partial string Args { get; set; }
 
         [ObservableProperty]
-        private string _filePath;
+        public partial string FilePath { get; set; }
 
         [ObservableProperty]
-        private string _workingDirectory;
+        public partial string WorkingDirectory { get; set; }
 
         [UsedImplicitly]
         public ICommand StartCommand => _startCommand;
@@ -41,9 +41,9 @@ namespace MvvmScarletToolkit.Core.Samples.Features.Process
         public ProcessViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            _workingDirectory = ".";
-            _filePath = "cmd.exe";
-            _args = "/c nslookup invalidname";
+            WorkingDirectory = ".";
+            FilePath = "cmd.exe";
+            Args = "/c nslookup invalidname";
 
             _outputQueue = new ConcurrentQueue<ProcessData>();
             _errorQueue = new ConcurrentQueue<ProcessErrorData>();

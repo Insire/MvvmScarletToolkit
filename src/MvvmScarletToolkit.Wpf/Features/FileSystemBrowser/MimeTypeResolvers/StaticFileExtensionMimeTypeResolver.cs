@@ -1,5 +1,4 @@
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
-using System.Collections.Generic;
 using System.IO;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
@@ -15,12 +14,12 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
 
             var extension = fileInfo.Extension;
 
-            if (string.IsNullOrEmpty(extension) || !_mimeTypes.ContainsKey(extension))
+            if (string.IsNullOrEmpty(extension) || !_mimeTypes.TryGetValue(extension, out var value))
             {
                 return null;
             }
 
-            return _mimeTypes[extension];
+            return value;
         }
 
         private static readonly Dictionary<string, string> _mimeTypes = new Dictionary<string, string>

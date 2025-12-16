@@ -21,10 +21,10 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [ObservableProperty]
-        private int _pageSize;
+        public partial int PageSize { get; set; }
 
         [ObservableProperty]
-        private int _pageIndex;
+        public partial int PageIndex { get; set; }
 
         [Bindable(true, BindingDirection.OneWay)]
         public PagingViewModel<TViewModel> Paging { get; }

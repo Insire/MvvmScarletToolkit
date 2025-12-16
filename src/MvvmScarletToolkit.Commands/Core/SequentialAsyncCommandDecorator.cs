@@ -22,6 +22,7 @@ namespace MvvmScarletToolkit.Commands
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0062:Make local function 'static'", Justification = "Access to 'this' in Debug configuration")]
         public override bool CanExecute(object? parameter)
         {
             if (Completion?.IsCompleted == false)

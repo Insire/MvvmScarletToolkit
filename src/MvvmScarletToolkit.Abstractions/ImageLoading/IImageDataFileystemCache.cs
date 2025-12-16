@@ -1,6 +1,4 @@
 namespace MvvmScarletToolkit
 {
-    public interface IImageDataFileystemCache : IImageDataCache
-    {
-    }
+    public interface IImageDataFileystemCache : IImageDataCache;
 }

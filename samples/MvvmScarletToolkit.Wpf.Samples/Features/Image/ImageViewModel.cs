@@ -32,7 +32,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             }
         }
 
-        private bool CanMoveToTarget(object? element)
+        private static bool CanMoveToTarget(object? element)
         {
             return true;
         }

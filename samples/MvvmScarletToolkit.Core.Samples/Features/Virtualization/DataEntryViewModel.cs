@@ -6,22 +6,22 @@ namespace MvvmScarletToolkit.Core.Samples.Features.Virtualization
     public sealed partial class DataEntryViewModel : BusinessViewModelBase
     {
         [ObservableProperty]
-        private string _message;
+        public partial string Message { get; set; }
 
         [ObservableProperty]
-        private DateTime _createdOn;
+        public partial DateTime CreatedOn { get; set; }
 
         [ObservableProperty]
-        private Guid _id;
+        public partial Guid Id { get; set; }
 
         [ObservableProperty]
-        private bool _isSelected;
+        public partial bool IsSelected { get; set; }
 
         public DataEntryViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
             Id = Guid.NewGuid();
-            _message = string.Empty;
+            Message = string.Empty;
         }
 
         protected override Task UnloadInternal(CancellationToken token)

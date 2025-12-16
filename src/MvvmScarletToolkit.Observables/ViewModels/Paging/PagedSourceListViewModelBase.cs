@@ -21,8 +21,7 @@ namespace MvvmScarletToolkit
         protected readonly IScarletCommandManager CommandManager;
 
         [ObservableProperty]
-        private TViewModel? _selectedItem;
-
+        public partial TViewModel? SelectedItem { get; set; }
         [Bindable(true, BindingDirection.OneWay)]
         public ObservableCollection<TViewModel> SelectedItems { get; }
 
@@ -43,11 +42,10 @@ namespace MvvmScarletToolkit
         }
 
         [ObservableProperty]
-        private int _pageSize;
+        public partial int PageSize { get; set; }
 
         [ObservableProperty]
-        private int _currentPage;
-
+        public partial int CurrentPage { get; set; }
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand NextCommand { get; }
 

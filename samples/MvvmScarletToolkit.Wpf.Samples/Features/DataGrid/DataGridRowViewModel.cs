@@ -69,8 +69,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
         }
 
         [ObservableProperty]
-        private bool? _isSelected;
-
+        public partial bool? IsSelected { get; set; }
         public int Page { get; }
 
         public DataGridRowViewModel(IScarletCommandBuilder commandBuilder, int page)

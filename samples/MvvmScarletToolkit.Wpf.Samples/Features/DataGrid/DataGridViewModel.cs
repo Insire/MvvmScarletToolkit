@@ -19,12 +19,12 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
         }
 
         [ObservableProperty]
-        private string _filterText;
+        public partial string FilterText { get; set; }
 
         public DataGridViewModel(IScarletCommandBuilder commandBuilder, SynchronizationContext synchronizationContext)
             : base(commandBuilder, synchronizationContext, vm => vm.Name, new DataGridDataProvider(commandBuilder, 2000, 50))
         {
-            _filterText = string.Empty;
+            FilterText = string.Empty;
             Groups = GroupingViewModel.Create(Items);
             Filter = IsMatch;
 

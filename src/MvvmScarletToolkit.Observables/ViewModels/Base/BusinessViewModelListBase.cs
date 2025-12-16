@@ -79,7 +79,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(BusinessViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(BusinessViewModelListBase<>));
             }
 
             using (BusyStack.GetToken())
@@ -111,7 +111,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(BusinessViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(BusinessViewModelListBase<>));
             }
 
             using (BusyStack.GetToken())
@@ -137,7 +137,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(BusinessViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(BusinessViewModelListBase<>));
             }
 
             using (BusyStack.GetToken())
@@ -160,7 +160,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             if (disposing)
