@@ -5,11 +5,11 @@
   </PropertyGroup>
   <!-- samples -->
   <ItemGroup Label="samples">
-    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.2" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
     <PackageVersion Include="Jot" Version="2.1.17" />
-    <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="14.9.1" />
-    <PackageVersion Include="Magick.NET.SystemWindowsMedia" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.0" />
+    <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="14.10.0" />
+    <PackageVersion Include="Magick.NET.SystemWindowsMedia" Version="8.0.13" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.1" />
     <PackageVersion Include="morelinq" Version="4.4.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
@@ -22,10 +22,10 @@
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />
     <PackageVersion Include="XamlFlair.WPF" Version="1.2.13" />
     <PackageVersion Include="Avalonia.Desktop" Version="11.3.9" />
-    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.8" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.8" />
-    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.8" />
-    <PackageVersion Include="HotAvalonia" Version="3.0.0" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.9" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.9" />
+    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.9" />
+    <PackageVersion Include="HotAvalonia" Version="3.0.2" />
   </ItemGroup>
   <!-- WPF -->
   <ItemGroup Label="Wpf">
@@ -41,18 +41,18 @@
   <ItemGroup Label="nuget">
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.9.50" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.14.1" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
   </ItemGroup>
   <!-- tests -->
   <ItemGroup Label="tests">
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.1.0" />
-    <PackageVersion Include="xunit.analyzers" Version="1.25.0" />
+    <PackageVersion Include="xunit.analyzers" Version="1.26.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="xunit.v3" Version="3.2.0" />
-    <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.0" />
-    <PackageVersion Include="xunit.v3.runner.console" Version="3.2.0" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.0" />
+    <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.1" />
+    <PackageVersion Include="xunit.v3.runner.console" Version="3.2.1" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.1" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
     <PackageVersion Include="Meziantou.Xunit.v3.ParallelTestFramework" Version="1.0.6" />
     <PackageVersion Include="MediatR" Version="13.1.0" />
@@ -69,17 +69,17 @@
     <PackageVersion Include="Codecov" Version="1.13.0" />
     <PackageVersion Include="GitVersion.CommandLine" Version="5.12.0" />
     <PackageVersion Include="Microsoft.CodeCoverage" Version="18.0.1" />
-    <PackageVersion Include="ReportGenerator" Version="5.5.0" />
+    <PackageVersion Include="ReportGenerator" Version="5.5.1" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
   </ItemGroup>
   <ItemGroup Label="core dependencies">
     <PackageVersion Include="Avalonia" Version="11.3.9" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="10.0.1" />
     <PackageVersion Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
-    <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="10.0.1" />
     <PackageVersion Include="DynamicData" Version="9.4.1" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
   </ItemGroup>
