@@ -1,4 +1,4 @@
-namespace MvvmScarletToolkit.Tests.Util
+namespace MvvmScarletToolkit.Wpf.Tests.Util
 {
     internal sealed class TestDispatcher : IScarletDispatcher
     {

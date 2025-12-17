@@ -1,6 +1,6 @@
 using MvvmScarletToolkit.Observables;
 
-namespace MvvmScarletToolkit.Tests
+namespace MvvmScarletToolkit.Wpf.Tests.TestData
 {
     internal sealed class DerivedViewModelBase : ViewModelBase
     {

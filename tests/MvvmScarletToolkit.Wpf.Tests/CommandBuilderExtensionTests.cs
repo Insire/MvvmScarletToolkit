@@ -1,4 +1,6 @@
-namespace MvvmScarletToolkit.Tests
+using MvvmScarletToolkit.Wpf.Tests.Util;
+
+namespace MvvmScarletToolkit.Wpf.Tests
 {
     public sealed class CommandBuilderExtensionTests : TraceTestBase, IAsyncLifetime
     {

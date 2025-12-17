@@ -1,6 +1,7 @@
 using MvvmScarletToolkit.Commands;
+using MvvmScarletToolkit.Wpf.Tests.Util;
 
-namespace MvvmScarletToolkit.Tests
+namespace MvvmScarletToolkit.Wpf.Tests
 {
     public sealed class ConcurrentCommandTests : TraceTestBase, IAsyncLifetime
     {

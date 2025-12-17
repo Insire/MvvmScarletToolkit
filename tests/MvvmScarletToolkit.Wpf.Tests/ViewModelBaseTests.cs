@@ -1,7 +1,8 @@
 using MvvmScarletToolkit.Observables;
-using MvvmScarletToolkit.Tests.Util;
+using MvvmScarletToolkit.Wpf.Tests.TestData;
+using MvvmScarletToolkit.Wpf.Tests.Util;
 
-namespace MvvmScarletToolkit.Tests
+namespace MvvmScarletToolkit.Wpf.Tests
 {
     public sealed class ViewModelBaseTests : TraceTestBase
     {

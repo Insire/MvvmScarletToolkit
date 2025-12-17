@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Observables;
 using System.ComponentModel;
 
-namespace MvvmScarletToolkit.Tests
+namespace MvvmScarletToolkit.Wpf.Tests.Util
 {
     internal static class Utils
     {
