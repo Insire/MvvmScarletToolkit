@@ -8,7 +8,7 @@ namespace MvvmScarletToolkit
 
         public ScarletLocalizationProvider()
         {
-            Languages = Enumerable.Empty<CultureInfo>();
+            Languages = [];
         }
 
         public string Translate(string key, CultureInfo culture)

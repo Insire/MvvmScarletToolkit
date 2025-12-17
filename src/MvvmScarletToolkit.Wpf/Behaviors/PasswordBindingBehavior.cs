@@ -35,7 +35,7 @@ namespace MvvmScarletToolkit
             nameof(ClearTextPassword),
             typeof(string),
             typeof(PasswordBindingBehavior),
-            new FrameworkPropertyMetadata(default(string), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         protected override void OnAttached()
         {

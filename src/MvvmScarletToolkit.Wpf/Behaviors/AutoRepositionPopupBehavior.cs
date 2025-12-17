@@ -56,12 +56,12 @@ namespace MvvmScarletToolkit
         private void AssociatedObject_Loaded(object? sender, RoutedEventArgs? e)
         {
             var root = AssociatedObject.PlacementTarget.FindParent<Window>();
-            if (root is not Window window)
+            if (root is null)
             {
                 return;
             }
 
-            var helper = new WindowInteropHelper(window);
+            var helper = new WindowInteropHelper(root);
             var hwndSource = HwndSource.FromHwnd(helper.Handle);
             if (hwndSource is null)
             {

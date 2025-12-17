@@ -95,39 +95,37 @@ namespace MvvmScarletToolkit.Wpf
             {
                 throw new InvalidOperationException("ScrollViewer not found.");
             }
-            else
+
+            if (scrollViewer.VerticalScrollBarVisibility is ScrollBarVisibility.Visible or ScrollBarVisibility.Auto)
             {
-                if (scrollViewer.VerticalScrollBarVisibility == ScrollBarVisibility.Visible || scrollViewer.VerticalScrollBarVisibility == ScrollBarVisibility.Auto)
+                var propertyDescriptor = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ScrollViewer.VerticalOffsetProperty, typeof(ScrollViewer));
+                propertyDescriptor?.RemoveValueChanged(scrollViewer, OnVerticalOffsetChanged);
+                propertyDescriptor?.AddValueChanged(scrollViewer, OnVerticalOffsetChanged);
+
+                void OnVerticalOffsetChanged(object? sender, EventArgs args)
                 {
-                    var propertyDescriptor = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ScrollViewer.VerticalOffsetProperty, typeof(ScrollViewer));
-                    propertyDescriptor?.RemoveValueChanged(scrollViewer, OnVerticalOffsetChanged);
-                    propertyDescriptor?.AddValueChanged(scrollViewer, OnVerticalOffsetChanged);
+                    var atBottom = scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight;
 
-                    void OnVerticalOffsetChanged(object? sender, EventArgs args)
+                    if (atBottom)
                     {
-                        var atBottom = scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight;
-
-                        if (atBottom)
-                        {
-                            CommandExecutionRequested?.Invoke(scrollViewer, EventArgs.Empty);
-                        }
+                        CommandExecutionRequested?.Invoke(scrollViewer, EventArgs.Empty);
                     }
                 }
+            }
 
-                if (scrollViewer.HorizontalScrollBarVisibility == ScrollBarVisibility.Visible || scrollViewer.VerticalScrollBarVisibility == ScrollBarVisibility.Auto)
+            if (scrollViewer.HorizontalScrollBarVisibility is ScrollBarVisibility.Visible or ScrollBarVisibility.Auto)
+            {
+                var propertyDescriptor = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ScrollViewer.HorizontalOffsetProperty, typeof(ScrollViewer));
+                propertyDescriptor?.RemoveValueChanged(scrollViewer, OnHorizontalOffsetChanged);
+                propertyDescriptor?.AddValueChanged(scrollViewer, OnHorizontalOffsetChanged);
+
+                void OnHorizontalOffsetChanged(object? sender, EventArgs args)
                 {
-                    var propertyDescriptor = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ScrollViewer.HorizontalOffsetProperty, typeof(ScrollViewer));
-                    propertyDescriptor?.RemoveValueChanged(scrollViewer, OnHorizontalOffsetChanged);
-                    propertyDescriptor?.AddValueChanged(scrollViewer, OnHorizontalOffsetChanged);
+                    var atBottom = scrollViewer.HorizontalOffset >= scrollViewer.ScrollableWidth;
 
-                    void OnHorizontalOffsetChanged(object? sender, EventArgs args)
+                    if (atBottom)
                     {
-                        var atBottom = scrollViewer.HorizontalOffset >= scrollViewer.ScrollableWidth;
-
-                        if (atBottom)
-                        {
-                            CommandExecutionRequested?.Invoke(scrollViewer, EventArgs.Empty);
-                        }
+                        CommandExecutionRequested?.Invoke(scrollViewer, EventArgs.Empty);
                     }
                 }
             }

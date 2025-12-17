@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit
             nameof(Data),
             typeof(object),
             typeof(BindingProxy),
-            new UIPropertyMetadata(default));
+            new UIPropertyMetadata(null));
 
         protected override Freezable CreateInstanceCore()
         {

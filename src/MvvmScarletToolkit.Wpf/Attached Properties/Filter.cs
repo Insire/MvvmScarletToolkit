@@ -37,7 +37,7 @@ namespace MvvmScarletToolkit
             "By",
             typeof(Predicate<object>),
             typeof(Filter),
-            new PropertyMetadata(default(Predicate<object>), OnByChanged));
+            new PropertyMetadata(null, OnByChanged));
 
         /// <summary>Helper for setting <see cref="ByProperty"/> on <paramref name="element"/>.</summary>
         /// <param name="element"><see cref="DependencyObject"/> to set <see cref="ByProperty"/> on.</param>
@@ -74,7 +74,7 @@ namespace MvvmScarletToolkit
             "RefreshWhenChanged",
             typeof(object),
             typeof(Filter),
-            new PropertyMetadata(default, OnRefreshWhenChangedChanged));
+            new PropertyMetadata(null, OnRefreshWhenChangedChanged));
 
         /// <summary>Helper for setting <see cref="RefreshWhenChangedProperty"/> on <paramref name="element"/>.</summary>
         /// <param name="element"><see cref="ItemsControl"/> to set <see cref="RefreshWhenChangedProperty"/> on.</param>
@@ -100,19 +100,19 @@ namespace MvvmScarletToolkit
                 return;
             }
 
-            if (d is ItemsControl itemsControl && itemsControl.Items.CanFilter)
+            switch (d)
             {
-                AttachFilterToCollectionView(itemsControl.Items, predicate);
-                return;
-            }
+                case ItemsControl { Items.CanFilter: true } itemsControl:
+                    AttachFilterToCollectionView(itemsControl.Items, predicate);
+                    return;
 
-            if (d is CollectionViewSource collectionViewSource)
-            {
-                if (collectionViewSource.View is null)
+                case CollectionViewSource { View: null } collectionViewSource:
                 {
                     var propertyDescriptor = DependencyPropertyDescriptor.FromProperty(CollectionViewSource.ViewProperty, typeof(CollectionViewSource));
                     propertyDescriptor?.RemoveValueChanged(collectionViewSource, OnViewChanged);
                     propertyDescriptor?.AddValueChanged(collectionViewSource, OnViewChanged);
+
+                    break;
 
                     void OnViewChanged(object? sender, EventArgs args)
                     {
@@ -123,11 +123,12 @@ namespace MvvmScarletToolkit
 
                         AttachFilterToCollectionView(collectionViewSource.View, predicate);
                     }
+
                 }
-                else
-                {
+
+                case CollectionViewSource collectionViewSource:
                     AttachFilterToCollectionView(collectionViewSource.View, predicate);
-                }
+                    break;
             }
         }
 
@@ -149,18 +150,21 @@ namespace MvvmScarletToolkit
 
         private static void OnRefreshWhenChangedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is CollectionViewSource collectionViewSource && collectionViewSource.View?.CanFilter == true)
+            switch (d)
             {
-                collectionViewSource.View.Refresh();
-            }
+                case CollectionViewSource { View.CanFilter: true } collectionViewSource:
+                    collectionViewSource.View.Refresh();
+                    break;
 
-            if (d is ItemsControl itemsControl && itemsControl.Items?.CanFilter == true)
-            {
-                // we dont care what property was bound to this,
-                // we only care that it changed. When it changes we refresh the view to force updating the filter
-                var view = CollectionViewSource.GetDefaultView(itemsControl.ItemsSource) as CollectionView;
+                case ItemsControl { Items.CanFilter: true } itemsControl:
+                {
+                    // we dont care what property was bound to this,
+                    // we only care that it changed. When it changes we refresh the view to force updating the filter
+                    var view = CollectionViewSource.GetDefaultView(itemsControl.ItemsSource) as CollectionView;
 
-                view?.Refresh();
+                    view?.Refresh();
+                    break;
+                }
             }
         }
     }

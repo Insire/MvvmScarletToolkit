@@ -37,7 +37,7 @@ namespace MvvmScarletToolkit
             nameof(SelectedItems)
             , typeof(IList)
             , typeof(MultiListBoxSelectionBehavior)
-            , new UIPropertyMetadata(default(IList), OnSelectedItemsChanged));
+            , new UIPropertyMetadata(null, OnSelectedItemsChanged));
 
         protected override void OnAttached()
         {

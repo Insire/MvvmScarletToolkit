@@ -2,8 +2,8 @@ namespace MvvmScarletToolkit
 {
     public interface IScarletDispatcher
     {
-        Task Invoke(Action action, CancellationToken token);
+        Task Invoke(Action? action, CancellationToken token);
 
-        Task<T> Invoke<T>(Func<T> action, CancellationToken token);
+        Task<T?> Invoke<T>(Func<T>? action, CancellationToken token);
     }
 }

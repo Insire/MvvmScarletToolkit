@@ -22,14 +22,17 @@ namespace MvvmScarletToolkit
         {
             var newTextLength = newText?.Length ?? 0;
 
-            // should we replace text?
-            if (selectedTextLength > 0 || isPaste || isInsertKeyToggled)
+            switch (selectedTextLength)
             {
-                if (selectedTextLength > 0)
-                {
+                // should we replace text?
+                case <= 0 when !isPaste && !isInsertKeyToggled:
+                    return text.Length + newTextLength;
+
+                case > 0:
                     text = text.Remove(caretIndex, selectedTextLength);
-                }
-                else
+                    break;
+
+                default:
                 {
                     var newLength = text.Length < newTextLength
                         ? text.Length
@@ -39,6 +42,8 @@ namespace MvvmScarletToolkit
                     {
                         text = text.Remove(caretIndex, newLength);
                     }
+
+                    break;
                 }
             }
 

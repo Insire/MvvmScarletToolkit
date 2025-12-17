@@ -32,44 +32,44 @@ namespace MvvmScarletToolkit.Wpf
             AssociatedObject.SelectionChanged += OnSelectionChanged;
         }
 
-        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private static void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is DataGrid dataGrid)
+            switch (sender)
             {
-                if (dataGrid.SelectedItem is null)
-                {
+                case DataGrid { SelectedItem: null }:
                     return;
-                }
 
-                var selectedItem = dataGrid.SelectedItem;
-
-                dataGrid.Dispatcher.Invoke(ScrollIntoView);
-                return;
-
-                void ScrollIntoView()
+                case DataGrid dataGrid:
                 {
-                    dataGrid.UpdateLayout();
+                    var selectedItem = dataGrid.SelectedItem;
 
-                    dataGrid.ScrollIntoView(selectedItem);
-                }
-            }
-
-            if (sender is ListBox listBox)
-            {
-                if (listBox.SelectedItem is null)
-                {
+                    dataGrid.Dispatcher.Invoke(ScrollIntoView);
                     return;
+
+                    void ScrollIntoView()
+                    {
+                        dataGrid.UpdateLayout();
+
+                        dataGrid.ScrollIntoView(selectedItem);
+                    }
                 }
 
-                var selectedItem = listBox.SelectedItem;
+                case ListBox { SelectedItem: null }:
+                    return;
 
-                listBox.Dispatcher.Invoke(ScrollIntoView);
-
-                void ScrollIntoView()
+                case ListBox listBox:
                 {
-                    listBox.UpdateLayout();
+                    var selectedItem = listBox.SelectedItem;
 
-                    listBox.ScrollIntoView(selectedItem);
+                    listBox.Dispatcher.Invoke(ScrollIntoView);
+                    return;
+
+                    void ScrollIntoView()
+                    {
+                        listBox.UpdateLayout();
+
+                        listBox.ScrollIntoView(selectedItem);
+                    }
                 }
             }
         }

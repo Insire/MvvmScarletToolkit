@@ -127,13 +127,9 @@ namespace MvvmScarletToolkit
                 {
                     _cachedStyle = AssociatedObject.Style;
                 }
+            }
 
-                AssociatedObject.SetValue(FrameworkElement.StyleProperty, style);
-            }
-            else
-            {
-                AssociatedObject.SetValue(FrameworkElement.StyleProperty, style);
-            }
+            AssociatedObject.SetValue(FrameworkElement.StyleProperty, style);
         }
 
         protected override void OnDetaching()

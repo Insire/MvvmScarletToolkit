@@ -115,15 +115,17 @@ namespace MvvmScarletToolkit.Wpf
 
         private void ItemContainerGeneratorItemsChanged(object sender, ItemsChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add || e.Action == NotifyCollectionChangedAction.Reset)
+            if (e.Action != NotifyCollectionChangedAction.Add && e.Action != NotifyCollectionChangedAction.Reset)
             {
-                // An item was added to the listbox, or listbox was cleared.
-                if (_autoScroll && !_userInteracting)
-                {
-                    // If automatic scrolling is turned on, scroll to the bottom to bring new item into view.
-                    // Do not do this if the user is actively interacting with the listbox.
-                    _scrollViewer?.ScrollToBottom();
-                }
+                return;
+            }
+
+            // An item was added to the listbox, or listbox was cleared.
+            if (_autoScroll && !_userInteracting)
+            {
+                // If automatic scrolling is turned on, scroll to the bottom to bring new item into view.
+                // Do not do this if the user is actively interacting with the listbox.
+                _scrollViewer?.ScrollToBottom();
             }
         }
 

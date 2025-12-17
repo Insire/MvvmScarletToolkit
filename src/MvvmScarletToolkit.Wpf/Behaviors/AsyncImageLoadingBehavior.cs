@@ -185,8 +185,12 @@ namespace MvvmScarletToolkit
             }
 
             var currentCts = new CancellationTokenSource();
+            var cts = _cancellationTokenSource;
+            if (cts is not null)
+            {
+                await cts.CancelAsync();
+            }
 
-            _cancellationTokenSource?.Cancel();
             _cancellationTokenSource = currentCts;
 
             var size = GetSize(newWidth, newHeight);

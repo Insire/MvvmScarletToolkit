@@ -112,6 +112,7 @@ namespace MvvmScarletToolkit
         /// Gets all children of the specified visual in the visual tree recursively including itself.
         /// </summary>
         /// <param name="dependencyObject">The visual to get the visual children for.</param>
+        /// <param name="filter"></param>
         /// <returns>All children of the specified visual in the visual tree recursively including itself.</returns>
         public static IEnumerable<T> FindVisualChildrenBreadthFirstOrSelf<T>(this DependencyObject dependencyObject, Func<T, bool>? filter = null)
             where T : DependencyObject
@@ -143,8 +144,9 @@ namespace MvvmScarletToolkit
         /// Gets all children of the specified visual in the visual tree recursively.
         /// </summary>
         /// <param name="dependencyObject">The visual to get the visual children for.</param>
+        /// <param name="filter"></param>
         /// <returns>All children of the specified visual in the visual tree recursively.</returns>
-        public static IEnumerable<T> FindVisualChildrenDepthFirst<T>(this DependencyObject? dependencyObject, Func<T, bool>? filter = null)
+        public static IEnumerable<T> FindVisualChildrenDepthFirst<T>(this DependencyObject? dependencyObject, Func<T, bool>? filter)
             where T : DependencyObject
         {
             if (dependencyObject is null)
@@ -172,6 +174,7 @@ namespace MvvmScarletToolkit
         /// Gets all children of the specified visual in the visual tree recursively including itself.
         /// </summary>
         /// <param name="dependencyObject">The visual to get the visual children for.</param>
+        /// <param name="filter"></param>
         /// <returns>All children of the specified visual in the visual tree recursively including itself.</returns>
         public static IEnumerable<T> FindVisualChildrenDepthFirstOrSelf<T>(this DependencyObject dependencyObject, Func<T, bool>? filter = null)
             where T : DependencyObject

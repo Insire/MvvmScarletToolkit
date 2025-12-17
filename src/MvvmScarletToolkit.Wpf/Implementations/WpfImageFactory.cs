@@ -25,7 +25,7 @@ namespace MvvmScarletToolkit.Wpf
                 image.BeginInit();
                 image.CacheOption = BitmapCacheOption.OnLoad;
                 image.StreamSource = stream;
-                image.StreamSource.Flush();
+                await image.StreamSource.FlushAsync(cancellationToken);
                 image.EndInit();
                 image.Freeze();
 
@@ -64,7 +64,8 @@ namespace MvvmScarletToolkit.Wpf
 
         private static BitmapSource ToResizedBitmapSource(BitmapImage image, ImageSize requestedSize)
         {
-            if (image.Width != requestedSize.Width || image.Height != requestedSize.Height)
+            const double tolerance = 0.005d;
+            if (Math.Abs(image.Width - requestedSize.Width) > tolerance || Math.Abs(image.Height - requestedSize.Height) > tolerance)
             {
                 return new TransformedBitmap(image, new ScaleTransform(0.5, 0.5));
             }

@@ -44,15 +44,13 @@ namespace MvvmScarletToolkit
                 return;
             }
 
+            element.Loaded -= OnLoaded;
             if (enabled)
             {
-                element.Loaded -= OnLoaded;
                 element.Loaded += OnLoaded;
             }
-            else
-            {
-                element.Loaded -= OnLoaded;
-            }
+
+            return;
 
             // will be fired each time the control is loaded. E.g. when a theme change occurs, this will trigger again
             // see: https://docs.microsoft.com/en-us/dotnet/api/system.windows.frameworkelement.loaded#remarks

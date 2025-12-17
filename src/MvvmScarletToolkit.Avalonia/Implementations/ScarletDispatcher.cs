@@ -27,7 +27,7 @@ namespace MvvmScarletToolkit
             invokeSynchronous = value;
         }
 
-        public async Task Invoke(Action action, CancellationToken token)
+        public async Task Invoke(Action? action, CancellationToken token)
         {
             if (action is null)
             {
@@ -43,7 +43,7 @@ namespace MvvmScarletToolkit
             await _dispatcherObject.InvokeAsync(action, _priority, token);
         }
 
-        public async Task<T> Invoke<T>(Func<T> action, CancellationToken token)
+        public async Task<T?> Invoke<T>(Func<T>? action, CancellationToken token)
         {
             if (action is null)
             {

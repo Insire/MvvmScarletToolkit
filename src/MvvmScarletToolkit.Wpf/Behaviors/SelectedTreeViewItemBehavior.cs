@@ -36,7 +36,7 @@ namespace MvvmScarletToolkit
             nameof(SelectedItem),
             typeof(object),
             typeof(SelectedTreeViewItemBehavior),
-             new FrameworkPropertyMetadata(default, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         protected override void OnAttached()
         {
