@@ -5,7 +5,7 @@ namespace MvvmScarletToolkit.Tests
         [Fact]
         public void Ctor_DoesntThrow()
         {
-            new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory);
+            _=new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory);
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace MvvmScarletToolkit.Tests
         {
             var builder = new ScarletCommandBuilder(Utils.GetTestDispatcher(), Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestMessenger(), Utils.GetTestExitService(), Utils.GetTestEventManager(), Utils.TestBusyStackFactory);
 
-            var context = builder.Create<object>((_, __) => Task.CompletedTask, (_) => true);
+            var context = builder.Create<object>((_, _) => Task.CompletedTask, (_) => true);
             Assert.NotNull(context);
         }
     }

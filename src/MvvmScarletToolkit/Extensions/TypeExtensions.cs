@@ -1,5 +1,3 @@
-using System;
-
 namespace MvvmScarletToolkit
 {
     public static class TypeExtensions

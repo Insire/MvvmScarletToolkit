@@ -1,7 +1,4 @@
 using MvvmScarletToolkit.Observables;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features

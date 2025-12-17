@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace MvvmScarletToolkit.Observables
 {
     public abstract class Scenes : ViewModelListBase<Scene>

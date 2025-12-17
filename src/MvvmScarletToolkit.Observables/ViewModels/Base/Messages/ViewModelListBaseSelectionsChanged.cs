@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using System.Collections.Generic;
 
 namespace MvvmScarletToolkit.Observables
 {

@@ -1,6 +1,5 @@
 using Jot;
 using MvvmScarletToolkit.Wpf.Samples.Features;
-using System;
 using System.Windows;
 
 namespace MvvmScarletToolkit.Wpf.Samples

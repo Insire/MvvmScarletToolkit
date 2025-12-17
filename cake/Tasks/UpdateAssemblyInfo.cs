@@ -1,5 +1,6 @@
 using Cake.Common.Solution.Project.Properties;
 using Cake.Frosting;
+using System.Globalization;
 
 namespace Build.Tasks
 {
@@ -18,8 +19,8 @@ namespace Build.Tasks
 
                 InternalsVisibleTo = assemblyInfoParseResult.InternalsVisibleTo,
 
-                MetaDataAttributes = new[]
-                {
+                MetaDataAttributes =
+                [
                     new AssemblyInfoMetadataAttribute()
                     {
                         Key = "Platform",
@@ -28,7 +29,7 @@ namespace Build.Tasks
                     new AssemblyInfoMetadataAttribute()
                     {
                         Key = "CompileDate",
-                        Value = "[UTC]" + DateTime.UtcNow.ToString(),
+                        Value = "[UTC]" + DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
                     },
                     new AssemblyInfoMetadataAttribute()
                     {
@@ -49,8 +50,8 @@ namespace Build.Tasks
                     {
                         Key = "Version",
                         Value = context.GitVersion?.SemVer2 ?? "",
-                    },
-                }
+                    }
+                ]
             };
 
             context.CreateAssemblyInfo(context.AssemblyInfoFile, settings);

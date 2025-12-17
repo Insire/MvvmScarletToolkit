@@ -75,10 +75,10 @@ namespace MvvmScarletToolkit.Tests
             context = _builder.Create((object? _) => Task.CompletedTask, () => true);
             Assert.NotNull(context);
 
-            context = _builder.Create((object? _, CancellationToken __) => Task.CompletedTask);
+            context = _builder.Create((object? _, CancellationToken _) => Task.CompletedTask);
             Assert.NotNull(context);
 
-            context = _builder.Create((_, __) => Task.CompletedTask, (object? _) => true);
+            context = _builder.Create((_, _) => Task.CompletedTask, (object? _) => true);
             Assert.NotNull(context);
         }
     }

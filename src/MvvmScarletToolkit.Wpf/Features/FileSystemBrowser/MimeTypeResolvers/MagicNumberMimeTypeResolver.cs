@@ -1,6 +1,5 @@
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System.IO;
-using System.Linq;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
 {

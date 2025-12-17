@@ -2,10 +2,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces
 {

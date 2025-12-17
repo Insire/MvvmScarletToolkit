@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace MvvmScarletToolkit.Wpf
 {
     internal interface IParamParser

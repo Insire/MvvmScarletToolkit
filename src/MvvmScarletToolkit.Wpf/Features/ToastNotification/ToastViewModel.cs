@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 
 namespace MvvmScarletToolkit.Wpf
 {

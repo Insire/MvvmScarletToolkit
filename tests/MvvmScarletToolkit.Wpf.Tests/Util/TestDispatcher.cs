@@ -1,14 +1,10 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace MvvmScarletToolkit.Tests.Util
 {
     internal sealed class TestDispatcher : IScarletDispatcher
     {
         public Task Invoke(Action action, CancellationToken token)
         {
-            action?.Invoke();
+            action.Invoke();
             return Task.CompletedTask;
         }
 

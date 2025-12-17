@@ -1,6 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
 {
@@ -8,15 +6,8 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
     {
         public GroupingViewModel Groups { get; }
 
-        private Predicate<object>? _filter;
-        public Predicate<object>? Filter
-        {
-            get { return _filter; }
-            private set
-            {
-                SetProperty(ref _filter, value);
-            }
-        }
+        [ObservableProperty]
+        public partial Predicate<object>? Filter { get; private set; }
 
         [ObservableProperty]
         public partial string FilterText { get; set; }

@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-
 namespace MvvmScarletToolkit.Commands
 {
     internal sealed class NoCancellationCommand : ICancelCommand

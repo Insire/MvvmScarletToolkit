@@ -1,6 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace MvvmScarletToolkit.Commands
 {
     internal sealed class ConcurrentCancelCommand : GenericConcurrentCommandBase, ICancelCommand

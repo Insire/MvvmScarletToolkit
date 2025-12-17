@@ -4,8 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Avalonia.Samples.Views;
 using MvvmScarletToolkit.Core.Samples.Features.Busy;
 using MvvmScarletToolkit.Core.Samples.Features.Enums;
-using System;
-using System.Collections.Generic;
 
 namespace MvvmScarletToolkit.Avalonia.Samples
 {

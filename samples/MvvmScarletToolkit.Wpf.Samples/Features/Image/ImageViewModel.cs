@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MvvmScarletToolkit.Observables;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 {

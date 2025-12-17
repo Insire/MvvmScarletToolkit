@@ -1,9 +1,6 @@
 using Microsoft.Xaml.Behaviors;
-using System;
-using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;

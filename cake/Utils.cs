@@ -10,25 +10,25 @@ namespace Build
     {
         public static void MergeReports(this BuildContext context, string pattern, ReportGeneratorReportType type, string subFolder)
         {
-            var ReportGeneratorSettings = new ReportGeneratorSettings()
+            var reportGeneratorSettings = new ReportGeneratorSettings()
             {
-                AssemblyFilters = new[]
-                {
+                AssemblyFilters =
+                [
                     "-MvvmScarletToolkit.Tests*",
-                    "-xunit*",
-                },
-                ClassFilters = new[]
-                {
+                    "-xunit*"
+                ],
+                ClassFilters =
+                [
                     "-System*",
-                    "-Microsoft*",
-                },
-                ReportTypes = new[]
-                {
+                    "-Microsoft*"
+                ],
+                ReportTypes =
+                [
                     type
-                },
+                ],
             };
 
-            context.ReportGenerator(new GlobPattern(pattern), context.ReportsPath.Combine(subFolder), ReportGeneratorSettings);
+            context.ReportGenerator(new GlobPattern(pattern), context.ReportsPath.Combine(subFolder), reportGeneratorSettings);
         }
 
         public static void Clean(this BuildContext context, bool cleanBin, bool cleanObj, bool cleanOutput, bool cleanMisc)

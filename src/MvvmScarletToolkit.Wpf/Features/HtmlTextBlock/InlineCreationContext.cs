@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Windows.Media;
 
 namespace MvvmScarletToolkit.Wpf

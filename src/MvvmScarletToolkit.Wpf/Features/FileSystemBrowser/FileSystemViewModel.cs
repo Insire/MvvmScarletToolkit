@@ -6,14 +6,11 @@ using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {

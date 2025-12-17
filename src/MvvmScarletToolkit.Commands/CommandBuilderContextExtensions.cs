@@ -1,5 +1,4 @@
 using MvvmScarletToolkit.Commands;
-using System;
 
 namespace MvvmScarletToolkit
 {

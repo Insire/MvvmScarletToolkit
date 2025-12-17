@@ -1,15 +1,10 @@
 using JetBrains.Annotations;
 using MoreLinq;
 using MvvmScarletToolkit.Core.Samples.Features;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 {

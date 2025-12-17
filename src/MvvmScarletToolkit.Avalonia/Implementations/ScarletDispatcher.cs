@@ -1,8 +1,5 @@
 using Avalonia.Threading;
-using System;
 using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit
 {

@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 
 namespace MvvmScarletToolkit.Observables
 {

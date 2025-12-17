@@ -98,7 +98,7 @@ namespace MvvmScarletToolkit.Tests
         public void Build_ShouldAddCustomCancellationSupport()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var customCancelCommand = NSubstitute.Substitute.For<ICancelCommand>();
+            var customCancelCommand = Substitute.For<ICancelCommand>();
             var command = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
                 .WithCustomCancellation(customCancelCommand)
                 .Build();
@@ -182,7 +182,7 @@ namespace MvvmScarletToolkit.Tests
         public void Build_ShouldAssignBusyStack()
         {
             var commandManager = Utils.GetTestCommandManager();
-            var customBusyStack = NSubstitute.Substitute.For<IBusyStack>();
+            var customBusyStack = Substitute.For<IBusyStack>();
             var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
 
             context.WithBusyNotification(customBusyStack);
@@ -219,7 +219,7 @@ namespace MvvmScarletToolkit.Tests
             Assert.Throws<ArgumentNullException>(() => context.WithAsyncCancellation());
             Assert.Throws<ArgumentNullException>(() => context.WithCustomCancellation(Substitute.For<ICancelCommand>()));
 
-            Assert.Throws<ArgumentNullException>(() => context.WithBusyNotification(NSubstitute.Substitute.For<IBusyStack>()));
+            Assert.Throws<ArgumentNullException>(() => context.WithBusyNotification(Substitute.For<IBusyStack>()));
             Assert.Throws<ArgumentNullException>(() => context.WithSingleExecution());
         }
     }

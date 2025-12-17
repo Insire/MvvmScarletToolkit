@@ -5,7 +5,6 @@ using MvvmScarletToolkit.Core.Samples.Features.ContextMenu;
 using MvvmScarletToolkit.Core.Samples.Features.Process;
 using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.Observables;
-using System.Threading;
 
 namespace MvvmScarletToolkit.Avalonia.Samples.Features
 {

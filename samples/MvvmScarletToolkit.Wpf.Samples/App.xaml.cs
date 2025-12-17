@@ -21,12 +21,10 @@ using MvvmScarletToolkit.Wpf.Samples.Features.DataGrid;
 using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using Serilog;
-using System;
 using System.IO;
 using System.Net.Http;
 using System.Reactive.Concurrency;
 using System.Runtime.Versioning;
-using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 

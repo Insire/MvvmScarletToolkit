@@ -11,7 +11,6 @@ using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using System.Net.Http;
 using System.Reactive.Concurrency;
-using System.Threading;
 using EnumViewModel = MvvmScarletToolkit.Core.Samples.Features.Enums.EnumViewModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features

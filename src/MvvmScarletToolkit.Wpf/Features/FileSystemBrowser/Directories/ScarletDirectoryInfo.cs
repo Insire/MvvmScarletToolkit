@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories

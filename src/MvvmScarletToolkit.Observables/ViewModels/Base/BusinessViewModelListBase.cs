@@ -1,9 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Commands;
-using System;
 using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Observables

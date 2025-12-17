@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace MvvmScarletToolkit.Wpf
 {
     internal sealed class ParamParser : IParamParser

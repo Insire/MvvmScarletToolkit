@@ -1,5 +1,4 @@
 using MvvmScarletToolkit.Observables;
-using System;
 
 namespace MvvmScarletToolkit.Tests
 {

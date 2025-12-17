@@ -5,8 +5,6 @@ using Avalonia.Markup.Xaml;
 using MvvmScarletToolkit.Avalonia.Samples.Features;
 using MvvmScarletToolkit.Avalonia.Samples.Views;
 using MvvmScarletToolkit.Observables;
-using System.Linq;
-using System.Threading;
 
 namespace MvvmScarletToolkit.Avalonia.Samples;
 

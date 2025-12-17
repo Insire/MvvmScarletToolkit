@@ -14,13 +14,13 @@ namespace MvvmScarletToolkit.Tests
         [Fact]
         public void Ctor_DoesNotThrow()
         {
-            new DerivedViewModelBase(Utils.GetTestCommandBuilder());
+            _ = new DerivedViewModelBase(Utils.GetTestCommandBuilder());
         }
 
         [Fact]
         public void Ctor_DoesNotThrowForNullModel()
         {
-            new DerivedObjectViewModelBase(Utils.GetTestCommandBuilder(), null);
+            _=new DerivedObjectViewModelBase(Utils.GetTestCommandBuilder(), null);
         }
 
         [Fact]
