@@ -22,7 +22,7 @@ namespace MvvmScarletToolkit.Avalonia.Samples
                 // [typeof(PasswordViewModel)]=typeof(),
                 // [typeof(ProcessViewModel)]=typeof(),
                 // [typeof(ContextMenuViewModels)]=typeof(),
-                [typeof(EnumViewModel)] = typeof(EnumsView),
+                [typeof(EnumsViewModel)] = typeof(EnumsView),
                 // [typeof(FormViewModel)]=typeof(),
                 // [typeof(ObservableDictionaryViewModel)]=typeof(),
             };

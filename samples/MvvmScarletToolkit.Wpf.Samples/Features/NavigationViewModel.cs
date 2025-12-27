@@ -2,6 +2,7 @@ using MvvmScarletToolkit.Core.Samples.Features;
 using MvvmScarletToolkit.Core.Samples.Features.AsyncState;
 using MvvmScarletToolkit.Core.Samples.Features.Busy;
 using MvvmScarletToolkit.Core.Samples.Features.ContextMenu;
+using MvvmScarletToolkit.Core.Samples.Features.Enums;
 using MvvmScarletToolkit.Core.Samples.Features.Process;
 using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.Observables;
@@ -11,7 +12,6 @@ using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using System.Net.Http;
 using System.Reactive.Concurrency;
-using EnumViewModel = MvvmScarletToolkit.Core.Samples.Features.Enums.EnumViewModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
@@ -50,7 +50,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             contextMenu.Items[0].Items.Add(menuitem);
 
             Add("MVVM ContextMenus", contextMenu);
-            Add("Binding Enum values", new EnumViewModel());
+            Add("Binding Enum values", new EnumsViewModel(commandBuilder));
             Add("MVVM Toast-Notification", new ToastsViewModel(commandBuilder));
             Add("Input Prevention", new FormViewModel());
             Add("ObservableDictionary", new ObservableDictionaryViewModel());

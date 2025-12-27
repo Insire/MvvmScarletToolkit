@@ -2,9 +2,11 @@ using MvvmScarletToolkit.Core.Samples.Features;
 using MvvmScarletToolkit.Core.Samples.Features.AsyncState;
 using MvvmScarletToolkit.Core.Samples.Features.Busy;
 using MvvmScarletToolkit.Core.Samples.Features.ContextMenu;
+using MvvmScarletToolkit.Core.Samples.Features.Enums;
 using MvvmScarletToolkit.Core.Samples.Features.Process;
 using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.Observables;
+using EnumViewModel = MvvmScarletToolkit.Observables.EnumViewModel;
 
 namespace MvvmScarletToolkit.Avalonia.Samples.Features
 {
@@ -14,7 +16,7 @@ namespace MvvmScarletToolkit.Avalonia.Samples.Features
             : base(in commandBuilder, in localizationsViewModel)
         {
             Add("State changes in a tree structure", new BusyViewModel(commandBuilder));
-            Add("Binding Enum values", new EnumViewModel());
+            Add("Binding Enum values", new EnumsViewModel(commandBuilder));
             Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
             Add("ConcurrentCommands and state changes", new AsyncStateListViewModel(commandBuilder));
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));

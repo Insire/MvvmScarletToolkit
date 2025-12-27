@@ -244,24 +244,6 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type observables:EnumViewModel}">
-                    <DockPanel>
-                        <StackPanel VerticalAlignment="Center"
-                                    DockPanel.Dock="Left"
-                                    Orientation="Vertical">
-                            <RadioButton Content="None" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static enums:ViewModelEnum.None}}" />
-                            <RadioButton Content="AnotherValue" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static enums:ViewModelEnum.AnotherValue}}" />
-                            <RadioButton Content="SomeValue" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static enums:ViewModelEnum.SomeValue}}" />
-                        </StackPanel>
-                        <Border HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                BorderBrush="Black"
-                                BorderThickness="1">
-                            <TextBlock Text="{Binding Value}" />
-                        </Border>
-                    </DockPanel>
-                </DataTemplate>
-
                 <DataTemplate DataType="{x:Type contextmenu:ContextMenuViewModels}">
                     <Grid Background="Transparent">
                         <Grid.ContextMenu>

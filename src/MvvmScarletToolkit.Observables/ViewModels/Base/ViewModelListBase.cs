@@ -129,12 +129,14 @@ namespace MvvmScarletToolkit.Observables
         /// </para>
         /// </summary>
         /// <param name="viewModel">the viewmodel instance to be added</param>
-        protected void AddUnchecked(TViewModel viewModel)
+        protected TViewModel AddUnchecked(TViewModel viewModel)
         {
             _items.Add(viewModel);
+
+            return viewModel;
         }
 
-        public Task Add(TViewModel item)
+        public Task Add(TViewModel? item)
         {
             if (IsDisposed)
             {
@@ -143,7 +145,7 @@ namespace MvvmScarletToolkit.Observables
 
             if (item is null)
             {
-                return Task.CompletedTask;
+                throw new ArgumentNullException(nameof(item));
             }
 
             return Add(item, CancellationToken.None);

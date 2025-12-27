@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit
             return value;
         }
 
-        public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (parameter is null)
             {
