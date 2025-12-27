@@ -7,8 +7,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\shared\MvvmScarletToolkit.Test.Tracing\MvvmScarletToolkit.Test.Tracing.csproj" />
     <ProjectReference Include="..\..\src\MvvmScarletToolkit.Mediator\MvvmScarletToolkit.Mediator.csproj" />
+    <ProjectReference Include="..\shared\MvvmScarletToolkit.Test.Tracing\MvvmScarletToolkit.Test.Tracing.csproj" />
   </ItemGroup>
 
   <ItemGroup>
