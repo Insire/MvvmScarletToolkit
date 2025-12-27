@@ -17,9 +17,9 @@
             </ContextMenu>
         </TreeView.ContextMenu>
         <TreeView.DataTemplates>
-            <DataTemplate DataType="features:BusyViewModel">
+            <TreeDataTemplate DataType="features:BusyViewModel" ItemsSource="{Binding Items}">
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding IsBusy}" />
+                    <CheckBox IsChecked="{Binding IsBusy, Mode=OneWay}" IsHitTestVisible="False" />
                     <TextBlock VerticalAlignment="Center" Text="Container" />
                     <StackPanel.ContextMenu>
                         <ContextMenu>
@@ -28,11 +28,11 @@
                         </ContextMenu>
                     </StackPanel.ContextMenu>
                 </StackPanel>
-            </DataTemplate>
+            </TreeDataTemplate>
 
             <DataTemplate DataType="features:ObservableBusyViewModel">
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding IsBusy}" />
+                    <CheckBox IsChecked="{Binding IsBusy, Mode=OneWay}" IsHitTestVisible="False" />
                     <TextBlock VerticalAlignment="Center" Text="Child" />
 
                     <StackPanel.ContextMenu>
