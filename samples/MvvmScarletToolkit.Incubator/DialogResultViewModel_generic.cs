@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit
         }
 
         protected DialogResultViewModel(IScarletCommandBuilder commandBuilder, TResult model)
-            : base(commandBuilder, new ViewModelContainer<TResult>(model))
+            : base(commandBuilder, new ViewModelContainer<TResult>(model, commandBuilder.Messenger))
         {
             CloseCommand = commandBuilder
                 .Create(Close, CanClose)

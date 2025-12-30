@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Geometry
             _geomtries = Enumerable.Range(0, 5000)
                                     .Select(c => (c % (97 - 32)) + 32)
                                     .Select(c => (char)c)
-                                    .Select(c => new GeometryContainer(BuildGeometry(new string(c, 1), _typeface, _numberSubstitution)))
+                                    .Select(c => new GeometryContainer(BuildGeometry(new string(c, 1), _typeface, _numberSubstitution), commandBuilder.Messenger))
                                     .ToArray();
         }
 
