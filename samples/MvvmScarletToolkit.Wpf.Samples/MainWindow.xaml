@@ -1645,6 +1645,10 @@
                                   SelectedItem="{Binding SelectedChild.SelectedChild}" />
                     </DockPanel>
                 </DataTemplate>
+
+                <DataTemplate DataType="{x:Type enums:EnumsViewModel}">
+                    <controls:EnumsView />
+                </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
 
