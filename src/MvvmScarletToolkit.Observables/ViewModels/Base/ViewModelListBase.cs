@@ -9,7 +9,7 @@ using System.Windows.Input;
 namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
-    /// Collection ViewModelBase wrapping around an <see cref="ObservableCollection"/> that provides methods for threadsafe modification via the dispatcher
+    /// Collection ViewModelBase wrapping around an <see cref="ObservableCollection{T}"/> that provides methods for threadsafe modification via the dispatcher
     /// </summary>
     public abstract partial class ViewModelListBase<TViewModel> : ViewModelBase
         where TViewModel : class, INotifyPropertyChanged
@@ -282,12 +282,14 @@ namespace MvvmScarletToolkit.Observables
 
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() =>
-                {
-                    _items.Clear();
-                    OnPropertyChanged(nameof(Count));
-                    OnPropertyChanged(nameof(HasItems));
-                }, token).ConfigureAwait(false);
+                await Dispatcher
+                    .Invoke(() =>
+                    {
+                        _items.Clear();
+                        OnPropertyChanged(nameof(Count));
+                        OnPropertyChanged(nameof(HasItems));
+                    }, token)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -307,7 +309,7 @@ namespace MvvmScarletToolkit.Observables
         {
             using (BusyStack.GetToken())
             {
-                await RemoveRange(items?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()).ConfigureAwait(false);
+                await RemoveRange(items?.Cast<TViewModel>() ?? []).ConfigureAwait(false);
             }
         }
 
@@ -320,7 +322,7 @@ namespace MvvmScarletToolkit.Observables
         protected bool CanRemoveRange(IList items)
         {
             return !IsDisposed
-                && CanRemoveRange(items?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>());
+                && CanRemoveRange(items?.Cast<TViewModel>() ?? []);
         }
 
         protected virtual bool CanRemove(TViewModel? item)
@@ -331,9 +333,8 @@ namespace MvvmScarletToolkit.Observables
             }
 
             return !IsDisposed
-                && CanClear()
-                && item is not null
-                && _items.Contains(item);
+                   && CanClear()
+                   && _items.Contains(item);
         }
 
         private bool CanRemove()
@@ -378,7 +379,7 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-            Messenger.Send(new ViewModelListBaseSelectionsChanged<TViewModel>(SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
+            Messenger.Send(new ViewModelListBaseSelectionsChanged<TViewModel>(SelectedItems?.Cast<TViewModel>() ?? []));
         }
 
         protected override async void Dispose(bool disposing)

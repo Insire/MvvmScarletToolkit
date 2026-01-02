@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Observables
         protected Scenes(in IScarletCommandBuilder commandBuilder, in LocalizationsViewModel localizationsViewModel)
             : base(commandBuilder)
         {
-            _localizationsViewModel = localizationsViewModel ?? throw new ArgumentNullException(nameof(LocalizationsViewModel));
+            _localizationsViewModel = localizationsViewModel ?? throw new ArgumentNullException(nameof(localizationsViewModel));
             _disposeables = new List<IDisposable>();
         }
 

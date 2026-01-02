@@ -11,12 +11,11 @@ namespace MvvmScarletToolkit.Observables
     public abstract partial class DomainViewModelListBase<TViewModel> : BusinessViewModelListBase<TViewModel>
         where TViewModel : class, INotifyPropertyChanged
     {
-        private int _total;
         [Bindable(true, BindingDirection.TwoWay)]
         public int Total
         {
-            get { return _total; }
-            protected set { SetProperty(ref _total, value); }
+            get { return field; }
+            protected set { SetProperty(ref field, value); }
         }
 
         [ObservableProperty]

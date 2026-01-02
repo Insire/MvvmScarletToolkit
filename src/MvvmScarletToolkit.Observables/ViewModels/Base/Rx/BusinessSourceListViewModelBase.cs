@@ -22,31 +22,28 @@ namespace MvvmScarletToolkit
         [Bindable(true, BindingDirection.OneWay)]
         public ObservableCollection<TViewModel> SelectedItems { get; }
 
-        private TViewModel? _selectedItem;
         [Bindable(true, BindingDirection.TwoWay)]
         public virtual TViewModel? SelectedItem
         {
-            get { return _selectedItem; }
-            set { SetProperty(ref _selectedItem, value); }
+            get { return field; }
+            set { SetProperty(ref field, value); }
         }
 
-        private bool _isLoaded;
         /// <summary>
         /// Indicates whether <see cref="Load"/> has been called already
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsLoaded
         {
-            get { return _isLoaded; }
-            protected set { SetProperty(ref _isLoaded, value); }
+            get { return field; }
+            protected set { SetProperty(ref field, value); }
         }
 
-        private bool _isBusy;
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsBusy
         {
-            get { return _isBusy; }
-            protected set { SetProperty(ref _isBusy, value); }
+            get { return field; }
+            protected set { SetProperty(ref field, value); }
         }
 
         [Bindable(true, BindingDirection.OneWay)]
@@ -61,7 +58,7 @@ namespace MvvmScarletToolkit
 
         private readonly ConcurrentCommandBase _refreshCommand;
         /// <summary>
-        /// Clears <see cref="Items"/> to add new instances
+        /// Clears <see cref="SourceListViewModelBase{TViewModel}.Items"/> to add new instances
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand RefreshCommand => _refreshCommand;
@@ -75,14 +72,14 @@ namespace MvvmScarletToolkit
 
         private readonly ConcurrentCommandBase _removeRangeCommand;
         /// <summary>
-        /// Removes all instances that are in <see cref="SelectedItems"/> from <see cref="Items"/>
+        /// Removes all instances that are in <see cref="SelectedItems"/> from <see cref="SourceListViewModelBase{TViewModel}.Items"/>
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand RemoveRangeCommand => _removeRangeCommand;
 
         private readonly ConcurrentCommandBase _removeCommand;
         /// <summary>
-        /// removes the instance in <see cref="SelectedItem"/> from <see cref="Items"/>
+        /// removes the instance in <see cref="SelectedItem"/> from <see cref="SourceListViewModelBase{TViewModel}.Items"/>
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand RemoveCommand => _removeCommand;
@@ -237,7 +234,7 @@ namespace MvvmScarletToolkit
                 && !_unloadCommand.IsBusy;
         }
 
-        public Task Add(TViewModel item)
+        public Task Add(TViewModel? item)
         {
             if (IsDisposed)
             {
@@ -326,7 +323,7 @@ namespace MvvmScarletToolkit
             return Remove(item, CancellationToken.None);
         }
 
-        public virtual Task Remove(TViewModel item, CancellationToken token)
+        public virtual Task Remove(TViewModel? item, CancellationToken token)
         {
             if (IsDisposed)
             {
@@ -384,7 +381,7 @@ namespace MvvmScarletToolkit
         {
             using (BusyStack.GetToken())
             {
-                await RemoveRange(items?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()).ConfigureAwait(false);
+                await RemoveRange(items?.Cast<TViewModel>() ?? []).ConfigureAwait(false);
             }
         }
 
@@ -397,7 +394,7 @@ namespace MvvmScarletToolkit
         protected bool CanRemoveRange(IList items)
         {
             return !IsDisposed
-                && CanRemoveRange(items?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>());
+                && CanRemoveRange(items?.Cast<TViewModel>() ?? []);
         }
 
         private bool CanRemoveRange()
@@ -413,8 +410,7 @@ namespace MvvmScarletToolkit
             }
 
             return !IsDisposed
-                && CanClear()
-                && item is not null
+                   && CanClear()
                 && Items.Contains(item);
         }
 

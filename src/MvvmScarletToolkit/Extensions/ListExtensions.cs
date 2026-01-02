@@ -25,7 +25,7 @@ namespace MvvmScarletToolkit
             UpdateItems(targetCollection, updateCollection, comparer, mapper, updater, targetFilter, _ => false);
         }
 
-        public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, in IEnumerable<T2> updateCollection, in Func<T1, T2, bool> comparer, in Func<T2, T1> mapper, in Action<T1, T2>? updater, in Func<T1, bool> targetFilter, in Func<T1, bool> ignoreItem)
+        public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, in IEnumerable<T2>? updateCollection, in Func<T1, T2, bool> comparer, in Func<T2, T1> mapper, in Action<T1, T2>? updater, in Func<T1, bool> targetFilter, in Func<T1, bool> ignoreItem)
         {
             if (updateCollection is null)
             {

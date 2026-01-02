@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit.Commands
         public override bool IsBusy => Command.IsBusy;
 
         [Bindable(true, BindingDirection.OneWay)]
-        public override Task Completion => Command.Completion;
+        public override Task? Completion => Command.Completion;
 
         protected ConcurrentCommandDecoratorBase(in IScarletCommandManager commandManager, in ConcurrentCommandBase command)
             : base(commandManager)

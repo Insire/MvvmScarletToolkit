@@ -227,27 +227,27 @@ namespace MvvmScarletToolkit.Observables
         {
             _shouldSuppressChanges = true;
 
-            if (!_disposedValue)
+            if (_disposedValue)
             {
-                if (disposing)
-                {
-                    foreach (var instance in _trackedInstances.Keys.ToArray())
-                    {
-                        instance.PropertyChanged -= OnPropertyChanged;
-                    }
+                return;
+            }
 
-                    _trackedInstances.Clear();
+            if (disposing)
+            {
+                foreach (var instance in _trackedInstances.Keys.ToArray())
+                {
+                    instance.PropertyChanged -= OnPropertyChanged;
                 }
 
-                _disposedValue = true;
+                _trackedInstances.Clear();
             }
+
+            _disposedValue = true;
         }
 
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
 
         private sealed class ChangeState

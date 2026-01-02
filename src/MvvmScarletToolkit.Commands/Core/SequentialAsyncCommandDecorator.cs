@@ -70,6 +70,11 @@ namespace MvvmScarletToolkit.Commands
         /// </summary>
         private async Task<bool> ShouldExecute()
         {
+            if (Completion is null)
+            {
+                return false;
+            }
+
             var state = Completion.Status;
 
             await Completion.ConfigureAwait(false);

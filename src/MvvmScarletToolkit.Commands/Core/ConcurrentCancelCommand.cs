@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Commands
         public ConcurrentCancelCommand(in IScarletCommandManager commandManager, in IScarletExceptionHandler exceptionHandler)
             : base(commandManager)
         {
-            _exceptionHandler = exceptionHandler ?? throw new System.ArgumentNullException(nameof(exceptionHandler));
+            _exceptionHandler = exceptionHandler ?? throw new ArgumentNullException(nameof(exceptionHandler));
         }
 
         public void NotifyCommandStarting()

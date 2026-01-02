@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Observables
     public sealed class ObservableBusyStack : IObservableBusyStack
     {
         private readonly string _id;
-        private readonly ConcurrentDictionary<IObserver<bool>, object> _observers;
+        private readonly ConcurrentDictionary<IObserver<bool>, object?> _observers;
         private readonly Action<bool> _onChanged;
 
         private int _items;
@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit.Observables
             _onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
 
             _id = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-            _observers = new ConcurrentDictionary<IObserver<bool>, object>();
+            _observers = new ConcurrentDictionary<IObserver<bool>, object?>();
         }
 
         public void Pull()
@@ -71,9 +71,8 @@ namespace MvvmScarletToolkit.Observables
         private void NotifySubscribers(bool newValue)
         {
             var observers = _observers.Keys.ToArray();
-            for (var i = 0; i < observers.Length; i++)
+            foreach (var observer in observers)
             {
-                var observer = observers[i];
                 InvokeOnChanged(observer, newValue);
             }
         }
@@ -100,7 +99,7 @@ namespace MvvmScarletToolkit.Observables
         }
 
         [DebuggerStepThrough]
-        private void InvokeOnChanged(IObserver<bool> observer, bool newValue)
+        private static void InvokeOnChanged(IObserver<bool> observer, bool newValue)
         {
             if (newValue)
             {
@@ -113,7 +112,7 @@ namespace MvvmScarletToolkit.Observables
         }
 
         /// <summary>
-        /// Returns a new <see cref="IDisposable"/> thats associated with <see cref="this"/> instance of a <see cref="IDisposable"/>
+        /// Returns a new <see cref="IDisposable"/> thats associated with this instance of a <see cref="IDisposable"/>
         /// </summary>
         /// <returns>a new <see cref="IDisposable"/></returns>
         /// <exception cref="ObjectDisposedException"></exception>

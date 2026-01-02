@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Observables
         public ViewModelListBaseSelectionChanging(in object sender, in TViewModel content)
             : base(content)
         {
-            Sender = sender ?? throw new System.ArgumentNullException(nameof(sender));
+            Sender = sender ?? throw new ArgumentNullException(nameof(sender));
         }
     }
 }

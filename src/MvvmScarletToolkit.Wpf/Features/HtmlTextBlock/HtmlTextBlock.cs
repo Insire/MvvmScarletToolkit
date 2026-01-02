@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Wpf
             nameof(Html),
             typeof(string),
             typeof(HtmlTextBlock),
-            new PropertyMetadata(string.Empty, new PropertyChangedCallback(OnHtmlChanged)));
+            new PropertyMetadata(string.Empty, OnHtmlChanged));
 
         public string Html
         {

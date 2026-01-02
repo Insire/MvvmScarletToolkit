@@ -6,12 +6,12 @@ namespace MvvmScarletToolkit
     {
         public static CommandBuilderContext<object?> Create(this IScarletCommandBuilder builder, Func<Task> execute)
         {
-            return builder.Create<object?>((_, __) => execute(), (_) => true);
+            return builder.Create<object?>((_, _) => execute(), (_) => true);
         }
 
         public static CommandBuilderContext<object?> Create(this IScarletCommandBuilder builder, Func<Task> execute, Func<bool> canExecute)
         {
-            return builder.Create<object?>((_, __) => execute(), (_) => canExecute());
+            return builder.Create<object?>((_, _) => execute(), (_) => canExecute());
         }
 
         public static CommandBuilderContext<object?> Create(this IScarletCommandBuilder builder, Func<CancellationToken, Task> execute)
@@ -26,12 +26,12 @@ namespace MvvmScarletToolkit
 
         public static CommandBuilderContext<TArgument> Create<TArgument>(this IScarletCommandBuilder builder, Func<Task> execute)
         {
-            return builder.Create<TArgument>((_, __) => execute(), (_) => true);
+            return builder.Create<TArgument>((_, _) => execute(), (_) => true);
         }
 
         public static CommandBuilderContext<TArgument> Create<TArgument>(this IScarletCommandBuilder builder, Func<Task> execute, Func<bool> canExecute)
         {
-            return builder.Create<TArgument>((_, __) => execute(), (_) => canExecute());
+            return builder.Create<TArgument>((_, _) => execute(), (_) => canExecute());
         }
 
         public static CommandBuilderContext<TArgument> Create<TArgument>(this IScarletCommandBuilder builder, Func<CancellationToken, Task> execute)
@@ -56,22 +56,22 @@ namespace MvvmScarletToolkit
 
         public static CommandBuilderContext<TArgument> Create<TArgument>(this IScarletCommandBuilder builder, Func<TArgument, Task> execute, Func<TArgument, bool> canExecute)
         {
-            return builder.Create<TArgument>((parameter, _) => execute(parameter), (parameter) => canExecute(parameter));
+            return builder.Create((parameter, _) => execute(parameter), canExecute);
         }
 
         public static CommandBuilderContext<TArgument> Create<TArgument>(this IScarletCommandBuilder builder, Func<TArgument, CancellationToken, Task> execute)
         {
-            return builder.Create<TArgument>((parameter, token) => execute(parameter, token), (_) => true);
+            return builder.Create(execute, (_) => true);
         }
 
         public static CommandBuilderContext<TArgument> Create<TArgument>(this IScarletCommandBuilder builder, Func<TArgument, CancellationToken, Task> execute, Func<bool> canExecute)
         {
-            return builder.Create<TArgument>((parameter, token) => execute(parameter, token), (_) => canExecute());
+            return builder.Create(execute, (_) => canExecute());
         }
 
         public static CommandBuilderContext<TArgument> Create<TArgument>(this IScarletCommandBuilder builder, Func<TArgument, CancellationToken, Task> execute, Func<TArgument, bool> canExecute)
         {
-            return builder.Create<TArgument>((parameter, token) => execute(parameter, token), (parameter) => canExecute(parameter));
+            return builder.Create(execute, canExecute);
         }
     }
 }

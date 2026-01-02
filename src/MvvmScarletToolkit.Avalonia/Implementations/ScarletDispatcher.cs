@@ -15,16 +15,16 @@ namespace MvvmScarletToolkit
 
         private readonly Dispatcher _dispatcherObject = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
-        private bool invokeSynchronous;
+        private bool _invokeSynchronous;
 
         internal bool GetInvokeSynchronous()
         {
-            return invokeSynchronous;
+            return _invokeSynchronous;
         }
 
         internal void SetInvokeSynchronous(bool value)
         {
-            invokeSynchronous = value;
+            _invokeSynchronous = value;
         }
 
         public async Task Invoke(Action? action, CancellationToken token)

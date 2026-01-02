@@ -1,4 +1,3 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 
 namespace MvvmScarletToolkit.Observables

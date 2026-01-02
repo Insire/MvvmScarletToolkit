@@ -34,7 +34,7 @@ namespace MvvmScarletToolkit.Observables
             : base(commandBuilder)
         {
             _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
-            PageSizes = pageSizes ?? throw new ArgumentNullException(nameof(viewModel));
+            PageSizes = pageSizes ?? throw new ArgumentNullException(nameof(pageSizes));
 
             NextCommand = commandBuilder.Create(Next, CanNext)
                 .WithSingleExecution()

@@ -5,6 +5,7 @@ namespace MvvmScarletToolkit.Wpf
         /// <summary>
         /// Show a toast notification for 5 seconds.
         /// </summary>
+        /// <param name="toastService"></param>
         /// <param name="title">The title of the toast.</param>
         /// <param name="body">The message to display.</param>
         /// <param name="toastType">The toast type to be displayed.</param>
@@ -16,6 +17,7 @@ namespace MvvmScarletToolkit.Wpf
         /// <summary>
         /// Show a toast notification for a given time frame.
         /// </summary>
+        /// <param name="toastService"></param>
         /// <param name="title">The title of the toast.</param>
         /// <param name="body">The message to display.</param>
         /// <param name="type">The toast type to be displayed.</param>

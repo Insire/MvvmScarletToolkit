@@ -10,7 +10,6 @@ namespace MvvmScarletToolkit.ImageLoading.Caches.Data
         private readonly IMemoryCache _memoryCache;
         private readonly ImageDataMemoryCacheOptions _options;
         private readonly ILogger<ImageDataMemoryCache> _logger;
-        private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
         private readonly string _prefix;
 
         public ImageDataMemoryCache(
@@ -20,12 +19,11 @@ namespace MvvmScarletToolkit.ImageLoading.Caches.Data
             ImageDataMemoryCacheOptions options)
         {
             _memoryCache = memoryCache;
-            _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
             _options = options;
             _logger = logger;
 
             var bytes = Encoding.UTF8.GetBytes(nameof(ImageDataMemoryCache));
-            using var resultStream = _recyclableMemoryStreamManager.GetStream(null, bytes.Length);
+            using var resultStream = recyclableMemoryStreamManager.GetStream(null, bytes.Length);
             resultStream.Write(bytes, 0, bytes.Length);
             resultStream.Seek(0, SeekOrigin.Begin);
 
@@ -35,12 +33,7 @@ namespace MvvmScarletToolkit.ImageLoading.Caches.Data
         /// <inheritdoc />
         public Task<Stream> GetStreamAsync(Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return Task.FromResult(Stream.Null);
-            }
-
-            if (!_options.IsEnabled)
+            if (cancellationToken.IsCancellationRequested || !_options.IsEnabled)
             {
                 return Task.FromResult(Stream.Null);
             }
@@ -48,12 +41,12 @@ namespace MvvmScarletToolkit.ImageLoading.Caches.Data
             var key = CreateKey(uri, requestedSize);
             if (_memoryCache.TryGetValue(key, out Stream? cachedImageStream))
             {
-                if (cachedImageStream is Stream nonNullStream)
+                if (cachedImageStream != null)
                 {
                     _logger.LogDebug("Resource with {Key} was found in memory", key);
-                    nonNullStream.Seek(0, SeekOrigin.Begin);
+                    cachedImageStream.Seek(0, SeekOrigin.Begin);
 
-                    return Task.FromResult(nonNullStream);
+                    return Task.FromResult(cachedImageStream);
                 }
                 else
                 {
@@ -71,12 +64,7 @@ namespace MvvmScarletToolkit.ImageLoading.Caches.Data
         /// <inheritdoc />
         public Task CacheStreamAsync(Stream imageDataStream, Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return Task.CompletedTask;
-            }
-
-            if (!_options.IsEnabled)
+            if (cancellationToken.IsCancellationRequested || !_options.IsEnabled)
             {
                 return Task.CompletedTask;
             }

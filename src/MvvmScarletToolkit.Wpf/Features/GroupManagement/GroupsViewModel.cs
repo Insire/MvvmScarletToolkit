@@ -18,18 +18,13 @@ namespace MvvmScarletToolkit
 
             Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, async (r, m) =>
             {
-                if (m.Value is null)
-                {
-                    return;
-                }
-
                 if (ReferenceEquals(m.Sender, r))
                 {
                     //Debug.WriteLine($"1 this instance({r.GetDebuggerDisplay()}) selection is changing => remove the previous value({m.Value.Name}) from the view");
                     // this instance selection is changing
                     // => remove the previous value from the view
                     var view = _collectionViewFactory.Invoke();
-                    await Dispatcher.Invoke(() => view?.GroupDescriptions.Remove(m.Value.GroupDescription));
+                    await Dispatcher.Invoke(() => view.GroupDescriptions.Remove(m.Value.GroupDescription));
                 }
                 else
                 {
@@ -42,18 +37,13 @@ namespace MvvmScarletToolkit
 
             Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, async (r, m) =>
             {
-                if (m.Value is null)
-                {
-                    return;
-                }
-
                 if (ReferenceEquals(m.Sender, r))
                 {
                     //Debug.WriteLine($"3 this instance({r.GetDebuggerDisplay()}) selection changed => add the current value({m.Value.Name}) to the view");
                     // this instance selection changed
                     // => add the current value to the view
                     var view = _collectionViewFactory.Invoke();
-                    await Dispatcher.Invoke(() => view?.GroupDescriptions.Add(m.Value.GroupDescription));
+                    await Dispatcher.Invoke(() => view.GroupDescriptions.Add(m.Value.GroupDescription));
                 }
                 else
                 {
@@ -67,7 +57,7 @@ namespace MvvmScarletToolkit
 
             Messenger.Register<GroupsViewModel, GroupsViewModelRemoved>(this, async (r, m) =>
             {
-                if (m?.Value?.SelectedItem is null)
+                if (m.Value.SelectedItem is null)
                 {
                     return;
                 }
@@ -80,7 +70,7 @@ namespace MvvmScarletToolkit
         public override async Task Clear(CancellationToken token)
         {
             var view = _collectionViewFactory.Invoke();
-            await Dispatcher.Invoke(() => view?.GroupDescriptions.Clear());
+            await Dispatcher.Invoke(() => view.GroupDescriptions.Clear());
 
             await base.Clear(token);
         }

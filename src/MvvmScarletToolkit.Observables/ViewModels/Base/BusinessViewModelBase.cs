@@ -10,12 +10,11 @@ namespace MvvmScarletToolkit.Observables
     /// </summary>
     public abstract class BusinessViewModelBase : ViewModelBase, IVirtualizationViewModel
     {
-        private bool _isLoaded;
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsLoaded
         {
-            get { return _isLoaded; }
-            protected set { SetProperty(ref _isLoaded, value); }
+            get { return field; }
+            protected set { SetProperty(ref field, value); }
         }
 
         private readonly ConcurrentCommandBase _loadCommand;

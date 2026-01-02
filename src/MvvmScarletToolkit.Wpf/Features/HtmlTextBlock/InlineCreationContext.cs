@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit.Wpf
         public bool Underline { get; private set; }
         public bool SubScript { get; private set; }
         public bool SuperScript { get; private set; }
-        public string HyperLink { get; private set; }
+        public string? HyperLink { get; private set; }
         public Color? Foreground { get; private set; }
 
         public InlineCreationContext()

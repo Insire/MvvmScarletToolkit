@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit.Wpf
             return _items.GetEnumerator();
         }
 
-        public virtual bool CanAdd(HtmlTag tag)
+        public virtual bool CanAdd(HtmlTag? tag)
         {
             if (tag is null || Tag.IsEndTag)
             {
@@ -56,7 +56,7 @@ namespace MvvmScarletToolkit.Wpf
 
         public IEnumerable<HtmlTag> GetTags()
         {
-            if (Tag.ID != -1)
+            if (Tag.Id != -1)
             {
                 yield return Tag;
             }
@@ -67,7 +67,7 @@ namespace MvvmScarletToolkit.Wpf
 
                 foreach (var tag in subnode.GetTags())
                 {
-                    if (tag.ID != -1)
+                    if (tag.Id != -1)
                     {
                         yield return tag;
                     }

@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit
         public GroupViewModel(IScarletCommandBuilder commandBuilder, PropertyInfo propertyInfo)
         : base(commandBuilder)
         {
-            ArgumentNullException.ThrowIfNull(propertyInfo, nameof(propertyInfo));
+            ArgumentNullException.ThrowIfNull(propertyInfo);
 
             _name = propertyInfo.Name;
             GroupDescription = new PropertyGroupDescription(propertyInfo.Name);

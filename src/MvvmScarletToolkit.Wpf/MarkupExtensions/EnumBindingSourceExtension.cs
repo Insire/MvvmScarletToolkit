@@ -124,7 +124,7 @@ namespace MvvmScarletToolkit
         {
             foreach (var field in type.GetFields(BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static))
             {
-                if (field.GetCustomAttributes(typeof(TAttribute), false).Length == 0)
+                if (field?.GetCustomAttributes(typeof(TAttribute), false).Length == 0)
                 {
                     yield return field?.GetValue(null);
                 }

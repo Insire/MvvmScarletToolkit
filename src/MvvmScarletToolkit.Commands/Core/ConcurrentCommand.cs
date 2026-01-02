@@ -26,7 +26,7 @@ namespace MvvmScarletToolkit.Commands
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             CancelCommand = _cancelCommand = cancelCommand ?? throw new ArgumentNullException(nameof(cancelCommand));
 
-            _internalBusyStack = busyStackFactory?.Invoke(hasItems => IsBusy = hasItems) ?? throw new ArgumentNullException(nameof(busyStackFactory));
+            _internalBusyStack = busyStackFactory.Invoke(hasItems => IsBusy = hasItems) ?? throw new ArgumentNullException(nameof(busyStackFactory));
         }
 
         internal ConcurrentCommand(in IScarletCommandManager commandManager,

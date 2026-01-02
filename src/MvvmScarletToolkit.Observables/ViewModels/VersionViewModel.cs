@@ -13,39 +13,40 @@ namespace MvvmScarletToolkit.Observables
         /// <summary>
         /// original value
         /// </summary>
-        public T Default { get; }
+        public T? Default { get; }
 
-        private T _current;
         /// <summary>
         /// new value
         /// </summary>
-        public virtual T Current
+        public virtual T? Current
         {
-            get { return _current; }
+            get;
             set
             {
-                if (SetProperty(ref _current, value))
+                if (!SetProperty(ref field, value))
                 {
-                    if (!EqualityComparer<T>.Default.Equals(_current, Default))
-                    {
-                        HasChanged = true;
-                    }
-
-                    OnPropertyChanged(nameof(CurrentOrDefault));
+                    return;
                 }
+
+                if (!EqualityComparer<T>.Default.Equals(field!, Default!))
+                {
+                    HasChanged = true;
+                }
+
+                OnPropertyChanged(nameof(CurrentOrDefault));
             }
         }
 
-        public T CurrentOrDefault => HasChanged ? Current : Default;
+        public T? CurrentOrDefault => HasChanged ? Current : Default;
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
-        public VersionViewModel(in T defaultValue)
+        public VersionViewModel(in T? defaultValue)
         {
             Default = defaultValue;
         }
 
-        public VersionViewModel(in T defaultValue, in T current)
+        public VersionViewModel(in T? defaultValue, in T? current)
         {
             Default = defaultValue;
             Current = current;

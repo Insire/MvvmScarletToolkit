@@ -4,7 +4,7 @@ using OpenTelemetry.Trace;
 
 namespace MvvmScarletToolkit.Test.Tracing.Otel.Fixtures
 {
-    public abstract class OpenTelemetryFixtureBase()
+    public abstract class OpenTelemetryFixtureBase
     {
         protected static TracerProvider CreateTracerProvider(ResourceBuilder builder, string tracerName)
         {

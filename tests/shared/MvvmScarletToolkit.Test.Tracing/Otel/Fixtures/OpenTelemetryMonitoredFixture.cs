@@ -23,8 +23,8 @@ namespace MvvmScarletToolkit.Test.Tracing.Otel.Fixtures
         public void Dispose()
         {
             TraceTestAttributeBase.ActivityForTestRun?.Stop();
-            _tracerProvider?.ForceFlush();
-            _tracerProvider?.Dispose();
+            _tracerProvider.ForceFlush();
+            _tracerProvider.Dispose();
         }
     }
 }

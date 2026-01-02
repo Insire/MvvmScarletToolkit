@@ -22,8 +22,8 @@ namespace MvvmScarletToolkit
         private Point _offset = new Point(0, 0);
         private Size _extent = new Size(0, 0);
         private Size _viewport = new Size(0, 0);
-        private int firstIndex;
-        private Size childSize;
+        private int _firstIndex;
+        private Size _childSize;
 
         private Size ChildSlotSize => new Size(ItemWidth, ItemHeight);
 
@@ -58,8 +58,8 @@ namespace MvvmScarletToolkit
 
         private void SetFirstRowViewItemIndex(int index)
         {
-            SetVerticalOffset(index / Math.Floor(_viewport.Width / childSize.Width));
-            SetHorizontalOffset(index / Math.Floor(_viewport.Height / childSize.Height));
+            SetVerticalOffset(index / Math.Floor(_viewport.Width / _childSize.Width));
+            SetHorizontalOffset(index / Math.Floor(_viewport.Height / _childSize.Height));
         }
 
         public void Resizing(object sender, EventArgs e)
@@ -69,11 +69,11 @@ namespace MvvmScarletToolkit
                 return;
             }
 
-            var firstIndexCache = firstIndex;
+            var firstIndexCache = _firstIndex;
             _abstractPanel = null;
             MeasureOverride(_viewport);
-            SetFirstRowViewItemIndex(firstIndex);
-            firstIndex = firstIndexCache;
+            SetFirstRowViewItemIndex(_firstIndex);
+            _firstIndex = firstIndexCache;
         }
 
         public int GetFirstVisibleSection()
@@ -234,7 +234,7 @@ namespace MvvmScarletToolkit
 
             while (itemIndex == -1)
             {
-                selected = (UIElement)VisualTreeHelper.GetParent(selected);
+                selected = (UIElement)VisualTreeHelper.GetParent(selected)!;
                 itemIndex = gen.IndexFromContainer(selected);
                 depth++;
             }
@@ -295,7 +295,7 @@ namespace MvvmScarletToolkit
 
             while (itemIndex == -1)
             {
-                selected = (UIElement)VisualTreeHelper.GetParent(selected);
+                selected = (UIElement)VisualTreeHelper.GetParent(selected)!;
                 itemIndex = gen.IndexFromContainer(selected);
                 depth++;
             }
@@ -350,7 +350,7 @@ namespace MvvmScarletToolkit
 
             while (itemIndex == -1)
             {
-                selected = (UIElement)VisualTreeHelper.GetParent(selected);
+                selected = (UIElement)VisualTreeHelper.GetParent(selected)!;
                 itemIndex = gen.IndexFromContainer(selected);
                 depth++;
             }
@@ -410,7 +410,7 @@ namespace MvvmScarletToolkit
 
             while (itemIndex == -1)
             {
-                selected = (UIElement)VisualTreeHelper.GetParent(selected);
+                selected = (UIElement)VisualTreeHelper.GetParent(selected)!;
                 itemIndex = gen.IndexFromContainer(selected);
                 depth++;
             }
@@ -565,8 +565,8 @@ namespace MvvmScarletToolkit
                             Debug.Assert(child == _children[childIndex], "Wrong child was generated");
                         }
 
-                        childSize = child.DesiredSize;
-                        var childRect = new Rect(new Point(currentX, currentY), childSize);
+                        _childSize = child.DesiredSize;
+                        var childRect = new Rect(new Point(currentX, currentY), _childSize);
                         if (isHorizontal)
                         {
                             maxItemSize = Math.Max(maxItemSize, childRect.Height);
@@ -715,7 +715,7 @@ namespace MvvmScarletToolkit
 
             while (itemIndex == -1)
             {
-                element = (UIElement)VisualTreeHelper.GetParent(element);
+                element = (UIElement)VisualTreeHelper.GetParent(element)!;
                 itemIndex = gen.IndexFromContainer(element);
             }
 
@@ -811,7 +811,7 @@ namespace MvvmScarletToolkit
             ScrollOwner?.InvalidateScrollInfo();
 
             InvalidateMeasure();
-            firstIndex = GetFirstVisibleIndex();
+            _firstIndex = GetFirstVisibleIndex();
         }
 
         public void SetVerticalOffset(double offset)
@@ -833,7 +833,7 @@ namespace MvvmScarletToolkit
             ScrollOwner?.InvalidateScrollInfo();
 
             InvalidateMeasure();
-            firstIndex = GetFirstVisibleIndex();
+            _firstIndex = GetFirstVisibleIndex();
         }
 
         public double ViewportHeight => _viewport.Height;

@@ -14,26 +14,22 @@ namespace MvvmScarletToolkit.Commands
         public event PropertyChangedEventHandler? PropertyChanged;
 
         [Bindable(true, BindingDirection.OneWay)]
-        public abstract Task Completion { get; }
-
-        private ICommand? _cancelCommand;
+        public abstract Task? Completion { get; }
 
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand? CancelCommand
         {
-            get { return _cancelCommand; }
-            protected set { SetValue(ref _cancelCommand, value); }
+            get { return field; }
+            protected set { SetValue(ref field, value); }
         }
-
-        private bool _isBusy;
 
         [Bindable(true, BindingDirection.OneWay)]
         public virtual bool IsBusy
         {
-            get { return _isBusy; }
+            get { return field; }
             protected set
             {
-                if (SetValue(ref _isBusy, value))
+                if (SetValue(ref field, value))
                 {
                     OnPropertyChanged(nameof(IsNotBusy));
                 }
@@ -80,24 +76,24 @@ namespace MvvmScarletToolkit.Commands
             return SetValue(ref field, value, null, null, propertyName);
         }
 
-        protected bool SetValue<T>(ref T field, in T value, in Action? OnChanged, [CallerMemberName] in string? propertyName = null)
+        protected bool SetValue<T>(ref T field, in T value, in Action? onChanged, [CallerMemberName] in string? propertyName = null)
         {
-            return SetValue(ref field, value, null, OnChanged, propertyName);
+            return SetValue(ref field, value, null, onChanged, propertyName);
         }
 
-        protected virtual bool SetValue<T>(ref T field, in T value, in Action? OnChanging, in Action? OnChanged, [CallerMemberName] in string? propertyName = null)
+        protected virtual bool SetValue<T>(ref T field, in T value, in Action? onChanging, in Action? onChanged, [CallerMemberName] in string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            OnChanging?.Invoke();
+            onChanging?.Invoke();
 
             field = value;
             OnPropertyChanged(propertyName);
 
-            OnChanged?.Invoke();
+            onChanged?.Invoke();
 
             return true;
         }

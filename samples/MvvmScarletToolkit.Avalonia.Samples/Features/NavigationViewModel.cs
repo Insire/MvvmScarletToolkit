@@ -6,7 +6,6 @@ using MvvmScarletToolkit.Core.Samples.Features.Enums;
 using MvvmScarletToolkit.Core.Samples.Features.Process;
 using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.Observables;
-using EnumViewModel = MvvmScarletToolkit.Observables.EnumViewModel;
 
 namespace MvvmScarletToolkit.Avalonia.Samples.Features
 {

@@ -2,7 +2,7 @@ using System.Windows.Controls;
 
 namespace MvvmScarletToolkit.Wpf
 {
-    internal static partial class HtmlParser
+    internal static class HtmlParser
     {
         private static readonly List<HTMLTagInfo> _builtinTags = new List<HTMLTagInfo>(51)
         {
@@ -79,7 +79,7 @@ namespace MvvmScarletToolkit.Wpf
            new HTMLTagInfo ("user",         HTMLFlag.Dynamic,       00),
        };
 
-        public static IParamParser ParamParser { get; set; } = new ParamParser(new HtmlAttributeStringSerializer());
+        public static IParamParser? ParamParser { get; set; } = new ParamParser(new HtmlAttributeStringSerializer());
 
         public static void UpdateWith(this TextBlock textBlock, string htmlInput)
         {
@@ -97,7 +97,7 @@ namespace MvvmScarletToolkit.Wpf
 
             foreach (var tag in tree.GetTags())
             {
-                switch (_builtinTags[tag.ID].Flags)
+                switch (_builtinTags[tag.Id].Flags)
                 {
                     case HTMLFlag.TextFormat:
                         context.UpdateStyle(tag);

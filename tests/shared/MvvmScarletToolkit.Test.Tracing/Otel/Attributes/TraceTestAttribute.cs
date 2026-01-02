@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Test.Tracing.Otel.Attributes
     {
         public bool TracePerTest { get; set; }
 
-        private Activity? activityForThisTest;
+        private Activity? _activityForThisTest;
 
         public TraceTestAttribute(bool tracePerTest = false)
         {
@@ -24,14 +24,14 @@ namespace MvvmScarletToolkit.Test.Tracing.Otel.Attributes
                     null :
                     new List<ActivityLink> { new ActivityLink(ActivityForTestRun.Context) };
 
-                activityForThisTest = OpenTelemetryMonitoredFixture.ActivitySource.StartActivity(
+                _activityForThisTest = OpenTelemetryMonitoredFixture.ActivitySource.StartActivity(
                     methodUnderTest.Name,
                     ActivityKind.Internal,
                     new ActivityContext(), links: testRunActivityLink);
             }
             else
             {
-                activityForThisTest = OpenTelemetryMonitoredFixture.ActivitySource.StartActivity(methodUnderTest.Name, ActivityKind.Internal, ActivityForTestRun.Context);
+                _activityForThisTest = OpenTelemetryMonitoredFixture.ActivitySource.StartActivity(methodUnderTest.Name, ActivityKind.Internal, ActivityForTestRun.Context);
             }
 
             base.Before(methodUnderTest, test);
@@ -39,7 +39,7 @@ namespace MvvmScarletToolkit.Test.Tracing.Otel.Attributes
 
         public override void After(MethodInfo methodUnderTest, IXunitTest test)
         {
-            activityForThisTest?.Stop();
+            _activityForThisTest?.Stop();
 
             base.After(methodUnderTest, test);
         }

@@ -10,13 +10,12 @@ namespace MvvmScarletToolkit.Observables
     {
         protected ILocalizationProvider LocalizationProvider { get; }
 
-        private CultureInfo? _currentLanguage;
         public CultureInfo? CurrentLanguage
         {
-            get { return _currentLanguage; }
+            get { return field; }
             set
             {
-                if (SetProperty(ref _currentLanguage, value))
+                if (SetProperty(ref field, value) && value is not null)
                 {
                     Thread.CurrentThread.CurrentUICulture = value;
                 }
@@ -25,7 +24,7 @@ namespace MvvmScarletToolkit.Observables
 
         public IEnumerable<CultureInfo> Languages => LocalizationProvider.Languages?.Any() == true
             ? LocalizationProvider.Languages
-            : Enumerable.Empty<CultureInfo>();
+            : [];
 
         public LocalizationsViewModel(ILocalizationProvider provider)
         {

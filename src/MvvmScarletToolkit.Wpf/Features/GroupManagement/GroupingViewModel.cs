@@ -45,15 +45,12 @@ namespace MvvmScarletToolkit
             get => _isLiveGroupingEnabled;
             set
             {
-                if (SetProperty(ref _isLiveGroupingEnabled, value))
+                if (!SetProperty(ref _isLiveGroupingEnabled, value))
                 {
-                    if (_view is null)
-                    {
-                        return;
-                    }
-
-                    _view.IsLiveGrouping = value;
+                    return;
                 }
+
+                _view?.IsLiveGrouping = value;
             }
         }
 
@@ -64,22 +61,24 @@ namespace MvvmScarletToolkit
             get => _isLiveSortingEnabled;
             set
             {
-                if (SetProperty(ref _isLiveSortingEnabled, value))
+                if (!SetProperty(ref _isLiveSortingEnabled, value))
                 {
-                    if (_view is null)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    using (_view.DeferRefresh())
-                    {
-                        //var descriptions = _view.SortDescriptions.Cast<SortDescription>().DistinctBy(p => p.PropertyName).ToArray();
-                        //_view.SortDescriptions.Clear();
+                if (_view is null)
+                {
+                    return;
+                }
 
-                        _view.IsLiveSorting = value;
+                using (_view.DeferRefresh())
+                {
+                    //var descriptions = _view.SortDescriptions.Cast<SortDescription>().DistinctBy(p => p.PropertyName).ToArray();
+                    //_view.SortDescriptions.Clear();
 
-                        //_view.SortDescriptions.AddRange(descriptions);
-                    }
+                    _view.IsLiveSorting = value;
+
+                    //_view.SortDescriptions.AddRange(descriptions);
                 }
             }
         }
@@ -102,31 +101,14 @@ namespace MvvmScarletToolkit
                 .Build();
 
             RemoveCommand = commandBuilder
-                .Create<GroupsViewModel>((p, t) => Remove(p, t), (p) => CanRemove(p))
+                .Create<GroupsViewModel>(Remove, CanRemove)
                 .WithSingleExecution()
                 .WithBusyNotification(BusyStack)
                 .WithCancellation()
                 .Build();
 
-            Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, (r, m) =>
-            {
-                if (m.Value is null)
-                {
-                    return;
-                }
-
-                r._filterCollection.TryAdd(m.Value.Name, m.Value);
-            });
-
-            Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, (r, m) =>
-            {
-                if (m.Value is null)
-                {
-                    return;
-                }
-
-                r._filterCollection.TryRemove(m.Value.Name, out var _);
-            });
+            Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, (r, m) => r._filterCollection.TryAdd(m.Value.Name, m.Value));
+            Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, (r, m) => r._filterCollection.TryRemove(m.Value.Name, out var _));
         }
 
         private ListCollectionView GetCollectionView()
@@ -150,7 +132,7 @@ namespace MvvmScarletToolkit
             var description = item.SelectedItem?.GroupDescription;
             if (description is not null)
             {
-                await Dispatcher.Invoke(() => _view?.GroupDescriptions.Remove(description)).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => _view?.GroupDescriptions?.Remove(description)).ConfigureAwait(false);
             }
 
             if (item.SelectedItem is not null)
@@ -188,15 +170,14 @@ namespace MvvmScarletToolkit
         {
             return !IsDisposed
                 && !IsBusy
-                && _filterCollection?.Count > 0
+                && !_filterCollection.IsEmpty
                 && _maxGroupings > Count;
         }
 
         public override async Task Clear(CancellationToken token)
         {
-            for (var i = 0; i < _items.Count; i++)
+            foreach (var item in _items)
             {
-                var item = _items[i];
                 item.Dispose();
             }
 

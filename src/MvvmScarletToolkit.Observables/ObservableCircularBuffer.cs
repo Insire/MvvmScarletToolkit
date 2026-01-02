@@ -60,7 +60,7 @@ namespace MvvmScarletToolkit.Observables
 
             _start = 0;
             _buffer = new ObservableCollection<T>(items);
-            _buffer.CollectionChanged += (o, e) => OnCollectionChanged(e);
+            _buffer.CollectionChanged += (_, e) => OnCollectionChanged(e);
             Capacity = capacity;
         }
 

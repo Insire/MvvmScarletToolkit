@@ -22,7 +22,7 @@ namespace MvvmScarletToolkit.Wpf
         private readonly IDisposable _removeSubscription;
 
         private Window? _host;
-        private bool disposedValue;
+        private bool _isDiposed;
 
         public string WindowStyleKey { get; }
         public int WindowOffset { get; }
@@ -40,7 +40,7 @@ namespace MvvmScarletToolkit.Wpf
 
         public ToastService(ToastServiceConfiguration configuration, SynchronizationContext synchronizationContext)
         {
-            ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
+            ArgumentNullException.ThrowIfNull(configuration);
             _synchronizationContext = synchronizationContext ?? throw new ArgumentNullException(nameof(synchronizationContext));
 
             _items = new SourceList<IToast>();
@@ -155,7 +155,7 @@ namespace MvvmScarletToolkit.Wpf
 
         public void Show(IToast toast)
         {
-            _synchronizationContext.Post(new SendOrPostCallback(context => SetupHost((ToastService)context!)), this);
+            _synchronizationContext.Post(context => SetupHost((ToastService)context!), this);
 
             _items.Add(toast);
         }
@@ -219,7 +219,7 @@ namespace MvvmScarletToolkit.Wpf
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_isDiposed)
             {
                 if (disposing)
                 {
@@ -228,7 +228,7 @@ namespace MvvmScarletToolkit.Wpf
                     _removeSubscription.Dispose();
                 }
 
-                disposedValue = true;
+                _isDiposed = true;
             }
         }
 

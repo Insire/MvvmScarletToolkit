@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit.Wpf
     /// <summary>
     /// Represent an element Tag in Html
     /// </summary>
-    [DebuggerDisplay("{ID} {Name}")]
+    [DebuggerDisplay("{Id} {Name}")]
     internal sealed class HtmlTag
     {
         private readonly Dictionary<string, string> _variables;
@@ -20,9 +20,9 @@ namespace MvvmScarletToolkit.Wpf
         private readonly Lazy<int> _level;
 
         /// <summary>
-        /// HtmlTag ID in BuiltInTags. (without <>)
+        /// HtmlTag Id in BuiltInTags. (without <>)
         /// </summary>
-        public int ID => _id.Value;
+        public int Id => _id.Value;
 
         /// <summary>
         /// HtmlTag name. (without <>)
@@ -43,7 +43,7 @@ namespace MvvmScarletToolkit.Wpf
 
             _id = new Lazy<int>(() => builtinTags.FindIndex(tagInfo => tagInfo.Html.Equals(Name.TrimStart('/'))));
             _isEndTag = new Lazy<bool>(() => Name.StartsWith('/') || _variables.ContainsKey("/"));
-            _level = new Lazy<int>(() => ID == -1 ? 0 : builtinTags[ID].TagLevel);
+            _level = new Lazy<int>(() => Id == -1 ? 0 : builtinTags[Id].TagLevel);
         }
 
         public HtmlTag(IParamParser paramParser, string name, string variableString, List<HTMLTagInfo> builtinTags)
@@ -141,12 +141,12 @@ namespace MvvmScarletToolkit.Wpf
                     }
 
                     var width = double.NaN;
-                    if (Contains("width") && double.TryParse(_variables["width"], out var internal_width))
-                        width = internal_width;
+                    if (Contains("width") && double.TryParse(_variables["width"], out var internalWidth))
+                        width = internalWidth;
 
                     var height = double.NaN;
-                    if (Contains("height") && double.TryParse(_variables["height"], out var internal_height))
-                        height = internal_height;
+                    if (Contains("height") && double.TryParse(_variables["height"], out var internalHeight))
+                        height = internalHeight;
 
                     if (!Uri.TryCreate(_variables["source"], UriKind.RelativeOrAbsolute, out var uri))
                     {

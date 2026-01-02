@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit.Test.Tracing.Otel
             _testRunId = testRunId;
         }
 
-        public override void OnStart(Activity data)
+        public override void OnStart(Activity? data)
         {
             data?.SetTag("test.run_id", _testRunId);
         }

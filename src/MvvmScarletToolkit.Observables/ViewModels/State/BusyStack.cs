@@ -45,7 +45,7 @@ namespace MvvmScarletToolkit.Observables
         }
 
         /// <summary>
-        /// Returns a new <see cref="IDisposable"/> thats associated with <see cref="this"/> instance of a <see cref="IDisposable"/>
+        /// Returns a new <see cref="IDisposable"/> thats associated with this instance of a <see cref="IDisposable"/>
         /// </summary>
         /// <returns>a new <see cref="IDisposable"/></returns>
         [DebuggerStepThrough]

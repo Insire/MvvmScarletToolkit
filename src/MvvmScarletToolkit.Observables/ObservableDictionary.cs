@@ -132,11 +132,13 @@ namespace MvvmScarletToolkit.Observables
             for (var i = 0; i < Count; i++)
             {
                 var entry = base[i];
-                if (entry.Key?.Equals(key) == true)
+                if (entry.Key?.Equals(key) != true)
                 {
-                    base.Remove(entry);
-                    return true;
+                    continue;
                 }
+
+                base.Remove(entry);
+                return true;
             }
 
             return false;

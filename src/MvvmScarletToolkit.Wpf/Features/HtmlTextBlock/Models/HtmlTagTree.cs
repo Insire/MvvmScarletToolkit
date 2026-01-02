@@ -58,7 +58,7 @@ namespace MvvmScarletToolkit.Wpf
             }
         }
 
-        public override bool CanAdd(HtmlTag tag)
+        public override bool CanAdd(HtmlTag? tag)
         {
             return true;
         }
@@ -81,7 +81,7 @@ namespace MvvmScarletToolkit.Wpf
             {
                 var tag = input.Substring(startIndex + 1, endIndex - startIndex - 1);
                 beforeTag = input[..startIndex];
-                afterTag = input.Substring(endIndex + 1, input.Length - endIndex - 1);
+                afterTag = input[(endIndex + 1)..];
 
                 var pos3 = tag.IndexOf(' ');
                 if ((pos3 != -1) && (tag != string.Empty))

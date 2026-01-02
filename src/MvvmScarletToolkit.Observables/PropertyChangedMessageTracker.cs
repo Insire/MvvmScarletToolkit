@@ -88,7 +88,6 @@ namespace MvvmScarletToolkit
             _trackedInstances.Remove(instance);
         }
 
-        /// <inheritdoc/>
         public bool TryGetChangeFor<T>(T instance, string propertyName, out IChange? change)
         {
             if (instance is null)
@@ -110,7 +109,6 @@ namespace MvvmScarletToolkit
             return false;
         }
 
-        /// <inheritdoc/>
         public bool TryGetChangeFor<TViewModel, TPropertyType>(TViewModel instance, string propertyName, out IChange<TPropertyType>? change)
         {
             if (instance is null)
@@ -292,7 +290,7 @@ namespace MvvmScarletToolkit
         {
             private readonly Dictionary<string, Change> _changes;
 
-            private int _suppressedState = 0;
+            private int _suppressedState;
 
             public int Count => _changes.Count == 0
                 ? 0
@@ -338,12 +336,12 @@ namespace MvvmScarletToolkit
                 }
 
                 var propertyName = message.PropertyName;
-                if (propertyName == null || propertyName.Length == 0)
+                if (string.IsNullOrEmpty(propertyName))
                 {
                     return;
                 }
 
-                if (_changes.TryGetValue(propertyName, out var changes))
+                if (_changes.TryGetValue(propertyName!, out var changes))
                 {
                     // update
                     var actualChanges = (Change<T>)changes;
@@ -363,7 +361,7 @@ namespace MvvmScarletToolkit
                 else
                 {
                     // initial value
-                    _changes[propertyName] = new Change<T>(message.OldValue, message.NewValue, true);
+                    _changes[propertyName!] = new Change<T>(message.OldValue, message.NewValue, true);
                 }
             }
 

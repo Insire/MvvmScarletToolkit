@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit.Commands
         private readonly Func<Action<bool>, IBusyStack> _busyStackFactory;
 
         private readonly Func<TArgument, CancellationToken, Task> _execute;
-        private readonly Func<TArgument, bool> _canExcute;
+        private readonly Func<TArgument, bool>? _canExcute;
 
         internal IScarletCommandManager CommandManager { get; }
         internal IScarletExceptionHandler ExceptionHandler { get; }
@@ -32,7 +32,7 @@ namespace MvvmScarletToolkit.Commands
                                      in IScarletExceptionHandler exceptionHandler,
                                      in Func<Action<bool>, IBusyStack> busyStackFactory,
                                      in Func<TArgument, CancellationToken, Task> execute,
-                                     in Func<TArgument, bool> canExecute)
+                                     in Func<TArgument, bool>? canExecute)
         {
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
             ExceptionHandler = exceptionHandler ?? throw new ArgumentNullException(nameof(exceptionHandler));

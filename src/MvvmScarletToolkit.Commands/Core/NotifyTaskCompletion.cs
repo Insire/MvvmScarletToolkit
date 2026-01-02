@@ -33,10 +33,11 @@ namespace MvvmScarletToolkit.Commands
         [Bindable(true, BindingDirection.OneWay)]
         public string ErrorMessage => InnerException?.Message ?? string.Empty;
 
-        public AggregateException Exception => Task.Exception.Flatten();
+        public AggregateException? Exception => Task?.Exception?.Flatten();
         public Exception? InnerException => Exception?.InnerException;
 
         public Task Task { get; }
+
         public Task TaskCompletion { get; }
 
         public NotifyTaskCompletion(in Task task, in IScarletExceptionHandler exceptionHandler)

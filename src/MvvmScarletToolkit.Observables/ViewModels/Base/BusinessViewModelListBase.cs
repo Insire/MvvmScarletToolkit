@@ -28,7 +28,7 @@ namespace MvvmScarletToolkit.Observables
 
         private readonly ConcurrentCommandBase _refreshCommand;
         /// <summary>
-        /// Clears <see cref="Items"/> to add new instances
+        /// Clears <see cref="ViewModelListBase{TViewModel}.Items"/> to add new instances
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand RefreshCommand => _refreshCommand;

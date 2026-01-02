@@ -6,7 +6,7 @@ namespace MvvmScarletToolkit.Observables
     /// <summary>
     /// Provides binding support for a localized string
     /// </summary>
-    public sealed class LocalizationViewModel : ObservableObject, IDisposable, ILocalizationViewModel
+    public sealed class LocalizationViewModel : ObservableObject, ILocalizationViewModel
     {
         private readonly string _key;
         private readonly bool _toUpper;
@@ -46,7 +46,7 @@ namespace MvvmScarletToolkit.Observables
 
             if (_toUpper)
             {
-                return _service?.Translate(_key)?.ToUpperInvariant() ?? _key;
+                return _service?.Translate(_key).ToUpperInvariant() ?? _key;
             }
 
             return _service?.Translate(_key) ?? _key;

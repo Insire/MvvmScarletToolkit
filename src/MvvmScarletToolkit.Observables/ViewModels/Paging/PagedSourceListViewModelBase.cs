@@ -19,30 +19,24 @@ namespace MvvmScarletToolkit
 
         [ObservableProperty]
         public partial TViewModel? SelectedItem { get; set; }
+
         [Bindable(true, BindingDirection.OneWay)]
         public ObservableCollection<TViewModel> SelectedItems { get; }
 
-        private bool _isBusy;
+        [ObservableProperty]
         [Bindable(true, BindingDirection.OneWay)]
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            protected set { SetProperty(ref _isBusy, value); }
-        }
+        public partial bool IsBusy { get; protected set; }
 
-        private int _totalPageCount;
+        [ObservableProperty]
         [Bindable(true, BindingDirection.TwoWay)]
-        public int TotalPageCount
-        {
-            get { return _totalPageCount; }
-            protected set { SetProperty(ref _totalPageCount, value); }
-        }
+        public partial int TotalPageCount { get; protected set; }
 
         [ObservableProperty]
         public partial int PageSize { get; set; }
 
         [ObservableProperty]
         public partial int CurrentPage { get; set; }
+
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand NextCommand { get; }
 
@@ -55,16 +49,12 @@ namespace MvvmScarletToolkit
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand LastCommand { get; }
 
-        private bool _isLoaded;
         /// <summary>
         /// Indicates whether <see cref="Load"/> has been called already
         /// </summary>
+        [ObservableProperty]
         [Bindable(true, BindingDirection.OneWay)]
-        public bool IsLoaded
-        {
-            get { return _isLoaded; }
-            protected set { SetProperty(ref _isLoaded, value); }
-        }
+        public partial bool IsLoaded { get; protected set; }
 
         private readonly ConcurrentCommandBase _loadCommand;
         /// <summary>
@@ -75,7 +65,7 @@ namespace MvvmScarletToolkit
 
         private readonly ConcurrentCommandBase _refreshCommand;
         /// <summary>
-        /// Clears <see cref="Items"/> to add new instances
+        /// Clears <see cref="SourceListViewModelBase{TViewModel}.Items"/> to add new instances
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand RefreshCommand => _refreshCommand;
@@ -183,7 +173,7 @@ namespace MvvmScarletToolkit
         {
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => Clear()).ConfigureAwait(false);
+                await Dispatcher.Invoke(Clear).ConfigureAwait(false);
             }
         }
 
@@ -248,7 +238,7 @@ namespace MvvmScarletToolkit
             return CanRefresh() && CurrentPage > 1;
         }
 
-        private int GetFirst()
+        private static int GetFirst()
         {
             return 1;
         }

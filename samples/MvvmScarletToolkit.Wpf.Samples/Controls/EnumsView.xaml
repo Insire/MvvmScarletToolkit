@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:enums="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Enums;assembly=MvvmScarletToolkit.Core.Samples"
-             xmlns:local="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mvvmScarletToolkit="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Observables"
              d:DataContext="{d:DesignInstance Type=enums:EnumsViewModel,
                                               IsDesignTimeCreatable=False}"
              d:DesignHeight="450"
@@ -16,7 +16,7 @@
                       DockPanel.Dock="Top"
                       ItemsSource="{Binding Items}">
             <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="mvvmScarletToolkit:ViewModelContainer">
+                <DataTemplate DataType="{x:Type mvvmScarletToolkit:ViewModelContainer}">
                     <RadioButton Content="{Binding Value}"
                                  GroupName="First Group"
                                  IsChecked="{Binding IsSelected, Mode=TwoWay}" />

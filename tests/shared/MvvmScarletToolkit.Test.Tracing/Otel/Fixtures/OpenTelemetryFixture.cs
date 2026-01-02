@@ -15,7 +15,7 @@ namespace MvvmScarletToolkit.Test.Tracing.Otel.Fixtures
 
         public void Dispose()
         {
-            _tracerProvider?.Dispose();
+            _tracerProvider.Dispose();
         }
     }
 }
