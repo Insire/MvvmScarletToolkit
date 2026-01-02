@@ -55,6 +55,13 @@ namespace MvvmScarletToolkit
 
         private void AssociatedObject_Loaded(object? sender, RoutedEventArgs? e)
         {
+            AssociatedObject.Loaded -= AssociatedObject_Loaded;
+
+            if (_disposableHandle is not null)
+            {
+                return;
+            }
+
             var root = AssociatedObject.PlacementTarget.FindParent<Window>();
             if (root is null)
             {
