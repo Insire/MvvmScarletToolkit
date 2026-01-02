@@ -41,18 +41,18 @@ namespace MvvmScarletToolkit
         public static T? FindParent<T>(this DependencyObject dependencyObject)
             where T : DependencyObject
         {
-            var parent = dependencyObject;
-            while (parent != null)
+            var current = dependencyObject;
+            while (current != null)
             {
-                if (parent is T result)
+                if (current is T result)
                 {
                     return result;
                 }
 
-                var isVisual = parent is Visual or Visual3D;
-                parent = isVisual
-                    ? VisualTreeHelper.GetParent(dependencyObject)
-                    : LogicalTreeHelper.GetParent(dependencyObject);
+                var isVisual = current is Visual or Visual3D;
+                current = isVisual
+                    ? VisualTreeHelper.GetParent(current)
+                    : LogicalTreeHelper.GetParent(current);
             }
 
             return null;
