@@ -752,7 +752,6 @@
                                     Margin="0 0 4 0"
                                     Padding="4 0"
                                     HorizontalAlignment="Right"
-                                    Background="Transparent"
                                     BorderThickness="0"
                                     Content="X"
                                     ToolTip="Clear">
@@ -780,7 +779,7 @@
                             <DockPanel Grid.Row="0" Grid.Column="2">
                                 <ToggleButton Content="Generate Items and Auto-Scroll">
                                     <ToggleButton.Style>
-                                        <Style TargetType="{x:Type ToggleButton}">
+                                        <Style BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="{x:Type ToggleButton}">
                                             <Style.Triggers>
                                                 <Trigger Property="IsChecked" Value="True">
                                                     <Setter Property="Command" Value="{Binding EnableGenerationCommand}" />
@@ -1080,7 +1079,7 @@
                                       IsChecked="{Binding Block}" />
                             <Button DockPanel.Dock="Bottom">
                                 <Button.Style>
-                                    <Style TargetType="{x:Type Button}">
+                                    <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}">
                                         <Setter Property="Command" Value="{Binding RefreshCommand}" />
                                         <Setter Property="Content" Value="Refresh" />
                                         <Style.Triggers>
