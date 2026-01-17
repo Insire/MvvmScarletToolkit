@@ -38,7 +38,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives
             {
                 using var token = _viewModel._busyStack.GetToken();
 
-                var info = await _fileSystemViewModelFactory.GetDriveInfo(_fullName, cancellationToken);
+                var info = await Task.Run(() => _fileSystemViewModelFactory.GetDriveInfo(_fullName, cancellationToken), cancellationToken);
                 if (info is null)
                 {
                     _viewModel.IsAccessProhibited = true;
@@ -47,23 +47,25 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives
 
                 Set(info);
 
-                var isEmpty = await _fileSystemViewModelFactory.IsEmpty(_viewModel, cancellationToken);
-                if (isEmpty)
+                _viewModel.IsEmpty = await Task.Run(() => _fileSystemViewModelFactory.IsEmpty(_viewModel, cancellationToken), cancellationToken);
+                if (_viewModel.IsEmpty)
                 {
                     _viewModel._cache.Clear();
                     return;
                 }
 
-                var children = await _fileSystemViewModelFactory.GetChildren(_viewModel, _fileAttributes, _folderAttributes, cancellationToken);
+                var children = await Task.Run(() => _fileSystemViewModelFactory.GetChildren(_viewModel, _fileAttributes, _folderAttributes, cancellationToken), cancellationToken);
 
                 if (!_viewModel.IsLoaded)
                 {
                     _viewModel._cache.AddOrUpdate(children);
                     _viewModel.IsLoaded = true;
+                    _viewModel.HasChildContainers = children.Any(p => p.IsContainer);
                 }
                 else
                 {
                     _viewModel._cache.AddOrUpdate(children);
+                    _viewModel.HasChildContainers = true;
                 }
             }
 

@@ -40,6 +40,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsHidden { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsLoaded { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial bool IsToggled { get; set; }
+        [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial bool IsEmpty { get; set; }
+        [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial bool HasChildContainers { get; set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsAccessProhibited { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsBusy { get; private set; }
 
@@ -93,6 +95,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
             Items = new ReadOnlyObservableCollection<IFileSystemChild>(_items);
             Properties = new ReadOnlyObservableCollection<PropertyViewModel>(_properties);
             IsActive = true;
+            HasChildContainers = true;
         }
 
         [RelayCommand]
