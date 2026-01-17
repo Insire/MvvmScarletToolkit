@@ -224,12 +224,12 @@
                             <ItemsControl ItemsSource="{Binding Source={StaticResource CompositeCollection}}">
                                 <ItemsControl.Resources>
                                     <DataTemplate DataType="{x:Type process:ProcessData}">
-                                        <TextBlock Foreground="Blue">
+                                        <TextBlock Foreground="{DynamicResource AccentTextFillColorTertiaryBrush}">
                                             <Run Text="{Binding Message, Mode=OneWay}" />
                                         </TextBlock>
                                     </DataTemplate>
                                     <DataTemplate DataType="{x:Type process:ProcessErrorData}">
-                                        <TextBlock Foreground="Red" TextWrapping="Wrap">
+                                        <TextBlock Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" TextWrapping="Wrap">
                                             <Run Text="{Binding Message, Mode=OneWay}" />
                                         </TextBlock>
                                     </DataTemplate>
@@ -712,7 +712,7 @@
                                             <Style TargetType="{x:Type TextBlock}">
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                                                        <Setter Property="Foreground" Value="Red" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -840,7 +840,7 @@
                                                     <Style TargetType="{x:Type TextBlock}">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                                                                <Setter Property="Foreground" Value="Red" />
+                                                                <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -1048,8 +1048,8 @@
                                 <i:Interaction.Behaviors>
                                     <mvvm:WatermarkBehavior Watermark="Search">
                                         <mvvm:WatermarkBehavior.WatermarkStyle>
-                                            <Style TargetType="{x:Type TextBox}">
-                                                <Setter Property="Foreground" Value="Red" />
+                                            <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}">
+                                                <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                                             </Style>
                                         </mvvm:WatermarkBehavior.WatermarkStyle>
                                     </mvvm:WatermarkBehavior>
