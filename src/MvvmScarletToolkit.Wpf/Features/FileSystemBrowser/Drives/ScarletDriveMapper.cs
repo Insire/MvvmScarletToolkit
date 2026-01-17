@@ -47,7 +47,16 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives
 
                 Set(info);
 
-                _viewModel.IsEmpty = await Task.Run(() => _fileSystemViewModelFactory.IsEmpty(_viewModel, cancellationToken), cancellationToken);
+                var isEmpty = await Task.Run(() => _fileSystemViewModelFactory.IsEmpty(_viewModel, cancellationToken), cancellationToken);
+                if (isEmpty.HasValue)
+                {
+                    _viewModel.IsEmpty = isEmpty.Value;
+                }
+                else
+                {
+                    _viewModel.IsAccessProhibited = true;
+                }
+
                 if (_viewModel.IsEmpty)
                 {
                     _viewModel._cache.Clear();
@@ -58,15 +67,11 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives
 
                 if (!_viewModel.IsLoaded)
                 {
-                    _viewModel._cache.AddOrUpdate(children);
                     _viewModel.IsLoaded = true;
-                    _viewModel.HasChildContainers = children.Any(p => p.IsContainer);
                 }
-                else
-                {
-                    _viewModel._cache.AddOrUpdate(children);
-                    _viewModel.HasChildContainers = true;
-                }
+
+                _viewModel._cache.AddOrUpdate(children);
+                _viewModel.HasChildContainers = children.Any(p => p.IsContainer);
             }
 
             private void Set(ScarletDriveInfo info)

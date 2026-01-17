@@ -205,11 +205,11 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return null;
         }
 
-        public Task<bool> IsEmpty(IFileSystemParent parent, CancellationToken token)
+        public Task<bool?> IsEmpty(IFileSystemParent parent, CancellationToken token)
         {
             return parent switch
             {
-                IFileSystemDrive drive => Task.Run(() => IsDriveEmpty(drive), token),
+                IFileSystemDrive drive => Task.Run<bool?>(() => IsDriveEmpty(drive), token),
                 IFileSystemDirectory directory => Task.Run(() => IsDirectoryEmpty(directory), token),
                 _ => throw new NotImplementedException(),
             };
@@ -244,12 +244,12 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return drive.DriveType == DriveType.NoRootDirectory || drive.DriveType == DriveType.Unknown;
         }
 
-        private bool IsDirectoryEmpty(IFileSystemDirectory directory)
+        private bool? IsDirectoryEmpty(IFileSystemDirectory directory)
         {
             return IsDirectoryEmpty(directory.FullName);
         }
 
-        private bool IsDirectoryEmpty(string directoryPath)
+        private bool? IsDirectoryEmpty(string directoryPath)
         {
             var result = true;
             if (_noAccessLookup.ContainsKey(directoryPath))
@@ -271,6 +271,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 _noAccessLookup.TryAdd(directoryPath, directoryPath);
 
                 _logger.LogError(ex, "Failed to get directory info");
+                return null;
             }
 
             return result;

@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
         public static async Task<IReadOnlyCollection<IFileSystemChild>> GetChildren(this IFileSystemViewModelFactory factory, IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes, CancellationToken token)
         {
-            if (await factory.IsEmpty(parent, token))
+            if (await factory.IsEmpty(parent, token) ?? true)
             {
                 return Enumerable.Empty<IFileSystemChild>().ToList();
             }

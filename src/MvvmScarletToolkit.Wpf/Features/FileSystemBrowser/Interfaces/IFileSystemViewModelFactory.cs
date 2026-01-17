@@ -27,7 +27,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces
             IReadOnlyCollection<FileAttributes> fileAttributes,
             CancellationToken token);
 
-        Task<bool> IsEmpty(IFileSystemParent parent, CancellationToken token);
+        Task<bool?> IsEmpty(IFileSystemParent parent, CancellationToken token);
 
         Task<ScarletFileInfo?> GetFileInfo(string filePath, CancellationToken token);
 

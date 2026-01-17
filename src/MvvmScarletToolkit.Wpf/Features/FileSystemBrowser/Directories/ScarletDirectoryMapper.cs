@@ -38,7 +38,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
             {
                 using var token = _viewModel._busyStack.GetToken();
 
-                var info = await Task.Run(() => _fileSystemViewModelFactory.GetDirectoryInfo(_fullName, cancellationToken), cancellationToken);
+                var info = await _fileSystemViewModelFactory.GetDirectoryInfo(_fullName, cancellationToken);
                 if (info is null)
                 {
                     _viewModel.IsAccessProhibited = true;
@@ -47,26 +47,31 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
 
                 Set(info);
 
-                _viewModel.IsEmpty = await Task.Run(() => _fileSystemViewModelFactory.IsEmpty(_viewModel, cancellationToken), cancellationToken);
+                var isEmpty = await _fileSystemViewModelFactory.IsEmpty(_viewModel, cancellationToken);
+                if (isEmpty.HasValue)
+                {
+                    _viewModel.IsEmpty = isEmpty.Value;
+                }
+                else
+                {
+                    _viewModel.IsAccessProhibited = true;
+                }
+
                 if (_viewModel.IsEmpty)
                 {
                     _viewModel._items.Clear();
                     return;
                 }
 
-                var children = await Task.Run(() => _fileSystemViewModelFactory.GetChildren(_viewModel, _fileAttributes, _folderAttributes, cancellationToken), cancellationToken);
+                var children = await _fileSystemViewModelFactory.GetChildren(_viewModel, _fileAttributes, _folderAttributes, cancellationToken);
 
                 if (!_viewModel.IsLoaded)
                 {
-                    _viewModel._cache.AddOrUpdate(children);
                     _viewModel.IsLoaded = true;
-                    _viewModel.HasChildContainers = children.Any(p => p.IsContainer);
                 }
-                else
-                {
-                    _viewModel._cache.AddOrUpdate(children);
-                    _viewModel.HasChildContainers = true;
-                }
+
+                _viewModel._cache.AddOrUpdate(children);
+                _viewModel.HasChildContainers = children.Any(p => p.IsContainer);
             }
 
             private void Set(ScarletDirectoryInfo info)
