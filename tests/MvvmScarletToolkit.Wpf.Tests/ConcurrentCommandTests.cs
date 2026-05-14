@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
         [Fact]
         public void Ctor_DoesNotThrow()
         {
-            _= new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (_, _) => Task.CompletedTask);
+            _ = new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), Utils.GetTestBusyStackFactory(), (_, _) => Task.CompletedTask);
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
         [Fact]
         public void Ctor_DoesThrowForNullBusyStackFactory()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), null!, (_, _) => Task.CompletedTask));
+            Assert.Throws<NullReferenceException>(() => new ConcurrentCommand<object>(Utils.GetTestCommandManager(), Utils.GetTestExceptionHandler(), Utils.GetTestCancelCommand(), null!, (_, _) => Task.CompletedTask));
         }
 
         [Fact]

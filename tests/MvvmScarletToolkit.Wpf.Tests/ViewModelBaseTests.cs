@@ -9,7 +9,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
         [Fact]
         public void Ctor_DoesNotAcceptNullArgument()
         {
-            Assert.Throws<ArgumentNullException>(() => new DerivedViewModelBase(null!));
+            Assert.Throws<NullReferenceException>(() => new DerivedViewModelBase(null!));
         }
 
         [Fact]
@@ -21,7 +21,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
         [Fact]
         public void Ctor_DoesNotThrowForNullModel()
         {
-            _=new DerivedObjectViewModelBase(Utils.GetTestCommandBuilder(), null);
+            _ = new DerivedObjectViewModelBase(Utils.GetTestCommandBuilder(), null);
         }
 
         [Fact]

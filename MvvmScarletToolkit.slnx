@@ -4,9 +4,6 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/cake/">
-    <Project Path="cake/Build.csproj" />
-  </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/MvvmScarletToolkit.Avalonia.Samples/MvvmScarletToolkit.Avalonia.Samples.csproj" />
     <Project Path="samples/MvvmScarletToolkit.Core.Samples/MvvmScarletToolkit.Core.Samples.csproj" />
