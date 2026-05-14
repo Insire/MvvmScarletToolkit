@@ -18,6 +18,11 @@ namespace MvvmScarletToolkit
 
             Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, async (r, m) =>
             {
+                if (m.Value is null)
+                {
+                    return;
+                }
+
                 if (ReferenceEquals(m.Sender, r))
                 {
                     //Debug.WriteLine($"1 this instance({r.GetDebuggerDisplay()}) selection is changing => remove the previous value({m.Value.Name}) from the view");
@@ -37,6 +42,11 @@ namespace MvvmScarletToolkit
 
             Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, async (r, m) =>
             {
+                if (m.Value is null)
+                {
+                    return;
+                }
+
                 if (ReferenceEquals(m.Sender, r))
                 {
                     //Debug.WriteLine($"3 this instance({r.GetDebuggerDisplay()}) selection changed => add the current value({m.Value.Name}) to the view");

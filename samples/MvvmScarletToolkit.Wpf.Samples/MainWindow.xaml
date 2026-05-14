@@ -443,8 +443,7 @@
                                                                 BorderThickness="1">
 
                                                             <DockPanel MinWidth="150">
-                                                                <Button Width="30"
-                                                                        Height="30"
+                                                                <Button Height="30"
                                                                         Margin="0 0 8 0"
                                                                         Command="{Binding Data.RemoveCommand, Source={StaticResource DataContextProxy}}"
                                                                         CommandParameter="{Binding}"
@@ -452,8 +451,7 @@
                                                                         DockPanel.Dock="Left"
                                                                         ToolTip="Remove" />
 
-                                                                <Button Width="30"
-                                                                        Height="30"
+                                                                <Button Height="30"
                                                                         Margin="8 0 0 0"
                                                                         Command="{Binding Data.AddCommand, Source={StaticResource DataContextProxy}}"
                                                                         Content="+"
@@ -1117,11 +1115,17 @@
                         <TreeView.Resources>
 
                             <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
+                                <Style.Resources>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="Grid.ColumnSpan" Value="2" />
+                                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                    </Style>
+                                </Style.Resources>
                                 <Setter Property="Margin" Value="2" />
                             </Style>
 
                             <DataTemplate DataType="{x:Type busy:ObservableBusyViewModel}">
-                                <Border>
+                                <Border HorizontalAlignment="Stretch">
                                     <Border.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Command="{Binding BeBusyCommand}" Header="Be busy" />
@@ -1140,7 +1144,7 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <TextBlock Text="{Binding}" />
+                                    <TextBlock HorizontalAlignment="Stretch" Text="{Binding}" />
                                 </Border>
                             </DataTemplate>
                             <HierarchicalDataTemplate DataType="{x:Type busy:BusyViewModel}" ItemsSource="{Binding Items}">
@@ -1232,9 +1236,10 @@
                                                   Data="{Binding Value}"
                                                   Fill="Black"
                                                   Focusable="False" />
+
                                             <Button x:Key="ButtonTemplate"
-                                                    Width="48"
-                                                    Height="48"
+                                                    Margin="0"
+                                                    Padding="0"
                                                     BorderBrush="{x:Null}"
                                                     BorderThickness="0">
                                                 <Path Width="48"
@@ -1309,6 +1314,7 @@
                                                                     ToolTip="Add" />
 
                                                             <Button Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                                                    Margin="4 0"
                                                                     Command="{Binding Data.RemoveCommand, Source={StaticResource DataContextProxy}}"
                                                                     CommandParameter="{Binding}"
                                                                     Content="-"
@@ -1338,7 +1344,6 @@
                                             <Setter Property="Content">
                                                 <Setter.Value>
                                                     <Button Grid.Column="0"
-                                                            Padding="10"
                                                             HorizontalAlignment="Center"
                                                             VerticalAlignment="Center"
                                                             Command="{Binding AddCommand}"

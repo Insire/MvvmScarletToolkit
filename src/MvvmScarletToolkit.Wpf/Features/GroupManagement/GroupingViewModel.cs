@@ -107,8 +107,24 @@ namespace MvvmScarletToolkit
                 .WithCancellation()
                 .Build();
 
-            Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, (r, m) => r._filterCollection.TryAdd(m.Value.Name, m.Value));
-            Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, (r, m) => r._filterCollection.TryRemove(m.Value.Name, out var _));
+            Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, static (r, m) =>
+            {
+                if (m.Value is null)
+                {
+                    return;
+                }
+                r._filterCollection.TryAdd(m.Value.Name, m.Value);
+            });
+
+            Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, static (r, m) =>
+            {
+                if (m.Value is null)
+                {
+                    return;
+                }
+
+                r._filterCollection.TryRemove(m.Value.Name, out var _);
+            });
         }
 
         private ListCollectionView GetCollectionView()

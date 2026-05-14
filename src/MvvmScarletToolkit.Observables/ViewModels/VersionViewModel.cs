@@ -39,8 +39,6 @@ namespace MvvmScarletToolkit.Observables
 
         public T? CurrentOrDefault => HasChanged ? Current : Default;
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-
         public VersionViewModel(in T? defaultValue)
         {
             Default = defaultValue;
@@ -51,7 +49,5 @@ namespace MvvmScarletToolkit.Observables
             Default = defaultValue;
             Current = current;
         }
-
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     }
 }
