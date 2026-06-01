@@ -28,7 +28,7 @@
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="$(Avalonia)" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="$(Avalonia)" />
     <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.1" />
-    <PackageVersion Include="HotAvalonia" Version="3.1.0" />
+    <PackageVersion Include="HotAvalonia" Version="3.1.1" />
   </ItemGroup>
   <!-- WPF -->
   <ItemGroup Label="Wpf">
