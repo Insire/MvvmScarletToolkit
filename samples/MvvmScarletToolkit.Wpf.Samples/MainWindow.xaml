@@ -14,6 +14,7 @@
         xmlns:filesystembrowser="clr-namespace:MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;assembly=MvvmScarletToolkit.Wpf"
         xmlns:geometry="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Geometry"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:image="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Image"
         xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Incubator"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
@@ -393,6 +394,237 @@
                                     Command="{Binding AddRangeCommand}"
                                     Content="AddRange" />
                         </StackPanel>
+                    </Grid>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type image:VirtualizedImagesViewModel}">
+                    <Grid>
+                        <Grid.Resources>
+                            <!--  shared by the list and the read-only state overview  -->
+                            <Style x:Key="ImageStateIndicatorStyle" TargetType="{x:Type Rectangle}">
+                                <Setter Property="Fill" Value="LightGray" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static image:VirtualizedImageState.Pending}">
+                                        <Setter Property="Fill" Value="Khaki" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static image:VirtualizedImageState.Loading}">
+                                        <Setter Property="Fill" Value="Orange" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static image:VirtualizedImageState.Failed}">
+                                        <Setter Property="Fill" Value="IndianRed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static image:VirtualizedImageState.Shown}">
+                                        <Setter Property="Fill" Value="MediumSeaGreen" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static image:VirtualizedImageState.Unrealized}">
+                                        <Setter Property="Fill" Value="SteelBlue" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Resources>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="4" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                        <DockPanel Grid.Row="0"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="3"
+                                   LastChildFill="True">
+                            <Button Margin="0 0 8 0"
+                                    Command="{Binding RefreshCommand}"
+                                    Content="Refresh"
+                                    DockPanel.Dock="Left" />
+
+                            <TextBlock VerticalAlignment="Center"
+                                       DockPanel.Dock="Left"
+                                       TextWrapping="Wrap">
+                                <Run Text="{Binding Items.Count, StringFormat={}{0} images, Mode=OneWay}" />
+                                <Run Text="·" />
+                                <Run Text="{Binding RealizedCount, StringFormat={}{0} realized, Mode=OneWay}" />
+                                <Run Text="·" />
+                                <Run Foreground="Orange" Text="{Binding LoadingCount, StringFormat={}{0} loading, Mode=OneWay}" />
+                                <Run Text="·" />
+                                <Run Foreground="MediumSeaGreen" Text="{Binding ShownCount, StringFormat={}{0} shown, Mode=OneWay}" />
+                                <Run Text="·" />
+                                <Run Foreground="SteelBlue" Text="{Binding UnrealizedCount, StringFormat={}{0} unrealized, Mode=OneWay}" />
+                                <Run Text="·" />
+                                <Run Foreground="IndianRed" Text="{Binding FailedCount, StringFormat={}{0} failed, Mode=OneWay}" />
+                            </TextBlock>
+
+                            <TextBlock Margin="8 0 0 0"
+                                       VerticalAlignment="Center"
+                                       Foreground="Red"
+                                       Text="{Binding Error}"
+                                       TextTrimming="CharacterEllipsis" />
+                        </DockPanel>
+
+                        <!--  Standard (not Recycling) virtualization, so containers really get unloaded while scrolling  -->
+                        <ListBox Grid.Row="2"
+                                 Grid.Column="0"
+                                 HorizontalContentAlignment="Stretch"
+                                 ItemsSource="{Binding Items}"
+                                 ScrollViewer.CanContentScroll="True"
+                                 VirtualizingStackPanel.IsVirtualizing="True"
+                                 VirtualizingStackPanel.ScrollUnit="Pixel"
+                                 VirtualizingStackPanel.VirtualizationMode="Standard">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type image:VirtualizedImageViewModel}">
+                                    <Grid Height="208" Margin="0 0 0 4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="300" />
+                                            <ColumnDefinition Width="8" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Loaded">
+                                                <i:InvokeCommandAction Command="{Binding RealizeCommand}" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="Unloaded">
+                                                <i:InvokeCommandAction Command="{Binding UnrealizeCommand}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+
+                                        <Border Grid.Column="0"
+                                                Width="300"
+                                                Height="200"
+                                                Background="WhiteSmoke">
+                                            <Grid>
+                                                <TextBlock HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="32"
+                                                           FontWeight="Light">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="{x:Type TextBlock}">
+                                                            <Setter Property="Foreground" Value="Gray" />
+                                                            <Setter Property="Text" Value="..." />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding State}" Value="{x:Static image:VirtualizedImageState.Failed}">
+                                                                    <Setter Property="Foreground" Value="IndianRed" />
+                                                                    <Setter Property="Text" Value="failed to load" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+
+                                                <Image Width="300"
+                                                       Height="200"
+                                                       RenderOptions.BitmapScalingMode="HighQuality">
+                                                    <i:Interaction.Behaviors>
+                                                        <mvvm:AsyncImageLoadingBehavior Width="300"
+                                                                                        Height="200"
+                                                                                        Source="{Binding Source}"
+                                                                                        State="{Binding LoadState, Mode=OneWayToSource}" />
+                                                    </i:Interaction.Behaviors>
+                                                </Image>
+                                            </Grid>
+                                        </Border>
+
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Rectangle Width="12"
+                                                           Height="12"
+                                                           Margin="0 0 6 0"
+                                                           Style="{StaticResource ImageStateIndicatorStyle}" />
+                                                <TextBlock FontWeight="SemiBold" Text="{Binding State}" />
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding Id, StringFormat={}#{0}}" />
+                                            <TextBlock Text="{Binding Author}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding RealizedCount, StringFormat={}realized {0}x}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <GridSplitter Grid.Row="2"
+                                      Grid.Column="1"
+                                      HorizontalAlignment="Stretch" />
+
+                        <!--  read-only overview of every image, independent of virtualization  -->
+                        <DockPanel Grid.Row="2" Grid.Column="2">
+                            <WrapPanel Margin="0 0 0 4" DockPanel.Dock="Top">
+                                <WrapPanel.Resources>
+                                    <Style TargetType="{x:Type Rectangle}">
+                                        <Setter Property="Width" Value="10" />
+                                        <Setter Property="Height" Value="10" />
+                                        <Setter Property="Margin" Value="0 0 4 0" />
+                                    </Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Margin" Value="0 0 10 0" />
+                                    </Style>
+                                </WrapPanel.Resources>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="LightGray" />
+                                    <TextBlock Text="not realized" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="Khaki" />
+                                    <TextBlock Text="pending" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="Orange" />
+                                    <TextBlock Text="loading" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="MediumSeaGreen" />
+                                    <TextBlock Text="shown" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="IndianRed" />
+                                    <TextBlock Text="failed" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="SteelBlue" />
+                                    <TextBlock Text="unrealized" />
+                                </StackPanel>
+                            </WrapPanel>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsControl Focusable="False" ItemsSource="{Binding Items}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type image:VirtualizedImageViewModel}">
+                                            <Rectangle Width="10"
+                                                       Height="10"
+                                                       Margin="1"
+                                                       Style="{StaticResource ImageStateIndicatorStyle}">
+                                                <Rectangle.ToolTip>
+                                                    <TextBlock>
+                                                        <Run Text="{Binding Id, StringFormat={}#{0}, Mode=OneWay}" />
+                                                        <Run Text="{Binding Author, Mode=OneWay}" />
+                                                        <LineBreak />
+                                                        <Run Text="{Binding State, StringFormat={}State: {0}, Mode=OneWay}" />
+                                                        <LineBreak />
+                                                        <Run Text="{Binding RealizedCount, StringFormat={}Realized: {0}x, Mode=OneWay}" />
+                                                    </TextBlock>
+                                                </Rectangle.ToolTip>
+                                            </Rectangle>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </DockPanel>
                     </Grid>
                 </DataTemplate>
 

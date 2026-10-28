@@ -1,36 +1,28 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Microsoft.IO;
-using System.Text;
 
 namespace MvvmScarletToolkit.ImageLoading.Caches.Data
 {
     public sealed class ImageDataMemoryCache : IImageDataMemoryCache
     {
+        private const string Prefix = nameof(ImageDataMemoryCache);
+
         private readonly IMemoryCache _memoryCache;
         private readonly ImageDataMemoryCacheOptions _options;
         private readonly ILogger<ImageDataMemoryCache> _logger;
-        private readonly string _prefix;
 
         public ImageDataMemoryCache(
             ILogger<ImageDataMemoryCache> logger,
             IMemoryCache memoryCache,
-            RecyclableMemoryStreamManager recyclableMemoryStreamManager,
             ImageDataMemoryCacheOptions options)
         {
             _memoryCache = memoryCache;
             _options = options;
             _logger = logger;
-
-            var bytes = Encoding.UTF8.GetBytes(nameof(ImageDataMemoryCache));
-            using var resultStream = recyclableMemoryStreamManager.GetStream(null, bytes.Length);
-            resultStream.Write(bytes, 0, bytes.Length);
-            resultStream.Seek(0, SeekOrigin.Begin);
-
-            _prefix = resultStream.CalculateMd5();
         }
 
         /// <inheritdoc />
+        /// <remarks>Every call returns a new, independent, read-only stream that the caller owns.</remarks>
         public Task<Stream> GetStreamAsync(Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
         {
             if (cancellationToken.IsCancellationRequested || !_options.IsEnabled)
@@ -39,21 +31,11 @@ namespace MvvmScarletToolkit.ImageLoading.Caches.Data
             }
 
             var key = CreateKey(uri, requestedSize);
-            if (_memoryCache.TryGetValue(key, out Stream? cachedImageStream))
+            if (_memoryCache.TryGetValue(key, out byte[]? cachedBytes) && cachedBytes is not null)
             {
-                if (cachedImageStream != null)
-                {
-                    _logger.LogDebug("Resource with {Key} was found in memory", key);
-                    cachedImageStream.Seek(0, SeekOrigin.Begin);
+                _logger.LogDebug("Resource with {Key} was found in memory", key);
 
-                    return Task.FromResult(cachedImageStream);
-                }
-                else
-                {
-                    _logger.LogDebug("Resource with {Key} was found in memory, but it was null", key);
-
-                    return Task.FromResult(Stream.Null);
-                }
+                return Task.FromResult<Stream>(new MemoryStream(cachedBytes, writable: false));
             }
 
             _logger.LogDebug("Resource with {Key} could not be found in memory", key);
@@ -62,27 +44,52 @@ namespace MvvmScarletToolkit.ImageLoading.Caches.Data
         }
 
         /// <inheritdoc />
-        public Task CacheStreamAsync(Stream imageDataStream, Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
+        /// <remarks>The stream is copied; the caller keeps ownership of it.</remarks>
+        public async Task CacheStreamAsync(Stream imageDataStream, Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
         {
             if (cancellationToken.IsCancellationRequested || !_options.IsEnabled)
             {
-                return Task.CompletedTask;
+                return;
             }
 
             var key = CreateKey(uri, requestedSize);
-
-            imageDataStream.Seek(0, SeekOrigin.Begin);
+            var bytes = await ReadAllBytesAsync(imageDataStream, cancellationToken).ConfigureAwait(false);
+            if (bytes.Length == 0)
+            {
+                return;
+            }
 
             using (var cacheEntry = _memoryCache.CreateEntry(key))
             {
                 cacheEntry.AbsoluteExpiration = DateTimeOffset.UtcNow.AddSeconds(_options.AbsoluteExpirationOffsetInSeconds);
-                cacheEntry.Value = imageDataStream;
-                cacheEntry.RegisterPostEvictionCallback(OnEviction);
+                cacheEntry.Size = bytes.Length;
+                cacheEntry.Value = bytes;
+
+                if (_logger.IsEnabled(LogLevel.Trace))
+                {
+                    cacheEntry.RegisterPostEvictionCallback(OnEviction);
+                }
             }
 
             _logger.LogDebug("Resource with {Key} has been cached in memory", key);
+        }
 
-            return Task.CompletedTask;
+        private static async Task<byte[]> ReadAllBytesAsync(Stream stream, CancellationToken cancellationToken)
+        {
+            if (stream is MemoryStream memoryStream)
+            {
+                return memoryStream.ToArray();
+            }
+
+            if (stream.CanSeek)
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+            }
+
+            using var copy = new MemoryStream(stream.CanSeek ? (int)Math.Min(stream.Length, int.MaxValue) : 0);
+            await stream.CopyToAsync(copy, cancellationToken).ConfigureAwait(false);
+
+            return copy.ToArray();
         }
 
         private void OnEviction(object key, object? value, EvictionReason reason, object? state)
@@ -90,9 +97,9 @@ namespace MvvmScarletToolkit.ImageLoading.Caches.Data
             _logger.LogTrace("Resource with {Key} was evicted for reason: '{Reason}'", key, reason);
         }
 
-        private string CreateKey(Uri uri, ImageSize requestedImageSize)
+        private static string CreateKey(Uri uri, ImageSize requestedImageSize)
         {
-            return $"{_prefix}_'{uri.OriginalString}'_w{requestedImageSize.Width}_h{requestedImageSize.Height}";
+            return $"{Prefix}_'{uri.OriginalString}'_w{requestedImageSize.Width}_h{requestedImageSize.Height}";
         }
     }
 }

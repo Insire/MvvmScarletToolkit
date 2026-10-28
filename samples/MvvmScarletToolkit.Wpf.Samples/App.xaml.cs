@@ -86,6 +86,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
             serviceCollection.AddLogging(builder =>
                 builder.AddSerilog(new LoggerConfiguration()
                     .MinimumLevel.Verbose()
+                    // every image logs several lines per load, too much for the debug output window
+                    .MinimumLevel.Override("MvvmScarletToolkit.ImageLoading", Serilog.Events.LogEventLevel.Information)
                     .Enrich.FromLogContext()
                     .WriteTo.Debug(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{SourceContext}> {Message:lj}{NewLine}{Exception}")
                     .WriteTo.File(Path.Combine(environmentInformationProvider.GetLogsFolderPath(), "logs.txt"), outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] <{SourceContext}> {Message:lj}{NewLine}{Exception}")
@@ -122,6 +124,10 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         protected override async void OnExit(ExitEventArgs e)
         {
+            // images are handed out before they are written to the disk caches, keep what is still pending.
+            // Blocking is fine, the image service does not need the UI thread to finish
+            Ioc.Default.GetRequiredService<ImageService<BitmapSource>>().FlushAsync().Wait(TimeSpan.FromSeconds(5));
+
             base.OnExit(e);
 
             await ScarletExitService.Default.ShutDown().ConfigureAwait(false);

@@ -1,151 +1,118 @@
 using Microsoft.Extensions.Logging;
-using Microsoft.IO;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace MvvmScarletToolkit.ImageLoading.Caches
 {
     public sealed class ImageFilesystemCache<TImage> : IImageFilesystemCache<TImage>
         where TImage : class
     {
-        public sealed class ImageFileSemaphore() : SemaphoreSlim(1, 1);
+        private const string Scope = "image";
 
         private readonly ILogger<ImageFilesystemCache<TImage>> _logger;
         private readonly IImageFactory<TImage> _imageFactory;
-        private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
         private readonly ImageFilesystemCacheOptions _options;
-        private readonly ConditionalWeakTable<string, ImageFileSemaphore> _lockDictionary;
 
         public ImageFilesystemCache(
             ILogger<ImageFilesystemCache<TImage>> logger,
             IImageFactory<TImage> imageFactory,
-            RecyclableMemoryStreamManager recyclableMemoryStreamManager,
             ImageFilesystemCacheOptions options)
         {
             _logger = logger;
             _imageFactory = imageFactory;
-            _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
             _options = options;
-            _lockDictionary = new ConditionalWeakTable<string, ImageFileSemaphore>();
 
-            if (!options.CreateFolder)
-            {
-                return;
-            }
-
-            if (options.ClearCacheDirectoryOnInit)
-            {
-                Directory.CreateDirectory(options.CacheDirectoryPath);
-                Directory.Delete(options.CacheDirectoryPath, true);
-            }
-
-            Directory.CreateDirectory(options.CacheDirectoryPath);
+            CacheFile.Initialize(logger, options.CacheDirectoryPath, options.CreateFolder, options.ClearCacheDirectoryOnInit, options.MaxFileAgeInDays);
         }
 
         /// <inheritdoc />
         public async Task<TImage?> GetImageAsync(Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
         {
-            if (cancellationToken.IsCancellationRequested)
+            if (cancellationToken.IsCancellationRequested || !_options.IsEnabled)
             {
                 return null;
             }
 
-            if (!_options.IsEnabled)
-            {
-                return null;
-            }
-
-            var key = await CreateKey(uri, requestedSize, cancellationToken);
+            var key = CacheFile.CreateName(Scope, uri, requestedSize);
             var path = Path.Combine(_options.CacheDirectoryPath, key);
-            if (File.Exists(path))
+
+            FileStream? stream;
+            try
+            {
+                stream = CacheFile.TryOpenRead(path);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                _logger.LogWarning(ex, "Opening file {FilePath} failed unexpectedly", path);
+
+                return null;
+            }
+
+            if (stream is null)
+            {
+                _logger.LogDebug("Image with {Key} could not be found on disk at {Path}", key, path);
+
+                return null;
+            }
+
+            try
             {
                 _logger.LogDebug("Image with {Key} was found on disk at {Path}", key, path);
 
-                return await Task.Run(() => ReadImage(path, requestedSize, cancellationToken), cancellationToken);
+                await using (stream)
+                {
+                    // decoding is CPU bound, keep it off the caller's thread. Not cancellable on purpose,
+                    // it is short and the caller caches the result, so the work is not lost
+                    return await Task.Run(() => _imageFactory.FromAsync(stream, requestedSize, CancellationToken.None)).ConfigureAwait(false);
+                }
             }
+            catch (OperationCanceledException)
+            {
+                // the caller no longer needs the image, not an error
+                return null;
+            }
+            catch (Exception ex)
+            {
+                // a corrupt entry would otherwise be hit forever
+                _logger.LogWarning(ex, "Reading image from {FilePath} failed, removing cache entry", path);
+                CacheFile.TryDelete(path);
 
-            _logger.LogDebug("Image with {Key} could not be found on disk at {Path}", key, path);
-
-            return null;
+                return null;
+            }
         }
 
         /// <inheritdoc />
         public async Task CacheImageAsync(TImage image, Uri uri, ImageSize requestedSize, CancellationToken cancellationToken = default)
         {
-            if (cancellationToken.IsCancellationRequested)
+            if (cancellationToken.IsCancellationRequested || !_options.IsEnabled)
             {
                 return;
             }
 
-            if (!_options.IsEnabled)
-            {
-                return;
-            }
-
-            var key = await CreateKey(uri, requestedSize, cancellationToken);
-
+            var key = CacheFile.CreateName(Scope, uri, requestedSize);
             var path = Path.Combine(_options.CacheDirectoryPath, key);
+
+            if (File.Exists(path))
+            {
+                return;
+            }
+
             try
             {
-                await WriteImage(path, image, cancellationToken);
-
-                _logger.LogDebug("Image with {Key} has been cached on disk at {Path}", key, path);
+                if (await CacheFile.WriteAtomicAsync(path, stream => Task.Run(() => _imageFactory.ToAsync(stream, image, cancellationToken), cancellationToken), cancellationToken).ConfigureAwait(false))
+                {
+                    _logger.LogDebug("Image with {Key} has been cached on disk at {Path}", key, path);
+                }
+                else
+                {
+                    _logger.LogDebug("Image with {Key} is in use on disk at {Path}, keeping the existing file", key, path);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // nothing got written, the next load tries again
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Opening file {FilePath} failed unexpectedly", path);
-            }
-        }
-
-        private async Task<string> CreateKey(Uri? input, ImageSize imageSize, CancellationToken cancellationToken)
-        {
-            if (input is null)
-            {
-                return string.Empty;
-            }
-
-            var key = $"'{input.OriginalString}'_w{imageSize.Width}_h{imageSize.Height}";
-
-            var bytes = Encoding.ASCII.GetBytes(key);
-
-            await using var resultStream = _recyclableMemoryStreamManager.GetStream(null, bytes.Length);
-            resultStream.Write(bytes, 0, bytes.Length);
-            resultStream.Seek(0, SeekOrigin.Begin);
-
-            return await resultStream.CalculateMd5Async(token: cancellationToken);
-        }
-
-        private async Task<TImage> ReadImage(string path, ImageSize requestedSize, CancellationToken token)
-        {
-            var semaphore = _lockDictionary.GetOrCreateValue(path);
-
-            try
-            {
-                await semaphore.WaitAsync(token);
-
-                await using var stream = File.OpenRead(path);
-                return await _imageFactory.FromAsync(stream, requestedSize, token);
-            }
-            finally
-            {
-                semaphore.Release();
-            }
-        }
-
-        private async Task WriteImage(string path, TImage image, CancellationToken token)
-        {
-            var semaphore = _lockDictionary.GetOrCreateValue(path);
-
-            try
-            {
-                await semaphore.WaitAsync(token);
-
-                await using var fileStream = File.OpenWrite(path);
-                await Task.Run(() => _imageFactory.ToAsync(fileStream, image, token), token);
-            }
-            finally
-            {
-                semaphore.Release();
+                _logger.LogError(ex, "Writing file {FilePath} failed unexpectedly", path);
             }
         }
     }

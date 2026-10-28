@@ -31,6 +31,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
 
             Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(CommandBuilder, new ImageViewModelProvider(CommandBuilder, environmentInformationProvider, httpClient)));
             Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
+            Add("Image Loading in a virtualized list", new VirtualizedImagesViewModel(CommandBuilder, synchronizationContext, httpClient));
             Add("ConcurrentCommands and state changes", new AsyncStateListViewModel(commandBuilder));
             Add("MVVM Live Sorting and Grouping in bound collections", dataGridViewModel);
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));

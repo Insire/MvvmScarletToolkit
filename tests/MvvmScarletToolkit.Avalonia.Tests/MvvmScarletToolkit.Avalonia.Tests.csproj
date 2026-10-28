@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../targetframeworks.props" />
+  <Import Project="../test-libraries.props" />
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Headless" />
+    <PackageReference Include="Avalonia.Skia" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Avalonia\MvvmScarletToolkit.Avalonia.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj" />
+    <ProjectReference Include="..\shared\MvvmScarletToolkit.Test.Tracing\MvvmScarletToolkit.Test.Tracing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="MvvmScarletToolkit.Test.Tracing.Otel.Attributes" />
+    <Using Include="MvvmScarletToolkit.Test.Tracing" />
+  </ItemGroup>
+
+</Project>

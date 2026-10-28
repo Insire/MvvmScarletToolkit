@@ -1,4 +1,4 @@
-# MvvmScarletToolkit.Observables
+# MvvmScarletToolkit.ImageLoading
 
 ## Goals
 

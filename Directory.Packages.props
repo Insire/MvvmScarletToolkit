@@ -49,6 +49,8 @@
   </ItemGroup>
   <!-- tests -->
   <ItemGroup Label="tests">
+    <PackageVersion Include="Avalonia.Headless" Version="$(Avalonia)" />
+    <PackageVersion Include="Avalonia.Skia" Version="$(Avalonia)" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
