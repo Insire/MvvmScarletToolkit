@@ -13,12 +13,12 @@ namespace MvvmScarletToolkit
         public static void Sort<T>(this ObservableCollection<T> collection)
             where T : IComparable
         {
-            var sorted = collection.OrderBy(x => x).ToList();
-
-            for (var i = 0; i < sorted.Count; i++)
+            if (collection is null)
             {
-                collection.Move(collection.IndexOf(sorted[i]), i);
+                throw new ArgumentNullException(nameof(collection));
             }
+
+            Sort(collection, collection.OrderBy(x => x).ToList());
         }
 
         /// <summary>
@@ -29,11 +29,33 @@ namespace MvvmScarletToolkit
         /// </remarks>
         public static void Sort<T>(this ObservableCollection<T> collection, IComparer<T> comparer)
         {
-            var sorted = collection.OrderBy(x => x, comparer).ToList();
+            if (collection is null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }
+
+            Sort(collection, collection.OrderBy(x => x, comparer).ToList());
+        }
+
+        private static void Sort<T>(ObservableCollection<T> collection, List<T> sorted)
+        {
+            var equalityComparer = EqualityComparer<T>.Default;
 
             for (var i = 0; i < sorted.Count; i++)
             {
-                collection.Move(collection.IndexOf(sorted[i]), i);
+                // everything before i is already in place, so only look at the unsorted remainder.
+                // searching from the start would pick up already placed duplicates and undo previous moves
+                var index = i;
+                while (!equalityComparer.Equals(collection[index], sorted[i]))
+                {
+                    index++;
+                }
+
+                // avoid raising CollectionChanged for items that are already in place
+                if (index != i)
+                {
+                    collection.Move(index, i);
+                }
             }
         }
     }

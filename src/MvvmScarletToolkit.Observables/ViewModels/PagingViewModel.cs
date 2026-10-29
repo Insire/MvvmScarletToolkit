@@ -61,11 +61,19 @@ namespace MvvmScarletToolkit.Observables
                 .Build();
         }
 
+        /// <summary>
+        /// number of pages required to display <see cref="DomainViewModelListBase{TViewModel}.Total"/> entries
+        /// </summary>
+        private int GetPageCount()
+        {
+            return _viewModel.PageSize <= 0 || _viewModel.Total <= 0
+                ? 0
+                : ((_viewModel.Total - 1) / _viewModel.PageSize) + 1;
+        }
+
         private int GetNext()
         {
-            return (_viewModel.PageIndex + _viewModel.PageSize < _viewModel.Total - _viewModel.PageSize - 1)
-            ? _viewModel.PageIndex + _viewModel.PageSize
-            : _viewModel.Total;
+            return Math.Min(_viewModel.PageIndex + 1, GetLast());
         }
 
         private Task Next(CancellationToken token)
@@ -75,14 +83,12 @@ namespace MvvmScarletToolkit.Observables
 
         private bool CanNext()
         {
-            return _viewModel.CanRefresh() && GetNext() < _viewModel.Total;
+            return _viewModel.CanRefresh() && _viewModel.PageIndex < GetLast();
         }
 
         private int GetPrevious()
         {
-            return (_viewModel.PageIndex - 1 > _viewModel.PageSize)
-            ? _viewModel.PageIndex - 1
-            : 0;
+            return Math.Max(_viewModel.PageIndex - 1, GetFirst());
         }
 
         private Task Previous(CancellationToken token)
@@ -92,7 +98,7 @@ namespace MvvmScarletToolkit.Observables
 
         private bool CanPrevious()
         {
-            return _viewModel.CanRefresh() && GetPrevious() > 0;
+            return _viewModel.CanRefresh() && _viewModel.PageIndex > GetFirst();
         }
 
         private int GetFirst()
@@ -112,7 +118,7 @@ namespace MvvmScarletToolkit.Observables
 
         private int GetLast()
         {
-            return _viewModel.Total - _viewModel.PageSize - 1;
+            return Math.Max(GetPageCount() - 1, GetFirst());
         }
 
         private Task Last(CancellationToken token)
@@ -122,7 +128,7 @@ namespace MvvmScarletToolkit.Observables
 
         private bool CanLast()
         {
-            return _viewModel.CanRefresh() && _viewModel.PageIndex < _viewModel.Total;
+            return _viewModel.CanRefresh() && _viewModel.PageIndex < GetLast();
         }
 
         private async Task Set(int index, CancellationToken token)

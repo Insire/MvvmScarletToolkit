@@ -2,6 +2,7 @@ using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -147,7 +148,16 @@ namespace MvvmScarletToolkit
                 .WithAsyncCancellation()
                 .Build();
 
+            // Items is updated asynchronously on the SynchronizationContext,
+            // so HasItems can only be raised once the collection actually changed
+            Items.CollectionChanged += OnItemsCollectionChanged;
+
             Exit.UnloadOnExit(this);
+        }
+
+        private void OnItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(HasItems));
         }
 
         protected virtual Task LoadInternal(CancellationToken token)
@@ -266,7 +276,6 @@ namespace MvvmScarletToolkit
             using (BusyStack.GetToken())
             {
                 AddOrUpdate(item);
-                OnPropertyChanged(nameof(HasItems));
             }
 
             return Task.CompletedTask;
@@ -340,7 +349,6 @@ namespace MvvmScarletToolkit
             using (BusyStack.GetToken())
             {
                 base.Remove(item);
-                OnPropertyChanged(nameof(HasItems));
             }
 
             return Task.CompletedTask;
@@ -458,6 +466,7 @@ namespace MvvmScarletToolkit
 
                 if (disposing)
                 {
+                    Items.CollectionChanged -= OnItemsCollectionChanged;
                     BusyStack.Dispose();
                 }
 

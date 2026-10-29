@@ -34,6 +34,9 @@ namespace MvvmScarletToolkit
         [ObservableProperty]
         public partial int PageSize { get; set; }
 
+        /// <summary>
+        /// 1-based number of the page to load, ranging from 1 to <see cref="TotalPageCount"/>
+        /// </summary>
         [ObservableProperty]
         public partial int CurrentPage { get; set; }
 
@@ -89,6 +92,7 @@ namespace MvvmScarletToolkit
             SelectedItems = new ObservableCollection<TViewModel>();
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
             PageSize = 50;
+            CurrentPage = 1;
 
             _loadCommand = commandBuilder
               .Create(Load, CanLoad)
@@ -142,7 +146,9 @@ namespace MvvmScarletToolkit
 
         public async Task Refresh(CancellationToken token)
         {
-            var results = await _pagedDataProvider.Get(CurrentPage * PageSize, PageSize, token).ConfigureAwait(false);
+            // CurrentPage is 1-based, the provider expects the number of entries to skip
+            var index = Math.Max(0, CurrentPage - 1) * PageSize;
+            var results = await _pagedDataProvider.Get(index, PageSize, token).ConfigureAwait(false);
 
             AddOrUpdateMany(results);
         }
@@ -217,7 +223,7 @@ namespace MvvmScarletToolkit
 
         private bool CanNext()
         {
-            return CanRefresh() && CurrentPage + 1 < TotalPageCount;
+            return CanRefresh() && CurrentPage < TotalPageCount;
         }
 
         private int GetPrevious()
@@ -265,7 +271,7 @@ namespace MvvmScarletToolkit
 
         private bool CanLast()
         {
-            return CanRefresh() && CurrentPage + 1 < TotalPageCount;
+            return CanRefresh() && CurrentPage < TotalPageCount;
         }
 
         private async Task Set(int index, CancellationToken token)

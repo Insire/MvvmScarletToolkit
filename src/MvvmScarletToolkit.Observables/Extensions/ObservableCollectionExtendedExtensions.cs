@@ -2,7 +2,7 @@ using DynamicData.Binding;
 
 namespace MvvmScarletToolkit
 {
-    public static class ObservableCollectionExtensions
+    public static class ObservableCollectionExtendedExtensions
     {
         /// <summary>
         /// in place sort an <see cref="IObservableCollection{T}"/>

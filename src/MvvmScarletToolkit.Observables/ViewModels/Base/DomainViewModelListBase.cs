@@ -11,6 +11,9 @@ namespace MvvmScarletToolkit.Observables
     public abstract partial class DomainViewModelListBase<TViewModel> : BusinessViewModelListBase<TViewModel>
         where TViewModel : class, INotifyPropertyChanged
     {
+        /// <summary>
+        /// total number of entries available across all pages
+        /// </summary>
         [Bindable(true, BindingDirection.TwoWay)]
         public int Total
         {
@@ -18,9 +21,15 @@ namespace MvvmScarletToolkit.Observables
             protected set { SetProperty(ref field, value); }
         }
 
+        /// <summary>
+        /// number of entries per page
+        /// </summary>
         [ObservableProperty]
         public partial int PageSize { get; set; }
 
+        /// <summary>
+        /// 0-based index of the current page. The first entry of the page is at <c>PageIndex * PageSize</c>
+        /// </summary>
         [ObservableProperty]
         public partial int PageIndex { get; set; }
 
