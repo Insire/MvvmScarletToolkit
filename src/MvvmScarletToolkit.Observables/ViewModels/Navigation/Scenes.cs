@@ -42,8 +42,9 @@ namespace MvvmScarletToolkit.Observables
                 for (var i = 0; i < _disposeables.Count; i++)
                 {
                     _disposeables[i].Dispose();
-                    _disposeables.Clear();
                 }
+
+                _disposeables.Clear();
             }
 
             base.Dispose(disposing);

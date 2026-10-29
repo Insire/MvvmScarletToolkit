@@ -13,8 +13,7 @@ namespace MvvmScarletToolkit
         private readonly IMessenger _messenger;
 
         private bool _disposedValue;
-        private bool _skipChanges;
-        private IDisposable? _globalChangeSkipSubscription;
+        private int _skipChangesCount;
 
         public PropertyChangedMessageTracker()
             : this(WeakReferenceMessenger.Default)
@@ -41,10 +40,21 @@ namespace MvvmScarletToolkit
                 throw new ObjectDisposedException(nameof(PropertyChangedMessageTracker));
             }
 
-            _trackedInstances.Add(instance, new Changes());
+            // tracking the same instance for another property type must not discard its recorded changes
+            if (!_trackedInstances.ContainsKey(instance))
+            {
+                _trackedInstances.Add(instance, new Changes());
+            }
+
+            // the messenger only allows a single registration per recipient and message type
+            if (_messenger.IsRegistered<PropertyChangedMessage<TPropertyType>>(this))
+            {
+                return;
+            }
+
             _messenger.Register<PropertyChangedMessageTracker, PropertyChangedMessage<TPropertyType>>(this, (r, m) =>
             {
-                if (r._skipChanges)
+                if (r._skipChangesCount != 0)
                 {
                     return;
                 }
@@ -64,10 +74,7 @@ namespace MvvmScarletToolkit
                 throw new ObjectDisposedException(nameof(PropertyChangedMessageTracker));
             }
 
-            using (SuppressAllChanges())
-            {
-                _trackedInstances.Clear();
-            }
+            _trackedInstances.Clear();
         }
 
         /// <inheritdoc/>
@@ -190,7 +197,10 @@ namespace MvvmScarletToolkit
                 throw new ObjectDisposedException(nameof(PropertyChangedMessageTracker));
             }
 
-            _trackedInstances.Clear();
+            foreach (var changes in _trackedInstances.Values)
+            {
+                changes.Clear();
+            }
         }
 
         /// <inheritdoc/>
@@ -207,7 +217,10 @@ namespace MvvmScarletToolkit
                 throw new ObjectDisposedException(nameof(PropertyChangedMessageTracker));
             }
 
-            _trackedInstances.Remove(instance);
+            if (_trackedInstances.TryGetValue(instance, out var changes))
+            {
+                changes.Clear();
+            }
         }
 
         /// <inheritdoc/>
@@ -218,12 +231,7 @@ namespace MvvmScarletToolkit
                 throw new ObjectDisposedException(nameof(PropertyChangedMessageTracker));
             }
 
-            if (_globalChangeSkipSubscription is not null)
-            {
-                throw new InvalidOperationException("Changes are already being skipped for this tracker instance");
-            }
-
-            return _globalChangeSkipSubscription = new IgnoreGlobalChanges(this);
+            return new IgnoreGlobalChanges(this);
         }
 
         /// <inheritdoc/>
@@ -274,15 +282,20 @@ namespace MvvmScarletToolkit
         {
             private readonly PropertyChangedMessageTracker _instance;
 
+            private int _disposed;
+
             public IgnoreGlobalChanges(PropertyChangedMessageTracker instance)
             {
                 _instance = instance;
-                _instance._skipChanges = true;
+                Interlocked.Increment(ref _instance._skipChangesCount);
             }
 
             public void Dispose()
             {
-                _instance._skipChanges = false;
+                if (Interlocked.Exchange(ref _disposed, 1) == 0)
+                {
+                    Interlocked.Decrement(ref _instance._skipChangesCount);
+                }
             }
         }
 
@@ -292,11 +305,39 @@ namespace MvvmScarletToolkit
 
             private int _suppressedState;
 
-            public int Count => _changes.Count == 0
-                ? 0
-                : _changes.Values.Count(p => p.IsActualChange);
+            public int Count
+            {
+                get
+                {
+                    var count = 0;
+                    foreach (var change in _changes.Values)
+                    {
+                        if (change.IsActualChange)
+                        {
+                            count++;
+                        }
+                    }
 
-            public bool IsChanged => _changes.Count != 0 && _changes.Values.Any(p => p.IsActualChange);
+                    return count;
+                }
+            }
+
+            public bool IsChanged
+            {
+                get
+                {
+                    foreach (var change in _changes.Values)
+                    {
+                        if (change.IsActualChange)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+            }
+
             public bool ShouldSuppressChanges => _suppressedState != 0;
 
             public Changes()
@@ -318,9 +359,9 @@ namespace MvvmScarletToolkit
 
             public bool TryGetValue<TProperty>(string key, out IChange<TProperty>? value)
             {
-                if (_changes.TryGetValue(key, out var change))
+                if (_changes.TryGetValue(key, out var change) && change is IChange<TProperty> typedChange)
                 {
-                    value = (IChange<TProperty>)change;
+                    value = typedChange;
                     return true;
                 }
 
@@ -341,28 +382,22 @@ namespace MvvmScarletToolkit
                     return;
                 }
 
-                if (_changes.TryGetValue(propertyName!, out var changes))
+                if (_changes.TryGetValue(propertyName!, out var changes) && changes is Change<T> actualChanges)
                 {
-                    // update
-                    var actualChanges = (Change<T>)changes;
-                    if (AreEqual(message.NewValue, actualChanges.NewValue))
-                    {
-                        return;
-                    }
-
-                    if (AreEqual(message.OldValue, actualChanges.InitialValue))
-                    {
-                        return;
-                    }
-
-                    actualChanges.IsActualChange = !AreEqual(actualChanges.InitialValue, message.NewValue);
+                    // update, the initial value is kept, so that reverting to it is not considered a change
                     actualChanges.NewValue = message.NewValue;
+                    actualChanges.IsActualChange = !AreEqual(actualChanges.InitialValue, message.NewValue);
                 }
                 else
                 {
                     // initial value
-                    _changes[propertyName!] = new Change<T>(message.OldValue, message.NewValue, true);
+                    _changes[propertyName!] = new Change<T>(message.OldValue, message.NewValue, !AreEqual(message.OldValue, message.NewValue));
                 }
+            }
+
+            public void Clear()
+            {
+                _changes.Clear();
             }
 
             public IDisposable SkipChanges()
@@ -389,6 +424,8 @@ namespace MvvmScarletToolkit
             {
                 private readonly Changes _instance;
 
+                private int _disposed;
+
                 public IgnoreLocalChanges(Changes instance)
                 {
                     _instance = instance;
@@ -397,7 +434,10 @@ namespace MvvmScarletToolkit
 
                 public void Dispose()
                 {
-                    _instance.Decrement();
+                    if (Interlocked.Exchange(ref _disposed, 1) == 0)
+                    {
+                        _instance.Decrement();
+                    }
                 }
             }
         }

@@ -12,6 +12,8 @@ namespace MvvmScarletToolkit.Observables
     public abstract partial class BusinessViewModelListBase<TViewModel> : ViewModelListBase<TViewModel>, IBusinessViewModelListBase<TViewModel>
         where TViewModel : class, INotifyPropertyChanged
     {
+        private bool _isDisposing;
+
         /// <summary>
         /// Indicates whether <see cref="Load"/> has been called already
         /// </summary>
@@ -122,7 +124,7 @@ namespace MvvmScarletToolkit.Observables
         public virtual bool CanUnload()
         {
             return !IsDisposed
-                && !IsLoaded
+                && IsLoaded
                 && !_loadCommand.IsBusy
                 && !_refreshCommand.IsBusy
                 && !_unloadCommand.IsBusy;
@@ -155,20 +157,25 @@ namespace MvvmScarletToolkit.Observables
 
         protected override async void Dispose(bool disposing)
         {
-            if (IsDisposed)
+            // Dispose has to be idempotent, also while still awaiting the unload of a previous call
+            if (IsDisposed || _isDisposing)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
+                return;
             }
 
-            if (disposing)
+            _isDisposing = true;
+
+            try
             {
-                if (IsLoaded && !IsBusy)
+                if (disposing && IsLoaded && !IsBusy)
                 {
                     await Unload(CancellationToken.None).ConfigureAwait(false);
                 }
             }
-
-            base.Dispose(disposing);
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
     }
 }

@@ -188,7 +188,7 @@ namespace MvvmScarletToolkit
 
         public virtual bool CanUnload()
         {
-            return !IsLoaded
+            return IsLoaded
                 && !_loadCommand.IsBusy
                 && !_refreshCommand.IsBusy
                 && !_unloadCommand.IsBusy;

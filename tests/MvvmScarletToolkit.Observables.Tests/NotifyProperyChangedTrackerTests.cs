@@ -383,5 +383,195 @@ namespace MvvmScarletToolkit.Observables.Tests
                 propertyChanged = true;
             }
         }
+
+        [Fact]
+        public void SuppressAllChanges_Nested_DoesWork()
+        {
+            using (var tracker = new NotifyProperyChangedTracker())
+            {
+                var viewModel = new ViewModel();
+                tracker.Track(viewModel);
+
+                using (tracker.SuppressAllChanges())
+                {
+                    using (tracker.SuppressAllChanges())
+                    {
+                    }
+
+                    // the outer scope is still active
+                    viewModel.Data = string.Empty;
+                }
+
+                Assert.False(tracker.HasChanges(viewModel));
+
+                viewModel.Data = "changed";
+
+                Assert.True(tracker.HasChanges(viewModel));
+            }
+        }
+
+        [Fact]
+        public void SuppressAllChanges_Disposed_Twice_DoesWork()
+        {
+            using (var tracker = new NotifyProperyChangedTracker())
+            {
+                var viewModel = new ViewModel();
+                tracker.Track(viewModel);
+
+                using (tracker.SuppressAllChanges())
+                {
+                    var scope = tracker.SuppressAllChanges();
+                    scope.Dispose();
+                    scope.Dispose();
+
+                    viewModel.Data = string.Empty;
+                }
+
+                Assert.False(tracker.HasChanges(viewModel));
+            }
+        }
+
+        [Fact]
+        public void SuppressChanges_Disposed_Twice_DoesWork()
+        {
+            using (var tracker = new NotifyProperyChangedTracker())
+            {
+                var viewModel = new ViewModel();
+                tracker.Track(viewModel);
+
+                var scope = tracker.SuppressChanges(viewModel);
+                scope.Dispose();
+                scope.Dispose();
+
+                viewModel.Data = string.Empty;
+
+                Assert.True(tracker.HasChanges(viewModel));
+            }
+        }
+
+        [Fact]
+        public void SuppressChanges_DoesThrow_For_Untracked_Instance()
+        {
+            using (var tracker = new NotifyProperyChangedTracker())
+            {
+                Assert.Throws<ArgumentOutOfRangeException>(() => tracker.SuppressChanges(new ViewModel()));
+            }
+        }
+
+        [Fact]
+        public void SuppressChanges_Does_Only_Affect_The_Instance()
+        {
+            using (var tracker = new NotifyProperyChangedTracker())
+            {
+                var suppressed = new ViewModel();
+                var tracked = new ViewModel();
+                tracker.Track(suppressed);
+                tracker.Track(tracked);
+
+                using (tracker.SuppressChanges(suppressed))
+                {
+                    suppressed.Data = string.Empty;
+                    tracked.Data = string.Empty;
+                }
+
+                Assert.Multiple(() =>
+                {
+                    Assert.False(tracker.HasChanges(suppressed));
+                    Assert.True(tracker.HasChanges(tracked));
+                });
+            }
+        }
+
+        [Fact]
+        public void StopTracking_Does_Discard_Previous_Changes()
+        {
+            using (var tracker = new NotifyProperyChangedTracker())
+            {
+                var viewModel = new ViewModel();
+                tracker.Track(viewModel);
+                viewModel.Data = string.Empty;
+
+                tracker.StopTracking(viewModel);
+
+                Assert.Multiple(() =>
+                {
+                    Assert.False(tracker.HasChanges());
+                    Assert.False(tracker.HasChanges(viewModel));
+                });
+            }
+        }
+
+        [Fact]
+        public void StopAllTracking_Does_Allow_Tracking_Again()
+        {
+            using (var tracker = new NotifyProperyChangedTracker())
+            {
+                var viewModel = new ViewModel();
+                tracker.Track(viewModel);
+                tracker.StopAllTracking();
+                tracker.Track(viewModel);
+
+                viewModel.Data = string.Empty;
+
+                Assert.Equal(1, tracker.CountChanges(viewModel));
+            }
+        }
+
+        [Fact]
+        public void Track_Twice_Does_Not_Count_Changes_Twice()
+        {
+            using (var tracker = new NotifyProperyChangedTracker())
+            {
+                var viewModel = new ViewModel();
+                var notifications = 0;
+                tracker.Track(viewModel);
+                tracker.Track(viewModel);
+                viewModel.PropertyChanged += (_, _) => notifications++;
+
+                viewModel.Data = string.Empty;
+                viewModel.Data = "changed";
+
+                Assert.Multiple(() =>
+                {
+                    Assert.Equal(2, notifications);
+                    Assert.Equal(1, tracker.CountChanges(viewModel));
+                });
+            }
+        }
+
+        [Fact]
+        public void Changes_Of_Untracked_Instances_Are_Ignored()
+        {
+            using (var tracker = new NotifyProperyChangedTracker())
+            {
+                var viewModel = new ViewModel();
+
+                viewModel.Data = string.Empty;
+
+                Assert.Multiple(() =>
+                {
+                    Assert.False(tracker.HasChanges());
+                    Assert.False(tracker.HasChanges(viewModel));
+                    Assert.Equal(0, tracker.CountChanges(viewModel));
+                });
+
+                tracker.ClearChanges(viewModel);
+                tracker.StopTracking(viewModel);
+            }
+        }
+
+        [Fact]
+        public void Dispose_Does_Stop_Tracking()
+        {
+            var viewModel = new ViewModel();
+            var tracker = new NotifyProperyChangedTracker();
+            tracker.Track(viewModel);
+            tracker.Dispose();
+            tracker.Dispose();
+
+            viewModel.Data = string.Empty;
+
+            Assert.False(tracker.HasChanges());
+        }
     }
 }

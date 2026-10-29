@@ -1,3 +1,5 @@
+using System.Collections.Specialized;
+
 namespace MvvmScarletToolkit.Observables.Tests
 {
     public sealed class ObservableDictionaryTests : TraceTestBase
@@ -389,6 +391,196 @@ namespace MvvmScarletToolkit.Observables.Tests
             {
                 Assert.False(sut.TryGetValue(3, out var result));
                 Assert.Null(result);
+            });
+        }
+
+        [Fact]
+        public void Indexer_Set_Does_Replace_Existing_Entry()
+        {
+            var sut = new ObservableDictionary<int, string>()
+            {
+                [1] = "a",
+                [2] = "b",
+            };
+            var actions = new List<NotifyCollectionChangedAction>();
+            sut.CollectionChanged += (_, e) => actions.Add(e.Action);
+
+            sut[1] = "c";
+
+            Assert.Multiple(() =>
+            {
+                Assert.Equal(2, sut.Count);
+                Assert.Equal("c", sut[1]);
+                Assert.Equal(new KeyValuePair<int, string>(1, "c"), ((IList<KeyValuePair<int, string>>)sut)[0]);
+                Assert.Equal([NotifyCollectionChangedAction.Replace], actions);
+            });
+        }
+
+        [Fact]
+        public void Indexer_Set_Does_Respect_The_EqualityComparer()
+        {
+            var sut = new ObservableDictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["key"] = 1,
+            };
+
+            sut["KEY"] = 2;
+
+            Assert.Multiple(() =>
+            {
+                Assert.Single(sut);
+                Assert.Single(sut.Keys);
+                Assert.Equal(2, sut["key"]);
+            });
+        }
+
+        [Fact]
+        public void Remove_Does_Respect_The_EqualityComparer()
+        {
+            var sut = new ObservableDictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["key"] = 1,
+            };
+
+            Assert.Multiple(() =>
+            {
+                Assert.True(sut.Remove("KEY"));
+                Assert.Empty(sut);
+                Assert.Empty(sut.Keys);
+            });
+        }
+
+        [Fact]
+        public void Remove_Does_Raise_CollectionChanged()
+        {
+            var sut = new ObservableDictionary<int, string>()
+            {
+                [1] = "a",
+            };
+            var actions = new List<NotifyCollectionChangedAction>();
+            sut.CollectionChanged += (_, e) => actions.Add(e.Action);
+
+            sut.Remove(1);
+
+            Assert.Equal([NotifyCollectionChangedAction.Remove], actions);
+        }
+
+        [Fact]
+        public void Collection_Add_DoesThrow_For_Duplicate_Key()
+        {
+            var sut = new ObservableDictionary<int, string>()
+            {
+                [1] = "a",
+            };
+
+            Assert.Throws<ArgumentException>(() => ((ICollection<KeyValuePair<int, string>>)sut).Add(new KeyValuePair<int, string>(1, "b")));
+
+            Assert.Multiple(() =>
+            {
+                Assert.Single(sut);
+                Assert.Equal("a", sut[1]);
+            });
+        }
+
+        [Fact]
+        public void Insert_DoesThrow_For_Duplicate_Key()
+        {
+            var sut = new ObservableDictionary<int, string>()
+            {
+                [1] = "a",
+            };
+
+            Assert.Throws<ArgumentException>(() => sut.Insert(0, new KeyValuePair<int, string>(1, "b")));
+            Assert.Single(sut);
+        }
+
+        [Fact]
+        public void Insert_Does_Add_To_The_Dictionary()
+        {
+            var sut = new ObservableDictionary<int, string>()
+            {
+                [1] = "a",
+            };
+
+            sut.Insert(0, new KeyValuePair<int, string>(2, "b"));
+
+            Assert.Multiple(() =>
+            {
+                Assert.Equal("b", sut[2]);
+                Assert.Equal(2, ((IList<KeyValuePair<int, string>>)sut)[0].Key);
+            });
+        }
+
+        [Fact]
+        public void SetItem_With_New_Key_Does_Remove_The_Old_Key()
+        {
+            var sut = new ObservableDictionary<int, string>()
+            {
+                [1] = "a",
+            };
+
+            ((IList<KeyValuePair<int, string>>)sut)[0] = new KeyValuePair<int, string>(2, "b");
+
+            Assert.Multiple(() =>
+            {
+                Assert.False(sut.ContainsKey(1));
+                Assert.True(sut.ContainsKey(2));
+                Assert.Single(sut.Keys);
+                Assert.Single(sut);
+            });
+        }
+
+        [Fact]
+        public void SetItem_With_Existing_Key_Of_Another_Entry_DoesThrow()
+        {
+            var sut = new ObservableDictionary<int, string>()
+            {
+                [1] = "a",
+                [2] = "b",
+            };
+
+            Assert.Throws<ArgumentException>(() => ((IList<KeyValuePair<int, string>>)sut)[0] = new KeyValuePair<int, string>(2, "c"));
+
+            Assert.Multiple(() =>
+            {
+                Assert.Equal("a", sut[1]);
+                Assert.Equal("b", sut[2]);
+            });
+        }
+
+        [Fact]
+        public void RemoveAt_Does_Remove_From_The_Dictionary()
+        {
+            var sut = new ObservableDictionary<int, string>()
+            {
+                [1] = "a",
+                [2] = "b",
+            };
+
+            sut.RemoveAt(0);
+
+            Assert.Multiple(() =>
+            {
+                Assert.False(sut.ContainsKey(1));
+                Assert.Equal("b", sut[2]);
+            });
+        }
+
+        [Fact]
+        public void Keys_And_Values_Stay_In_Sync_With_The_Collection()
+        {
+            var sut = new ObservableDictionary<int, string>();
+
+            sut.Add(1, "a");
+            sut[2] = "b";
+            sut[1] = "c";
+            sut.Remove(2);
+            sut.Add(3, "d");
+
+            Assert.Multiple(() =>
+            {
+                Assert.Equal(sut.Select(p => p.Key).OrderBy(p => p), sut.Keys.OrderBy(p => p));
+                Assert.Equal(sut.Select(p => p.Value).OrderBy(p => p), sut.Values.OrderBy(p => p));
             });
         }
     }

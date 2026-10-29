@@ -100,6 +100,7 @@ namespace MvvmScarletToolkit
                 if (disposing)
                 {
                     _subscription.Dispose();
+                    _sourceCache.Dispose();
                 }
 
                 _disposedValue = true;

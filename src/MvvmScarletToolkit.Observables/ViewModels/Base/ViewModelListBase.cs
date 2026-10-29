@@ -382,11 +382,12 @@ namespace MvvmScarletToolkit.Observables
             Messenger.Send(new ViewModelListBaseSelectionsChanged<TViewModel>(SelectedItems?.Cast<TViewModel>() ?? []));
         }
 
-        protected override async void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
+            // Dispose has to be idempotent
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
+                return;
             }
 
             if (disposing)
@@ -396,7 +397,9 @@ namespace MvvmScarletToolkit.Observables
 
                 SelectedItems.CollectionChanged -= OnSelectedItemsCollectionChanged;
 
-                await Clear().ConfigureAwait(false);
+                // Dispose can't be awaited, but the collection may only be modified on the dispatcher.
+                // IsDisposed is set synchronously below, so that repeated or concurrent calls are no-ops
+                _ = Dispatcher.Invoke(_items.Clear, CancellationToken.None);
             }
 
             base.Dispose(disposing);

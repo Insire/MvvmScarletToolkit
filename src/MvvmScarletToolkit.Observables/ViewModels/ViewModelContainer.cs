@@ -17,6 +17,12 @@ namespace MvvmScarletToolkit
         {
             Value = value;
         }
+
+        // keep the untyped base property in sync, so that bindings against ViewModelContainer see the value
+        partial void OnValueChanged(T value)
+        {
+            base.Value = value;
+        }
     }
 
     public abstract partial class ViewModelContainer : ObservableRecipient

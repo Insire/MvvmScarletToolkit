@@ -19,6 +19,8 @@ namespace MvvmScarletToolkit
 
         protected bool IsDisposed { get; private set; }
 
+        private bool _isDisposing;
+
         [Bindable(true, BindingDirection.OneWay)]
         public ObservableCollection<TViewModel> SelectedItems { get; }
 
@@ -203,7 +205,7 @@ namespace MvvmScarletToolkit
         public virtual bool CanUnload()
         {
             return !IsDisposed
-                && !IsLoaded
+                && IsLoaded
                 && !_loadCommand.IsBusy
                 && !_refreshCommand.IsBusy
                 && !_unloadCommand.IsBusy;
@@ -435,24 +437,32 @@ namespace MvvmScarletToolkit
 
         protected override async void Dispose(bool disposing)
         {
-            if (IsDisposed)
+            if (IsDisposed || _isDisposing)
             {
                 return;
             }
 
-            IsDisposed = true;
+            // IsDisposed must not be set before unloading, because Unload throws for disposed instances
+            _isDisposing = true;
 
-            if (disposing)
+            try
             {
-                if (IsLoaded && !IsBusy)
+                if (disposing && IsLoaded && !IsBusy)
                 {
                     await Unload(CancellationToken.None).ConfigureAwait(false);
                 }
-
-                BusyStack?.Dispose();
             }
+            finally
+            {
+                IsDisposed = true;
 
-            base.Dispose(disposing);
+                if (disposing)
+                {
+                    BusyStack.Dispose();
+                }
+
+                base.Dispose(disposing);
+            }
         }
     }
 }

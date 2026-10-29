@@ -27,7 +27,6 @@ namespace MvvmScarletToolkit
                 fsHandler => ProgressChanged -= fsHandler);
 
             _disposable = _observable
-                .ObserveOn(System.Reactive.Concurrency.TaskPoolScheduler.Default)
                 .Sample(interval)
                 .Subscribe(e => ReportInternal(e.EventArgs));
         }
@@ -45,9 +44,11 @@ namespace MvvmScarletToolkit
 
         private async void ReportInternal(T value)
         {
+            // a sampled value may still be in flight while disposing.
+            // throwing here would crash the process, since this is an async void method
             if (_disposed)
             {
-                throw new ObjectDisposedException(nameof(DispatcherProgress<>));
+                return;
             }
 
             await _dispatcher.Invoke(() => _callback.Invoke(value), CancellationToken.None).ConfigureAwait(false);
@@ -60,8 +61,8 @@ namespace MvvmScarletToolkit
                 return;
             }
 
-            _disposable.Dispose();
             _disposed = true;
+            _disposable.Dispose();
         }
     }
 }

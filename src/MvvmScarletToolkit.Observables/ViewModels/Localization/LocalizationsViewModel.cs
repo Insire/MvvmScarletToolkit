@@ -42,11 +42,6 @@ namespace MvvmScarletToolkit.Observables
                 return $"!{key}!";
             }
 
-            if (Thread.CurrentThread.CurrentUICulture.Equals(CurrentLanguage))
-            {
-                Thread.CurrentThread.CurrentUICulture = CurrentLanguage;
-            }
-
             var translatedValue = LocalizationProvider.Translate(key, CurrentLanguage);
             return string.IsNullOrEmpty(translatedValue)
                 ? $"!{key}!"

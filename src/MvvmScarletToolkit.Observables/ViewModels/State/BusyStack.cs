@@ -18,30 +18,20 @@ namespace MvvmScarletToolkit.Observables
 
         public void Pull()
         {
-            var oldValue = _items > 0;
-            Interlocked.Decrement(ref _items);
-            var newValue = _items > 0;
-
-            if (oldValue.Equals(newValue))
+            // only the transition from 1 to 0 changes the state.
+            // using the result of the atomic operation avoids racing other threads between read and write
+            if (Interlocked.Decrement(ref _items) == 0)
             {
-                return;
+                InvokeOnChanged(false);
             }
-
-            InvokeOnChanged(newValue);
         }
 
         public void Push()
         {
-            var oldValue = _items > 0;
-            Interlocked.Increment(ref _items);
-            var newValue = _items > 0;
-
-            if (oldValue.Equals(newValue))
+            if (Interlocked.Increment(ref _items) == 1)
             {
-                return;
+                InvokeOnChanged(true);
             }
-
-            InvokeOnChanged(newValue);
         }
 
         /// <summary>

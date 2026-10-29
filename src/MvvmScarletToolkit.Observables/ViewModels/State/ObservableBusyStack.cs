@@ -26,21 +26,19 @@ namespace MvvmScarletToolkit.Observables
 
         public void Pull()
         {
+            // tokens handed out before disposal may be released afterwards (e.g. a running command),
+            // throwing here would surface from a Dispose call or a using block
             if (_disposed)
-            {
-                throw new ObjectDisposedException(nameof(ObservableBusyStack));
-            }
-
-            var oldValue = _items > 0;
-            Interlocked.Decrement(ref _items);
-            var newValue = _items > 0;
-
-            if (oldValue.Equals(newValue))
             {
                 return;
             }
 
-            Notify(newValue);
+            // only the transition from 1 to 0 changes the state.
+            // using the result of the atomic operation avoids racing other threads between read and write
+            if (Interlocked.Decrement(ref _items) == 0)
+            {
+                Notify(false);
+            }
         }
 
         public void Push()
@@ -50,16 +48,10 @@ namespace MvvmScarletToolkit.Observables
                 throw new ObjectDisposedException(nameof(ObservableBusyStack));
             }
 
-            var oldValue = _items > 0;
-            Interlocked.Increment(ref _items);
-            var newValue = _items > 0;
-
-            if (oldValue.Equals(newValue))
+            if (Interlocked.Increment(ref _items) == 1)
             {
-                return;
+                Notify(true);
             }
-
-            Notify(newValue);
         }
 
         private void Notify(bool hasItems)

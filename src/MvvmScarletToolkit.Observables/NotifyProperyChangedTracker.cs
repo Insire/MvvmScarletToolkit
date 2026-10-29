@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit.Observables
         private readonly Dictionary<INotifyPropertyChanged, ChangeState> _trackedInstances;
 
         private bool _disposedValue;
-        private bool _shouldSuppressChanges;
+        private int _suppressAllChangesCount;
 
         public NotifyProperyChangedTracker()
         {
@@ -102,13 +102,13 @@ namespace MvvmScarletToolkit.Observables
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
             }
 
-            using (SuppressAllChanges())
+            foreach (var instance in _trackedInstances.Keys)
             {
-                foreach (var instance in _trackedInstances.Keys)
-                {
-                    instance.PropertyChanged -= OnPropertyChanged;
-                }
+                instance.PropertyChanged -= OnPropertyChanged;
             }
+
+            // don't keep instances alive, that aren't being tracked anymore
+            _trackedInstances.Clear();
         }
 
         /// <inheritdoc/>
@@ -126,7 +126,7 @@ namespace MvvmScarletToolkit.Observables
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
             }
 
-            if (_trackedInstances.TryGetValue(instance, out var changeState))
+            if (_trackedInstances.Remove(instance))
             {
                 instance.PropertyChanged -= OnPropertyChanged;
             }
@@ -140,7 +140,7 @@ namespace MvvmScarletToolkit.Observables
                 throw new ObjectDisposedException(nameof(NotifyProperyChangedTracker));
             }
 
-            foreach (var state in _trackedInstances.Values.ToArray())
+            foreach (var state in _trackedInstances.Values)
             {
                 state.Clear();
             }
@@ -204,7 +204,7 @@ namespace MvvmScarletToolkit.Observables
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (_shouldSuppressChanges)
+            if (_disposedValue || _suppressAllChangesCount != 0)
             {
                 return;
             }
@@ -225,8 +225,6 @@ namespace MvvmScarletToolkit.Observables
 
         private void Dispose(bool disposing)
         {
-            _shouldSuppressChanges = true;
-
             if (_disposedValue)
             {
                 return;
@@ -295,6 +293,8 @@ namespace MvvmScarletToolkit.Observables
         {
             private readonly ChangeState _changeState;
 
+            private int _disposed;
+
             public SuppressChangesSubscription(ChangeState changeState)
             {
                 _changeState = changeState;
@@ -303,7 +303,11 @@ namespace MvvmScarletToolkit.Observables
 
             public void Dispose()
             {
-                _changeState.Decrement();
+                // disposing twice must not decrement twice, or the counter would never reach zero again
+                if (Interlocked.Exchange(ref _disposed, 1) == 0)
+                {
+                    _changeState.Decrement();
+                }
             }
         }
 
@@ -311,15 +315,20 @@ namespace MvvmScarletToolkit.Observables
         {
             private readonly NotifyProperyChangedTracker _tracker;
 
+            private int _disposed;
+
             public SuppressAllChangesSubscription(NotifyProperyChangedTracker tracker)
             {
                 _tracker = tracker;
-                _tracker._shouldSuppressChanges = true;
+                Interlocked.Increment(ref _tracker._suppressAllChangesCount);
             }
 
             public void Dispose()
             {
-                _tracker._shouldSuppressChanges = false;
+                if (Interlocked.Exchange(ref _disposed, 1) == 0)
+                {
+                    Interlocked.Decrement(ref _tracker._suppressAllChangesCount);
+                }
             }
         }
     }

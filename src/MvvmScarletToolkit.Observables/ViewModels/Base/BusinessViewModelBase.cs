@@ -113,7 +113,7 @@ namespace MvvmScarletToolkit.Observables
         public virtual bool CanUnload()
         {
             return !IsDisposed
-                && !IsLoaded
+                && IsLoaded
                 && !_loadCommand.IsBusy
                 && !_refreshCommand.IsBusy
                 && !_unloadCommand.IsBusy;

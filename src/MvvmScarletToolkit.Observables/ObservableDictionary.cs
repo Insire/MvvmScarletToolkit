@@ -74,24 +74,18 @@ namespace MvvmScarletToolkit.Observables
             }
             set
             {
-                _dictionary[key] = value;
-                var requiresAdd = true;
-                for (var i = 0; i < Count; i++)
-                {
-                    var entry = base[i];
-                    if (entry.Key?.Equals(key) != true)
-                    {
-                        continue;
-                    }
+                var item = new KeyValuePair<TKey, TValue>(key, value);
+                var index = _dictionary.ContainsKey(key)
+                    ? IndexOfKey(key)
+                    : -1;
 
-                    base[i] = new KeyValuePair<TKey, TValue>(key, value);
-                    requiresAdd = false;
-                    break;
+                if (index == -1)
+                {
+                    base.Add(item);
                 }
-
-                if (requiresAdd)
+                else
                 {
-                    base.Add(new KeyValuePair<TKey, TValue>(key, value));
+                    base[index] = item;
                 }
             }
         }
@@ -111,7 +105,6 @@ namespace MvvmScarletToolkit.Observables
         /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}.Add(TKey, TValue)" />
         public void Add(TKey key, TValue value)
         {
-            _dictionary.Add(key, value);
             base.Add(new KeyValuePair<TKey, TValue>(key, value));
         }
 
@@ -129,19 +122,14 @@ namespace MvvmScarletToolkit.Observables
                 return false;
             }
 
-            for (var i = 0; i < Count; i++)
+            var index = IndexOfKey(key);
+            if (index == -1)
             {
-                var entry = base[i];
-                if (entry.Key?.Equals(key) != true)
-                {
-                    continue;
-                }
-
-                base.Remove(entry);
-                return true;
+                return false;
             }
 
-            return false;
+            RemoveAt(index);
+            return true;
         }
 
         /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}.TryGetValue(TKey, out TValue)" />
@@ -160,7 +148,8 @@ namespace MvvmScarletToolkit.Observables
         /// <inheritdoc/>
         protected override void InsertItem(int index, KeyValuePair<TKey, TValue> item)
         {
-            _dictionary[item.Key] = item.Value;
+            // throws for null and duplicate keys, so the list and the dictionary can't get out of sync
+            _dictionary.Add(item.Key, item.Value);
             base.InsertItem(index, item);
         }
 
@@ -178,8 +167,35 @@ namespace MvvmScarletToolkit.Observables
         /// <inheritdoc/>
         protected override void SetItem(int index, KeyValuePair<TKey, TValue> item)
         {
+            var oldKey = base[index].Key;
+            var comparer = _dictionary.Comparer;
+
+            if (!comparer.Equals(oldKey, item.Key))
+            {
+                if (_dictionary.ContainsKey(item.Key))
+                {
+                    throw new ArgumentException("An item with the same key has already been added.", nameof(item));
+                }
+
+                _dictionary.Remove(oldKey);
+            }
+
             _dictionary[item.Key] = item.Value;
             base.SetItem(index, item);
+        }
+
+        private int IndexOfKey(TKey key)
+        {
+            var comparer = _dictionary.Comparer;
+            for (var i = 0; i < Count; i++)
+            {
+                if (comparer.Equals(base[i].Key, key))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
     }
 }
