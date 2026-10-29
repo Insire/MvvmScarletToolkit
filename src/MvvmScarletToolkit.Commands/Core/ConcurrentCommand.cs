@@ -88,9 +88,20 @@ namespace MvvmScarletToolkit.Commands
                 CancelCommand?.Execute(parameter);
             }
 
-            var argument = parameter is TArgument arg
-                ? arg
-                : default;
+            TArgument argument;
+            if (parameter is TArgument arg)
+            {
+                argument = arg;
+            }
+            else if (parameter is null)
+            {
+                argument = default!;
+            }
+            else
+            {
+                // CanExecute rejects arguments of a different type, so don't run with a substituted default value either
+                return;
+            }
 
             var externalToken = default(IDisposable);
             try
@@ -103,11 +114,14 @@ namespace MvvmScarletToolkit.Commands
                     {
                         _cancelCommand.NotifyCommandStarting();
 
-                        // if we intend to react with a binding to the currently running state of the command, we need to tell it to rerun CanExecute
-                        CommandManager.InvalidateRequerySuggested();
+                        var execution = new NotifyTaskCompletion(InvokeExecute(argument, _cancelCommand.Token), _exceptionHandler);
+                        Execution = execution;
 
-                        Execution = new NotifyTaskCompletion(_execute.Invoke(argument!, _cancelCommand.Token), _exceptionHandler);
-                        await Execution.TaskCompletion.ConfigureAwait(true); // return to UI thread here
+                        // if we intend to react with a binding to the currently running state of the command, we need to tell it to rerun CanExecute
+                        // this has to happen after Execution was updated, since decorators evaluate CanExecute based on Completion
+                        RaiseCanExecuteChanged();
+
+                        await execution.TaskCompletion.ConfigureAwait(true); // return to UI thread here
                     }
                     finally
                     {
@@ -120,6 +134,24 @@ namespace MvvmScarletToolkit.Commands
                 externalToken?.Dispose();
 
                 RaiseCanExecuteChanged();
+            }
+        }
+
+        private Task InvokeExecute(TArgument argument, CancellationToken token)
+        {
+            try
+            {
+                return _execute.Invoke(argument, token) ?? Task.CompletedTask;
+            }
+            catch (OperationCanceledException) when (token.IsCancellationRequested)
+            {
+                return Task.FromCanceled(token);
+            }
+            catch (Exception ex)
+            {
+                // delegates that are not async methods may throw before returning a task,
+                // route those exceptions to the exception handler as well, instead of crashing the async void Execute
+                return Task.FromException(ex);
             }
         }
     }

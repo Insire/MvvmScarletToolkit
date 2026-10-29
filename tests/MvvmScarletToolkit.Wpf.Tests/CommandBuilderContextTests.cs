@@ -30,7 +30,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
             {
                 // should not be initialized by default, since they represent optional features
                 Assert.Null(context.BusyStack);
-                Assert.Null(context.CancelCommand);
+                Assert.Null(context.CancelCommandFactory);
             });
         }
 
@@ -209,6 +209,35 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 .Build();
 
             Assert.IsType<SequentialAsyncCommandDecorator>(command);
+        }
+
+        [Fact]
+        public void Build_ShouldApplyDecoratorsOnEveryCall()
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute)
+                .WithSingleExecution();
+
+            ConcurrentCommandBase implicitlyConverted = context;
+
+            Assert.IsType<SequentialAsyncCommandDecorator>(implicitlyConverted);
+            Assert.IsType<SequentialAsyncCommandDecorator>(context.Build());
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Build_ShouldCreateSeparateCancelCommandOnEveryCall(bool asyncCancellation)
+        {
+            var commandManager = Utils.GetTestCommandManager();
+            var context = new CommandBuilderContext<object>(commandManager, Utils.GetTestExceptionHandler(), Utils.TestBusyStackFactory, Utils.TestExecute, Utils.TestCanExecute);
+            context = asyncCancellation ? context.WithAsyncCancellation() : context.WithCancellation();
+
+            var first = context.Build();
+            var second = context.Build();
+
+            Assert.NotNull(first.CancelCommand);
+            Assert.NotSame(first.CancelCommand, second.CancelCommand);
         }
 
         [Fact]

@@ -2,17 +2,19 @@ namespace MvvmScarletToolkit.Commands
 {
     internal sealed class NoCancellationCommand : ICancelCommand
     {
-        private static readonly Lazy<NoCancellationCommand> _default = new Lazy<NoCancellationCommand>(() => new NoCancellationCommand());
+        public static NoCancellationCommand Default { get; } = new NoCancellationCommand();
 
-        public static NoCancellationCommand Default => _default.Value;
+        public CancellationToken Token => CancellationToken.None;
 
-        public CancellationToken Token { get; }
-
-        public event EventHandler? CanExecuteChanged;
+        // CanExecute never changes, so subscribers don't need to be tracked or notified
+        public event EventHandler? CanExecuteChanged
+        {
+            add { }
+            remove { }
+        }
 
         private NoCancellationCommand()
         {
-            Token = CancellationToken.None;
         }
 
         public bool CanExecute(object? parameter)
@@ -30,12 +32,10 @@ namespace MvvmScarletToolkit.Commands
 
         public void NotifyCommandFinished()
         {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void NotifyCommandStarting()
         {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

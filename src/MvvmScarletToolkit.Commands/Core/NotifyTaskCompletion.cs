@@ -1,14 +1,24 @@
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace MvvmScarletToolkit.Commands
 {
     public sealed class NotifyTaskCompletion : INotifyPropertyChanged
     {
-        private static readonly Lazy<NotifyTaskCompletion> _completed = new Lazy<NotifyTaskCompletion>(() => new NotifyTaskCompletion(Task.CompletedTask, IgnoreExceptionHandler.Default));
+        private static readonly PropertyChangedEventArgs _statusChanged = new PropertyChangedEventArgs(nameof(Status));
+        private static readonly PropertyChangedEventArgs _isRunningChanged = new PropertyChangedEventArgs(nameof(IsRunning));
+        private static readonly PropertyChangedEventArgs _isCompletedChanged = new PropertyChangedEventArgs(nameof(IsCompleted));
+        private static readonly PropertyChangedEventArgs _isCanceledChanged = new PropertyChangedEventArgs(nameof(IsCanceled));
+        private static readonly PropertyChangedEventArgs _isFaultedChanged = new PropertyChangedEventArgs(nameof(IsFaulted));
+        private static readonly PropertyChangedEventArgs _exceptionChanged = new PropertyChangedEventArgs(nameof(Exception));
+        private static readonly PropertyChangedEventArgs _innerExceptionChanged = new PropertyChangedEventArgs(nameof(InnerException));
+        private static readonly PropertyChangedEventArgs _errorMessageChanged = new PropertyChangedEventArgs(nameof(ErrorMessage));
+        private static readonly PropertyChangedEventArgs _isSuccessfullyCompletedChanged = new PropertyChangedEventArgs(nameof(IsSuccessfullyCompleted));
+
         private readonly IScarletExceptionHandler _exceptionHandler;
 
-        public static NotifyTaskCompletion Completed => _completed.Value;
+        private AggregateException? _exception;
+
+        public static NotifyTaskCompletion Completed { get; } = new NotifyTaskCompletion(Task.CompletedTask, IgnoreExceptionHandler.Default);
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -33,7 +43,8 @@ namespace MvvmScarletToolkit.Commands
         [Bindable(true, BindingDirection.OneWay)]
         public string ErrorMessage => InnerException?.Message ?? string.Empty;
 
-        public AggregateException? Exception => Task?.Exception?.Flatten();
+        // flattening allocates a new AggregateException, so only do it once
+        public AggregateException? Exception => _exception ??= Task.Exception?.Flatten();
         public Exception? InnerException => Exception?.InnerException;
 
         public Task Task { get; }
@@ -53,37 +64,41 @@ namespace MvvmScarletToolkit.Commands
             {
                 await task;
             }
+            catch (OperationCanceledException) when (task.IsCanceled)
+            {
+                // cancellation is an expected outcome and is reported via IsCanceled instead of the exception handler
+            }
             catch (Exception ex)
             {
                 await _exceptionHandler.Handle(ex);
             }
             finally
             {
-                OnPropertyChanged(nameof(Status));
-                OnPropertyChanged(nameof(IsRunning));
-                OnPropertyChanged(nameof(IsCompleted));
+                OnPropertyChanged(_statusChanged);
+                OnPropertyChanged(_isRunningChanged);
+                OnPropertyChanged(_isCompletedChanged);
 
                 if (task.IsCanceled)
                 {
-                    OnPropertyChanged(nameof(IsCanceled));
+                    OnPropertyChanged(_isCanceledChanged);
                 }
                 else if (task.IsFaulted)
                 {
-                    OnPropertyChanged(nameof(IsFaulted));
-                    OnPropertyChanged(nameof(Exception));
-                    OnPropertyChanged(nameof(InnerException));
-                    OnPropertyChanged(nameof(ErrorMessage));
+                    OnPropertyChanged(_isFaultedChanged);
+                    OnPropertyChanged(_exceptionChanged);
+                    OnPropertyChanged(_innerExceptionChanged);
+                    OnPropertyChanged(_errorMessageChanged);
                 }
                 else
                 {
-                    OnPropertyChanged(nameof(IsSuccessfullyCompleted));
+                    OnPropertyChanged(_isSuccessfullyCompletedChanged);
                 }
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] in string? propertyName = null)
+        private void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, e);
         }
     }
 }

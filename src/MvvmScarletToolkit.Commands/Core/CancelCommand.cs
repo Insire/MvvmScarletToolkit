@@ -7,44 +7,39 @@ namespace MvvmScarletToolkit.Commands
         private readonly IScarletCommandManager _commandManager;
 
         private CancellationTokenSource? _cts;
-        private bool _commandExecuting;
+        private int _runningExecutions;
 
-        public CancellationToken Token => _cts?.Token ?? CancellationToken.None;
+        public CancellationToken Token => Volatile.Read(ref _cts)?.Token ?? CancellationToken.None;
 
         public CancelCommand(in IScarletCommandManager commandManager)
         {
-            _commandManager = commandManager ?? throw new ArgumentException($"{nameof(commandManager)} can't be empty.", nameof(commandManager));
+            _commandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
         }
 
         public void NotifyCommandStarting()
         {
-            _commandExecuting = true;
-            if (_cts?.IsCancellationRequested == false)
+            // the owning command invalidates the requery state after this call, so there is no need to raise CanExecuteChanged here
+            Interlocked.Increment(ref _runningExecutions);
+            if (Volatile.Read(ref _cts) is null)
             {
-                return;
+                Interlocked.CompareExchange(ref _cts, new CancellationTokenSource(), null);
             }
-
-            _cts?.Dispose();
-            _cts = new CancellationTokenSource();
-            RaiseCanExecuteChanged();
         }
 
         public void NotifyCommandFinished()
         {
-            _commandExecuting = false;
-            RaiseCanExecuteChanged();
+            Interlocked.Decrement(ref _runningExecutions);
         }
 
         bool ICommand.CanExecute(object? parameter)
         {
-            return _commandExecuting && _cts?.IsCancellationRequested != true;
+            return Volatile.Read(ref _runningExecutions) > 0 && Volatile.Read(ref _cts) is not null;
         }
 
         void ICommand.Execute(object? parameter)
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
-            _cts = null;
+            // the source is not disposed, since running executions may still register callbacks on its token
+            Interlocked.Exchange(ref _cts, null)?.Cancel();
 
             RaiseCanExecuteChanged();
         }
@@ -62,7 +57,7 @@ namespace MvvmScarletToolkit.Commands
 
         public void Dispose()
         {
-            _cts?.Dispose();
+            Interlocked.Exchange(ref _cts, null)?.Dispose();
         }
     }
 }

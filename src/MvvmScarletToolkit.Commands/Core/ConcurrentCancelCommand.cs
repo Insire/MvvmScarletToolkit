@@ -3,9 +3,10 @@ namespace MvvmScarletToolkit.Commands
     internal sealed class ConcurrentCancelCommand : GenericConcurrentCommandBase, ICancelCommand
     {
         private CancellationTokenSource? _cts;
+        private int _runningExecutions;
         private readonly IScarletExceptionHandler _exceptionHandler;
 
-        public CancellationToken Token => _cts?.Token ?? CancellationToken.None;
+        public CancellationToken Token => Volatile.Read(ref _cts)?.Token ?? CancellationToken.None;
 
         public ConcurrentCancelCommand(in IScarletCommandManager commandManager, in IScarletExceptionHandler exceptionHandler)
             : base(commandManager)
@@ -15,28 +16,25 @@ namespace MvvmScarletToolkit.Commands
 
         public void NotifyCommandStarting()
         {
-            IsBusy = true;
-            if (_cts?.IsCancellationRequested == false)
+            // the owning command invalidates the requery state after this call, so there is no need to raise CanExecuteChanged here
+            IsBusy = Interlocked.Increment(ref _runningExecutions) > 0;
+            if (Volatile.Read(ref _cts) is not null)
             {
                 return;
             }
 
-            _cts?.Dispose();
-            _cts = new CancellationTokenSource();
-
-            RaiseCanExecuteChanged();
+            Interlocked.CompareExchange(ref _cts, new CancellationTokenSource(), null);
             OnPropertyChanged(nameof(Token));
         }
 
         public void NotifyCommandFinished()
         {
-            IsBusy = false;
-            RaiseCanExecuteChanged();
+            IsBusy = Interlocked.Decrement(ref _runningExecutions) > 0;
         }
 
         public void Dispose()
         {
-            _cts?.Dispose();
+            Interlocked.Exchange(ref _cts, null)?.Dispose();
         }
 
         public override async void Execute(object? parameter)
@@ -47,25 +45,27 @@ namespace MvvmScarletToolkit.Commands
 
         public override bool CanExecute(object? parameter)
         {
-            return IsBusy && _cts?.IsCancellationRequested != true;
+            return IsBusy && Volatile.Read(ref _cts) is not null;
         }
 
         public override async Task ExecuteAsync(object? parameter)
         {
-            Execution = new NotifyTaskCompletion(Task.Run(() =>
+            // detach the source synchronously, so that an execution starting right after this call receives a fresh token.
+            // the source is not disposed, since running executions may still register callbacks on its token
+            var cts = Interlocked.Exchange(ref _cts, null);
+            if (cts is null)
             {
-                _cts?.Cancel();
-                _cts?.Dispose();
-                _cts = null;
-            }), _exceptionHandler);
+                return;
+            }
 
-            OnPropertyChanged(nameof(Completion));
+            OnPropertyChanged(nameof(Token));
+            RaiseCanExecuteChanged();
+
+            // cancellation callbacks run synchronously, so keep them off the calling thread
+            Execution = new NotifyTaskCompletion(Task.Run(cts.Cancel), _exceptionHandler);
 
             await Completion
-                .ConfigureAwait(true); // return to UI thread here
-
-            RaiseCanExecuteChanged();
-            OnPropertyChanged(nameof(Token));
+                .ConfigureAwait(false);
         }
     }
 }

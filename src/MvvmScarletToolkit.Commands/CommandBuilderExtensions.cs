@@ -68,10 +68,5 @@ namespace MvvmScarletToolkit
         {
             return builder.Create(execute, (_) => canExecute());
         }
-
-        public static CommandBuilderContext<TArgument> Create<TArgument>(this IScarletCommandBuilder builder, Func<TArgument, CancellationToken, Task> execute, Func<TArgument, bool> canExecute)
-        {
-            return builder.Create(execute, canExecute);
-        }
     }
 }

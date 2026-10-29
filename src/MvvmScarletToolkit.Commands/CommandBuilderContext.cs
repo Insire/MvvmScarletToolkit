@@ -9,19 +9,20 @@ namespace MvvmScarletToolkit.Commands
     [Bindable(false)]
     public sealed class CommandBuilderContext<TArgument> : AbstractBuilder<ConcurrentCommandBase>
     {
-        private readonly Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>> _decorators;
+        private readonly List<Func<ConcurrentCommandBase, ConcurrentCommandBase>> _decorators;
         private readonly Func<Action<bool>, IBusyStack> _busyStackFactory;
 
         private readonly Func<TArgument, CancellationToken, Task> _execute;
-        private readonly Func<TArgument, bool>? _canExcute;
+        private readonly Func<TArgument, bool> _canExecute;
 
         internal IScarletCommandManager CommandManager { get; }
         internal IScarletExceptionHandler ExceptionHandler { get; }
 
         /// <summary>
-        /// optional <see cref="System.Windows.Input.ICommand"/> for Cancellation-Support
+        /// optional factory for an <see cref="System.Windows.Input.ICommand"/> for Cancellation-Support.
+        /// A factory is used, so that every call to <see cref="Build"/> creates a command with its own cancellation state
         /// </summary>
-        internal ICancelCommand? CancelCommand { get; set; }
+        internal Func<ICancelCommand>? CancelCommandFactory { get; set; }
 
         /// <summary>
         /// optional external <see cref="IBusyStack"/> that can be hooked up to receive notifications from the internal busy state
@@ -32,26 +33,26 @@ namespace MvvmScarletToolkit.Commands
                                      in IScarletExceptionHandler exceptionHandler,
                                      in Func<Action<bool>, IBusyStack> busyStackFactory,
                                      in Func<TArgument, CancellationToken, Task> execute,
-                                     in Func<TArgument, bool>? canExecute)
+                                     in Func<TArgument, bool> canExecute)
         {
             CommandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
             ExceptionHandler = exceptionHandler ?? throw new ArgumentNullException(nameof(exceptionHandler));
 
-            _decorators = new Queue<Func<ConcurrentCommandBase, ConcurrentCommandBase>>();
+            _decorators = new List<Func<ConcurrentCommandBase, ConcurrentCommandBase>>();
             _busyStackFactory = busyStackFactory ?? throw new ArgumentNullException(nameof(busyStackFactory));
 
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            _canExcute = canExecute ?? throw new ArgumentNullException(nameof(canExecute));
+            _canExecute = canExecute ?? throw new ArgumentNullException(nameof(canExecute));
         }
 
         internal void AddDecorator(in Func<ConcurrentCommandBase, ConcurrentCommandBase> decoratorFactory)
         {
             if (decoratorFactory is null)
             {
-                throw new ArgumentNullException(nameof(decoratorFactory) + " can't be null.");
+                throw new ArgumentNullException(nameof(decoratorFactory));
             }
 
-            _decorators.Enqueue(decoratorFactory);
+            _decorators.Add(decoratorFactory);
         }
 
         public override ConcurrentCommandBase Build()
@@ -63,25 +64,22 @@ namespace MvvmScarletToolkit.Commands
 
         private ConcurrentCommand<TArgument> CreateCommand()
         {
-            if (_canExcute is null)
-            {
-                return new ConcurrentCommand<TArgument>(CommandManager, ExceptionHandler, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, _execute);
-            }
+            var cancelCommand = CancelCommandFactory?.Invoke() ?? NoCancellationCommand.Default;
 
             if (BusyStack is null)
             {
-                return new ConcurrentCommand<TArgument>(CommandManager, ExceptionHandler, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, _execute, _canExcute);
+                return new ConcurrentCommand<TArgument>(CommandManager, ExceptionHandler, cancelCommand, _busyStackFactory, _execute, _canExecute);
             }
 
-            return new ConcurrentCommand<TArgument>(CommandManager, ExceptionHandler, CancelCommand ?? NoCancellationCommand.Default, _busyStackFactory, BusyStack, _execute, _canExcute);
+            return new ConcurrentCommand<TArgument>(CommandManager, ExceptionHandler, cancelCommand, _busyStackFactory, BusyStack, _execute, _canExecute);
         }
 
         private ConcurrentCommandBase WrapInDecorators(in ConcurrentCommandBase command)
         {
+            // the decorators are not consumed, so that Build (and the implicit conversion) can be called more than once
             var decorator = command;
-            while (_decorators.Count > 0)
+            foreach (var wrapper in _decorators)
             {
-                var wrapper = _decorators.Dequeue();
                 decorator = wrapper.Invoke(decorator);
             }
 
