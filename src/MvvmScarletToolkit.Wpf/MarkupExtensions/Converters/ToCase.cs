@@ -20,6 +20,12 @@ namespace MvvmScarletToolkit
             Casing = CharacterCasing.Upper;
         }
 
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            // not shared, Casing is set per usage
+            return this;
+        }
+
         public override object? Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
         {
             if (value is string str)

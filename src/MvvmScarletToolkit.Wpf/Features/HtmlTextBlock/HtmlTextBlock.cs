@@ -38,9 +38,10 @@ namespace MvvmScarletToolkit.Wpf
 
         private static void OnHtmlChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            if (o is HtmlTextBlock textBlock && e.NewValue is string text)
+            if (o is HtmlTextBlock textBlock)
             {
-                textBlock.Parse(text);
+                // null clears the inlines as well
+                textBlock.Parse(e.NewValue as string ?? string.Empty);
             }
         }
     }

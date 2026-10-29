@@ -83,7 +83,8 @@ namespace MvvmScarletToolkit.Wpf
                 return image;
             }
 
-            return new TransformedBitmap(image, new ScaleTransform(scale, scale));
+            // a TransformedBitmap keeps the full size source alive, copying the scaled pixels lets it be collected
+            return new WriteableBitmap(new TransformedBitmap(image, new ScaleTransform(scale, scale)));
         }
     }
 }

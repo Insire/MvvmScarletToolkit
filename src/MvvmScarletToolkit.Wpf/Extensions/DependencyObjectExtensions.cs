@@ -27,15 +27,18 @@ namespace MvvmScarletToolkit
 
         public static DependencyObject? FindTopMostParent(this DependencyObject? dependencyObject)
         {
+            var topMost = dependencyObject;
             while (dependencyObject != null)
             {
+                topMost = dependencyObject;
+
                 var isVisual = dependencyObject is Visual or Visual3D;
                 dependencyObject = isVisual
                     ? VisualTreeHelper.GetParent(dependencyObject)
                     : LogicalTreeHelper.GetParent(dependencyObject);
             }
 
-            return null;
+            return topMost;
         }
 
         public static T? FindParent<T>(this DependencyObject dependencyObject)
@@ -203,7 +206,8 @@ namespace MvvmScarletToolkit
         /// </summary>
         public static DataTemplate? FindDataTemplateFor(this FrameworkElement container, Type type)
         {
-            return container?.FindResource(new DataTemplateKey(type)) as DataTemplate;
+            // TryFindResource, FindResource throws when there is no template for the type
+            return container?.TryFindResource(new DataTemplateKey(type)) as DataTemplate;
         }
     }
 }

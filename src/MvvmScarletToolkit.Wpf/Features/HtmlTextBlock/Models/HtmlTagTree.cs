@@ -105,7 +105,8 @@ namespace MvvmScarletToolkit.Wpf
                     var pos4 = afterTag.IndexOf("-->", StringComparison.Ordinal);
                     if (pos4 != -1)
                     {
-                        afterTag = afterTag.Substring(pos4 + 2, afterTag.Length - pos4 - 1);
+                        // skip past the closing "-->"
+                        afterTag = afterTag[(pos4 + 3)..];
                     }
                 }
 

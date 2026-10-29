@@ -2,16 +2,20 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
+using System.Diagnostics;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace MvvmScarletToolkit.Wpf
 {
     public class ToastService : ObservableObject, IToastService
     {
-        private static readonly Lazy<ToastService> _default = new Lazy<ToastService>(() => new ToastService(new ToastServiceConfiguration(), SynchronizationContext.Current!));
+        // not SynchronizationContext.Current, that is null off the UI thread.
+        // PublicationOnly, so that a failure (e.g. no Application yet) is not cached and a later access can still succeed
+        private static readonly Lazy<ToastService> _default = new Lazy<ToastService>(CreateDefault, LazyThreadSafetyMode.PublicationOnly);
 
         public static IToastService Default => _default.Value;
 
@@ -106,29 +110,39 @@ namespace MvvmScarletToolkit.Wpf
                 .DistinctUntilChanged()
                 .Filter(t => !t.IsPersistent)
                 .Delay(ToastVisibleFor)
-                .Subscribe(async changes =>
+                .Subscribe(changes => _ = CloseToasts(changes));
+        }
+
+        private async Task CloseToasts(IChangeSet<IToast> changes)
+        {
+            // an async lambda passed to Subscribe would be async void, an exception would crash the application
+            try
+            {
+                foreach (var change in changes)
                 {
-                    foreach (var change in changes)
+                    switch (change.Reason)
                     {
-                        switch (change.Reason)
-                        {
-                            case ListChangeReason.Add:
-                            case ListChangeReason.AddRange:
-                                var toast = change.Item.Current;
-                                await CloseToast(toast).ConfigureAwait(false);
+                        case ListChangeReason.Add:
+                        case ListChangeReason.AddRange:
+                            var toast = change.Item.Current;
+                            await CloseToast(toast).ConfigureAwait(false);
 
-                                break;
+                            break;
 
-                            case ListChangeReason.Replace:
-                            case ListChangeReason.Remove:
-                            case ListChangeReason.RemoveRange:
-                            case ListChangeReason.Clear:
-                            case ListChangeReason.Refresh:
-                            case ListChangeReason.Moved:
-                                break;
-                        }
+                        case ListChangeReason.Replace:
+                        case ListChangeReason.Remove:
+                        case ListChangeReason.RemoveRange:
+                        case ListChangeReason.Clear:
+                        case ListChangeReason.Refresh:
+                        case ListChangeReason.Moved:
+                            break;
                     }
-                });
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Closing toasts failed: {0}", ex);
+            }
         }
 
         protected virtual Task DismissImpl(object? args)
@@ -153,11 +167,26 @@ namespace MvvmScarletToolkit.Wpf
             _items.Remove(toast);
         }
 
+        private static ToastService CreateDefault()
+        {
+            var application = Application.Current ?? throw new InvalidOperationException($"{nameof(ToastService)}.{nameof(Default)} requires a running {nameof(Application)}.");
+
+            return new ToastService(new ToastServiceConfiguration(), new DispatcherSynchronizationContext(application.Dispatcher));
+        }
+
         public void Show(IToast toast)
         {
-            _synchronizationContext.Post(context => SetupHost((ToastService)context!), this);
+            _synchronizationContext.Post(context => ((ToastService)context!).SetupHost(), this);
 
             _items.Add(toast);
+        }
+
+        /// <summary>
+        /// Creates and shows the window that hosts the toasts, if it is missing. Runs on the synchronization context of this service.
+        /// </summary>
+        protected virtual void SetupHost()
+        {
+            SetupHost(this);
         }
 
         private static void SetupHost(ToastService context)
@@ -170,7 +199,8 @@ namespace MvvmScarletToolkit.Wpf
                     DataContext = context,
                 };
 
-                var obj = Application.Current.FindResource(context.WindowStyleKey);
+                // TryFindResource, a missing style should not prevent showing toasts
+                var obj = Application.Current?.TryFindResource(context.WindowStyleKey);
                 if (obj is Style style && style.TargetType == typeof(Window))
                 {
                     context._host.Style = style;

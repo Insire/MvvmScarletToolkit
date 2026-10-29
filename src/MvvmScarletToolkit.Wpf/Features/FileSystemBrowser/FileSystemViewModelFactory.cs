@@ -29,11 +29,13 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             _scheduler = scheduler;
             Messenger = new WeakReferenceMessenger();
             _noAccessLookup = new ConcurrentDictionary<string, string>();
+            // the extension based resolvers run first, the magic number resolver opens and reads every file,
+            // which is too expensive when listing directories. It only runs for extensions that are unknown to the others
             _mimetypeResolvers = new List<IMimeTypeResolver>()
             {
-                new MagicNumberMimeTypeResolver(),
                 new RegistryFileExtensionMimeTypeResolver(),
                 new StaticFileExtensionMimeTypeResolver(),
+                new MagicNumberMimeTypeResolver(),
             };
         }
 
@@ -325,24 +327,43 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 return Enumerable.Empty<IFileSystemDirectory>();
             }
 
+            string[] paths;
             try
             {
-                var directoryInfos = Directory
-                    .GetDirectories(parent.FullName)
-                    .Select(p => new DirectoryInfo(p));
-
-                return directoryInfos
-                    .Where(p => folderAttributes.Any(q => p.Attributes.HasFlag(q)))
-                    .Select(p => new ScarletDirectory(_scheduler, new ScarletDirectoryInfo(p), fileAttributes, folderAttributes, parent, this));
+                paths = Directory.GetDirectories(parent.FullName);
             }
             catch (UnauthorizedAccessException ex)
             {
                 _logger.LogError(ex, "Failed to get directory info");
 
                 _noAccessLookup.TryAdd(parent.FullName, parent.FullName);
+                return Enumerable.Empty<IFileSystemDirectory>();
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "Failed to get directory info");
+                return Enumerable.Empty<IFileSystemDirectory>();
             }
 
-            return Enumerable.Empty<IFileSystemDirectory>();
+            // materialized here, so that failures of single entries are handled per entry instead of escaping the caller
+            var result = new List<IFileSystemDirectory>(paths.Length);
+            foreach (var path in paths)
+            {
+                try
+                {
+                    var info = new DirectoryInfo(path);
+                    if (folderAttributes.Any(q => info.Attributes.HasFlag(q)))
+                    {
+                        result.Add(new ScarletDirectory(_scheduler, new ScarletDirectoryInfo(info), fileAttributes, folderAttributes, parent, this));
+                    }
+                }
+                catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+                {
+                    _logger.LogError(ex, "Failed to get directory info for {Path}", path);
+                }
+            }
+
+            return result;
         }
 
         public Task<IReadOnlyCollection<IFileSystemFile>> GetFiles(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, CancellationToken token)
@@ -357,38 +378,55 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 return Enumerable.Empty<IFileSystemFile>();
             }
 
+            string[] paths;
             try
             {
-                var fileInfos = Directory
-                    .GetFiles(parent.FullName)
-                    .Select(file => new FileInfo(file))
-                    .Where(p => fileAttributes.Any(q => p.Attributes.HasFlag(q)))
-                    .Select(info =>
-                    {
-                        var mimeType = string.Empty;
-                        try
-                        {
-                            mimeType = GetMimeType(info);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Failed to get mimetype from file");
-                        }
-
-                        return new ScarletFileInfo(info, mimeType ?? string.Empty);
-                    });
-
-                return fileInfos
-                    .Select(p => new ScarletFile(_scheduler, p, parent, this));
+                paths = Directory.GetFiles(parent.FullName);
             }
             catch (UnauthorizedAccessException ex)
             {
                 _logger.LogError(ex, "Failed to get file info");
 
                 _noAccessLookup.TryAdd(parent.FullName, parent.FullName);
+                return Enumerable.Empty<IFileSystemFile>();
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "Failed to get file info");
+                return Enumerable.Empty<IFileSystemFile>();
             }
 
-            return Enumerable.Empty<IFileSystemFile>();
+            // materialized here, so that failures of single entries are handled per entry instead of escaping the caller
+            var result = new List<IFileSystemFile>(paths.Length);
+            foreach (var path in paths)
+            {
+                try
+                {
+                    var info = new FileInfo(path);
+                    if (!fileAttributes.Any(q => info.Attributes.HasFlag(q)))
+                    {
+                        continue;
+                    }
+
+                    var mimeType = string.Empty;
+                    try
+                    {
+                        mimeType = GetMimeType(info);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to get mimetype from file");
+                    }
+
+                    result.Add(new ScarletFile(_scheduler, new ScarletFileInfo(info, mimeType ?? string.Empty), parent, this));
+                }
+                catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+                {
+                    _logger.LogError(ex, "Failed to get file info for {Path}", path);
+                }
+            }
+
+            return result;
         }
     }
 }

@@ -67,30 +67,19 @@ namespace MvvmScarletToolkit
 
             var actualEnumType = Nullable.GetUnderlyingType(_enumType) ?? _enumType;
 
-            if (FilterNonBrowseables)
-            {
-                var filteredValues = FilterEnumWithoutAttributeOf<BrowsableAttribute>(actualEnumType)
-                    .Concat(FilterEnumWithoutAttributeOf<EditorBrowsableAttribute>(actualEnumType))
-                    .Where(p => p != null)
-                    .Distinct()
-                    .ToArray();
+            var values = FilterNonBrowseables
+                ? GetBrowsableValues(actualEnumType)
+                : Enum.GetValues(actualEnumType).Cast<object>().ToArray();
 
-                var tempArray = Array.CreateInstance(actualEnumType, filteredValues.Length + 1);
-                filteredValues.CopyTo(tempArray, 1);
-                return tempArray;
-            }
-            else
+            // a nullable enum gets a leading null entry, so that the selection can be cleared
+            var offset = actualEnumType == _enumType ? 0 : 1;
+            var result = Array.CreateInstance(_enumType, values.Length + offset);
+            for (var i = 0; i < values.Length; i++)
             {
-                var enumValues = Enum.GetValues(actualEnumType);
-                if (actualEnumType == _enumType)
-                {
-                    return enumValues;
-                }
-
-                var tempArray = Array.CreateInstance(actualEnumType, enumValues.Length + 1);
-                enumValues.CopyTo(tempArray, 1);
-                return tempArray;
+                result.SetValue(values[i], i + offset);
             }
+
+            return result;
         }
 
         //public static IEnumerable<TEnum> FilterEnumWithAttributeOf<TEnum, TAttribute>()
@@ -119,16 +108,16 @@ namespace MvvmScarletToolkit
         //    }
         //}
 
-        private static IEnumerable<object?> FilterEnumWithoutAttributeOf<TAttribute>(Type type)
-            where TAttribute : class
+        /// <summary>
+        /// values that are neither marked with [Browsable(false)] nor with [EditorBrowsable(EditorBrowsableState.Never)]
+        /// </summary>
+        private static object[] GetBrowsableValues(Type type)
         {
-            foreach (var field in type.GetFields(BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static))
-            {
-                if (field?.GetCustomAttributes(typeof(TAttribute), false).Length == 0)
-                {
-                    yield return field?.GetValue(null);
-                }
-            }
+            return type.GetFields(BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static)
+                .Where(field => field.GetCustomAttribute<BrowsableAttribute>(false)?.Browsable != false
+                    && field.GetCustomAttribute<EditorBrowsableAttribute>(false)?.State != EditorBrowsableState.Never)
+                .Select(field => field.GetValue(null)!)
+                .ToArray();
         }
     }
 }

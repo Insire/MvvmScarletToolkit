@@ -93,59 +93,65 @@ namespace MvvmScarletToolkit
             return element.GetValue(RefreshWhenChangedProperty);
         }
 
+        private static readonly DependencyPropertyDescriptor _viewDescriptor = DependencyPropertyDescriptor.FromProperty(CollectionViewSource.ViewProperty, typeof(CollectionViewSource));
+
         private static void OnByChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (e.NewValue is not Predicate<object> predicate)
-            {
-                return;
-            }
+            var oldPredicate = e.OldValue as Predicate<object>;
+            var predicate = e.NewValue as Predicate<object>;
 
             switch (d)
             {
                 case ItemsControl { Items.CanFilter: true } itemsControl:
-                    AttachFilterToCollectionView(itemsControl.Items, predicate);
+                    ApplyFilter(itemsControl.Items, oldPredicate, predicate);
                     return;
 
-                case CollectionViewSource { View: null } collectionViewSource:
-                {
-                    var propertyDescriptor = DependencyPropertyDescriptor.FromProperty(CollectionViewSource.ViewProperty, typeof(CollectionViewSource));
-                    propertyDescriptor?.RemoveValueChanged(collectionViewSource, OnViewChanged);
-                    propertyDescriptor?.AddValueChanged(collectionViewSource, OnViewChanged);
-
-                    break;
-
-                    void OnViewChanged(object? sender, EventArgs args)
+                case CollectionViewSource collectionViewSource:
+                    // the view may not exist yet or get replaced later, e.g. when Source changes.
+                    // a static handler, a local function capturing variables would be a new delegate on every call and could never be removed
+                    _viewDescriptor.RemoveValueChanged(collectionViewSource, OnViewChanged);
+                    if (predicate is not null)
                     {
-                        if (collectionViewSource.View is null)
-                        {
-                            return;
-                        }
-
-                        AttachFilterToCollectionView(collectionViewSource.View, predicate);
+                        _viewDescriptor.AddValueChanged(collectionViewSource, OnViewChanged);
                     }
 
-                }
+                    if (collectionViewSource.View is not null)
+                    {
+                        ApplyFilter(collectionViewSource.View, oldPredicate, predicate);
+                    }
 
-                case CollectionViewSource collectionViewSource:
-                    AttachFilterToCollectionView(collectionViewSource.View, predicate);
-                    break;
+                    return;
             }
         }
 
-        private static void AttachFilterToCollectionView(ICollectionView view, Predicate<object> predicate)
+        private static void OnViewChanged(object? sender, EventArgs args)
         {
-            using (view.DeferRefresh())
+            if (sender is CollectionViewSource { View: not null } collectionViewSource)
             {
-                if (view.Filter is null)
-                {
-                    view.Filter = predicate;
-                }
-                else
-                {
-                    view.Filter -= predicate;
-                    view.Filter += predicate;
-                }
+                ApplyFilter(collectionViewSource.View, null, collectionViewSource.GetValue(ByProperty) as Predicate<object>);
             }
+        }
+
+        private static void ApplyFilter(ICollectionView view, Predicate<object>? oldPredicate, Predicate<object>? predicate)
+        {
+            if (!view.CanFilter)
+            {
+                return;
+            }
+
+            if (predicate is null)
+            {
+                // only clear a filter that we set
+                if (oldPredicate is not null && Equals(view.Filter, oldPredicate))
+                {
+                    view.Filter = null;
+                }
+
+                return;
+            }
+
+            // replace instead of combining, a multicast predicate only returns the result of its last delegate
+            view.Filter = predicate;
         }
 
         private static void OnRefreshWhenChangedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

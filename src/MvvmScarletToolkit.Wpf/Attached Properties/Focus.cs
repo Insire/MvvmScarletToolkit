@@ -44,17 +44,19 @@ namespace MvvmScarletToolkit
                 return;
             }
 
+            // a static handler, a local function capturing element would be a new delegate on every call and could never be removed
             element.Loaded -= OnLoaded;
             if (enabled)
             {
                 element.Loaded += OnLoaded;
             }
+        }
 
-            return;
-
-            // will be fired each time the control is loaded. E.g. when a theme change occurs, this will trigger again
-            // see: https://docs.microsoft.com/en-us/dotnet/api/system.windows.frameworkelement.loaded#remarks
-            void OnLoaded(object _, EventArgs __)
+        // will be fired each time the control is loaded. E.g. when a theme change occurs, this will trigger again
+        // see: https://docs.microsoft.com/en-us/dotnet/api/system.windows.frameworkelement.loaded#remarks
+        private static void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement element)
             {
                 element.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
             }

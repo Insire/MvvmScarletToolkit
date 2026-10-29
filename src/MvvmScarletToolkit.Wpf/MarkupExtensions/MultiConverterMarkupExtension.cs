@@ -9,6 +9,10 @@ namespace MvvmScarletToolkit
     {
         private static T? _converter;
 
+        /// <summary>
+        /// Returns one shared instance per converter type. Converters with properties settable in xaml
+        /// must override this and return <see langword="this"/>, the shared instance would drop those settings.
+        /// </summary>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return _converter ??= new T();

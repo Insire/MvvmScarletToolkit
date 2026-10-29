@@ -36,11 +36,28 @@ namespace MvvmScarletToolkit.Wpf
 
         protected override void OnAttached()
         {
+            base.OnAttached();
+
             AssociatedObject.Loaded += AssociatedObjectOnLoaded;
             AssociatedObject.Unloaded += AssociatedObjectOnUnloaded;
         }
 
+        protected override void OnDetaching()
+        {
+            AssociatedObject.Loaded -= AssociatedObjectOnLoaded;
+            AssociatedObject.Unloaded -= AssociatedObjectOnUnloaded;
+
+            UnregisterEvents();
+
+            base.OnDetaching();
+        }
+
         private void AssociatedObjectOnUnloaded(object sender, RoutedEventArgs e)
+        {
+            UnregisterEvents();
+        }
+
+        private void UnregisterEvents()
         {
             if (_scrollViewer != null)
             {

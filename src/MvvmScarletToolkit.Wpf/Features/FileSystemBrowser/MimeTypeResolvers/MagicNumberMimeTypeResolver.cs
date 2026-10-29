@@ -27,7 +27,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
 
             var extension = Path.GetExtension(fileInfo.Name) is null
                 ? string.Empty
-                : Path.GetExtension(fileInfo.Name).ToUpper();
+                : Path.GetExtension(fileInfo.Name).ToUpperInvariant();
 
             return GetInternal(byteBuffer, extension);
         }

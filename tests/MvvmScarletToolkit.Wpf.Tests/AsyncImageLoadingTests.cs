@@ -530,6 +530,49 @@ namespace MvvmScarletToolkit.Wpf.Tests
         }
 
         [Fact]
+        public Task Loading_Again_Before_The_Cancelled_Load_Finished_Should_Resume()
+        {
+            // e.g. container recycling in virtualized lists, Loaded arrives while the cancelled load is still in flight
+            return StaRunner.Run(async () =>
+            {
+                var calls = 0;
+                var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                _imageService.ProvideImageAsync(First, Arg.Any<ImageSize?>(), Arg.Any<Func<bool, Task>>(), Arg.Any<CancellationToken>())
+                    .Returns(async call =>
+                    {
+                        if (Interlocked.Increment(ref calls) == 1)
+                        {
+                            started.SetResult();
+
+                            // only notices the cancellation after being loaded again
+                            await release.Task;
+                            call.Arg<CancellationToken>().ThrowIfCancellationRequested();
+                        }
+
+                        return (BitmapSource?)_firstBitmap;
+                    });
+
+                var (window, image) = CreateShownImage();
+                SetSource(image, First);
+                await WaitUntil(() => started.Task.IsCompleted);
+
+                window.Content = null;
+                await Settle();
+                window.Content = image;
+                await Settle();
+
+                release.SetResult();
+
+                await WaitUntil(() => image.Source is not null);
+                Assert.Same(_firstBitmap, image.Source);
+                AssertState(image, ImageLoadState.Loaded);
+                Assert.Equal(2, calls);
+                window.Close();
+            });
+        }
+
+        [Fact]
         public Task Loading_A_Loaded_Image_Again_Should_Not_Load_Again()
         {
             return StaRunner.Run(async () =>

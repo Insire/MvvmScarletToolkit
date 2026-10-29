@@ -137,10 +137,11 @@ namespace MvvmScarletToolkit
                 {
                     columnHeader.SizeChanged -= GridColumnHeaderSizeChanged;
                 }
-                else if (_scrollViewer is null && childVisual is ScrollViewer scrollViewer)
+                else if (childVisual is ScrollViewer scrollViewer && ReferenceEquals(scrollViewer, _scrollViewer))
                 {
-                    _scrollViewer = scrollViewer;
                     _scrollViewer.ScrollChanged -= ScrollViewerScrollChanged;
+                    // so that RegisterEvents picks it up again, once the ListView is loaded again
+                    _scrollViewer = null;
                 }
 
                 UnregisterEvents(childVisual);

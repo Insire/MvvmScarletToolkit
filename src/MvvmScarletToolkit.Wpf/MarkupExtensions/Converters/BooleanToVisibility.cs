@@ -11,7 +11,7 @@ namespace MvvmScarletToolkit
     /// <c>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</c>
     /// </remarks>
     [ValueConversion(typeof(bool), typeof(Visibility))]
-    public sealed class BooleanToVisibility : ConverterMarkupExtension<InvertBooleanToVisibility>
+    public sealed class BooleanToVisibility : ConverterMarkupExtension<BooleanToVisibility>
     {
         public override object Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
         {

@@ -21,8 +21,10 @@ namespace MvvmScarletToolkit
     /// </remarks>
     // usage:
     // <i:Interaction.Behaviors>
-    //    <mvvm:AllowableCharactersTextBoxBehavior MaxLength = "4", RegularExpression="[^a-zA-Z]" />
+    //    <mvvm:AllowableCharactersTextBoxBehavior MaxLength = "4", RegularExpression="^[^a-zA-Z]*$" />
     // </ i:Interaction.Behaviors>
+    // the expression is matched against the typed or pasted text, not the whole content of the TextBox.
+    // anchor it with ^ and $, otherwise it accepts any input that merely contains a match
     // https://stackoverflow.com/questions/1268552/how-do-i-get-a-textbox-to-only-accept-numeric-input-in-wpf/8015485#8015485
     public sealed class AllowableCharactersTextBoxBehavior : Behavior<TextBox>
     {
@@ -105,7 +107,8 @@ namespace MvvmScarletToolkit
                 var newText = Convert.ToString(e.DataObject.GetData(DataFormats.Text));
 
                 var selectedTextLength = AssociatedObject.SelectedText.Length;
-                var caretIndex = AssociatedObject.CaretIndex;
+                // the selected text is removed starting at the selection start, the caret may sit at either end of the selection
+                var caretIndex = AssociatedObject.SelectionStart;
                 var text = AssociatedObject.Text;
                 var isInsertKeyToggled = Keyboard.IsKeyToggled(Key.Insert);
 
@@ -123,7 +126,8 @@ namespace MvvmScarletToolkit
         private void OnPreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             var selectedTextLength = AssociatedObject.SelectedText.Length;
-            var caretIndex = AssociatedObject.CaretIndex;
+            // the selected text is removed starting at the selection start, the caret may sit at either end of the selection
+            var caretIndex = AssociatedObject.SelectionStart;
             var text = AssociatedObject.Text;
             var isInsertKeyToggled = Keyboard.IsKeyToggled(Key.Insert);
 

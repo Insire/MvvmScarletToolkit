@@ -48,6 +48,22 @@ namespace MvvmScarletToolkit.Wpf.Tests
             Assert.Equal(expectedHeight, image.PixelHeight);
         }
 
+        [Fact]
+        public async Task FromAsync_Should_Not_Keep_The_Full_Size_Image_When_Scaling_Down()
+        {
+            using var png = TestBitmaps.CreatePng(400, 400);
+
+            var image = await _factory.FromAsync(png, new ImageSize(100, 100), TestContext.Current.CancellationToken);
+
+            // a TransformedBitmap references its full size source
+            Assert.Multiple(() =>
+            {
+                Assert.IsNotType<TransformedBitmap>(image);
+                Assert.True(image.IsFrozen);
+                Assert.Equal(100, image.PixelWidth);
+            });
+        }
+
         [Theory]
         [InlineData(50, 40, 100, 100)]
         [InlineData(50, 40, 0, 0)]

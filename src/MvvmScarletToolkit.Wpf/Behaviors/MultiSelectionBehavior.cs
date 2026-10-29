@@ -60,11 +60,25 @@ namespace MvvmScarletToolkit
             {
                 AssociatedObject.SelectedItems.Add(item);
             }
+
+            // OnSelectedItemsChanged skips subscribing while the behavior is not attached yet
+            if (SelectedItems is INotifyCollectionChanged collection)
+            {
+                collection.CollectionChanged -= SourceCollectionChanged;
+                collection.CollectionChanged += SourceCollectionChanged;
+            }
         }
 
         protected override void OnDetaching()
         {
             AssociatedObject.SelectionChanged -= OnSelectionChanged;
+
+            // the source collection would otherwise keep the behavior and its MultiSelector alive
+            if (SelectedItems is INotifyCollectionChanged collection)
+            {
+                collection.CollectionChanged -= SourceCollectionChanged;
+            }
+
             base.OnDetaching();
         }
 

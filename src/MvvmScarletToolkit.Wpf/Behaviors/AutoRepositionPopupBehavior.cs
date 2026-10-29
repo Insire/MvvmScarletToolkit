@@ -28,7 +28,7 @@ namespace MvvmScarletToolkit
     {
         private const int WM_MOVING = 0x0216;
 
-        private IDisposable? _disposableHandle;
+        private HwndSource? _hwndSource;
 
         protected override void OnAttached()
         {
@@ -43,7 +43,9 @@ namespace MvvmScarletToolkit
             AssociatedObject.LayoutUpdated -= AssociatedObject_LayoutUpdated;
             AssociatedObject.Loaded -= AssociatedObject_Loaded;
 
-            _disposableHandle?.Dispose();
+            // the HwndSource belongs to the window, only remove our hook from it
+            _hwndSource?.RemoveHook(HwndMessageHook);
+            _hwndSource = null;
 
             base.OnDetaching();
         }
@@ -57,7 +59,7 @@ namespace MvvmScarletToolkit
         {
             AssociatedObject.Loaded -= AssociatedObject_Loaded;
 
-            if (_disposableHandle is not null)
+            if (_hwndSource is not null || AssociatedObject.PlacementTarget is null)
             {
                 return;
             }
@@ -76,7 +78,7 @@ namespace MvvmScarletToolkit
             }
 
             hwndSource.AddHook(HwndMessageHook);
-            _disposableHandle = hwndSource;
+            _hwndSource = hwndSource;
         }
 
         private IntPtr HwndMessageHook(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool bHandled)

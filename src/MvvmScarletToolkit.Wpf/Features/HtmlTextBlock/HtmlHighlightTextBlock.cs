@@ -1,15 +1,18 @@
+using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace MvvmScarletToolkit.Wpf
 {
     public class HtmlHighlightTextBlock : HtmlTextBlock
     {
+        private static readonly Regex _tagSplitter = new Regex("(<[^>]*>)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
         /// <summary>Identifies the <see cref="Highlight"/> dependency property.</summary>
         public static readonly DependencyProperty HighlightProperty = DependencyProperty.Register(
             nameof(Highlight),
             typeof(string),
             typeof(HtmlHighlightTextBlock),
-            new UIPropertyMetadata(string.Empty));
+            new UIPropertyMetadata(string.Empty, OnHighlightChanged));
 
         public string Highlight
         {
@@ -17,27 +20,42 @@ namespace MvvmScarletToolkit.Wpf
             set => SetValue(HighlightProperty, value);
         }
 
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-            Parse(Html);
-        }
-
         protected override void Parse(string html)
         {
             Inlines.Clear();
 
-            if (!string.IsNullOrEmpty(Highlight))
+            if (string.IsNullOrEmpty(html))
             {
-                var index = html.IndexOf(Highlight, StringComparison.InvariantCultureIgnoreCase);
-                while (index != -1)
+                return;
+            }
+
+            var highlight = Highlight;
+            if (!string.IsNullOrEmpty(highlight))
+            {
+                var pattern = Regex.Escape(highlight);
+
+                // only highlight text between tags, the split keeps the tags, since they are captured
+                var segments = _tagSplitter.Split(html);
+                for (var i = 0; i < segments.Length; i++)
                 {
-                    html = string.Format("{0}[b]{1}[/b]{2}", html[..index], html.Substring(index, Highlight.Length), html[(index + Highlight.Length)..]);
-                    index = html.IndexOf(Highlight, index + 7 + Highlight.Length, StringComparison.InvariantCultureIgnoreCase);
+                    if (!segments[i].StartsWith('<'))
+                    {
+                        segments[i] = Regex.Replace(segments[i], pattern, "<b>$0</b>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+                    }
                 }
+
+                html = string.Concat(segments);
             }
 
             this.UpdateWith(html);
+        }
+
+        private static void OnHighlightChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            if (o is HtmlHighlightTextBlock textBlock)
+            {
+                textBlock.Parse(textBlock.Html);
+            }
         }
     }
 }

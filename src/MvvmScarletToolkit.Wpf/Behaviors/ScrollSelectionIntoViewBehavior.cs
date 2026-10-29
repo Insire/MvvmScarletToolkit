@@ -43,7 +43,8 @@ namespace MvvmScarletToolkit.Wpf
                 {
                     var selectedItem = dataGrid.SelectedItem;
 
-                    dataGrid.Dispatcher.Invoke(ScrollIntoView);
+                    // deferred, so that the selection change completes before scrolling
+                    dataGrid.Dispatcher.InvokeAsync(ScrollIntoView);
                     return;
 
                     void ScrollIntoView()
@@ -61,7 +62,8 @@ namespace MvvmScarletToolkit.Wpf
                 {
                     var selectedItem = listBox.SelectedItem;
 
-                    listBox.Dispatcher.Invoke(ScrollIntoView);
+                    // deferred, so that the selection change completes before scrolling
+                    listBox.Dispatcher.InvokeAsync(ScrollIntoView);
                     return;
 
                     void ScrollIntoView()

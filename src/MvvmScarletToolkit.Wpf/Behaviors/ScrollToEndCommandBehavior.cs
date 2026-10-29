@@ -1,9 +1,12 @@
 using Microsoft.Xaml.Behaviors;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace MvvmScarletToolkit.Wpf
 {
@@ -51,16 +54,13 @@ namespace MvvmScarletToolkit.Wpf
             set => SetValue(IntervalProperty, value);
         }
 
-        private readonly IScheduler _scheduler;
+        private static readonly DependencyPropertyDescriptor _verticalOffsetDescriptor = DependencyPropertyDescriptor.FromProperty(ScrollViewer.VerticalOffsetProperty, typeof(ScrollViewer));
+        private static readonly DependencyPropertyDescriptor _horizontalOffsetDescriptor = DependencyPropertyDescriptor.FromProperty(ScrollViewer.HorizontalOffsetProperty, typeof(ScrollViewer));
 
         private IDisposable? _disposable;
+        private ScrollViewer? _scrollViewer;
 
         private event EventHandler? CommandExecutionRequested;
-
-        public ScrollToEndCommandBehavior()
-        {
-            _scheduler = new SynchronizationContextScheduler(SynchronizationContext.Current!);
-        }
 
         protected override void OnAttached()
         {
@@ -69,15 +69,23 @@ namespace MvvmScarletToolkit.Wpf
             AssociatedObject.Loaded -= OnLoaded;
             _disposable?.Dispose();
 
+            // created here instead of in the constructor, SynchronizationContext.Current may be null at construction time
+            var scheduler = new SynchronizationContextScheduler(new DispatcherSynchronizationContext(AssociatedObject.Dispatcher));
+
             _disposable = Observable.FromEventPattern(
                 fsHandler => CommandExecutionRequested += fsHandler,
                 fsHandler => CommandExecutionRequested -= fsHandler)
                 .ObserveOn(TaskPoolScheduler.Default)
                 .Sample(Interval)
-                .ObserveOn(_scheduler)
+                .ObserveOn(scheduler)
                 .Subscribe(_ => Command?.Execute(null));
 
             AssociatedObject.Loaded += OnLoaded;
+
+            if (AssociatedObject.IsLoaded)
+            {
+                OnLoaded(AssociatedObject, new RoutedEventArgs());
+            }
         }
 
         protected override void OnDetaching()
@@ -85,49 +93,61 @@ namespace MvvmScarletToolkit.Wpf
             base.OnDetaching();
 
             AssociatedObject.Loaded -= OnLoaded;
+            DetachScrollViewer();
             _disposable?.Dispose();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            // Loaded fires again e.g. after switching tabs, don't subscribe twice
+            DetachScrollViewer();
+
             var scrollViewer = AssociatedObject.FindVisualChildrenBreadthFirstOrSelf<ScrollViewer>().FirstOrDefault();
             if (scrollViewer is null)
             {
-                throw new InvalidOperationException("ScrollViewer not found.");
+                // throwing from an event handler would crash the application
+                Trace.TraceWarning("{0}: no ScrollViewer found in {1}", nameof(ScrollToEndCommandBehavior), AssociatedObject);
+                return;
             }
+
+            _scrollViewer = scrollViewer;
 
             if (scrollViewer.VerticalScrollBarVisibility is ScrollBarVisibility.Visible or ScrollBarVisibility.Auto)
             {
-                var propertyDescriptor = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ScrollViewer.VerticalOffsetProperty, typeof(ScrollViewer));
-                propertyDescriptor?.RemoveValueChanged(scrollViewer, OnVerticalOffsetChanged);
-                propertyDescriptor?.AddValueChanged(scrollViewer, OnVerticalOffsetChanged);
-
-                void OnVerticalOffsetChanged(object? sender, EventArgs args)
-                {
-                    var atBottom = scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight;
-
-                    if (atBottom)
-                    {
-                        CommandExecutionRequested?.Invoke(scrollViewer, EventArgs.Empty);
-                    }
-                }
+                _verticalOffsetDescriptor.AddValueChanged(scrollViewer, OnVerticalOffsetChanged);
             }
 
             if (scrollViewer.HorizontalScrollBarVisibility is ScrollBarVisibility.Visible or ScrollBarVisibility.Auto)
             {
-                var propertyDescriptor = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ScrollViewer.HorizontalOffsetProperty, typeof(ScrollViewer));
-                propertyDescriptor?.RemoveValueChanged(scrollViewer, OnHorizontalOffsetChanged);
-                propertyDescriptor?.AddValueChanged(scrollViewer, OnHorizontalOffsetChanged);
+                _horizontalOffsetDescriptor.AddValueChanged(scrollViewer, OnHorizontalOffsetChanged);
+            }
+        }
 
-                void OnHorizontalOffsetChanged(object? sender, EventArgs args)
-                {
-                    var atBottom = scrollViewer.HorizontalOffset >= scrollViewer.ScrollableWidth;
+        private void DetachScrollViewer()
+        {
+            if (_scrollViewer is null)
+            {
+                return;
+            }
 
-                    if (atBottom)
-                    {
-                        CommandExecutionRequested?.Invoke(scrollViewer, EventArgs.Empty);
-                    }
-                }
+            _verticalOffsetDescriptor.RemoveValueChanged(_scrollViewer, OnVerticalOffsetChanged);
+            _horizontalOffsetDescriptor.RemoveValueChanged(_scrollViewer, OnHorizontalOffsetChanged);
+            _scrollViewer = null;
+        }
+
+        private void OnVerticalOffsetChanged(object? sender, EventArgs args)
+        {
+            if (sender is ScrollViewer scrollViewer && scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight)
+            {
+                CommandExecutionRequested?.Invoke(scrollViewer, EventArgs.Empty);
+            }
+        }
+
+        private void OnHorizontalOffsetChanged(object? sender, EventArgs args)
+        {
+            if (sender is ScrollViewer scrollViewer && scrollViewer.HorizontalOffset >= scrollViewer.ScrollableWidth)
+            {
+                CommandExecutionRequested?.Invoke(scrollViewer, EventArgs.Empty);
             }
         }
     }

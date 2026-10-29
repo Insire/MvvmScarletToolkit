@@ -13,9 +13,15 @@ namespace MvvmScarletToolkit
 
         public override DataTemplate? SelectTemplate(object item, DependencyObject container)
         {
+            // e.g. a ContentPresenter without content
+            if (item is null)
+            {
+                return null;
+            }
+
             var type = item.GetType();
 
-            return Templates.FirstOrDefault(p => p.DataType.Equals(type)) ?? container.FindDataTemplateFor(type);
+            return Templates.Find(type) ?? container.FindDataTemplateFor(type);
         }
     }
 }

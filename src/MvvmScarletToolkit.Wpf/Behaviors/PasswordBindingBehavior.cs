@@ -35,7 +35,9 @@ namespace MvvmScarletToolkit
             nameof(ClearTextPassword),
             typeof(string),
             typeof(PasswordBindingBehavior),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnClearTextPasswordChanged));
+
+        private bool _isUpdatingPassword;
 
         protected override void OnAttached()
         {
@@ -47,11 +49,50 @@ namespace MvvmScarletToolkit
             }
 
             AssociatedObject.PasswordChanged += PasswordChanged;
+            UpdatePassword();
         }
 
         private void PasswordChanged(object sender, RoutedEventArgs e)
         {
+            if (_isUpdatingPassword)
+            {
+                return;
+            }
+
             SetCurrentValue(ClearTextPasswordProperty, AssociatedObject.Password);
+        }
+
+        private static void OnClearTextPasswordChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is PasswordBindingBehavior behavior)
+            {
+                behavior.UpdatePassword();
+            }
+        }
+
+        private void UpdatePassword()
+        {
+            if (AssociatedObject is null)
+            {
+                return;
+            }
+
+            var password = ClearTextPassword ?? string.Empty;
+            if (AssociatedObject.Password == password)
+            {
+                // also prevents moving the caret while the user types
+                return;
+            }
+
+            try
+            {
+                _isUpdatingPassword = true;
+                AssociatedObject.Password = password;
+            }
+            finally
+            {
+                _isUpdatingPassword = false;
+            }
         }
 
         protected override void OnDetaching()

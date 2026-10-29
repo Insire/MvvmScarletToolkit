@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Markup;
 
 [assembly: System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("MvvmScarletToolkit.Wpf.Tests")]
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information

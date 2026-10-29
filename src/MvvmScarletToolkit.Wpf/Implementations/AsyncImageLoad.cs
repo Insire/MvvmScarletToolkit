@@ -132,6 +132,10 @@ namespace MvvmScarletToolkit.Wpf
             var cancellationTokenSource = new CancellationTokenSource();
             _cancellationTokenSource = cancellationTokenSource;
 
+            // set when the image got loaded again before the cancelled load finished.
+            // OnLoaded already ran and skipped resuming, since this load was still in flight
+            var resume = false;
+
             try
             {
                 var bitmap = await loader.Value.ProvideImageAsync(uri, _getSize(), isLoading => SetIsLoadingAsync(version, isLoading), cancellationTokenSource.Token);
@@ -144,6 +148,7 @@ namespace MvvmScarletToolkit.Wpf
                 {
                     // unloaded, the image service reports cancellation with null, resumes once loaded again
                     SetState(ImageLoadState.Pending);
+                    resume = _image.IsLoaded;
                 }
                 else
                 {
@@ -158,6 +163,7 @@ namespace MvvmScarletToolkit.Wpf
                 if (_version == version)
                 {
                     SetState(ImageLoadState.Pending);
+                    resume = _image.IsLoaded;
                 }
             }
             catch (Exception ex)
@@ -178,6 +184,11 @@ namespace MvvmScarletToolkit.Wpf
                 }
 
                 cancellationTokenSource.Dispose();
+            }
+
+            if (resume)
+            {
+                Invalidate();
             }
         }
 

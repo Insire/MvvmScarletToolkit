@@ -61,13 +61,7 @@ namespace MvvmScarletToolkit.Wpf
                 return;
             }
 
-            var info = new ProcessStartInfo("cmd", $"/c start {uri}")
-            {
-                CreateNoWindow = true,
-            };
-
-            using (Process.Start(info))
-            { }
+            ShellExecute.Start(ShellExecute.CreateStartInfo(uri));
         }
 
         private bool CanExecuteImpl()
