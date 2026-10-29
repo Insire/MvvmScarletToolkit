@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using JetBrains.Annotations;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
@@ -29,6 +30,8 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
         public const int ImageHeight = 200;
 
         private readonly HttpClient _httpClient;
+
+        private bool _isCountUpdatePending;
 
         [ObservableProperty]
         public partial int RealizedCount { get; private set; }
@@ -73,7 +76,8 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 
                 await AddRange(viewModels, token);
             }
-            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+            // a cancellation requested by the user is not an error, the command handles it
+            catch (Exception ex) when (ex is HttpRequestException or JsonException || (ex is TaskCanceledException && !token.IsCancellationRequested))
             {
                 Error = $"Fetching the image list from picsum.photos failed: {ex.Message}";
             }
@@ -83,7 +87,18 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 
         private void OnStateChanged(VirtualizedImageViewModel viewModel)
         {
-            UpdateCounts();
+            // scrolling changes the state of many items at once, count them once afterwards instead of once per change
+            if (_isCountUpdatePending)
+            {
+                return;
+            }
+
+            _isCountUpdatePending = true;
+            _ = Dispatcher.Invoke(() =>
+            {
+                _isCountUpdatePending = false;
+                UpdateCounts();
+            });
         }
 
         private void UpdateCounts()
@@ -122,16 +137,6 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             ShownCount = shown;
             UnrealizedCount = unrealized;
             FailedCount = failed;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                Items.Dispose();
-            }
-
-            base.Dispose(disposing);
         }
     }
 }

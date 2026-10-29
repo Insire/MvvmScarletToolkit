@@ -30,8 +30,8 @@
                RenderOptions.EdgeMode="Aliased"
                SnapsToDevicePixels="True">
             <i:Interaction.Behaviors>
-                <mvvm:AsyncImageLoadingBehavior Width="800"
-                                                Height="800"
+                <mvvm:AsyncImageLoadingBehavior Width="{Binding DecodeSize, ElementName=this}"
+                                                Height="{Binding DecodeSize, ElementName=this}"
                                                 IsLoading="{Binding IsLoading, Mode=TwoWay, ElementName=this, UpdateSourceTrigger=PropertyChanged}"
                                                 Source="{Binding Path}" />
             </i:Interaction.Behaviors>

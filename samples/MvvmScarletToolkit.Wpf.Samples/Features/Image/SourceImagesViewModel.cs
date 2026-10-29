@@ -17,9 +17,10 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             _target = target;
         }
 
-        protected override Task RefreshInternal(CancellationToken token)
+        protected override async Task RefreshInternal(CancellationToken token)
         {
-            return AddRange(_provider.GetImages(this, _target), token);
+            await _provider.Initialize(token).ConfigureAwait(false);
+            await AddRange(_provider.GetImages(this, _target), token).ConfigureAwait(false);
         }
     }
 }

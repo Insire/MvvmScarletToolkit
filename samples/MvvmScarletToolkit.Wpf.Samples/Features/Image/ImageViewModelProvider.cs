@@ -1,9 +1,11 @@
 using JetBrains.Annotations;
+using Microsoft.Extensions.Logging;
 using MoreLinq;
 using MvvmScarletToolkit.Core.Samples.Features;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
@@ -41,34 +43,76 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             "https://w.wallhaven.cc/full/6d/wallhaven-6d6pvl.jpg",
         };
 
+        private static readonly TimeSpan InitializationTimeout = TimeSpan.FromSeconds(10);
+
         private readonly HashSet<string> _randomWebUrls;
         private readonly IScarletCommandBuilder _commandBuilder;
         private readonly EnvironmentInformationProvider _environmentInformationProvider;
         private readonly HttpClient _httpClient;
+        private readonly ILogger<ImageViewModelProvider> _logger;
+        private readonly Lock _initializationLock;
+        private Task<bool>? _initialization;
         private int _index;
 
         public ImageViewModelProvider(
             IScarletCommandBuilder commandBuilder,
             EnvironmentInformationProvider environmentInformationProvider,
-            HttpClient httpClient)
+            HttpClient httpClient,
+            ILogger<ImageViewModelProvider> logger)
         {
             _commandBuilder = commandBuilder ?? throw new ArgumentNullException(nameof(commandBuilder));
             _environmentInformationProvider = environmentInformationProvider;
             _httpClient = httpClient;
+            _logger = logger;
             _randomWebUrls = new HashSet<string>();
+            _initializationLock = new Lock();
         }
 
-        public async Task Initialize(CancellationToken cancellationToken)
+        /// <summary>
+        /// Fetches the list of random images once. A failed attempt is logged, and repeated on the next call.
+        /// </summary>
+        public Task Initialize(CancellationToken cancellationToken)
         {
-            var models = await _httpClient.GetFromJsonAsync<List<ImageDto>>("https://picsum.photos/v2/list", cancellationToken);
-            if (models != null)
+            Task<bool> initialization;
+            lock (_initializationLock)
             {
-                _randomWebUrls.AddRange(models.Select(p => p.DownloadUrl.ToString()));
+                if (_initialization is null || (_initialization.IsCompleted && !_initialization.Result))
+                {
+                    _initialization = InitializeInternal();
+                }
+
+                initialization = _initialization;
+            }
+
+            // the fetch is shared, cancelling one caller must not cancel it for the others
+            return initialization.WaitAsync(cancellationToken);
+        }
+
+        private async Task<bool> InitializeInternal()
+        {
+            try
+            {
+                using var timeout = new CancellationTokenSource(InitializationTimeout);
+                var models = await _httpClient.GetFromJsonAsync<List<ImageDto>>("https://picsum.photos/v2/list", timeout.Token).ConfigureAwait(false);
+                if (models != null)
+                {
+                    _randomWebUrls.AddRange(models.Select(p => p.DownloadUrl.ToString()));
+                }
+
+                return true;
+            }
+            catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException or JsonException or NotSupportedException)
+            {
+                _logger.LogWarning(ex, "Fetching the image list from picsum.photos failed, continuing without random images");
+                return false;
             }
         }
 
         public IEnumerable<ImageViewModel> GetImages(SourceImagesViewModel source, TargetImagesViewModel target)
         {
+            // Sequence restarts with every refresh
+            Interlocked.Exchange(ref _index, 0);
+
             return GetLocalImages(source, target).Interleave(GetWebImages(source, target), GetRandomWebImages(source, target));
         }
 
@@ -100,7 +144,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 
                 yield return new ImageViewModel(_commandBuilder, target, source)
                 {
-                    IsSelected = index == 0,
+                    IsSelected = index == 1,
                     DisplayName = Path.GetFileName(filePath),
                     Path = filePath,
                     Sequence = index,
@@ -116,7 +160,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 
                 yield return new ImageViewModel(_commandBuilder, target, source)
                 {
-                    IsSelected = index == 0,
+                    IsSelected = index == 1,
                     DisplayName = $"Image {index}",
                     Path = _urls[i],
                     Sequence = index,
@@ -134,7 +178,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 
                 yield return new ImageViewModel(_commandBuilder, target, source)
                 {
-                    IsSelected = index == 0,
+                    IsSelected = index == 1,
                     DisplayName = $"Image {index}",
                     Path = randomWebUrls[i],
                     Sequence = index,

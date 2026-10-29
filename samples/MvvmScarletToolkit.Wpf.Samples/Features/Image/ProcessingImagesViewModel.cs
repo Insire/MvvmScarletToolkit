@@ -5,8 +5,6 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
     public sealed partial class ProcessingImagesViewModel : ObservableObject
     {
-        private readonly ImageViewModelProvider _imageFactory;
-
         private SourceImagesViewModel _source;
         public SourceImagesViewModel Source
         {
@@ -25,12 +23,6 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
         {
             _target = new TargetImagesViewModel(commandBuilder);
             _source = new SourceImagesViewModel(commandBuilder, imageFactory, _target);
-            _imageFactory = imageFactory;
-        }
-
-        public Task Initialize(CancellationToken cancellationToken)
-        {
-            return _imageFactory.Initialize(cancellationToken);
         }
     }
 }

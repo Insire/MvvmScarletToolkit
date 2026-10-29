@@ -24,10 +24,11 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
         [RelayCommand(CanExecute = nameof(CanMoveToTarget), AllowConcurrentExecutions = false)]
         private async Task MoveToTarget(object? element)
         {
-            await _source.Remove(this).ConfigureAwait(false);
+            // no ConfigureAwait(false), Items may only be read on the UI thread, which modifies it
+            await _source.Remove(this);
             if (!_target.Items.Contains(this))
             {
-                await _target.Add(this).ConfigureAwait(false);
+                await _target.Add(this);
             }
         }
 

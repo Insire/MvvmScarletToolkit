@@ -1,15 +1,9 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Jot;
 using Jot.Storage;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.IO;
 using MvvmScarletToolkit.Core.Samples.Features;
-using MvvmScarletToolkit.Core.Samples.Features.AsyncState;
-using MvvmScarletToolkit.Core.Samples.Features.Busy;
-using MvvmScarletToolkit.Core.Samples.Features.Process;
-using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.ImageLoading;
 using MvvmScarletToolkit.ImageLoading.Caches;
 using MvvmScarletToolkit.ImageLoading.Caches.Data;
@@ -17,10 +11,9 @@ using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using MvvmScarletToolkit.Wpf.Samples.Features;
-using MvvmScarletToolkit.Wpf.Samples.Features.DataGrid;
-using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using Serilog;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Reactive.Concurrency;
@@ -33,6 +26,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
     [SupportedOSPlatform("windows7.0")]
     public partial class App : Application
     {
+        private static readonly TimeSpan ShutDownTimeout = TimeSpan.FromSeconds(5);
+
         public App()
         {
             Ioc.Default.ConfigureServices(ConfigureServices());
@@ -53,26 +48,14 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 .PersistOn(nameof(Window.Closing))
                 .StopTrackingOn(nameof(Window.Closing));
 
+            // NavigationViewModel creates the other scenes itself, only what is resolved from the container is registered here
             serviceCollection.AddSingleton<MainWindow>();
             serviceCollection.AddSingleton<NavigationViewModel>();
-            serviceCollection.AddSingleton<DataGridViewModel>();
             serviceCollection.AddSingleton<ImageViewModelProvider>();
-            serviceCollection.AddSingleton<LocalizationsViewModel>();
             serviceCollection.AddSingleton<ProcessingImagesViewModel>();
-            serviceCollection.AddSingleton<DataEntriesViewModel>();
-            serviceCollection.AddSingleton<AsyncStateListViewModel>();
-            serviceCollection.AddSingleton<ProgressViewModel>();
-            serviceCollection.AddSingleton<FileSystemViewModel>();
-            serviceCollection.AddSingleton<FilePickerViewModel>();
-            serviceCollection.AddSingleton<FolderPickerViewModel>();
+            serviceCollection.AddSingleton<LocalizationsViewModel>();
             serviceCollection.AddSingleton<IFileSystemViewModelFactory, FileSystemViewModelFactory>();
             serviceCollection.AddSingleton(FileSystemOptionsViewModel.Default);
-            serviceCollection.AddSingleton<BusyViewModel>();
-            serviceCollection.AddSingleton<GeometryRenderViewModel>();
-            serviceCollection.AddSingleton<PasswordViewModel>();
-            serviceCollection.AddSingleton<DialogViewModel>();
-            serviceCollection.AddSingleton<ProcessViewModel>();
-            serviceCollection.AddSingleton<ToastsViewModel>();
 
             serviceCollection.AddSingleton<IScheduler>(provider => new SynchronizationContextScheduler(provider.GetRequiredService<SynchronizationContext>()));
             serviceCollection.AddSingleton<ILocalizationProvider, ScarletLocalizationProvider>();
@@ -81,7 +64,6 @@ namespace MvvmScarletToolkit.Wpf.Samples
             serviceCollection.AddSingleton(tracker);
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<RecyclableMemoryStreamManager>();
-            serviceCollection.AddSingleton(new MemoryCache(new MemoryCacheOptionsWrapper(new MemoryCacheOptions())));
             serviceCollection.AddSingleton(environmentInformationProvider);
             serviceCollection.AddLogging(builder =>
                 builder.AddSerilog(new LoggerConfiguration()
@@ -100,6 +82,7 @@ namespace MvvmScarletToolkit.Wpf.Samples
             serviceCollection.AddSingleton<IImageFilesystemCache<BitmapSource>, ImageFilesystemCache<BitmapSource>>();
             serviceCollection.AddSingleton<IImageDataMemoryCache, ImageDataMemoryCache>();
             serviceCollection.AddSingleton<IImageMemoryCache<BitmapSource>, ImageMemoryCache<BitmapSource>>();
+            // limits concurrent decoding in MagickImageFactory, when that is registered instead of WpfImageFactory
             serviceCollection.AddSingleton(new SemaphoreSlim(Environment.ProcessorCount));
             serviceCollection.AddSingleton(new ImageDataFileystemCacheOptions() { CacheDirectoryPath = environmentInformationProvider.GetRawImagesFolderPath(), CreateFolder = true, IsEnabled = true });
             serviceCollection.AddSingleton(new ImageFilesystemCacheOptions() { IsEnabled = true, CacheDirectoryPath = environmentInformationProvider.GetEncodedImagesFolderPath(), CreateFolder = true });
@@ -112,35 +95,39 @@ namespace MvvmScarletToolkit.Wpf.Samples
             return serviceCollection.BuildServiceProvider();
         }
 
-        protected override async void OnStartup(StartupEventArgs e)
+        protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            var processingImagesViewModel = Ioc.Default.GetRequiredService<ProcessingImagesViewModel>();
-            await processingImagesViewModel.Initialize(CancellationToken.None);
 
+            // the image list from picsum.photos is fetched by the image scene when it loads, so a slow or missing network does not delay the window
             var window = Ioc.Default.GetRequiredService<MainWindow>();
             window.Show();
         }
 
-        protected override async void OnExit(ExitEventArgs e)
+        protected override void OnExit(ExitEventArgs e)
         {
             // images are handed out before they are written to the disk caches, keep what is still pending.
             // Blocking is fine, the image service does not need the UI thread to finish
-            Ioc.Default.GetRequiredService<ImageService<BitmapSource>>().FlushAsync().Wait(TimeSpan.FromSeconds(5));
+            WaitForShutDownStep(Ioc.Default.GetRequiredService<ImageService<BitmapSource>>().FlushAsync());
 
+            // raises Exit, which starts unloading the registered viewmodels with a synchronous dispatcher, so waiting here can't deadlock.
+            // OnExit must not be async: the process ends as soon as it returns, continuations after an await would never run
             base.OnExit(e);
 
-            await ScarletExitService.Default.ShutDown().ConfigureAwait(false);
+            WaitForShutDownStep(ScarletExitService.Default.ShutDown());
             Ioc.Default.GetRequiredService<Tracker>().PersistAll();
         }
 
-        private sealed class MemoryCacheOptionsWrapper : IOptions<MemoryCacheOptions>
+        private static void WaitForShutDownStep(Task task)
         {
-            public MemoryCacheOptions Value { get; }
-
-            public MemoryCacheOptionsWrapper(MemoryCacheOptions value)
+            try
             {
-                Value = value;
+                task.Wait(ShutDownTimeout);
+            }
+            catch (AggregateException ex)
+            {
+                // a failing step must not prevent the remaining ones
+                Trace.TraceError("Shutting down failed: {0}", ex);
             }
         }
     }

@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Globalization;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
 {
@@ -13,7 +14,8 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
         public partial string FilterText { get; set; }
 
         public DataGridViewModel(IScarletCommandBuilder commandBuilder, SynchronizationContext synchronizationContext)
-            : base(commandBuilder, synchronizationContext, vm => vm.Name, new DataGridDataProvider(commandBuilder, 2000, 50))
+            // the key has to be immutable, Name can be edited in the details view
+            : base(commandBuilder, synchronizationContext, vm => vm.Id.ToString(CultureInfo.InvariantCulture), new DataGridDataProvider(commandBuilder, 2000, 50))
         {
             FilterText = string.Empty;
             Groups = GroupingViewModel.Create(Items);
@@ -61,9 +63,8 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
         {
             if (disposing)
             {
+                // the rows are disposed by the base class, when they are removed from Items
                 Groups.Dispose();
-
-                Items.Dispose();
             }
 
             base.Dispose(disposing);

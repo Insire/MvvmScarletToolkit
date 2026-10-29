@@ -23,13 +23,13 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             SynchronizationContext synchronizationContext,
             IScarletCommandBuilder commandBuilder,
             LocalizationsViewModel localizationsViewModel,
-            EnvironmentInformationProvider environmentInformationProvider,
+            ProcessingImagesViewModel processingImagesViewModel,
             HttpClient httpClient)
             : base(commandBuilder, localizationsViewModel)
         {
             var dataGridViewModel = new DataGrid.DataGridViewModel(commandBuilder, synchronizationContext);
 
-            Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(CommandBuilder, new ImageViewModelProvider(CommandBuilder, environmentInformationProvider, httpClient)));
+            Add("Image Loading + Drag and Drop", processingImagesViewModel);
             Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
             Add("Image Loading in a virtualized list", new VirtualizedImagesViewModel(CommandBuilder, synchronizationContext, httpClient));
             Add("ConcurrentCommands and state changes", new AsyncStateListViewModel(commandBuilder));
@@ -39,7 +39,9 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             Add("State changes in a tree structure", new BusyViewModel(commandBuilder));
             Add("Geometry rendering", new GeometryRenderViewModel(commandBuilder));
             Add("Binding Passwordbox", new PasswordViewModel());
-            Add("MVVM Grouping", GroupingViewModel.Create(commandBuilder, dataGridViewModel.Items));
+            // the same instance as in the DataGrid scene: GroupsViewModels coordinate through the shared messenger,
+            // a second GroupingViewModel would take part in that and steal groupings from the first one
+            Add("MVVM Grouping", dataGridViewModel.Groups);
             Add("Dialog-ViewModel", new DialogViewModel(commandBuilder));
             Add("MVVM Terminal/Console", new ProcessViewModel(commandBuilder));
 

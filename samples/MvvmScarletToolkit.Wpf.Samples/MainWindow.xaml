@@ -111,6 +111,32 @@
                                 <CollectionContainer Collection="{Binding Data, Source={StaticResource OutputProxy}}" />
                                 <CollectionContainer Collection="{Binding Data, Source={StaticResource ErrorsProxy}}" />
                             </CompositeCollection>
+
+                            <!--  the ScrollViewer has to be part of the template, inside another ScrollViewer the VirtualizingStackPanel would realize every line  -->
+                            <Style x:Key="VirtualizedOutputStyle" TargetType="{x:Type ItemsControl}">
+                                <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
+                                <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ItemsControl}">
+                                            <ScrollViewer CanContentScroll="True"
+                                                          Focusable="False"
+                                                          HorizontalScrollBarVisibility="Auto"
+                                                          VerticalScrollBarVisibility="Auto">
+                                                <ItemsPresenter />
+                                            </ScrollViewer>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="ItemsPanel">
+                                    <Setter.Value>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel />
+                                        </ItemsPanelTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
                         </Grid.Resources>
 
                         <Grid.ColumnDefinitions>
@@ -147,6 +173,7 @@
 
                         <Button Grid.Row="0"
                                 Grid.Column="4"
+                                Click="SelectProcessFile_Click"
                                 Content="Select" />
                         <TextBlock Grid.Row="2"
                                    Grid.Column="0"
@@ -173,75 +200,54 @@
                                 Command="{Binding StartCommand}"
                                 Content="Run" />
 
-                        <ScrollViewer Grid.Row="8"
+                        <ItemsControl Grid.Row="8"
                                       Grid.Column="0"
-                                      HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding Output}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type process:ProcessData}">
-                                        <TextBlock>
-                                            <Run Text="{Binding Message, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
+                                      ItemsSource="{Binding Output}"
+                                      Style="{StaticResource VirtualizedOutputStyle}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type process:ProcessData}">
+                                    <TextBlock>
+                                        <Run Text="{Binding Message, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
-                        <ScrollViewer Grid.Row="8"
+                        <ItemsControl Grid.Row="8"
                                       Grid.Column="2"
-                                      HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding Errors}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type process:ProcessErrorData}">
-                                        <TextBlock TextWrapping="Wrap">
-                                            <Run Text="{Binding Message, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
+                                      ItemsSource="{Binding Errors}"
+                                      Style="{StaticResource VirtualizedOutputStyle}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type process:ProcessErrorData}">
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run Text="{Binding Message, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
                         <TextBlock Grid.Row="10"
                                    Grid.Column="0"
                                    Text="All Output" />
 
-                        <ScrollViewer Grid.Row="12"
+                        <ItemsControl Grid.Row="12"
                                       Grid.Column="0"
                                       Grid.ColumnSpan="3"
-                                      HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding Source={StaticResource CompositeCollection}}">
-                                <ItemsControl.Resources>
-                                    <DataTemplate DataType="{x:Type process:ProcessData}">
-                                        <TextBlock Foreground="{DynamicResource AccentTextFillColorTertiaryBrush}">
-                                            <Run Text="{Binding Message, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </DataTemplate>
-                                    <DataTemplate DataType="{x:Type process:ProcessErrorData}">
-                                        <TextBlock Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" TextWrapping="Wrap">
-                                            <Run Text="{Binding Message, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </DataTemplate>
-                                </ItemsControl.Resources>
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>
-                        </ScrollViewer>
+                                      ItemsSource="{Binding Source={StaticResource CompositeCollection}}"
+                                      Style="{StaticResource VirtualizedOutputStyle}">
+                            <ItemsControl.Resources>
+                                <DataTemplate DataType="{x:Type process:ProcessData}">
+                                    <TextBlock Foreground="{DynamicResource AccentTextFillColorTertiaryBrush}">
+                                        <Run Text="{Binding Message, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type process:ProcessErrorData}">
+                                    <TextBlock Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" TextWrapping="Wrap">
+                                        <Run Text="{Binding Message, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ItemsControl.Resources>
+                        </ItemsControl>
                     </Grid>
                 </DataTemplate>
 
@@ -274,7 +280,9 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <ListBox ItemsSource="{Binding Items}"
+                        <!--  the scope on the ListBox aligns the columns of all rows, a scope per row would do nothing  -->
+                        <ListBox Grid.IsSharedSizeScope="True"
+                                 ItemsSource="{Binding Items}"
                                  SelectedItem="{Binding SelectedItem}"
                                  SelectionMode="Extended"
                                  VirtualizingStackPanel.IsVirtualizing="True"
@@ -301,7 +309,7 @@
 
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Grid.IsSharedSizeScope="True">
+                                    <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="Col1" />
                                             <ColumnDefinition Width="*" MinWidth="4" />
@@ -634,13 +642,11 @@
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding Groups}" />
                         </Grid.Resources>
 
+                        <!--  Groups is shared with the "MVVM Grouping" scene and stays loaded, unloading it would leave its group descriptions on the view  -->
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Loaded">
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
                                 <i:InvokeCommandAction Command="{Binding Groups.LoadCommand}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="Unloaded">
-                                <i:InvokeCommandAction Command="{Binding Groups.UnloadCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
@@ -732,13 +738,16 @@
                             </ContentControl.Style>
                         </ContentControl>
 
+                        <!--  without IsVirtualizingWhenGrouping every auto-paged row gets realized once a grouping is active  -->
                         <DataGrid Grid.Row="4"
                                   mvvm:Filter.By="{Binding Filter, Mode=OneWay}"
                                   mvvm:Filter.RefreshWhenChanged="{Binding FilterText, Mode=OneWay}"
                                   AutoGenerateColumns="false"
                                   IsReadOnly="True"
                                   ItemsSource="{Binding Items}"
-                                  SelectedItem="{Binding SelectedItem}">
+                                  SelectedItem="{Binding SelectedItem}"
+                                  VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling">
 
                             <i:Interaction.Behaviors>
                                 <mvvm:ScrollToEndCommandBehavior Command="{Binding NextCommand}" Interval="00:00:00.250" />
@@ -1506,12 +1515,10 @@
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
                         </Grid.Resources>
 
+                        <!--  shared with the DataGrid scene, so it is not unloaded here either  -->
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Loaded">
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="Unloaded">
-                                <i:InvokeCommandAction Command="{Binding UnloadCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 

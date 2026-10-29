@@ -391,7 +391,8 @@ namespace MvvmScarletToolkit
         {
             using (BusyStack.GetToken())
             {
-                await RemoveRange(items?.Cast<TViewModel>() ?? []).ConfigureAwait(false);
+                // a snapshot: removing an item deselects it, which changes SelectedItems while it would still be enumerated
+                await RemoveRange(items?.Cast<TViewModel>().ToArray() ?? [], CancellationToken.None).ConfigureAwait(false);
             }
         }
 

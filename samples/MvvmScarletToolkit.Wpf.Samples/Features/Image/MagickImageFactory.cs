@@ -18,9 +18,10 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 
         public async Task<BitmapSource> FromAsync(Stream stream, ImageSize requestedSize, CancellationToken cancellationToken = default)
         {
+            // outside of the try, a cancelled wait must not release a slot it never got
+            await _semaphore.WaitAsync(cancellationToken);
             try
             {
-                await _semaphore.WaitAsync(cancellationToken);
                 using var image = new MagickImage(stream);
 
                 var bitmapSource = ToResizedBitmapSource(image, requestedSize);
@@ -36,9 +37,9 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
 
         public async Task ToAsync(Stream stream, BitmapSource image, CancellationToken cancellationToken = default)
         {
+            await _semaphore.WaitAsync(cancellationToken);
             try
             {
-                await _semaphore.WaitAsync(cancellationToken);
                 var encoder = new PngBitmapEncoder
                 {
                     Interlace = PngInterlaceOption.On
