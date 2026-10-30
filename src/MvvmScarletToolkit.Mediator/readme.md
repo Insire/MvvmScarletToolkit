@@ -62,9 +62,9 @@ Requests without a response use `Send(request, token)`.
 ```cs
 public sealed record UserLoggedIn(string Name) : ISimpleNotification;
 
-public sealed class UserLoggedInHandler : ISimpleNotificationHandler<ISimpleNotification>
+public sealed class UserLoggedInHandler : ISimpleNotificationHandler<UserLoggedIn>
 {
-    public Task Handle(ISimpleNotification request, CancellationToken cancellationToken = default)
+    public Task Handle(UserLoggedIn request, CancellationToken cancellationToken = default)
     {
         return Task.CompletedTask;
     }
@@ -77,4 +77,4 @@ registrator.RegisterNotification<UserLoggedIn, UserLoggedInHandler>();
 await mediator.Publish(new UserLoggedIn("World"), token);
 ```
 
-Handlers currently have to implement `ISimpleNotificationHandler<ISimpleNotification>`. `Publish` throws `MissingHandlerRegistrationException` for a handler that implements the interface for a specific notification type, like `ISimpleNotificationHandler<UserLoggedIn>`.
+Handlers run one after another, in the order they were registered. A handler can also implement `ISimpleNotificationHandler<ISimpleNotification>`, to be registered for several notification types.

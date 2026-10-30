@@ -6,6 +6,7 @@ namespace MvvmScarletToolkit.Mediator
     {
         private readonly Dictionary<Type, Type> _requestMap = new();
         private readonly Dictionary<Type, List<Type>> _notificationMap = new();
+        private readonly Dictionary<Type, NotificationPublisher> _notificationPublishers = new();
 
         public void RegisterRequest<TRequest, TRequestHandler>()
             where TRequest : ISimpleRequest
@@ -25,6 +26,9 @@ namespace MvvmScarletToolkit.Mediator
             where TNotification : ISimpleNotification
             where TNotificationHandler : class, ISimpleNotificationHandler<TNotification>
         {
+            // the notification type is only known here, the mediator receives notifications as ISimpleNotification
+            _notificationPublishers[typeof(TNotification)] = PublishTo<TNotification>;
+
             if (_notificationMap.TryGetValue(typeof(TNotification), out var handlerTypes))
             {
                 handlerTypes.Add(typeof(TNotificationHandler));
@@ -40,7 +44,21 @@ namespace MvvmScarletToolkit.Mediator
             var requestMap = _requestMap.ToFrozenDictionary();
             var notificationMap = _notificationMap.ToFrozenDictionary(p => p.Key, IReadOnlyList<Type> (p) => p.Value);
 
-            return new SimpleMediatorRegistry(requestMap, notificationMap);
+            var notificationPublishers = _notificationPublishers.ToFrozenDictionary();
+
+            return new SimpleMediatorRegistry(requestMap, notificationMap, notificationPublishers);
+        }
+
+        private static Task PublishTo<TNotification>(object? instance, Type handlerType, ISimpleNotification notification, CancellationToken cancellationToken)
+            where TNotification : ISimpleNotification
+        {
+            var service = instance as ISimpleNotificationHandler<TNotification>;
+
+            return service switch
+            {
+                null => throw new MissingHandlerRegistrationException(handlerType),
+                _ => service.Handle((TNotification)notification, cancellationToken),
+            };
         }
     }
 }
