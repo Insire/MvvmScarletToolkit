@@ -6,11 +6,15 @@ This library aims to provide an easy to use and extend browser control for FileS
 
 ## Contents
 
-|class|summary|code|
-|---|---|---|
-|FileSystemBrowser|TODO|TODO|
-|FileSystemViewModel|TODO|TODO|
-|Generic.xaml|TODO|TODO|
+|class|summary|
+|---|---|
+|[``FileSystemView``](FileSystemView.cs)|Control that displays a ``FileSystemViewModel``, styled by ``Generic.xaml``.|
+|[``FileSystemViewModel``](FileSystemViewModel.cs)|Provides the drives, the selected folder and its content, and the selected file.|
+|[``FileSystemOptionsViewModel``](FileSystemOptionsViewModel.cs)|Selects which drive types, file attributes and folder attributes are shown. ``Default`` provides a preset.|
+|[``FilePickerViewModel``](FilePickerViewModel.cs)|Wraps a ``FileSystemViewModel`` for selecting a file.|
+|[``FolderPickerViewModel``](FolderPickerViewModel.cs)|Wraps a ``FileSystemViewModel`` for selecting a folder.|
+|[``FileSystemViewModelFactory``](FileSystemViewModelFactory.cs)|Creates the viewmodels for drives, folders and files.|
+|[``Generic.xaml``](Generic.xaml)|Default styles. Merge this into your application resources, as described in the [MvvmScarletToolkit.Wpf](../../readme.md) readme.|
 
 ## Licensing
 
