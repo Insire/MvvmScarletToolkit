@@ -14,6 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CsvHelper" />
     <PackageReference Include="Jot" />
     <PackageReference Include="Magick.NET-Q8-AnyCPU" />
     <PackageReference Include="Magick.NET.SystemWindowsMedia" />

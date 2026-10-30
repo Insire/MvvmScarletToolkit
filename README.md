@@ -174,6 +174,8 @@ dotnet run --project samples/MvvmScarletToolkit.Avalonia.Samples
   - image loading with drag and drop, and in a virtualized list
   - lazy loading and data virtualization
   - live sorting and grouping in bound collections
+  - DataGrid extensions: column filters, drag and drop grouping, hiding columns, summaries, saved layouts and exporting
+  - a DataGrid with a million rows and the most common data types
   - an implementation of IProgress (e.g. for a progressbar) to send any amount of updates without locking up the UI thread
   - stress test for rendering lots of characters converted to geometry objects
   - a passwordbox with binding support

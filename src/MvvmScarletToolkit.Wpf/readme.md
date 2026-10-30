@@ -13,9 +13,10 @@ xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
 xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
 ```
 
-Toast notifications and the FileSystemBrowser come with default styles. Merge them in `App.xaml` when using those features:
+Toast notifications, the FileSystemBrowser and the DataGrid extensions come with default styles. Merge them in `App.xaml` when using those features:
 
 ```xml
+<ResourceDictionary Source="pack://application:,,,/MvvmScarletToolkit.Wpf;component/Features/DataGridExtensions/Generic.xaml" />
 <ResourceDictionary Source="pack://application:,,,/MvvmScarletToolkit.Wpf;component/Features/ToastNotification/Generic.xaml" />
 <ResourceDictionary Source="pack://application:,,,/MvvmScarletToolkit.Wpf;component/Features/FileSystemBrowser/Generic.xaml" />
 ```
@@ -48,7 +49,113 @@ ToastService.Default.Show("Error", "The file could not be saved.", ToastType.Err
 
 ### Grouping
 
-``GroupingViewModel`` manages the groups of an ``ICollectionView`` from a viewmodel, so that users can add and remove groupings at runtime. ``GroupingViewModel.Create`` builds one for a collection.
+``GroupingViewModel`` manages the groups of an ``ICollectionView`` from a viewmodel, so that users can add and remove groupings at runtime. ``GroupingViewModel.Create`` builds one for a collection. ``GroupBy`` and ``Ungroup`` change groupings from code.
+
+Every public property is offered for grouping by default. Pass ``GroupingViewModelOptions`` to change that:
+
+```cs
+var groups = GroupingViewModel.Create(commandBuilder, Items, new GroupingViewModelOptions
+{
+    ExcludeToolkitProperties = true, // hides properties like IsBusy
+    Properties = ["Color", "Size"], // only offers these
+});
+```
+
+### DataGrid extensions
+
+Everything here works through behaviors and commands, so viewmodels don't need to know about the grid. Merge the [default styles](#setup) to use the keyed styles below.
+
+```xml
+<ItemsControl x:Name="GroupPanel"
+              DataContext="{Binding Groups}"
+              Style="{StaticResource ScarletDataGridGroupPanelStyle}" />
+
+<DataGrid x:Name="Grid"
+          ColumnHeaderStyle="{StaticResource ScarletDataGridFilterColumnHeaderStyle}"
+          ItemsSource="{Binding Items}">
+    <i:Interaction.Behaviors>
+        <mvvm:DataGridColumnChooserBehavior />
+        <mvvm:DataGridLayoutBehavior Layout="{Binding Layout}" />
+        <mvvm:DataGridFilterBehavior Filter="{Binding Filter}" />
+        <mvvm:DataGridGroupingBehavior DropTarget="{Binding ElementName=GroupPanel}" Grouping="{Binding Groups}" />
+    </i:Interaction.Behaviors>
+    <DataGrid.Columns>
+        <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Sum"
+                            mvvm:DataGridSummaryBar.Format="N2"
+                            Binding="{Binding Price}"
+                            Header="Price" />
+    </DataGrid.Columns>
+</DataGrid>
+
+<mvvm:DataGridSummaryBar DataGrid="{Binding ElementName=Grid}" />
+```
+
+- **Columns**: ``DataGridColumnChooserBehavior`` adds a context menu to the column headers to hide and show columns.
+- **Layout**: ``DataGridLayoutBehavior`` keeps a ``DataGridLayout`` in sync with visibility, order, width, sorting and summary function of the columns. See [Saving the layout](#saving-the-layout).
+- **Filtering**: ``DataGridFilterViewModel.Create<T>`` offers one ``ColumnFilterViewModel`` per column, combined with AND. ``ScarletDataGridFilterColumnHeaderStyle`` adds a button to each header that opens a popup with the filter, which is applied when the popup closes. From code, set ``Operator`` and ``Value`` and call ``Apply``. The popup uses system colors by default. For another theme, add a style for ``DataGridColumnFilter`` based on ``ScarletDataGridColumnFilterStyle`` that sets ``Background`` and ``Foreground``. ``Operators`` only offers what fits the type of the property: comparisons for numbers, dates and times, equality for bool and enum, contains and equality for ``Guid`` and text. ``AdditionalFilter`` adds a predicate of your own. As ``Filter.By`` only holds one predicate, use this instead of setting it yourself.
+- **Filter validation**: text is checked against the type of the property while typing, and an invalid value disables the filter. Add a WPF ``ValidationRule`` to ``ValidationRules`` for custom rules. Set ``IsValidationEnabled`` to false, on a ``ColumnFilterViewModel`` or on the ``DataGridFilterViewModel`` for all columns, to turn this off. There are no errors then, and a value that can't be converted is compared by its text.
+- **Grouping**: ``DataGridGroupingBehavior`` groups by a column when its header is dragged out of the header row and onto ``DropTarget``. Columns need a ``SortMemberPath``. Dragging along the headers still reorders columns.
+- **Summaries**: ``DataGridSummaryBar`` shows ``Sum``, ``Average``, ``Minimum``, ``Maximum`` or ``Count`` over the filtered rows below the grid, with a tooltip that says what each value means. Users can change the function of a column at runtime, see [Changing summaries at runtime](#changing-summaries-at-runtime). The bar updates when rows are added, removed, filtered or edited through a cell. Call ``Refresh`` after changing a row in another way. Frozen columns are not supported.
+- **Export**: provide an ``IDataGridExporter`` to turn the content of a grid into anything you like. See [Exporting a DataGrid](../../docs/datagrid-export.md).
+
+#### Changing summaries at runtime
+
+``DataGridSummaryBar.Function`` sets the starting function of a column. Users can then right-click any cell of the bar and pick another function, or add one to a column that has none. Only that cell is calculated again, and the current function is checked in the menu.
+
+The menu offers what fits the type of the property:
+
+|type|functions|
+|---|---|
+|numbers|``Sum``, ``Average``, ``Minimum``, ``Maximum``, ``Count``|
+|``DateTime``, ``DateTimeOffset``, ``DateOnly``, ``TimeOnly``, ``TimeSpan``|``Minimum``, ``Maximum``, ``Count``|
+|anything else|``Count``|
+
+``None`` is always available and removes the summary. ``Count`` counts rows, not values. A function set in XAML stays in the menu, even when it isn't suggested for that type.
+
+```xml
+<!-- offer your own list for a column -->
+<DataGridTextColumn mvvm:DataGridSummaryBar.Functions="Sum, Maximum"
+                    Binding="{Binding Price}"
+                    Header="Price" />
+
+<!-- lock a column -->
+<DataGridTextColumn mvvm:DataGridSummaryBar.Function="Count"
+                    mvvm:DataGridSummaryBar.Functions="None"
+                    Binding="{Binding Id}"
+                    Header="Id" />
+
+<!-- turn the menu off for the whole bar -->
+<mvvm:DataGridSummaryBar CanChangeFunction="False" DataGrid="{Binding ElementName=Grid}" />
+```
+
+#### Saving the layout
+
+Bind ``DataGridLayoutBehavior.Layout`` to a property of your viewmodel. The behavior replaces its value when the user changes a column, and applies a layout you assign. The toolkit doesn't write anything to disk, so saving it is up to the application:
+
+```cs
+public sealed partial class OrdersViewModel : ViewModelBase
+{
+    [ObservableProperty]
+    public partial DataGridLayout? Layout { get; set; }
+}
+```
+
+``DataGridLayout`` contains no WPF types, so any serializer works. Load it before the grid is shown and save it when the application exits:
+
+```cs
+// at startup
+if (File.Exists(path))
+{
+    viewModel.Layout = JsonSerializer.Deserialize<DataGridLayout>(File.ReadAllText(path));
+}
+
+// on exit
+File.WriteAllText(path, JsonSerializer.Serialize(viewModel.Layout));
+```
+
+Columns are matched by their property path, so give columns without a binding a ``SortMemberPath`` or a header. Columns missing from a stored layout keep their settings, and entries without a column are ignored. A layout stored without ``SummaryFunction`` leaves the functions of the columns as they are.
+
+The WPF sample stores the layout of its grids with [Jot](https://github.com/anakic/Jot), see ``App.xaml.cs`` and ``NavigationViewModel.cs``.
 
 ### GridView column sizing
 
@@ -72,6 +179,10 @@ Adds proportional and limited column widths to a ``GridView``, like ``*`` sizing
 |``AsyncImageLoadingBehavior``|``Image``|Load an image through [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.ImageLoading/readme.md), and report ``State``, ``IsPending``, ``IsLoading``, ``IsLoaded`` and ``IsFailed``.|
 |``AutoRepositionPopupBehavior``|``Popup``|Keep a popup at its position, when its window is moved.|
 |``AutoScrollBehavior``|``Selector``|Scroll to the end of e.g. a ``ListBox`` or ``DataGrid``. Pauses when the user scrolls manually.|
+|``DataGridColumnChooserBehavior``|``DataGrid``|Hide and show columns through a context menu on their headers.|
+|``DataGridFilterBehavior``|``DataGrid``|Connect a ``DataGridFilterViewModel`` to a grid.|
+|``DataGridGroupingBehavior``|``DataGrid``|Group by dragging a column header onto ``DropTarget``.|
+|``DataGridLayoutBehavior``|``DataGrid``|Keep a bindable ``DataGridLayout`` in sync with the columns.|
 |``LaunchNavigateUriAsNewProcessBehavior``|``Hyperlink``|Open ``Hyperlink.NavigateUri`` in a new process.|
 |``MultiListBoxSelectionBehavior``|``ListBox``|Bind ``ListBox.SelectedItems`` to an existing ``IList``.|
 |``MultiSelectionBehavior``|``MultiSelector``|Bind ``SelectedItems`` of e.g. a ``DataGrid`` to an existing ``IList``.|

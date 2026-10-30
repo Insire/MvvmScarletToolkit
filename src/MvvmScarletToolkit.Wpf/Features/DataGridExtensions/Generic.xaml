@@ -1,0 +1,293 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:behaviors="clr-namespace:MvvmScarletToolkit.Wpf"
+                    xmlns:local="clr-namespace:MvvmScarletToolkit">
+
+    <DataTemplate x:Key="ScarletColumnFilterOperatorTemplate" DataType="{x:Type local:ColumnFilterOperator}">
+        <TextBlock x:Name="Symbol" Text="~" />
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding}" Value="{x:Static local:ColumnFilterOperator.Equals}">
+                <Setter TargetName="Symbol" Property="Text" Value="=" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding}" Value="{x:Static local:ColumnFilterOperator.NotEquals}">
+                <Setter TargetName="Symbol" Property="Text" Value="≠" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding}" Value="{x:Static local:ColumnFilterOperator.GreaterThan}">
+                <Setter TargetName="Symbol" Property="Text" Value="&gt;" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding}" Value="{x:Static local:ColumnFilterOperator.GreaterThanOrEqual}">
+                <Setter TargetName="Symbol" Property="Text" Value="≥" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding}" Value="{x:Static local:ColumnFilterOperator.LessThan}">
+                <Setter TargetName="Symbol" Property="Text" Value="&lt;" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding}" Value="{x:Static local:ColumnFilterOperator.LessThanOrEqual}">
+                <Setter TargetName="Symbol" Property="Text" Value="≤" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!--  a button that opens a popup to configure the filter of a column, which is applied when the popup closes. Background and Foreground are the colors of the popup  -->
+    <Style x:Key="ScarletDataGridColumnFilterStyle" TargetType="{x:Type local:DataGridColumnFilter}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:DataGridColumnFilter}">
+                    <Grid>
+                        <ToggleButton x:Name="Toggle"
+                                      Padding="4"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      IsChecked="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                      ToolTip="Filter">
+                            <Path x:Name="Icon"
+                                  Width="10"
+                                  Height="10"
+                                  Data="M0,0 L10,0 L6,5 L6,10 L4,9 L4,5 Z"
+                                  Fill="Transparent"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type ToggleButton}}}"
+                                  StrokeThickness="1" />
+                        </ToggleButton>
+
+                        <Popup x:Name="PART_Popup"
+                               IsOpen="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                               Placement="Bottom"
+                               PlacementTarget="{Binding ElementName=Toggle}"
+                               StaysOpen="False">
+                            <Border MinWidth="240"
+                                    Padding="8"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    DataContext="{Binding Filter, RelativeSource={RelativeSource TemplatedParent}}"
+                                    TextElement.Foreground="{TemplateBinding Foreground}">
+                                <StackPanel>
+                                    <DockPanel>
+                                        <ComboBox MinWidth="56"
+                                                  Margin="0 0 4 0"
+                                                  DockPanel.Dock="Left"
+                                                  ItemTemplate="{StaticResource ScarletColumnFilterOperatorTemplate}"
+                                                  ItemsSource="{Binding Operators}"
+                                                  SelectedItem="{Binding Operator}" />
+
+                                        <!--  only for the list, the fluent theme adds a clear button to a textbox  -->
+                                        <Button Margin="4 0 0 0"
+                                                Padding="8 2"
+                                                VerticalAlignment="Stretch"
+                                                Command="{Binding ClearCommand}"
+                                                Content="×"
+                                                DockPanel.Dock="Right"
+                                                ToolTip="Clear">
+                                            <Button.Style>
+                                                <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Options}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
+                                        <Grid>
+                                            <!--  bool and enum columns choose from a list, everything else is free text  -->
+                                            <ComboBox x:Name="PART_Options"
+                                                      MinWidth="100"
+                                                      ItemsSource="{Binding Options}"
+                                                      SelectedItem="{Binding Value}">
+                                                <ComboBox.Style>
+                                                    <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Options}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ComboBox.Style>
+                                            </ComboBox>
+
+                                            <TextBox x:Name="PART_Text"
+                                                     MinWidth="100"
+                                                     Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}">
+                                                <TextBox.Style>
+                                                    <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Options, Converter={local:IsNotNull}}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding HasError}" Value="True">
+                                                                <Setter Property="BorderBrush" Value="Red" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBox.Style>
+                                            </TextBox>
+                                        </Grid>
+                                    </DockPanel>
+
+                                    <TextBlock MaxWidth="320"
+                                               Margin="0 4 0 0"
+                                               HorizontalAlignment="Left"
+                                               Foreground="Red"
+                                               Text="{Binding Error}"
+                                               TextWrapping="Wrap">
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding HasError}" Value="False">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Filter.IsApplied, RelativeSource={RelativeSource Self}}" Value="True">
+                            <Setter TargetName="Icon" Property="Fill" Value="{Binding Stroke, ElementName=Icon}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Filter.HasError, RelativeSource={RelativeSource Self}}" Value="True">
+                            <Setter TargetName="Icon" Property="Stroke" Value="Red" />
+                            <Setter TargetName="Toggle" Property="ToolTip" Value="{Binding Filter.Error, RelativeSource={RelativeSource TemplatedParent}}" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="Filter" Value="{x:Null}">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style BasedOn="{StaticResource ScarletDataGridColumnFilterStyle}" TargetType="{x:Type local:DataGridColumnFilter}" />
+
+    <!--  a column header with a button for its filter. Requires a DataGridFilterBehavior on the DataGrid. Use it as DataGrid.ColumnHeaderStyle  -->
+    <Style x:Key="ScarletDataGridFilterColumnHeaderStyle"
+           BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"
+           TargetType="{x:Type DataGridColumnHeader}">
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <DockPanel>
+                        <local:DataGridColumnFilter Margin="4 0 0 0"
+                                                    VerticalAlignment="Center"
+                                                    DockPanel.Dock="Right"
+                                                    Filter="{Binding Path=Column.(behaviors:DataGridFilterBehavior.ColumnFilter), RelativeSource={RelativeSource AncestorType={x:Type DataGridColumnHeader}}}" />
+                        <TextBlock VerticalAlignment="Center"
+                                   Text="{Binding}"
+                                   TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <!--  shows the groupings of a GroupingViewModel, which has to be the DataContext. It doubles as the DropTarget of a DataGridGroupingBehavior  -->
+    <Style x:Key="ScarletDataGridGroupPanelStyle" TargetType="{x:Type ItemsControl}">
+        <!--  not null, so that a drop is detected on the empty area as well  -->
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate DataType="{x:Type local:GroupsViewModel}">
+                    <Border Margin="0 0 4 0"
+                            Padding="6 2"
+                            BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                            BorderThickness="1"
+                            CornerRadius="2">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center" Text="{Binding SelectedItem.Name}" />
+                            <Button Margin="6 0 0 0"
+                                    Padding="4 0"
+                                    Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                    CommandParameter="{Binding}"
+                                    Content="×"
+                                    ToolTip="Remove" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsSource" Value="{Binding Items}" />
+        <Setter Property="MinHeight" Value="34" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ItemsControl}">
+                    <Border Padding="4" Background="{TemplateBinding Background}">
+                        <Grid>
+                            <TextBlock x:Name="Hint"
+                                       VerticalAlignment="Center"
+                                       Opacity="0.7"
+                                       Text="Drag a column header here to group by it"
+                                       Visibility="Collapsed" />
+                            <ItemsPresenter />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasItems" Value="False">
+                            <Setter TargetName="Hint" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type local:DataGridSummaryBar}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
+        <Setter Property="BorderThickness" Value="0 1 0 0" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:DataGridSummaryBar}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <!--  the scrollviewer provides the cells with the width they need and clips them  -->
+                        <ScrollViewer Focusable="False"
+                                      HorizontalScrollBarVisibility="Hidden"
+                                      VerticalScrollBarVisibility="Disabled">
+                            <ItemsControl Margin="{TemplateBinding CellsMargin}"
+                                          Focusable="False"
+                                          ItemsSource="{Binding Cells, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type local:DataGridSummaryCell}">
+                                        <TextBlock Width="{Binding Width}"
+                                                   Padding="4 2"
+                                                   Background="Transparent"
+                                                   Text="{Binding Text}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   ToolTip="{Binding Description}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

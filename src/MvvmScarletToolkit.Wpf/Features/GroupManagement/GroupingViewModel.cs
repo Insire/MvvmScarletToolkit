@@ -22,18 +22,31 @@ namespace MvvmScarletToolkit
         public static GroupingViewModel Create<T>(IScarletCommandBuilder commandBuilder, IEnumerable<T> collection)
             where T : class, INotifyPropertyChanged
         {
-            return new GroupingViewModel(commandBuilder, () => (ListCollectionView)CollectionViewSource.GetDefaultView(collection), typeof(T));
+            return Create(commandBuilder, collection, null);
+        }
+
+        public static GroupingViewModel Create<T>(IScarletCommandBuilder commandBuilder, IEnumerable<T> collection, GroupingViewModelOptions? options)
+            where T : class, INotifyPropertyChanged
+        {
+            return new GroupingViewModel(commandBuilder, () => (ListCollectionView)CollectionViewSource.GetDefaultView(collection), typeof(T), options);
         }
 
         public static GroupingViewModel Create<T>(IScarletCommandBuilder commandBuilder, Func<ListCollectionView> collectionViewFactory)
             where T : class, INotifyPropertyChanged
         {
-            return new GroupingViewModel(commandBuilder, collectionViewFactory, typeof(T));
+            return Create<T>(commandBuilder, collectionViewFactory, null);
+        }
+
+        public static GroupingViewModel Create<T>(IScarletCommandBuilder commandBuilder, Func<ListCollectionView> collectionViewFactory, GroupingViewModelOptions? options)
+            where T : class, INotifyPropertyChanged
+        {
+            return new GroupingViewModel(commandBuilder, collectionViewFactory, typeof(T), options);
         }
 
         private readonly ConcurrentDictionary<string, GroupViewModel> _filterCollection;
         private readonly Func<ListCollectionView> _collectionViewFactory;
         private readonly Type _type;
+        private readonly GroupingViewModelOptions? _options;
 
         private int _maxGroupings;
         private ListCollectionView? _view;
@@ -87,10 +100,11 @@ namespace MvvmScarletToolkit
 
         public override ICommand RemoveCommand { get; }
 
-        private GroupingViewModel(IScarletCommandBuilder commandBuilder, Func<ListCollectionView> collectionViewFactory, Type type)
+        private GroupingViewModel(IScarletCommandBuilder commandBuilder, Func<ListCollectionView> collectionViewFactory, Type type, GroupingViewModelOptions? options)
             : base(commandBuilder)
         {
             _type = type ?? throw new ArgumentNullException(nameof(type));
+            _options = options;
             _filterCollection = new ConcurrentDictionary<string, GroupViewModel>();
             _collectionViewFactory = collectionViewFactory ?? throw new ArgumentNullException(nameof(collectionViewFactory));
 
@@ -109,7 +123,7 @@ namespace MvvmScarletToolkit
 
             Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, static (r, m) =>
             {
-                if (m.Value is null)
+                if (m.Value is null || !ReferenceEquals(m.Value.Owner, r))
                 {
                     return;
                 }
@@ -118,7 +132,7 @@ namespace MvvmScarletToolkit
 
             Messenger.Register<GroupingViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, static (r, m) =>
             {
-                if (m.Value is null)
+                if (m.Value is null || !ReferenceEquals(m.Value.Owner, r))
                 {
                     return;
                 }
@@ -155,6 +169,66 @@ namespace MvvmScarletToolkit
             {
                 _filterCollection.TryAdd(item.SelectedItem.Name, item.SelectedItem);
             }
+
+            // a removed instance must not keep reacting to the selections of the remaining ones
+            item.Dispose();
+        }
+
+        /// <summary>
+        /// Whether the collection is currently grouped by <paramref name="propertyName"/>
+        /// </summary>
+        public bool IsGroupedBy(string propertyName)
+        {
+            return FindGroups(propertyName) is not null;
+        }
+
+        /// <summary>
+        /// Groups the collection by <paramref name="propertyName"/>, unless that grouping is already active. Loads this instance when necessary.
+        /// </summary>
+        /// <exception cref="ArgumentException"><paramref name="propertyName"/> is not available for grouping</exception>
+        public async Task GroupBy(string propertyName, CancellationToken token)
+        {
+            ArgumentException.ThrowIfNullOrEmpty(propertyName);
+
+            if (!IsLoaded)
+            {
+                await Load(token).ConfigureAwait(false);
+            }
+
+            if (IsGroupedBy(propertyName))
+            {
+                return;
+            }
+
+            if (!_filterCollection.TryGetValue(propertyName, out var group))
+            {
+                throw new ArgumentException($"{propertyName} is not available for grouping.", nameof(propertyName));
+            }
+
+            var result = new GroupsViewModel(CommandBuilder, GetCollectionView, this);
+            await result.AddRange(_filterCollection.Values, token).ConfigureAwait(false);
+            await Add(result, token).ConfigureAwait(false);
+
+            await Dispatcher.Invoke(() => result.SelectedItem = group, token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Removes the grouping by <paramref name="propertyName"/>, if there is one
+        /// </summary>
+        public async Task Ungroup(string propertyName, CancellationToken token)
+        {
+            ArgumentException.ThrowIfNullOrEmpty(propertyName);
+
+            var groups = FindGroups(propertyName);
+            if (groups is not null)
+            {
+                await Remove(groups, token).ConfigureAwait(false);
+            }
+        }
+
+        private GroupsViewModel? FindGroups(string propertyName)
+        {
+            return Items.FirstOrDefault(p => p.SelectedItem?.Name == propertyName);
         }
 
         protected override Task RefreshInternal(CancellationToken token)
@@ -166,7 +240,8 @@ namespace MvvmScarletToolkit
                 _type
                     .GetProperties(BindingFlags.Instance | BindingFlags.Public)
                     .Where(p => p.CanRead && p.GetGetMethod(true)?.IsPublic == true)
-                    .Select(p => new GroupViewModel(CommandBuilder, p))
+                    .Where(p => _options?.IsIncluded(p) != false)
+                    .Select(p => new GroupViewModel(CommandBuilder, p, this))
                     .Select(p => new KeyValuePair<string, GroupViewModel>(p.Name, p))
                     .ForEach(p => _filterCollection.TryAdd(p.Key, p.Value));
 
@@ -176,7 +251,7 @@ namespace MvvmScarletToolkit
 
         private async Task Add(CancellationToken token)
         {
-            var result = new GroupsViewModel(CommandBuilder, GetCollectionView);
+            var result = new GroupsViewModel(CommandBuilder, GetCollectionView, this);
             await result.AddRange(_filterCollection.Values, token).ConfigureAwait(false);
 
             await Add(result, token).ConfigureAwait(false);

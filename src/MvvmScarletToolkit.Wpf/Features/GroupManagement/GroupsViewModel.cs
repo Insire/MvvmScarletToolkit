@@ -10,15 +10,22 @@ namespace MvvmScarletToolkit
     public sealed class GroupsViewModel : ViewModelListBase<GroupViewModel>
     {
         private readonly Func<ICollectionView> _collectionViewFactory;
+        private readonly GroupingViewModel? _owner;
 
         public GroupsViewModel(IScarletCommandBuilder commandBuilder, Func<ICollectionView> collectionViewFactory)
+            : this(commandBuilder, collectionViewFactory, null)
+        {
+        }
+
+        internal GroupsViewModel(IScarletCommandBuilder commandBuilder, Func<ICollectionView> collectionViewFactory, GroupingViewModel? owner)
             : base(commandBuilder)
         {
             _collectionViewFactory = collectionViewFactory ?? throw new ArgumentNullException(nameof(collectionViewFactory));
+            _owner = owner;
 
             Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, async (r, m) =>
             {
-                if (m.Value is null)
+                if (m.Value is null || !ReferenceEquals(m.Value.Owner, r._owner))
                 {
                     return;
                 }
@@ -42,7 +49,7 @@ namespace MvvmScarletToolkit
 
             Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, async (r, m) =>
             {
-                if (m.Value is null)
+                if (m.Value is null || !ReferenceEquals(m.Value.Owner, r._owner))
                 {
                     return;
                 }
@@ -60,14 +67,14 @@ namespace MvvmScarletToolkit
                     //Debug.WriteLine($"4 another instance selection changed =>  remove the current value({m.Value.Name}) from the possible selections");
                     // another instance selection changed
                     // => remove the current value from the possible selections
+                    // m.Value is now selected by the sender, so it has to stay usable
                     await r.Remove(m.Value);
-                    m.Value.Dispose();
                 }
             });
 
             Messenger.Register<GroupsViewModel, GroupsViewModelRemoved>(this, async (r, m) =>
             {
-                if (m.Value.SelectedItem is null)
+                if (m.Value.SelectedItem is null || ReferenceEquals(m.Value, r) || !ReferenceEquals(m.Value._owner, r._owner))
                 {
                     return;
                 }
@@ -83,6 +90,16 @@ namespace MvvmScarletToolkit
             await Dispatcher.Invoke(() => view.GroupDescriptions.Clear());
 
             await base.Clear(token);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Messenger.UnregisterAll(this);
+            }
+
+            base.Dispose(disposing);
         }
 
         private string GetDebuggerDisplay()

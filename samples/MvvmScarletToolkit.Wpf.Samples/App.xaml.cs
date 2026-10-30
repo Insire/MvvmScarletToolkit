@@ -11,6 +11,7 @@ using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using MvvmScarletToolkit.Wpf.Samples.Features;
+using MvvmScarletToolkit.Wpf.Samples.Features.DataGrid;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using Serilog;
 using System.Diagnostics;
@@ -47,6 +48,15 @@ namespace MvvmScarletToolkit.Wpf.Samples
                 .Properties(w => new { w.Height, w.Width, w.Left, w.Top, w.WindowState })
                 .PersistOn(nameof(Window.Closing))
                 .StopTrackingOn(nameof(Window.Closing));
+
+            // written by PersistAll when the application exits
+            tracker.Configure<DataGridViewModel>()
+                .Id(_ => nameof(DataGridViewModel))
+                .Properties(vm => new { vm.Layout });
+
+            tracker.Configure<LargeDataGridViewModel>()
+                .Id(_ => nameof(LargeDataGridViewModel))
+                .Properties(vm => new { vm.Layout });
 
             // NavigationViewModel creates the other scenes itself, only what is resolved from the container is registered here
             serviceCollection.AddSingleton<MainWindow>();

@@ -1,0 +1,49 @@
+﻿<Window x:Class="MvvmScarletToolkit.Wpf.Samples.Controls.SaveFileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:dataGrid="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.DataGrid"
+        xmlns:filesystembrowser="clr-namespace:MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;assembly=MvvmScarletToolkit.Wpf"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Title="Export to CSV"
+        Width="900"
+        Height="600"
+        d:DataContext="{d:DesignInstance Type=dataGrid:SaveFileViewModel}"
+        ResizeMode="CanResizeWithGrip"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d">
+
+    <DockPanel Margin="8">
+        <DockPanel Margin="0 8 0 0" DockPanel.Dock="Bottom">
+            <Button MinWidth="80"
+                    Margin="8 0 0 0"
+                    Content="Cancel"
+                    DockPanel.Dock="Right"
+                    IsCancel="True" />
+
+            <Button MinWidth="80"
+                    Click="Save_Click"
+                    Content="Save"
+                    DockPanel.Dock="Right"
+                    IsDefault="True"
+                    IsEnabled="{Binding CanSave}" />
+
+            <TextBlock VerticalAlignment="Center"
+                       Text="{Binding FilePath}"
+                       TextTrimming="CharacterEllipsis"
+                       ToolTip="{Binding FilePath}" />
+        </DockPanel>
+
+        <DockPanel Margin="0 8 0 0" DockPanel.Dock="Bottom">
+            <TextBlock Margin="0 0 8 0"
+                       VerticalAlignment="Center"
+                       Text="File name" />
+
+            <TextBox AutomationProperties.AutomationId="FileName" Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" />
+        </DockPanel>
+
+        <!--  the template of the view binds to its DataContext  -->
+        <filesystembrowser:FileSystemView DataContext="{Binding FileSystem}" ViewModel="{Binding}" />
+    </DockPanel>
+</Window>

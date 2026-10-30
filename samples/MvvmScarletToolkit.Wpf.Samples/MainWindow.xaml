@@ -114,8 +114,13 @@
 
                             <!--  the ScrollViewer has to be part of the template, inside another ScrollViewer the VirtualizingStackPanel would realize every line  -->
                             <Style x:Key="VirtualizedOutputStyle" TargetType="{x:Type ItemsControl}">
-                                <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
-                                <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
+                                <Setter Property="ItemsPanel">
+                                    <Setter.Value>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel />
+                                        </ItemsPanelTemplate>
+                                    </Setter.Value>
+                                </Setter>
                                 <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
                                 <Setter Property="Template">
                                     <Setter.Value>
@@ -129,13 +134,8 @@
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
-                                <Setter Property="ItemsPanel">
-                                    <Setter.Value>
-                                        <ItemsPanelTemplate>
-                                            <VirtualizingStackPanel />
-                                        </ItemsPanelTemplate>
-                                    </Setter.Value>
-                                </Setter>
+                                <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
+                                <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
                             </Style>
                         </Grid.Resources>
 
@@ -569,9 +569,9 @@
                             <WrapPanel Margin="0 0 0 4" DockPanel.Dock="Top">
                                 <WrapPanel.Resources>
                                     <Style TargetType="{x:Type Rectangle}">
-                                        <Setter Property="Width" Value="10" />
                                         <Setter Property="Height" Value="10" />
                                         <Setter Property="Margin" Value="0 0 4 0" />
+                                        <Setter Property="Width" Value="10" />
                                     </Style>
                                     <Style TargetType="{x:Type TextBlock}">
                                         <Setter Property="Margin" Value="0 0 10 0" />
@@ -634,6 +634,38 @@
                             </ScrollViewer>
                         </DockPanel>
                     </Grid>
+                </DataTemplate>
+
+                <!--  shows the progress of a CsvExporter  -->
+                <DataTemplate x:Key="CsvExportProgressTemplate">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Style>
+                            <Style TargetType="{x:Type StackPanel}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsWriting}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+
+                        <ProgressBar Width="160"
+                                     Height="8"
+                                     Margin="0 0 8 0"
+                                     VerticalAlignment="Center"
+                                     Maximum="{Binding RowCount, Mode=OneWay}"
+                                     Value="{Binding RowsWritten, Mode=OneWay}" />
+
+                        <TextBlock VerticalAlignment="Center">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}Exporting {0:N0} of {1:N0}">
+                                    <Binding Path="RowsWritten" />
+                                    <Binding Path="RowCount" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type dataGrid:DataGridViewModel}">
@@ -739,61 +771,78 @@
                         </ContentControl>
 
                         <!--  without IsVirtualizingWhenGrouping every auto-paged row gets realized once a grouping is active  -->
-                        <DataGrid Grid.Row="4"
-                                  mvvm:Filter.By="{Binding Filter, Mode=OneWay}"
-                                  mvvm:Filter.RefreshWhenChanged="{Binding FilterText, Mode=OneWay}"
-                                  AutoGenerateColumns="false"
-                                  IsReadOnly="True"
-                                  ItemsSource="{Binding Items}"
-                                  SelectedItem="{Binding SelectedItem}"
-                                  VirtualizingPanel.IsVirtualizingWhenGrouping="True"
-                                  VirtualizingPanel.VirtualizationMode="Recycling">
+                        <DockPanel Grid.Row="4">
+                            <ItemsControl x:Name="GroupPanel"
+                                          DataContext="{Binding Groups}"
+                                          DockPanel.Dock="Top"
+                                          Style="{StaticResource ScarletDataGridGroupPanelStyle}" />
 
-                            <i:Interaction.Behaviors>
-                                <mvvm:ScrollToEndCommandBehavior Command="{Binding NextCommand}" Interval="00:00:00.250" />
-                                <mvvm:AutoScrollBehavior />
-                            </i:Interaction.Behaviors>
+                            <mvvm:DataGridSummaryBar DataGrid="{Binding ElementName=Grid}" DockPanel.Dock="Bottom" />
 
-                            <DataGrid.GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.ContainerStyle>
-                                        <Style TargetType="{x:Type GroupItem}">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="{x:Type GroupItem}">
-                                                        <DockPanel>
-                                                            <StackPanel Height="30"
-                                                                        DockPanel.Dock="Top"
-                                                                        Orientation="Horizontal">
-                                                                <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">
-                                                                    <Run FontSize="16"
-                                                                         FontWeight="DemiBold"
-                                                                         Text="{Binding Name, Mode=OneWay}" />
-                                                                    <Run Text="{Binding ItemCount, StringFormat=Count: {0}, Mode=OneWay}" />
-                                                                </TextBlock>
-                                                            </StackPanel>
-                                                            <ItemsPresenter />
-                                                        </DockPanel>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </GroupStyle.ContainerStyle>
-                                </GroupStyle>
-                            </DataGrid.GroupStyle>
+                            <DataGrid x:Name="Grid"
+                                      AutoGenerateColumns="false"
+                                      ColumnHeaderStyle="{StaticResource ScarletDataGridFilterColumnHeaderStyle}"
+                                      IsReadOnly="True"
+                                      ItemsSource="{Binding Items}"
+                                      SelectedItem="{Binding SelectedItem}"
+                                      VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                      VirtualizingPanel.VirtualizationMode="Recycling">
 
-                            <DataGrid.Columns>
-                                <DataGridCheckBoxColumn Binding="{Binding IsSelected, Mode=TwoWay}" Header="IsSelected" />
+                                <i:Interaction.Behaviors>
+                                    <mvvm:ScrollToEndCommandBehavior Command="{Binding NextCommand}" Interval="00:00:00.250" />
+                                    <mvvm:AutoScrollBehavior />
+                                    <mvvm:DataGridColumnChooserBehavior />
+                                    <mvvm:DataGridLayoutBehavior Layout="{Binding Layout}" />
+                                    <mvvm:DataGridFilterBehavior Filter="{Binding ColumnFilters}" />
+                                    <mvvm:DataGridGroupingBehavior DropTarget="{Binding ElementName=GroupPanel}" Grouping="{Binding Groups}" />
+                                </i:Interaction.Behaviors>
 
-                                <DataGridTextColumn Binding="{Binding Id}" Header="Id" />
-                                <DataGridTextColumn Width="*"
-                                                    Binding="{Binding Name}"
-                                                    Header="Name" />
-                                <DataGridTextColumn Binding="{Binding Color}" Header="Color" />
-                                <DataGridTextColumn Binding="{Binding CreatedOn}" Header="CreatedOn" />
-                                <DataGridTextColumn Binding="{Binding UpdatedOn}" Header="UpdatedOn" />
-                            </DataGrid.Columns>
-                        </DataGrid>
+                                <DataGrid.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="{x:Type GroupItem}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                            <DockPanel>
+                                                                <StackPanel Height="30"
+                                                                            DockPanel.Dock="Top"
+                                                                            Orientation="Horizontal">
+                                                                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">
+                                                                        <Run FontSize="16"
+                                                                             FontWeight="DemiBold"
+                                                                             Text="{Binding Name, Mode=OneWay}" />
+                                                                        <Run Text="{Binding ItemCount, StringFormat=Count: {0}, Mode=OneWay}" />
+                                                                    </TextBlock>
+                                                                </StackPanel>
+                                                                <ItemsPresenter />
+                                                            </DockPanel>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
+                                    </GroupStyle>
+                                </DataGrid.GroupStyle>
+
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, Mode=TwoWay}" Header="IsSelected" />
+
+                                    <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Maximum"
+                                                        Binding="{Binding Id}"
+                                                        Header="Id" />
+                                    <DataGridTextColumn Width="*"
+                                                        mvvm:DataGridSummaryBar.Function="Count"
+                                                        Binding="{Binding Name}"
+                                                        Header="Name" />
+                                    <DataGridTextColumn Binding="{Binding Color}" Header="Color" />
+                                    <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Minimum"
+                                                        Binding="{Binding CreatedOn}"
+                                                        Header="CreatedOn" />
+                                    <DataGridTextColumn Binding="{Binding UpdatedOn}" Header="UpdatedOn" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DockPanel>
 
                         <DockPanel Grid.Row="6">
                             <Button Command="{Binding FirstCommand}"
@@ -907,9 +956,146 @@
                                           Content="Live sorting"
                                           IsChecked="{Binding Groups.IsLiveSortingEnabled}" />
 
-                            <TextBlock VerticalAlignment="Center" Text="{Binding Items.Count, StringFormat='{}{0} Rows '}" />
+                            <Button Height="30"
+                                    Padding="8 0"
+                                    Command="{x:Static mvvm:DataGridCommands.Export}"
+                                    CommandParameter="{Binding CsvExporter}"
+                                    CommandTarget="{Binding ElementName=Grid}"
+                                    Content="Export CSV" />
+
+                            <Button Height="30"
+                                    Margin="8 0"
+                                    Padding="8 0"
+                                    Command="{x:Static mvvm:DataGridCommands.CancelExport}"
+                                    CommandTarget="{Binding ElementName=Grid}"
+                                    Content="Cancel export" />
+
+                            <Button Height="30"
+                                    Margin="0 0 8 0"
+                                    Padding="8 0"
+                                    Command="{Binding ColumnFilters.ClearCommand}"
+                                    Content="Clear filters" />
+
+                            <TextBlock Margin="0 0 8 0"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding Items.Count, StringFormat='{}{0} Rows '}" />
+
+                            <ContentControl Content="{Binding CsvExporter}"
+                                            ContentTemplate="{StaticResource CsvExportProgressTemplate}"
+                                            Focusable="False" />
                         </DockPanel>
                     </Grid>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type dataGrid:LargeDataGridViewModel}">
+                    <DockPanel>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                        <DockPanel Margin="0 4 0 0" DockPanel.Dock="Bottom">
+                            <Button Height="30"
+                                    Padding="8 0"
+                                    Command="{x:Static mvvm:DataGridCommands.Export}"
+                                    CommandParameter="{Binding CsvExporter}"
+                                    CommandTarget="{Binding ElementName=Grid}"
+                                    Content="Export CSV" />
+
+                            <Button Height="30"
+                                    Margin="8 0"
+                                    Padding="8 0"
+                                    Command="{x:Static mvvm:DataGridCommands.CancelExport}"
+                                    CommandTarget="{Binding ElementName=Grid}"
+                                    Content="Cancel export" />
+
+                            <Button Height="30"
+                                    Margin="0 0 8 0"
+                                    Padding="8 0"
+                                    Command="{Binding ColumnFilters.ClearCommand}"
+                                    Content="Clear filters" />
+
+                            <CheckBox Margin="0 0 8 0"
+                                      VerticalAlignment="Center"
+                                      Content="Validate filters"
+                                      IsChecked="{Binding ColumnFilters.IsValidationEnabled}" />
+
+                            <CheckBox Margin="0 0 8 0"
+                                      VerticalAlignment="Center"
+                                      Content="Change summaries"
+                                      IsChecked="{Binding CanChangeFunction, ElementName=Summary}" />
+
+                            <TextBlock Margin="0 0 8 0"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding Items.Count, ElementName=Grid, StringFormat='{}{0:N0} Rows'}" />
+
+                            <ContentControl Content="{Binding CsvExporter}"
+                                            ContentTemplate="{StaticResource CsvExportProgressTemplate}"
+                                            Focusable="False" />
+                        </DockPanel>
+
+                        <mvvm:DataGridSummaryBar x:Name="Summary"
+                                                 DataGrid="{Binding ElementName=Grid}"
+                                                 DockPanel.Dock="Bottom" />
+
+                        <ItemsControl x:Name="GroupPanel"
+                                      DataContext="{Binding Groups}"
+                                      DockPanel.Dock="Top"
+                                      Style="{StaticResource ScarletDataGridGroupPanelStyle}" />
+
+                        <DataGrid x:Name="Grid"
+                                  AutoGenerateColumns="false"
+                                  ColumnHeaderStyle="{StaticResource ScarletDataGridFilterColumnHeaderStyle}"
+                                  EnableColumnVirtualization="True"
+                                  IsReadOnly="True"
+                                  ItemsSource="{Binding Items}"
+                                  VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling">
+
+                            <i:Interaction.Behaviors>
+                                <mvvm:DataGridColumnChooserBehavior />
+                                <mvvm:DataGridLayoutBehavior Layout="{Binding Layout}" />
+                                <mvvm:DataGridFilterBehavior Filter="{Binding ColumnFilters}" />
+                                <mvvm:DataGridGroupingBehavior DropTarget="{Binding ElementName=GroupPanel}" Grouping="{Binding Groups}" />
+                            </i:Interaction.Behaviors>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Count"
+                                                    Binding="{Binding Id}"
+                                                    Header="Id (int)" />
+                                <DataGridTextColumn Binding="{Binding Reference}" Header="Reference (Guid)" />
+                                <DataGridTextColumn Binding="{Binding Name}" Header="Name (string)" />
+                                <DataGridTextColumn Binding="{Binding Description}" Header="Description (string?)" />
+                                <DataGridTextColumn Binding="{Binding Category}" Header="Category (enum)" />
+                                <DataGridCheckBoxColumn Binding="{Binding IsActive, Mode=OneWay}" Header="IsActive (bool)" />
+                                <DataGridCheckBoxColumn Binding="{Binding IsVerified, Mode=OneWay}"
+                                                        Header="IsVerified (bool?)"
+                                                        IsThreeState="True" />
+                                <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Sum"
+                                                    Binding="{Binding Quantity}"
+                                                    Header="Quantity (int?)" />
+                                <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Maximum"
+                                                    Binding="{Binding Views}"
+                                                    Header="Views (long)" />
+                                <DataGridTextColumn mvvm:DataGridSummaryBar.Format="N2"
+                                                    mvvm:DataGridSummaryBar.Function="Average"
+                                                    Binding="{Binding Score}"
+                                                    Header="Score (double)" />
+                                <DataGridTextColumn mvvm:DataGridSummaryBar.Format="N2"
+                                                    mvvm:DataGridSummaryBar.Function="Sum"
+                                                    Binding="{Binding Price}"
+                                                    Header="Price (decimal)" />
+                                <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Minimum"
+                                                    Binding="{Binding CreatedOn}"
+                                                    Header="CreatedOn (DateTime)" />
+                                <DataGridTextColumn Binding="{Binding ModifiedOn}" Header="ModifiedOn (DateTimeOffset)" />
+                                <DataGridTextColumn Binding="{Binding ReleaseDate}" Header="ReleaseDate (DateOnly)" />
+                                <DataGridTextColumn Binding="{Binding StartTime}" Header="StartTime (TimeOnly)" />
+                                <DataGridTextColumn Binding="{Binding Duration}" Header="Duration (TimeSpan)" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type asyncState:AsyncStateListViewModel}">

@@ -1,3 +1,4 @@
+using Jot;
 using MvvmScarletToolkit.Core.Samples.Features;
 using MvvmScarletToolkit.Core.Samples.Features.AsyncState;
 using MvvmScarletToolkit.Core.Samples.Features.Busy;
@@ -24,23 +25,31 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             IScarletCommandBuilder commandBuilder,
             LocalizationsViewModel localizationsViewModel,
             ProcessingImagesViewModel processingImagesViewModel,
-            HttpClient httpClient)
+            HttpClient httpClient,
+            Tracker tracker)
             : base(commandBuilder, localizationsViewModel)
         {
-            var dataGridViewModel = new DataGrid.DataGridViewModel(commandBuilder, synchronizationContext);
+            // shared with the export dialog: every instance listens to the selections of all others and is never unregistered
+            var fileSystem = new FileSystemViewModel(scheduler, factory, FileSystemOptionsViewModel.Default);
+            var exportFileDialog = new DataGrid.ExportFileDialog(fileSystem, commandBuilder.Dispatcher);
+            var dataGridViewModel = new DataGrid.DataGridViewModel(commandBuilder, synchronizationContext, exportFileDialog);
+            var largeDataGridViewModel = new DataGrid.LargeDataGridViewModel(commandBuilder, exportFileDialog);
+
+            tracker.Track(dataGridViewModel);
+            tracker.Track(largeDataGridViewModel);
 
             Add("Image Loading + Drag and Drop", processingImagesViewModel);
             Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
             Add("Image Loading in a virtualized list", new VirtualizedImagesViewModel(CommandBuilder, synchronizationContext, httpClient));
             Add("ConcurrentCommands and state changes", new AsyncStateListViewModel(commandBuilder));
             Add("MVVM Live Sorting and Grouping in bound collections", dataGridViewModel);
+            Add("DataGrid with a million rows", largeDataGridViewModel);
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));
-            Add("FileSystemBrowser", new FileSystemViewModel(scheduler, factory, FileSystemOptionsViewModel.Default));
+            Add("FileSystemBrowser", fileSystem);
             Add("State changes in a tree structure", new BusyViewModel(commandBuilder));
             Add("Geometry rendering", new GeometryRenderViewModel(commandBuilder));
             Add("Binding Passwordbox", new PasswordViewModel());
-            // the same instance as in the DataGrid scene: GroupsViewModels coordinate through the shared messenger,
-            // a second GroupingViewModel would take part in that and steal groupings from the first one
+            // the same instance as in the DataGrid scene, so that both scenes show the same groupings
             Add("MVVM Grouping", dataGridViewModel.Groups);
             Add("Dialog-ViewModel", new DialogViewModel(commandBuilder));
             Add("MVVM Terminal/Console", new ProcessViewModel(commandBuilder));

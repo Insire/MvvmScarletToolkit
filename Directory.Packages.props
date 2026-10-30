@@ -8,6 +8,7 @@
   <!-- samples -->
   <ItemGroup Label="samples">
     <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />
+    <PackageVersion Include="CsvHelper" Version="34.0.0" />
     <PackageVersion Include="Jot" Version="2.1.17" />
     <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="15.0.0" />
     <PackageVersion Include="Magick.NET.SystemWindowsMedia" Version="9.0.0" />

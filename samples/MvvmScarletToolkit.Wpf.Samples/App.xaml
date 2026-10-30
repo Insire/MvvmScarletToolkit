@@ -9,10 +9,17 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/PresentationFramework.Fluent;component/Themes/Fluent.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MvvmScarletToolkit.Wpf;component/Features/DataGridExtensions/Generic.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MvvmScarletToolkit.Wpf;component/Features/FileSystemBrowser/Generic.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MvvmScarletToolkit.Wpf;component/Features/ToastNotification/Generic.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/XamlFlair.WPF;component/DefaultAnimations.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!--  the system colors of the default style don't follow the fluent theme  -->
+            <Style BasedOn="{StaticResource ScarletDataGridColumnFilterStyle}" TargetType="{x:Type mvvm:DataGridColumnFilter}">
+                <Setter Property="Background" Value="{DynamicResource ApplicationBackgroundBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+            </Style>
 
             <DataTemplate DataType="{x:Type mvvm:ToastViewModel}">
                 <Button MinWidth="300"
