@@ -8,11 +8,13 @@ namespace MvvmScarletToolkit
     {
         private readonly ILogger<AvaloniaImageFactory> _logger;
         private readonly SemaphoreSlim _semaphore;
+        private readonly PngBitmapEncoderOptions _options;
 
         public AvaloniaImageFactory(ILogger<AvaloniaImageFactory> logger, SemaphoreSlim semaphore)
         {
             _logger = logger;
             _semaphore = semaphore;
+            _options = new PngBitmapEncoderOptions() { CompressionLevel = System.IO.Compression.CompressionLevel.Optimal };
         }
 
         public async Task<Bitmap> FromAsync(Stream stream, ImageSize requestedSize, CancellationToken cancellationToken = default)
@@ -36,7 +38,7 @@ namespace MvvmScarletToolkit
             await _semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
-                image.Save(stream);
+                image.Save(stream, _options);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {

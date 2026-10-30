@@ -2,22 +2,22 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-    <Avalonia>12.0.4</Avalonia>
-    <Dotnet>10.0.8</Dotnet>
+    <Avalonia>12.1.4</Avalonia>
+    <Dotnet>10.0.14</Dotnet>
   </PropertyGroup>
   <!-- samples -->
   <ItemGroup Label="samples">
-    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />
     <PackageVersion Include="Jot" Version="2.1.17" />
-    <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="14.13.1" />
-    <PackageVersion Include="Magick.NET.SystemWindowsMedia" Version="8.0.21" />
+    <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="15.0.0" />
+    <PackageVersion Include="Magick.NET.SystemWindowsMedia" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(Dotnet)" />
     <PackageVersion Include="morelinq" Version="4.4.0" />
-    <PackageVersion Include="NuGet.Packaging" Version="7.6.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.15.3" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
-    <PackageVersion Include="Serilog" Version="4.3.1" />
+    <PackageVersion Include="NuGet.Packaging" Version="7.9.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.20.1" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.20.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.20.1" />
+    <PackageVersion Include="Serilog" Version="4.4.0" />
     <PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />
     <PackageVersion Include="Serilog.Formatting.Compact" Version="3.0.0" />
     <PackageVersion Include="Serilog.Sinks.Debug" Version="3.0.0" />
@@ -27,52 +27,53 @@
     <PackageVersion Include="Avalonia.Desktop" Version="$(Avalonia)" />
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="$(Avalonia)" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="$(Avalonia)" />
-    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.1" />
-    <PackageVersion Include="HotAvalonia" Version="3.1.1" />
+    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
+    <PackageVersion Include="HotAvalonia" Version="3.1.5" />
   </ItemGroup>
   <!-- WPF -->
   <ItemGroup Label="Wpf">
-    <PackageVersion Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
+    <PackageVersion Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.161" />
     <PackageVersion Include="System.Drawing.Common" Version="$(Dotnet)" />
   </ItemGroup>
   <!-- transient packages fixing vulnerabilities -->
   <ItemGroup Label="transient packages fixing vulnerabilities">
     <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
-    <PackageVersion Include="NuGet.Protocol" Version="7.6.0" />
+    <PackageVersion Include="NuGet.Protocol" Version="7.9.0" />
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="$(Dotnet)" />
   </ItemGroup>
   <!-- nuget -->
   <ItemGroup Label="nuget">
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.300" />
-    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.9.50" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.403" />
+    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.10.94" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="5.0.1" />
   </ItemGroup>
   <!-- tests -->
   <ItemGroup Label="tests">
     <PackageVersion Include="Avalonia.Headless" Version="$(Avalonia)" />
     <PackageVersion Include="Avalonia.Skia" Version="$(Avalonia)" />
-    <PackageVersion Include="NSubstitute" Version="5.3.0" />
+    <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
-    <PackageVersion Include="xunit.analyzers" Version="1.27.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-    <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2" />
-    <PackageVersion Include="xunit.v3.runner.console" Version="3.2.2" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.2" />
-    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.7.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.15.3" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageVersion Include="xunit.analyzers" Version="2.2.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
+    <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.2" />
+    <PackageVersion Include="xunit.v3.runner.console" Version="4.0.2" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.2" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.20.1" />
   </ItemGroup>
   <!-- cake -->
   <ItemGroup Label="cake">
     <PackageVersion Include="Cake" Version="6.0.0" />
     <PackageVersion Include="Cake.Codecov" Version="6.0.0" />
-    <PackageVersion Include="Cake.Frosting" Version="6.1.0" />
-    <PackageVersion Include="Cake.GitVersioning" Version="3.9.50" />
+    <PackageVersion Include="Cake.Frosting" Version="6.3.0" />
+    <PackageVersion Include="Cake.GitVersioning" Version="3.10.94" />
     <PackageVersion Include="Cake.Incubator" Version="11.0.0" />
     <PackageVersion Include="Codecov" Version="1.13.0" />
     <PackageVersion Include="GitVersion.CommandLine" Version="5.12.0" />
-    <PackageVersion Include="Microsoft.CodeCoverage" Version="18.5.1" />
-    <PackageVersion Include="ReportGenerator" Version="5.5.10" />
+    <PackageVersion Include="Microsoft.CodeCoverage" Version="18.11.0" />
+    <PackageVersion Include="ReportGenerator" Version="5.5.12" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
   </ItemGroup>
   <ItemGroup Label="core dependencies">
@@ -81,9 +82,9 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(Dotnet)" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(Dotnet)" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="$(Dotnet)" />
-    <PackageVersion Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
+    <PackageVersion Include="Microsoft.IO.RecyclableMemoryStream" Version="4.0.1" />
     <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="$(Dotnet)" />
-    <PackageVersion Include="DynamicData" Version="9.4.31" />
+    <PackageVersion Include="DynamicData" Version="9.5.0" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
   </ItemGroup>
 </Project>

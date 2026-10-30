@@ -29,7 +29,7 @@ namespace MvvmScarletToolkit.Avalonia.Tests.Util
             using var bitmap = Create(width, height);
 
             var stream = new MemoryStream();
-            bitmap.Save(stream);
+            bitmap.Save(stream, new PngBitmapEncoderOptions() { CompressionLevel = System.IO.Compression.CompressionLevel.Optimal });
             stream.Seek(0, SeekOrigin.Begin);
 
             return stream;
