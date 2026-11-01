@@ -34,6 +34,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 _viewModel.SelectedDirectory = message.Directory;
 
                 _viewModel.SelectedFile = null;
+                _viewModel.OnContainerSelected(message.Directory);
             }
 
             public void Receive(ScarletFileSelected message)
@@ -53,6 +54,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 _viewModel.SelectedChild = null;
                 _viewModel.SelectedFile = null;
                 _viewModel.SelectedDirectory = null;
+                _viewModel.OnContainerSelected(message.Drive);
             }
 
             public async Task Refresh(CancellationToken token)

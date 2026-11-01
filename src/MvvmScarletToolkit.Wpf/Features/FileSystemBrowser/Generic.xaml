@@ -7,545 +7,1202 @@
                     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:mvvm="clr-namespace:MvvmScarletToolkit">
 
+    <browser:RelativeLocationConverter x:Key="RelativeLocationConverter" />
+
     <PathGeometry x:Key="FilePath">M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48z</PathGeometry>
     <PathGeometry x:Key="FolderPath">M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z</PathGeometry>
     <PathGeometry x:Key="DrivePath">M567.403 235.642L462.323 84.589A48 48 0 0 0 422.919 64H153.081a48 48 0 0 0-39.404 20.589L8.597 235.642A48.001 48.001 0 0 0 0 263.054V400c0 26.51 21.49 48 48 48h480c26.51 0 48-21.49 48-48V263.054c0-9.801-3-19.366-8.597-27.412zM153.081 112h269.838l77.913 112H75.168l77.913-112zM528 400H48V272h480v128zm-32-64c0 17.673-14.327 32-32 32s-32-14.327-32-32 14.327-32 32-32 32 14.327 32 32zm-96 0c0 17.673-14.327 32-32 32s-32-14.327-32-32 14.327-32 32-32 32 14.327 32 32z</PathGeometry>
 
+    <PathGeometry x:Key="ImagePath">M4 5h16v14H4zM4 16l5-5 4 4 2-2 5 5M15 9h1v1h-1z</PathGeometry>
+    <PathGeometry x:Key="LockPath">M7 11V8a5 5 0 0 1 10 0v3M5 11h14v9H5z</PathGeometry>
+    <PathGeometry x:Key="ChevronPath">M9 5l7 7-7 7</PathGeometry>
+    <PathGeometry x:Key="UpPath">M12 19V5M6 11l6-6 6 6</PathGeometry>
+    <PathGeometry x:Key="RefreshPath">M20 11a8 8 0 1 0-2.3 6.3M20 5v6h-6</PathGeometry>
+    <PathGeometry x:Key="DetailsPath">M3 6h18M3 12h18M3 18h18M9 6v12</PathGeometry>
+    <PathGeometry x:Key="ListPath">M8 6h13M8 12h13M8 18h13M3 6h2M3 12h2M3 18h2</PathGeometry>
+    <PathGeometry x:Key="PanelPath">M3 5h18v14H3zM15 5v14</PathGeometry>
+    <PathGeometry x:Key="SearchPath">M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4</PathGeometry>
+    <PathGeometry x:Key="ClosePath">M6 6l12 12M18 6L6 18</PathGeometry>
+
     <Style x:Key="PathStyle" TargetType="{x:Type Path}">
-        <Setter Property="Fill" Value="#777" />
-        <Setter Property="Stroke" Value="#777" />
+        <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Stretch" Value="Uniform" />
+        <Setter Property="Stroke" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Width" Value="16" />
+    </Style>
+
+    <Style x:Key="ToolPathStyle" TargetType="{x:Type Path}">
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Stretch" Value="Uniform" />
+        <Setter Property="Stroke" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Control}}}" />
+        <Setter Property="StrokeEndLineCap" Value="Round" />
+        <Setter Property="StrokeLineJoin" Value="Round" />
+        <Setter Property="StrokeStartLineCap" Value="Round" />
+        <Setter Property="StrokeThickness" Value="1.5" />
+        <Setter Property="Width" Value="16" />
+    </Style>
+
+    <Style x:Key="MutedTextStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+    </Style>
+
+    <Style x:Key="PaneTitleStyle"
+           BasedOn="{StaticResource MutedTextStyle}"
+           TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Margin" Value="12 10 12 6" />
+    </Style>
+
+    <Style x:Key="SectionTitleStyle"
+           BasedOn="{StaticResource PaneTitleStyle}"
+           TargetType="{x:Type TextBlock}">
+        <Setter Property="Margin" Value="0 10 0 6" />
+    </Style>
+
+    <Style x:Key="PaneStyle" TargetType="{x:Type Border}">
+        <!--  translucent, to work with light and dark themes on every target framework  -->
+        <Setter Property="Background" Value="#10808080" />
+        <Setter Property="BorderBrush" Value="#40808080" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="4" />
+    </Style>
+
+    <Style x:Key="ToolButtonStyle"
+           BasedOn="{StaticResource {x:Type Button}}"
+           TargetType="{x:Type Button}">
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Margin" Value="0 0 8 0" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="MinWidth" Value="32" />
+        <Setter Property="Padding" Value="8 0" />
+    </Style>
+
+    <Style x:Key="ToolToggleStyle"
+           BasedOn="{StaticResource {x:Type ToggleButton}}"
+           TargetType="{x:Type ToggleButton}">
+        <Setter Property="Height" Value="32" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="Padding" Value="12 0" />
+    </Style>
+
+    <Style x:Key="SplitterStyle" TargetType="{x:Type GridSplitter}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+    </Style>
+
+    <Style x:Key="StateStyle" TargetType="{x:Type StackPanel}">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Visibility" Value="Collapsed" />
+    </Style>
+
+    <Style x:Key="PropertyStyle" TargetType="{x:Type HeaderedContentControl}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Margin" Value="0 0 0 3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type HeaderedContentControl}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="96" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <ContentPresenter ContentSource="Header" TextElement.Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                        <ContentPresenter Grid.Column="1">
+                            <ContentPresenter.Resources>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                </Style>
+                            </ContentPresenter.Resources>
+                        </ContentPresenter>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  displays the preview of a confirmed image, the DataContext is the file  -->
+    <DataTemplate x:Key="PreviewImageTemplate" DataType="{x:Type files:ScarletFile}">
+        <DockPanel>
+            <DockPanel Margin="0 6 0 0" DockPanel.Dock="Bottom">
+                <TextBlock DockPanel.Dock="Right"
+                           Style="{StaticResource MutedTextStyle}"
+                           Text="{Binding TypeName, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource MutedTextStyle}"
+                           Text="{Binding Name, Mode=OneWay}"
+                           TextTrimming="CharacterEllipsis" />
+            </DockPanel>
+
+            <Image RenderOptions.BitmapScalingMode="HighQuality"
+                   RenderOptions.EdgeMode="Aliased"
+                   SnapsToDevicePixels="True"
+                   Stretch="Uniform"
+                   StretchDirection="DownOnly">
+                <i:Interaction.Behaviors>
+                    <mvvm:AsyncImageLoadingBehavior Width="800"
+                                                    Height="800"
+                                                    IsFailed="{Binding IsPreviewFailed, Mode=OneWayToSource}"
+                                                    Source="{Binding FullName}" />
+                </i:Interaction.Behaviors>
+            </Image>
+        </DockPanel>
+    </DataTemplate>
+
+    <!--  a preview is only loaded after the header confirmed an image, the DataContext is the FileSystemViewModel  -->
+    <DataTemplate x:Key="PreviewTemplate" DataType="{x:Type browser:FileSystemViewModel}">
+        <Border Style="{StaticResource PaneStyle}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top"
+                           Style="{StaticResource PaneTitleStyle}"
+                           Text="Preview" />
+
+                <Grid Margin="10 0 10 10">
+                    <ContentControl Content="{Binding SelectedFile}" Focusable="False">
+                        <ContentControl.Style>
+                            <Style TargetType="{x:Type ContentControl}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedFile.IsImage}" Value="True">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource PreviewImageTemplate}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                                <Setter Property="ContentTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate />
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ContentControl.Style>
+                    </ContentControl>
+
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style BasedOn="{StaticResource StateStyle}" TargetType="{x:Type StackPanel}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedFile, Converter={mvvm:IsNull}}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock HorizontalAlignment="Center"
+                                   Style="{StaticResource MutedTextStyle}"
+                                   Text="Select a file to preview it." />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style BasedOn="{StaticResource StateStyle}" TargetType="{x:Type StackPanel}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedFile.IsHeaderChecked}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock HorizontalAlignment="Center"
+                                   Style="{StaticResource MutedTextStyle}"
+                                   Text="Loading preview" />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style BasedOn="{StaticResource StateStyle}" TargetType="{x:Type StackPanel}">
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SelectedFile.IsHeaderChecked}" Value="True" />
+                                            <Condition Binding="{Binding SelectedFile.IsImage}" Value="False" />
+                                            <Condition Binding="{Binding SelectedFile.IsAccessProhibited}" Value="False" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock HorizontalAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   Text="No preview" />
+                        <TextBlock HorizontalAlignment="Center"
+                                   Style="{StaticResource MutedTextStyle}"
+                                   Text="This file has no preview." />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style BasedOn="{StaticResource StateStyle}" TargetType="{x:Type StackPanel}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedFile.IsAccessProhibited}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock HorizontalAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   Text="Can't read this file" />
+                        <TextBlock HorizontalAlignment="Center"
+                                   Style="{StaticResource MutedTextStyle}"
+                                   Text="Access denied." />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style BasedOn="{StaticResource StateStyle}" TargetType="{x:Type StackPanel}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedFile.IsPreviewFailed}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock HorizontalAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   Text="No decoder installed" />
+                        <TextBlock HorizontalAlignment="Center"
+                                   Style="{StaticResource MutedTextStyle}"
+                                   Text="Windows has no codec for this format." />
+                    </StackPanel>
+                </Grid>
+            </DockPanel>
+        </Border>
+    </DataTemplate>
+
+    <!--  the DataContext is the FileSystemViewModel  -->
+    <DataTemplate x:Key="InspectorTemplate" DataType="{x:Type browser:FileSystemViewModel}">
+        <Border Style="{StaticResource PaneStyle}">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="12 0 12 12">
+                    <ContentPresenter Content="{Binding Inspected}">
+                        <ContentPresenter.Resources>
+                            <DataTemplate DataType="{x:Type files:ScarletFile}">
+                                <StackPanel>
+                                    <TextBlock Margin="0 12 0 0"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Text="{Binding Name, Mode=OneWay}"
+                                               TextWrapping="Wrap" />
+                                    <TextBlock Style="{StaticResource MutedTextStyle}" Text="{Binding TypeName, Mode=OneWay}" />
+
+                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Text="General" />
+                                    <HeaderedContentControl Content="{Binding Location, Mode=OneWay}"
+                                                            Header="Location"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                    <HeaderedContentControl Content="{Binding Length, Mode=OneWay, Converter={mvvm:ToFileSize}}"
+                                                            Header="Size"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                    <HeaderedContentControl Content="{Binding Length, Mode=OneWay}"
+                                                            ContentStringFormat="{}{0:N0} bytes"
+                                                            Header="Bytes"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                    <HeaderedContentControl Content="{Binding CreationTimeUtc, Mode=OneWay, Converter={mvvm:ToLocalTime}}"
+                                                            Header="Created"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                    <HeaderedContentControl Content="{Binding LastWriteTimeUtc, Mode=OneWay, Converter={mvvm:ToLocalTime}}"
+                                                            Header="Modified"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                    <HeaderedContentControl Content="{Binding LastAccessTimeUtc, Mode=OneWay, Converter={mvvm:ToLocalTime}}"
+                                                            Header="Accessed"
+                                                            Style="{StaticResource PropertyStyle}" />
+
+                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Text="Type" />
+                                    <HeaderedContentControl Content="{Binding TypeName, Mode=OneWay}"
+                                                            Header="Type"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                    <HeaderedContentControl Content="{Binding Extension, Mode=OneWay}"
+                                                            Header="Extension"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                </StackPanel>
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type directories:ScarletDirectory}">
+                                <StackPanel>
+                                    <TextBlock Margin="0 12 0 0"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Text="{Binding Name, Mode=OneWay}"
+                                               TextWrapping="Wrap" />
+                                    <TextBlock Style="{StaticResource MutedTextStyle}" Text="{Binding TypeName, Mode=OneWay}" />
+
+                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Text="General" />
+                                    <HeaderedContentControl Content="{Binding Location, Mode=OneWay}"
+                                                            Header="Location"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                    <HeaderedContentControl Content="{Binding CreationTimeUtc, Mode=OneWay, Converter={mvvm:ToLocalTime}}"
+                                                            Header="Created"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                    <HeaderedContentControl Content="{Binding LastWriteTimeUtc, Mode=OneWay, Converter={mvvm:ToLocalTime}}"
+                                                            Header="Modified"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                    <HeaderedContentControl Content="{Binding LastAccessTimeUtc, Mode=OneWay, Converter={mvvm:ToLocalTime}}"
+                                                            Header="Accessed"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                </StackPanel>
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type drives:ScarletDrive}">
+                                <StackPanel>
+                                    <TextBlock Margin="0 12 0 0"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Text="{Binding Name, Mode=OneWay}" />
+                                    <TextBlock Style="{StaticResource MutedTextStyle}" Text="{Binding DriveType, Mode=OneWay, StringFormat={}{0} drive}" />
+
+                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Text="Capacity" />
+                                    <ProgressBar Height="6"
+                                                 Margin="0 0 0 4"
+                                                 Maximum="{Binding TotalSize, Mode=OneWay}"
+                                                 Value="{Binding UsedSpace, Mode=OneWay}" />
+                                    <TextBlock Style="{StaticResource MutedTextStyle}">
+                                        <Run Text="{Binding TotalFreeSpace, Mode=OneWay, Converter={mvvm:ToFileSize}}" />
+                                        <Run Text="free of" />
+                                        <Run Text="{Binding TotalSize, Mode=OneWay, Converter={mvvm:ToFileSize}}" />
+                                    </TextBlock>
+
+                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Text="Volume" />
+                                    <HeaderedContentControl Content="{Binding DriveFormat, Mode=OneWay}"
+                                                            Header="Format"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                    <HeaderedContentControl Content="{Binding DriveType, Mode=OneWay}"
+                                                            Header="Drive type"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                    <HeaderedContentControl Content="{Binding FullName, Mode=OneWay}"
+                                                            Header="Root"
+                                                            Style="{StaticResource PropertyStyle}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ContentPresenter.Resources>
+                    </ContentPresenter>
+
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style TargetType="{x:Type StackPanel}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding InspectedAttributes.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+
+                        <TextBlock Style="{StaticResource SectionTitleStyle}" Text="Attributes" />
+                        <ItemsControl Focusable="False" ItemsSource="{Binding InspectedAttributes}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type browser:FileAttributeFlag}">
+                                    <Border Margin="0 0 4 4"
+                                            Padding="8 2"
+                                            BorderThickness="1"
+                                            CornerRadius="10">
+                                        <Border.Style>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSet}" Value="False">
+                                                        <Setter Property="BorderBrush" Value="#40808080" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock FontSize="12" Text="{Binding Name}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="{x:Type TextBlock}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsSet}" Value="False">
+                                                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style TargetType="{x:Type StackPanel}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding InspectedPermissions, Converter={mvvm:IsNull}}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+
+                        <TextBlock Style="{StaticResource SectionTitleStyle}" Text="Permissions" />
+                        <HeaderedContentControl Content="{Binding InspectedPermissions.Owner}"
+                                                Header="Owner"
+                                                Style="{StaticResource PropertyStyle}" />
+                        <ItemsControl Margin="0 4 0 0"
+                                      Focusable="False"
+                                      ItemsSource="{Binding InspectedPermissions.Rules}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type browser:ScarletAccessRule}">
+                                    <StackPanel Margin="0 0 0 6">
+                                        <TextBlock Text="{Binding Identity}" TextWrapping="Wrap" />
+                                        <TextBlock FontSize="12" TextWrapping="Wrap">
+                                            <TextBlock.Style>
+                                                <Style BasedOn="{StaticResource MutedTextStyle}" TargetType="{x:Type TextBlock}">
+                                                    <Setter Property="Text" Value="{Binding Rights, StringFormat={}Allow · {0}}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsDenied}" Value="True">
+                                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                                            <Setter Property="Text" Value="{Binding Rights, StringFormat={}Deny · {0}}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </DataTemplate>
+
+    <Style x:Key="TreeChevronStyle" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border Width="22"
+                            Height="28"
+                            Background="{TemplateBinding Background}">
+                        <Path x:Name="Chevron"
+                              Width="10"
+                              Height="10"
+                              Data="{StaticResource ChevronPath}"
+                              RenderTransformOrigin="0.5 0.5"
+                              Stretch="Uniform"
+                              Stroke="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                              StrokeThickness="1.5" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Chevron" Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
         <Style.Triggers>
-            <DataTrigger Binding="{Binding IsAccessProhibited}" Value="True">
-                <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
-                <Setter Property="Stroke" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
+            <DataTrigger Binding="{Binding HasChildContainers}" Value="False">
+                <Setter Property="Visibility" Value="Hidden" />
             </DataTrigger>
-
             <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
-                <Setter Property="Stroke" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
-            </DataTrigger>
-
-            <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
-                <Setter Property="Stroke" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+                <Setter Property="IsEnabled" Value="False" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
-
-    <DataTemplate x:Key="FolderIconPath" DataType="{x:Type directories:ScarletDirectory}">
-        <Path Width="16"
-              Height="16"
-              Data="{StaticResource FolderPath}"
-              Stretch="Uniform"
-              StrokeThickness="1"
-              Style="{StaticResource PathStyle}" />
-    </DataTemplate>
-    <DataTemplate x:Key="FileIconPath" DataType="{x:Type files:ScarletFile}">
-        <Path Width="16"
-              Height="16"
-              Data="{StaticResource FilePath}"
-              Stretch="Uniform"
-              StrokeThickness="1"
-              Style="{StaticResource PathStyle}" />
-    </DataTemplate>
-    <DataTemplate x:Key="DriveIconPath" DataType="{x:Type drives:ScarletDrive}">
-        <Path Width="16"
-              Height="16"
-              Data="{StaticResource DrivePath}"
-              Stretch="Uniform"
-              StrokeThickness="1"
-              Style="{StaticResource PathStyle}" />
-    </DataTemplate>
-
-    <ItemsControl x:Key="PropertyList"
-                  x:Shared="false"
-                  Grid.IsSharedSizeScope="True"
-                  ItemsSource="{Binding Properties}">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="{x:Type browser:PropertyViewModel}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="PropertyDisplayName" />
-                        <ColumnDefinition Width="4" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Column="0" Text="{Binding DisplayName, Mode=OneWay, StringFormat={}{0}:}" />
-                    <TextBlock Grid.Column="2"
-                               Text="{Binding Value, Mode=OneWay}"
-                               TextTrimming="CharacterEllipsis" />
-                </Grid>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
-
-    <ToolTip x:Key="PropertyTooltip" Content="{StaticResource PropertyList}" />
 
     <Style TargetType="{x:Type browser:FileSystemView}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type browser:FileSystemView}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" MaxWidth="300" />
-                            <ColumnDefinition Width="8" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="8" />
-                            <ColumnDefinition Width="*" MaxWidth="300" />
-                        </Grid.ColumnDefinitions>
+                    <DockPanel Margin="8">
+                        <DockPanel Margin="0 0 0 8" DockPanel.Dock="Top">
+                            <Button AutomationProperties.Name="Up one level"
+                                    Command="{Binding GoUpCommand}"
+                                    ToolTip="Up one level">
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource ToolButtonStyle}" TargetType="{x:Type Button}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Breadcrumbs.Count}" Value="0">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Breadcrumbs.Count}" Value="1">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                                <Path Data="{StaticResource UpPath}" Style="{StaticResource ToolPathStyle}" />
+                            </Button>
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="4" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
+                            <Button AutomationProperties.Name="Refresh"
+                                    Command="{Binding SelectedContainer.RefreshCommand}"
+                                    Style="{StaticResource ToolButtonStyle}"
+                                    ToolTip="Refresh">
+                                <Path Data="{StaticResource RefreshPath}" Style="{StaticResource ToolPathStyle}" />
+                            </Button>
 
-                        <TreeView Grid.Row="0"
-                                  Grid.RowSpan="3"
-                                  Grid.Column="0"
-                                  HorizontalAlignment="Stretch"
-                                  ItemsSource="{Binding Items}"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
-                            <TreeView.Resources>
-                                <Style x:Key="{x:Type TreeViewItem}"
-                                       BasedOn="{StaticResource {x:Type TreeViewItem}}"
-                                       TargetType="{x:Type TreeViewItem}">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
-                                    <Setter Property="IsExpanded" Value="{Binding IsToggled, Mode=TwoWay}" />
-                                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                                    <Setter Property="OverridesDefaultStyle" Value="True" />
-                                    <Setter Property="Padding" Value="1 0 0 0" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type TreeViewItem}">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" MinWidth="19" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition />
-                                                    </Grid.RowDefinitions>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <RadioButton Margin="8 0 0 0"
+                                             AutomationProperties.Name="Details"
+                                             IsChecked="{Binding ViewMode, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static browser:FileSystemViewMode.Details}}"
+                                             Style="{StaticResource ToolToggleStyle}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Margin="0 0 6 0"
+                                              Data="{StaticResource DetailsPath}"
+                                              Style="{StaticResource ToolPathStyle}" />
+                                        <TextBlock Text="Details" />
+                                    </StackPanel>
+                                </RadioButton>
+                                <RadioButton Margin="-1 0 0 0"
+                                             AutomationProperties.Name="List"
+                                             IsChecked="{Binding ViewMode, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static browser:FileSystemViewMode.List}}"
+                                             Style="{StaticResource ToolToggleStyle}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Margin="0 0 6 0"
+                                              Data="{StaticResource ListPath}"
+                                              Style="{StaticResource ToolPathStyle}" />
+                                        <TextBlock Text="List" />
+                                    </StackPanel>
+                                </RadioButton>
+                                <ToggleButton Margin="8 0 0 0"
+                                              AutomationProperties.Name="Preview"
+                                              IsChecked="{Binding IsPreviewVisible}"
+                                              Style="{StaticResource ToolToggleStyle}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Margin="0 0 6 0"
+                                              Data="{StaticResource ImagePath}"
+                                              Style="{StaticResource ToolPathStyle}" />
+                                        <TextBlock Text="Preview" />
+                                    </StackPanel>
+                                </ToggleButton>
+                                <ToggleButton Margin="8 0 0 0"
+                                              AutomationProperties.Name="Inspector"
+                                              IsChecked="{Binding IsInspectorVisible}"
+                                              Style="{StaticResource ToolToggleStyle}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Margin="0 0 6 0"
+                                              Data="{StaticResource PanelPath}"
+                                              Style="{StaticResource ToolPathStyle}" />
+                                        <TextBlock Text="Inspector" />
+                                    </StackPanel>
+                                </ToggleButton>
+                            </StackPanel>
 
-                                                    <!--  Toggle  -->
-                                                    <CheckBox x:Name="PART_Expander"
-                                                              ClickMode="Press"
-                                                              IsChecked="{Binding IsToggled, Mode=TwoWay}">
-                                                        <CheckBox.Style>
-                                                            <Style BasedOn="{StaticResource {x:Type CheckBox}}" TargetType="{x:Type CheckBox}">
+                            <Grid Width="260"
+                                  Margin="8 0 0 0"
+                                  DockPanel.Dock="Right"
+                                  ToolTip="Use * for any characters and ? for one character">
+                                <Grid.Style>
+                                    <Style TargetType="{x:Type Grid}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedContainer, Converter={mvvm:IsNull}}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SelectedContainer.IsAccessProhibited}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SelectedContainer.IsEmpty}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+
+                                <TextBox x:Name="SearchBox"
+                                         Height="32"
+                                         MinHeight="32"
+                                         Padding="30 0 8 0"
+                                         VerticalContentAlignment="Center"
+                                         AutomationProperties.Name="Search"
+                                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=250}">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Escape" Command="{Binding ClearSearchCommand}" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+
+                                <Path Margin="10 0 0 0"
+                                      HorizontalAlignment="Left"
+                                      Data="{StaticResource SearchPath}"
+                                      IsHitTestVisible="False"
+                                      Stretch="Uniform"
+                                      Stroke="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                                      StrokeThickness="1.5"
+                                      Width="14"
+                                      Height="14" />
+
+                                <TextBlock Margin="32 0 8 0"
+                                           VerticalAlignment="Center"
+                                           IsHitTestVisible="False"
+                                           Text="{Binding SelectedContainer.Name, StringFormat={}Search in {0}}"
+                                           TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Style>
+                                        <Style BasedOn="{StaticResource MutedTextStyle}" TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+
+                            <Border Height="32" Style="{StaticResource PaneStyle}">
+                                <ItemsControl Margin="6 0"
+                                              VerticalAlignment="Center"
+                                              Focusable="False"
+                                              ItemsSource="{Binding Breadcrumbs}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="2 0"
+                                                           VerticalAlignment="Center"
+                                                           Text="›">
+                                                    <TextBlock.Style>
+                                                        <Style BasedOn="{StaticResource MutedTextStyle}" TargetType="{x:Type TextBlock}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource PreviousData}}" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <Button Padding="6 2"
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        Command="{Binding DataContext.SelectContainerCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                                        CommandParameter="{Binding}"
+                                                        Content="{Binding Name}"
+                                                        MinHeight="0"
+                                                        MinWidth="0" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+                        </DockPanel>
+
+                        <DockPanel Margin="6 8 6 0" DockPanel.Dock="Bottom">
+                            <TextBlock FontSize="12">
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource MutedTextStyle}" TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Text" Value="{Binding Entries.Count, StringFormat={}{0:N0} items}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSearchActive}" Value="True">
+                                                <Setter Property="Text" Value="{Binding SearchStatus}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Margin="16 0 0 0"
+                                       FontSize="12"
+                                       Style="{StaticResource MutedTextStyle}"
+                                       Text="{Binding SelectedEntry.Name}" />
+                            <TextBlock Margin="16 0 0 0"
+                                       FontSize="12"
+                                       Style="{StaticResource MutedTextStyle}"
+                                       Text="{Binding SelectedEntry.Length, Converter={mvvm:ToFileSize}}" />
+                        </DockPanel>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="270" MinWidth="120" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" MinWidth="240" />
+                                <ColumnDefinition x:Name="InspectorSplitterColumn" Width="8" />
+                                <ColumnDefinition x:Name="InspectorColumn" Width="340" />
+                            </Grid.ColumnDefinitions>
+
+                            <Border Style="{StaticResource PaneStyle}">
+                                <DockPanel>
+                                    <TreeView Background="Transparent"
+                                              BorderThickness="0"
+                                              ItemsSource="{Binding Items}"
+                                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                              ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                        <TreeView.Resources>
+                                            <Style x:Key="{x:Type TreeViewItem}" TargetType="{x:Type TreeViewItem}">
+                                                <Setter Property="Background" Value="Transparent" />
+                                                <Setter Property="IsExpanded" Value="{Binding IsToggled, Mode=TwoWay}" />
+                                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                                                <Setter Property="OverridesDefaultStyle" Value="True" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto" MinWidth="22" />
+                                                                    <ColumnDefinition Width="*" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto" />
+                                                                    <RowDefinition />
+                                                                </Grid.RowDefinitions>
+
+                                                                <Border x:Name="Selection"
+                                                                        Grid.ColumnSpan="2"
+                                                                        Background="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                                                                        CornerRadius="4"
+                                                                        Opacity="0"
+                                                                        IsHitTestVisible="False" />
+
+                                                                <ToggleButton IsChecked="{Binding IsToggled, Mode=TwoWay}" Style="{StaticResource TreeChevronStyle}" />
+
+                                                                <Border Grid.Column="1"
+                                                                        Height="28"
+                                                                        Padding="1 0 8 0"
+                                                                        Background="{TemplateBinding Background}">
+                                                                    <ContentPresenter VerticalAlignment="Center" ContentSource="Header">
+                                                                        <ContentPresenter.ContextMenu>
+                                                                            <ContextMenu>
+                                                                                <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
+                                                                            </ContextMenu>
+                                                                        </ContentPresenter.ContextMenu>
+                                                                    </ContentPresenter>
+                                                                </Border>
+
+                                                                <ItemsPresenter x:Name="ItemsHost"
+                                                                                Grid.Row="1"
+                                                                                Grid.Column="0"
+                                                                                Grid.ColumnSpan="2"
+                                                                                Margin="16 0 0 0" />
+                                                            </Grid>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsExpanded" Value="False">
+                                                                    <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+                                                                </Trigger>
+                                                                <Trigger Property="IsSelected" Value="True">
+                                                                    <Setter TargetName="Selection" Property="Opacity" Value="0.25" />
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+
+                                            <HierarchicalDataTemplate DataType="{x:Type directories:ScarletDirectory}" ItemsSource="{Binding Containers}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Path>
+                                                        <Path.Style>
+                                                            <Style BasedOn="{StaticResource PathStyle}" TargetType="{x:Type Path}">
+                                                                <Setter Property="Data" Value="{StaticResource FolderPath}" />
                                                                 <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding HasChildContainers}" Value="False">
-                                                                        <Setter Property="Visibility" Value="Hidden" />
-                                                                    </DataTrigger>
-
-                                                                    <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                                                                        <Setter Property="IsEnabled" Value="False" />
+                                                                    <DataTrigger Binding="{Binding IsAccessProhibited}" Value="True">
+                                                                        <Setter Property="Data" Value="{StaticResource LockPath}" />
+                                                                        <Setter Property="Fill" Value="Transparent" />
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
-                                                        </CheckBox.Style>
-                                                    </CheckBox>
+                                                        </Path.Style>
+                                                    </Path>
+                                                    <TextBlock Margin="6 0 0 0"
+                                                               VerticalAlignment="Center"
+                                                               Text="{Binding Name}"
+                                                               TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                            </HierarchicalDataTemplate>
 
-                                                    <!--  Toggle Title  -->
-                                                    <Border Name="Bd"
-                                                            Grid.Row="0"
-                                                            Grid.Column="1"
-                                                            Padding="{TemplateBinding Padding}"
-                                                            Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <ContentPresenter x:Name="PART_Header"
-                                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          ContentSource="Header">
-                                                            <ContentPresenter.Style>
-                                                                <Style TargetType="{x:Type ContentPresenter}">
+                                            <HierarchicalDataTemplate DataType="{x:Type drives:ScarletDrive}" ItemsSource="{Binding Containers}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Path Data="{StaticResource DrivePath}" Style="{StaticResource PathStyle}" />
+                                                    <TextBlock Margin="6 0 0 0"
+                                                               VerticalAlignment="Center"
+                                                               Text="{Binding Name}"
+                                                               TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                            </HierarchicalDataTemplate>
+                                        </TreeView.Resources>
+
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Loaded">
+                                                <i:InvokeCommandAction Command="{Binding RefreshCommand}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeView>
+                                </DockPanel>
+                            </Border>
+
+                            <GridSplitter Grid.Column="1"
+                                          HorizontalAlignment="Stretch"
+                                          Style="{StaticResource SplitterStyle}" />
+
+                            <Grid Grid.Column="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" MinHeight="120" />
+                                    <RowDefinition x:Name="PreviewBelowSplitterRow" Height="0" />
+                                    <RowDefinition x:Name="PreviewBelowRow" Height="250" MaxHeight="0" />
+                                </Grid.RowDefinitions>
+
+                                <Border Style="{StaticResource PaneStyle}">
+                                    <Grid>
+                                        <Grid.Resources>
+                                            <!--  loading a row confirms the type expected from the extension, recycling containers would skip Loaded  -->
+                                            <DataTemplate DataType="{x:Type files:ScarletFile}">
+                                                <Path>
+                                                    <Path.Style>
+                                                        <Style BasedOn="{StaticResource PathStyle}" TargetType="{x:Type Path}">
+                                                            <Setter Property="Data" Value="{StaticResource FilePath}" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsImage}" Value="True">
+                                                                    <Setter Property="Data" Value="{StaticResource ImagePath}" />
+                                                                    <Setter Property="Fill" Value="Transparent" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Path.Style>
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="Loaded">
+                                                            <i:InvokeCommandAction Command="{Binding CheckHeaderCommand}" />
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </Path>
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type directories:ScarletDirectory}">
+                                                <Path Data="{StaticResource FolderPath}" Style="{StaticResource PathStyle}" />
+                                            </DataTemplate>
+                                        </Grid.Resources>
+
+                                        <ListView Background="Transparent"
+                                                  BorderThickness="0"
+                                                  ItemsSource="{Binding Entries}"
+                                                  ScrollViewer.CanContentScroll="True"
+                                                  SelectedItem="{Binding SelectedEntry}"
+                                                  SelectionMode="Single"
+                                                  VirtualizingPanel.IsVirtualizing="True"
+                                                  VirtualizingPanel.VirtualizationMode="Standard">
+                                            <ListView.Style>
+                                                <Style BasedOn="{StaticResource {x:Type ListView}}" TargetType="{x:Type ListView}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ViewMode}" Value="{x:Static browser:FileSystemViewMode.List}">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ListView.Style>
+
+                                            <ListView.Resources>
+                                                <mvvm:BindingProxy x:Key="SearchActiveProxy" Data="{Binding IsSearchActive}" />
+                                            </ListView.Resources>
+
+                                            <ListView.View>
+                                                <GridView>
+                                                    <GridViewColumn Width="220" Header="Name">
+                                                        <GridViewColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <ContentControl Content="{Binding}" Focusable="False" />
+                                                                    <TextBlock Margin="8 0 0 0"
+                                                                               VerticalAlignment="Center"
+                                                                               Text="{Binding Name, Mode=OneWay}"
+                                                                               TextTrimming="CharacterEllipsis" />
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </GridViewColumn.CellTemplate>
+                                                    </GridViewColumn>
+                                                    <GridViewColumn Width="{Binding Data, Source={StaticResource SearchActiveProxy}, Mode=TwoWay, Converter={mvvm:BooleanToWidth}, ConverterParameter=160}" Header="Location">
+                                                        <GridViewColumn.DisplayMemberBinding>
+                                                            <MultiBinding Converter="{StaticResource RelativeLocationConverter}">
+                                                                <Binding Mode="OneWay" Path="Location" />
+                                                                <Binding Path="DataContext.SelectedContainer.FullName" RelativeSource="{RelativeSource AncestorType={x:Type ListView}}" />
+                                                            </MultiBinding>
+                                                        </GridViewColumn.DisplayMemberBinding>
+                                                    </GridViewColumn>
+                                                    <GridViewColumn Width="120"
+                                                                    DisplayMemberBinding="{Binding TypeName, Mode=OneWay}"
+                                                                    Header="Type" />
+                                                    <GridViewColumn Width="80" Header="Size">
+                                                        <GridViewColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding Length, Mode=OneWay, Converter={mvvm:ToFileSize}}" />
+                                                            </DataTemplate>
+                                                        </GridViewColumn.CellTemplate>
+                                                    </GridViewColumn>
+                                                    <GridViewColumn Width="130"
+                                                                    DisplayMemberBinding="{Binding LastWriteTimeUtc, Mode=OneWay, Converter={mvvm:ToLocalTime}}"
+                                                                    Header="Modified" />
+                                                    <GridViewColumn Width="50"
+                                                                    DisplayMemberBinding="{Binding Attributes, Mode=OneWay, Converter={mvvm:ToAttributeLetters}}"
+                                                                    Header="Attr" />
+                                                </GridView>
+                                            </ListView.View>
+
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="MouseDoubleClick">
+                                                    <i:InvokeCommandAction Command="{Binding OpenCommand}" CommandParameter="{Binding SelectedEntry}" />
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
+                                        </ListView>
+
+                                        <ListBox Background="Transparent"
+                                                 BorderThickness="0"
+                                                 ItemsSource="{Binding Entries}"
+                                                 ScrollViewer.CanContentScroll="True"
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                 SelectedItem="{Binding SelectedEntry}"
+                                                 SelectionMode="Single"
+                                                 VirtualizingPanel.IsVirtualizing="True"
+                                                 VirtualizingPanel.VirtualizationMode="Standard">
+                                            <ListBox.Style>
+                                                <Style BasedOn="{StaticResource {x:Type ListBox}}" TargetType="{x:Type ListBox}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ViewMode}" Value="{x:Static browser:FileSystemViewMode.List}">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ListBox.Style>
+
+                                            <ListBox.Resources>
+                                                <DataTemplate DataType="{x:Type files:ScarletFile}">
+                                                    <Grid Width="48" Height="34">
+                                                        <Path HorizontalAlignment="Center">
+                                                            <Path.Style>
+                                                                <Style BasedOn="{StaticResource PathStyle}" TargetType="{x:Type Path}">
+                                                                    <Setter Property="Data" Value="{StaticResource FilePath}" />
+                                                                    <Setter Property="Height" Value="20" />
+                                                                    <Setter Property="Width" Value="20" />
+                                                                </Style>
+                                                            </Path.Style>
+                                                        </Path>
+                                                        <ContentControl Content="{Binding}" Focusable="False">
+                                                            <ContentControl.Style>
+                                                                <Style TargetType="{x:Type ContentControl}">
+                                                                    <Setter Property="ContentTemplate">
+                                                                        <Setter.Value>
+                                                                            <DataTemplate />
+                                                                        </Setter.Value>
+                                                                    </Setter>
                                                                     <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding IsLoaded, Mode=OneWay}" Value="True">
-                                                                            <Setter Property="ToolTip" Value="{StaticResource PropertyTooltip}" />
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding IsLoaded, Mode=OneWay}" Value="False">
-                                                                            <Setter Property="ToolTip">
+                                                                        <DataTrigger Binding="{Binding IsImage}" Value="True">
+                                                                            <Setter Property="ContentTemplate">
                                                                                 <Setter.Value>
-                                                                                    <ToolTip>
-                                                                                        <StackPanel Orientation="Vertical">
-                                                                                            <TextBlock Text="{Binding IsLoaded, StringFormat={}IsLoaded: {0}, Mode=OneWay}" />
-                                                                                        </StackPanel>
-                                                                                    </ToolTip>
+                                                                                    <DataTemplate>
+                                                                                        <Image Stretch="UniformToFill">
+                                                                                            <i:Interaction.Behaviors>
+                                                                                                <mvvm:AsyncImageLoadingBehavior Width="96"
+                                                                                                                                Height="96"
+                                                                                                                                Source="{Binding FullName}" />
+                                                                                            </i:Interaction.Behaviors>
+                                                                                        </Image>
+                                                                                    </DataTemplate>
                                                                                 </Setter.Value>
                                                                             </Setter>
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
-                                                            </ContentPresenter.Style>
-                                                            <ContentPresenter.ContextMenu>
-                                                                <ContextMenu>
-                                                                    <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                                                </ContextMenu>
-                                                            </ContentPresenter.ContextMenu>
-                                                        </ContentPresenter>
-                                                    </Border>
+                                                            </ContentControl.Style>
+                                                        </ContentControl>
+                                                        <i:Interaction.Triggers>
+                                                            <i:EventTrigger EventName="Loaded">
+                                                                <i:InvokeCommandAction Command="{Binding CheckHeaderCommand}" />
+                                                            </i:EventTrigger>
+                                                        </i:Interaction.Triggers>
+                                                    </Grid>
+                                                </DataTemplate>
+                                                <DataTemplate DataType="{x:Type directories:ScarletDirectory}">
+                                                    <Grid Width="48" Height="34">
+                                                        <Path Width="20"
+                                                              Height="20"
+                                                              Data="{StaticResource FolderPath}"
+                                                              Fill="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                                                              Stretch="Uniform" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListBox.Resources>
 
-                                                    <!--  Children  -->
-                                                    <ItemsPresenter x:Name="PART_ItemsHost"
-                                                                    Grid.Row="1"
-                                                                    Grid.Column="1"
-                                                                    Grid.ColumnSpan="2" />
-                                                </Grid>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsExpanded" Value="false">
-                                                        <Setter TargetName="PART_ItemsHost" Property="Visibility" Value="Collapsed" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                                </Style>
-
-                                <HierarchicalDataTemplate DataType="{x:Type directories:ScarletDirectory}" ItemsSource="{Binding Containers}">
-                                    <DockPanel ToolTip="{StaticResource PropertyTooltip}">
-                                        <ContentControl ContentTemplate="{StaticResource FolderIconPath}" DockPanel.Dock="Left" />
-                                        <TextBlock Margin="5 0 0 0"
-                                                   VerticalAlignment="Center"
-                                                   Text="{Binding Name}"
-                                                   TextTrimming="CharacterEllipsis">
-                                            <TextBlock.Style>
-                                                <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="{x:Type TextBlock}">
-                                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </DockPanel>
-                                </HierarchicalDataTemplate>
-
-                                <HierarchicalDataTemplate DataType="{x:Type drives:ScarletDrive}" ItemsSource="{Binding Containers}">
-                                    <DockPanel ToolTip="{StaticResource PropertyTooltip}">
-                                        <ContentControl ContentTemplate="{StaticResource DriveIconPath}" DockPanel.Dock="Left" />
-                                        <TextBlock Margin="5 0 0 0"
-                                                   VerticalAlignment="Center"
-                                                   Text="{Binding Name}"
-                                                   TextTrimming="CharacterEllipsis">
-                                            <TextBlock.Style>
-                                                <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="{x:Type TextBlock}">
-                                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </DockPanel>
-                                </HierarchicalDataTemplate>
-                            </TreeView.Resources>
-
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="Loaded">
-                                    <i:InvokeCommandAction Command="{Binding RefreshCommand}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </TreeView>
-
-                        <GridSplitter Grid.Row="0"
-                                      Grid.Column="1"
-                                      Width="8"
-                                      HorizontalAlignment="Center"
-                                      VerticalAlignment="Stretch" />
-
-                        <ContentControl Grid.Row="0" Grid.Column="2">
-                            <ContentControl.Style>
-                                <Style TargetType="{x:Type ContentControl}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SelectedTreeDetail, Converter={mvvm:IsNull}}" Value="True">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="{x:Type ContentControl}">
-                                                        <TextBlock HorizontalAlignment="Center"
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <DockPanel Height="44">
+                                                        <ContentControl VerticalAlignment="Center"
+                                                                        Content="{Binding}"
+                                                                        DockPanel.Dock="Left"
+                                                                        Focusable="False" />
+                                                        <TextBlock Margin="12 0 0 0"
                                                                    VerticalAlignment="Center"
-                                                                   Text="nothing selected..." />
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type ContentControl}">
-                                                <ContentPresenter Content="{Binding SelectedTreeDetail}">
-                                                    <ContentPresenter.Resources>
-                                                        <DataTemplate DataType="{x:Type files:ScarletFile}">
-                                                            <DockPanel Width="100"
-                                                                       Background="Transparent"
-                                                                       ToolTip="{StaticResource PropertyTooltip}">
-                                                                <DockPanel.InputBindings>
-                                                                    <MouseBinding Command="{Binding SelectCommand}" MouseAction="LeftDoubleClick" />
-                                                                </DockPanel.InputBindings>
-
-                                                                <TextBlock Grid.Row="1"
-                                                                           HorizontalAlignment="Center"
-                                                                           DockPanel.Dock="Bottom"
-                                                                           Text="{Binding Name}"
-                                                                           TextTrimming="CharacterEllipsis" />
-
-                                                                <ContentControl Grid.Row="0"
-                                                                                Width="66"
-                                                                                Height="66">
-                                                                    <ContentControl.Style>
-                                                                        <Style TargetType="{x:Type ContentControl}">
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding IsImage}" Value="false">
-                                                                                    <Setter Property="Content">
-                                                                                        <Setter.Value>
-                                                                                            <Path Width="66"
-                                                                                                  Height="66"
-                                                                                                  Data="{StaticResource FilePath}"
-                                                                                                  Stretch="Uniform"
-                                                                                                  StrokeThickness="1">
-                                                                                                <Path.Style>
-                                                                                                    <Style BasedOn="{StaticResource PathStyle}" TargetType="{x:Type Path}">
-                                                                                                        <Setter Property="Visibility" Value="Collapsed" />
-                                                                                                        <Style.Triggers>
-                                                                                                            <DataTrigger Binding="{Binding IsImage}" Value="false">
-                                                                                                                <Setter Property="Visibility" Value="Visible" />
-                                                                                                            </DataTrigger>
-                                                                                                        </Style.Triggers>
-                                                                                                    </Style>
-                                                                                                </Path.Style>
-                                                                                            </Path>
-                                                                                        </Setter.Value>
-                                                                                    </Setter>
-                                                                                </DataTrigger>
-
-                                                                                <DataTrigger Binding="{Binding IsImage}" Value="true">
-                                                                                    <Setter Property="Content">
-                                                                                        <Setter.Value>
-                                                                                            <Image Width="66"
-                                                                                                   Height="66"
-                                                                                                   RenderOptions.BitmapScalingMode="HighQuality"
-                                                                                                   RenderOptions.EdgeMode="Aliased"
-                                                                                                   SnapsToDevicePixels="True"
-                                                                                                   Stretch="Uniform"
-                                                                                                   StretchDirection="Both">
-                                                                                                <i:Interaction.Behaviors>
-                                                                                                    <mvvm:AsyncImageLoadingBehavior Width="122"
-                                                                                                                                    Height="122"
-                                                                                                                                    Source="{Binding FullName}" />
-                                                                                                </i:Interaction.Behaviors>
-
-                                                                                                <Image.Style>
-                                                                                                    <Style TargetType="{x:Type Image}">
-                                                                                                        <Setter Property="Visibility" Value="Collapsed" />
-                                                                                                        <Style.Triggers>
-                                                                                                            <DataTrigger Binding="{Binding IsImage}" Value="true">
-                                                                                                                <Setter Property="Visibility" Value="Visible" />
-                                                                                                            </DataTrigger>
-                                                                                                        </Style.Triggers>
-                                                                                                    </Style>
-                                                                                                </Image.Style>
-                                                                                            </Image>
-                                                                                        </Setter.Value>
-                                                                                    </Setter>
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </ContentControl.Style>
-                                                                </ContentControl>
-                                                            </DockPanel>
-                                                        </DataTemplate>
-
-                                                        <DataTemplate DataType="{x:Type directories:ScarletDirectory}">
-                                                            <ListBox ItemsSource="{Binding Items}"
-                                                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                                     SelectionMode="Extended">
-                                                                <ListBox.ContextMenu>
-                                                                    <ContextMenu>
-                                                                        <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                                                    </ContextMenu>
-                                                                </ListBox.ContextMenu>
-
-                                                                <ListBox.ItemsPanel>
-                                                                    <ItemsPanelTemplate>
-                                                                        <mvvm:VirtualizingWrapPanel IsItemsHost="True" Orientation="Horizontal" />
-                                                                    </ItemsPanelTemplate>
-                                                                </ListBox.ItemsPanel>
-
-                                                                <ListBox.ItemContainerStyle>
-                                                                    <Style TargetType="{x:Type ListBoxItem}">
-                                                                        <Setter Property="ToolTip" Value="{StaticResource PropertyTooltip}" />
+                                                                   DockPanel.Dock="Right"
+                                                                   TextTrimming="CharacterEllipsis">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding Converter="{StaticResource RelativeLocationConverter}">
+                                                                    <Binding Mode="OneWay" Path="Location" />
+                                                                    <Binding Path="DataContext.SelectedContainer.FullName" RelativeSource="{RelativeSource AncestorType={x:Type ListBox}}" />
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                            <TextBlock.Style>
+                                                                <Style BasedOn="{StaticResource MutedTextStyle}" TargetType="{x:Type TextBlock}">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding DataContext.IsSearchActive, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="True">
+                                                                            <Setter Property="Visibility" Value="Visible" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                        <StackPanel Margin="10 0 0 0" VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                                                            <TextBlock FontSize="12" TextTrimming="CharacterEllipsis">
+                                                                <TextBlock.Style>
+                                                                    <Style BasedOn="{StaticResource MutedTextStyle}" TargetType="{x:Type TextBlock}">
                                                                         <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding IsBusy}" Value="true">
-                                                                                <Setter Property="IsEnabled" Value="False" />
-                                                                                <Setter Property="IsHitTestVisible" Value="False" />
+                                                                            <DataTrigger Binding="{Binding IsContainer}" Value="True">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
                                                                             </DataTrigger>
                                                                         </Style.Triggers>
                                                                     </Style>
-                                                                </ListBox.ItemContainerStyle>
+                                                                </TextBlock.Style>
+                                                                <Run Text="{Binding TypeName, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding Length, Mode=OneWay, Converter={mvvm:ToFileSize}}" /><Run Text=" · " /><Run Text="{Binding LastWriteTimeUtc, Mode=OneWay, Converter={mvvm:ToLocalTime}}" />
+                                                            </TextBlock>
+                                                            <TextBlock FontSize="12"
+                                                                       Style="{StaticResource MutedTextStyle}"
+                                                                       Text="{Binding TypeName, Mode=OneWay}"
+                                                                       Visibility="{Binding IsContainer, Mode=OneWay, Converter={mvvm:BooleanToVisibility}}" />
+                                                        </StackPanel>
+                                                    </DockPanel>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
 
-                                                                <ListBox.Resources>
-                                                                    <DataTemplate DataType="{x:Type directories:ScarletDirectory}">
-                                                                        <DockPanel Width="100" Background="Transparent">
-                                                                            <DockPanel.InputBindings>
-                                                                                <MouseBinding Command="{Binding SelectCommand}" MouseAction="LeftDoubleClick" />
-                                                                            </DockPanel.InputBindings>
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="MouseDoubleClick">
+                                                    <i:InvokeCommandAction Command="{Binding OpenCommand}" CommandParameter="{Binding SelectedEntry}" />
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
+                                        </ListBox>
 
-                                                                            <TextBlock HorizontalAlignment="Center"
-                                                                                       DockPanel.Dock="Bottom"
-                                                                                       Text="{Binding Name}"
-                                                                                       TextTrimming="CharacterEllipsis" />
-                                                                            <Path Width="66"
-                                                                                  Height="66"
-                                                                                  Data="{StaticResource FolderPath}"
-                                                                                  Stretch="Uniform"
-                                                                                  StrokeThickness="1"
-                                                                                  Style="{StaticResource PathStyle}" />
-                                                                        </DockPanel>
-                                                                    </DataTemplate>
-                                                                </ListBox.Resources>
-                                                            </ListBox>
-                                                        </DataTemplate>
+                                        <Border>
+                                            <Border.Style>
+                                                <Style TargetType="{x:Type Border}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedContainer, Converter={mvvm:IsNull}}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding SelectedContainer.IsAccessProhibited}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding SelectedContainer.IsEmpty}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsSearchActive}" Value="True" />
+                                                                <Condition Binding="{Binding IsSearching}" Value="False" />
+                                                                <Condition Binding="{Binding Entries.Count}" Value="0" />
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </MultiDataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
 
-                                                        <DataTemplate DataType="{x:Type drives:ScarletDrive}">
-                                                            <ListBox ItemsSource="{Binding Items}"
-                                                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                                     SelectionMode="Extended">
-                                                                <ListBox.ContextMenu>
-                                                                    <ContextMenu>
-                                                                        <MenuItem Command="{Binding RefreshCommand}" Header="Refresh" />
-                                                                    </ContextMenu>
-                                                                </ListBox.ContextMenu>
+                                            <TextBlock HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center">
+                                                <TextBlock.Style>
+                                                    <Style BasedOn="{StaticResource MutedTextStyle}" TargetType="{x:Type TextBlock}">
+                                                        <Setter Property="Text" Value="Select a drive or folder." />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding SelectedContainer.IsEmpty}" Value="True">
+                                                                <Setter Property="Text" Value="This folder is empty." />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding SelectedContainer.IsAccessProhibited}" Value="True">
+                                                                <Setter Property="Text" Value="Access denied. You don't have permission to list this folder." />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsSearchActive}" Value="True">
+                                                                <Setter Property="Text" Value="{Binding SearchText, StringFormat='Nothing here or in the subfolders matches “{0}”.'}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </Grid>
+                                </Border>
 
-                                                                <ListBox.ItemsPanel>
-                                                                    <ItemsPanelTemplate>
-                                                                        <mvvm:VirtualizingWrapPanel IsItemsHost="True" Orientation="Horizontal" />
-                                                                    </ItemsPanelTemplate>
-                                                                </ListBox.ItemsPanel>
+                                <GridSplitter x:Name="PreviewBelowSplitter"
+                                              Grid.Row="1"
+                                              Style="{StaticResource SplitterStyle}"
+                                              Visibility="Collapsed" />
 
-                                                                <ListBox.ItemContainerStyle>
-                                                                    <Style TargetType="{x:Type ListBoxItem}">
-                                                                        <Setter Property="ToolTip" Value="{StaticResource PropertyTooltip}" />
-                                                                    </Style>
-                                                                </ListBox.ItemContainerStyle>
+                                <ContentControl x:Name="PreviewBelow"
+                                                Grid.Row="2"
+                                                Content="{Binding}"
+                                                ContentTemplate="{StaticResource PreviewTemplate}"
+                                                Focusable="False"
+                                                Visibility="Collapsed" />
+                            </Grid>
 
-                                                                <ListBox.Resources>
-                                                                    <DataTemplate DataType="{x:Type directories:ScarletDirectory}">
-                                                                        <DockPanel Width="100" Background="Transparent">
-                                                                            <DockPanel.InputBindings>
-                                                                                <MouseBinding Command="{Binding SelectCommand}" MouseAction="LeftDoubleClick" />
-                                                                            </DockPanel.InputBindings>
+                            <GridSplitter x:Name="InspectorSplitter"
+                                          Grid.Column="3"
+                                          Style="{StaticResource SplitterStyle}" />
 
-                                                                            <TextBlock HorizontalAlignment="Center"
-                                                                                       DockPanel.Dock="Bottom"
-                                                                                       Text="{Binding Name}"
-                                                                                       TextTrimming="CharacterEllipsis" />
-                                                                            <Path Width="66"
-                                                                                  Height="66"
-                                                                                  Data="{StaticResource FolderPath}"
-                                                                                  Stretch="Uniform"
-                                                                                  StrokeThickness="1"
-                                                                                  Style="{StaticResource PathStyle}" />
-                                                                        </DockPanel>
-                                                                    </DataTemplate>
-                                                                </ListBox.Resources>
-                                                            </ListBox>
-                                                        </DataTemplate>
-                                                    </ContentPresenter.Resources>
-                                                </ContentPresenter>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </ContentControl.Style>
-                        </ContentControl>
+                            <Grid x:Name="Inspector" Grid.Column="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition x:Name="PreviewSideRow" Height="0" />
+                                    <RowDefinition x:Name="PreviewSideSplitterRow" Height="0" />
+                                    <RowDefinition Height="*" MinHeight="120" />
+                                </Grid.RowDefinitions>
 
-                        <GridSplitter Grid.Row="0"
-                                      Grid.Column="3"
-                                      Width="8"
-                                      HorizontalAlignment="Center"
-                                      VerticalAlignment="Stretch" />
+                                <ContentControl x:Name="PreviewSide"
+                                                Content="{Binding}"
+                                                ContentTemplate="{StaticResource PreviewTemplate}"
+                                                Focusable="False"
+                                                Visibility="Collapsed" />
 
-                        <ContentControl Grid.Row="0" Grid.Column="4">
-                            <ContentControl.Style>
-                                <Style TargetType="{x:Type ContentControl}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SelectedDetail, Converter={mvvm:IsNull}}" Value="True">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="{x:Type ContentControl}">
-                                                        <TextBlock HorizontalAlignment="Center"
-                                                                   VerticalAlignment="Center"
-                                                                   Text="nothing selected..." />
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </DataTrigger>
-                                    </Style.Triggers>
+                                <GridSplitter x:Name="PreviewSideSplitter"
+                                              Grid.Row="1"
+                                              Style="{StaticResource SplitterStyle}"
+                                              Visibility="Collapsed" />
 
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type ContentControl}">
-                                                <ContentPresenter Content="{Binding SelectedDetail}">
-                                                    <ContentPresenter.Resources>
-                                                        <DataTemplate DataType="{x:Type files:ScarletFile}">
-                                                            <DockPanel LastChildFill="True">
-                                                                <ContentControl Content="{StaticResource PropertyList}" DockPanel.Dock="Top" />
+                                <ContentControl Grid.Row="2"
+                                                Content="{Binding}"
+                                                ContentTemplate="{StaticResource InspectorTemplate}"
+                                                Focusable="False" />
+                            </Grid>
+                        </Grid>
+                    </DockPanel>
 
-                                                                <Image RenderOptions.BitmapScalingMode="HighQuality"
-                                                                       RenderOptions.EdgeMode="Aliased"
-                                                                       SnapsToDevicePixels="True"
-                                                                       Stretch="Uniform"
-                                                                       StretchDirection="Both">
-                                                                    <i:Interaction.Behaviors>
-                                                                        <mvvm:AsyncImageLoadingBehavior Width="800"
-                                                                                                        Height="800"
-                                                                                                        Source="{Binding FullName}" />
-                                                                    </i:Interaction.Behaviors>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsInspectorVisible}" Value="False">
+                            <Setter TargetName="Inspector" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="InspectorSplitter" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="InspectorColumn" Property="MaxWidth" Value="0" />
+                            <Setter TargetName="InspectorSplitterColumn" Property="MaxWidth" Value="0" />
+                        </DataTrigger>
 
-                                                                    <Image.Style>
-                                                                        <Style TargetType="{x:Type Image}">
-                                                                            <Setter Property="Visibility" Value="Collapsed" />
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding IsImage}" Value="true">
-                                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </Image.Style>
-                                                                </Image>
-                                                            </DockPanel>
-                                                        </DataTemplate>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsPreviewVisible}" Value="True" />
+                                <Condition Binding="{Binding IsInspectorVisible}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="PreviewSide" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PreviewSideSplitter" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PreviewSideRow" Property="Height" Value="250" />
+                            <Setter TargetName="PreviewSideSplitterRow" Property="Height" Value="8" />
+                        </MultiDataTrigger>
 
-                                                        <DataTemplate DataType="{x:Type directories:ScarletDirectory}">
-                                                            <ContentControl Content="{StaticResource PropertyList}" />
-                                                        </DataTemplate>
-                                                    </ContentPresenter.Resources>
-                                                </ContentPresenter>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </ContentControl.Style>
-                        </ContentControl>
-
-                        <StatusBar Grid.Row="2"
-                                   Grid.Column="2"
-                                   Grid.ColumnSpan="5">
-                            <StatusBarItem Content="Status" />
-                            <StatusBarItem Content="{Binding SelectedContainer.Name, FallbackValue='No container selected'}" />
-                            <StatusBarItem Content="{Binding SelectedChild.Name, FallbackValue='No child selected'}" />
-                        </StatusBar>
-                    </Grid>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsPreviewVisible}" Value="True" />
+                                <Condition Binding="{Binding IsInspectorVisible}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="PreviewBelow" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PreviewBelowSplitter" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PreviewBelowRow" Property="MaxHeight" Value="10000" />
+                            <Setter TargetName="PreviewBelowSplitterRow" Property="Height" Value="8" />
+                        </MultiDataTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

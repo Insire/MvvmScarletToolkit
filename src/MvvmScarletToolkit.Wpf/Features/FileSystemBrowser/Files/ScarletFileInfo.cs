@@ -11,6 +11,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files
             Extension = info.Extension;
             Exists = info.Exists;
             IsHidden = (info.Attributes & FileAttributes.Hidden) != 0;
+            Attributes = info.Exists ? info.Attributes : default;
+            Length = info.Exists ? info.Length : 0;
             CreationTimeUtc = info.CreationTimeUtc;
             LastAccessTimeUtc = info.LastAccessTimeUtc;
             LastWriteTimeUtc = info.LastWriteTimeUtc;
@@ -34,6 +36,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files
         public bool Exists { get; init; }
         public bool IsHidden { get; init; }
         public bool IsImage { get; init; }
+        public long Length { get; init; }
+        public FileAttributes Attributes { get; init; }
         public DateTime? CreationTimeUtc { get; init; }
         public DateTime? LastAccessTimeUtc { get; init; }
         public DateTime? LastWriteTimeUtc { get; init; }

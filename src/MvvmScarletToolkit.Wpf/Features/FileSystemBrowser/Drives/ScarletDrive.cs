@@ -34,8 +34,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string? DriveFormat { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial DriveType DriveType { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial long AvailableFreeSpace { get; private set; }
-        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial long TotalFreeSpace { get; private set; }
-        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial long TotalSize { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay), NotifyPropertyChangedFor(nameof(UsedSpace))] public partial long TotalFreeSpace { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay), NotifyPropertyChangedFor(nameof(UsedSpace))] public partial long TotalSize { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsReady { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial bool IsSelected { get; set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsLoaded { get; private set; }
@@ -48,6 +48,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives
         [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<IFileSystemChild> Items { get; }
         [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<IFileSystemChild> Containers { get; }
         [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<PropertyViewModel> Properties { get; }
+
+        [Bindable(true, BindingDirection.OneWay)] public long UsedSpace => TotalSize - TotalFreeSpace;
 
         [Bindable(true, BindingDirection.OneWay)] public bool IsContainer => true;
         [Bindable(true, BindingDirection.OneWay)] public bool Exists => true;
@@ -73,7 +75,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives
 
             var itemsSubscription = _cache.Connect()
                  .ObserveOn(scheduler)
-                 .SortAndBind(_items, SortExpressionComparer<IFileSystemChild>.Ascending(p => p.Name))
+                 .SortAndBind(_items, SortExpressionComparer<IFileSystemChild>.Descending(p => p.IsContainer).ThenByAscending(p => p.Name))
                  .Subscribe();
 
             var containersSubscription = _cache.Connect()

@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
         public string Get(FileInfo fileInfo)
         {
             var byteBuffer = new byte[256];
-            using (var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
             {
                 if (fileStream.Length >= 256)
                 {
@@ -94,9 +94,13 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
             {
                 mime = "application/x-shockwave-flash";
             }
-            else if (file.Take(4).SequenceEqual(TIFF))
+            else if (file.Take(4).SequenceEqual(TIFF) || file.Take(4).SequenceEqual(TIFF_BIG_ENDIAN))
             {
                 mime = "image/tiff";
+            }
+            else if (file.Skip(4).Take(4).SequenceEqual(FTYP))
+            {
+                mime = GetIsoMediaType(file.Skip(8).Take(4).ToArray());
             }
             else if (file.Take(11).SequenceEqual(TORRENT))
             {
@@ -108,7 +112,14 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
             }
             else if (file.Take(4).SequenceEqual(WAV_AVI))
             {
-                mime = extension == ".AVI" ? "video/x-msvideo" : "audio/x-wav";
+                if (file.Skip(8).Take(4).SequenceEqual(WEBP))
+                {
+                    mime = "image/webp";
+                }
+                else
+                {
+                    mime = extension == ".AVI" ? "video/x-msvideo" : "audio/x-wav";
+                }
             }
             else if (file.Take(16).SequenceEqual(WMV_WMA))
             {
@@ -120,6 +131,16 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
             }
 
             return mime;
+        }
+
+        private static string GetIsoMediaType(byte[] brand)
+        {
+            return System.Text.Encoding.ASCII.GetString(brand) switch
+            {
+                "heic" or "heix" or "hevc" or "mif1" or "msf1" => "image/heic",
+                "avif" or "avis" => "image/avif",
+                _ => "video/mp4",
+            };
         }
 
         private static readonly byte[] BMP = [66, 77];
@@ -135,6 +156,9 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
         private static readonly byte[] RAR = [82, 97, 114, 33, 26, 7, 0];
         private static readonly byte[] SWF = [70, 87, 83];
         private static readonly byte[] TIFF = [73, 73, 42, 0];
+        private static readonly byte[] TIFF_BIG_ENDIAN = [77, 77, 0, 42];
+        private static readonly byte[] FTYP = [102, 116, 121, 112];
+        private static readonly byte[] WEBP = [87, 69, 66, 80];
         private static readonly byte[] TORRENT = [100, 56, 58, 97, 110, 110, 111, 117, 110, 99, 101];
         private static readonly byte[] TTF = [0, 1, 0, 0, 0];
         private static readonly byte[] WAV_AVI = [82, 73, 70, 70];

@@ -78,6 +78,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
             {
                 _viewModel.Name = info.Name;
                 _viewModel.FullName = info.FullName;
+                _viewModel.Location = Path.GetDirectoryName(info.FullName) ?? string.Empty;
+                _viewModel.Attributes = info.Attributes;
                 _viewModel.Exists = info.Exists;
                 _viewModel.IsHidden = info.IsHidden;
                 _viewModel.CreationTimeUtc = info.CreationTimeUtc;

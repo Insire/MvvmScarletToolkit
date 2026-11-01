@@ -31,6 +31,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
 
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string Name { get; private set; } = string.Empty;
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string FullName { get; private set; } = string.Empty;
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string Location { get; private set; } = string.Empty;
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial FileAttributes Attributes { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial IFileSystemParent? Parent { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial DateTime? CreationTimeUtc { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial DateTime? LastAccessTimeUtc { get; private set; }
@@ -50,6 +52,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
         [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<PropertyViewModel> Properties { get; }
 
         [Bindable(true, BindingDirection.OneWay)] public bool IsContainer => true;
+        [Bindable(true, BindingDirection.OneWay)] public long? Length => null;
+        [Bindable(true, BindingDirection.OneWay)] public string TypeName => "Folder";
         [Bindable(true, BindingDirection.OneWay)] public FileSystemType FileSystemType { get; } = FileSystemType.Directory;
 
         public ScarletDirectory(
@@ -74,7 +78,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
 
             var itemsSubscription = _cache.Connect()
                  .ObserveOn(scheduler)
-                 .SortAndBind(_items, SortExpressionComparer<IFileSystemChild>.Ascending(p => p.Name))
+                 .SortAndBind(_items, SortExpressionComparer<IFileSystemChild>.Descending(p => p.IsContainer).ThenByAscending(p => p.Name))
                  .Subscribe();
 
             var containersSubscription = _cache.Connect()
