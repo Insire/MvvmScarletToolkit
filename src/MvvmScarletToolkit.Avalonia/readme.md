@@ -10,10 +10,9 @@ This library aims to provide implementations for avalonia specific classes used 
 - **Unload on exit:** business viewmodels are unloaded when a classic desktop application shuts down. Other application lifetimes are not supported by `ScarletExitService`.
 - **Async image loading:** `AsyncImageLoadingBehavior` loads images through [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.ImageLoading/readme.md).
 - **Converters as markup extensions:** `ConverterMarkupExtension<T>` is a base class for writing converters that don't have to be declared as resources.
-
 - **Virtualizing panels:** `VirtualizingTilePanel` and `VirtualizingWrapPanel` keep lists with many items per row fast.
 
-Apart from these panels, the behaviors, converters and controls of [MvvmScarletToolkit.Wpf](../MvvmScarletToolkit.Wpf/readme.md) are not available for Avalonia.
+Apart from these panels, the behaviors, converters and controls of [MvvmScarletToolkit.Wpf](../MvvmScarletToolkit.Wpf/readme.md) are not available for Avalonia. Text selection doesn't need the toolkit here, as Avalonia comes with a `SelectableTextBlock`.
 
 ## Contents
 
@@ -83,6 +82,16 @@ Both panels realize only what is visible and rely on the `ScrollViewer` of the l
         </ItemsPanelTemplate>
     </ListBox.ItemsPanel>
 </ListBox>
+```
+
+`VirtualizingWrapPanel` wraps into columns with `Orientation="Vertical"`. Items may differ in size, so the sizes of items that were not realized yet are estimated, and the scrollbar can shift a little while scrolling. Set `ItemWidth` and `ItemHeight` to avoid that.
+
+`VirtualizingTilePanel` fits as many columns of `ChildSize` tiles as the width allows:
+
+```xml
+<ItemsPanelTemplate>
+    <mvvm:VirtualizingTilePanel ChildSize="50" />
+</ItemsPanelTemplate>
 ```
 
 ### Converters

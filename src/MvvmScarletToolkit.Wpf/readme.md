@@ -313,6 +313,7 @@ All converters are markup extensions, so they don't have to be declared as resou
 |---|---|
 |``BindingProxy``|Forward a ``DataContext`` to elements outside of the visual tree, through its ``Data`` property.|
 |``DependencyObjectExtensions``|Find parents, children and datatemplates in the visual tree.|
+|``IoCRegistrationExtensions``|Register a container in a ``ResourceDictionary`` with ``Register``, and resolve services from a ``FrameworkElement`` with ``GetService<T>``.|
 
 ## Contents
 

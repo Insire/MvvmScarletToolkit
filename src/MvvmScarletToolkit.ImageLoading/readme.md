@@ -10,6 +10,7 @@ MvvmScarletToolkit.ImageLoading is part of the MvvmScarletToolkit framework, con
 - **Resizing:** images are decoded for the requested size, with a configurable default.
 - **Works with virtualized lists:** cancelled loads return `null` instead of throwing, because cancelling is routine for items that scroll out of view.
 - **Background disk writes:** images are handed out before they are written to disk, and `MaxConcurrentDiskCacheWrites` limits how many writes run at once. Call `FlushAsync` before the application exits to keep pending writes.
+- **Forward-only streams:** an `IImageDataProvider` can return a stream that isn't seekable, like a network stream. `ImageService<TImage>` buffers it, as the factories and data caches read it more than once.
 - **Failed load protection:** a failed resource is not requested again for `FailedLoadRetryDelayInSeconds`.
 - **Download limits:** `MaxDownloadSizeInBytes` and `RequestTimeout` protect against oversized or slow resources.
 - **Cache cleanup:** the disk caches can remove old files on startup through `MaxFileAgeInDays`, or clear themselves with `ClearCacheDirectoryOnInit`.

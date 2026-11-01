@@ -14,6 +14,8 @@ This library aims to provide an easy to use and extend browser control for FileS
 |[``FilePickerViewModel``](FilePickerViewModel.cs)|Wraps a ``FileSystemViewModel`` for selecting a file.|
 |[``FolderPickerViewModel``](FolderPickerViewModel.cs)|Wraps a ``FileSystemViewModel`` for selecting a folder.|
 |[``FileSystemViewModelFactory``](FileSystemViewModelFactory.cs)|Creates the viewmodels for drives, folders and files.|
+|[``FileSystemViewModelFactoryExtensions``](FileSystemViewModelFactoryExtensions.cs)|Loads the folders and files of a parent in a single call.|
+|[``RegistryFileExtensionMimeTypeResolver``](MimeTypeResolvers/RegistryFileExtensionMimeTypeResolver.cs), [``StaticFileExtensionMimeTypeResolver``](MimeTypeResolvers/StaticFileExtensionMimeTypeResolver.cs), [``MagicNumberMimeTypeResolver``](MimeTypeResolvers/MagicNumberMimeTypeResolver.cs)|The ``IMimeTypeResolver`` implementations used by the factory. They work from the Windows registry, a fixed list of file extensions and the content of a file.|
 |[``Generic.xaml``](Generic.xaml)|Default styles. Merge this into your application resources, as described in the [MvvmScarletToolkit.Wpf](../../readme.md) readme.|
 
 ## Licensing

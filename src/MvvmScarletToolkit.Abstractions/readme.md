@@ -60,6 +60,17 @@ These types are used by [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.
 |``ImageSize``|Width and height of an image.|
 |``ImageLoadState``|State of an image that gets loaded asynchronously: ``None``, ``Pending``, ``Loading``, ``Loaded`` or ``Failed``.|
 
+### DataGrid export
+
+These types let applications export a grid without the toolkit depending on a format. See [Exporting a DataGrid](../../docs/datagrid-export.md).
+
+|type|summary|
+|---|---|
+|``IDataGridExporter``|Turns the content of a grid into something else, like a file.|
+|``IDataGridDataSource``|Snapshot of a grid: its visible columns in display order, and its rows after filtering in the order shown on screen.|
+|``DataGridItems<TItem>``|The rows of a grid, and a description of its visible columns.|
+|``DataGridColumnInfo``|Name and caption of a column.|
+
 ### Builders
 
 |type|summary|

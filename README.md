@@ -14,8 +14,8 @@ Each package has its own readme with the full list of what it contains.
 
 - [MvvmScarletToolkit.Commands](src/MvvmScarletToolkit.Commands/readme.md): fluent interface to build task based ICommands with cancellation, single execution and busy state notifications
 - [MvvmScarletToolkit.Observables](src/MvvmScarletToolkit.Observables/readme.md): viewmodel base classes, threadsafe busy state, localization, change tracking, paging and navigation
-- [MvvmScarletToolkit.Wpf](src/MvvmScarletToolkit.Wpf/readme.md): behaviors, converters as markup extensions, FileSystemBrowser, virtualizing panels, HtmlTextBlock and toast notifications
-- [MvvmScarletToolkit.Avalonia](src/MvvmScarletToolkit.Avalonia/readme.md): Avalonia implementations of the toolkit services and async image loading
+- [MvvmScarletToolkit.Wpf](src/MvvmScarletToolkit.Wpf/readme.md): behaviors, converters as markup extensions, DataGrid extensions, FileSystemBrowser, virtualizing panels, HtmlTextBlock, selectable text and toast notifications
+- [MvvmScarletToolkit.Avalonia](src/MvvmScarletToolkit.Avalonia/readme.md): Avalonia implementations of the toolkit services, async image loading and virtualizing panels
 - [MvvmScarletToolkit.ImageLoading](src/MvvmScarletToolkit.ImageLoading/readme.md): loading and caching images from remote resources
 - [MvvmScarletToolkit.Mediator](src/MvvmScarletToolkit.Mediator/readme.md): simple mediator with requests and notifications
 - [MvvmScarletToolkit](src/MvvmScarletToolkit/readme.md): extension methods used across the toolkit
@@ -164,7 +164,7 @@ dotnet run --project samples/MvvmScarletToolkit.Avalonia.Samples
 ## Samples
 
 - MvvmScarletToolkit.Core.Samples: viewmodels shared by the WPF and Avalonia samples
-- MvvmScarletToolkit.Incubator: experimental dialog viewmodels used by the WPF samples
+- MvvmScarletToolkit.Incubator: experimental WPF image code referenced by the WPF samples
 
 - MvvmScarletToolkit.Wpf.Samples
 
@@ -183,15 +183,25 @@ dotnet run --project samples/MvvmScarletToolkit.Avalonia.Samples
   - dialogs and toast notifications
   - terminal/console and context menus using MVVM
   - nested selection
+  - binding enum values and an ObservableDictionary
+  - a tag cloud with a VirtualizingWrapPanel
+  - selecting and copying the text of a TextBlock
 
-- MvvmScarletToolkit.Avalonia.Samples
+- MvvmScarletToolkit.Avalonia.Samples: the same scenes as the WPF samples, apart from the DataGrid, grouping, the file/folder browser and text selection, as those are not part of the Avalonia package
 
   - navigation
   - async cancelable commands using ICommand
+  - image loading with drag and drop, and in a virtualized list
   - lazy loading and data virtualization
-  - progress notifications
+  - progress notifications and state changes in a tree structure
+  - stress test for rendering lots of characters converted to geometry objects, in a VirtualizingTilePanel
   - a passwordbox with binding support
+  - input prevention for textboxes
+  - dialogs and toast notifications
   - terminal/console and context menus using MVVM
+  - nested selection
+  - binding enum values and an ObservableDictionary
+  - a tag cloud with a VirtualizingWrapPanel
 
 ## Build Requirements
 
