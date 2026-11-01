@@ -209,7 +209,7 @@
                                       Style="{StaticResource VirtualizedOutputStyle}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="{x:Type process:ProcessData}">
-                                    <TextBlock>
+                                    <TextBlock mvvm:TextBlockSelection.IsEnabled="True">
                                         <Run Text="{Binding Message, Mode=OneWay}" />
                                     </TextBlock>
                                 </DataTemplate>
@@ -222,7 +222,7 @@
                                       Style="{StaticResource VirtualizedOutputStyle}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="{x:Type process:ProcessErrorData}">
-                                    <TextBlock TextWrapping="Wrap">
+                                    <TextBlock mvvm:TextBlockSelection.IsEnabled="True" TextWrapping="Wrap">
                                         <Run Text="{Binding Message, Mode=OneWay}" />
                                     </TextBlock>
                                 </DataTemplate>
@@ -240,12 +240,12 @@
                                       Style="{StaticResource VirtualizedOutputStyle}">
                             <ItemsControl.Resources>
                                 <DataTemplate DataType="{x:Type process:ProcessData}">
-                                    <TextBlock Foreground="{DynamicResource AccentTextFillColorTertiaryBrush}">
+                                    <TextBlock mvvm:TextBlockSelection.IsEnabled="True" Foreground="{DynamicResource AccentTextFillColorTertiaryBrush}">
                                         <Run Text="{Binding Message, Mode=OneWay}" />
                                     </TextBlock>
                                 </DataTemplate>
                                 <DataTemplate DataType="{x:Type process:ProcessErrorData}">
-                                    <TextBlock Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" TextWrapping="Wrap">
+                                    <TextBlock mvvm:TextBlockSelection.IsEnabled="True" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" TextWrapping="Wrap">
                                         <Run Text="{Binding Message, Mode=OneWay}" />
                                     </TextBlock>
                                 </DataTemplate>
@@ -2076,6 +2076,55 @@
                                   ItemsSource="{Binding SelectedChild.Children}"
                                   SelectedItem="{Binding SelectedChild.SelectedChild}" />
                     </DockPanel>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type features:SelectableTextViewModel}">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel.Resources>
+                            <Style x:Key="SelectableTextStyle" TargetType="{x:Type TextBlock}">
+                                <Setter Property="mvvm:TextBlockSelection.IsEnabled" Value="True" />
+                                <Setter Property="TextWrapping" Value="Wrap" />
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <GroupBox Header="Drag to select or double-click a word, then press Ctrl+C or right-click. Ctrl+A selects everything.">
+                            <TextBlock x:Name="WrappedText"
+                                       Style="{StaticResource SelectableTextStyle}"
+                                       Text="This TextBlock gets its selection from a style. A long text that wraps across multiple lines shows that a selection follows the layout of the text. Resize the window while text is selected and the highlight moves along with the lines. Clicking somewhere else in this text starts a new selection." />
+                        </GroupBox>
+
+                        <GroupBox Margin="0 8 0 0" Header="Inlines keep their formatting, set through the behavior">
+                            <TextBlock>
+                                <i:Interaction.Behaviors>
+                                    <mvvm:TextBlockSelectionBehavior />
+                                </i:Interaction.Behaviors>
+                                <Run Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Text="Colored runs," />
+                                <Bold>bold text</Bold>
+                                <Run Text="and" />
+                                <Italic>italic text</Italic>
+                                <LineBreak />
+                                <Run Text="can be selected in one go, across a line break." />
+                            </TextBlock>
+                        </GroupBox>
+
+                        <GroupBox Margin="0 8 0 0" Header="HtmlTextBlock with a custom SelectionBrush and SelectionOpacity">
+                            <mvvm:HtmlTextBlock mvvm:TextBlockSelection.IsEnabled="True"
+                                                mvvm:TextBlockSelection.SelectionBrush="Orange"
+                                                mvvm:TextBlockSelection.SelectionOpacity="0.6"
+                                                Html="This &lt;b&gt;selection&lt;/b&gt; is orange." />
+                        </GroupBox>
+
+                        <GroupBox Margin="0 8 0 0" Header="Bound text">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Style="{StaticResource SelectableTextStyle}" Text="{Binding Message}" />
+                                <TextBox Margin="0 8 0 0" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Margin="0 8 0 0" Header="SelectedText of the first text">
+                            <TextBlock Text="{Binding (mvvm:TextBlockSelection.SelectedText), ElementName=WrappedText}" TextWrapping="Wrap" />
+                        </GroupBox>
+                    </StackPanel>
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type tagCloud:TagCloudViewModel}">

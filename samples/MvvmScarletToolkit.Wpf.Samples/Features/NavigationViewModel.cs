@@ -71,6 +71,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             Add("ObservableDictionary", new ObservableDictionaryViewModel());
             Add("Nested Selection", new SelectionsViewModel());
             Add("Tag cloud with a VirtualizingWrapPanel", new TagCloudViewModel());
+            Add("Selecting and copying text", new SelectableTextViewModel());
 
             Items[0].IsSelected = true;
         }

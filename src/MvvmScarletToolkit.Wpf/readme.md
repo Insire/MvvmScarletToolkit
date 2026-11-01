@@ -33,6 +33,34 @@ Toast notifications, the FileSystemBrowser and the DataGrid extensions come with
 |``HtmlTextBlock``|TextBlock that displays formatted text from its ``Html`` property, like ``b``, ``i``, ``u``, ``sub``, ``sup``, ``a`` and ``br``.|
 |``HtmlHighlightTextBlock``|``HtmlTextBlock`` that also highlights the text from its ``Highlight`` property, e.g. for search results.|
 
+### Selecting text
+
+``TextBlockSelection.IsEnabled`` makes the text of any ``TextBlock`` selectable, including ``HtmlTextBlock``. Users select text by dragging the mouse, double-clicking selects a word, ``Ctrl+A`` selects everything and ``Ctrl+C`` copies. A context menu with both commands is added, unless you set your own ``ContextMenu``.
+
+```xml
+<TextBlock mvvm:TextBlockSelection.IsEnabled="True" Text="{Binding Message}" />
+
+<Style TargetType="{x:Type TextBlock}">
+    <Setter Property="mvvm:TextBlockSelection.IsEnabled" Value="True" />
+    <Setter Property="mvvm:TextBlockSelection.SelectionBrush" Value="Orange" />
+    <Setter Property="mvvm:TextBlockSelection.SelectionOpacity" Value="0.6" />
+</Style>
+```
+
+``IsEnabled`` adds a ``TextBlockSelectionBehavior``, which can also be added directly, as a style can't do that:
+
+```xml
+<TextBlock Text="{Binding Message}">
+    <i:Interaction.Behaviors>
+        <mvvm:TextBlockSelectionBehavior />
+    </i:Interaction.Behaviors>
+</TextBlock>
+```
+
+``SelectionBrush``, ``SelectionOpacity`` and the read-only ``SelectedText`` are attached properties of ``TextBlockSelection`` either way. Bind to the selected text with ``{Binding (mvvm:TextBlockSelection.SelectedText), ElementName=Name}``. From code, the behavior offers ``Select``, ``SelectWord``, ``SelectAll``, ``ClearSelection`` and ``Copy``.
+
+The selection ends when the ``TextBlock`` loses the focus or its text changes. It is drawn in an adorner on top of the text, so inlines keep their foreground and bindings, and the highlight needs an ``AdornerLayer`` to show up. Every ``Window`` and ``ScrollViewer`` has one.
+
 ### Toast notifications
 
 ``ToastService`` shows notifications in their own window, without needing a reference to a view. ``ToastServiceConfiguration`` sets the window style, position and durations.
@@ -192,6 +220,7 @@ Adds proportional and limited column widths to a ``GridView``, like ``*`` sizing
 |``ScrollToEndCommandBehavior``|``FrameworkElement``|Execute ``Command`` when a scrollviewer reaches its vertical or horizontal end, sampled at ``Interval``. Useful for loading the next page.|
 |``SelectedTreeViewItemBehavior``|``TreeView``|Enable twoway binding of the selected item.|
 |``SmoothProgressBehavior``|``ProgressBar``|Animate changes of ``Percentage``, instead of jumping to the new value.|
+|``TextBlockSelectionBehavior``|``TextBlock``|Select and copy text. See [Selecting text](#selecting-text).|
 |``WatermarkBehavior``|``TextBox``|Display ``Watermark`` on top of a ``TextBox`` while it is empty and not focused. Customize it with ``WatermarkStyle``.|
 
 ```xml
@@ -223,6 +252,7 @@ Adds proportional and limited column widths to a ``GridView``, like ``*`` sizing
 |``Filter.RefreshWhenChanged``|Refresh the ``ICollectionView`` when the bound value changes, e.g. a search text.|
 |``Focus.First``|Move the focus to the control with the lowest tab order on load. A WPF window has no focus when it is first shown.|
 |``ImageLoader.Source``|Attached alternative to ``AsyncImageLoadingBehavior``, with ``ImageLoader.IsLoading`` reporting its state.|
+|``TextBlockSelection.IsEnabled``|Attached alternative to ``TextBlockSelectionBehavior``, that can be set from a style. See [Selecting text](#selecting-text).|
 
 ```xml
 <ListBox ItemsSource="{Binding Items}"
