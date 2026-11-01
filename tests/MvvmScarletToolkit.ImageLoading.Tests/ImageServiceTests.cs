@@ -113,6 +113,55 @@ public sealed class ImageServiceTests : TraceTestBase, IDisposable
     }
 
     [Fact]
+    public async Task Forward_Only_Streams_Should_Be_Decoded_And_Cached()
+    {
+        _dataProvider.GetStreamAsync(default!, Arg.Any<CancellationToken>()).ReturnsForAnyArgs(_ => Task.FromResult<Stream>(new NonSeekableStream(TestData.Bytes("forward only"))));
+        var service = CreateService();
+
+        var image = await service.ProvideImageAsync(Uri, Size, NoCallback, TestContext.Current.CancellationToken);
+        await service.FlushAsync(TestContext.Current.CancellationToken);
+
+        Assert.NotNull(image);
+        Assert.Equal("forward only", image.Text);
+
+        await using var cached = await _dataMemoryCache.GetStreamAsync(Uri, Size, TestContext.Current.CancellationToken);
+        Assert.Equal("forward only", await TestData.ReadAllTextAsync(cached));
+
+        await _dataFilesystemCache.Received(1).CacheStreamAsync(Arg.Any<Stream>(), Uri, Size, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task A_Failing_Forward_Only_Stream_Should_Be_Remembered_As_Failure()
+    {
+        _dataProvider.GetStreamAsync(default!, Arg.Any<CancellationToken>()).ReturnsForAnyArgs(_ => Task.FromResult<Stream>(new FailingStream(() => throw new IOException("connection lost"))));
+        var service = CreateService();
+
+        Assert.Null(await service.ProvideImageAsync(Uri, Size, NoCallback, TestContext.Current.CancellationToken));
+        Assert.Null(await service.ProvideImageAsync(Uri, Size, NoCallback, TestContext.Current.CancellationToken));
+
+        await _dataProvider.ReceivedWithAnyArgs(1).GetStreamAsync(default!, Arg.Any<CancellationToken>());
+        Assert.Equal(0, _factory.FromCalls);
+    }
+
+    [Fact]
+    public async Task Cancelling_While_Copying_A_Forward_Only_Stream_Should_Not_Throw_Or_Be_Remembered()
+    {
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        _dataProvider.GetStreamAsync(default!, Arg.Any<CancellationToken>()).ReturnsForAnyArgs(_ => Task.FromResult<Stream>(new FailingStream(() =>
+        {
+            cts.Cancel();
+            cts.Token.ThrowIfCancellationRequested();
+        })));
+        var service = CreateService();
+
+        Assert.Null(await service.ProvideImageAsync(Uri, Size, NoCallback, cts.Token));
+
+        ReturnFromRemote("remote");
+
+        Assert.NotNull(await service.ProvideImageAsync(Uri, Size, NoCallback, TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
     public async Task Memory_Hit_Should_Complete_Synchronously()
     {
         var cached = new TestImage(TestData.Bytes("cached"));

@@ -15,11 +15,13 @@ using MvvmScarletToolkit.Wpf.Samples.Features.DataGrid;
 using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using Serilog;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Reactive.Concurrency;
 using System.Runtime.Versioning;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 
 namespace MvvmScarletToolkit.Wpf.Samples
@@ -31,6 +33,9 @@ namespace MvvmScarletToolkit.Wpf.Samples
 
         public App()
         {
+            // bindings format values with Language, which is en-US unless an application changes it
+            FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+
             Ioc.Default.ConfigureServices(ConfigureServices());
 
             AsyncImageLoadingBehavior.Loader = Ioc.Default.GetRequiredService<Lazy<IImageService<BitmapSource>>>();

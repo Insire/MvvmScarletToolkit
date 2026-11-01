@@ -29,6 +29,18 @@ namespace MvvmScarletToolkit.Wpf.Tests.Util
 
             return stream;
         }
+
+        public static MemoryStream CreateJpeg(int width, int height)
+        {
+            var encoder = new JpegBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(Create(width, height)));
+
+            var stream = new MemoryStream();
+            encoder.Save(stream);
+            stream.Seek(0, SeekOrigin.Begin);
+
+            return stream;
+        }
     }
 
     /// <summary>

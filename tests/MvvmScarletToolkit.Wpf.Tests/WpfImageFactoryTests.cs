@@ -152,6 +152,69 @@ namespace MvvmScarletToolkit.Wpf.Tests
             Assert.Equal(1, _semaphore.CurrentCount);
         }
 
+        [Theory]
+        [InlineData(1000, 3, 100, 100, 100, 1)]
+        [InlineData(3, 1000, 100, 100, 1, 100)]
+        public async Task FromAsync_Should_Keep_At_Least_One_Pixel_For_Thin_Images(int width, int height, uint requestedWidth, uint requestedHeight, int expectedWidth, int expectedHeight)
+        {
+            using var png = TestBitmaps.CreatePng(width, height);
+
+            var image = await _factory.FromAsync(png, new ImageSize(requestedWidth, requestedHeight), TestContext.Current.CancellationToken);
+
+            Assert.Equal(expectedWidth, image.PixelWidth);
+            Assert.Equal(expectedHeight, image.PixelHeight);
+        }
+
+        [Fact]
+        public async Task FromAsync_Should_Leave_The_Stream_Open()
+        {
+            using var png = TestBitmaps.CreatePng(400, 200);
+
+            await _factory.FromAsync(png, new ImageSize(100, 100), TestContext.Current.CancellationToken);
+
+            Assert.True(png.CanRead);
+        }
+
+        [Theory]
+        [InlineData(400, 200, 100)]
+        [InlineData(20, 10, 100)]
+        public async Task ToAsync_Should_Save_Opaque_Images_As_Jpeg(int width, int height, uint requestedSize)
+        {
+            using var jpeg = TestBitmaps.CreateJpeg(width, height);
+            using var result = new MemoryStream();
+
+            var image = await _factory.FromAsync(jpeg, new ImageSize(requestedSize, requestedSize), TestContext.Current.CancellationToken);
+            await _factory.ToAsync(result, image, TestContext.Current.CancellationToken);
+
+            Assert.Equal([0xFF, 0xD8], result.ToArray().Take(2));
+        }
+
+        [Theory]
+        [InlineData(400, 200, 100)]
+        [InlineData(20, 10, 100)]
+        public async Task ToAsync_Should_Keep_Transparency(int width, int height, uint requestedSize)
+        {
+            using var png = TestBitmaps.CreatePng(width, height);
+            using var result = new MemoryStream();
+
+            var image = await _factory.FromAsync(png, new ImageSize(requestedSize, requestedSize), TestContext.Current.CancellationToken);
+            await _factory.ToAsync(result, image, TestContext.Current.CancellationToken);
+
+            Assert.Equal([0x89, 0x50], result.ToArray().Take(2));
+        }
+
+        [Fact]
+        public async Task ToAsync_Should_Keep_Transparency_Of_Palettes()
+        {
+            var palette = new BitmapPalette([System.Windows.Media.Colors.Transparent, System.Windows.Media.Colors.Red]);
+            var indexed = BitmapSource.Create(2, 2, 96, 96, System.Windows.Media.PixelFormats.Indexed8, palette, new byte[] { 0, 1, 1, 0 }, 2);
+            using var result = new MemoryStream();
+
+            await _factory.ToAsync(result, indexed, TestContext.Current.CancellationToken);
+
+            Assert.Equal([0x89, 0x50], result.ToArray().Take(2));
+        }
+
         [Fact]
         public async Task FilesystemCache_Should_Round_Trip_With_Wpf_Factory()
         {

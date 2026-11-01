@@ -218,7 +218,7 @@ namespace MvvmScarletToolkit.ImageLoading
             }
 
             // remote (web) or filesystem data
-            var remoteStream = await _imageDataProvider.GetStreamAsync(uri, cancellationToken).ConfigureAwait(false);
+            var remoteStream = await ToSeekableAsync(await _imageDataProvider.GetStreamAsync(uri, cancellationToken).ConfigureAwait(false), uri, cancellationToken).ConfigureAwait(false);
             var isHandedOver = false;
             try
             {
@@ -302,6 +302,43 @@ namespace MvvmScarletToolkit.ImageLoading
                 CancellationToken.None,
                 TaskContinuationOptions.ExecuteSynchronously,
                 TaskScheduler.Default);
+        }
+
+        /// <summary>
+        /// Providers are free to return a forward-only stream, like a network stream. It is read more than once here,
+        /// the factories rewind after reading the header and the data caches read it again after decoding.
+        /// </summary>
+        /// <returns>
+        /// A seekable stream the caller owns, <paramref name="stream"/> itself when it already is one.
+        /// <see cref="Stream.Null"/> when reading failed or <paramref name="cancellationToken"/> was cancelled.
+        /// </returns>
+        private async Task<Stream> ToSeekableAsync(Stream stream, Uri uri, CancellationToken cancellationToken)
+        {
+            if (stream.CanSeek)
+            {
+                return stream;
+            }
+
+            await using (stream)
+            {
+                try
+                {
+                    var copy = new MemoryStream();
+                    await stream.CopyToAsync(copy, cancellationToken).ConfigureAwait(false);
+                    copy.Seek(0, SeekOrigin.Begin);
+
+                    return copy;
+                }
+                catch (Exception ex)
+                {
+                    if (!cancellationToken.IsCancellationRequested)
+                    {
+                        _logger.LogError(ex, "Reading image data from {Uri} failed unexpectedly", uri.OriginalString);
+                    }
+
+                    return Stream.Null;
+                }
+            }
         }
 
         private async Task<TImage?> TryCreateImageAsync(Stream stream, Uri uri, ImageSize requestedSize, LogLevel failureLevel)

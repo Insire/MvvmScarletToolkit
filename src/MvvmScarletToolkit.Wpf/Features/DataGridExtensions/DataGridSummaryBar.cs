@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Markup;
 using System.Windows.Threading;
 
 namespace MvvmScarletToolkit
@@ -148,6 +149,18 @@ namespace MvvmScarletToolkit
             private set { SetValue(_cellsMarginPropertyKey, value); }
         }
 
+        // a binding instead of a DependencyPropertyDescriptor, which would keep this control alive
+        private static readonly DependencyProperty _dataGridLanguageProperty = DependencyProperty.Register(
+            "DataGridLanguage",
+            typeof(XmlLanguage),
+            typeof(DataGridSummaryBar),
+            new PropertyMetadata(null, OnDataGridLanguageChanged));
+
+        private static void OnDataGridLanguageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((DataGridSummaryBar)d).ScheduleCalculation();
+        }
+
         private static void OnDataGridChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is not DataGridSummaryBar bar)
@@ -174,6 +187,12 @@ namespace MvvmScarletToolkit
             dataGrid.Loaded += OnDataGridLoaded;
             dataGrid.AddHandler(ScrollViewer.ScrollChangedEvent, new ScrollChangedEventHandler(OnScrollChanged));
             ((INotifyCollectionChanged)dataGrid.Items).CollectionChanged += OnItemsChanged;
+            BindingOperations.SetBinding(this, _dataGridLanguageProperty, new Binding
+            {
+                Path = new PropertyPath(LanguageProperty),
+                Source = dataGrid,
+                Mode = BindingMode.OneWay,
+            });
 
             UpdateCells();
         }
@@ -186,6 +205,7 @@ namespace MvvmScarletToolkit
             dataGrid.Loaded -= OnDataGridLoaded;
             dataGrid.RemoveHandler(ScrollViewer.ScrollChangedEvent, new ScrollChangedEventHandler(OnScrollChanged));
             ((INotifyCollectionChanged)dataGrid.Items).CollectionChanged -= OnItemsChanged;
+            BindingOperations.ClearBinding(this, _dataGridLanguageProperty);
 
             Untrack();
             _columns.Clear();
@@ -362,8 +382,9 @@ namespace MvvmScarletToolkit
             }
 
             var items = DataGrid.Items.Cast<object>().Where(p => !ReferenceEquals(p, CollectionView.NewItemPlaceholder)).ToArray();
+            var culture = DataGrid.GetCulture();
 
-            var results = await Task.Run(() => work.Select(p => Format(DataGridSummaryCalculator.Calculate(items, p.Path!, p.Function), p.Format)).ToArray());
+            var results = await Task.Run(() => work.Select(p => Format(DataGridSummaryCalculator.Calculate(items, p.Path!, p.Function), p.Format, culture)).ToArray());
 
             for (var i = 0; i < work.Length; i++)
             {
@@ -484,10 +505,10 @@ namespace MvvmScarletToolkit
             return menu;
         }
 
-        private static string? Format(object? value, string? format)
+        private static string? Format(object? value, string? format, CultureInfo culture)
         {
-            return format is not null && value is IFormattable formattable
-                ? formattable.ToString(format, CultureInfo.CurrentCulture)
+            return value is IFormattable formattable
+                ? formattable.ToString(format, culture)
                 : value?.ToString();
         }
     }

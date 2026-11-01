@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Observables;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit
@@ -68,6 +69,36 @@ namespace MvvmScarletToolkit
             }
         } = true;
 
+        /// <summary>
+        /// The culture input is read in and values are compared with. It has to match the culture of the cells, otherwise values are not found or are read differently than they are shown.
+        /// <see cref="Wpf.DataGridFilterBehavior"/> keeps this in sync with <see cref="System.Windows.FrameworkElement.Language"/> of its grid, which is what the bindings of the cells use.
+        /// Without a value <see cref="CultureInfo.CurrentCulture"/> is used.
+        /// </summary>
+        public CultureInfo? Culture
+        {
+            get;
+            set
+            {
+                if (!SetProperty(ref field, value))
+                {
+                    return;
+                }
+
+                foreach (var filter in _filters)
+                {
+                    filter.Culture = value;
+
+                    // input that hasn't been applied yet has to stay that way
+                    if (filter.IsApplied)
+                    {
+                        filter.Commit();
+                    }
+                }
+
+                Update();
+            }
+        }
+
         public ICommand ClearCommand { get; }
 
         public DataGridFilterViewModel(IScarletCommandBuilder commandBuilder, Type itemType)
@@ -109,6 +140,7 @@ namespace MvvmScarletToolkit
 
             filter = new ColumnFilterViewModel(CommandBuilder, propertyPath, accessor)
             {
+                Culture = Culture,
                 IsValidationEnabled = IsValidationEnabled,
             };
             filter.Applied += OnFilterApplied;

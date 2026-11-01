@@ -134,6 +134,45 @@ namespace MvvmScarletToolkit.Avalonia.Tests
         }
 
         [Fact]
+        public async Task FromAsync_Should_Leave_The_Stream_Open()
+        {
+            using var png = TestBitmaps.CreatePng(400, 200);
+
+            using var image = await _factory.FromAsync(png, new ImageSize(100, 100), TestContext.Current.CancellationToken);
+
+            Assert.True(png.CanRead);
+        }
+
+        [Theory]
+        [InlineData(400, 200, 100)]
+        [InlineData(200, 400, 100)]
+        [InlineData(20, 10, 100)]
+        public async Task ToAsync_Should_Save_Opaque_Images_As_Jpeg(int width, int height, uint requestedSize)
+        {
+            using var jpeg = TestBitmaps.CreateJpeg(width, height);
+            using var result = new MemoryStream();
+
+            using var image = await _factory.FromAsync(jpeg, new ImageSize(requestedSize, requestedSize), TestContext.Current.CancellationToken);
+            await _factory.ToAsync(result, image, TestContext.Current.CancellationToken);
+
+            Assert.Equal([0xFF, 0xD8], result.ToArray().Take(2));
+        }
+
+        [Theory]
+        [InlineData(400, 200, 100)]
+        [InlineData(20, 10, 100)]
+        public async Task ToAsync_Should_Keep_Transparency(int width, int height, uint requestedSize)
+        {
+            using var png = TestBitmaps.CreatePng(width, height);
+            using var result = new MemoryStream();
+
+            using var image = await _factory.FromAsync(png, new ImageSize(requestedSize, requestedSize), TestContext.Current.CancellationToken);
+            await _factory.ToAsync(result, image, TestContext.Current.CancellationToken);
+
+            Assert.Equal([0x89, 0x50], result.ToArray().Take(2));
+        }
+
+        [Fact]
         public async Task FilesystemCache_Should_Round_Trip_And_Drop_Corrupt_Entries()
         {
             var directory = Path.Combine(Path.GetTempPath(), "MvvmScarletToolkit.Avalonia.Tests", Guid.NewGuid().ToString("N"));

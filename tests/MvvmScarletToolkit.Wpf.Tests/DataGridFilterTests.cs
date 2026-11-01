@@ -1,8 +1,10 @@
 using Microsoft.Xaml.Behaviors;
 using MvvmScarletToolkit.Wpf;
 using MvvmScarletToolkit.Wpf.Tests.Util;
+using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Markup;
 using System.Windows.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Tests
@@ -612,6 +614,120 @@ namespace MvvmScarletToolkit.Wpf.Tests
 
                 Assert.Null(grid.Items.Filter);
                 Assert.Null(DataGridFilterBehavior.GetColumnFilter(grid.Columns[0]));
+
+                return Task.CompletedTask;
+            });
+        }
+
+        [Theory]
+        [InlineData("de-DE", "1,5", true)]
+        [InlineData("de-DE", "1.5", false)]
+        [InlineData("en-US", "1.5", true)]
+        [InlineData("en-US", "1,5", false)]
+        public void Numbers_Should_Be_Read_With_The_Culture_Of_The_Filter(string culture, string value, bool isValid)
+        {
+            var sut = CreateFilter();
+            sut.Culture = new CultureInfo(culture);
+            var filter = sut.GetFilter(nameof(Row.Price))!;
+
+            filter.Operator = ColumnFilterOperator.Equals;
+            filter.Value = value;
+            filter.Apply();
+
+            Assert.Equal(!isValid, filter.HasError);
+            Assert.Equal(isValid, filter.IsApplied);
+        }
+
+        [Fact]
+        public void Dates_Should_Be_Read_With_The_Culture_Of_The_Filter_Instead_Of_The_System_Culture()
+        {
+            var current = CultureInfo.CurrentCulture;
+            try
+            {
+                CultureInfo.CurrentCulture = new CultureInfo("de-DE");
+
+                var sut = CreateFilter();
+                sut.Culture = new CultureInfo("en-US");
+                var filter = sut.GetFilter(nameof(Row.Created))!;
+
+                filter.Operator = ColumnFilterOperator.Equals;
+                filter.Value = "2/3/2021";
+                filter.Apply();
+
+                Assert.True(sut.Predicate(new Row { Created = new DateTime(2021, 2, 3) }));
+                Assert.False(sut.Predicate(new Row { Created = new DateTime(2021, 3, 2) }));
+            }
+            finally
+            {
+                CultureInfo.CurrentCulture = current;
+            }
+        }
+
+        [Theory]
+        [InlineData("de-DE", "1,5", true)]
+        [InlineData("de-DE", "1.5", false)]
+        [InlineData("en-US", "1.5", true)]
+        public void Contains_Should_Match_The_Text_Shown_For_The_Culture(string culture, string value, bool expected)
+        {
+            var sut = CreateFilter();
+            sut.Culture = new CultureInfo(culture);
+            var filter = sut.GetFilter(nameof(Row.Anything))!;
+
+            filter.Value = value;
+            filter.Apply();
+
+            Assert.Equal(expected, sut.Predicate(new Row { Anything = 1.5m }));
+        }
+
+        [Fact]
+        public void Changing_The_Culture_Should_Validate_Applied_Filters_Again()
+        {
+            var sut = CreateFilter();
+            sut.Culture = new CultureInfo("en-US");
+            var filter = sut.GetFilter(nameof(Row.Price))!;
+
+            filter.Operator = ColumnFilterOperator.Equals;
+            filter.Value = "1.5";
+            filter.Apply();
+
+            var version = sut.Version;
+            sut.Culture = new CultureInfo("de-DE");
+
+            Assert.True(filter.HasError);
+            Assert.False(filter.IsApplied);
+            Assert.True(sut.Version > version);
+        }
+
+        [Fact]
+        public void Changing_The_Culture_Should_Not_Apply_Pending_Input()
+        {
+            var sut = CreateFilter();
+            var filter = sut.GetFilter(nameof(Row.Age))!;
+
+            filter.Operator = ColumnFilterOperator.Equals;
+            filter.Value = "30";
+
+            sut.Culture = new CultureInfo("de-DE");
+
+            Assert.False(filter.IsApplied);
+        }
+
+        [Fact]
+        public Task Behavior_Should_Follow_The_Language_Of_The_Grid()
+        {
+            return StaRunner.Run(() =>
+            {
+                var grid = CreateGrid();
+                grid.Language = XmlLanguage.GetLanguage("de-DE");
+                var filter = CreateFilter();
+
+                Interaction.GetBehaviors(grid).Add(new DataGridFilterBehavior { Filter = filter });
+
+                Assert.Equal(new CultureInfo("de-DE"), filter.Culture);
+
+                grid.Language = XmlLanguage.GetLanguage("fr-FR");
+
+                Assert.Equal(new CultureInfo("fr-FR"), filter.Culture);
 
                 return Task.CompletedTask;
             });

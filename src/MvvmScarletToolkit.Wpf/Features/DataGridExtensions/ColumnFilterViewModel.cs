@@ -109,6 +109,24 @@ namespace MvvmScarletToolkit
         public IReadOnlyList<string>? Options { get; }
 
         /// <summary>
+        /// See <see cref="DataGridFilterViewModel.Culture"/>
+        /// </summary>
+        internal CultureInfo? Culture
+        {
+            get;
+            set
+            {
+                if (!Equals(field, value))
+                {
+                    field = value;
+                    Validate();
+                }
+            }
+        }
+
+        private CultureInfo EffectiveCulture => Culture ?? CultureInfo.CurrentCulture;
+
+        /// <summary>
         /// Clears <see cref="Value"/>. Like any other input, this takes effect with <see cref="Apply"/>.
         /// </summary>
         public ICommand ClearCommand { get; }
@@ -198,7 +216,7 @@ namespace MvvmScarletToolkit
 
             return _appliedOperator switch
             {
-                ColumnFilterOperator.Contains => value?.ToString()?.IndexOf(_appliedText!, StringComparison.CurrentCultureIgnoreCase) >= 0,
+                ColumnFilterOperator.Contains => ToText(value) is { } text && EffectiveCulture.CompareInfo.IndexOf(text, _appliedText!, CompareOptions.IgnoreCase) >= 0,
                 ColumnFilterOperator.Equals => Compare(value) == 0,
                 ColumnFilterOperator.NotEquals => Compare(value) != 0,
                 ColumnFilterOperator.GreaterThan => value is not null && Compare(value) > 0,
@@ -217,8 +235,15 @@ namespace MvvmScarletToolkit
             }
 
             return _appliedValue is string text
-                ? string.Compare(value.ToString(), text, StringComparison.CurrentCultureIgnoreCase)
+                ? string.Compare(ToText(value), text, EffectiveCulture, CompareOptions.IgnoreCase)
                 : ((IComparable)value).CompareTo(_appliedValue);
+        }
+
+        private string? ToText(object? value)
+        {
+            return value is IFormattable formattable
+                ? formattable.ToString(null, EffectiveCulture)
+                : value?.ToString();
         }
 
         private void Validate()
@@ -254,7 +279,7 @@ namespace MvvmScarletToolkit
 
             foreach (var rule in ValidationRules)
             {
-                var result = rule.Validate(Value, CultureInfo.CurrentCulture);
+                var result = rule.Validate(Value, EffectiveCulture);
                 if (!result.IsValid)
                 {
                     Fail(result.ErrorContent?.ToString() ?? $"'{Value}' is not valid.");
@@ -276,7 +301,7 @@ namespace MvvmScarletToolkit
             {
                 result = _type.IsEnum
                     ? Enum.Parse(_type, value, true)
-                    : TypeDescriptor.GetConverter(_type).ConvertFromString(null, CultureInfo.CurrentCulture, value);
+                    : TypeDescriptor.GetConverter(_type).ConvertFromString(null, EffectiveCulture, value);
 
                 return result is not null;
             }

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -30,6 +31,14 @@ namespace MvvmScarletToolkit
         public static string GetCaption(this DataGridColumn column, int index)
         {
             return column.Header?.ToString() ?? column.GetKey(index);
+        }
+
+        /// <summary>
+        /// the culture the bindings of the cells format their values with. It is not <see cref="CultureInfo.CurrentCulture"/>, Language defaults to en-US.
+        /// </summary>
+        public static CultureInfo GetCulture(this DataGrid dataGrid)
+        {
+            return dataGrid.Language.GetSpecificCulture();
         }
     }
 }

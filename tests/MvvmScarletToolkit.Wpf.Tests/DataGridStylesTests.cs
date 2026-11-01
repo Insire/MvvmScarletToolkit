@@ -122,7 +122,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
                     });
 
                     Assert.Equal([120d, 200d, 200d], bar.Cells.Select(p => p.Width));
-                    Assert.Equal(22.5m.ToString(System.Globalization.CultureInfo.CurrentCulture), bar.Cells[2].Text);
+                    Assert.Equal(22.5m.ToString(new System.Globalization.CultureInfo("en-US")), bar.Cells[2].Text);
                     Assert.True(bar.ActualHeight > 10, $"the bar is {bar.ActualHeight} high");
 
                     var cells = bar.GetVisualDescendants().OfType<TextBlock>().ToArray();
@@ -160,7 +160,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
 
                     Assert.False(button.IsOpen);
                     Assert.Single(grid.Items);
-                    Assert.Equal(3m.ToString("0.0", System.Globalization.CultureInfo.CurrentCulture), bar.Cells[2].Text);
+                    Assert.Equal(3m.ToString("0.0", new System.Globalization.CultureInfo("en-US")), bar.Cells[2].Text);
 
                     SaveScreenshot(root);
 

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Markup;
 using System.Windows.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Tests
@@ -80,7 +81,29 @@ namespace MvvmScarletToolkit.Wpf.Tests
 
                 Assert.Equal(2, bar.Cells.Count);
                 Assert.Null(bar.Cells[0].Text);
-                Assert.Equal(4m.ToString("0.00", System.Globalization.CultureInfo.CurrentCulture), bar.Cells[1].Text);
+                Assert.Equal(4m.ToString("0.00", new System.Globalization.CultureInfo("en-US")), bar.Cells[1].Text);
+            });
+        }
+
+        [Theory]
+        [InlineData("0.00", "4,00", "4.00")]
+        [InlineData(null, "4,0", "4.0")]
+        public Task Cells_Should_Be_Formatted_With_The_Language_Of_The_Grid(string? format, string german, string english)
+        {
+            return StaRunner.Run(async () =>
+            {
+                var (grid, bar, _) = Create();
+                DataGridSummaryBar.SetFormat(grid.Columns[1], format);
+
+                grid.Language = XmlLanguage.GetLanguage("de-DE");
+                await Calculated();
+
+                Assert.Equal(german, bar.Cells[1].Text);
+
+                grid.Language = XmlLanguage.GetLanguage("en-US");
+                await Calculated();
+
+                Assert.Equal(english, bar.Cells[1].Text);
             });
         }
 
@@ -233,7 +256,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 await Calculated();
 
                 Assert.Equal(DataGridSummaryFunction.Maximum, DataGridSummaryBar.GetFunction(grid.Columns[1]));
-                Assert.Equal(2.5m.ToString("0.00", System.Globalization.CultureInfo.CurrentCulture), bar.Cells[1].Text);
+                Assert.Equal(2.5m.ToString("0.00", new System.Globalization.CultureInfo("en-US")), bar.Cells[1].Text);
                 Assert.Contains("Maximum of", bar.Cells[1].Description);
             });
         }
@@ -256,7 +279,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
 
                 Assert.Equal(cells, bar.Cells);
                 Assert.Empty(untouched);
-                Assert.Equal(2m.ToString("0.00", System.Globalization.CultureInfo.CurrentCulture), cells[1].Text);
+                Assert.Equal(2m.ToString("0.00", new System.Globalization.CultureInfo("en-US")), cells[1].Text);
             });
         }
 
@@ -271,7 +294,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 DataGridSummaryBar.SetFunction(grid.Columns[1], DataGridSummaryFunction.Minimum);
                 await Calculated();
 
-                Assert.Equal(1.5m.ToString("0.00", System.Globalization.CultureInfo.CurrentCulture), bar.Cells[1].Text);
+                Assert.Equal(1.5m.ToString("0.00", new System.Globalization.CultureInfo("en-US")), bar.Cells[1].Text);
 
                 DataGridSummaryBar.SetFunction(grid.Columns[1], DataGridSummaryFunction.Maximum);
                 DataGridSummaryBar.SetFunction(grid.Columns[1], DataGridSummaryFunction.None);
@@ -341,7 +364,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 rows.Add(new Row(4, 6, null));
                 await Calculated();
 
-                Assert.Equal(10m.ToString("0.00", System.Globalization.CultureInfo.CurrentCulture), bar.Cells[1].Text);
+                Assert.Equal(10m.ToString("0.00", new System.Globalization.CultureInfo("en-US")), bar.Cells[1].Text);
             });
         }
 
@@ -355,7 +378,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 grid.Items.Filter = p => ((Row)p).Id == 1;
                 await Calculated();
 
-                Assert.Equal(1.5m.ToString("0.00", System.Globalization.CultureInfo.CurrentCulture), bar.Cells[1].Text);
+                Assert.Equal(1.5m.ToString("0.00", new System.Globalization.CultureInfo("en-US")), bar.Cells[1].Text);
             });
         }
 

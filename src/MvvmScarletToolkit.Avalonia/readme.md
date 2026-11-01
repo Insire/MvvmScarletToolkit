@@ -23,7 +23,7 @@ The behaviors, converters and controls of [MvvmScarletToolkit.Wpf](../MvvmScarle
 |[``ScarletExitService``](./Implementations/ScarletExitService.cs)|Takes care of executing ``IVirtualizationViewModel.UnloadCommand`` when the application exits.|
 |[``ScarletLocalizationProvider``](./Implementations/ScarletLocalizationProvider.cs)|Dummy Implementation of ``ILocalizationProvider``.|
 |[``ScarletWeakEventManager``](./Implementations/ScarletWeakEventManager.cs)|Weak event subscriptions for ``INotifyPropertyChanged``, to support Dependency Injection.|
-|[``AvaloniaImageFactory``](./Implementations/AvaloniaImageFactory.cs)|``IImageFactory<Bitmap>`` for [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.ImageLoading/readme.md). Scales images down to the requested size, keeping their aspect ratio.|
+|[``AvaloniaImageFactory``](./Implementations/AvaloniaImageFactory.cs)|``IImageFactory<Bitmap>`` for [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.ImageLoading/readme.md). Decodes images directly to the requested size, keeping their aspect ratio. Saves them as JPEG with quality 90, or as PNG when their source can contain transparency. Reads image headers with SkiaSharp, so the native Skia library has to be available, which ``Avalonia.Skia`` provides.|
 |[``AsyncImageLoadingBehavior``](./Behaviors/AsyncImageLoadingBehavior.cs)|Attached properties for loading the source of an ``Image`` asynchronously.|
 |[``ConverterMarkupExtension<T>``](./ConverterMarkupExtension.cs)|Base class for writing your own converters as markup extensions.|
 

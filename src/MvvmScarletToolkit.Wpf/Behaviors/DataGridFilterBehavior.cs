@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Markup;
 
 namespace MvvmScarletToolkit.Wpf
 {
@@ -47,6 +48,13 @@ namespace MvvmScarletToolkit.Wpf
             typeof(DataGridFilterBehavior),
             new PropertyMetadata(null));
 
+        // a binding instead of a DependencyPropertyDescriptor, which would keep this behavior alive
+        private static readonly DependencyProperty _languageProperty = DependencyProperty.Register(
+            "Language",
+            typeof(XmlLanguage),
+            typeof(DataGridFilterBehavior),
+            new PropertyMetadata(null, OnLanguageChanged));
+
         public static void SetColumnFilter(DependencyObject element, ColumnFilterViewModel? value)
         {
             element.SetValue(ColumnFilterProperty, value);
@@ -66,17 +74,32 @@ namespace MvvmScarletToolkit.Wpf
             }
         }
 
+        private static void OnLanguageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is DataGridFilterBehavior { AssociatedObject: not null, Filter: not null } behavior)
+            {
+                behavior.Filter.Culture = behavior.AssociatedObject.GetCulture();
+            }
+        }
+
         protected override void OnAttached()
         {
             base.OnAttached();
 
             AssociatedObject.Columns.CollectionChanged += OnColumnsChanged;
+            BindingOperations.SetBinding(this, _languageProperty, new Binding
+            {
+                Path = new PropertyPath(FrameworkElement.LanguageProperty),
+                Source = AssociatedObject,
+                Mode = BindingMode.OneWay,
+            });
             Connect();
         }
 
         protected override void OnDetaching()
         {
             AssociatedObject.Columns.CollectionChanged -= OnColumnsChanged;
+            BindingOperations.ClearBinding(this, _languageProperty);
             Disconnect();
 
             base.OnDetaching();
@@ -95,6 +118,8 @@ namespace MvvmScarletToolkit.Wpf
             {
                 return;
             }
+
+            Filter.Culture = AssociatedObject.GetCulture();
 
             UpdateColumns();
 

@@ -42,14 +42,18 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             {
                 var encoder = new PngBitmapEncoder
                 {
-                    Interlace = PngInterlaceOption.On
+                    Interlace = PngInterlaceOption.Off
                 };
-                encoder.Frames.Add(BitmapFrame.Create(image));
+                // explicit nulls, the single-argument overload probes the metadata, which throws (and is caught) internally for a BitmapImage
+                encoder.Frames.Add(BitmapFrame.Create(image, null, null, null));
                 encoder.Save(stream);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 _logger.LogError(ex, "Saving BitmapSource to stream failed unexpectedly");
+
+                // callers must know, otherwise a truncated result would be treated as valid
+                throw;
             }
             finally
             {

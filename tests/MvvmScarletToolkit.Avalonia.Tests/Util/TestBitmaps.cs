@@ -34,5 +34,16 @@ namespace MvvmScarletToolkit.Avalonia.Tests.Util
 
             return stream;
         }
+
+        public static MemoryStream CreateJpeg(int width, int height)
+        {
+            using var bitmap = Create(width, height);
+
+            var stream = new MemoryStream();
+            bitmap.Save(stream, new JpegBitmapEncoderOptions() { Quality = 90 });
+            stream.Seek(0, SeekOrigin.Begin);
+
+            return stream;
+        }
     }
 }

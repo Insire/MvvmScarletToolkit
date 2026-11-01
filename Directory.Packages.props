@@ -79,6 +79,8 @@
   </ItemGroup>
   <ItemGroup Label="core dependencies">
     <PackageVersion Include="Avalonia" Version="$(Avalonia)" />
+    <!-- has to match the version Avalonia.Skia depends on -->
+    <PackageVersion Include="SkiaSharp" Version="3.119.4" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="$(Dotnet)" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(Dotnet)" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(Dotnet)" />
