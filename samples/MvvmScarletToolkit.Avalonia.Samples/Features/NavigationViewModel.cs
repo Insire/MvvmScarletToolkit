@@ -8,6 +8,7 @@ using MvvmScarletToolkit.Core.Samples.Features.Enums;
 using MvvmScarletToolkit.Core.Samples.Features.Image;
 using MvvmScarletToolkit.Core.Samples.Features.NestedSelection;
 using MvvmScarletToolkit.Core.Samples.Features.Process;
+using MvvmScarletToolkit.Core.Samples.Features.TagCloud;
 using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.Observables;
 using System.Net.Http;
@@ -49,6 +50,7 @@ namespace MvvmScarletToolkit.Avalonia.Samples.Features
             Add("Input Prevention", new FormViewModel());
             Add("ObservableDictionary", new ObservableDictionaryViewModel());
             Add("Nested Selection", new SelectionsViewModel());
+            Add("Tag cloud with a VirtualizingWrapPanel", new TagCloudViewModel());
 
             Items[0].IsSelected = true;
             SelectedItem = Items[0];

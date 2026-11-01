@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Headless;
+using Avalonia.Themes.Fluent;
 using Avalonia.Threading;
 
 namespace MvvmScarletToolkit.Avalonia.Tests.Util
@@ -16,7 +17,9 @@ namespace MvvmScarletToolkit.Avalonia.Tests.Util
         {
             return AppBuilder.Configure<Application>()
                 .UseSkia()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false });
+                .UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false })
+                // templated controls like ItemsControl and ScrollViewer don't build their content without a theme
+                .AfterSetup(builder => builder.Instance!.Styles.Add(new FluentTheme()));
         }
 
         public async ValueTask InitializeAsync()

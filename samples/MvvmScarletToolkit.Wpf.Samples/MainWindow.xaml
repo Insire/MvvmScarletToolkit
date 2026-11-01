@@ -23,6 +23,7 @@
         xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
         xmlns:process="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Process;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        xmlns:tagCloud="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.TagCloud;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:virtualization="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Virtualization;assembly=MvvmScarletToolkit.Core.Samples"
         Name="MainWindowRoot"
         Title="MvvmScarletToolkit.Wpf.Samples"
@@ -2075,6 +2076,10 @@
                                   ItemsSource="{Binding SelectedChild.Children}"
                                   SelectedItem="{Binding SelectedChild.SelectedChild}" />
                     </DockPanel>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type tagCloud:TagCloudViewModel}">
+                    <controls:TagCloud />
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type enums:EnumsViewModel}">

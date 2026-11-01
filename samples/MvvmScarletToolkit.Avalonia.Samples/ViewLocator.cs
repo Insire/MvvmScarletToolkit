@@ -12,6 +12,7 @@ using MvvmScarletToolkit.Core.Samples.Features.Enums;
 using MvvmScarletToolkit.Core.Samples.Features.Image;
 using MvvmScarletToolkit.Core.Samples.Features.NestedSelection;
 using MvvmScarletToolkit.Core.Samples.Features.Process;
+using MvvmScarletToolkit.Core.Samples.Features.TagCloud;
 using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 
 namespace MvvmScarletToolkit.Avalonia.Samples
@@ -40,6 +41,7 @@ namespace MvvmScarletToolkit.Avalonia.Samples
                 [typeof(FormViewModel)] = typeof(FormView),
                 [typeof(ObservableDictionaryViewModel)] = typeof(ObservableDictionaryView),
                 [typeof(SelectionsViewModel)] = typeof(SelectionsView),
+                [typeof(TagCloudViewModel)] = typeof(TagCloudView),
             };
         }
 

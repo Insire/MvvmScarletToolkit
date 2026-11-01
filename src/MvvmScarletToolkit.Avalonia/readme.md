@@ -11,7 +11,9 @@ This library aims to provide implementations for avalonia specific classes used 
 - **Async image loading:** `AsyncImageLoadingBehavior` loads images through [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.ImageLoading/readme.md).
 - **Converters as markup extensions:** `ConverterMarkupExtension<T>` is a base class for writing converters that don't have to be declared as resources.
 
-The behaviors, converters and controls of [MvvmScarletToolkit.Wpf](../MvvmScarletToolkit.Wpf/readme.md) are not available for Avalonia.
+- **Virtualizing panels:** `VirtualizingTilePanel` and `VirtualizingWrapPanel` keep lists with many items per row fast.
+
+Apart from these panels, the behaviors, converters and controls of [MvvmScarletToolkit.Wpf](../MvvmScarletToolkit.Wpf/readme.md) are not available for Avalonia.
 
 ## Contents
 
@@ -26,6 +28,9 @@ The behaviors, converters and controls of [MvvmScarletToolkit.Wpf](../MvvmScarle
 |[``AvaloniaImageFactory``](./Implementations/AvaloniaImageFactory.cs)|``IImageFactory<Bitmap>`` for [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.ImageLoading/readme.md). Decodes images directly to the requested size, keeping their aspect ratio. Saves them as JPEG with quality 90, or as PNG when their source can contain transparency. Reads image headers with SkiaSharp, so the native Skia library has to be available, which ``Avalonia.Skia`` provides.|
 |[``AsyncImageLoadingBehavior``](./Behaviors/AsyncImageLoadingBehavior.cs)|Attached properties for loading the source of an ``Image`` asynchronously.|
 |[``ConverterMarkupExtension<T>``](./ConverterMarkupExtension.cs)|Base class for writing your own converters as markup extensions.|
+|[``VirtualizingTilePanel``](./Controls/VirtualizingTilePanel.cs)|Virtualizing panel that lays out items as square tiles of ``ChildSize``.|
+|[``VirtualizingWrapPanel``](./Controls/VirtualizingWrapPanel.cs)|Virtualizing panel that wraps items of different sizes into rows or columns. ``ItemWidth`` and ``ItemHeight`` set a fixed size, without one the sizes of items that were not realized yet are estimated.|
+|[``VirtualizingItemsPanel``](./Controls/VirtualizingItemsPanel.cs)|Base class of both panels, it realizes and recycles containers. Derive from it to add another layout.|
 
 ## Usage
 
@@ -65,6 +70,20 @@ xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
 ```
 
 `State`, `IsPending`, `IsLoading`, `IsLoaded` and `IsFailed` are also available as attached properties, for example to show a placeholder.
+
+### Virtualizing panels
+
+Both panels realize only what is visible and rely on the `ScrollViewer` of the list, like the `VirtualizingStackPanel`. The direction items wrap in must not scroll, so disable the horizontal scrollbar for the default orientation:
+
+```xml
+<ListBox ItemsSource="{Binding Items}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+    <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+            <mvvm:VirtualizingWrapPanel />
+        </ItemsPanelTemplate>
+    </ListBox.ItemsPanel>
+</ListBox>
+```
 
 ### Converters
 

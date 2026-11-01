@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:geometry="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Features.Geometry"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:media="clr-namespace:Avalonia.Media;assembly=Avalonia.Base"
+             xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
              d:DesignHeight="450"
              d:DesignWidth="800"
              x:DataType="geometry:GeometryRenderViewModel"
@@ -16,6 +16,12 @@
         </Style>
         <Style Selector="Border.tile:pointerover Path">
             <Setter Property="Fill" Value="Purple" />
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Width" Value="48" />
         </Style>
     </UserControl.Styles>
 
@@ -34,39 +40,23 @@
                     Content="Unload" />
         </UniformGrid>
 
-        <!--  a ListBox for the virtualization, not for selecting rows  -->
         <ListBox Grid.Row="1"
                  ItemsSource="{Binding Items}"
-                 SelectionMode="Single">
-            <ListBox.Styles>
-                <Style Selector="ListBoxItem">
-                    <Setter Property="Focusable" Value="False" />
-                    <Setter Property="Height" Value="50" />
-                    <Setter Property="IsHitTestVisible" Value="True" />
-                    <Setter Property="Padding" Value="0" />
-                </Style>
-            </ListBox.Styles>
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <mvvm:VirtualizingTilePanel ChildSize="50" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
 
             <ListBox.ItemTemplate>
-                <DataTemplate x:DataType="geometry:GeometryRow">
-                    <ItemsControl ItemsSource="{Binding Items}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="2" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="media:Geometry">
-                                <Border Width="48"
-                                        Height="48"
-                                        Background="Transparent"
-                                        Classes="tile">
-                                    <Path Data="{Binding}" />
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                <DataTemplate x:DataType="geometry:GeometryContainer">
+                    <Border Width="48"
+                            Height="48"
+                            Background="Transparent"
+                            Classes="tile">
+                        <Path Data="{Binding Value}" />
+                    </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
