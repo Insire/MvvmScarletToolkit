@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Diagnostics;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features
+namespace MvvmScarletToolkit.Core.Samples.Features.NestedSelection
 {
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public sealed partial class SelectionChildViewModel : ObservableObject

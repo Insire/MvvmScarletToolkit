@@ -5,7 +5,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
+namespace MvvmScarletToolkit.Core.Samples.Features.Image
 {
     /// <summary>
     /// Lots of images in a virtualized list, to observe how images get loaded, cancelled and served from cache while scrolling.

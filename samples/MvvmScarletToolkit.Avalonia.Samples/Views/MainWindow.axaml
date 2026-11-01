@@ -4,17 +4,49 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:features="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Features"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
         Title="MvvmScarletToolkit.Avalonia.Samples"
+        Width="1200"
+        Height="700"
         d:DesignHeight="450"
         d:DesignWidth="800"
         x:DataType="features:NavigationViewModel"
         Icon="/Assets/avalonia-logo.ico"
         mc:Ignorable="d">
-    <Grid ColumnDefinitions="Auto,4,*">
-        <ListBox Grid.Column="0"
-                 DisplayMemberBinding="{Binding Localization.Value}"
+    <Grid ColumnDefinitions="Auto,4,*" RowDefinitions="*,4,Auto,4">
+        <ListBox Grid.Row="0"
+                 Grid.Column="0"
                  ItemsSource="{Binding Items}"
-                 SelectedItem="{Binding SelectedItem}" />
-        <ContentControl Grid.Column="2" Content="{Binding SelectedItem.Content}" />
+                 SelectedItem="{Binding SelectedItem}"
+                 SelectionMode="Single">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="observables:Scene">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0 0 4 0" Text="{Binding Sequence}" />
+                        <TextBlock Text="{Binding Localization.Value}" ToolTip.Tip="{Binding Localization.Value, StringFormat='Translated Value: {0}'}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <GridSplitter Grid.Row="0"
+                      Grid.RowSpan="3"
+                      Grid.Column="1"
+                      ResizeDirection="Columns" />
+
+        <!--  the ViewLocator in App.axaml picks the view for the content of the selected scene  -->
+        <ContentControl Grid.Row="0"
+                        Grid.RowSpan="4"
+                        Grid.Column="2"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Content="{Binding SelectedItem.Content}" />
+
+        <Button Grid.Row="2"
+                Grid.Column="0"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Click="Button_Click"
+                Content="Clear GC" />
     </Grid>
 </Window>

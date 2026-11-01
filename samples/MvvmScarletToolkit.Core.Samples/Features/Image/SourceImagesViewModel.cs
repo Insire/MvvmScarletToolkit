@@ -1,6 +1,6 @@
 using MvvmScarletToolkit.Observables;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
+namespace MvvmScarletToolkit.Core.Samples.Features.Image
 {
     public sealed class SourceImagesViewModel : BusinessViewModelListBase<ImageViewModel>
     {

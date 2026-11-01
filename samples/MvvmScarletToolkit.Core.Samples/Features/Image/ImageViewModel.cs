@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MvvmScarletToolkit.Observables;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
+namespace MvvmScarletToolkit.Core.Samples.Features.Image
 {
     public sealed partial class ImageViewModel : ViewModelBase
     {

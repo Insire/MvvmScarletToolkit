@@ -1,11 +1,11 @@
+using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
-using System.Windows.Input;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features
+namespace MvvmScarletToolkit.Core.Samples.Features.Dialog
 {
     public class DialogViewModel : ViewModelBase
     {
-        public ICommand RunCommand { get; }
+        public ConcurrentCommandBase RunCommand { get; }
 
         public BoolDialogResultViewModel DialogResult { get; }
 

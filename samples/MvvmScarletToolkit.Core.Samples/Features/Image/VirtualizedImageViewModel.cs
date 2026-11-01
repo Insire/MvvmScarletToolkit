@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MvvmScarletToolkit.Observables;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
+namespace MvvmScarletToolkit.Core.Samples.Features.Image
 {
     public enum VirtualizedImageState
     {
@@ -40,7 +40,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
         public partial bool IsRealized { get; private set; }
 
         /// <summary>
-        /// Bound to <see cref="AsyncImageLoadingBehavior.State"/>.
+        /// Bound to the State of the AsyncImageLoadingBehavior.
         /// </summary>
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(State))]

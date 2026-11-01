@@ -1,0 +1,94 @@
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.DataEntriesView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:behaviors="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:virtualization="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Virtualization;assembly=MvvmScarletToolkit.Core.Samples"
+             behaviors:ViewLifecycle.LoadCommand="{Binding LoadCommand}"
+             behaviors:ViewLifecycle.UnloadCommand="{Binding UnloadCommand}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="virtualization:DataEntriesViewModel"
+             mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="Rectangle.entry">
+            <Setter Property="Fill" Value="Gray" />
+            <Setter Property="ToolTip.Tip" Value="Not Loaded" />
+        </Style>
+        <Style Selector="Rectangle.entry.loaded">
+            <Setter Property="Fill" Value="Green" />
+            <Setter Property="ToolTip.Tip" Value="Loaded" />
+        </Style>
+        <Style Selector="Rectangle.entry.busy">
+            <Setter Property="Fill" Value="Red" />
+            <Setter Property="ToolTip.Tip" Value="Busy" />
+        </Style>
+        <Style Selector="Rectangle.entry.selected">
+            <Setter Property="Fill" Value="Blue" />
+            <Setter Property="ToolTip.Tip" Value="Selected" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid ColumnDefinitions="2*,4,*" RowDefinitions="*,4,Auto">
+        <!--  the scope on the ListBox aligns the columns of all rows, a scope per row would do nothing  -->
+        <ListBox x:Name="Entries"
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 Grid.IsSharedSizeScope="True"
+                 ItemsSource="{Binding Items}"
+                 SelectedItem="{Binding SelectedItem}"
+                 SelectedItems="{Binding SelectedItems}"
+                 SelectionChanged="Entries_SelectionChanged"
+                 SelectionMode="Multiple">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="virtualization:DataEntryViewModel">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Col1" />
+                            <ColumnDefinition Width="*" MinWidth="4" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Col2" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="{Binding CreatedOn}" />
+                        <TextBlock Grid.Column="2" Text="{Binding Message}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <ScrollViewer Grid.Row="0" Grid.Column="2">
+            <ItemsControl ItemsSource="{Binding Items}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="virtualization:DataEntryViewModel">
+                        <Rectangle Width="10"
+                                   Height="10"
+                                   Margin="1"
+                                   Classes="entry"
+                                   Classes.busy="{Binding IsBusy}"
+                                   Classes.loaded="{Binding IsLoaded}"
+                                   Classes.selected="{Binding IsSelected}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2"
+                    Grid.Column="0"
+                    Orientation="Horizontal"
+                    Spacing="4">
+            <Button Command="{Binding AddCommand}" Content="New" />
+            <Button Command="{Binding RemoveRangeCommand}" Content="Remove" />
+            <Button Command="{Binding RefreshCommand}" Content="Refresh" />
+            <Button Command="{Binding ClearCommand}" Content="Clear" />
+            <Button Command="{Binding AddRangeCommand}" Content="AddRange" />
+        </StackPanel>
+    </Grid>
+</UserControl>

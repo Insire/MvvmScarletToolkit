@@ -1,0 +1,100 @@
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.ProcessView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:process="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Process;assembly=MvvmScarletToolkit.Core.Samples"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="process:ProcessViewModel"
+             mc:Ignorable="d">
+
+    <Grid ColumnDefinitions="*,8,*,8,Auto" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,*,8,Auto,8,*">
+        <TextBlock Grid.Row="0"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Text="FilePath" />
+
+        <TextBox Grid.Row="0"
+                 Grid.Column="2"
+                 Text="{Binding FilePath}" />
+
+        <Button Grid.Row="0"
+                Grid.Column="4"
+                Click="SelectProcessFile_Click"
+                Content="Select" />
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Text="Args" />
+
+        <TextBox Grid.Row="2"
+                 Grid.Column="2"
+                 Text="{Binding Args}" />
+
+        <TextBlock Grid.Row="4"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Text="WorkingDirectory" />
+
+        <TextBox Grid.Row="4"
+                 Grid.Column="2"
+                 Text="{Binding WorkingDirectory}" />
+
+        <TextBlock Grid.Row="6"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Text="Output" />
+
+        <TextBlock Grid.Row="6"
+                   Grid.Column="2"
+                   VerticalAlignment="Center"
+                   Text="Errors" />
+
+        <Button Grid.Row="6"
+                Grid.Column="4"
+                Command="{Binding StartCommand}"
+                Content="Run" />
+
+        <ListBox Grid.Row="8"
+                 Grid.Column="0"
+                 ItemsSource="{Binding Output}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="process:ProcessData">
+                    <TextBlock Text="{Binding Message}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <ListBox Grid.Row="8"
+                 Grid.Column="2"
+                 ItemsSource="{Binding Errors}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="process:ProcessErrorData">
+                    <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock Grid.Row="10"
+                   Grid.Column="0"
+                   Text="All Output" />
+
+        <ListBox x:Name="AllOutput"
+                 Grid.Row="12"
+                 Grid.Column="0"
+                 Grid.ColumnSpan="3">
+            <ListBox.DataTemplates>
+                <DataTemplate DataType="process:ProcessData">
+                    <TextBlock Foreground="{DynamicResource SystemAccentColor}" Text="{Binding Message}" />
+                </DataTemplate>
+                <DataTemplate DataType="process:ProcessErrorData">
+                    <TextBlock Foreground="IndianRed"
+                               Text="{Binding Message}"
+                               TextWrapping="Wrap" />
+                </DataTemplate>
+            </ListBox.DataTemplates>
+        </ListBox>
+    </Grid>
+</UserControl>

@@ -1,0 +1,60 @@
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.ToastsView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:features="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Features"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="features:ToastsViewModel"
+             mc:Ignorable="d">
+
+    <Grid ColumnDefinitions="Auto,4,*" RowDefinitions="Auto,4,Auto,4,Auto,4,Auto,4,Auto,4,Auto">
+        <TextBlock Grid.Row="0"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Text="Title:" />
+        <TextBox Grid.Row="0"
+                 Grid.Column="2"
+                 Text="{Binding Title}" />
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Text="Body:" />
+        <TextBox Grid.Row="2"
+                 Grid.Column="2"
+                 Text="{Binding Body}" />
+
+        <TextBlock Grid.Row="4"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Text="Type:" />
+        <ComboBox Grid.Row="4"
+                  Grid.Column="2"
+                  HorizontalAlignment="Stretch"
+                  ItemsSource="{Binding ToastTypes}"
+                  SelectedItem="{Binding ToastType}" />
+
+        <CheckBox Grid.Row="6"
+                  Grid.Column="2"
+                  Content="Persist:"
+                  IsChecked="{Binding Persist}" />
+
+        <Button Grid.Row="8"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Command="{Binding ShowToastCommand}"
+                Content="Send Toast" />
+
+        <Button Grid.Row="10"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Command="{Binding ShowManyToastsCommand}"
+                Content="Send many Toasts" />
+    </Grid>
+</UserControl>

@@ -4,19 +4,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:enums="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Enums;assembly=MvvmScarletToolkit.Core.Samples"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
              xmlns:mvvmScarletToolkit="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Observables"
              d:DesignHeight="450"
              d:DesignWidth="800"
              x:DataType="enums:EnumsViewModel"
              mc:Ignorable="d">
 
-    <DockPanel Background="#333">
+    <DockPanel>
         <ItemsControl VerticalAlignment="Center"
                       DockPanel.Dock="Top"
                       ItemsSource="{Binding Items}">
             <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="mvvmScarletToolkit:ViewModelContainer">
+                <DataTemplate x:DataType="mvvmScarletToolkit:ViewModelContainer">
                     <RadioButton Content="{Binding Value}"
                                  GroupName="First Group"
                                  IsChecked="{Binding IsSelected, Mode=TwoWay}" />
@@ -24,13 +23,12 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <Border HorizontalAlignment="Center"
+        <Border Padding="4"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                BorderBrush="Black"
+                BorderBrush="Gray"
                 BorderThickness="1">
             <TextBlock Text="{Binding SelectedItem.DisplayName}" />
         </Border>
-
     </DockPanel>
 </UserControl>
-

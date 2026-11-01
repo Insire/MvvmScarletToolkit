@@ -9,40 +9,58 @@
              x:DataType="features:BusyViewModel"
              mc:Ignorable="d">
 
-    <TreeView Background="#333" ItemsSource="{Binding Items}">
+    <UserControl.Styles>
+        <!--  a collapsed container would hide the children that get added to it  -->
+        <Style Selector="TreeViewItem">
+            <Setter Property="IsExpanded" Value="True" />
+        </Style>
+        <!--  without a background only the text and the outline would open the context menu of the node  -->
+        <Style Selector="Border.state">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Green" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="Padding" Value="4 2" />
+        </Style>
+        <Style Selector="Border.state.busy">
+            <Setter Property="BorderBrush" Value="Red" />
+        </Style>
+    </UserControl.Styles>
+
+    <!--  the background makes the empty area hit testable, for its context menu and to clear the selection  -->
+    <TreeView x:Name="Tree"
+              Background="Transparent"
+              ItemsSource="{Binding Items}"
+              PointerPressed="Tree_PointerPressed"
+              SelectedItem="{Binding SelectedItem}">
         <TreeView.ContextMenu>
-            <ContextMenu>
+            <ContextMenu Opening="TreeMenu_Opening">
                 <MenuItem Command="{Binding AddChildCommand}" Header="Add Child" />
                 <MenuItem Command="{Binding AddContainerCommand}" Header="Add Container" />
             </ContextMenu>
         </TreeView.ContextMenu>
         <TreeView.DataTemplates>
             <TreeDataTemplate DataType="features:BusyViewModel" ItemsSource="{Binding Items}">
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding IsBusy, Mode=OneWay}" IsHitTestVisible="False" />
-                    <TextBlock VerticalAlignment="Center" Text="Container" />
-                    <StackPanel.ContextMenu>
+                <Border Classes="state" Classes.busy="{Binding IsBusy}">
+                    <Border.ContextMenu>
                         <ContextMenu>
                             <MenuItem Command="{Binding AddChildCommand}" Header="Add Child" />
                             <MenuItem Command="{Binding AddContainerCommand}" Header="Add Container" />
                         </ContextMenu>
-                    </StackPanel.ContextMenu>
-                </StackPanel>
+                    </Border.ContextMenu>
+                    <TextBlock Text="Container" />
+                </Border>
             </TreeDataTemplate>
 
             <DataTemplate DataType="features:ObservableBusyViewModel">
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding IsBusy, Mode=OneWay}" IsHitTestVisible="False" />
-                    <TextBlock VerticalAlignment="Center" Text="Child" />
-
-                    <StackPanel.ContextMenu>
+                <Border Classes="state" Classes.busy="{Binding IsBusy}">
+                    <Border.ContextMenu>
                         <ContextMenu>
                             <MenuItem Command="{Binding BeBusyCommand}" Header="Be Busy" />
                         </ContextMenu>
-                    </StackPanel.ContextMenu>
-                </StackPanel>
+                    </Border.ContextMenu>
+                    <TextBlock Text="Child" />
+                </Border>
             </DataTemplate>
         </TreeView.DataTemplates>
     </TreeView>
 </UserControl>
-

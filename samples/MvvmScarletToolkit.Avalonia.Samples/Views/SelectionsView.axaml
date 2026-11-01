@@ -1,0 +1,25 @@
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.SelectionsView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:selection="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.NestedSelection;assembly=MvvmScarletToolkit.Core.Samples"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="selection:SelectionsViewModel"
+             mc:Ignorable="d">
+
+    <DockPanel LastChildFill="False">
+        <ComboBox HorizontalAlignment="Stretch"
+                  DisplayMemberBinding="{Binding Index}"
+                  DockPanel.Dock="Top"
+                  ItemsSource="{Binding Children}"
+                  SelectedItem="{Binding SelectedChild}" />
+        <ComboBox Margin="0 8"
+                  HorizontalAlignment="Stretch"
+                  DisplayMemberBinding="{Binding Index}"
+                  DockPanel.Dock="Top"
+                  ItemsSource="{Binding SelectedChild.Children}"
+                  SelectedItem="{Binding SelectedChild.SelectedChild}" />
+    </DockPanel>
+</UserControl>

@@ -18,7 +18,7 @@ The behaviors, converters and controls of [MvvmScarletToolkit.Wpf](../MvvmScarle
 |class|summary|
 |---|---|
 |[``ScarletCommandBuilder``](./Implementations/ScarletCommandBuilder.cs)|Fluent builder for ConcurrentCommand instances.|
-|[``ScarletCommandManager``](./Implementations/ScarletCommandManager.cs)|Raises ``RequerySuggested``, so that commands can update their ``CanExecute`` state.|
+|[``ScarletCommandManager``](./Implementations/ScarletCommandManager.cs)|Raises ``RequerySuggested`` on the UI thread after user input and when requested from any thread, so that commands can update their ``CanExecute`` state.|
 |[``ScarletDispatcher``](./Implementations/ScarletDispatcher.cs)|Wrapper for the Avalonia dispatcher to support Dependency Injection and Task based ICommand implementations in this library.|
 |[``ScarletExitService``](./Implementations/ScarletExitService.cs)|Takes care of executing ``IVirtualizationViewModel.UnloadCommand`` when the application exits.|
 |[``ScarletLocalizationProvider``](./Implementations/ScarletLocalizationProvider.cs)|Dummy Implementation of ``ILocalizationProvider``.|

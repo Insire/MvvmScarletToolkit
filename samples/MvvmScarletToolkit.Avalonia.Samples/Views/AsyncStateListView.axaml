@@ -1,0 +1,144 @@
+<!--  the commands are declared as ICommand, their IsBusy and CancelCommand can only be reached with reflection bindings  -->
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.AsyncStateListView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:asyncState="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.AsyncState;assembly=MvvmScarletToolkit.Core.Samples"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:CompileBindings="False"
+             x:DataType="asyncState:AsyncStateListViewModel"
+             mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.busy">
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColor}" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid ColumnDefinitions="*,4,*,4" RowDefinitions="Auto,4,*,4,*">
+        <DockPanel Grid.Row="0" Grid.Column="0">
+            <Label VerticalAlignment="Center"
+                   Content="Filter:"
+                   Target="FilterTextBox" />
+            <TextBox x:Name="FilterTextBox"
+                     Classes="clearButton"
+                     Text="{Binding FilterText, Delay=150}" />
+        </DockPanel>
+
+        <ToggleButton x:Name="Generate"
+                      Grid.Row="0"
+                      Grid.Column="2"
+                      HorizontalAlignment="Stretch"
+                      Content="Generate Items and Auto-Scroll"
+                      IsCheckedChanged="Generate_IsCheckedChanged" />
+
+        <ListBox x:Name="SortedList"
+                 Grid.Row="2"
+                 Grid.Column="0"
+                 SelectedItem="{Binding SelectedItem}"
+                 SelectedItems="{Binding SelectedItems}"
+                 SelectionChanged="SortedList_SelectionChanged"
+                 SelectionMode="Multiple">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Margin="5"
+                                Command="{Binding LoadCommand}"
+                                Content="Load"
+                                ToolTip.Tip="Load" />
+                        <Button Margin="5"
+                                Command="{Binding RefreshCommand}"
+                                Content="Refresh"
+                                ToolTip.Tip="Refresh" />
+                        <Button Margin="5"
+                                Command="{Binding RefreshCommand.CancelCommand}"
+                                Content="Cancel"
+                                ToolTip.Tip="Cancel" />
+                        <TextBlock VerticalAlignment="Center"
+                                   Classes.busy="{Binding IsBusy}"
+                                   Text="{Binding DisplayName}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock Grid.Row="2"
+                   Grid.RowSpan="3"
+                   Grid.Column="0"
+                   Margin="0 0 25 0"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom"
+                   Text="{Binding Items.Count, StringFormat='{}{0} Entries'}" />
+
+        <Border Grid.Row="2"
+                Grid.Column="2"
+                BorderBrush="Gray"
+                BorderThickness="0.5">
+            <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding SelectedItems}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="4 0"
+                                       VerticalAlignment="Center"
+                                       Classes.busy="{Binding IsBusy}"
+                                       Text="{Binding DisplayName}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="2"
+                   Margin="0 0 4 0"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom"
+                   Text="{Binding SelectedItems.Count, StringFormat='{}{0} Entries selected'}" />
+
+        <DockPanel Grid.Row="4" Grid.Column="0">
+            <Grid Margin="4 0"
+                  ColumnDefinitions="100,100"
+                  DockPanel.Dock="Top">
+                <TextBlock FontWeight="SemiBold" Text="DisplayName" />
+                <TextBlock Grid.Column="1"
+                           FontWeight="SemiBold"
+                           Text="IsBusy" />
+            </Grid>
+
+            <ListBox x:Name="SortedTable"
+                     SelectedItem="{Binding SelectedItem}"
+                     SelectionMode="Multiple">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="100,100">
+                            <TextBlock Text="{Binding DisplayName}" />
+                            <TextBlock Grid.Column="1" Text="{Binding IsBusy}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+
+        <Border Grid.Row="4"
+                Grid.Column="2"
+                BorderBrush="Gray"
+                BorderThickness="0.5">
+            <ContentControl Content="{Binding SelectedItem}">
+                <ContentControl.ContentTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="4" Orientation="Vertical">
+                            <TextBlock Text="{Binding DisplayName, StringFormat='DisplayName: {0}'}" />
+                            <TextBlock Text="{Binding IsBusy, StringFormat='IsSelfBusy: {0}'}" />
+                            <TextBlock Text="{Binding IsSelected, StringFormat='IsSelected: {0}'}" />
+                            <TextBlock Text="{Binding RefreshCommand.IsBusy, StringFormat='IsRefreshCommandBusy: {0}'}" />
+                            <TextBlock Text="{Binding LoadCommand.IsBusy, StringFormat='IsLoadCommandBusy: {0}'}" />
+                            <TextBlock Text="{Binding UnloadCommand.IsBusy, StringFormat='IsUnloadCommandBusy: {0}'}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+        </Border>
+    </Grid>
+</UserControl>

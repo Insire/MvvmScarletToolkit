@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features
+namespace MvvmScarletToolkit.Core.Samples.Features.Image
 {
     public sealed partial class ProcessingImagesViewModel : ObservableObject
     {

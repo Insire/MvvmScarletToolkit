@@ -12,7 +12,7 @@ using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using MvvmScarletToolkit.Wpf.Samples.Features;
 using MvvmScarletToolkit.Wpf.Samples.Features.DataGrid;
-using MvvmScarletToolkit.Wpf.Samples.Features.Image;
+using MvvmScarletToolkit.Core.Samples.Features.Image;
 using Serilog;
 using System.Diagnostics;
 using System.Globalization;

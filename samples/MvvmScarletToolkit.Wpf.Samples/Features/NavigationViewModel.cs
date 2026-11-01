@@ -3,14 +3,16 @@ using MvvmScarletToolkit.Core.Samples.Features;
 using MvvmScarletToolkit.Core.Samples.Features.AsyncState;
 using MvvmScarletToolkit.Core.Samples.Features.Busy;
 using MvvmScarletToolkit.Core.Samples.Features.ContextMenu;
+using MvvmScarletToolkit.Core.Samples.Features.Dialog;
 using MvvmScarletToolkit.Core.Samples.Features.Enums;
+using MvvmScarletToolkit.Core.Samples.Features.Image;
+using MvvmScarletToolkit.Core.Samples.Features.NestedSelection;
 using MvvmScarletToolkit.Core.Samples.Features.Process;
 using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
-using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using System.Net.Http;
 using System.Reactive.Concurrency;
 

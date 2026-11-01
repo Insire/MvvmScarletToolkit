@@ -1,14 +1,13 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using MoreLinq;
-using MvvmScarletToolkit.Core.Samples.Features;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
+namespace MvvmScarletToolkit.Core.Samples.Features.Image
 {
     public sealed class ImageViewModelProvider
     {
@@ -50,7 +49,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
         private readonly EnvironmentInformationProvider _environmentInformationProvider;
         private readonly HttpClient _httpClient;
         private readonly ILogger<ImageViewModelProvider> _logger;
-        private readonly Lock _initializationLock;
+        private readonly object _initializationLock;
         private Task<bool>? _initialization;
         private int _index;
 
@@ -65,7 +64,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Image
             _httpClient = httpClient;
             _logger = logger;
             _randomWebUrls = new HashSet<string>();
-            _initializationLock = new Lock();
+            _initializationLock = new object();
         }
 
         /// <summary>

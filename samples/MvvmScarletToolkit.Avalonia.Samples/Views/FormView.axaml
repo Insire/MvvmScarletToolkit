@@ -1,0 +1,82 @@
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.FormView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:behaviors="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:features="clr-namespace:MvvmScarletToolkit.Core.Samples.Features;assembly=MvvmScarletToolkit.Core.Samples"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="features:FormViewModel"
+             mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.header">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0 8 0 4" />
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel Margin="4">
+        <TextBlock Classes="header" Text="Bound TextInputFilter" />
+        <Grid ColumnDefinitions="Auto,5,*" RowDefinitions="Auto,5,Auto,5,Auto">
+            <TextBlock Grid.Row="0"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       Text="MaxLength:" />
+            <TextBox Grid.Row="0"
+                     Grid.Column="2"
+                     behaviors:TextInputFilter.AllowWhitespace="False"
+                     behaviors:TextInputFilter.RegularExpression="^\d+$"
+                     MaxLength="1"
+                     Text="{Binding MaxLengthInput}" />
+
+            <TextBlock Grid.Row="2"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       Text="Regex:" />
+            <TextBox Grid.Row="2"
+                     Grid.Column="2"
+                     Text="{Binding Regex}" />
+
+            <TextBlock Grid.Row="4"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       Text="Input:" />
+            <TextBox Grid.Row="4"
+                     Grid.Column="2"
+                     behaviors:TextInputFilter.AllowWhitespace="False"
+                     behaviors:TextInputFilter.RegularExpression="{Binding Regex}"
+                     MaxLength="{Binding MaxLength}" />
+        </Grid>
+
+        <TextBlock Classes="header" Text="Compile time defined TextInputFilter" />
+        <Grid ColumnDefinitions="Auto,5,*" RowDefinitions="Auto,5,Auto,5,Auto">
+            <TextBlock Grid.Row="0"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       Text="Only Numbers, no whitespace:" />
+            <TextBox Grid.Row="0"
+                     Grid.Column="2"
+                     behaviors:TextInputFilter.AllowWhitespace="False"
+                     behaviors:TextInputFilter.RegularExpression="^\d+$" />
+
+            <TextBlock Grid.Row="2"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       Text="only numbers but with whitespace:" />
+            <TextBox Grid.Row="2"
+                     Grid.Column="2"
+                     behaviors:TextInputFilter.RegularExpression="^[\d\s]+$" />
+
+            <TextBlock Grid.Row="4"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       Text="Anything but numbers, with max length of 20:" />
+            <TextBox Grid.Row="4"
+                     Grid.Column="2"
+                     behaviors:TextInputFilter.RegularExpression="^\D+$"
+                     MaxLength="20" />
+        </Grid>
+    </StackPanel>
+</UserControl>

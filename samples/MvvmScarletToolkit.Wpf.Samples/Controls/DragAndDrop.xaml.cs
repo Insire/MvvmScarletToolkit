@@ -1,6 +1,5 @@
 using MvvmScarletToolkit.Observables;
-using MvvmScarletToolkit.Wpf.Samples.Features;
-using MvvmScarletToolkit.Wpf.Samples.Features.Image;
+using MvvmScarletToolkit.Core.Samples.Features.Image;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;

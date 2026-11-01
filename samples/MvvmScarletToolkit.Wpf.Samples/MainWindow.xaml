@@ -8,16 +8,18 @@
         xmlns:controls="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:dataGrid="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.DataGrid"
+        xmlns:dialog="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Dialog;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:enums="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Enums;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:features="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features"
         xmlns:features1="clr-namespace:MvvmScarletToolkit.Core.Samples.Features;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:filesystembrowser="clr-namespace:MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;assembly=MvvmScarletToolkit.Wpf"
         xmlns:geometry="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Geometry"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:image="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Image"
-        xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Incubator"
+        xmlns:image="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Image;assembly=MvvmScarletToolkit.Core.Samples"
+        xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
+        xmlns:nestedSelection="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.NestedSelection;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
         xmlns:process="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Process;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
@@ -1325,7 +1327,7 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type features:ProcessingImagesViewModel}">
+                <DataTemplate DataType="{x:Type image:ProcessingImagesViewModel}">
                     <controls:DragAndDrop />
                 </DataTemplate>
 
@@ -1571,7 +1573,7 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <TextBlock HorizontalAlignment="Stretch" Text="{Binding}" />
+                                    <TextBlock HorizontalAlignment="Stretch" Text="Child" />
                                 </Border>
                             </DataTemplate>
                             <HierarchicalDataTemplate DataType="{x:Type busy:BusyViewModel}" ItemsSource="{Binding Items}">
@@ -1595,7 +1597,7 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <TextBlock Text="{Binding}" />
+                                    <TextBlock Text="Container" />
                                 </Border>
                             </HierarchicalDataTemplate>
                         </TreeView.Resources>
@@ -1798,7 +1800,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type features:DialogViewModel}">
+                <DataTemplate DataType="{x:Type dialog:DialogViewModel}">
                     <Grid>
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
@@ -2061,7 +2063,7 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type features:SelectionsViewModel}">
+                <DataTemplate DataType="{x:Type nestedSelection:SelectionsViewModel}">
                     <DockPanel LastChildFill="False">
                         <ComboBox DisplayMemberPath="Index"
                                   DockPanel.Dock="Top"
