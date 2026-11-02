@@ -27,7 +27,7 @@ Toast notifications, the FileSystemBrowser and the DataGrid extensions come with
 
 |name|summary|
 |---|---|
-|[FileSystemBrowser](Features/FileSystemBrowser/readme.md)|Browse drives, folders and files through a viewmodel, with file and folder pickers.|
+|[FileSystemBrowser](Features/FileSystemBrowser/readme.md)|Browse drives, folders and files through a viewmodel, with file and folder dialogs.|
 |``VirtualizingTilePanel``|Virtualizing panel that lays out items as tiles of ``ChildSize``.|
 |``VirtualizingWrapPanel``|Virtualizing panel that wraps items of ``ItemWidth`` and ``ItemHeight``.|
 |``HtmlTextBlock``|TextBlock that displays formatted text from its ``Html`` property, like ``b``, ``i``, ``u``, ``sub``, ``sup``, ``a`` and ``br``.|
@@ -216,7 +216,7 @@ Adds proportional and limited column widths to a ``GridView``, like ``*`` sizing
 |``MultiListBoxSelectionBehavior``|``ListBox``|Bind ``ListBox.SelectedItems`` to an existing ``IList``.|
 |``MultiSelectionBehavior``|``MultiSelector``|Bind ``SelectedItems`` of e.g. a ``DataGrid`` to an existing ``IList``.|
 |``PasswordBindingBehavior``|``PasswordBox``|Bind the password through ``ClearTextPassword``.|
-|``ScrollSelectionIntoViewBehavior``|``Selector``|Scroll the selected item of a ``ListBox`` or ``DataGrid`` into view.|
+|``ScrollSelectionIntoViewBehavior``|``ItemsControl``|Scroll the selected item of a ``ListBox``, ``DataGrid`` or ``TreeView`` into view. A custom ``TreeViewItem`` template needs a ``PART_Header`` to scroll to the selected row only.|
 |``ScrollToEndCommandBehavior``|``FrameworkElement``|Execute ``Command`` when a scrollviewer reaches its vertical or horizontal end, sampled at ``Interval``. Useful for loading the next page.|
 |``SelectedTreeViewItemBehavior``|``TreeView``|Enable twoway binding of the selected item.|
 |``SmoothProgressBehavior``|``ProgressBar``|Animate changes of ``Percentage``, instead of jumping to the new value.|

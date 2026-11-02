@@ -1360,60 +1360,62 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type filesystembrowser:FilePickerViewModel}">
-                    <DockPanel>
-                        <Menu DockPanel.Dock="Top">
-                            <MenuItem Header="File">
-                                <MenuItem Header="Open" />
-                                <MenuItem Header="Delete" />
-                                <MenuItem Header="Refresh" />
-                                <MenuItem Header="Copy">
-                                    <MenuItem Header="As File" />
-                                    <MenuItem Header="As Path" />
-                                </MenuItem>
-                                <MenuItem Header="Move" />
-                            </MenuItem>
-                            <MenuItem Header="View">
-                                <!--<MenuItem Command="{Binding Options.DisplayDetailsAsListCommand}" Header="As List" />
-                                <MenuItem Command="{Binding Options.DisplayDetailsAsIconsCommand}" Header="As Icons" />-->
-                            </MenuItem>
-                            <MenuItem Header="Options" />
-                            <MenuItem Header="Help">
-                                <MenuItem Header="License" />
-                                <MenuItem Header="Credits" />
-                            </MenuItem>
-                        </Menu>
+                <DataTemplate DataType="{x:Type features:FileSystemDialogsViewModel}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="16" Grid.IsSharedSizeScope="True">
+                            <StackPanel.Resources>
+                                <DataTemplate DataType="{x:Type features:FileFilterExampleViewModel}">
+                                    <Grid Margin="0 0 0 12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="FileFilterExampleButton" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
 
-                        <controls:FilePicker />
-                    </DockPanel>
-                </DataTemplate>
+                                        <Button Grid.RowSpan="2"
+                                                MinWidth="140"
+                                                Margin="0 0 12 0"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding PickCommand}"
+                                                Content="{Binding Name}" />
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Description}"
+                                                   TextWrapping="Wrap" />
+                                        <TextBlock Grid.Row="1"
+                                                   Grid.Column="1"
+                                                   FontWeight="SemiBold"
+                                                   Text="{Binding File}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </Grid>
+                                </DataTemplate>
+                            </StackPanel.Resources>
 
-                <DataTemplate DataType="{x:Type filesystembrowser:FolderPickerViewModel}">
-                    <DockPanel>
-                        <Menu DockPanel.Dock="Top">
-                            <MenuItem Header="File">
-                                <MenuItem Header="Open" />
-                                <MenuItem Header="Delete" />
-                                <MenuItem Header="Refresh" />
-                                <MenuItem Header="Copy">
-                                    <MenuItem Header="As File" />
-                                    <MenuItem Header="As Path" />
-                                </MenuItem>
-                                <MenuItem Header="Move" />
-                            </MenuItem>
-                            <MenuItem Header="View">
-                                <!--<MenuItem Command="{Binding Options.DisplayDetailsAsListCommand}" Header="As List" />
-                                <MenuItem Command="{Binding Options.DisplayDetailsAsIconsCommand}" Header="As Icons" />-->
-                            </MenuItem>
-                            <MenuItem Header="Options" />
-                            <MenuItem Header="Help">
-                                <MenuItem Header="License" />
-                                <MenuItem Header="Credits" />
-                            </MenuItem>
-                        </Menu>
+                            <ItemsControl Focusable="False" ItemsSource="{Binding Examples}" />
 
-                        <controls:FolderPicker />
-                    </DockPanel>
+                            <ContentControl Content="{Binding CustomExample}" Focusable="False" />
+
+                            <DockPanel Margin="0 0 0 24">
+                                <TextBlock Margin="0 0 8 0"
+                                           VerticalAlignment="Center"
+                                           Text="Patterns, separated by ;" />
+                                <TextBox AutomationProperties.AutomationId="CustomPatterns" Text="{Binding CustomPatterns, UpdateSourceTrigger=PropertyChanged}" />
+                            </DockPanel>
+
+                            <DockPanel>
+                                <Button MinWidth="140"
+                                        Margin="0 0 12 0"
+                                        Command="{Binding PickFolderCommand}"
+                                        Content="Select a folder" />
+                                <TextBlock VerticalAlignment="Center"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding Folder}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </DockPanel>
+                        </StackPanel>
+                    </ScrollViewer>
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type features1:PasswordViewModel}">

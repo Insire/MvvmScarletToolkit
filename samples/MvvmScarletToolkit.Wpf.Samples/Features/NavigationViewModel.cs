@@ -32,7 +32,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             Tracker tracker)
             : base(commandBuilder, localizationsViewModel)
         {
-            // shared with the export dialog: every instance listens to the selections of all others and is never unregistered
+            // shared with the export dialog, so that it starts in the folder selected in the browser
             var fileSystem = new FileSystemViewModel(scheduler, factory, FileSystemOptionsViewModel.Default);
             var exportFileDialog = new DataGrid.ExportFileDialog(fileSystem, commandBuilder.Dispatcher);
             var dataGridViewModel = new DataGrid.DataGridViewModel(commandBuilder, synchronizationContext, exportFileDialog);
@@ -49,6 +49,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             Add("DataGrid with a million rows", largeDataGridViewModel);
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));
             Add("FileSystemBrowser", fileSystem);
+            Add("File and folder dialogs", new FileSystemDialogsViewModel(new FileSystemDialog(scheduler, factory, FileSystemOptionsViewModel.Default, commandBuilder.Dispatcher)));
             Add("State changes in a tree structure", new BusyViewModel(commandBuilder));
             Add("Geometry rendering", new GeometryRenderViewModel(commandBuilder));
             Add("Binding Passwordbox", new PasswordViewModel());

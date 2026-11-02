@@ -378,5 +378,341 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 Assert.Same(root.Items, viewModel.Entries);
             });
         }
+
+        private FileSystemViewModel CreateDriveViewModel(string? initialFolder = null, FileAttributes[]? fileAttributes = null)
+        {
+            var options = new FileSystemOptionsViewModel([DriveType.Fixed], fileAttributes ?? _fileAttributes, _folderAttributes);
+
+            return new FileSystemViewModel(ImmediateScheduler.Instance, _factory, options) { InitialFolder = initialFolder };
+        }
+
+        [Fact]
+        public async Task Refresh_Should_Open_The_InitialFolder()
+        {
+            CreateFile(Path.Combine("sub", "a.txt"), new byte[1]);
+            var folder = Path.Combine(_directory, "sub");
+            using var viewModel = CreateDriveViewModel(folder);
+
+            await viewModel.RefreshCommand.ExecuteAsync(null);
+            await WaitFor(() => viewModel.SelectedContainer is not null);
+
+            Assert.Equal(folder, viewModel.SelectedContainer?.FullName);
+        }
+
+        [Fact]
+        public async Task Refresh_Should_Open_The_Deepest_Existing_Part_Of_The_InitialFolder()
+        {
+            using var viewModel = CreateDriveViewModel(Path.Combine(_directory, "missing", "folder"));
+
+            await viewModel.RefreshCommand.ExecuteAsync(null);
+            await WaitFor(() => viewModel.SelectedContainer is not null);
+
+            Assert.Equal(_directory, viewModel.SelectedContainer?.FullName);
+        }
+
+        [Fact]
+        public async Task Selection_Should_Not_Reach_Other_ViewModels_Of_The_Factory()
+        {
+            using var other = CreateDriveViewModel();
+            using var viewModel = CreateDriveViewModel(_directory);
+            await other.RefreshCommand.ExecuteAsync(null);
+
+            await viewModel.RefreshCommand.ExecuteAsync(null);
+            await WaitFor(() => viewModel.SelectedContainer is not null);
+
+            Assert.Null(other.SelectedContainer);
+        }
+
+        [Fact]
+        public async Task Dispose_Should_Stop_Listening_To_Selections()
+        {
+            var viewModel = CreateDriveViewModel();
+            await viewModel.RefreshCommand.ExecuteAsync(null);
+
+            var drive = viewModel.Items[0];
+
+            viewModel.Dispose();
+            drive.IsSelected = true;
+
+            Assert.Null(viewModel.SelectedContainer);
+        }
+
+        [Fact]
+        public async Task Open_Should_Report_A_File()
+        {
+            CreateFile("a.txt", new byte[1]);
+            var (viewModel, _) = await CreateViewModel();
+            var file = viewModel.Entries!.Single();
+            IFileSystemChild? opened = null;
+            viewModel.FileOpened += (_, e) => opened = e;
+
+            await viewModel.OpenCommand.ExecuteAsync(file);
+
+            Assert.Same(file, opened);
+        }
+
+        [Fact]
+        public async Task FilePicker_Should_Confirm_The_Opened_File()
+        {
+            CreateFile("a.txt", new byte[1]);
+            var (viewModel, _) = await CreateViewModel();
+            using var picker = new FilePickerViewModel(viewModel);
+            var confirmed = 0;
+            picker.Confirmed += (_, _) => confirmed++;
+
+            Assert.False(picker.ConfirmCommand.CanExecute(null));
+
+            viewModel.SelectedEntry = viewModel.Entries!.Single();
+            await viewModel.OpenCommand.ExecuteAsync(viewModel.SelectedEntry);
+
+            Assert.Multiple(() =>
+            {
+                Assert.Equal(1, confirmed);
+                Assert.Equal(Path.Combine(_directory, "a.txt"), picker.SelectedPath);
+                Assert.True(picker.ConfirmCommand.CanExecute(null));
+            });
+        }
+
+        [Fact]
+        public async Task FilePicker_Should_Not_Accept_A_Folder()
+        {
+            CreateFile(Path.Combine("sub", "a.txt"), new byte[1]);
+            var (viewModel, _) = await CreateViewModel();
+            using var picker = new FilePickerViewModel(viewModel);
+
+            viewModel.SelectedEntry = viewModel.Entries!.Single();
+
+            Assert.Multiple(() =>
+            {
+                Assert.Null(picker.SelectedPath);
+                Assert.False(picker.ConfirmCommand.CanExecute(null));
+            });
+        }
+
+        [Fact]
+        public async Task FolderPicker_Should_Prefer_The_Selected_Folder_Over_The_Displayed_One()
+        {
+            CreateFile(Path.Combine("sub", "a.txt"), new byte[1]);
+            var (viewModel, root) = await CreateViewModel();
+            using var picker = new FolderPickerViewModel(viewModel);
+
+            var displayed = picker.SelectedPath;
+            viewModel.SelectedEntry = viewModel.Entries!.Single();
+
+            Assert.Multiple(() =>
+            {
+                Assert.Equal(root.FullName, displayed);
+                Assert.Equal(Path.Combine(_directory, "sub"), picker.SelectedPath);
+            });
+        }
+
+        [Fact]
+        public async Task FolderPicker_Should_Not_Confirm_An_Opened_File()
+        {
+            CreateFile("a.txt", new byte[1]);
+            var (viewModel, _) = await CreateViewModel();
+            using var picker = new FolderPickerViewModel(viewModel);
+            var confirmed = 0;
+            picker.Confirmed += (_, _) => confirmed++;
+
+            await viewModel.OpenCommand.ExecuteAsync(viewModel.Entries!.Single());
+
+            Assert.Equal(0, confirmed);
+        }
+
+        [Fact]
+        public async Task Disposed_Picker_Should_Ignore_The_FileSystem()
+        {
+            CreateFile("a.txt", new byte[1]);
+            var (viewModel, _) = await CreateViewModel();
+            var picker = new FilePickerViewModel(viewModel);
+            var confirmed = 0;
+            picker.Confirmed += (_, _) => confirmed++;
+
+            picker.Dispose();
+            viewModel.SelectedEntry = viewModel.Entries!.Single();
+            await viewModel.OpenCommand.ExecuteAsync(viewModel.SelectedEntry);
+
+            Assert.Equal(0, confirmed);
+        }
+
+        [Fact]
+        public async Task IsEmpty_Should_Not_Throw_For_A_Deleted_Folder()
+        {
+            var folder = Substitute.For<IFileSystemDirectory>();
+            folder.FullName.Returns(Path.Combine(_directory, "deleted"));
+
+            var result = await _factory.IsEmpty(folder, TestContext.Current.CancellationToken);
+
+            Assert.True(result);
+        }
+
+        [Theory]
+        [InlineData("a.PNG", true)]
+        [InlineData("a.jpg", true)]
+        [InlineData("a.png.txt", false)]
+        public void Filter_Should_Match_Any_Pattern_Ignoring_Case(string name, bool expected)
+        {
+            var filter = new FileSystemFilter("Images", "*.png", "*.jpg");
+
+            Assert.Equal(expected, filter.IsMatch(name));
+        }
+
+        [Fact]
+        public void AllFiles_Should_Match_Names_Without_Extension()
+        {
+            Assert.True(FileSystemFilter.AllFiles.IsMatch("LICENSE"));
+        }
+
+        [Fact]
+        public void Filter_Should_Require_A_Pattern()
+        {
+            Assert.Throws<ArgumentException>(() => new FileSystemFilter("Nothing"));
+        }
+
+        [Fact]
+        public async Task FileFilter_Should_Hide_Other_Files_But_Keep_Folders()
+        {
+            CreateFile("a.png", new byte[1]);
+            CreateFile("b.txt", new byte[1]);
+            CreateFile(Path.Combine("sub", "c.txt"), new byte[1]);
+            var (viewModel, _) = await CreateViewModel();
+
+            viewModel.FileFilter = new FileSystemFilter("Images", "*.png");
+
+            Assert.Equal(["sub", "a.png"], viewModel.Entries!.Select(p => p.Name));
+        }
+
+        [Fact]
+        public async Task Clearing_The_FileFilter_Should_Display_All_Files()
+        {
+            CreateFile("a.png", new byte[1]);
+            CreateFile("b.txt", new byte[1]);
+            var (viewModel, root) = await CreateViewModel();
+            viewModel.FileFilter = new FileSystemFilter("Images", "*.png");
+
+            viewModel.FileFilter = null;
+
+            Assert.Same(root.Items, viewModel.Entries);
+        }
+
+        [Fact]
+        public async Task FileFilter_Should_Clear_A_Selection_It_Hides()
+        {
+            CreateFile("b.txt", new byte[1]);
+            var (viewModel, _) = await CreateViewModel();
+            viewModel.SelectedEntry = viewModel.Entries!.Single();
+
+            viewModel.FileFilter = new FileSystemFilter("Images", "*.png");
+
+            Assert.Null(viewModel.SelectedEntry);
+        }
+
+        [Fact]
+        public async Task FileFilter_Should_Apply_To_Reloaded_Items()
+        {
+            CreateFile("a.png", new byte[1]);
+            var (viewModel, root) = await CreateViewModel();
+            viewModel.FileFilter = new FileSystemFilter("Images", "*.png");
+
+            CreateFile("b.png", new byte[1]);
+            CreateFile("c.txt", new byte[1]);
+            await root.RefreshCommand.ExecuteAsync(null);
+
+            Assert.Equal(["a.png", "b.png"], viewModel.Entries!.Select(p => p.Name));
+        }
+
+        [Fact]
+        public async Task FileFilter_Should_Apply_To_Search_Results()
+        {
+            CreateFile("a.png", new byte[1]);
+            CreateFile("a.txt", new byte[1]);
+            var (viewModel, _) = await CreateViewModel();
+            viewModel.FileFilter = new FileSystemFilter("Images", "*.png");
+
+            viewModel.SearchText = "a";
+            await WaitFor(() => !viewModel.IsSearching);
+
+            Assert.Equal(["a.png"], viewModel.Entries!.Select(p => p.Name));
+        }
+
+        [Fact]
+        public async Task FileFilter_Should_Survive_Clearing_The_Search()
+        {
+            CreateFile("a.png", new byte[1]);
+            CreateFile("a.txt", new byte[1]);
+            var (viewModel, _) = await CreateViewModel();
+            viewModel.FileFilter = new FileSystemFilter("Images", "*.png");
+            viewModel.SearchText = "a";
+            await WaitFor(() => !viewModel.IsSearching);
+
+            viewModel.SearchText = string.Empty;
+
+            Assert.Equal(["a.png"], viewModel.Entries!.Select(p => p.Name));
+        }
+
+        [Fact]
+        public async Task Changing_The_FileFilter_Should_Repeat_The_Search()
+        {
+            CreateFile("a.png", new byte[1]);
+            CreateFile("a.txt", new byte[1]);
+            var (viewModel, _) = await CreateViewModel();
+            viewModel.FileFilter = new FileSystemFilter("Images", "*.png");
+            viewModel.SearchText = "a";
+            await WaitFor(() => !viewModel.IsSearching);
+
+            viewModel.FileFilter = new FileSystemFilter("Text", "*.txt");
+            await WaitFor(() => !viewModel.IsSearching);
+
+            Assert.Equal(["a.txt"], viewModel.Entries!.Select(p => p.Name));
+        }
+
+        [Fact]
+        public async Task FilePicker_Should_Apply_The_First_Filter_And_Switch()
+        {
+            CreateFile("a.png", new byte[1]);
+            CreateFile("b.txt", new byte[1]);
+            var (viewModel, _) = await CreateViewModel();
+            var images = new FileSystemFilter("Images", "*.png");
+            var text = new FileSystemFilter("Text", "*.txt");
+            using var picker = new FilePickerViewModel(viewModel, images, text);
+
+            var initial = viewModel.Entries!.Select(p => p.Name).ToList();
+            picker.SelectedFilter = text;
+
+            Assert.Multiple(() =>
+            {
+                Assert.Equal(["a.png"], initial);
+                Assert.Equal(["b.txt"], viewModel.Entries!.Select(p => p.Name));
+            });
+        }
+
+        [Fact]
+        public async Task FilePicker_Should_Not_Filter_Without_Filters()
+        {
+            var (viewModel, _) = await CreateViewModel();
+            using var picker = new FilePickerViewModel(viewModel);
+
+            Assert.Multiple(() =>
+            {
+                Assert.Empty(picker.Filters);
+                Assert.Null(viewModel.FileFilter);
+            });
+        }
+
+        [Fact]
+        public Task DialogWindow_Should_Display_The_Picker()
+        {
+            return StaRunner.Run(async () =>
+            {
+                var (viewModel, _) = await CreateViewModel();
+                using var picker = new FolderPickerViewModel(viewModel);
+
+                var window = new FileSystemDialogWindow(picker);
+
+                Assert.Equal(picker.Title, window.Title);
+                window.Close();
+            });
+        }
     }
 }

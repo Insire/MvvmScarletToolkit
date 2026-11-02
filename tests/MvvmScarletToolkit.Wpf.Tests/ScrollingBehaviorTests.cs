@@ -99,6 +99,28 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 window.Close();
             });
         }
+
+        [Fact]
+        public Task Should_Scroll_Selected_TreeViewItem_Into_View()
+        {
+            return StaRunner.Run(async () =>
+            {
+                var treeView = new TreeView { Height = 100 };
+                var items = Enumerable.Range(0, 100).Select(p => new TreeViewItem { Header = p.ToString() }).ToList();
+                items.ForEach(p => treeView.Items.Add(p));
+                Interaction.GetBehaviors(treeView).Add(new ScrollSelectionIntoViewBehavior());
+
+                var window = Ui.Show(treeView);
+                await Ui.Settle();
+
+                items[^1].IsSelected = true;
+                await Ui.Settle();
+
+                var scrollViewer = treeView.FindVisualChildBreadthFirst<ScrollViewer>()!;
+                Assert.Equal(scrollViewer.ScrollableHeight, scrollViewer.VerticalOffset);
+                window.Close();
+            });
+        }
     }
 
     public sealed class ScrollToEndCommandBehaviorTests : TraceTestBase

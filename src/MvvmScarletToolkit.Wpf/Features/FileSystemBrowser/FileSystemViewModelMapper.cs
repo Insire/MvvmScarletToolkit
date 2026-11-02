@@ -27,6 +27,11 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
             public void Receive(ScarletDirectorySelected message)
             {
+                if (!IsOwnEntry(message.Directory))
+                {
+                    return;
+                }
+
                 _viewModel.SelectedChild = message.Directory;
                 _viewModel.SelectedContainer = message.Directory;
                 _viewModel.SelectedTreeDetail = message.Directory;
@@ -39,6 +44,11 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
             public void Receive(ScarletFileSelected message)
             {
+                if (!IsOwnEntry(message.File))
+                {
+                    return;
+                }
+
                 _viewModel.SelectedChild = message.File;
                 _viewModel.SelectedDetail = message.File;
                 _viewModel.SelectedFile = message.File;
@@ -48,6 +58,11 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
             public void Receive(ScarletDriveSelected message)
             {
+                if (!IsOwnEntry(message.Drive))
+                {
+                    return;
+                }
+
                 _viewModel.SelectedContainer = message.Drive;
                 _viewModel.SelectedTreeDetail = message.Drive;
 
@@ -55,6 +70,26 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 _viewModel.SelectedFile = null;
                 _viewModel.SelectedDirectory = null;
                 _viewModel.OnContainerSelected(message.Drive);
+            }
+
+            /// <summary>
+            /// All viewmodels of a factory share its messenger, so an entry has to lead to one of the own drives.
+            /// </summary>
+            private bool IsOwnEntry(IFileSystemInfo entry)
+            {
+                while (entry is IFileSystemChild { Parent: not null } child)
+                {
+                    entry = child.Parent;
+                }
+
+                if (entry is not IFileSystemDrive drive)
+                {
+                    return false;
+                }
+
+                var ownDrive = _viewModel._cache.Lookup(drive.Name);
+
+                return ownDrive.HasValue && ReferenceEquals(ownDrive.Value, drive);
             }
 
             public async Task Refresh(CancellationToken token)
@@ -67,6 +102,11 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                     _viewModel.IsLoaded = true;
 
                     _fileSystemViewModelFactory.Messenger.RegisterAll(this);
+
+                    if (_viewModel.InitialFolder is not null)
+                    {
+                        await _viewModel.OpenFolder(_viewModel.InitialFolder);
+                    }
                 }
                 else
                 {

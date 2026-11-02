@@ -428,20 +428,14 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
         private bool? IsDirectoryEmpty(string directoryPath)
         {
-            var result = true;
             if (_noAccessLookup.ContainsKey(directoryPath))
             {
-                return result;
+                return true;
             }
 
             try
             {
-                if (Directory.Exists(directoryPath))
-                {
-                    var query = Directory.EnumerateFileSystemEntries(directoryPath);
-
-                    result = !query.Any();
-                }
+                return !Directory.EnumerateFileSystemEntries(directoryPath).Any();
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -450,8 +444,12 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 _logger.LogError(ex, "Failed to get directory info");
                 return null;
             }
-
-            return result;
+            catch (IOException ex)
+            {
+                // the folder can disappear at any time, refreshing happens in async void handlers, where escaping exceptions end the process
+                _logger.LogWarning(ex, "Failed to enumerate {Path}", directoryPath);
+                return true;
+            }
         }
 
         public Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(

@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
@@ -16,5 +17,16 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             typeof(FileSystemViewModel),
             typeof(FileSystemView),
             new PropertyMetadata(default(FileSystemViewModel)));
+
+        protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
+        {
+            base.OnMouseDoubleClick(e);
+
+            // a double click on the scrollbar or a column header must not open the selected entry
+            if ((e.OriginalSource as DependencyObject)?.FindParent<ListBoxItem>() is { } item)
+            {
+                ViewModel?.OpenCommand.Execute(item.DataContext);
+            }
+        }
     }
 }

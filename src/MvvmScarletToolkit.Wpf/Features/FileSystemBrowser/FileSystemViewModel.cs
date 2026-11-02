@@ -7,6 +7,7 @@ using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -37,6 +38,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         private readonly SourceCache<IFileSystemDrive, string> _cache;
         private readonly ObservableCollectionExtended<IFileSystemChild> _searchResults;
         private readonly ReadOnlyObservableCollection<IFileSystemChild> _readOnlySearchResults;
+        private readonly ObservableCollectionExtended<IFileSystemChild> _filteredEntries;
+        private readonly ReadOnlyObservableCollection<IFileSystemChild> _readOnlyFilteredEntries;
         private readonly FileSystemViewModelMapper _mapper;
         private readonly CompositeDisposable _compositeDisposable;
         private readonly IScheduler _scheduler;
@@ -45,6 +48,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         private CancellationTokenSource? _searchCancellation;
         private CancellationTokenSource? _permissionsCancellation;
         private string? _selectedEntryPath;
+        private ReadOnlyObservableCollection<IFileSystemChild>? _filteredSource;
 
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsLoaded { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial IFileSystemParent? SelectedContainer { get; private set; }
@@ -82,12 +86,27 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         /// </summary>
         [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial string SearchText { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Restricts the files of the detail view and search, <see langword="null"/> displays all of them.
+        /// </summary>
+        [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial FileSystemFilter? FileFilter { get; set; }
+
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsSearchActive { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsSearching { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string SearchStatus { get; private set; } = string.Empty;
 
         [Bindable(true, BindingDirection.OneWay)] public FileSystemOptionsViewModel Options { get; }
         [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<IFileSystemDrive> Items { get; }
+
+        /// <summary>
+        /// The folder to open once the drives have been loaded for the first time.
+        /// </summary>
+        public string? InitialFolder { get; set; }
+
+        /// <summary>
+        /// Raised when <see cref="OpenCommand"/> is executed for a file, which is the <see cref="SelectedEntry"/> when it comes from the detail view.
+        /// </summary>
+        public event EventHandler<IFileSystemChild>? FileOpened;
 
         public FileSystemViewModel(
             IScheduler scheduler,
@@ -103,6 +122,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             _cache = new SourceCache<IFileSystemDrive, string>(vm => vm.Name);
             _searchResults = new ObservableCollectionExtended<IFileSystemChild>();
             _readOnlySearchResults = new ReadOnlyObservableCollection<IFileSystemChild>(_searchResults);
+            _filteredEntries = new ObservableCollectionExtended<IFileSystemChild>();
+            _readOnlyFilteredEntries = new ReadOnlyObservableCollection<IFileSystemChild>(_filteredEntries);
             _mapper = new FileSystemViewModelMapper(this, factory);
 
             var itemsSubscription = _cache.Connect()
@@ -148,23 +169,36 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         }
 
         /// <summary>
-        /// Moves the tree selection to a folder of the detail view. Search results are separate instances, so the tree is walked by path.
+        /// Moves the tree selection to a folder of the detail view or reports a file through <see cref="FileOpened"/>.
         /// </summary>
         [RelayCommand]
         private async Task Open(IFileSystemChild? entry)
         {
-            if (entry is not IFileSystemDirectory directory)
+            switch (entry)
             {
-                return;
-            }
+                case IFileSystemDirectory directory:
+                    await OpenFolder(directory.FullName);
+                    break;
 
-            IFileSystemParent? current = Items.FirstOrDefault(p => directory.FullName.StartsWith(p.FullName, StringComparison.OrdinalIgnoreCase));
+                case not null:
+                    FileOpened?.Invoke(this, entry);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Search results are separate instances, so the tree is walked by path. Stops at the deepest folder that exists.
+        /// </summary>
+        internal async Task OpenFolder(string path)
+        {
+            // the Items collection receives the drives through the scheduler
+            IFileSystemParent? current = _cache.Items.FirstOrDefault(p => path.StartsWith(p.FullName, StringComparison.OrdinalIgnoreCase));
             if (current is null)
             {
                 return;
             }
 
-            foreach (var segment in Path.GetRelativePath(current.FullName, directory.FullName).Split(Path.DirectorySeparatorChar))
+            foreach (var segment in Path.GetRelativePath(current.FullName, path).Split(Path.DirectorySeparatorChar))
             {
                 if (!current.IsLoaded)
                 {
@@ -199,8 +233,73 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             Breadcrumbs = GetBreadcrumbs(container);
 
             SearchText = string.Empty;
-            Entries = container.Items;
+            Entries = GetEntries(container);
             Inspected = container;
+        }
+
+        /// <summary>
+        /// The items of a container, the unfiltered collection is used directly, so that nothing has to be kept in sync without a filter.
+        /// </summary>
+        private ReadOnlyObservableCollection<IFileSystemChild>? GetEntries(IFileSystemParent? container)
+        {
+            StopFiltering();
+
+            if (container is null || FileFilter is null)
+            {
+                return container?.Items;
+            }
+
+            _filteredSource = container.Items;
+            ((INotifyCollectionChanged)_filteredSource).CollectionChanged += OnFilteredSourceChanged;
+            UpdateFilteredEntries();
+
+            return _readOnlyFilteredEntries;
+        }
+
+        private void StopFiltering()
+        {
+            if (_filteredSource is not null)
+            {
+                ((INotifyCollectionChanged)_filteredSource).CollectionChanged -= OnFilteredSourceChanged;
+                _filteredSource = null;
+            }
+        }
+
+        private void OnFilteredSourceChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateFilteredEntries();
+            RestoreSelectedEntry(_filteredEntries);
+        }
+
+        private void UpdateFilteredEntries()
+        {
+            using (_filteredEntries.SuspendNotifications())
+            {
+                _filteredEntries.Clear();
+                _filteredEntries.AddRange(_filteredSource!.Where(IsDisplayed));
+            }
+        }
+
+        private bool IsDisplayed(IFileSystemChild entry)
+        {
+            return entry.IsContainer || FileFilter?.IsMatch(entry.Name) != false;
+        }
+
+        partial void OnFileFilterChanged(FileSystemFilter? value)
+        {
+            if (SelectedEntry is not null && !IsDisplayed(SelectedEntry))
+            {
+                SelectedEntry = null;
+            }
+
+            if (IsSearchActive)
+            {
+                OnSearchTextChanged(SearchText);
+            }
+            else
+            {
+                Entries = GetEntries(SelectedContainer);
+            }
         }
 
         private static List<IFileSystemParent> GetBreadcrumbs(IFileSystemParent container)
@@ -284,7 +383,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 IsSearchActive = false;
                 IsSearching = false;
                 SearchStatus = string.Empty;
-                Entries = SelectedContainer?.Items;
+                Entries = GetEntries(SelectedContainer);
 
                 if (Entries is not null)
                 {
@@ -317,13 +416,14 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                     }
 
                     var remaining = MaxSearchResults - _searchResults.Count;
+                    var matches = batch.Items.Where(IsDisplayed).ToList();
 
-                    _searchResults.AddRange(batch.Items.Take(remaining));
-                    Dispose(batch.Items.Skip(remaining));
-                    RestoreSelectedEntry(batch.Items.Take(remaining));
+                    _searchResults.AddRange(matches.Take(remaining));
+                    Dispose(batch.Items.Except(matches.Take(remaining)));
+                    RestoreSelectedEntry(matches.Take(remaining));
 
                     skipped += batch.IsSkipped ? 1 : 0;
-                    isLimited = batch.Items.Count >= remaining;
+                    isLimited = matches.Count >= remaining;
                     UpdateSearchStatus(scope, skipped, isLimited);
 
                     if (isLimited)
@@ -386,6 +486,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             CancelAndDispose(ref _searchCancellation);
             CancelAndDispose(ref _permissionsCancellation);
             ClearSearchResults();
+            StopFiltering();
+            _factory.Messenger.UnregisterAll(_mapper);
             _compositeDisposable.Dispose();
         }
     }
