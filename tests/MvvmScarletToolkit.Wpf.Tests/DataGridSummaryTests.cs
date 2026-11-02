@@ -63,12 +63,10 @@ namespace MvvmScarletToolkit.Wpf.Tests
             return (grid, new DataGridSummaryBar { DataGrid = grid }, rows);
         }
 
-        private static async Task Calculated()
+        private static Task Calculated(DataGridSummaryBar bar)
         {
-            // the calculation runs on the thread pool
-            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
-            await Task.Delay(50);
-            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+            // the calculation runs on the thread pool, a fixed delay is too short on slow build agents
+            return Ui.WaitUntil(() => !bar.IsCalculating);
         }
 
         [Fact]
@@ -77,7 +75,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
             return StaRunner.Run(async () =>
             {
                 var (_, bar, _) = Create();
-                await Calculated();
+                await Calculated(bar);
 
                 Assert.Equal(2, bar.Cells.Count);
                 Assert.Null(bar.Cells[0].Text);
@@ -96,12 +94,12 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 DataGridSummaryBar.SetFormat(grid.Columns[1], format);
 
                 grid.Language = XmlLanguage.GetLanguage("de-DE");
-                await Calculated();
+                await Calculated(bar);
 
                 Assert.Equal(german, bar.Cells[1].Text);
 
                 grid.Language = XmlLanguage.GetLanguage("en-US");
-                await Calculated();
+                await Calculated(bar);
 
                 Assert.Equal(english, bar.Cells[1].Text);
             });
@@ -247,13 +245,13 @@ namespace MvvmScarletToolkit.Wpf.Tests
             return StaRunner.Run(async () =>
             {
                 var (grid, bar, _) = Create();
-                await Calculated();
+                await Calculated(bar);
 
                 var menu = bar.CreateMenu(bar.Cells[1])!;
                 Assert.True(((MenuItem)menu.Items[1]).IsChecked);
 
                 ((MenuItem)menu.Items[4]).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
-                await Calculated();
+                await Calculated(bar);
 
                 Assert.Equal(DataGridSummaryFunction.Maximum, DataGridSummaryBar.GetFunction(grid.Columns[1]));
                 Assert.Equal(2.5m.ToString("0.00", new System.Globalization.CultureInfo("en-US")), bar.Cells[1].Text);
@@ -268,14 +266,14 @@ namespace MvvmScarletToolkit.Wpf.Tests
             {
                 var (grid, bar, rows) = Create();
                 DataGridSummaryBar.SetFunction(grid.Columns[0], DataGridSummaryFunction.Maximum);
-                await Calculated();
+                await Calculated(bar);
 
                 var cells = bar.Cells.ToArray();
                 var untouched = new List<string?>();
                 cells[0].PropertyChanged += (_, e) => untouched.Add(e.PropertyName);
 
                 DataGridSummaryBar.SetFunction(grid.Columns[1], DataGridSummaryFunction.Average);
-                await Calculated();
+                await Calculated(bar);
 
                 Assert.Equal(cells, bar.Cells);
                 Assert.Empty(untouched);
@@ -292,13 +290,13 @@ namespace MvvmScarletToolkit.Wpf.Tests
 
                 DataGridSummaryBar.SetFunction(grid.Columns[1], DataGridSummaryFunction.Maximum);
                 DataGridSummaryBar.SetFunction(grid.Columns[1], DataGridSummaryFunction.Minimum);
-                await Calculated();
+                await Calculated(bar);
 
                 Assert.Equal(1.5m.ToString("0.00", new System.Globalization.CultureInfo("en-US")), bar.Cells[1].Text);
 
                 DataGridSummaryBar.SetFunction(grid.Columns[1], DataGridSummaryFunction.Maximum);
                 DataGridSummaryBar.SetFunction(grid.Columns[1], DataGridSummaryFunction.None);
-                await Calculated();
+                await Calculated(bar);
 
                 Assert.Null(bar.Cells[1].Text);
             });
@@ -332,7 +330,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 var (grid, bar, _) = Create();
 
                 grid.Columns[0].Visibility = Visibility.Collapsed;
-                await Calculated();
+                await Calculated(bar);
 
                 Assert.Single(bar.Cells);
                 Assert.NotNull(bar.Cells[0].Text);
@@ -347,7 +345,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 var (grid, bar, _) = Create();
 
                 grid.Columns[1].DisplayIndex = 0;
-                await Calculated();
+                await Calculated(bar);
 
                 Assert.NotNull(bar.Cells[0].Text);
                 Assert.Null(bar.Cells[1].Text);
@@ -362,7 +360,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 var (_, bar, rows) = Create();
 
                 rows.Add(new Row(4, 6, null));
-                await Calculated();
+                await Calculated(bar);
 
                 Assert.Equal(10m.ToString("0.00", new System.Globalization.CultureInfo("en-US")), bar.Cells[1].Text);
             });
@@ -376,7 +374,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 var (grid, bar, _) = Create();
 
                 grid.Items.Filter = p => ((Row)p).Id == 1;
-                await Calculated();
+                await Calculated(bar);
 
                 Assert.Equal(1.5m.ToString("0.00", new System.Globalization.CultureInfo("en-US")), bar.Cells[1].Text);
             });
