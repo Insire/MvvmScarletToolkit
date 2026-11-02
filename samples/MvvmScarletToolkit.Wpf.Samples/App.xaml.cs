@@ -101,8 +101,8 @@ namespace MvvmScarletToolkit.Wpf.Samples
             serviceCollection.AddSingleton(new SemaphoreSlim(Environment.ProcessorCount));
             serviceCollection.AddSingleton(new ImageDataFileystemCacheOptions() { CacheDirectoryPath = environmentInformationProvider.GetRawImagesFolderPath(), CreateFolder = true, IsEnabled = true });
             serviceCollection.AddSingleton(new ImageFilesystemCacheOptions() { IsEnabled = true, CacheDirectoryPath = environmentInformationProvider.GetEncodedImagesFolderPath(), CreateFolder = true });
-            serviceCollection.AddSingleton(new ImageDataMemoryCacheOptions() { IsEnabled = true });
-            serviceCollection.AddSingleton(new ImageMemoryCacheOptions() { IsEnabled = true });
+            serviceCollection.AddSingleton(new ImageDataMemoryCacheOptions() { IsEnabled = true, MaxEntries = 200 });
+            serviceCollection.AddSingleton(new ImageMemoryCacheOptions() { IsEnabled = true, MaxEntries = 200 });
             serviceCollection.AddSingleton(new ImageServiceOptions() { DefaultHeight = 300, DefaultWidth = 300 });
             serviceCollection.AddSingleton(provider => new Lazy<IImageService<BitmapSource>>(() => provider.GetRequiredService<ImageService<BitmapSource>>()));
             serviceCollection.AddMemoryCache();

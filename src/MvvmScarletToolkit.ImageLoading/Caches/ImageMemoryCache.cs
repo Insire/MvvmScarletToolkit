@@ -10,6 +10,7 @@ namespace MvvmScarletToolkit.ImageLoading.Caches
         private readonly ILogger<ImageMemoryCache<TImage>> _logger;
         private readonly IMemoryCache _memoryCache;
         private readonly ImageMemoryCacheOptions _options;
+        private readonly MemoryCacheEntryLimit? _entryLimit;
 
         public ImageMemoryCache(
             ILogger<ImageMemoryCache<TImage>> logger,
@@ -19,6 +20,7 @@ namespace MvvmScarletToolkit.ImageLoading.Caches
             _logger = logger;
             _memoryCache = memoryCache;
             _options = options;
+            _entryLimit = options.MaxEntries > 0 ? new MemoryCacheEntryLimit(memoryCache, options.MaxEntries) : null;
         }
 
         /// <inheritdoc />
@@ -32,6 +34,7 @@ namespace MvvmScarletToolkit.ImageLoading.Caches
             var key = CreateKey(uri, requestedSize);
             if (_memoryCache.TryGetValue(key, out TImage? cachedImage))
             {
+                _entryLimit?.Touch(key);
                 _logger.LogDebug("Image with {Key} was found in memory", key);
 
                 return Task.FromResult(cachedImage);
@@ -56,6 +59,7 @@ namespace MvvmScarletToolkit.ImageLoading.Caches
             {
                 cacheEntry.AbsoluteExpiration = DateTimeOffset.UtcNow.AddSeconds(_options.AbsoluteExpirationOffsetInSeconds);
                 cacheEntry.Value = image;
+                _entryLimit?.Add(cacheEntry);
 
                 if (_logger.IsEnabled(LogLevel.Trace))
                 {
