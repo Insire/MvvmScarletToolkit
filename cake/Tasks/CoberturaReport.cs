@@ -4,7 +4,7 @@ using Cake.Frosting;
 
 namespace Build.Tasks
 {
-    [IsDependentOn(typeof(ConvertCoverage))]
+    [IsDependentOn(typeof(Test))]
     public sealed class CoberturaReport : FrostingTask<BuildContext>
     {
         public override void Run(BuildContext context)
