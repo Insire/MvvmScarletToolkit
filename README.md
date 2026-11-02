@@ -1,4 +1,9 @@
-# MvvmScarletToolkit
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/branding/wordmark-dark.svg">
+    <img src="assets/branding/wordmark.svg" alt="MvvmScarletToolkit" width="420">
+  </picture>
+</h1>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Insire/MvvmScarletToolkit/blob/master/LICENSE.md)
 [![NuGet](https://img.shields.io/nuget/v/MvvmScarletToolkit.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/MvvmScarletToolkit/)
@@ -234,7 +239,4 @@ Parts of this codebase were written with the help of Claude, an AI assistant by 
 
 ## TODO
 
-- add more tests
-- improve documentation
-- add a nice icon for this lib
 - add Contribution guidelines
