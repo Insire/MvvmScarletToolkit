@@ -4,7 +4,7 @@ using Cake.Frosting;
 
 namespace Build.Tasks
 {
-    [IsDependentOn(typeof(ConvertCoverage))]
+    [IsDependentOn(typeof(Test))]
     public sealed class HtmlReport : FrostingTask<BuildContext>
     {
         public override void Run(BuildContext context)

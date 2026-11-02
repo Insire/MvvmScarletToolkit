@@ -13,7 +13,7 @@ namespace MvvmScarletToolkit.Test.Tracing.Otel.Fixtures
         internal static ActivitySource ActivitySource { get; } = new ActivitySource(TracerName);
 
         private const string TracerName = "unittest-with-otel";
-        private readonly TracerProvider _tracerProvider;
+        private readonly TracerProvider? _tracerProvider;
 
         public OpenTelemetryMonitoredFixture()
         {
@@ -23,8 +23,8 @@ namespace MvvmScarletToolkit.Test.Tracing.Otel.Fixtures
         public void Dispose()
         {
             TraceTestAttributeBase.ActivityForTestRun?.Stop();
-            _tracerProvider.ForceFlush();
-            _tracerProvider.Dispose();
+            _tracerProvider?.ForceFlush();
+            _tracerProvider?.Dispose();
         }
     }
 }

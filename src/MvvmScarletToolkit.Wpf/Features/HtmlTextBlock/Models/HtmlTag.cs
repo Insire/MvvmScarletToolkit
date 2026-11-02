@@ -20,17 +20,17 @@ namespace MvvmScarletToolkit.Wpf
         private readonly Lazy<int> _level;
 
         /// <summary>
-        /// HtmlTag Id in BuiltInTags. (without <>)
+        /// HtmlTag Id in BuiltInTags. (without &lt;&gt;)
         /// </summary>
         public int Id => _id.Value;
 
         /// <summary>
-        /// HtmlTag name. (without <>)
+        /// HtmlTag name. (without &lt;&gt;)
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// HtmlTag Level in BuiltInTags. (without <>)
+        /// HtmlTag Level in BuiltInTags. (without &lt;&gt;)
         /// </summary>
         internal int Level => _level.Value;
 

@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <Nullable>enable</Nullable>
-    <Description>MvvmScarletToolkit.Implementations is part of the MvvmScarletToolkit framework, containing concrete implementations for WPF that have been abstracted away in the MvvmScarletToolkit.Abstractions library.</Description>
+    <Description>MvvmScarletToolkit.Wpf is part of the MvvmScarletToolkit framework, containing concrete implementations for WPF that have been abstracted away in the MvvmScarletToolkit.Abstractions library.</Description>
     <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,WPF,Library,.NET,OSS,OpenSource</PackageTags>
   </PropertyGroup>
 

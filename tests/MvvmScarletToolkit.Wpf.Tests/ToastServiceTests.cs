@@ -54,20 +54,17 @@ namespace MvvmScarletToolkit.Wpf.Tests
         {
             return StaRunner.Run(async () =>
             {
-                // visible long enough to observe the toast before it is removed again
-                var configuration = new ToastServiceConfiguration
-                {
-                    ToastVisibleFor = TimeSpan.FromMilliseconds(300),
-                    ToastCloseDelay = TimeSpan.FromMilliseconds(10),
-                    WindowCloseDelay = TimeSpan.FromMilliseconds(10),
-                };
-                using var service = new HeadlessToastService(configuration, SynchronizationContext.Current!);
+                using var service = new HeadlessToastService(_configuration, SynchronizationContext.Current!);
                 var toast = new ToastViewModel("title", "body", ToastType.Information, false);
 
-                service.Show(toast);
-                await Ui.WaitUntil(() => service.Items.Count == 1);
+                // not polled, a busy machine can add and remove the toast between two polls.
+                // not NewItems either, Bind applies the first change set as a Reset
+                var added = false;
+                service.Items.CollectionChanged += (_, _) => added |= service.Items.Contains(toast);
 
-                await Ui.WaitUntil(() => service.Items.Count == 0);
+                service.Show(toast);
+
+                await Ui.WaitUntil(() => added && service.Items.Count == 0);
                 Assert.True(toast.IsRemoving);
             });
         }

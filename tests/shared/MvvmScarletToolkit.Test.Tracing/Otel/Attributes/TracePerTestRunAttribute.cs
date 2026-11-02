@@ -11,12 +11,12 @@ namespace MvvmScarletToolkit.Test.Tracing.Otel.Attributes
 
         public override void Before(MethodInfo methodUnderTest, IXunitTest test)
         {
-            if (ActivityForTestRun == null)
+            if (ActivityForTestRun == null && OpenTelemetryFixtureBase.IsEnabled)
             {
                 throw new ArgumentNullException(nameof(ActivityForTestRun), "The test run Activity was null, and therefore can't be used");
             }
 
-            _activityForThisTest = OpenTelemetryMonitoredFixture.ActivitySource.StartActivity(methodUnderTest.Name, ActivityKind.Internal, ActivityForTestRun.Context);
+            _activityForThisTest = OpenTelemetryMonitoredFixture.ActivitySource.StartActivity(methodUnderTest.Name, ActivityKind.Internal, ActivityForTestRun?.Context ?? default);
 
             base.Before(methodUnderTest, test);
         }

@@ -3,7 +3,7 @@
   <Import Project="../../package.props" />
 
   <PropertyGroup>
-    <Description>MvvmScarletToolkit.Implementations is part of the MvvmScarletToolkit framework, containing concrete implementations for Avalonia that have been abstracted away in the MvvmScarletToolkit.Abstractions library.</Description>
+    <Description>MvvmScarletToolkit.Avalonia is part of the MvvmScarletToolkit framework, containing concrete implementations for Avalonia that have been abstracted away in the MvvmScarletToolkit.Abstractions library.</Description>
     <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,Avalonia,Library,.NET,OSS,OpenSource</PackageTags>
   </PropertyGroup>
 

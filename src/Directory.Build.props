@@ -9,14 +9,29 @@
     <RepositoryUrl>https://github.com/Insire/MvvmScarletToolkit</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes></PackageReleaseNotes>
+    <Copyright>© $([System.DateTime]::UtcNow.Year) Insire</Copyright>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <!-- pinned transitive packages would otherwise be published as direct dependencies -->
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
+
+  <!-- XML documentation for IntelliSense, without demanding docs on every public member -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
 
   <PropertyGroup>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TF_BUILD)' == 'true' Or '$(VALIDATE_DETERMINISTIC_BUILDS)' == 'true'">

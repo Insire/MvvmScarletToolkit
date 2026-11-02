@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- samples are not deployed, vulnerable packages only warn -->
+    <PropertyGroup>
+        <FailOnVulnerablePackages>false</FailOnVulnerablePackages>
+    </PropertyGroup>
+
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" Condition="'' != $([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
 
     <PropertyGroup>

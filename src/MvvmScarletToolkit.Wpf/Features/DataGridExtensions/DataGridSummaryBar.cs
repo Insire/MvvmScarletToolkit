@@ -34,7 +34,13 @@ namespace MvvmScarletToolkit
         private readonly List<DataGridColumn> _columns = [];
 
         private bool _isCalculationPending;
+        private int _runningCalculations;
         private double _horizontalOffset;
+
+        /// <summary>
+        /// Whether a calculation is scheduled or its results have not been applied to the cells yet
+        /// </summary>
+        internal bool IsCalculating => _isCalculationPending || _runningCalculations > 0;
 
         public ObservableCollection<DataGridSummaryCell> Cells { get; } = [];
 
@@ -384,15 +390,23 @@ namespace MvvmScarletToolkit
             var items = DataGrid.Items.Cast<object>().Where(p => !ReferenceEquals(p, CollectionView.NewItemPlaceholder)).ToArray();
             var culture = DataGrid.GetCulture();
 
-            var results = await Task.Run(() => work.Select(p => Format(DataGridSummaryCalculator.Calculate(items, p.Path!, p.Function), p.Format, culture)).ToArray());
-
-            for (var i = 0; i < work.Length; i++)
+            _runningCalculations++;
+            try
             {
-                // a newer calculation of this cell may have started in the meantime
-                if (work[i].Version == work[i].Cell.Version)
+                var results = await Task.Run(() => work.Select(p => Format(DataGridSummaryCalculator.Calculate(items, p.Path!, p.Function), p.Format, culture)).ToArray());
+
+                for (var i = 0; i < work.Length; i++)
                 {
-                    work[i].Cell.Text = results[i];
+                    // a newer calculation of this cell may have started in the meantime
+                    if (work[i].Version == work[i].Cell.Version)
+                    {
+                        work[i].Cell.Text = results[i];
+                    }
                 }
+            }
+            finally
+            {
+                _runningCalculations--;
             }
         }
 

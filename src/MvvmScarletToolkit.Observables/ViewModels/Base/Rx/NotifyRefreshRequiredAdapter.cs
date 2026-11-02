@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 namespace MvvmScarletToolkit
 {
     /// <summary>
-    /// Adapter class around <see cref="Observable.FromEventPattern{T}"/>
+    /// Adapter class around <see cref="Observable.FromEventPattern{TEventArgs}(Action{EventHandler{TEventArgs}}, Action{EventHandler{TEventArgs}})"/>
     /// </summary>
     public sealed class NotifyRefreshRequiredAdapter : INotifyRefreshRequired
     {

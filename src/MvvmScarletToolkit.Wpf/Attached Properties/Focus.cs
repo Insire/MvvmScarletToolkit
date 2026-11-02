@@ -10,7 +10,7 @@ namespace MvvmScarletToolkit
     /// </summary>
     /// <example>
     /// In xaml
-    /// <Window namespace:Focus.First="true"></window>
+    /// <code>&lt;Window namespace:Focus.First="true"&gt;&lt;/Window&gt;</code>
     /// </example>
     public static class Focus
     {
