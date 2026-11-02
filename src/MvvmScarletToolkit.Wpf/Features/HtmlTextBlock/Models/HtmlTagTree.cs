@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace MvvmScarletToolkit.Wpf
 {
     /// <summary>
@@ -61,7 +58,7 @@ namespace MvvmScarletToolkit.Wpf
             }
         }
 
-        public override bool CanAdd(HtmlTag tag)
+        public override bool CanAdd(HtmlTag? tag)
         {
             return true;
         }
@@ -84,12 +81,12 @@ namespace MvvmScarletToolkit.Wpf
             {
                 var tag = input.Substring(startIndex + 1, endIndex - startIndex - 1);
                 beforeTag = input[..startIndex];
-                afterTag = input.Substring(endIndex + 1, input.Length - endIndex - 1);
+                afterTag = input[(endIndex + 1)..];
 
                 var pos3 = tag.IndexOf(' ');
                 if ((pos3 != -1) && (tag != string.Empty))
                 {
-                    name = tag.Substring(0, pos3);
+                    name = tag[..pos3];
                     vars = tag.Substring(pos3 + 1, tag.Length - pos3 - 1);
                 }
                 else
@@ -108,7 +105,8 @@ namespace MvvmScarletToolkit.Wpf
                     var pos4 = afterTag.IndexOf("-->", StringComparison.Ordinal);
                     if (pos4 != -1)
                     {
-                        afterTag = afterTag.Substring(pos4 + 2, afterTag.Length - pos4 - 1);
+                        // skip past the closing "-->"
+                        afterTag = afterTag[(pos4 + 3)..];
                     }
                 }
 

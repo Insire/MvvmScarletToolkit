@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 
 namespace MvvmScarletToolkit.Wpf
 {
@@ -10,8 +9,7 @@ namespace MvvmScarletToolkit.Wpf
         /// so that there is time to animate its removal
         /// </summary>
         [ObservableProperty]
-        private bool _isRemoving;
-
+        public partial bool IsRemoving { get; set; }
         public string Title { get; }
 
         public string Body { get; }

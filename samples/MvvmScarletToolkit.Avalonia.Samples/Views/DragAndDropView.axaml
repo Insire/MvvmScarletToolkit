@@ -1,0 +1,130 @@
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.DragAndDropView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:behaviors="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:image="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Image;assembly=MvvmScarletToolkit.Core.Samples"
+             xmlns:local="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             behaviors:ViewLifecycle.LoadCommand="{Binding Source.LoadCommand}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="image:ProcessingImagesViewModel"
+             mc:Ignorable="d">
+
+    <Grid ColumnDefinitions="440,4,*" RowDefinitions="*,4,Auto,4">
+        <ListBox x:Name="SourceList"
+                 Grid.Column="0"
+                 DragDrop.AllowDrop="True"
+                 ItemsSource="{Binding Source.Items}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="image:ImageViewModel">
+                    <Grid Background="Transparent"
+                          ColumnDefinitions="50,4,90,4,250"
+                          PointerMoved="Element_PointerMoved"
+                          PointerPressed="Element_PointerPressed"
+                          PointerReleased="Element_PointerReleased">
+                        <Button Grid.Column="0"
+                                Command="{Binding MoveToTargetCommand}"
+                                Content="&gt;" />
+
+                        <local:ImagePlaceholder Grid.Column="2"
+                                                Width="90"
+                                                Height="90"
+                                                DecodeSize="90" />
+
+                        <StackPanel Grid.Column="4" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding Path}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Grid Grid.Row="0"
+              Grid.RowSpan="3"
+              Grid.Column="2"
+              x:DataType="image:TargetImagesViewModel"
+              ColumnDefinitions="*,4,*"
+              DataContext="{ReflectionBinding Target}"
+              RowDefinitions="*,4,Auto,4">
+            <ListBox x:Name="TargetList"
+                     Grid.Row="0"
+                     Grid.Column="0"
+                     DragDrop.AllowDrop="True"
+                     ItemsSource="{Binding Items}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     SelectedItem="{Binding SelectedItem}"
+                     SelectedItems="{Binding SelectedItems}"
+                     SelectionMode="Multiple">
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding RemoveRangeCommand}"
+                                  CommandParameter="{Binding SelectedItems}"
+                                  Header="Remove selected" />
+                        <MenuItem Command="{Binding RemoveCommand}"
+                                  CommandParameter="{Binding SelectedItem}"
+                                  Header="Remove" />
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="image:ImageViewModel">
+                        <Grid Width="200"
+                              Height="200"
+                              Background="Transparent"
+                              PointerMoved="Element_PointerMoved"
+                              PointerPressed="Element_PointerPressed"
+                              PointerReleased="Element_PointerReleased">
+                            <local:ImagePlaceholder Width="200"
+                                                    Height="200"
+                                                    DecodeSize="200" />
+
+                            <Border VerticalAlignment="Top" Opacity="0.75">
+                                <TextBlock Margin="0 4"
+                                           Text="{Binding DisplayName}"
+                                           TextAlignment="Center" />
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <Grid Grid.Row="0"
+                  Grid.RowSpan="4"
+                  Grid.Column="2"
+                  x:DataType="image:ImageViewModel"
+                  DataContext="{ReflectionBinding SelectedItem}"
+                  RowDefinitions="*,4,Auto">
+                <local:ImagePlaceholder Grid.Row="0" DecodeSize="800" />
+
+                <StackPanel Grid.Row="2">
+                    <TextBlock Text="{Binding DisplayName, StringFormat='DisplayName: {0}'}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="{Binding Path, StringFormat='Path: {0}'}" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Grid.Row="2"
+                        Grid.Column="0"
+                        Orientation="Horizontal">
+                <Button Margin="0 0 4 0"
+                        Command="{Binding RemoveRangeCommand}"
+                        CommandParameter="{Binding SelectedItems}"
+                        Content="Remove" />
+                <Button Command="{Binding ClearCommand}" Content="Clear" />
+            </StackPanel>
+        </Grid>
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="0"
+                   HorizontalAlignment="Right"
+                   Text="{Binding Source.Count, StringFormat='{}{0} Images'}" />
+    </Grid>
+</UserControl>

@@ -1,5 +1,3 @@
-using System;
-
 namespace MvvmScarletToolkit
 {
     public interface IScarletEventManager<TEventSource, TEventArgs>

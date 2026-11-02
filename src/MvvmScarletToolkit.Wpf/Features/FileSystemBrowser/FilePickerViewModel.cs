@@ -1,22 +1,24 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives;
-using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files;
-using System.Collections.ObjectModel;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
-    public class FilePickerViewModel : ObservableObject
+    public sealed class FilePickerViewModel : FileSystemPickerViewModel
     {
-        private readonly FileSystemViewModel _fileSystemViewModel;
-
-        public FilePickerViewModel(FileSystemViewModel fileSystemViewModel)
+        public FilePickerViewModel(FileSystemViewModel fileSystemViewModel, params FileSystemFilter[] filters)
+            : base(fileSystemViewModel, filters)
         {
-            _fileSystemViewModel = fileSystemViewModel;
         }
 
-        [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<IFileSystemDrive> Items => _fileSystemViewModel.Items;
+        [Bindable(true, BindingDirection.OneWay)] public override string? SelectedPath => FileSystem.SelectedFile?.FullName;
 
-        [Bindable(true, BindingDirection.OneWay)] public ScarletFile? SelectedFile => _fileSystemViewModel.SelectedFile;
+        [Bindable(true, BindingDirection.OneWay)] public override string Title => "Select a file";
+
+        [Bindable(true, BindingDirection.OneWay)] public override string ConfirmText => "Open";
+
+        protected override void OnFileOpened(object? sender, IFileSystemChild file)
+        {
+            ConfirmCommand.Execute(null);
+        }
     }
 }

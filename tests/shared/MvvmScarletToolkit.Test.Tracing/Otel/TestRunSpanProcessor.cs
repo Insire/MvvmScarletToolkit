@@ -1,7 +1,7 @@
 using OpenTelemetry;
 using System.Diagnostics;
 
-namespace MvvmScarletToolkit.Mediator.Tests.Otel
+namespace MvvmScarletToolkit.Test.Tracing.Otel
 {
     public sealed class TestRunSpanProcessor : BaseProcessor<Activity>
     {
@@ -12,7 +12,7 @@ namespace MvvmScarletToolkit.Mediator.Tests.Otel
             _testRunId = testRunId;
         }
 
-        public override void OnStart(Activity data)
+        public override void OnStart(Activity? data)
         {
             data?.SetTag("test.run_id", _testRunId);
         }

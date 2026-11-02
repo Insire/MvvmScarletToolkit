@@ -1,22 +1,22 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives;
-using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files;
-using System.Collections.ObjectModel;
+using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories;
 using System.ComponentModel;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
-    public class FolderPickerViewModel : ObservableObject
+    public sealed class FolderPickerViewModel : FileSystemPickerViewModel
     {
         public FolderPickerViewModel(FileSystemViewModel fileSystemViewModel)
+            : base(fileSystemViewModel, [])
         {
-            FileSystem = fileSystemViewModel;
         }
 
-        [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<IFileSystemDrive> Items => FileSystem.Items;
+        /// <summary>
+        /// The folder selected in the detail view, otherwise the displayed folder or drive.
+        /// </summary>
+        [Bindable(true, BindingDirection.OneWay)] public override string? SelectedPath => (FileSystem.SelectedEntry as IFileSystemDirectory)?.FullName ?? FileSystem.SelectedContainer?.FullName;
 
-        [Bindable(true, BindingDirection.OneWay)] public ScarletFile? SelectedFile => FileSystem.SelectedFile;
+        [Bindable(true, BindingDirection.OneWay)] public override string Title => "Select a folder";
 
-        [Bindable(true, BindingDirection.OneWay)] public FileSystemViewModel FileSystem { get; }
+        [Bindable(true, BindingDirection.OneWay)] public override string ConfirmText => "Select";
     }
 }

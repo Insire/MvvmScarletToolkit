@@ -5,15 +5,13 @@ using DynamicData;
 using DynamicData.Binding;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files
 {
@@ -31,7 +29,10 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string Name { get; private set; } = string.Empty;
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string FullName { get; private set; } = string.Empty;
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string Extension { get; private set; } = string.Empty;
-        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string MimeType { get; private set; } = string.Empty;
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay), NotifyPropertyChangedFor(nameof(TypeName))] public partial string MimeType { get; private set; } = string.Empty;
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string Location { get; private set; } = string.Empty;
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial long? Length { get; private set; }
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial FileAttributes Attributes { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial IFileSystemParent? Parent { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial DateTime? CreationTimeUtc { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial DateTime? LastAccessTimeUtc { get; private set; }
@@ -42,9 +43,22 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsLoaded { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsAccessProhibited { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsBusy { get; private set; }
+
+        /// <summary>
+        /// Whether the header confirmed an image. The extension alone only tells what to expect, so this stays <see langword="false"/> until <see cref="CheckHeaderCommand"/> ran.
+        /// </summary>
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsImage { get; private set; }
 
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsHeaderChecked { get; private set; }
+
+        /// <summary>
+        /// Set by the view, when no codec is available to decode a confirmed image.
+        /// </summary>
+        [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial bool IsPreviewFailed { get; set; }
+
         [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<PropertyViewModel> Properties { get; }
+
+        [Bindable(true, BindingDirection.OneWay)] public string TypeName => MimeTypeNames.Get(MimeType, Extension);
 
         [Bindable(true, BindingDirection.OneWay)] public bool IsContainer => false;
         [Bindable(true, BindingDirection.OneWay)] public FileSystemType FileSystemType { get; } = FileSystemType.File;
@@ -85,6 +99,12 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files
         private Task Refresh(CancellationToken token)
         {
             return _mapper.Refresh(token);
+        }
+
+        [RelayCommand(AllowConcurrentExecutions = false)]
+        private Task CheckHeader(CancellationToken token)
+        {
+            return _mapper.CheckHeader(token);
         }
 
         partial void OnIsSelectedChanged(bool value)

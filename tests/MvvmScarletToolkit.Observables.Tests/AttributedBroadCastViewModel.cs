@@ -7,6 +7,6 @@ namespace MvvmScarletToolkit.Observables.Tests
     {
         [ObservableProperty]
         [NotifyPropertyChangedRecipients]
-        private string _property;
+        public partial string? Property { get; set; }
     }
 }

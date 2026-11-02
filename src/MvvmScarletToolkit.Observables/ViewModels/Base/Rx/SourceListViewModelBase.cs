@@ -1,11 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
 using DynamicData.Binding;
-using System;
-using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Threading;
 
 namespace MvvmScarletToolkit
 {
@@ -103,6 +100,7 @@ namespace MvvmScarletToolkit
                 if (disposing)
                 {
                     _subscription.Dispose();
+                    _sourceCache.Dispose();
                 }
 
                 _disposedValue = true;

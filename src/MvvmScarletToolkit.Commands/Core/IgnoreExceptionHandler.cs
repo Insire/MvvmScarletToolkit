@@ -1,13 +1,8 @@
-using System;
-using System.Threading.Tasks;
-
 namespace MvvmScarletToolkit
 {
     public sealed class IgnoreExceptionHandler : IScarletExceptionHandler
     {
-        private static readonly Lazy<IScarletExceptionHandler> _default = new Lazy<IScarletExceptionHandler>(() => new IgnoreExceptionHandler());
-
-        public static IScarletExceptionHandler Default => _default.Value;
+        public static IScarletExceptionHandler Default { get; } = new IgnoreExceptionHandler();
 
         public Task Handle(Exception ex)
         {

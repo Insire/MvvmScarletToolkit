@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -38,7 +37,7 @@ namespace MvvmScarletToolkit
             "By",
             typeof(Predicate<object>),
             typeof(Filter),
-            new PropertyMetadata(default(Predicate<object>), OnByChanged));
+            new PropertyMetadata(null, OnByChanged));
 
         /// <summary>Helper for setting <see cref="ByProperty"/> on <paramref name="element"/>.</summary>
         /// <param name="element"><see cref="DependencyObject"/> to set <see cref="ByProperty"/> on.</param>
@@ -75,7 +74,7 @@ namespace MvvmScarletToolkit
             "RefreshWhenChanged",
             typeof(object),
             typeof(Filter),
-            new PropertyMetadata(default, OnRefreshWhenChangedChanged));
+            new PropertyMetadata(null, OnRefreshWhenChangedChanged));
 
         /// <summary>Helper for setting <see cref="RefreshWhenChangedProperty"/> on <paramref name="element"/>.</summary>
         /// <param name="element"><see cref="ItemsControl"/> to set <see cref="RefreshWhenChangedProperty"/> on.</param>
@@ -94,74 +93,84 @@ namespace MvvmScarletToolkit
             return element.GetValue(RefreshWhenChangedProperty);
         }
 
+        private static readonly DependencyPropertyDescriptor _viewDescriptor = DependencyPropertyDescriptor.FromProperty(CollectionViewSource.ViewProperty, typeof(CollectionViewSource));
+
         private static void OnByChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (e.NewValue is not Predicate<object> predicate)
-            {
-                return;
-            }
+            var oldPredicate = e.OldValue as Predicate<object>;
+            var predicate = e.NewValue as Predicate<object>;
 
-            if (d is ItemsControl itemsControl && itemsControl.Items.CanFilter)
+            switch (d)
             {
-                AttachFilterToCollectionView(itemsControl.Items, predicate);
-                return;
-            }
+                case ItemsControl { Items.CanFilter: true } itemsControl:
+                    ApplyFilter(itemsControl.Items, oldPredicate, predicate);
+                    return;
 
-            if (d is CollectionViewSource collectionViewSource)
-            {
-                if (collectionViewSource.View is null)
-                {
-                    var propertyDescriptor = DependencyPropertyDescriptor.FromProperty(CollectionViewSource.ViewProperty, typeof(CollectionViewSource));
-                    propertyDescriptor?.RemoveValueChanged(collectionViewSource, OnViewChanged);
-                    propertyDescriptor?.AddValueChanged(collectionViewSource, OnViewChanged);
-
-                    void OnViewChanged(object? sender, EventArgs args)
+                case CollectionViewSource collectionViewSource:
+                    // the view may not exist yet or get replaced later, e.g. when Source changes.
+                    // a static handler, a local function capturing variables would be a new delegate on every call and could never be removed
+                    _viewDescriptor.RemoveValueChanged(collectionViewSource, OnViewChanged);
+                    if (predicate is not null)
                     {
-                        if (collectionViewSource.View is null)
-                        {
-                            return;
-                        }
-
-                        AttachFilterToCollectionView(collectionViewSource.View, predicate);
+                        _viewDescriptor.AddValueChanged(collectionViewSource, OnViewChanged);
                     }
-                }
-                else
-                {
-                    AttachFilterToCollectionView(collectionViewSource.View, predicate);
-                }
+
+                    if (collectionViewSource.View is not null)
+                    {
+                        ApplyFilter(collectionViewSource.View, oldPredicate, predicate);
+                    }
+
+                    return;
             }
         }
 
-        private static void AttachFilterToCollectionView(ICollectionView view, Predicate<object> predicate)
+        private static void OnViewChanged(object? sender, EventArgs args)
         {
-            using (view.DeferRefresh())
+            if (sender is CollectionViewSource { View: not null } collectionViewSource)
             {
-                if (view.Filter is null)
-                {
-                    view.Filter = predicate;
-                }
-                else
-                {
-                    view.Filter -= predicate;
-                    view.Filter += predicate;
-                }
+                ApplyFilter(collectionViewSource.View, null, collectionViewSource.GetValue(ByProperty) as Predicate<object>);
             }
+        }
+
+        private static void ApplyFilter(ICollectionView view, Predicate<object>? oldPredicate, Predicate<object>? predicate)
+        {
+            if (!view.CanFilter)
+            {
+                return;
+            }
+
+            if (predicate is null)
+            {
+                // only clear a filter that we set
+                if (oldPredicate is not null && Equals(view.Filter, oldPredicate))
+                {
+                    view.Filter = null;
+                }
+
+                return;
+            }
+
+            // replace instead of combining, a multicast predicate only returns the result of its last delegate
+            view.Filter = predicate;
         }
 
         private static void OnRefreshWhenChangedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is CollectionViewSource collectionViewSource && collectionViewSource.View?.CanFilter == true)
+            switch (d)
             {
-                collectionViewSource.View.Refresh();
-            }
+                case CollectionViewSource { View.CanFilter: true } collectionViewSource:
+                    collectionViewSource.View.Refresh();
+                    break;
 
-            if (d is ItemsControl itemsControl && itemsControl.Items?.CanFilter == true)
-            {
-                // we dont care what property was bound to this,
-                // we only care that it changed. When it changes we refresh the view to force updating the filter
-                var view = CollectionViewSource.GetDefaultView(itemsControl.ItemsSource) as CollectionView;
+                case ItemsControl { Items.CanFilter: true } itemsControl:
+                {
+                    // we dont care what property was bound to this,
+                    // we only care that it changed. When it changes we refresh the view to force updating the filter
+                    var view = CollectionViewSource.GetDefaultView(itemsControl.ItemsSource) as CollectionView;
 
-                view?.Refresh();
+                    view?.Refresh();
+                    break;
+                }
             }
         }
     }

@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Xaml.Behaviors;
-using System;
 using System.Diagnostics;
 using System.Windows.Documents;
 
@@ -57,16 +56,12 @@ namespace MvvmScarletToolkit.Wpf
 
         private void ExecuteImpl()
         {
-            if (AssociatedObject.NavigateUri is Uri uri) // null check
+            if (AssociatedObject.NavigateUri is not { } uri) // null check
             {
-                var info = new ProcessStartInfo("cmd", $"/c start {uri}")
-                {
-                    CreateNoWindow = true,
-                };
-
-                using (Process.Start(info))
-                { }
+                return;
             }
+
+            ShellExecute.Start(ShellExecute.CreateStartInfo(uri));
         }
 
         private bool CanExecuteImpl()

@@ -1,7 +1,4 @@
-using System;
 using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -19,7 +16,7 @@ namespace MvvmScarletToolkit
 
         private readonly Dispatcher _dispatcherObject;
 
-        private bool invokeSynchronous;
+        private bool _invokeSynchronous;
 
         public ScarletDispatcher(Dispatcher dispatcher)
         {
@@ -28,15 +25,15 @@ namespace MvvmScarletToolkit
 
         internal bool GetInvokeSynchronous()
         {
-            return invokeSynchronous;
+            return _invokeSynchronous;
         }
 
         internal void SetInvokeSynchronous(bool value)
         {
-            invokeSynchronous = value;
+            _invokeSynchronous = value;
         }
 
-        public async Task Invoke(Action action, CancellationToken token)
+        public async Task Invoke(Action? action, CancellationToken token)
         {
             if (action is null)
             {
@@ -52,7 +49,7 @@ namespace MvvmScarletToolkit
             await _dispatcherObject.InvokeAsync(action, Priority, token);
         }
 
-        public async Task<T> Invoke<T>(Func<T> action, CancellationToken token)
+        public async Task<T?> Invoke<T>(Func<T>? action, CancellationToken token)
         {
             if (action is null)
             {

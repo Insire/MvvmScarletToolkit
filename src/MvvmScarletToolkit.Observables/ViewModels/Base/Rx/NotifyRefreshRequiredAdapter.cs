@@ -1,11 +1,10 @@
-using System;
 using System.Reactive;
 using System.Reactive.Linq;
 
 namespace MvvmScarletToolkit
 {
     /// <summary>
-    /// Adapter class around <see cref="Observable.FromEventPattern"/>
+    /// Adapter class around <see cref="Observable.FromEventPattern{T}"/>
     /// </summary>
     public sealed class NotifyRefreshRequiredAdapter : INotifyRefreshRequired
     {

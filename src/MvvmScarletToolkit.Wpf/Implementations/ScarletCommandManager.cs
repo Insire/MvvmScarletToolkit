@@ -1,4 +1,3 @@
-using System;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit
@@ -16,10 +15,6 @@ namespace MvvmScarletToolkit
         {
             add => CommandManager.RequerySuggested += value;
             remove => CommandManager.RequerySuggested -= value;
-        }
-
-        public ScarletCommandManager()
-        {
         }
 
         public void InvalidateRequerySuggested()

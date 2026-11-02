@@ -14,7 +14,7 @@ namespace Build.Tasks
             {
                 Verbose = true,
                 WorkingDirectory = context.CoberturaResultsPath,
-                Files = new[] { context.CoberturaResultFile.FullPath },
+                Files = [context.CoberturaResultFile.FullPath],
                 Token = context.EnvironmentVariable("CODECOV_TOKEN"),
             };
 

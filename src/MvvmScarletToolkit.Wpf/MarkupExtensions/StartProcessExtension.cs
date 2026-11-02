@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.Input;
-using System;
+using MvvmScarletToolkit.Wpf;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
@@ -39,8 +39,7 @@ namespace MvvmScarletToolkit
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    using (Process.Start(new ProcessStartInfo("cmd", $"/c start {Url}")))
-                    { }
+                    ShellExecute.Start(ShellExecute.CreateStartInfo(Url));
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {

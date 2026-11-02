@@ -1,9 +1,5 @@
 using MvvmScarletToolkit.Observables;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -14,7 +10,8 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Geometry
         private readonly Typeface _typeface;
         private readonly NumberSubstitution _numberSubstitution;
 
-        private readonly IEnumerable<GeometryContainer> _geomtries;
+        // built on first load and off the UI thread, instead of while the application starts
+        private readonly Lazy<GeometryContainer[]> _geomtries;
 
         public GeometryRenderViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
@@ -22,11 +19,11 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Geometry
             _typeface = new Typeface("Tahoma");
             _numberSubstitution = new NumberSubstitution();
 
-            _geomtries = Enumerable.Range(0, 5000)
+            _geomtries = new Lazy<GeometryContainer[]>(() => Enumerable.Range(0, 5000)
                                     .Select(c => (c % (97 - 32)) + 32)
                                     .Select(c => (char)c)
-                                    .Select(c => new GeometryContainer(BuildGeometry(new string(c, 1), _typeface, _numberSubstitution)))
-                                    .ToArray();
+                                    .Select(c => new GeometryContainer(BuildGeometry(new string(c, 1), _typeface, _numberSubstitution), commandBuilder.Messenger))
+                                    .ToArray());
         }
 
         private static System.Windows.Media.Geometry BuildGeometry(string charachters, Typeface typeface, NumberSubstitution numberSubstitution)
@@ -39,9 +36,21 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.Geometry
             return result;
         }
 
-        protected override Task RefreshInternal(CancellationToken token)
+        protected override async Task RefreshInternal(CancellationToken token)
         {
-            return AddRange(_geomtries, token);
+            var geometries = await Task.Run(() => _geomtries.Value, token).ConfigureAwait(false);
+
+            // one dispatcher call for all items, AddRange would dispatch each item on its own and in no particular order
+            await Dispatcher.Invoke(() =>
+            {
+                foreach (var geometry in geometries)
+                {
+                    AddUnchecked(geometry);
+                }
+
+                OnPropertyChanged(nameof(Count));
+                OnPropertyChanged(nameof(HasItems));
+            }, token).ConfigureAwait(false);
         }
     }
 }

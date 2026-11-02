@@ -1,5 +1,4 @@
 using MvvmScarletToolkit.Observables;
-using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Data;
@@ -19,13 +18,25 @@ namespace MvvmScarletToolkit
 
         public PropertyGroupDescription GroupDescription { get; }
 
+        /// <summary>
+        /// the <see cref="GroupingViewModel"/> this instance belongs to.
+        /// All viewmodels share a messenger, so this keeps separate groupings from reacting to each other
+        /// </summary>
+        internal GroupingViewModel? Owner { get; }
+
         public GroupViewModel(IScarletCommandBuilder commandBuilder, PropertyInfo propertyInfo)
-        : base(commandBuilder)
+            : this(commandBuilder, propertyInfo, null)
         {
-            ArgumentNullException.ThrowIfNull(propertyInfo, nameof(propertyInfo));
+        }
+
+        internal GroupViewModel(IScarletCommandBuilder commandBuilder, PropertyInfo propertyInfo, GroupingViewModel? owner)
+            : base(commandBuilder)
+        {
+            ArgumentNullException.ThrowIfNull(propertyInfo);
 
             _name = propertyInfo.Name;
             GroupDescription = new PropertyGroupDescription(propertyInfo.Name);
+            Owner = owner;
         }
 
         private string GetDebuggerDisplay()

@@ -1,11 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmScarletToolkit.Commands;
 using MvvmScarletToolkit.Observables;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit
@@ -21,32 +18,27 @@ namespace MvvmScarletToolkit
         protected readonly IScarletCommandManager CommandManager;
 
         [ObservableProperty]
-        private TViewModel? _selectedItem;
+        public partial TViewModel? SelectedItem { get; set; }
 
         [Bindable(true, BindingDirection.OneWay)]
         public ObservableCollection<TViewModel> SelectedItems { get; }
 
-        private bool _isBusy;
+        [ObservableProperty]
         [Bindable(true, BindingDirection.OneWay)]
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            protected set { SetProperty(ref _isBusy, value); }
-        }
+        public partial bool IsBusy { get; protected set; }
 
-        private int _totalPageCount;
+        [ObservableProperty]
         [Bindable(true, BindingDirection.TwoWay)]
-        public int TotalPageCount
-        {
-            get { return _totalPageCount; }
-            protected set { SetProperty(ref _totalPageCount, value); }
-        }
+        public partial int TotalPageCount { get; protected set; }
 
         [ObservableProperty]
-        private int _pageSize;
+        public partial int PageSize { get; set; }
 
+        /// <summary>
+        /// 1-based number of the page to load, ranging from 1 to <see cref="TotalPageCount"/>
+        /// </summary>
         [ObservableProperty]
-        private int _currentPage;
+        public partial int CurrentPage { get; set; }
 
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand NextCommand { get; }
@@ -60,16 +52,12 @@ namespace MvvmScarletToolkit
         [Bindable(true, BindingDirection.OneWay)]
         public ICommand LastCommand { get; }
 
-        private bool _isLoaded;
         /// <summary>
         /// Indicates whether <see cref="Load"/> has been called already
         /// </summary>
+        [ObservableProperty]
         [Bindable(true, BindingDirection.OneWay)]
-        public bool IsLoaded
-        {
-            get { return _isLoaded; }
-            protected set { SetProperty(ref _isLoaded, value); }
-        }
+        public partial bool IsLoaded { get; protected set; }
 
         private readonly ConcurrentCommandBase _loadCommand;
         /// <summary>
@@ -80,7 +68,7 @@ namespace MvvmScarletToolkit
 
         private readonly ConcurrentCommandBase _refreshCommand;
         /// <summary>
-        /// Clears <see cref="Items"/> to add new instances
+        /// Clears <see cref="SourceListViewModelBase{TViewModel}.Items"/> to add new instances
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public virtual ICommand RefreshCommand => _refreshCommand;
@@ -104,6 +92,7 @@ namespace MvvmScarletToolkit
             SelectedItems = new ObservableCollection<TViewModel>();
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
             PageSize = 50;
+            CurrentPage = 1;
 
             _loadCommand = commandBuilder
               .Create(Load, CanLoad)
@@ -157,7 +146,9 @@ namespace MvvmScarletToolkit
 
         public async Task Refresh(CancellationToken token)
         {
-            var results = await _pagedDataProvider.Get(CurrentPage * PageSize, PageSize, token).ConfigureAwait(false);
+            // CurrentPage is 1-based, the provider expects the number of entries to skip
+            var index = Math.Max(0, CurrentPage - 1) * PageSize;
+            var results = await _pagedDataProvider.Get(index, PageSize, token).ConfigureAwait(false);
 
             AddOrUpdateMany(results);
         }
@@ -188,7 +179,7 @@ namespace MvvmScarletToolkit
         {
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() => Clear()).ConfigureAwait(false);
+                await Dispatcher.Invoke(Clear).ConfigureAwait(false);
             }
         }
 
@@ -203,7 +194,7 @@ namespace MvvmScarletToolkit
 
         public virtual bool CanUnload()
         {
-            return !IsLoaded
+            return IsLoaded
                 && !_loadCommand.IsBusy
                 && !_refreshCommand.IsBusy
                 && !_unloadCommand.IsBusy;
@@ -232,7 +223,7 @@ namespace MvvmScarletToolkit
 
         private bool CanNext()
         {
-            return CanRefresh() && CurrentPage + 1 < TotalPageCount;
+            return CanRefresh() && CurrentPage < TotalPageCount;
         }
 
         private int GetPrevious()
@@ -253,7 +244,7 @@ namespace MvvmScarletToolkit
             return CanRefresh() && CurrentPage > 1;
         }
 
-        private int GetFirst()
+        private static int GetFirst()
         {
             return 1;
         }
@@ -280,7 +271,7 @@ namespace MvvmScarletToolkit
 
         private bool CanLast()
         {
-            return CanRefresh() && CurrentPage + 1 < TotalPageCount;
+            return CanRefresh() && CurrentPage < TotalPageCount;
         }
 
         private async Task Set(int index, CancellationToken token)

@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace MvvmScarletToolkit
 {
     public interface IExitService

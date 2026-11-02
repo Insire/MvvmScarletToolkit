@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace MvvmScarletToolkit
 {
     public static class QueryExtensions

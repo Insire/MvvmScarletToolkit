@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Windows.Data;
 using System.Windows.Markup;
 
@@ -18,6 +15,12 @@ namespace MvvmScarletToolkit
     {
         [ConstructorArgument("separator")]
         public string Separator { get; set; } = ", ";
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            // not shared, Separator is set per usage
+            return this;
+        }
 
         public override object Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
         {

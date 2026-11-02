@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace MvvmScarletToolkit
 {
     // source: https://github.com/duanenewman/SantasBloggers/blob/master/IListExtensions.cs
@@ -29,7 +25,7 @@ namespace MvvmScarletToolkit
             UpdateItems(targetCollection, updateCollection, comparer, mapper, updater, targetFilter, _ => false);
         }
 
-        public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, in IEnumerable<T2> updateCollection, in Func<T1, T2, bool> comparer, in Func<T2, T1> mapper, in Action<T1, T2>? updater, in Func<T1, bool> targetFilter, in Func<T1, bool> ignoreItem)
+        public static void UpdateItems<T1, T2>(this IList<T1> targetCollection, in IEnumerable<T2>? updateCollection, in Func<T1, T2, bool> comparer, in Func<T2, T1> mapper, in Action<T1, T2>? updater, in Func<T1, bool> targetFilter, in Func<T1, bool> ignoreItem)
         {
             if (updateCollection is null)
             {
@@ -58,14 +54,17 @@ namespace MvvmScarletToolkit
             for (var i = 0; i < array.Length; i++)
             {
                 var targetItem = array[i];
-                var updateItem = updateCollection.FirstOrDefault(u => comparer(targetItem, u));
-                if (updateItem is null && !ignoreItem(targetItem))
+
+                // a default value can't tell a missing match apart, for value types it would be a valid item
+                var matches = updateCollection.Where(u => comparer(targetItem, u)).Take(1).ToArray();
+                if (matches.Length > 0)
+                {
+                    updater?.Invoke(targetItem, matches[0]);
+                }
+                else if (!ignoreItem(targetItem))
                 {
                     itemsToRemove.Add(targetItem);
-                    continue;
                 }
-
-                updater?.Invoke(targetItem, updateItem);
             }
         }
 

@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit.analyzers" />
+    <PackageReference Include="xunit.analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="xunit.v3.extensibility.core" />
 
     <PackageReference Include="OpenTelemetry.Exporter.Console" />

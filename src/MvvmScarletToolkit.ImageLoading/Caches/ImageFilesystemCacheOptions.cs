@@ -9,5 +9,10 @@ namespace MvvmScarletToolkit.ImageLoading.Caches
         public bool CreateFolder { get; init; } = false;
 
         public bool IsEnabled { get; init; } = false;
+
+        /// <summary>
+        /// Files older than this are removed on startup. 0 disables the cleanup.
+        /// </summary>
+        public int MaxFileAgeInDays { get; init; } = 0;
     }
 }

@@ -5,8 +5,6 @@ using DynamicData;
 using DynamicData.Binding;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -14,8 +12,6 @@ using System.IO;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
 {
@@ -35,6 +31,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
 
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string Name { get; private set; } = string.Empty;
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string FullName { get; private set; } = string.Empty;
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial string Location { get; private set; } = string.Empty;
+        [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial FileAttributes Attributes { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial IFileSystemParent? Parent { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial DateTime? CreationTimeUtc { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial DateTime? LastAccessTimeUtc { get; private set; }
@@ -44,6 +42,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsHidden { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsLoaded { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial bool IsToggled { get; set; }
+        [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial bool IsEmpty { get; set; }
+        [ObservableProperty, Bindable(true, BindingDirection.TwoWay)] public partial bool HasChildContainers { get; set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsAccessProhibited { get; private set; }
         [ObservableProperty, Bindable(true, BindingDirection.OneWay)] public partial bool IsBusy { get; private set; }
 
@@ -52,6 +52,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
         [Bindable(true, BindingDirection.OneWay)] public ReadOnlyObservableCollection<PropertyViewModel> Properties { get; }
 
         [Bindable(true, BindingDirection.OneWay)] public bool IsContainer => true;
+        [Bindable(true, BindingDirection.OneWay)] public long? Length => null;
+        [Bindable(true, BindingDirection.OneWay)] public string TypeName => "Folder";
         [Bindable(true, BindingDirection.OneWay)] public FileSystemType FileSystemType { get; } = FileSystemType.Directory;
 
         public ScarletDirectory(
@@ -76,7 +78,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
 
             var itemsSubscription = _cache.Connect()
                  .ObserveOn(scheduler)
-                 .SortAndBind(_items, SortExpressionComparer<IFileSystemChild>.Ascending(p => p.Name))
+                 .SortAndBind(_items, SortExpressionComparer<IFileSystemChild>.Descending(p => p.IsContainer).ThenByAscending(p => p.Name))
                  .Subscribe();
 
             var containersSubscription = _cache.Connect()
@@ -97,6 +99,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories
             Items = new ReadOnlyObservableCollection<IFileSystemChild>(_items);
             Properties = new ReadOnlyObservableCollection<PropertyViewModel>(_properties);
             IsActive = true;
+            HasChildContainers = true;
         }
 
         [RelayCommand]

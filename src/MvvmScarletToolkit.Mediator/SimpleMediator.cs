@@ -35,16 +35,14 @@ namespace MvvmScarletToolkit.Mediator
 
         public async Task Publish(ISimpleNotification notification, CancellationToken cancellationToken = default)
         {
-            foreach (var handlerType in _registry.GetNotificationHandlerTypes(notification))
+            var handlerTypes = _registry.GetNotificationHandlerTypes(notification);
+            var publisher = _registry.GetNotificationPublisher(notification);
+
+            foreach (var handlerType in handlerTypes)
             {
                 var instance = _serviceProvider.GetService(handlerType);
 
-                if (instance is not ISimpleNotificationHandler<ISimpleNotification> service)
-                {
-                    throw new MissingHandlerRegistrationException(handlerType);
-                }
-
-                await service.Handle(notification, cancellationToken);
+                await publisher(instance, handlerType, notification, cancellationToken);
             }
         }
     }

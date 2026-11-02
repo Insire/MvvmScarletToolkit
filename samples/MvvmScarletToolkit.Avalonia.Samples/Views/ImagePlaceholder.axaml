@@ -1,0 +1,30 @@
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.ImagePlaceholder"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:image="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Image;assembly=MvvmScarletToolkit.Core.Samples"
+             xmlns:local="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Views"
+             xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
+             x:Name="Root"
+             x:DataType="image:ImageViewModel">
+
+    <Grid>
+        <ToolTip.Tip>
+            <StackPanel>
+                <TextBlock Text="{Binding DisplayName}" />
+                <TextBlock Text="{Binding Path}" />
+            </StackPanel>
+        </ToolTip.Tip>
+
+        <Image x:Name="Image"
+               mvvm:AsyncImageLoadingBehavior.Height="{Binding DecodeSize, ElementName=Root}"
+               mvvm:AsyncImageLoadingBehavior.Width="{Binding DecodeSize, ElementName=Root}"
+               RenderOptions.BitmapInterpolationMode="HighQuality" />
+
+        <TextBlock HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="40"
+                   FontWeight="Light"
+                   IsVisible="{Binding #Image.(mvvm:AsyncImageLoadingBehavior.IsLoading)}"
+                   Text="..." />
+    </Grid>
+</UserControl>

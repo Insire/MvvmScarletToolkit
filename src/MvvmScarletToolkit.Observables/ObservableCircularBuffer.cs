@@ -1,23 +1,22 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
 
 namespace MvvmScarletToolkit.Observables
 {
+    /// <summary>
+    /// Fixed size collection, that adds new entries at the beginning and removes the last entry, when it's full
+    /// </summary>
     public sealed partial class ObservableCircularBuffer<T> : ObservableObject, IEnumerable<T>, INotifyCollectionChanged
     {
         private readonly ObservableCollection<T> _buffer;
-        private int _start;
 
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsFull))]
-        private int _capacity;
+        public partial int Capacity { get; set; }
 
         private int _size;
         /// <summary>
@@ -37,8 +36,10 @@ namespace MvvmScarletToolkit.Observables
 
         public bool IsFull => _size == Capacity;
 
+        public T this[int index] => _buffer[index];
+
         public ObservableCircularBuffer(in int capacity)
-            : this(capacity, new T[] { })
+            : this(capacity, [])
         {
         }
 
@@ -54,53 +55,57 @@ namespace MvvmScarletToolkit.Observables
                 throw new ArgumentNullException(nameof(items));
             }
 
-            _size = items.Count();
+            _buffer = new ObservableCollection<T>(items);
+            _size = _buffer.Count;
 
             if (_size > capacity)
             {
                 throw new ArgumentException("Too many items to fit circular buffer", nameof(items));
             }
 
-            _start = 0;
-            _buffer = new ObservableCollection<T>(items);
-            _buffer.CollectionChanged += (o, e) => OnCollectionChanged(e);
-
-            _capacity = capacity;
+            _buffer.CollectionChanged += (_, e) => OnCollectionChanged(e);
+            Capacity = capacity;
         }
 
+        /// <summary>
+        /// Adds <paramref name="item"/> at the beginning of the buffer and removes the last entry, if the buffer is full
+        /// </summary>
         public void Push(in T item)
         {
             if (IsFull)
             {
-                for (var i = 1; i < Capacity - 1; i++)
-                {
-                    _buffer.Move(i, i + 1);
-                }
-
-                Decrement(ref _start);
-                _buffer[_start] = item;
+                _buffer.RemoveAt(_buffer.Count - 1);
+                _buffer.Insert(0, item);
             }
             else
             {
-                Decrement(ref _start);
-                _buffer.Add(item);
-                ++Size;
-
-                if (IsFull)
-                {
-                    OnPropertyChanged(nameof(IsFull));
-                }
+                _buffer.Insert(0, item);
+                Size = _buffer.Count;
             }
         }
 
-        private void Decrement(ref int index)
+        partial void OnCapacityChanging(int value)
         {
-            if (index == 0)
+            if (value < 1)
             {
-                index = Capacity;
+                throw new ArgumentOutOfRangeException(nameof(Capacity), "Circular buffer cannot have negative or zero capacity.");
+            }
+        }
+
+        partial void OnCapacityChanged(int value)
+        {
+            // the constructor sets the capacity after the buffer has been created
+            if (_buffer is null)
+            {
+                return;
             }
 
-            index--;
+            while (_buffer.Count > value)
+            {
+                _buffer.RemoveAt(_buffer.Count - 1);
+            }
+
+            Size = _buffer.Count;
         }
 
         public IEnumerator<T> GetEnumerator()

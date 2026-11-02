@@ -1,0 +1,64 @@
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.GeometryRenderView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:geometry="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Features.Geometry"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="geometry:GeometryRenderViewModel"
+             mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="Path">
+            <Setter Property="Fill" Value="{DynamicResource TextControlForeground}" />
+        </Style>
+        <Style Selector="Border.tile:pointerover Path">
+            <Setter Property="Fill" Value="Purple" />
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Width" Value="48" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,*">
+        <UniformGrid Columns="2">
+            <Button Margin="2 0"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding LoadCommand}"
+                    Content="Load" />
+
+            <Button Margin="2 0"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding UnloadCommand}"
+                    Content="Unload" />
+        </UniformGrid>
+
+        <ListBox Grid.Row="1"
+                 ItemsSource="{Binding Items}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <mvvm:VirtualizingTilePanel ChildSize="50" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="geometry:GeometryContainer">
+                    <Border Width="48"
+                            Height="48"
+                            Background="Transparent"
+                            Classes="tile">
+                        <Path Data="{Binding Value}" />
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

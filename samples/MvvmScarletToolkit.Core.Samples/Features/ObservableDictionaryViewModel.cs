@@ -31,12 +31,15 @@ namespace MvvmScarletToolkit.Core.Samples.Features
             {
                 Items.Add(0, Guid.NewGuid());
             }
+
+            RemoveCommand.NotifyCanExecuteChanged();
         }
 
         [RelayCommand(CanExecute = nameof(CanRemove))]
         private void Remove()
         {
             Items.Remove(Items.First());
+            RemoveCommand.NotifyCanExecuteChanged();
         }
 
         private bool CanRemove()
@@ -48,6 +51,7 @@ namespace MvvmScarletToolkit.Core.Samples.Features
         private void Clear()
         {
             Items.Clear();
+            RemoveCommand.NotifyCanExecuteChanged();
         }
     }
 }

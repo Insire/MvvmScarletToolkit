@@ -1,5 +1,3 @@
-using System;
-
 namespace MvvmScarletToolkit.Observables
 {
     public struct BusyToken : IDisposable

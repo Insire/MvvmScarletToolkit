@@ -1,10 +1,8 @@
-using System.Threading;
-using System.Threading.Tasks;
+using MvvmScarletToolkit.Wpf.Tests.Util;
 
-namespace MvvmScarletToolkit.Tests
+namespace MvvmScarletToolkit.Wpf.Tests
 {
-    [TraceTest]
-    public sealed class CommandBuilderExtensionTests : IAsyncLifetime
+    public sealed class CommandBuilderExtensionTests : TraceTestBase, IAsyncLifetime
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         private static ScarletCommandBuilder _builder;
@@ -48,10 +46,10 @@ namespace MvvmScarletToolkit.Tests
             context = _builder.Create(() => Task.CompletedTask, () => true);
             Assert.NotNull(context);
 
-            context = _builder.Create((CancellationToken _) => Task.CompletedTask);
+            context = _builder.Create(_ => Task.CompletedTask);
             Assert.NotNull(context);
 
-            context = _builder.Create((CancellationToken _) => Task.CompletedTask, () => true);
+            context = _builder.Create(_ => Task.CompletedTask, () => true);
             Assert.NotNull(context);
 
             // generic overloads ignoring argument:
@@ -73,16 +71,16 @@ namespace MvvmScarletToolkit.Tests
             context = _builder.Create((object? _) => Task.CompletedTask);
             Assert.NotNull(context);
 
-            context = _builder.Create((object? _) => Task.CompletedTask, (object? _) => true);
+            context = _builder.Create(_ => Task.CompletedTask, (object? _) => true);
             Assert.NotNull(context);
 
             context = _builder.Create((object? _) => Task.CompletedTask, () => true);
             Assert.NotNull(context);
 
-            context = _builder.Create((object? _, CancellationToken __) => Task.CompletedTask);
+            context = _builder.Create((object? _, CancellationToken _) => Task.CompletedTask);
             Assert.NotNull(context);
 
-            context = _builder.Create((object? _, CancellationToken __) => Task.CompletedTask, (object? _) => true);
+            context = _builder.Create((_, _) => Task.CompletedTask, (object? _) => true);
             Assert.NotNull(context);
         }
     }

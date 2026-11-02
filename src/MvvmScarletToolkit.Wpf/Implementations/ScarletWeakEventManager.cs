@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Windows;
 
@@ -9,10 +8,6 @@ namespace MvvmScarletToolkit
         private static readonly Lazy<ScarletWeakEventManager> _default = new Lazy<ScarletWeakEventManager>(() => new ScarletWeakEventManager());
 
         public static IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> Default => _default.Value;
-
-        public ScarletWeakEventManager()
-        {
-        }
 
         public void AddHandler(INotifyPropertyChanged source, string eventName, EventHandler<PropertyChangedEventArgs> handler)
         {

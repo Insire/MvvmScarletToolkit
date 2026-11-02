@@ -1,5 +1,4 @@
 using MvvmScarletToolkit.Commands;
-using System;
 
 namespace MvvmScarletToolkit
 {
@@ -12,7 +11,8 @@ namespace MvvmScarletToolkit
         {
             ValdiateContextForNull(context);
 
-            context.CancelCommand = new CancelCommand(context.CommandManager);
+            var commandManager = context.CommandManager;
+            context.CancelCommandFactory = () => new CancelCommand(commandManager);
             return context;
         }
 
@@ -23,7 +23,9 @@ namespace MvvmScarletToolkit
         {
             ValdiateContextForNull(context);
 
-            context.CancelCommand = new ConcurrentCancelCommand(context.CommandManager, context.ExceptionHandler);
+            var commandManager = context.CommandManager;
+            var exceptionHandler = context.ExceptionHandler;
+            context.CancelCommandFactory = () => new ConcurrentCancelCommand(commandManager, exceptionHandler);
             return context;
         }
 
@@ -40,7 +42,9 @@ namespace MvvmScarletToolkit
                 throw new ArgumentNullException(nameof(cancelCommand), "This method should be called with a non null instance of ICancelCommand.");
             }
 
-            context.CancelCommand = cancelCommand;
+            // the caller provides the instance, so it is shared between all commands built from this context
+            var instance = cancelCommand;
+            context.CancelCommandFactory = () => instance;
             return context;
         }
 

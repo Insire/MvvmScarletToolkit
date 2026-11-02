@@ -1,7 +1,6 @@
 namespace MvvmScarletToolkit.Wpf.Tests
 {
-    [TraceTest]
-    public sealed class AllowableCharactersTextBoxBehaviorServiceTests
+    public sealed class AllowableCharactersTextBoxBehaviorServiceTests : TraceTestBase
     {
         [Theory]
         // full length original text, insert off, with text selection

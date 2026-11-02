@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Commands
 {

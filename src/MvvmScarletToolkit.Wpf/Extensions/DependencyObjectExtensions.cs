@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -30,32 +27,35 @@ namespace MvvmScarletToolkit
 
         public static DependencyObject? FindTopMostParent(this DependencyObject? dependencyObject)
         {
+            var topMost = dependencyObject;
             while (dependencyObject != null)
             {
+                topMost = dependencyObject;
+
                 var isVisual = dependencyObject is Visual or Visual3D;
                 dependencyObject = isVisual
                     ? VisualTreeHelper.GetParent(dependencyObject)
                     : LogicalTreeHelper.GetParent(dependencyObject);
             }
 
-            return null;
+            return topMost;
         }
 
         public static T? FindParent<T>(this DependencyObject dependencyObject)
             where T : DependencyObject
         {
-            var parent = dependencyObject;
-            while (parent != null)
+            var current = dependencyObject;
+            while (current != null)
             {
-                if (parent is T result)
+                if (current is T result)
                 {
                     return result;
                 }
 
-                var isVisual = parent is Visual or Visual3D;
-                parent = isVisual
-                    ? VisualTreeHelper.GetParent(dependencyObject)
-                    : LogicalTreeHelper.GetParent(dependencyObject);
+                var isVisual = current is Visual or Visual3D;
+                current = isVisual
+                    ? VisualTreeHelper.GetParent(current)
+                    : LogicalTreeHelper.GetParent(current);
             }
 
             return null;
@@ -115,6 +115,7 @@ namespace MvvmScarletToolkit
         /// Gets all children of the specified visual in the visual tree recursively including itself.
         /// </summary>
         /// <param name="dependencyObject">The visual to get the visual children for.</param>
+        /// <param name="filter"></param>
         /// <returns>All children of the specified visual in the visual tree recursively including itself.</returns>
         public static IEnumerable<T> FindVisualChildrenBreadthFirstOrSelf<T>(this DependencyObject dependencyObject, Func<T, bool>? filter = null)
             where T : DependencyObject
@@ -146,8 +147,9 @@ namespace MvvmScarletToolkit
         /// Gets all children of the specified visual in the visual tree recursively.
         /// </summary>
         /// <param name="dependencyObject">The visual to get the visual children for.</param>
+        /// <param name="filter"></param>
         /// <returns>All children of the specified visual in the visual tree recursively.</returns>
-        public static IEnumerable<T> FindVisualChildrenDepthFirst<T>(this DependencyObject? dependencyObject, Func<T, bool>? filter = null)
+        public static IEnumerable<T> FindVisualChildrenDepthFirst<T>(this DependencyObject? dependencyObject, Func<T, bool>? filter)
             where T : DependencyObject
         {
             if (dependencyObject is null)
@@ -175,6 +177,7 @@ namespace MvvmScarletToolkit
         /// Gets all children of the specified visual in the visual tree recursively including itself.
         /// </summary>
         /// <param name="dependencyObject">The visual to get the visual children for.</param>
+        /// <param name="filter"></param>
         /// <returns>All children of the specified visual in the visual tree recursively including itself.</returns>
         public static IEnumerable<T> FindVisualChildrenDepthFirstOrSelf<T>(this DependencyObject dependencyObject, Func<T, bool>? filter = null)
             where T : DependencyObject
@@ -203,7 +206,8 @@ namespace MvvmScarletToolkit
         /// </summary>
         public static DataTemplate? FindDataTemplateFor(this FrameworkElement container, Type type)
         {
-            return container?.FindResource(new DataTemplateKey(type)) as DataTemplate;
+            // TryFindResource, FindResource throws when there is no template for the type
+            return container?.TryFindResource(new DataTemplateKey(type)) as DataTemplate;
         }
     }
 }

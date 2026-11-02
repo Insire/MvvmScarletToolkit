@@ -1,0 +1,27 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace MvvmScarletToolkit.Core.Samples.Features.Image
+{
+    public sealed partial class ProcessingImagesViewModel : ObservableObject
+    {
+        private SourceImagesViewModel _source;
+        public SourceImagesViewModel Source
+        {
+            get { return _source; }
+            private set { SetProperty(ref _source, value); }
+        }
+
+        private TargetImagesViewModel _target;
+        public TargetImagesViewModel Target
+        {
+            get { return _target; }
+            private set { SetProperty(ref _target, value); }
+        }
+
+        public ProcessingImagesViewModel(IScarletCommandBuilder commandBuilder, ImageViewModelProvider imageFactory)
+        {
+            _target = new TargetImagesViewModel(commandBuilder);
+            _source = new SourceImagesViewModel(commandBuilder, imageFactory, _target);
+        }
+    }
+}

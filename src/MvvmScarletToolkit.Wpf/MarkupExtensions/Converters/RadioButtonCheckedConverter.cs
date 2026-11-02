@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -24,9 +23,10 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// A converted value. If the method returns null, the valid null value is used.
         /// </summary>
-        public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return value.Equals(true) ? parameter : false;
+            // an unchecked radio button must not overwrite the value written by the checked one
+            return value is true ? parameter : Binding.DoNothing;
         }
     }
 }

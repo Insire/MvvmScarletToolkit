@@ -1,0 +1,26 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
+
+namespace MvvmScarletToolkit.Core.Samples.Features.NestedSelection
+{
+    public sealed partial class SelectionsViewModel : ObservableObject
+    {
+        public ObservableCollection<SelectionViewModel> Children { get; }
+
+        [ObservableProperty]
+        public partial SelectionViewModel SelectedChild { get; set; }
+
+        public SelectionsViewModel()
+        {
+            Children = new ObservableCollection<SelectionViewModel>();
+
+            for (var i = 1; i < 20; i++)
+            {
+                Children.Add(new SelectionViewModel(i));
+            }
+
+            Children[0].IsSelected = true;
+            SelectedChild = Children[0];
+        }
+    }
+}

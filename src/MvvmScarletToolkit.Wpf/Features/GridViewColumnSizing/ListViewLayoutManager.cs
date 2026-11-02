@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,7 +63,7 @@ namespace MvvmScarletToolkit
                 var childVisual = VisualTreeHelper.GetChild(start, i) as Visual;
                 if (childVisual is Thumb)
                 {
-                    var gridViewColumn = ListViewLayoutManager.FindParentColumn(childVisual);
+                    var gridViewColumn = FindParentColumn(childVisual);
                     if (gridViewColumn != null)
                     {
                         if (childVisual is Thumb thumb)
@@ -114,7 +113,7 @@ namespace MvvmScarletToolkit
                 var childVisual = VisualTreeHelper.GetChild(start, i) as Visual;
                 if (childVisual is Thumb)
                 {
-                    var gridViewColumn = ListViewLayoutManager.FindParentColumn(childVisual);
+                    var gridViewColumn = FindParentColumn(childVisual);
                     if (gridViewColumn != null)
                     {
                         if (childVisual is Thumb thumb)
@@ -138,10 +137,11 @@ namespace MvvmScarletToolkit
                 {
                     columnHeader.SizeChanged -= GridColumnHeaderSizeChanged;
                 }
-                else if (_scrollViewer is null && childVisual is ScrollViewer scrollViewer)
+                else if (childVisual is ScrollViewer scrollViewer && ReferenceEquals(scrollViewer, _scrollViewer))
                 {
-                    _scrollViewer = scrollViewer;
                     _scrollViewer.ScrollChanged -= ScrollViewerScrollChanged;
+                    // so that RegisterEvents picks it up again, once the ListView is loaded again
+                    _scrollViewer = null;
                 }
 
                 UnregisterEvents(childVisual);
@@ -192,7 +192,7 @@ namespace MvvmScarletToolkit
                         }
                     }
                 }
-                var childGridViewHeader = ListViewLayoutManager.FindColumnHeader(childVisual, gridViewColumn);
+                var childGridViewHeader = FindColumnHeader(childVisual, gridViewColumn);
                 if (childGridViewHeader != null)
                 {
                     return childGridViewHeader;
@@ -222,7 +222,7 @@ namespace MvvmScarletToolkit
                     continue;
                 }
 
-                var columnHeader = ListViewLayoutManager.FindColumnHeader(ListView, gridViewColumn);
+                var columnHeader = FindColumnHeader(ListView, gridViewColumn);
                 if (columnHeader is null)
                 {
                     continue;
@@ -436,7 +436,7 @@ namespace MvvmScarletToolkit
             {
                 return;
             }
-            var gridViewColumn = ListViewLayoutManager.FindParentColumn(thumb);
+            var gridViewColumn = FindParentColumn(thumb);
             if (gridViewColumn is null)
             {
                 return;
@@ -484,7 +484,7 @@ namespace MvvmScarletToolkit
                 return;
             }
 
-            var gridViewColumn = ListViewLayoutManager.FindParentColumn(thumb);
+            var gridViewColumn = FindParentColumn(thumb);
 
             // suppress column resizing for proportional, fixed and range fill columns
             if (ProportionalColumn.IsProportionalColumn(gridViewColumn) || FixedColumn.IsFixedColumn(gridViewColumn) || IsFillColumn(gridViewColumn))
@@ -518,7 +518,7 @@ namespace MvvmScarletToolkit
                     }
 
                     // ensure column bounds
-                    if (Math.Abs(ListViewLayoutManager.SetRangeColumnToBounds(gridViewColumn) - 0) > ZeroWidthRange)
+                    if (Math.Abs(SetRangeColumnToBounds(gridViewColumn) - 0) > ZeroWidthRange)
                     {
                         return;
                     }

@@ -10,7 +10,7 @@ namespace Build.Tasks
 {
     public sealed class PushLocally : FrostingTask<BuildContext>
     {
-        private const string LocalNugetServer = @"http://localhost:5555/v3/index.json";
+        private const string LocalNugetServer = "http://localhost:5555/v3/index.json";
 
         public override void Run(BuildContext context)
         {
@@ -19,7 +19,7 @@ namespace Build.Tasks
                 context.DotNetNuGetAddSource("Local", new DotNetNuGetAddSourceSettings()
                 {
                     Source = LocalNugetServer,
-                    HandleExitCode = exitCode => true,
+                    HandleExitCode = _ => true,
                 });
             }
 

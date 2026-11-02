@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -25,8 +23,8 @@ namespace MvvmScarletToolkit
         private Point _offset = new Point(0, 0);
         private Size _extent = new Size(0, 0);
         private Size _viewport = new Size(0, 0);
-        private int firstIndex;
-        private Size childSize;
+        private int _firstIndex;
+        private Size _childSize;
 
         private Size ChildSlotSize => new Size(ItemWidth, ItemHeight);
 
@@ -61,8 +59,8 @@ namespace MvvmScarletToolkit
 
         private void SetFirstRowViewItemIndex(int index)
         {
-            SetVerticalOffset(index / Math.Floor(_viewport.Width / childSize.Width));
-            SetHorizontalOffset(index / Math.Floor(_viewport.Height / childSize.Height));
+            SetVerticalOffset(index / Math.Floor(_viewport.Width / _childSize.Width));
+            SetHorizontalOffset(index / Math.Floor(_viewport.Height / _childSize.Height));
         }
 
         public void Resizing(object sender, EventArgs e)
@@ -72,11 +70,11 @@ namespace MvvmScarletToolkit
                 return;
             }
 
-            var firstIndexCache = firstIndex;
+            var firstIndexCache = _firstIndex;
             _abstractPanel = null;
             MeasureOverride(_viewport);
-            SetFirstRowViewItemIndex(firstIndex);
-            firstIndex = firstIndexCache;
+            SetFirstRowViewItemIndex(_firstIndex);
+            _firstIndex = firstIndexCache;
         }
 
         public int GetFirstVisibleSection()
@@ -237,7 +235,7 @@ namespace MvvmScarletToolkit
 
             while (itemIndex == -1)
             {
-                selected = (UIElement)VisualTreeHelper.GetParent(selected);
+                selected = (UIElement)VisualTreeHelper.GetParent(selected)!;
                 itemIndex = gen.IndexFromContainer(selected);
                 depth++;
             }
@@ -298,7 +296,7 @@ namespace MvvmScarletToolkit
 
             while (itemIndex == -1)
             {
-                selected = (UIElement)VisualTreeHelper.GetParent(selected);
+                selected = (UIElement)VisualTreeHelper.GetParent(selected)!;
                 itemIndex = gen.IndexFromContainer(selected);
                 depth++;
             }
@@ -353,7 +351,7 @@ namespace MvvmScarletToolkit
 
             while (itemIndex == -1)
             {
-                selected = (UIElement)VisualTreeHelper.GetParent(selected);
+                selected = (UIElement)VisualTreeHelper.GetParent(selected)!;
                 itemIndex = gen.IndexFromContainer(selected);
                 depth++;
             }
@@ -413,7 +411,7 @@ namespace MvvmScarletToolkit
 
             while (itemIndex == -1)
             {
-                selected = (UIElement)VisualTreeHelper.GetParent(selected);
+                selected = (UIElement)VisualTreeHelper.GetParent(selected)!;
                 itemIndex = gen.IndexFromContainer(selected);
                 depth++;
             }
@@ -487,6 +485,16 @@ namespace MvvmScarletToolkit
         protected override void OnItemsChanged(object sender, ItemsChangedEventArgs args)
         {
             base.OnItemsChanged(sender, args);
+
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Remove:
+                case NotifyCollectionChangedAction.Replace:
+                case NotifyCollectionChangedAction.Move:
+                    RemoveInternalChildRange(args.Position.Index, args.ItemUICount);
+                    break;
+            }
+
             _abstractPanel = null;
             ResetScrollInfo();
         }
@@ -568,8 +576,8 @@ namespace MvvmScarletToolkit
                             Debug.Assert(child == _children[childIndex], "Wrong child was generated");
                         }
 
-                        childSize = child.DesiredSize;
-                        var childRect = new Rect(new Point(currentX, currentY), childSize);
+                        _childSize = child.DesiredSize;
+                        var childRect = new Rect(new Point(currentX, currentY), _childSize);
                         if (isHorizontal)
                         {
                             maxItemSize = Math.Max(maxItemSize, childRect.Height);
@@ -718,7 +726,7 @@ namespace MvvmScarletToolkit
 
             while (itemIndex == -1)
             {
-                element = (UIElement)VisualTreeHelper.GetParent(element);
+                element = (UIElement)VisualTreeHelper.GetParent(element)!;
                 itemIndex = gen.IndexFromContainer(element);
             }
 
@@ -814,7 +822,7 @@ namespace MvvmScarletToolkit
             ScrollOwner?.InvalidateScrollInfo();
 
             InvalidateMeasure();
-            firstIndex = GetFirstVisibleIndex();
+            _firstIndex = GetFirstVisibleIndex();
         }
 
         public void SetVerticalOffset(double offset)
@@ -836,7 +844,7 @@ namespace MvvmScarletToolkit
             ScrollOwner?.InvalidateScrollInfo();
 
             InvalidateMeasure();
-            firstIndex = GetFirstVisibleIndex();
+            _firstIndex = GetFirstVisibleIndex();
         }
 
         public double ViewportHeight => _viewport.Height;
@@ -887,8 +895,12 @@ namespace MvvmScarletToolkit
         private sealed class WrapPanelAbstraction : IEnumerable<ItemAbstraction>
         {
             private readonly ReadOnlyCollection<ItemAbstraction> _items;
-            private readonly object _syncRoot = new object();
+#if NET10_0_OR_GREATER
 
+            private readonly Lock _syncRoot = new Lock();
+#else
+            private readonly object _syncRoot = new object();
+#endif
             private int _currentSetSection = -1;
             private int _currentSetItemIndex = -1;
             private int _itemsInCurrentSecction;

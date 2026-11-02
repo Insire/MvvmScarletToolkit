@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Windows;
 
@@ -33,12 +32,7 @@ namespace MvvmScarletToolkit
                 throw new InvalidOperationException($"No service registration found for {serviceType.FullName}");
             }
 
-            if (service is not T instance)
-            {
-                throw new InvalidOperationException($"IServiceProvider returned invalid type of {service.GetType()} when asked for {serviceType.FullName}");
-            }
-
-            return instance;
+            return service is not T instance ? throw new InvalidOperationException($"IServiceProvider returned invalid type of {service.GetType()} when asked for {serviceType.FullName}") : instance;
         }
     }
 }

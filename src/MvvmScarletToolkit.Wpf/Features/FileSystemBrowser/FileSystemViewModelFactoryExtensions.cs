@@ -1,10 +1,6 @@
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
@@ -17,7 +13,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
         public static async Task<IReadOnlyCollection<IFileSystemChild>> GetChildren(this IFileSystemViewModelFactory factory, IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, IReadOnlyCollection<FileAttributes> folderAttributes, CancellationToken token)
         {
-            if (await factory.IsEmpty(parent, token))
+            if (await factory.IsEmpty(parent, token) ?? true)
             {
                 return Enumerable.Empty<IFileSystemChild>().ToList();
             }

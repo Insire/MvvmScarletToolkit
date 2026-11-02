@@ -1,9 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -14,13 +10,12 @@ namespace MvvmScarletToolkit.Observables
     {
         protected ILocalizationProvider LocalizationProvider { get; }
 
-        private CultureInfo? _currentLanguage;
         public CultureInfo? CurrentLanguage
         {
-            get { return _currentLanguage; }
+            get { return field; }
             set
             {
-                if (SetProperty(ref _currentLanguage, value))
+                if (SetProperty(ref field, value) && value is not null)
                 {
                     Thread.CurrentThread.CurrentUICulture = value;
                 }
@@ -29,7 +24,7 @@ namespace MvvmScarletToolkit.Observables
 
         public IEnumerable<CultureInfo> Languages => LocalizationProvider.Languages?.Any() == true
             ? LocalizationProvider.Languages
-            : Enumerable.Empty<CultureInfo>();
+            : [];
 
         public LocalizationsViewModel(ILocalizationProvider provider)
         {
@@ -45,11 +40,6 @@ namespace MvvmScarletToolkit.Observables
             if (CurrentLanguage == null)
             {
                 return $"!{key}!";
-            }
-
-            if (Thread.CurrentThread.CurrentUICulture.Equals(CurrentLanguage))
-            {
-                Thread.CurrentThread.CurrentUICulture = CurrentLanguage;
             }
 
             var translatedValue = LocalizationProvider.Translate(key, CurrentLanguage);

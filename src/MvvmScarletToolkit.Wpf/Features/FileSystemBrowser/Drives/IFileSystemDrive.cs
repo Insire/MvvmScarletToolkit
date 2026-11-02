@@ -1,5 +1,4 @@
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
-using System;
 using System.IO;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives

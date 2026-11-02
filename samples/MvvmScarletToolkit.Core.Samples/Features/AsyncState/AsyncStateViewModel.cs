@@ -6,10 +6,10 @@ namespace MvvmScarletToolkit.Core.Samples.Features.AsyncState
     public sealed partial class AsyncStateViewModel : BusinessViewModelBase
     {
         [ObservableProperty]
-        private string _displayName;
+        public partial string DisplayName { get; set; }
 
         [ObservableProperty]
-        private bool _isSelected;
+        public partial bool IsSelected { get; set; }
 
         public AsyncStateViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)

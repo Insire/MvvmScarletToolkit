@@ -24,7 +24,7 @@ namespace Build.Tasks
                         .Append("--skip-duplicate")
                     );
 
-                context.StartProcess("dotnet", settings);
+                context.StartProcessOrFail("dotnet", settings, $"Pushing {package.GetFilename()} to GitHub");
             }
         }
 

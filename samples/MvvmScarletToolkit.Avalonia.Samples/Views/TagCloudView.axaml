@@ -1,0 +1,61 @@
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.TagCloudView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
+             xmlns:tagCloud="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.TagCloud;assembly=MvvmScarletToolkit.Core.Samples"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="tagCloud:TagCloudViewModel"
+             mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="Padding" Value="8 2" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+    </UserControl.Styles>
+
+    <DockPanel>
+        <DockPanel Margin="0 0 0 4" DockPanel.Dock="Top">
+            <ToggleButton x:Name="Columns"
+                          Margin="0 0 8 0"
+                          Content="Wrap into columns"
+                          DockPanel.Dock="Right"
+                          IsCheckedChanged="Columns_IsCheckedChanged" />
+
+            <TextBox Margin="0 0 8 0"
+                     Classes="clearButton"
+                     PlaceholderText="Filter tags"
+                     Text="{Binding FilterText, Delay=250}" />
+        </DockPanel>
+
+        <!--  shows how few containers are needed, no matter how many tags there are  -->
+        <TextBlock x:Name="Statistics"
+                   Margin="0 4 0 0"
+                   DockPanel.Dock="Bottom" />
+
+        <TextBlock Margin="0 4 0 0"
+                   DockPanel.Dock="Bottom"
+                   Text="{Binding Selection}" />
+
+        <ListBox x:Name="Tags"
+                 ItemsSource="{Binding Tags}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 SelectedItem="{Binding SelectedTag}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <mvvm:VirtualizingWrapPanel />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="tagCloud:TagViewModel">
+                    <TextBlock FontSize="{Binding FontSize}" Text="{Binding Name}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,46 @@
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.DialogView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dialog="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Dialog;assembly=MvvmScarletToolkit.Core.Samples"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="dialog:DialogViewModel"
+             mc:Ignorable="d">
+
+    <Grid>
+        <Button x:Name="DialogToggle"
+                Padding="10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Command="{Binding RunCommand}"
+                Content="Open Dialog" />
+
+        <Popup IsLightDismissEnabled="False"
+               IsOpen="{Binding DialogResult.IsOpen, Mode=OneWay}"
+               Placement="Bottom"
+               PlacementTarget="DialogToggle">
+            <Border MinWidth="350"
+                    MinHeight="325"
+                    Background="DarkGray"
+                    BoxShadow="0 4 12 0 #80000000">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Spacing="4">
+                    <TextBlock Foreground="Black" Text="Dialog open" />
+                    <Button Padding="10"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            Command="{Binding DialogResult.CloseCommand}"
+                            Content="Close" />
+                    <Button Padding="10"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            Command="{Binding RunCommand.CancelCommand}"
+                            Content="Cancel" />
+                </StackPanel>
+            </Border>
+        </Popup>
+    </Grid>
+</UserControl>

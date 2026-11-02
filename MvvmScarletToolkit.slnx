@@ -4,14 +4,10 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/cake/">
-    <Project Path="cake/Build.csproj" />
-  </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/MvvmScarletToolkit.Avalonia.Samples/MvvmScarletToolkit.Avalonia.Samples.csproj" />
     <Project Path="samples/MvvmScarletToolkit.Core.Samples/MvvmScarletToolkit.Core.Samples.csproj" />
     <Project Path="samples/MvvmScarletToolkit.Incubator/MvvmScarletToolkit.Incubator.csproj" />
-    <Project Path="samples/MvvmScarletToolkit.Mediator.Benchmark/MvvmScarletToolkit.Mediator.Benchmark.csproj" />
     <Project Path="samples/MvvmScarletToolkit.Wpf.Samples/MvvmScarletToolkit.Wpf.Samples.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
@@ -33,6 +29,8 @@
     <File Path="README.md" />
     <File Path="targetframeworks-windows.props" />
     <File Path="targetframeworks.props" />
+    <File Path="tests/test-libraries.props" />
+    <File Path="tests/xunit.runner.json" />
     <File Path="version.json" />
   </Folder>
   <Folder Name="/src/">
@@ -46,8 +44,11 @@
     <Project Path="src/MvvmScarletToolkit/MvvmScarletToolkit.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/MvvmScarletToolkit.Avalonia.Tests/MvvmScarletToolkit.Avalonia.Tests.csproj" />
+    <Project Path="tests/MvvmScarletToolkit.ImageLoading.Tests/MvvmScarletToolkit.ImageLoading.Tests.csproj" />
     <Project Path="tests/MvvmScarletToolkit.Mediator.Tests/MvvmScarletToolkit.Mediator.Tests.csproj" />
     <Project Path="tests/MvvmScarletToolkit.Observables.Tests/MvvmScarletToolkit.Observables.Tests.csproj" />
+    <Project Path="tests/MvvmScarletToolkit.Tests/MvvmScarletToolkit.Tests.csproj" />
     <Project Path="tests/MvvmScarletToolkit.Wpf.Tests/MvvmScarletToolkit.Wpf.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/shared/">

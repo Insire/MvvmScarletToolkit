@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 
 namespace MvvmScarletToolkit
 {
@@ -10,7 +8,7 @@ namespace MvvmScarletToolkit
 
         public ScarletLocalizationProvider()
         {
-            Languages = Enumerable.Empty<CultureInfo>();
+            Languages = [];
         }
 
         public string Translate(string key, CultureInfo culture)

@@ -1,6 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser

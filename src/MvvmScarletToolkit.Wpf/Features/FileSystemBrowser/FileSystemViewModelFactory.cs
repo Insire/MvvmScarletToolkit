@@ -5,14 +5,12 @@ using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reactive.Concurrency;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using ScarletDirectory = MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories.ScarletDirectory;
 using ScarletDrive = MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Drives.ScarletDrive;
 using ScarletFile = MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files.ScarletFile;
@@ -25,6 +23,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         private readonly IScheduler _scheduler;
         private readonly ConcurrentDictionary<string, string> _noAccessLookup;
         private readonly IReadOnlyList<IMimeTypeResolver> _mimetypeResolvers;
+        private readonly IReadOnlyList<IMimeTypeResolver> _extensionMimetypeResolvers;
+        private readonly MagicNumberMimeTypeResolver _magicNumberMimeTypeResolver;
 
         public IMessenger Messenger { get; }
 
@@ -34,12 +34,179 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             _scheduler = scheduler;
             Messenger = new WeakReferenceMessenger();
             _noAccessLookup = new ConcurrentDictionary<string, string>();
-            _mimetypeResolvers = new List<IMimeTypeResolver>()
+            // the extension based resolvers run first, the magic number resolver opens and reads every file,
+            // which is too expensive when listing directories. It only runs for extensions that are unknown to the others
+            // the extension is only an expectation though, GetFileHeader confirms it for the files that are actually displayed
+            _extensionMimetypeResolvers = new List<IMimeTypeResolver>()
             {
-                new MagicNumberMimeTypeResolver(),
                 new RegistryFileExtensionMimeTypeResolver(),
                 new StaticFileExtensionMimeTypeResolver(),
             };
+            _magicNumberMimeTypeResolver = new MagicNumberMimeTypeResolver();
+            _mimetypeResolvers = [.. _extensionMimetypeResolvers, _magicNumberMimeTypeResolver];
+        }
+
+        public Task<ScarletFileHeader> GetFileHeader(string filePath, CancellationToken token)
+        {
+            return Task.Run(() =>
+            {
+                try
+                {
+                    var mimeType = _magicNumberMimeTypeResolver.Get(new FileInfo(filePath));
+
+                    return new ScarletFileHeader(string.IsNullOrEmpty(mimeType) ? null : mimeType, true);
+                }
+                catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+                {
+                    _logger.LogError(ex, "Failed to read file header of {Path}", filePath);
+
+                    return new ScarletFileHeader(null, false);
+                }
+            }, token);
+        }
+
+        public Task<ScarletPermissions?> GetPermissions(string path, bool isDirectory, CancellationToken token)
+        {
+            return Task.Run(() =>
+            {
+                try
+                {
+                    const AccessControlSections sections = AccessControlSections.Access | AccessControlSections.Owner;
+
+                    FileSystemSecurity security = isDirectory
+                        ? new DirectoryInfo(path).GetAccessControl(sections)
+                        : new FileInfo(path).GetAccessControl(sections);
+
+                    var rules = security
+                        .GetAccessRules(true, true, typeof(SecurityIdentifier))
+                        .OfType<FileSystemAccessRule>()
+                        .Select(p => new ScarletAccessRule(
+                            GetAccountName(p.IdentityReference),
+                            GetRights(p.FileSystemRights),
+                            p.AccessControlType == AccessControlType.Deny,
+                            p.IsInherited))
+                        .ToList();
+
+                    var owner = security.GetOwner(typeof(SecurityIdentifier));
+
+                    return new ScarletPermissions(owner is null ? null : GetAccountName(owner), rules);
+                }
+                catch (Exception ex) when (ex is UnauthorizedAccessException or IOException or InvalidOperationException)
+                {
+                    _logger.LogError(ex, "Failed to read permissions of {Path}", path);
+
+                    return null;
+                }
+            }, token);
+        }
+
+        internal static string GetRights(FileSystemRights rights)
+        {
+            // inheritable rules on system folders use the generic bits, which have no name in FileSystemRights
+            const int genericRead = unchecked((int)0x80000000);
+            const int genericWrite = 0x40000000;
+            const int genericExecute = 0x20000000;
+            const int genericAll = 0x10000000;
+
+            var value = (int)rights;
+            rights = (FileSystemRights)(value & ~(genericRead | genericWrite | genericExecute | genericAll));
+            rights |= (value & genericRead) != 0 ? FileSystemRights.Read : 0;
+            rights |= (value & genericWrite) != 0 ? FileSystemRights.Write : 0;
+            rights |= (value & genericExecute) != 0 ? FileSystemRights.ReadAndExecute : 0;
+            rights |= (value & genericAll) != 0 ? FileSystemRights.FullControl : 0;
+
+            // Synchronize is part of nearly every rule and FullControl contains it
+            return rights.HasFlag(FileSystemRights.FullControl)
+                ? nameof(FileSystemRights.FullControl)
+                : (rights & ~FileSystemRights.Synchronize).ToString();
+        }
+
+        private static string GetAccountName(IdentityReference identity)
+        {
+            try
+            {
+                return identity.Translate(typeof(NTAccount)).Value;
+            }
+            catch (Exception ex) when (ex is IdentityNotMappedException or SystemException)
+            {
+                // accounts of removed users or other machines stay unresolved
+                return identity.Value;
+            }
+        }
+
+        public async IAsyncEnumerable<FileSystemSearchBatch> Search(
+            IFileSystemParent parent,
+            string query,
+            IReadOnlyCollection<FileAttributes> fileAttributes,
+            IReadOnlyCollection<FileAttributes> folderAttributes,
+            [EnumeratorCancellation] CancellationToken token)
+        {
+            var pending = new Stack<string>();
+            pending.Push(parent.FullName);
+
+            while (pending.TryPop(out var path))
+            {
+                token.ThrowIfCancellationRequested();
+
+                yield return await Task.Run(() => SearchDirectory(path, parent, query, fileAttributes, folderAttributes, pending), token);
+            }
+        }
+
+        private FileSystemSearchBatch SearchDirectory(
+            string path,
+            IFileSystemParent parent,
+            string query,
+            IReadOnlyCollection<FileAttributes> fileAttributes,
+            IReadOnlyCollection<FileAttributes> folderAttributes,
+            Stack<string> pending)
+        {
+            var result = new List<IFileSystemChild>();
+            if (_noAccessLookup.ContainsKey(path))
+            {
+                return new FileSystemSearchBatch(result, true);
+            }
+
+            try
+            {
+                foreach (var entry in new DirectoryInfo(path).EnumerateFileSystemInfos())
+                {
+                    if (entry is DirectoryInfo directory)
+                    {
+                        if (!folderAttributes.Any(q => directory.Attributes.HasFlag(q)))
+                        {
+                            continue;
+                        }
+
+                        // junctions can point back to one of their parents
+                        if (!directory.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                        {
+                            pending.Push(directory.FullName);
+                        }
+
+                        if (FileSystemSearch.IsMatch(directory.Name, query))
+                        {
+                            result.Add(new ScarletDirectory(_scheduler, new ScarletDirectoryInfo(directory), fileAttributes, folderAttributes, parent, this));
+                        }
+                    }
+                    else if (entry is FileInfo file
+                        && FileSystemSearch.IsMatch(file.Name, query)
+                        && fileAttributes.Any(q => file.Attributes.HasFlag(q)))
+                    {
+                        var mimeType = GetMimeType(file, _extensionMimetypeResolvers);
+
+                        result.Add(new ScarletFile(_scheduler, new ScarletFileInfo(file, mimeType ?? string.Empty), parent, this));
+                    }
+                }
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+            {
+                _logger.LogWarning(ex, "Skipped {Path} while searching", path);
+                _noAccessLookup.TryAdd(path, path);
+
+                return new FileSystemSearchBatch(result, true);
+            }
+
+            return new FileSystemSearchBatch(result, false);
         }
 
         public async Task<ScarletFileInfo?> GetFileInfo(string filePath, CancellationToken token)
@@ -210,11 +377,11 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return null;
         }
 
-        public Task<bool> IsEmpty(IFileSystemParent parent, CancellationToken token)
+        public Task<bool?> IsEmpty(IFileSystemParent parent, CancellationToken token)
         {
             return parent switch
             {
-                IFileSystemDrive drive => Task.Run(() => IsDriveEmpty(drive), token),
+                IFileSystemDrive drive => Task.Run<bool?>(() => IsDriveEmpty(drive), token),
                 IFileSystemDirectory directory => Task.Run(() => IsDirectoryEmpty(directory), token),
                 _ => throw new NotImplementedException(),
             };
@@ -222,10 +389,14 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 
         private string? GetMimeType(FileInfo fileInfo)
         {
-            foreach (var mimeTypeResolver in _mimetypeResolvers)
-            {
-                var mimeType = string.Empty;
+            return GetMimeType(fileInfo, _mimetypeResolvers);
+        }
 
+        private string? GetMimeType(FileInfo fileInfo, IReadOnlyList<IMimeTypeResolver> resolvers)
+        {
+            foreach (var mimeTypeResolver in resolvers)
+            {
+                string? mimeType;
                 try
                 {
                     mimeType = mimeTypeResolver.Get(fileInfo);
@@ -250,36 +421,35 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return drive.DriveType == DriveType.NoRootDirectory || drive.DriveType == DriveType.Unknown;
         }
 
-        private bool IsDirectoryEmpty(IFileSystemDirectory directory)
+        private bool? IsDirectoryEmpty(IFileSystemDirectory directory)
         {
             return IsDirectoryEmpty(directory.FullName);
         }
 
-        private bool IsDirectoryEmpty(string directoryPath)
+        private bool? IsDirectoryEmpty(string directoryPath)
         {
-            var result = true;
             if (_noAccessLookup.ContainsKey(directoryPath))
             {
-                return result;
+                return true;
             }
 
             try
             {
-                if (Directory.Exists(directoryPath))
-                {
-                    var query = Directory.EnumerateFileSystemEntries(directoryPath);
-
-                    result = !query.Any();
-                }
+                return !Directory.EnumerateFileSystemEntries(directoryPath).Any();
             }
             catch (UnauthorizedAccessException ex)
             {
                 _noAccessLookup.TryAdd(directoryPath, directoryPath);
 
                 _logger.LogError(ex, "Failed to get directory info");
+                return null;
             }
-
-            return result;
+            catch (IOException ex)
+            {
+                // the folder can disappear at any time, refreshing happens in async void handlers, where escaping exceptions end the process
+                _logger.LogWarning(ex, "Failed to enumerate {Path}", directoryPath);
+                return true;
+            }
         }
 
         public Task<IReadOnlyCollection<IFileSystemDrive>> GetDrives(
@@ -330,24 +500,43 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 return Enumerable.Empty<IFileSystemDirectory>();
             }
 
+            string[] paths;
             try
             {
-                var directoryInfos = Directory
-                    .GetDirectories(parent.FullName)
-                    .Select(p => new DirectoryInfo(p));
-
-                return directoryInfos
-                    .Where(p => folderAttributes.Any(q => p.Attributes.HasFlag(q)))
-                    .Select(p => new ScarletDirectory(_scheduler, new ScarletDirectoryInfo(p), fileAttributes, folderAttributes, parent, this));
+                paths = Directory.GetDirectories(parent.FullName);
             }
             catch (UnauthorizedAccessException ex)
             {
                 _logger.LogError(ex, "Failed to get directory info");
 
                 _noAccessLookup.TryAdd(parent.FullName, parent.FullName);
+                return Enumerable.Empty<IFileSystemDirectory>();
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "Failed to get directory info");
+                return Enumerable.Empty<IFileSystemDirectory>();
             }
 
-            return Enumerable.Empty<IFileSystemDirectory>();
+            // materialized here, so that failures of single entries are handled per entry instead of escaping the caller
+            var result = new List<IFileSystemDirectory>(paths.Length);
+            foreach (var path in paths)
+            {
+                try
+                {
+                    var info = new DirectoryInfo(path);
+                    if (folderAttributes.Any(q => info.Attributes.HasFlag(q)))
+                    {
+                        result.Add(new ScarletDirectory(_scheduler, new ScarletDirectoryInfo(info), fileAttributes, folderAttributes, parent, this));
+                    }
+                }
+                catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+                {
+                    _logger.LogError(ex, "Failed to get directory info for {Path}", path);
+                }
+            }
+
+            return result;
         }
 
         public Task<IReadOnlyCollection<IFileSystemFile>> GetFiles(IFileSystemParent parent, IReadOnlyCollection<FileAttributes> fileAttributes, CancellationToken token)
@@ -362,38 +551,55 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 return Enumerable.Empty<IFileSystemFile>();
             }
 
+            string[] paths;
             try
             {
-                var fileInfos = Directory
-                    .GetFiles(parent.FullName)
-                    .Select(file => new FileInfo(file))
-                    .Where(p => fileAttributes.Any(q => p.Attributes.HasFlag(q)))
-                    .Select(info =>
-                    {
-                        var mimeType = string.Empty;
-                        try
-                        {
-                            mimeType = GetMimeType(info);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Failed to get mimetype from file");
-                        }
-
-                        return new ScarletFileInfo(info, mimeType ?? string.Empty);
-                    });
-
-                return fileInfos
-                    .Select(p => new ScarletFile(_scheduler, p, parent, this));
+                paths = Directory.GetFiles(parent.FullName);
             }
             catch (UnauthorizedAccessException ex)
             {
                 _logger.LogError(ex, "Failed to get file info");
 
                 _noAccessLookup.TryAdd(parent.FullName, parent.FullName);
+                return Enumerable.Empty<IFileSystemFile>();
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "Failed to get file info");
+                return Enumerable.Empty<IFileSystemFile>();
             }
 
-            return Enumerable.Empty<IFileSystemFile>();
+            // materialized here, so that failures of single entries are handled per entry instead of escaping the caller
+            var result = new List<IFileSystemFile>(paths.Length);
+            foreach (var path in paths)
+            {
+                try
+                {
+                    var info = new FileInfo(path);
+                    if (!fileAttributes.Any(q => info.Attributes.HasFlag(q)))
+                    {
+                        continue;
+                    }
+
+                    var mimeType = string.Empty;
+                    try
+                    {
+                        mimeType = GetMimeType(info);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to get mimetype from file");
+                    }
+
+                    result.Add(new ScarletFile(_scheduler, new ScarletFileInfo(info, mimeType ?? string.Empty), parent, this));
+                }
+                catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+                {
+                    _logger.LogError(ex, "Failed to get file info for {Path}", path);
+                }
+            }
+
+            return result;
         }
     }
 }

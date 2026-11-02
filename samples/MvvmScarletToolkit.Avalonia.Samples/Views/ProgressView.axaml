@@ -1,0 +1,46 @@
+<!--  the commands are declared as ICommand, their IsBusy and CancelCommand can only be reached with reflection bindings  -->
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.ProgressView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:behaviors="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:features="clr-namespace:MvvmScarletToolkit.Core.Samples.Features;assembly=MvvmScarletToolkit.Core.Samples"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             behaviors:ViewLifecycle.LoadCommand="{Binding LoadCommand}"
+             behaviors:ViewLifecycle.UnloadCommand="{Binding UnloadCommand}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:CompileBindings="False"
+             x:DataType="features:ProgressViewModel"
+             mc:Ignorable="d">
+
+    <DockPanel>
+        <StackPanel Margin="0 4"
+                    DockPanel.Dock="Bottom"
+                    Orientation="Horizontal"
+                    Spacing="4">
+            <CheckBox Margin="4 0"
+                      VerticalAlignment="Center"
+                      Content="Murder UI with INPC-Events"
+                      IsChecked="{Binding Block}" />
+
+            <Button Command="{Binding RefreshCommand}"
+                    Content="Refresh"
+                    IsVisible="{Binding !RefreshCommand.IsBusy}" />
+
+            <Button Command="{Binding RefreshCommand.CancelCommand}"
+                    Content="Cancel"
+                    IsVisible="{Binding RefreshCommand.IsBusy}" />
+        </StackPanel>
+
+        <ProgressBar Height="20"
+                     Maximum="{Binding Maximum}"
+                     Value="{Binding Percentage}">
+            <ProgressBar.Transitions>
+                <Transitions>
+                    <DoubleTransition Property="Value" Duration="0:0:0.1" />
+                </Transitions>
+            </ProgressBar.Transitions>
+        </ProgressBar>
+    </DockPanel>
+</UserControl>

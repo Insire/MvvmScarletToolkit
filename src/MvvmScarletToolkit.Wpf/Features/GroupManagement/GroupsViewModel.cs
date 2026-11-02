@@ -1,10 +1,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Observables;
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MvvmScarletToolkit
 {
@@ -13,15 +10,22 @@ namespace MvvmScarletToolkit
     public sealed class GroupsViewModel : ViewModelListBase<GroupViewModel>
     {
         private readonly Func<ICollectionView> _collectionViewFactory;
+        private readonly GroupingViewModel? _owner;
 
         public GroupsViewModel(IScarletCommandBuilder commandBuilder, Func<ICollectionView> collectionViewFactory)
+            : this(commandBuilder, collectionViewFactory, null)
+        {
+        }
+
+        internal GroupsViewModel(IScarletCommandBuilder commandBuilder, Func<ICollectionView> collectionViewFactory, GroupingViewModel? owner)
             : base(commandBuilder)
         {
             _collectionViewFactory = collectionViewFactory ?? throw new ArgumentNullException(nameof(collectionViewFactory));
+            _owner = owner;
 
             Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, async (r, m) =>
             {
-                if (m.Value is null)
+                if (m.Value is null || !ReferenceEquals(m.Value.Owner, r._owner))
                 {
                     return;
                 }
@@ -32,7 +36,7 @@ namespace MvvmScarletToolkit
                     // this instance selection is changing
                     // => remove the previous value from the view
                     var view = _collectionViewFactory.Invoke();
-                    await Dispatcher.Invoke(() => view?.GroupDescriptions.Remove(m.Value.GroupDescription));
+                    await Dispatcher.Invoke(() => view.GroupDescriptions.Remove(m.Value.GroupDescription));
                 }
                 else
                 {
@@ -45,7 +49,7 @@ namespace MvvmScarletToolkit
 
             Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, async (r, m) =>
             {
-                if (m.Value is null)
+                if (m.Value is null || !ReferenceEquals(m.Value.Owner, r._owner))
                 {
                     return;
                 }
@@ -56,21 +60,21 @@ namespace MvvmScarletToolkit
                     // this instance selection changed
                     // => add the current value to the view
                     var view = _collectionViewFactory.Invoke();
-                    await Dispatcher.Invoke(() => view?.GroupDescriptions.Add(m.Value.GroupDescription));
+                    await Dispatcher.Invoke(() => view.GroupDescriptions.Add(m.Value.GroupDescription));
                 }
                 else
                 {
                     //Debug.WriteLine($"4 another instance selection changed =>  remove the current value({m.Value.Name}) from the possible selections");
                     // another instance selection changed
                     // => remove the current value from the possible selections
+                    // m.Value is now selected by the sender, so it has to stay usable
                     await r.Remove(m.Value);
-                    m.Value.Dispose();
                 }
             });
 
             Messenger.Register<GroupsViewModel, GroupsViewModelRemoved>(this, async (r, m) =>
             {
-                if (m?.Value?.SelectedItem is null)
+                if (m.Value.SelectedItem is null || ReferenceEquals(m.Value, r) || !ReferenceEquals(m.Value._owner, r._owner))
                 {
                     return;
                 }
@@ -83,9 +87,19 @@ namespace MvvmScarletToolkit
         public override async Task Clear(CancellationToken token)
         {
             var view = _collectionViewFactory.Invoke();
-            await Dispatcher.Invoke(() => view?.GroupDescriptions.Clear());
+            await Dispatcher.Invoke(() => view.GroupDescriptions.Clear());
 
             await base.Clear(token);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Messenger.UnregisterAll(this);
+            }
+
+            base.Dispose(disposing);
         }
 
         private string GetDebuggerDisplay()

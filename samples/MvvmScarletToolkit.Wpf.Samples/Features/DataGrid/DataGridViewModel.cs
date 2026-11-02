@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Threading;
+using System.Globalization;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
 {
@@ -8,25 +7,41 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
     {
         public GroupingViewModel Groups { get; }
 
-        private Predicate<object>? _filter;
-        public Predicate<object>? Filter
-        {
-            get { return _filter; }
-            private set
-            {
-                SetProperty(ref _filter, value);
-            }
-        }
+        public DataGridFilterViewModel ColumnFilters { get; }
+
+        public CsvExporter<DataGridRowViewModel> CsvExporter { get; }
+
+        /// <summary>
+        /// Stored by the tracker configured in <see cref="App"/>
+        /// </summary>
+        [ObservableProperty]
+        public partial DataGridLayout? Layout { get; set; }
 
         [ObservableProperty]
-        private string _filterText;
+        public partial string FilterText { get; set; }
 
-        public DataGridViewModel(IScarletCommandBuilder commandBuilder, SynchronizationContext synchronizationContext)
-            : base(commandBuilder, synchronizationContext, vm => vm.Name, new DataGridDataProvider(commandBuilder, 2000, 50))
+        partial void OnFilterTextChanged(string value)
         {
-            _filterText = string.Empty;
-            Groups = GroupingViewModel.Create(Items);
-            Filter = IsMatch;
+            ColumnFilters?.Refresh();
+        }
+
+        public DataGridViewModel(IScarletCommandBuilder commandBuilder, SynchronizationContext synchronizationContext, ExportFileDialog exportFileDialog)
+            // the key has to be immutable, Name can be edited in the details view
+            : base(commandBuilder, synchronizationContext, vm => vm.Id.ToString(CultureInfo.InvariantCulture), new DataGridDataProvider(commandBuilder, 2000, 50))
+        {
+            FilterText = string.Empty;
+            Groups = GroupingViewModel.Create(commandBuilder, Items, new GroupingViewModelOptions { ExcludeToolkitProperties = true });
+            ColumnFilters = DataGridFilterViewModel.Create<DataGridRowViewModel>(commandBuilder);
+            ColumnFilters.AdditionalFilter = IsMatch;
+            CsvExporter = new CsvExporter<DataGridRowViewModel>(commandBuilder, exportFileDialog, new Dictionary<string, Func<DataGridRowViewModel, object?>>
+            {
+                [nameof(DataGridRowViewModel.IsSelected)] = p => p.IsSelected,
+                [nameof(DataGridRowViewModel.Id)] = p => p.Id,
+                [nameof(DataGridRowViewModel.Name)] = p => p.Name,
+                [nameof(DataGridRowViewModel.Color)] = p => p.Color,
+                [nameof(DataGridRowViewModel.CreatedOn)] = p => p.CreatedOn,
+                [nameof(DataGridRowViewModel.UpdatedOn)] = p => p.UpdatedOn,
+            });
 
             PageSize = 50;
             TotalPageCount = 2000;
@@ -70,9 +85,10 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features.DataGrid
         {
             if (disposing)
             {
+                // the rows are disposed by the base class, when they are removed from Items
                 Groups.Dispose();
-
-                Items.Dispose();
+                ColumnFilters.Dispose();
+                CsvExporter.Dispose();
             }
 
             base.Dispose(disposing);

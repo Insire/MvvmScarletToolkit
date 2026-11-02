@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -71,10 +69,14 @@ namespace MvvmScarletToolkit
                     var subscriber = subscription.Subscriber?.Target;
 
                     if (subscriber is null)
+                    {
                         // The subscriber was collected, so there's no need to keep this subscription around
                         toRemove.Add(subscription);
+                    }
                     else
+                    {
                         toRaise.Add((subscriber, subscription.Handler));
+                    }
                 }
 
                 for (var i = 0; i < toRemove.Count; i++)
@@ -158,7 +160,7 @@ namespace MvvmScarletToolkit
             }
         }
 
-        private record struct Subscription(WeakReference? Subscriber, MethodInfo Handler)
+        private readonly record struct Subscription(WeakReference? Subscriber, MethodInfo Handler)
         {
             public readonly WeakReference? Subscriber = Subscriber;
             public readonly MethodInfo Handler = Handler ?? throw new ArgumentNullException(nameof(Handler));

@@ -8,18 +8,22 @@
         xmlns:controls="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:dataGrid="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.DataGrid"
+        xmlns:dialog="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Dialog;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:enums="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Enums;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:features="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features"
         xmlns:features1="clr-namespace:MvvmScarletToolkit.Core.Samples.Features;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:filesystembrowser="clr-namespace:MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;assembly=MvvmScarletToolkit.Wpf"
         xmlns:geometry="clr-namespace:MvvmScarletToolkit.Wpf.Samples.Features.Geometry"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Incubator"
+        xmlns:image="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Image;assembly=MvvmScarletToolkit.Core.Samples"
+        xmlns:incubator="clr-namespace:MvvmScarletToolkit;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
+        xmlns:nestedSelection="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.NestedSelection;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:observables="clr-namespace:MvvmScarletToolkit.Observables;assembly=MvvmScarletToolkit.Observables"
         xmlns:process="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Process;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        xmlns:tagCloud="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.TagCloud;assembly=MvvmScarletToolkit.Core.Samples"
         xmlns:virtualization="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Virtualization;assembly=MvvmScarletToolkit.Core.Samples"
         Name="MainWindowRoot"
         Title="MvvmScarletToolkit.Wpf.Samples"
@@ -110,6 +114,32 @@
                                 <CollectionContainer Collection="{Binding Data, Source={StaticResource OutputProxy}}" />
                                 <CollectionContainer Collection="{Binding Data, Source={StaticResource ErrorsProxy}}" />
                             </CompositeCollection>
+
+                            <!--  the ScrollViewer has to be part of the template, inside another ScrollViewer the VirtualizingStackPanel would realize every line  -->
+                            <Style x:Key="VirtualizedOutputStyle" TargetType="{x:Type ItemsControl}">
+                                <Setter Property="ItemsPanel">
+                                    <Setter.Value>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel />
+                                        </ItemsPanelTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ItemsControl}">
+                                            <ScrollViewer CanContentScroll="True"
+                                                          Focusable="False"
+                                                          HorizontalScrollBarVisibility="Auto"
+                                                          VerticalScrollBarVisibility="Auto">
+                                                <ItemsPresenter />
+                                            </ScrollViewer>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
+                                <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
+                            </Style>
                         </Grid.Resources>
 
                         <Grid.ColumnDefinitions>
@@ -146,6 +176,7 @@
 
                         <Button Grid.Row="0"
                                 Grid.Column="4"
+                                Click="SelectProcessFile_Click"
                                 Content="Select" />
                         <TextBlock Grid.Row="2"
                                    Grid.Column="0"
@@ -172,94 +203,55 @@
                                 Command="{Binding StartCommand}"
                                 Content="Run" />
 
-                        <ScrollViewer Grid.Row="8"
+                        <ItemsControl Grid.Row="8"
                                       Grid.Column="0"
-                                      HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding Output}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type process:ProcessData}">
-                                        <TextBlock>
-                                            <Run Text="{Binding Message, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
+                                      ItemsSource="{Binding Output}"
+                                      Style="{StaticResource VirtualizedOutputStyle}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type process:ProcessData}">
+                                    <TextBlock mvvm:TextBlockSelection.IsEnabled="True">
+                                        <Run Text="{Binding Message, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
-                        <ScrollViewer Grid.Row="8"
+                        <ItemsControl Grid.Row="8"
                                       Grid.Column="2"
-                                      HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding Errors}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type process:ProcessErrorData}">
-                                        <TextBlock TextWrapping="Wrap">
-                                            <Run Text="{Binding Message, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
+                                      ItemsSource="{Binding Errors}"
+                                      Style="{StaticResource VirtualizedOutputStyle}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type process:ProcessErrorData}">
+                                    <TextBlock mvvm:TextBlockSelection.IsEnabled="True" TextWrapping="Wrap">
+                                        <Run Text="{Binding Message, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
                         <TextBlock Grid.Row="10"
                                    Grid.Column="0"
                                    Text="All Output" />
 
-                        <ScrollViewer Grid.Row="12"
+                        <ItemsControl Grid.Row="12"
                                       Grid.Column="0"
                                       Grid.ColumnSpan="3"
-                                      HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding Source={StaticResource CompositeCollection}}">
-                                <ItemsControl.Resources>
-                                    <DataTemplate DataType="{x:Type process:ProcessData}">
-                                        <TextBlock Foreground="Blue">
-                                            <Run Text="{Binding Message, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </DataTemplate>
-                                    <DataTemplate DataType="{x:Type process:ProcessErrorData}">
-                                        <TextBlock Foreground="Red" TextWrapping="Wrap">
-                                            <Run Text="{Binding Message, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </DataTemplate>
-                                </ItemsControl.Resources>
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>
-                        </ScrollViewer>
+                                      ItemsSource="{Binding Source={StaticResource CompositeCollection}}"
+                                      Style="{StaticResource VirtualizedOutputStyle}">
+                            <ItemsControl.Resources>
+                                <DataTemplate DataType="{x:Type process:ProcessData}">
+                                    <TextBlock mvvm:TextBlockSelection.IsEnabled="True" Foreground="{DynamicResource AccentTextFillColorTertiaryBrush}">
+                                        <Run Text="{Binding Message, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type process:ProcessErrorData}">
+                                    <TextBlock mvvm:TextBlockSelection.IsEnabled="True" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" TextWrapping="Wrap">
+                                        <Run Text="{Binding Message, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ItemsControl.Resources>
+                        </ItemsControl>
                     </Grid>
-                </DataTemplate>
-
-                <DataTemplate DataType="{x:Type observables:EnumViewModel}">
-                    <DockPanel>
-                        <StackPanel VerticalAlignment="Center"
-                                    DockPanel.Dock="Left"
-                                    Orientation="Vertical">
-                            <RadioButton Content="None" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static enums:ViewModelEnum.None}}" />
-                            <RadioButton Content="AnotherValue" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static enums:ViewModelEnum.AnotherValue}}" />
-                            <RadioButton Content="SomeValue" IsChecked="{Binding Value, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static enums:ViewModelEnum.SomeValue}}" />
-                        </StackPanel>
-                        <Border HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                BorderBrush="Black"
-                                BorderThickness="1">
-                            <TextBlock Text="{Binding Value}" />
-                        </Border>
-                    </DockPanel>
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type contextmenu:ContextMenuViewModels}">
@@ -291,7 +283,9 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <ListBox ItemsSource="{Binding Items}"
+                        <!--  the scope on the ListBox aligns the columns of all rows, a scope per row would do nothing  -->
+                        <ListBox Grid.IsSharedSizeScope="True"
+                                 ItemsSource="{Binding Items}"
                                  SelectedItem="{Binding SelectedItem}"
                                  SelectionMode="Extended"
                                  VirtualizingStackPanel.IsVirtualizing="True"
@@ -318,7 +312,7 @@
 
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Grid.IsSharedSizeScope="True">
+                                    <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="Col1" />
                                             <ColumnDefinition Width="*" MinWidth="4" />
@@ -414,19 +408,280 @@
                     </Grid>
                 </DataTemplate>
 
+                <DataTemplate DataType="{x:Type image:VirtualizedImagesViewModel}">
+                    <Grid>
+                        <Grid.Resources>
+                            <!--  shared by the list and the read-only state overview  -->
+                            <Style x:Key="ImageStateIndicatorStyle" TargetType="{x:Type Rectangle}">
+                                <Setter Property="Fill" Value="LightGray" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static image:VirtualizedImageState.Pending}">
+                                        <Setter Property="Fill" Value="Khaki" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static image:VirtualizedImageState.Loading}">
+                                        <Setter Property="Fill" Value="Orange" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static image:VirtualizedImageState.Failed}">
+                                        <Setter Property="Fill" Value="IndianRed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static image:VirtualizedImageState.Shown}">
+                                        <Setter Property="Fill" Value="MediumSeaGreen" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static image:VirtualizedImageState.Unrealized}">
+                                        <Setter Property="Fill" Value="SteelBlue" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Resources>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="4" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                        <DockPanel Grid.Row="0"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="3"
+                                   LastChildFill="True">
+                            <Button Margin="0 0 8 0"
+                                    Command="{Binding RefreshCommand}"
+                                    Content="Refresh"
+                                    DockPanel.Dock="Left" />
+
+                            <TextBlock VerticalAlignment="Center"
+                                       DockPanel.Dock="Left"
+                                       TextWrapping="Wrap">
+                                <Run Text="{Binding Items.Count, StringFormat={}{0} images, Mode=OneWay}" />
+                                <Run Text="·" />
+                                <Run Text="{Binding RealizedCount, StringFormat={}{0} realized, Mode=OneWay}" />
+                                <Run Text="·" />
+                                <Run Foreground="Orange" Text="{Binding LoadingCount, StringFormat={}{0} loading, Mode=OneWay}" />
+                                <Run Text="·" />
+                                <Run Foreground="MediumSeaGreen" Text="{Binding ShownCount, StringFormat={}{0} shown, Mode=OneWay}" />
+                                <Run Text="·" />
+                                <Run Foreground="SteelBlue" Text="{Binding UnrealizedCount, StringFormat={}{0} unrealized, Mode=OneWay}" />
+                                <Run Text="·" />
+                                <Run Foreground="IndianRed" Text="{Binding FailedCount, StringFormat={}{0} failed, Mode=OneWay}" />
+                            </TextBlock>
+
+                            <TextBlock Margin="8 0 0 0"
+                                       VerticalAlignment="Center"
+                                       Foreground="Red"
+                                       Text="{Binding Error}"
+                                       TextTrimming="CharacterEllipsis" />
+                        </DockPanel>
+
+                        <!--  Standard (not Recycling) virtualization, so containers really get unloaded while scrolling  -->
+                        <ListBox Grid.Row="2"
+                                 Grid.Column="0"
+                                 HorizontalContentAlignment="Stretch"
+                                 ItemsSource="{Binding Items}"
+                                 ScrollViewer.CanContentScroll="True"
+                                 VirtualizingStackPanel.IsVirtualizing="True"
+                                 VirtualizingStackPanel.ScrollUnit="Pixel"
+                                 VirtualizingStackPanel.VirtualizationMode="Standard">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type image:VirtualizedImageViewModel}">
+                                    <Grid Height="208" Margin="0 0 0 4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="300" />
+                                            <ColumnDefinition Width="8" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Loaded">
+                                                <i:InvokeCommandAction Command="{Binding RealizeCommand}" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="Unloaded">
+                                                <i:InvokeCommandAction Command="{Binding UnrealizeCommand}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+
+                                        <Border Grid.Column="0"
+                                                Width="300"
+                                                Height="200"
+                                                Background="WhiteSmoke">
+                                            <Grid>
+                                                <TextBlock HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="32"
+                                                           FontWeight="Light">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="{x:Type TextBlock}">
+                                                            <Setter Property="Foreground" Value="Gray" />
+                                                            <Setter Property="Text" Value="..." />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding State}" Value="{x:Static image:VirtualizedImageState.Failed}">
+                                                                    <Setter Property="Foreground" Value="IndianRed" />
+                                                                    <Setter Property="Text" Value="failed to load" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+
+                                                <Image Width="300"
+                                                       Height="200"
+                                                       RenderOptions.BitmapScalingMode="HighQuality">
+                                                    <i:Interaction.Behaviors>
+                                                        <mvvm:AsyncImageLoadingBehavior Width="300"
+                                                                                        Height="200"
+                                                                                        Source="{Binding Source}"
+                                                                                        State="{Binding LoadState, Mode=OneWayToSource}" />
+                                                    </i:Interaction.Behaviors>
+                                                </Image>
+                                            </Grid>
+                                        </Border>
+
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Rectangle Width="12"
+                                                           Height="12"
+                                                           Margin="0 0 6 0"
+                                                           Style="{StaticResource ImageStateIndicatorStyle}" />
+                                                <TextBlock FontWeight="SemiBold" Text="{Binding State}" />
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding Id, StringFormat={}#{0}}" />
+                                            <TextBlock Text="{Binding Author}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding RealizedCount, StringFormat={}realized {0}x}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <GridSplitter Grid.Row="2"
+                                      Grid.Column="1"
+                                      HorizontalAlignment="Stretch" />
+
+                        <!--  read-only overview of every image, independent of virtualization  -->
+                        <DockPanel Grid.Row="2" Grid.Column="2">
+                            <WrapPanel Margin="0 0 0 4" DockPanel.Dock="Top">
+                                <WrapPanel.Resources>
+                                    <Style TargetType="{x:Type Rectangle}">
+                                        <Setter Property="Height" Value="10" />
+                                        <Setter Property="Margin" Value="0 0 4 0" />
+                                        <Setter Property="Width" Value="10" />
+                                    </Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Margin" Value="0 0 10 0" />
+                                    </Style>
+                                </WrapPanel.Resources>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="LightGray" />
+                                    <TextBlock Text="not realized" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="Khaki" />
+                                    <TextBlock Text="pending" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="Orange" />
+                                    <TextBlock Text="loading" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="MediumSeaGreen" />
+                                    <TextBlock Text="shown" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="IndianRed" />
+                                    <TextBlock Text="failed" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="SteelBlue" />
+                                    <TextBlock Text="unrealized" />
+                                </StackPanel>
+                            </WrapPanel>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsControl Focusable="False" ItemsSource="{Binding Items}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type image:VirtualizedImageViewModel}">
+                                            <Rectangle Width="10"
+                                                       Height="10"
+                                                       Margin="1"
+                                                       Style="{StaticResource ImageStateIndicatorStyle}">
+                                                <Rectangle.ToolTip>
+                                                    <TextBlock>
+                                                        <Run Text="{Binding Id, StringFormat={}#{0}, Mode=OneWay}" />
+                                                        <Run Text="{Binding Author, Mode=OneWay}" />
+                                                        <LineBreak />
+                                                        <Run Text="{Binding State, StringFormat={}State: {0}, Mode=OneWay}" />
+                                                        <LineBreak />
+                                                        <Run Text="{Binding RealizedCount, StringFormat={}Realized: {0}x, Mode=OneWay}" />
+                                                    </TextBlock>
+                                                </Rectangle.ToolTip>
+                                            </Rectangle>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </DockPanel>
+                    </Grid>
+                </DataTemplate>
+
+                <!--  shows the progress of a CsvExporter  -->
+                <DataTemplate x:Key="CsvExportProgressTemplate">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Style>
+                            <Style TargetType="{x:Type StackPanel}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsWriting}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+
+                        <ProgressBar Width="160"
+                                     Height="8"
+                                     Margin="0 0 8 0"
+                                     VerticalAlignment="Center"
+                                     Maximum="{Binding RowCount, Mode=OneWay}"
+                                     Value="{Binding RowsWritten, Mode=OneWay}" />
+
+                        <TextBlock VerticalAlignment="Center">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}Exporting {0:N0} of {1:N0}">
+                                    <Binding Path="RowsWritten" />
+                                    <Binding Path="RowCount" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+
                 <DataTemplate DataType="{x:Type dataGrid:DataGridViewModel}">
                     <Grid>
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding Groups}" />
                         </Grid.Resources>
 
+                        <!--  Groups is shared with the "MVVM Grouping" scene and stays loaded, unloading it would leave its group descriptions on the view  -->
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Loaded">
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
                                 <i:InvokeCommandAction Command="{Binding Groups.LoadCommand}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="Unloaded">
-                                <i:InvokeCommandAction Command="{Binding Groups.UnloadCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
@@ -461,8 +716,7 @@
                                                                 BorderThickness="1">
 
                                                             <DockPanel MinWidth="150">
-                                                                <Button Width="30"
-                                                                        Height="30"
+                                                                <Button Height="30"
                                                                         Margin="0 0 8 0"
                                                                         Command="{Binding Data.RemoveCommand, Source={StaticResource DataContextProxy}}"
                                                                         CommandParameter="{Binding}"
@@ -470,8 +724,7 @@
                                                                         DockPanel.Dock="Left"
                                                                         ToolTip="Remove" />
 
-                                                                <Button Width="30"
-                                                                        Height="30"
+                                                                <Button Height="30"
                                                                         Margin="8 0 0 0"
                                                                         Command="{Binding Data.AddCommand, Source={StaticResource DataContextProxy}}"
                                                                         Content="+"
@@ -520,59 +773,79 @@
                             </ContentControl.Style>
                         </ContentControl>
 
-                        <DataGrid Grid.Row="4"
-                                  mvvm:Filter.By="{Binding Filter, Mode=OneWay}"
-                                  mvvm:Filter.RefreshWhenChanged="{Binding FilterText, Mode=OneWay}"
-                                  AutoGenerateColumns="false"
-                                  IsReadOnly="True"
-                                  ItemsSource="{Binding Items}"
-                                  SelectedItem="{Binding SelectedItem}">
+                        <!--  without IsVirtualizingWhenGrouping every auto-paged row gets realized once a grouping is active  -->
+                        <DockPanel Grid.Row="4">
+                            <ItemsControl x:Name="GroupPanel"
+                                          DataContext="{Binding Groups}"
+                                          DockPanel.Dock="Top"
+                                          Style="{StaticResource ScarletDataGridGroupPanelStyle}" />
 
-                            <i:Interaction.Behaviors>
-                                <mvvm:ScrollToEndCommandBehavior Command="{Binding NextCommand}" Interval="00:00:00.250" />
-                                <mvvm:AutoScrollBehavior />
-                            </i:Interaction.Behaviors>
+                            <mvvm:DataGridSummaryBar DataGrid="{Binding ElementName=Grid}" DockPanel.Dock="Bottom" />
 
-                            <DataGrid.GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.ContainerStyle>
-                                        <Style TargetType="{x:Type GroupItem}">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="{x:Type GroupItem}">
-                                                        <DockPanel>
-                                                            <StackPanel Height="30"
-                                                                        DockPanel.Dock="Top"
-                                                                        Orientation="Horizontal">
-                                                                <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">
-                                                                    <Run FontSize="16"
-                                                                         FontWeight="DemiBold"
-                                                                         Text="{Binding Name, Mode=OneWay}" />
-                                                                    <Run Text="{Binding ItemCount, StringFormat=Count: {0}, Mode=OneWay}" />
-                                                                </TextBlock>
-                                                            </StackPanel>
-                                                            <ItemsPresenter />
-                                                        </DockPanel>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </GroupStyle.ContainerStyle>
-                                </GroupStyle>
-                            </DataGrid.GroupStyle>
+                            <DataGrid x:Name="Grid"
+                                      AutoGenerateColumns="false"
+                                      ColumnHeaderStyle="{StaticResource ScarletDataGridFilterColumnHeaderStyle}"
+                                      IsReadOnly="True"
+                                      ItemsSource="{Binding Items}"
+                                      SelectedItem="{Binding SelectedItem}"
+                                      VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                      VirtualizingPanel.VirtualizationMode="Recycling">
 
-                            <DataGrid.Columns>
-                                <DataGridCheckBoxColumn Binding="{Binding IsSelected, Mode=TwoWay}" Header="IsSelected" />
+                                <i:Interaction.Behaviors>
+                                    <mvvm:ScrollToEndCommandBehavior Command="{Binding NextCommand}" Interval="00:00:00.250" />
+                                    <mvvm:AutoScrollBehavior />
+                                    <mvvm:DataGridColumnChooserBehavior />
+                                    <mvvm:DataGridLayoutBehavior Layout="{Binding Layout}" />
+                                    <mvvm:DataGridFilterBehavior Filter="{Binding ColumnFilters}" />
+                                    <mvvm:DataGridGroupingBehavior DropTarget="{Binding ElementName=GroupPanel}" Grouping="{Binding Groups}" />
+                                </i:Interaction.Behaviors>
 
-                                <DataGridTextColumn Binding="{Binding Id}" Header="Id" />
-                                <DataGridTextColumn Width="*"
-                                                    Binding="{Binding Name}"
-                                                    Header="Name" />
-                                <DataGridTextColumn Binding="{Binding Color}" Header="Color" />
-                                <DataGridTextColumn Binding="{Binding CreatedOn}" Header="CreatedOn" />
-                                <DataGridTextColumn Binding="{Binding UpdatedOn}" Header="UpdatedOn" />
-                            </DataGrid.Columns>
-                        </DataGrid>
+                                <DataGrid.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="{x:Type GroupItem}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                            <DockPanel>
+                                                                <StackPanel Height="30"
+                                                                            DockPanel.Dock="Top"
+                                                                            Orientation="Horizontal">
+                                                                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">
+                                                                        <Run FontSize="16"
+                                                                             FontWeight="DemiBold"
+                                                                             Text="{Binding Name, Mode=OneWay}" />
+                                                                        <Run Text="{Binding ItemCount, StringFormat=Count: {0}, Mode=OneWay}" />
+                                                                    </TextBlock>
+                                                                </StackPanel>
+                                                                <ItemsPresenter />
+                                                            </DockPanel>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
+                                    </GroupStyle>
+                                </DataGrid.GroupStyle>
+
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, Mode=TwoWay}" Header="IsSelected" />
+
+                                    <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Maximum"
+                                                        Binding="{Binding Id}"
+                                                        Header="Id" />
+                                    <DataGridTextColumn Width="*"
+                                                        mvvm:DataGridSummaryBar.Function="Count"
+                                                        Binding="{Binding Name}"
+                                                        Header="Name" />
+                                    <DataGridTextColumn Binding="{Binding Color}" Header="Color" />
+                                    <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Minimum"
+                                                        Binding="{Binding CreatedOn}"
+                                                        Header="CreatedOn" />
+                                    <DataGridTextColumn Binding="{Binding UpdatedOn}" Header="UpdatedOn" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DockPanel>
 
                         <DockPanel Grid.Row="6">
                             <Button Command="{Binding FirstCommand}"
@@ -686,9 +959,146 @@
                                           Content="Live sorting"
                                           IsChecked="{Binding Groups.IsLiveSortingEnabled}" />
 
-                            <TextBlock VerticalAlignment="Center" Text="{Binding Items.Count, StringFormat='{}{0} Rows '}" />
+                            <Button Height="30"
+                                    Padding="8 0"
+                                    Command="{x:Static mvvm:DataGridCommands.Export}"
+                                    CommandParameter="{Binding CsvExporter}"
+                                    CommandTarget="{Binding ElementName=Grid}"
+                                    Content="Export CSV" />
+
+                            <Button Height="30"
+                                    Margin="8 0"
+                                    Padding="8 0"
+                                    Command="{x:Static mvvm:DataGridCommands.CancelExport}"
+                                    CommandTarget="{Binding ElementName=Grid}"
+                                    Content="Cancel export" />
+
+                            <Button Height="30"
+                                    Margin="0 0 8 0"
+                                    Padding="8 0"
+                                    Command="{Binding ColumnFilters.ClearCommand}"
+                                    Content="Clear filters" />
+
+                            <TextBlock Margin="0 0 8 0"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding Items.Count, StringFormat='{}{0} Rows '}" />
+
+                            <ContentControl Content="{Binding CsvExporter}"
+                                            ContentTemplate="{StaticResource CsvExportProgressTemplate}"
+                                            Focusable="False" />
                         </DockPanel>
                     </Grid>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type dataGrid:LargeDataGridViewModel}">
+                    <DockPanel>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                        <DockPanel Margin="0 4 0 0" DockPanel.Dock="Bottom">
+                            <Button Height="30"
+                                    Padding="8 0"
+                                    Command="{x:Static mvvm:DataGridCommands.Export}"
+                                    CommandParameter="{Binding CsvExporter}"
+                                    CommandTarget="{Binding ElementName=Grid}"
+                                    Content="Export CSV" />
+
+                            <Button Height="30"
+                                    Margin="8 0"
+                                    Padding="8 0"
+                                    Command="{x:Static mvvm:DataGridCommands.CancelExport}"
+                                    CommandTarget="{Binding ElementName=Grid}"
+                                    Content="Cancel export" />
+
+                            <Button Height="30"
+                                    Margin="0 0 8 0"
+                                    Padding="8 0"
+                                    Command="{Binding ColumnFilters.ClearCommand}"
+                                    Content="Clear filters" />
+
+                            <CheckBox Margin="0 0 8 0"
+                                      VerticalAlignment="Center"
+                                      Content="Validate filters"
+                                      IsChecked="{Binding ColumnFilters.IsValidationEnabled}" />
+
+                            <CheckBox Margin="0 0 8 0"
+                                      VerticalAlignment="Center"
+                                      Content="Change summaries"
+                                      IsChecked="{Binding CanChangeFunction, ElementName=Summary}" />
+
+                            <TextBlock Margin="0 0 8 0"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding Items.Count, ElementName=Grid, StringFormat='{}{0:N0} Rows'}" />
+
+                            <ContentControl Content="{Binding CsvExporter}"
+                                            ContentTemplate="{StaticResource CsvExportProgressTemplate}"
+                                            Focusable="False" />
+                        </DockPanel>
+
+                        <mvvm:DataGridSummaryBar x:Name="Summary"
+                                                 DataGrid="{Binding ElementName=Grid}"
+                                                 DockPanel.Dock="Bottom" />
+
+                        <ItemsControl x:Name="GroupPanel"
+                                      DataContext="{Binding Groups}"
+                                      DockPanel.Dock="Top"
+                                      Style="{StaticResource ScarletDataGridGroupPanelStyle}" />
+
+                        <DataGrid x:Name="Grid"
+                                  AutoGenerateColumns="false"
+                                  ColumnHeaderStyle="{StaticResource ScarletDataGridFilterColumnHeaderStyle}"
+                                  EnableColumnVirtualization="True"
+                                  IsReadOnly="True"
+                                  ItemsSource="{Binding Items}"
+                                  VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling">
+
+                            <i:Interaction.Behaviors>
+                                <mvvm:DataGridColumnChooserBehavior />
+                                <mvvm:DataGridLayoutBehavior Layout="{Binding Layout}" />
+                                <mvvm:DataGridFilterBehavior Filter="{Binding ColumnFilters}" />
+                                <mvvm:DataGridGroupingBehavior DropTarget="{Binding ElementName=GroupPanel}" Grouping="{Binding Groups}" />
+                            </i:Interaction.Behaviors>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Count"
+                                                    Binding="{Binding Id}"
+                                                    Header="Id (int)" />
+                                <DataGridTextColumn Binding="{Binding Reference}" Header="Reference (Guid)" />
+                                <DataGridTextColumn Binding="{Binding Name}" Header="Name (string)" />
+                                <DataGridTextColumn Binding="{Binding Description}" Header="Description (string?)" />
+                                <DataGridTextColumn Binding="{Binding Category}" Header="Category (enum)" />
+                                <DataGridCheckBoxColumn Binding="{Binding IsActive, Mode=OneWay}" Header="IsActive (bool)" />
+                                <DataGridCheckBoxColumn Binding="{Binding IsVerified, Mode=OneWay}"
+                                                        Header="IsVerified (bool?)"
+                                                        IsThreeState="True" />
+                                <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Sum"
+                                                    Binding="{Binding Quantity}"
+                                                    Header="Quantity (int?)" />
+                                <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Maximum"
+                                                    Binding="{Binding Views}"
+                                                    Header="Views (long)" />
+                                <DataGridTextColumn mvvm:DataGridSummaryBar.Format="N2"
+                                                    mvvm:DataGridSummaryBar.Function="Average"
+                                                    Binding="{Binding Score}"
+                                                    Header="Score (double)" />
+                                <DataGridTextColumn mvvm:DataGridSummaryBar.Format="N2"
+                                                    mvvm:DataGridSummaryBar.Function="Sum"
+                                                    Binding="{Binding Price}"
+                                                    Header="Price (decimal)" />
+                                <DataGridTextColumn mvvm:DataGridSummaryBar.Function="Minimum"
+                                                    Binding="{Binding CreatedOn}"
+                                                    Header="CreatedOn (DateTime)" />
+                                <DataGridTextColumn Binding="{Binding ModifiedOn}" Header="ModifiedOn (DateTimeOffset)" />
+                                <DataGridTextColumn Binding="{Binding ReleaseDate}" Header="ReleaseDate (DateOnly)" />
+                                <DataGridTextColumn Binding="{Binding StartTime}" Header="StartTime (TimeOnly)" />
+                                <DataGridTextColumn Binding="{Binding Duration}" Header="Duration (TimeSpan)" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type asyncState:AsyncStateListViewModel}">
@@ -730,7 +1140,7 @@
                                             <Style TargetType="{x:Type TextBlock}">
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                                                        <Setter Property="Foreground" Value="Red" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -770,7 +1180,6 @@
                                     Margin="0 0 4 0"
                                     Padding="4 0"
                                     HorizontalAlignment="Right"
-                                    Background="Transparent"
                                     BorderThickness="0"
                                     Content="X"
                                     ToolTip="Clear">
@@ -798,7 +1207,7 @@
                             <DockPanel Grid.Row="0" Grid.Column="2">
                                 <ToggleButton Content="Generate Items and Auto-Scroll">
                                     <ToggleButton.Style>
-                                        <Style TargetType="{x:Type ToggleButton}">
+                                        <Style BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="{x:Type ToggleButton}">
                                             <Style.Triggers>
                                                 <Trigger Property="IsChecked" Value="True">
                                                     <Setter Property="Command" Value="{Binding EnableGenerationCommand}" />
@@ -859,7 +1268,7 @@
                                                     <Style TargetType="{x:Type TextBlock}">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                                                                <Setter Property="Foreground" Value="Red" />
+                                                                <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -919,7 +1328,7 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type features:ProcessingImagesViewModel}">
+                <DataTemplate DataType="{x:Type image:ProcessingImagesViewModel}">
                     <controls:DragAndDrop />
                 </DataTemplate>
 
@@ -951,60 +1360,62 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type filesystembrowser:FilePickerViewModel}">
-                    <DockPanel>
-                        <Menu DockPanel.Dock="Top">
-                            <MenuItem Header="File">
-                                <MenuItem Header="Open" />
-                                <MenuItem Header="Delete" />
-                                <MenuItem Header="Refresh" />
-                                <MenuItem Header="Copy">
-                                    <MenuItem Header="As File" />
-                                    <MenuItem Header="As Path" />
-                                </MenuItem>
-                                <MenuItem Header="Move" />
-                            </MenuItem>
-                            <MenuItem Header="View">
-                                <!--<MenuItem Command="{Binding Options.DisplayDetailsAsListCommand}" Header="As List" />
-                                <MenuItem Command="{Binding Options.DisplayDetailsAsIconsCommand}" Header="As Icons" />-->
-                            </MenuItem>
-                            <MenuItem Header="Options" />
-                            <MenuItem Header="Help">
-                                <MenuItem Header="License" />
-                                <MenuItem Header="Credits" />
-                            </MenuItem>
-                        </Menu>
+                <DataTemplate DataType="{x:Type features:FileSystemDialogsViewModel}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="16" Grid.IsSharedSizeScope="True">
+                            <StackPanel.Resources>
+                                <DataTemplate DataType="{x:Type features:FileFilterExampleViewModel}">
+                                    <Grid Margin="0 0 0 12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="FileFilterExampleButton" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
 
-                        <controls:FilePicker />
-                    </DockPanel>
-                </DataTemplate>
+                                        <Button Grid.RowSpan="2"
+                                                MinWidth="140"
+                                                Margin="0 0 12 0"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding PickCommand}"
+                                                Content="{Binding Name}" />
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Description}"
+                                                   TextWrapping="Wrap" />
+                                        <TextBlock Grid.Row="1"
+                                                   Grid.Column="1"
+                                                   FontWeight="SemiBold"
+                                                   Text="{Binding File}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </Grid>
+                                </DataTemplate>
+                            </StackPanel.Resources>
 
-                <DataTemplate DataType="{x:Type filesystembrowser:FolderPickerViewModel}">
-                    <DockPanel>
-                        <Menu DockPanel.Dock="Top">
-                            <MenuItem Header="File">
-                                <MenuItem Header="Open" />
-                                <MenuItem Header="Delete" />
-                                <MenuItem Header="Refresh" />
-                                <MenuItem Header="Copy">
-                                    <MenuItem Header="As File" />
-                                    <MenuItem Header="As Path" />
-                                </MenuItem>
-                                <MenuItem Header="Move" />
-                            </MenuItem>
-                            <MenuItem Header="View">
-                                <!--<MenuItem Command="{Binding Options.DisplayDetailsAsListCommand}" Header="As List" />
-                                <MenuItem Command="{Binding Options.DisplayDetailsAsIconsCommand}" Header="As Icons" />-->
-                            </MenuItem>
-                            <MenuItem Header="Options" />
-                            <MenuItem Header="Help">
-                                <MenuItem Header="License" />
-                                <MenuItem Header="Credits" />
-                            </MenuItem>
-                        </Menu>
+                            <ItemsControl Focusable="False" ItemsSource="{Binding Examples}" />
 
-                        <controls:FolderPicker />
-                    </DockPanel>
+                            <ContentControl Content="{Binding CustomExample}" Focusable="False" />
+
+                            <DockPanel Margin="0 0 0 24">
+                                <TextBlock Margin="0 0 8 0"
+                                           VerticalAlignment="Center"
+                                           Text="Patterns, separated by ;" />
+                                <TextBox AutomationProperties.AutomationId="CustomPatterns" Text="{Binding CustomPatterns, UpdateSourceTrigger=PropertyChanged}" />
+                            </DockPanel>
+
+                            <DockPanel>
+                                <Button MinWidth="140"
+                                        Margin="0 0 12 0"
+                                        Command="{Binding PickFolderCommand}"
+                                        Content="Select a folder" />
+                                <TextBlock VerticalAlignment="Center"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding Folder}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </DockPanel>
+                        </StackPanel>
+                    </ScrollViewer>
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type features1:PasswordViewModel}">
@@ -1067,8 +1478,8 @@
                                 <i:Interaction.Behaviors>
                                     <mvvm:WatermarkBehavior Watermark="Search">
                                         <mvvm:WatermarkBehavior.WatermarkStyle>
-                                            <Style TargetType="{x:Type TextBox}">
-                                                <Setter Property="Foreground" Value="Red" />
+                                            <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}">
+                                                <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                                             </Style>
                                         </mvvm:WatermarkBehavior.WatermarkStyle>
                                     </mvvm:WatermarkBehavior>
@@ -1098,7 +1509,7 @@
                                       IsChecked="{Binding Block}" />
                             <Button DockPanel.Dock="Bottom">
                                 <Button.Style>
-                                    <Style TargetType="{x:Type Button}">
+                                    <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}">
                                         <Setter Property="Command" Value="{Binding RefreshCommand}" />
                                         <Setter Property="Content" Value="Refresh" />
                                         <Style.Triggers>
@@ -1136,11 +1547,17 @@
                         <TreeView.Resources>
 
                             <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
+                                <Style.Resources>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="Grid.ColumnSpan" Value="2" />
+                                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                    </Style>
+                                </Style.Resources>
                                 <Setter Property="Margin" Value="2" />
                             </Style>
 
                             <DataTemplate DataType="{x:Type busy:ObservableBusyViewModel}">
-                                <Border>
+                                <Border HorizontalAlignment="Stretch">
                                     <Border.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Command="{Binding BeBusyCommand}" Header="Be busy" />
@@ -1159,7 +1576,7 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <TextBlock Text="{Binding}" />
+                                    <TextBlock HorizontalAlignment="Stretch" Text="Child" />
                                 </Border>
                             </DataTemplate>
                             <HierarchicalDataTemplate DataType="{x:Type busy:BusyViewModel}" ItemsSource="{Binding Items}">
@@ -1183,7 +1600,7 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <TextBlock Text="{Binding}" />
+                                    <TextBlock Text="Container" />
                                 </Border>
                             </HierarchicalDataTemplate>
                         </TreeView.Resources>
@@ -1251,9 +1668,10 @@
                                                   Data="{Binding Value}"
                                                   Fill="Black"
                                                   Focusable="False" />
+
                                             <Button x:Key="ButtonTemplate"
-                                                    Width="48"
-                                                    Height="48"
+                                                    Margin="0"
+                                                    Padding="0"
                                                     BorderBrush="{x:Null}"
                                                     BorderThickness="0">
                                                 <Path Width="48"
@@ -1288,12 +1706,10 @@
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
                         </Grid.Resources>
 
+                        <!--  shared with the DataGrid scene, so it is not unloaded here either  -->
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Loaded">
                                 <i:InvokeCommandAction Command="{Binding LoadCommand}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="Unloaded">
-                                <i:InvokeCommandAction Command="{Binding UnloadCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
@@ -1328,6 +1744,7 @@
                                                                     ToolTip="Add" />
 
                                                             <Button Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                                                    Margin="4 0"
                                                                     Command="{Binding Data.RemoveCommand, Source={StaticResource DataContextProxy}}"
                                                                     CommandParameter="{Binding}"
                                                                     Content="-"
@@ -1357,7 +1774,6 @@
                                             <Setter Property="Content">
                                                 <Setter.Value>
                                                     <Button Grid.Column="0"
-                                                            Padding="10"
                                                             HorizontalAlignment="Center"
                                                             VerticalAlignment="Center"
                                                             Command="{Binding AddCommand}"
@@ -1387,7 +1803,7 @@
                     </Grid>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type features:DialogViewModel}">
+                <DataTemplate DataType="{x:Type dialog:DialogViewModel}">
                     <Grid>
                         <Grid.Resources>
                             <mvvm:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
@@ -1650,7 +2066,7 @@
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type features:SelectionsViewModel}">
+                <DataTemplate DataType="{x:Type nestedSelection:SelectionsViewModel}">
                     <DockPanel LastChildFill="False">
                         <ComboBox DisplayMemberPath="Index"
                                   DockPanel.Dock="Top"
@@ -1662,6 +2078,63 @@
                                   ItemsSource="{Binding SelectedChild.Children}"
                                   SelectedItem="{Binding SelectedChild.SelectedChild}" />
                     </DockPanel>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type features:SelectableTextViewModel}">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel.Resources>
+                            <Style x:Key="SelectableTextStyle" TargetType="{x:Type TextBlock}">
+                                <Setter Property="mvvm:TextBlockSelection.IsEnabled" Value="True" />
+                                <Setter Property="TextWrapping" Value="Wrap" />
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <GroupBox Header="Drag to select or double-click a word, then press Ctrl+C or right-click. Ctrl+A selects everything.">
+                            <TextBlock x:Name="WrappedText"
+                                       Style="{StaticResource SelectableTextStyle}"
+                                       Text="This TextBlock gets its selection from a style. A long text that wraps across multiple lines shows that a selection follows the layout of the text. Resize the window while text is selected and the highlight moves along with the lines. Clicking somewhere else in this text starts a new selection." />
+                        </GroupBox>
+
+                        <GroupBox Margin="0 8 0 0" Header="Inlines keep their formatting, set through the behavior">
+                            <TextBlock>
+                                <i:Interaction.Behaviors>
+                                    <mvvm:TextBlockSelectionBehavior />
+                                </i:Interaction.Behaviors>
+                                <Run Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Text="Colored runs," />
+                                <Bold>bold text</Bold>
+                                <Run Text="and" />
+                                <Italic>italic text</Italic>
+                                <LineBreak />
+                                <Run Text="can be selected in one go, across a line break." />
+                            </TextBlock>
+                        </GroupBox>
+
+                        <GroupBox Margin="0 8 0 0" Header="HtmlTextBlock with a custom SelectionBrush and SelectionOpacity">
+                            <mvvm:HtmlTextBlock mvvm:TextBlockSelection.IsEnabled="True"
+                                                mvvm:TextBlockSelection.SelectionBrush="Orange"
+                                                mvvm:TextBlockSelection.SelectionOpacity="0.6"
+                                                Html="This &lt;b&gt;selection&lt;/b&gt; is orange." />
+                        </GroupBox>
+
+                        <GroupBox Margin="0 8 0 0" Header="Bound text">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Style="{StaticResource SelectableTextStyle}" Text="{Binding Message}" />
+                                <TextBox Margin="0 8 0 0" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Margin="0 8 0 0" Header="SelectedText of the first text">
+                            <TextBlock Text="{Binding (mvvm:TextBlockSelection.SelectedText), ElementName=WrappedText}" TextWrapping="Wrap" />
+                        </GroupBox>
+                    </StackPanel>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type tagCloud:TagCloudViewModel}">
+                    <controls:TagCloud />
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type enums:EnumsViewModel}">
+                    <controls:EnumsView />
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>

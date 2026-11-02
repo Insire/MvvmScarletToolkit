@@ -38,7 +38,7 @@ namespace MvvmScarletToolkit
             nameof(SelectedItems)
             , typeof(IList)
             , typeof(MultiSelectionBehavior)
-            , new UIPropertyMetadata(default(IList), OnSelectedItemsChanged));
+            , new UIPropertyMetadata(null, OnSelectedItemsChanged));
 
         protected override void OnAttached()
         {
@@ -46,23 +46,39 @@ namespace MvvmScarletToolkit
 
             AssociatedObject.SelectionChanged += OnSelectionChanged;
 
-            if (SelectedItems != null)
+            if (SelectedItems == null)
             {
-                if (AssociatedObject.SelectedItems.Count > 0)
-                {
-                    AssociatedObject.SelectedItems.Clear();
-                }
+                return;
+            }
 
-                foreach (var item in SelectedItems)
-                {
-                    AssociatedObject.SelectedItems.Add(item);
-                }
+            if (AssociatedObject.SelectedItems.Count > 0)
+            {
+                AssociatedObject.SelectedItems.Clear();
+            }
+
+            foreach (var item in SelectedItems)
+            {
+                AssociatedObject.SelectedItems.Add(item);
+            }
+
+            // OnSelectedItemsChanged skips subscribing while the behavior is not attached yet
+            if (SelectedItems is INotifyCollectionChanged collection)
+            {
+                collection.CollectionChanged -= SourceCollectionChanged;
+                collection.CollectionChanged += SourceCollectionChanged;
             }
         }
 
         protected override void OnDetaching()
         {
             AssociatedObject.SelectionChanged -= OnSelectionChanged;
+
+            // the source collection would otherwise keep the behavior and its MultiSelector alive
+            if (SelectedItems is INotifyCollectionChanged collection)
+            {
+                collection.CollectionChanged -= SourceCollectionChanged;
+            }
+
             base.OnDetaching();
         }
 
@@ -83,23 +99,25 @@ namespace MvvmScarletToolkit
                 oldValue.CollectionChanged -= behavior.SourceCollectionChanged;
             }
 
-            if (e.NewValue is INotifyCollectionChanged newValue)
+            if (e.NewValue is not INotifyCollectionChanged newValue)
             {
-                if (e.OldValue is not null) // skip setting the initial value from the UI(since thats an empty collection), as that will overwrite anything that has been set in the bound object
-                {
-                    if (behavior.AssociatedObject.SelectedItems.Count > 0)
-                    {
-                        behavior.AssociatedObject.SelectedItems.Clear();
-                    }
-                }
-
-                foreach (var item in (IEnumerable)newValue)
-                {
-                    behavior.AssociatedObject.SelectedItems.Add(item);
-                }
-
-                newValue.CollectionChanged += behavior.SourceCollectionChanged;
+                return;
             }
+
+            if (e.OldValue is not null) // skip setting the initial value from the UI(since thats an empty collection), as that will overwrite anything that has been set in the bound object
+            {
+                if (behavior.AssociatedObject.SelectedItems.Count > 0)
+                {
+                    behavior.AssociatedObject.SelectedItems.Clear();
+                }
+            }
+
+            foreach (var item in (IEnumerable)newValue)
+            {
+                behavior.AssociatedObject.SelectedItems.Add(item);
+            }
+
+            newValue.CollectionChanged += behavior.SourceCollectionChanged;
         }
 
         private bool _isUpdatingTarget;

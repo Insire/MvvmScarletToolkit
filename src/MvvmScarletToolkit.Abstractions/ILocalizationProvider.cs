@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace MvvmScarletToolkit
@@ -9,6 +8,7 @@ namespace MvvmScarletToolkit
         /// Translates the key into a localized value
         /// </summary>
         /// <param name="key">The key.</param>
+        /// <param name="culture"></param>
         /// <returns></returns>
         string Translate(string key, CultureInfo culture);
 

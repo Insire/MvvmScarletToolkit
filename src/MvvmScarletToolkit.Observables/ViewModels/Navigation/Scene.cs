@@ -1,19 +1,17 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 
 namespace MvvmScarletToolkit.Observables
 {
     public partial class Scene : ObservableObject
     {
         [ObservableProperty]
-        private object? _content;
+        public partial object? Content { get; set; }
 
         [ObservableProperty]
-        private bool _isSelected;
+        public partial bool IsSelected { get; set; }
 
         [ObservableProperty]
-        public int _sequence;
-
+        public partial int Sequence { get; set; }
         public ILocalizationViewModel Localization { get; }
 
         public Scene(in ILocalizationViewModel localizationViewModel)

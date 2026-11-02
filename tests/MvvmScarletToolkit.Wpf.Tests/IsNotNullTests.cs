@@ -1,7 +1,6 @@
 namespace MvvmScarletToolkit.Wpf.Tests
 {
-    [TraceTest]
-    public sealed class IsNotNullTests
+    public sealed class IsNotNullTests : TraceTestBase
     {
         [Fact]
         public void Convert_Should_Return_True_For_Anything_But_Null()

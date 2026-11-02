@@ -1,18 +1,21 @@
+using Jot;
 using MvvmScarletToolkit.Core.Samples.Features;
 using MvvmScarletToolkit.Core.Samples.Features.AsyncState;
 using MvvmScarletToolkit.Core.Samples.Features.Busy;
 using MvvmScarletToolkit.Core.Samples.Features.ContextMenu;
+using MvvmScarletToolkit.Core.Samples.Features.Dialog;
+using MvvmScarletToolkit.Core.Samples.Features.Enums;
+using MvvmScarletToolkit.Core.Samples.Features.Image;
+using MvvmScarletToolkit.Core.Samples.Features.NestedSelection;
 using MvvmScarletToolkit.Core.Samples.Features.Process;
+using MvvmScarletToolkit.Core.Samples.Features.TagCloud;
 using MvvmScarletToolkit.Core.Samples.Features.Virtualization;
 using MvvmScarletToolkit.Observables;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using MvvmScarletToolkit.Wpf.Samples.Features.Geometry;
-using MvvmScarletToolkit.Wpf.Samples.Features.Image;
 using System.Net.Http;
 using System.Reactive.Concurrency;
-using System.Threading;
-using EnumViewModel = MvvmScarletToolkit.Core.Samples.Features.Enums.EnumViewModel;
 
 namespace MvvmScarletToolkit.Wpf.Samples.Features
 {
@@ -24,22 +27,34 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             SynchronizationContext synchronizationContext,
             IScarletCommandBuilder commandBuilder,
             LocalizationsViewModel localizationsViewModel,
-            EnvironmentInformationProvider environmentInformationProvider,
-            HttpClient httpClient)
+            ProcessingImagesViewModel processingImagesViewModel,
+            HttpClient httpClient,
+            Tracker tracker)
             : base(commandBuilder, localizationsViewModel)
         {
-            var dataGridViewModel = new DataGrid.DataGridViewModel(commandBuilder, synchronizationContext);
+            // shared with the export dialog, so that it starts in the folder selected in the browser
+            var fileSystem = new FileSystemViewModel(scheduler, factory, FileSystemOptionsViewModel.Default);
+            var exportFileDialog = new DataGrid.ExportFileDialog(fileSystem, commandBuilder.Dispatcher);
+            var dataGridViewModel = new DataGrid.DataGridViewModel(commandBuilder, synchronizationContext, exportFileDialog);
+            var largeDataGridViewModel = new DataGrid.LargeDataGridViewModel(commandBuilder, exportFileDialog);
 
-            Add("Image Loading + Drag and Drop", new ProcessingImagesViewModel(CommandBuilder, new ImageViewModelProvider(CommandBuilder, environmentInformationProvider, httpClient)));
+            tracker.Track(dataGridViewModel);
+            tracker.Track(largeDataGridViewModel);
+
+            Add("Image Loading + Drag and Drop", processingImagesViewModel);
             Add("Lazy Loading / Data-Virtualization", new DataEntriesViewModel(CommandBuilder, synchronizationContext));
+            Add("Image Loading in a virtualized list", new VirtualizedImagesViewModel(CommandBuilder, synchronizationContext, httpClient));
             Add("ConcurrentCommands and state changes", new AsyncStateListViewModel(commandBuilder));
             Add("MVVM Live Sorting and Grouping in bound collections", dataGridViewModel);
+            Add("DataGrid with a million rows", largeDataGridViewModel);
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));
-            Add("FileSystemBrowser", new FileSystemViewModel(scheduler, factory, FileSystemOptionsViewModel.Default));
+            Add("FileSystemBrowser", fileSystem);
+            Add("File and folder dialogs", new FileSystemDialogsViewModel(new FileSystemDialog(scheduler, factory, FileSystemOptionsViewModel.Default, commandBuilder.Dispatcher)));
             Add("State changes in a tree structure", new BusyViewModel(commandBuilder));
             Add("Geometry rendering", new GeometryRenderViewModel(commandBuilder));
             Add("Binding Passwordbox", new PasswordViewModel());
-            Add("MVVM Grouping", GroupingViewModel.Create(commandBuilder, dataGridViewModel.Items));
+            // the same instance as in the DataGrid scene, so that both scenes show the same groupings
+            Add("MVVM Grouping", dataGridViewModel.Groups);
             Add("Dialog-ViewModel", new DialogViewModel(commandBuilder));
             Add("MVVM Terminal/Console", new ProcessViewModel(commandBuilder));
 
@@ -51,11 +66,13 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             contextMenu.Items[0].Items.Add(menuitem);
 
             Add("MVVM ContextMenus", contextMenu);
-            Add("Binding Enum values", new EnumViewModel());
+            Add("Binding Enum values", new EnumsViewModel(commandBuilder));
             Add("MVVM Toast-Notification", new ToastsViewModel(commandBuilder));
             Add("Input Prevention", new FormViewModel());
             Add("ObservableDictionary", new ObservableDictionaryViewModel());
             Add("Nested Selection", new SelectionsViewModel());
+            Add("Tag cloud with a VirtualizingWrapPanel", new TagCloudViewModel());
+            Add("Selecting and copying text", new SelectableTextViewModel());
 
             Items[0].IsSelected = true;
         }

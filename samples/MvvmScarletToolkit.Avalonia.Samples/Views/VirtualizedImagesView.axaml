@@ -1,0 +1,167 @@
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.VirtualizedImagesView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:behaviors="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Behaviors"
+             xmlns:converters="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:image="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.Image;assembly=MvvmScarletToolkit.Core.Samples"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
+             behaviors:ViewLifecycle.LoadCommand="{Binding LoadCommand}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="image:VirtualizedImagesViewModel"
+             mc:Ignorable="d">
+
+    <Grid ColumnDefinitions="2*,4,*" RowDefinitions="Auto,4,*">
+        <DockPanel Grid.Row="0"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="3">
+            <Button Margin="0 0 8 0"
+                    Command="{Binding RefreshCommand}"
+                    Content="Refresh"
+                    DockPanel.Dock="Left" />
+
+            <TextBlock VerticalAlignment="Center"
+                       DockPanel.Dock="Left"
+                       TextWrapping="Wrap">
+                <Run Text="{Binding Items.Count, StringFormat='{}{0} images', Mode=OneWay}" />
+                <Run Text="·" />
+                <Run Text="{Binding RealizedCount, StringFormat='{}{0} realized', Mode=OneWay}" />
+                <Run Text="·" />
+                <Run Foreground="Orange" Text="{Binding LoadingCount, StringFormat='{}{0} loading', Mode=OneWay}" />
+                <Run Text="·" />
+                <Run Foreground="MediumSeaGreen" Text="{Binding ShownCount, StringFormat='{}{0} shown', Mode=OneWay}" />
+                <Run Text="·" />
+                <Run Foreground="SteelBlue" Text="{Binding UnrealizedCount, StringFormat='{}{0} unrealized', Mode=OneWay}" />
+                <Run Text="·" />
+                <Run Foreground="IndianRed" Text="{Binding FailedCount, StringFormat='{}{0} failed', Mode=OneWay}" />
+            </TextBlock>
+
+            <TextBlock Margin="8 0 0 0"
+                       VerticalAlignment="Center"
+                       Foreground="Red"
+                       Text="{Binding Error}"
+                       TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+
+        <ListBox x:Name="Images"
+                 Grid.Row="2"
+                 Grid.Column="0"
+                 ItemsSource="{Binding Items}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="image:VirtualizedImageViewModel">
+                    <Grid Height="208"
+                          Margin="0 0 0 4"
+                          ColumnDefinitions="300,8,*">
+                        <Border Grid.Column="0"
+                                Width="300"
+                                Height="200"
+                                Background="WhiteSmoke">
+                            <Grid>
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="32"
+                                           FontWeight="Light"
+                                           Foreground="Gray"
+                                           Text="..." />
+
+                                <Image Width="300"
+                                       Height="200"
+                                       mvvm:AsyncImageLoadingBehavior.Height="200"
+                                       mvvm:AsyncImageLoadingBehavior.Source="{Binding Source}"
+                                       mvvm:AsyncImageLoadingBehavior.State="{Binding LoadState, Mode=OneWayToSource}"
+                                       mvvm:AsyncImageLoadingBehavior.Width="300"
+                                       RenderOptions.BitmapInterpolationMode="HighQuality" />
+                            </Grid>
+                        </Border>
+
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Width="12"
+                                           Height="12"
+                                           Margin="0 0 6 0"
+                                           Fill="{Binding State, Converter={converters:ImageStateToBrush}}" />
+                                <TextBlock FontWeight="SemiBold" Text="{Binding State}" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding Id, StringFormat='#{0}'}" />
+                            <TextBlock Text="{Binding Author}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding RealizedCount, StringFormat='realized {0}x'}" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <GridSplitter Grid.Row="2"
+                      Grid.Column="1"
+                      ResizeDirection="Columns" />
+
+        <!--  read-only overview of every image, independent of virtualization  -->
+        <DockPanel Grid.Row="2" Grid.Column="2">
+            <WrapPanel Margin="0 0 0 4" DockPanel.Dock="Top">
+                <WrapPanel.Styles>
+                    <Style Selector="Rectangle">
+                        <Setter Property="Height" Value="10" />
+                        <Setter Property="Margin" Value="0 0 4 0" />
+                        <Setter Property="Width" Value="10" />
+                    </Style>
+                    <Style Selector="TextBlock">
+                        <Setter Property="Margin" Value="0 0 10 0" />
+                    </Style>
+                </WrapPanel.Styles>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Fill="LightGray" />
+                    <TextBlock Text="not realized" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Fill="Khaki" />
+                    <TextBlock Text="pending" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Fill="Orange" />
+                    <TextBlock Text="loading" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Fill="MediumSeaGreen" />
+                    <TextBlock Text="shown" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Fill="IndianRed" />
+                    <TextBlock Text="failed" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Fill="SteelBlue" />
+                    <TextBlock Text="unrealized" />
+                </StackPanel>
+            </WrapPanel>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding Items}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="image:VirtualizedImageViewModel">
+                            <Rectangle Width="10"
+                                       Height="10"
+                                       Margin="1"
+                                       Fill="{Binding State, Converter={converters:ImageStateToBrush}}">
+                                <ToolTip.Tip>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Author}" />
+                                        <TextBlock Text="{Binding State, StringFormat='State: {0}'}" />
+                                        <TextBlock Text="{Binding RealizedCount, StringFormat='Realized: {0}x'}" />
+                                    </StackPanel>
+                                </ToolTip.Tip>
+                            </Rectangle>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+</UserControl>

@@ -4,5 +4,6 @@
     "parallelizeAssembly": true,
     "showLiveOutput": true,
     "parallelizeTestCollections": true,
-    "parallelAlgorithm": "aggressive"
+    "parallelAlgorithm": "aggressive",
+    "preEnumerateTheories": true
 }

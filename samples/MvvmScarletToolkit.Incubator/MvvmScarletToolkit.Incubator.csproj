@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net9.0-windows</TargetFrameworks>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -10,7 +10,6 @@
   <ItemGroup>
     <PackageReference Include="DynamicData" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
-    <PackageReference Include="System.Drawing.Common" />
   </ItemGroup>
 
   <ItemGroup>

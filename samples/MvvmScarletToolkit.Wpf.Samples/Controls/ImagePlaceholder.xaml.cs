@@ -21,5 +21,20 @@ namespace MvvmScarletToolkit.Wpf.Samples.Controls
             typeof(bool),
             typeof(ImagePlaceholder),
             new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+
+        /// <summary>
+        /// The size in pixels, that the image is decoded to fit into. Should match the displayed size, larger values waste memory.
+        /// </summary>
+        public uint DecodeSize
+        {
+            get { return (uint)GetValue(DecodeSizeProperty); }
+            set { SetValue(DecodeSizeProperty, value); }
+        }
+
+        public static readonly DependencyProperty DecodeSizeProperty = DependencyProperty.Register(
+            nameof(DecodeSize),
+            typeof(uint),
+            typeof(ImagePlaceholder),
+            new PropertyMetadata(800u));
     }
 }

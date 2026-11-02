@@ -1,28 +1,27 @@
 using MvvmScarletToolkit.Observables;
-using MvvmScarletToolkit.Tests.Util;
-using System;
+using MvvmScarletToolkit.Wpf.Tests.TestData;
+using MvvmScarletToolkit.Wpf.Tests.Util;
 
-namespace MvvmScarletToolkit.Tests
+namespace MvvmScarletToolkit.Wpf.Tests
 {
-    [TraceTest]
-    public sealed class ViewModelBaseTests
+    public sealed class ViewModelBaseTests : TraceTestBase
     {
         [Fact]
         public void Ctor_DoesNotAcceptNullArgument()
         {
-            Assert.Throws<ArgumentNullException>(() => new DerivedViewModelBase(null!));
+            Assert.Throws<NullReferenceException>(() => new DerivedViewModelBase(null!));
         }
 
         [Fact]
         public void Ctor_DoesNotThrow()
         {
-            new DerivedViewModelBase(Utils.GetTestCommandBuilder());
+            _ = new DerivedViewModelBase(Utils.GetTestCommandBuilder());
         }
 
         [Fact]
         public void Ctor_DoesNotThrowForNullModel()
         {
-            new DerivedObjectViewModelBase(Utils.GetTestCommandBuilder(), null);
+            _ = new DerivedObjectViewModelBase(Utils.GetTestCommandBuilder(), null);
         }
 
         [Fact]

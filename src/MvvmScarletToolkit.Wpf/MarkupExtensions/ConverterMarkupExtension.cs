@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Markup;
@@ -10,6 +9,10 @@ namespace MvvmScarletToolkit
     {
         private static T? _converter;
 
+        /// <summary>
+        /// Returns one shared instance per converter type. Converters with properties settable in xaml
+        /// must override this and return <see langword="this"/>, the shared instance would drop those settings.
+        /// </summary>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return _converter ??= new T();
@@ -17,7 +20,7 @@ namespace MvvmScarletToolkit
 
         public abstract object? Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture);
 
-        public virtual object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public virtual object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             // According to https://msdn.microsoft.com/en-us/library/system.windows.data.ivalueconverter.convertback(v=vs.110).aspx#Anchor_1
             // (kudos Scott Chamberlain), if you do not support a conversion

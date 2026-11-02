@@ -1,20 +1,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit.Observables
 {
     /// <summary>
-    /// Collection ViewModelBase wrapping around an <see cref="ObservableCollection"/> that provides methods for threadsafe modification via the dispatcher
+    /// Collection ViewModelBase wrapping around an <see cref="ObservableCollection{T}"/> that provides methods for threadsafe modification via the dispatcher
     /// </summary>
     public abstract partial class ViewModelListBase<TViewModel> : ViewModelBase
         where TViewModel : class, INotifyPropertyChanged
@@ -134,21 +129,23 @@ namespace MvvmScarletToolkit.Observables
         /// </para>
         /// </summary>
         /// <param name="viewModel">the viewmodel instance to be added</param>
-        protected void AddUnchecked(TViewModel viewModel)
+        protected TViewModel AddUnchecked(TViewModel viewModel)
         {
             _items.Add(viewModel);
+
+            return viewModel;
         }
 
-        public Task Add(TViewModel item)
+        public Task Add(TViewModel? item)
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             if (item is null)
             {
-                return Task.CompletedTask;
+                throw new ArgumentNullException(nameof(item));
             }
 
             return Add(item, CancellationToken.None);
@@ -158,7 +155,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             if (item is null)
@@ -181,7 +178,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             return AddRange(items, CancellationToken.None);
@@ -191,7 +188,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             if (items is null)
@@ -209,7 +206,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             if (item is null)
@@ -224,7 +221,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             using (BusyStack.GetToken())
@@ -242,7 +239,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             return RemoveRange(items, CancellationToken.None);
@@ -252,7 +249,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             if (items is null)
@@ -270,7 +267,7 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             return Clear(CancellationToken.None);
@@ -280,17 +277,19 @@ namespace MvvmScarletToolkit.Observables
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                throw new ObjectDisposedException(nameof(ViewModelListBase<>));
             }
 
             using (BusyStack.GetToken())
             {
-                await Dispatcher.Invoke(() =>
-                {
-                    _items.Clear();
-                    OnPropertyChanged(nameof(Count));
-                    OnPropertyChanged(nameof(HasItems));
-                }, token).ConfigureAwait(false);
+                await Dispatcher
+                    .Invoke(() =>
+                    {
+                        _items.Clear();
+                        OnPropertyChanged(nameof(Count));
+                        OnPropertyChanged(nameof(HasItems));
+                    }, token)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -310,7 +309,8 @@ namespace MvvmScarletToolkit.Observables
         {
             using (BusyStack.GetToken())
             {
-                await RemoveRange(items?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()).ConfigureAwait(false);
+                // a snapshot: removing an item deselects it, which changes SelectedItems while it would still be enumerated
+                await RemoveRange(items?.Cast<TViewModel>().ToArray() ?? [], CancellationToken.None).ConfigureAwait(false);
             }
         }
 
@@ -323,7 +323,7 @@ namespace MvvmScarletToolkit.Observables
         protected bool CanRemoveRange(IList items)
         {
             return !IsDisposed
-                && CanRemoveRange(items?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>());
+                && CanRemoveRange(items?.Cast<TViewModel>() ?? []);
         }
 
         protected virtual bool CanRemove(TViewModel? item)
@@ -334,9 +334,8 @@ namespace MvvmScarletToolkit.Observables
             }
 
             return !IsDisposed
-                && CanClear()
-                && item is not null
-                && _items.Contains(item);
+                   && CanClear()
+                   && _items.Contains(item);
         }
 
         private bool CanRemove()
@@ -381,14 +380,15 @@ namespace MvvmScarletToolkit.Observables
                 return;
             }
 
-            Messenger.Send(new ViewModelListBaseSelectionsChanged<TViewModel>(SelectedItems?.Cast<TViewModel>() ?? Enumerable.Empty<TViewModel>()));
+            Messenger.Send(new ViewModelListBaseSelectionsChanged<TViewModel>(SelectedItems?.Cast<TViewModel>() ?? []));
         }
 
-        protected override async void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
+            // Dispose has to be idempotent
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ViewModelListBase<TViewModel>));
+                return;
             }
 
             if (disposing)
@@ -398,7 +398,9 @@ namespace MvvmScarletToolkit.Observables
 
                 SelectedItems.CollectionChanged -= OnSelectedItemsCollectionChanged;
 
-                await Clear().ConfigureAwait(false);
+                // Dispose can't be awaited, but the collection may only be modified on the dispatcher.
+                // IsDisposed is set synchronously below, so that repeated or concurrent calls are no-ops
+                _ = Dispatcher.Invoke(_items.Clear, CancellationToken.None);
             }
 
             base.Dispose(disposing);

@@ -21,13 +21,13 @@ namespace MvvmScarletToolkit.Core.Samples.Features.Process
         private readonly ConcurrentCommandBase _startCommand;
 
         [ObservableProperty]
-        private string _args;
+        public partial string Args { get; set; }
 
         [ObservableProperty]
-        private string _filePath;
+        public partial string FilePath { get; set; }
 
         [ObservableProperty]
-        private string _workingDirectory;
+        public partial string WorkingDirectory { get; set; }
 
         [UsedImplicitly]
         public ICommand StartCommand => _startCommand;
@@ -41,9 +41,9 @@ namespace MvvmScarletToolkit.Core.Samples.Features.Process
         public ProcessViewModel(IScarletCommandBuilder commandBuilder)
             : base(commandBuilder)
         {
-            _workingDirectory = ".";
-            _filePath = "cmd.exe";
-            _args = "/c nslookup invalidname";
+            WorkingDirectory = ".";
+            FilePath = "cmd.exe";
+            Args = "/c nslookup invalidname";
 
             _outputQueue = new ConcurrentQueue<ProcessData>();
             _errorQueue = new ConcurrentQueue<ProcessErrorData>();
@@ -120,21 +120,39 @@ namespace MvvmScarletToolkit.Core.Samples.Features.Process
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
 
+            using var stopTimer = CancellationTokenSource.CreateLinkedTokenSource(token);
+
             var timerTask = Task.Run(async () =>
             {
-                while (!token.IsCancellationRequested)
+                try
                 {
-                    await _timer.WaitForNextTickAsync(token);
-                    await OnTimerTick();
+                    while (!stopTimer.Token.IsCancellationRequested)
+                    {
+                        await _timer.WaitForNextTickAsync(stopTimer.Token);
+                        await OnTimerTick();
+                    }
                 }
-            }, token);
+                catch (OperationCanceledException)
+                {
+                    // the process exited or the user cancelled
+                }
+            }, CancellationToken.None);
 
-            await using (token.Register(() => Task.Run(() => tcs.TrySetCanceled(), token)))
+            try
             {
-                await tcs.Task.ConfigureAwait(false);
+                await using (token.Register(() => Task.Run(() => tcs.TrySetCanceled(), token)))
+                {
+                    await tcs.Task.ConfigureAwait(false);
+                }
+            }
+            finally
+            {
+                stopTimer.Cancel();
+                await timerTask.ConfigureAwait(false);
             }
 
-            await timerTask;
+            // whatever the process wrote since the last tick
+            await OnTimerTick().ConfigureAwait(false);
 
             void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
             {

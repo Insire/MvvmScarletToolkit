@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -46,7 +45,8 @@ namespace MvvmScarletToolkit
                 comparison = @double;
             }
 
-            if (parameter is string @string && double.TryParse(@string, out @double))
+            // written in xaml, so it doesn't depend on the culture of the machine
+            if (parameter is string @string && double.TryParse(@string, NumberStyles.Float, CultureInfo.InvariantCulture, out @double))
             {
                 comparison = @double;
             }

@@ -1,30 +1,28 @@
 using CommunityToolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Observables;
-using MvvmScarletToolkit.Tests.Util;
-using System;
-using System.Threading.Tasks;
+using MvvmScarletToolkit.Wpf.Tests.TestData;
+using MvvmScarletToolkit.Wpf.Tests.Util;
 
-namespace MvvmScarletToolkit.Tests
+namespace MvvmScarletToolkit.Wpf.Tests
 {
-    [TraceTest]
-    public sealed class ViewModelListBaseTests
+    public sealed class ViewModelListBaseTests : TraceTestBase
     {
         [Fact]
         public void Ctor_DoesNotAcceptNullArgument()
         {
-            Assert.Throws<ArgumentNullException>(() => new DerivedViewModelListBase(null!));
+            Assert.Throws<NullReferenceException>(() => new DerivedViewModelListBase(null!));
         }
 
         [Fact]
         public void Ctor_DoesNotThrow()
         {
-            new DerivedViewModelListBase(Utils.GetTestCommandBuilder());
+            _ = new DerivedViewModelListBase(Utils.GetTestCommandBuilder());
         }
 
         [Fact]
         public void Ctor_DoesNotThrowForNullModel()
         {
-            new DerivedViewModelListBase(Utils.GetTestCommandBuilder());
+            _ = new DerivedViewModelListBase(Utils.GetTestCommandBuilder());
         }
 
         [Fact]
@@ -53,20 +51,20 @@ namespace MvvmScarletToolkit.Tests
             await vm.Add(child1, TestContext.Current.CancellationToken);
             await vm.Add(child2, TestContext.Current.CancellationToken);
 
-            messenger.Register<ViewModelListBaseSelectionsChanged<DerivedObjectViewModelBase>>(this, (_, __) => Assert.Fail());
+            messenger.Register<ViewModelListBaseSelectionsChanged<DerivedObjectViewModelBase>>(this, (_, _) => Assert.Fail());
 
             var viewModelListBaseSelectionChangedCalled = false;
-            messenger.Register<ViewModelListBaseSelectionChanged<DerivedObjectViewModelBase>>(this, (_, __) => viewModelListBaseSelectionChangedCalled = true);
+            messenger.Register<ViewModelListBaseSelectionChanged<DerivedObjectViewModelBase>>(this, (_, _) => viewModelListBaseSelectionChangedCalled = true);
 
-            var ViewModelListBaseSelectionChangingCalled = false;
-            messenger.Register<ViewModelListBaseSelectionChanging<DerivedObjectViewModelBase>>(this, (_, __) => ViewModelListBaseSelectionChangingCalled = true);
+            var viewModelListBaseSelectionChangingCalled = false;
+            messenger.Register<ViewModelListBaseSelectionChanging<DerivedObjectViewModelBase>>(this, (_, _) => viewModelListBaseSelectionChangingCalled = true);
 
             vm.SelectedItem = child1;
 
             Assert.Multiple(() =>
             {
                 Assert.True(viewModelListBaseSelectionChangedCalled);
-                Assert.True(ViewModelListBaseSelectionChangingCalled);
+                Assert.True(viewModelListBaseSelectionChangingCalled);
             });
         }
 
@@ -83,16 +81,16 @@ namespace MvvmScarletToolkit.Tests
             await vm.Add(child1, TestContext.Current.CancellationToken);
             await vm.Add(child2, TestContext.Current.CancellationToken);
 
-            var ViewModelListBaseSelectionsChangingCalled = false;
-            messenger.Register<ViewModelListBaseSelectionsChanged<DerivedObjectViewModelBase>>(this, (_, __) => ViewModelListBaseSelectionsChangingCalled = true);
+            var viewModelListBaseSelectionsChangingCalled = false;
+            messenger.Register<ViewModelListBaseSelectionsChanged<DerivedObjectViewModelBase>>(this, (_, _) => viewModelListBaseSelectionsChangingCalled = true);
 
-            messenger.Register<ViewModelListBaseSelectionChanged<DerivedObjectViewModelBase>>(this, (_, __) => Assert.Fail());
+            messenger.Register<ViewModelListBaseSelectionChanged<DerivedObjectViewModelBase>>(this, (_, _) => Assert.Fail());
 
-            messenger.Register<ViewModelListBaseSelectionChanging<DerivedObjectViewModelBase>>(this, (_, __) => Assert.Fail());
+            messenger.Register<ViewModelListBaseSelectionChanging<DerivedObjectViewModelBase>>(this, (_, _) => Assert.Fail());
 
             vm.SelectedItems.Add(child1);
 
-            Assert.True(ViewModelListBaseSelectionsChangingCalled);
+            Assert.True(viewModelListBaseSelectionsChangingCalled);
         }
     }
 }

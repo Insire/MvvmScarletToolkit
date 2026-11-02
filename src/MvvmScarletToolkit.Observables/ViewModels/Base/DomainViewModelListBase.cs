@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -12,19 +11,27 @@ namespace MvvmScarletToolkit.Observables
     public abstract partial class DomainViewModelListBase<TViewModel> : BusinessViewModelListBase<TViewModel>
         where TViewModel : class, INotifyPropertyChanged
     {
-        private int _total;
+        /// <summary>
+        /// total number of entries available across all pages
+        /// </summary>
         [Bindable(true, BindingDirection.TwoWay)]
         public int Total
         {
-            get { return _total; }
-            protected set { SetProperty(ref _total, value); }
+            get { return field; }
+            protected set { SetProperty(ref field, value); }
         }
 
+        /// <summary>
+        /// number of entries per page
+        /// </summary>
         [ObservableProperty]
-        private int _pageSize;
+        public partial int PageSize { get; set; }
 
+        /// <summary>
+        /// 0-based index of the current page. The first entry of the page is at <c>PageIndex * PageSize</c>
+        /// </summary>
         [ObservableProperty]
-        private int _pageIndex;
+        public partial int PageIndex { get; set; }
 
         [Bindable(true, BindingDirection.OneWay)]
         public PagingViewModel<TViewModel> Paging { get; }

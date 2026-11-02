@@ -1,42 +1,39 @@
 using CommunityToolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Observables;
-using System;
 using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace MvvmScarletToolkit.Tests
+namespace MvvmScarletToolkit.Wpf.Tests.Util
 {
     internal static class Utils
     {
         public static IScarletExceptionHandler GetTestExceptionHandler()
         {
-            return NSubstitute.Substitute.For<IScarletExceptionHandler>();
+            return Substitute.For<IScarletExceptionHandler>();
         }
 
         public static IScarletDispatcher GetTestDispatcher()
         {
-            return NSubstitute.Substitute.For<IScarletDispatcher>();
+            return Substitute.For<IScarletDispatcher>();
         }
 
         public static IScarletCommandManager GetTestCommandManager()
         {
-            return NSubstitute.Substitute.For<IScarletCommandManager>();
+            return Substitute.For<IScarletCommandManager>();
         }
 
         public static IMessenger GetTestMessenger()
         {
-            return NSubstitute.Substitute.For<IMessenger>();
+            return Substitute.For<IMessenger>();
         }
 
         public static IExitService GetTestExitService()
         {
-            return NSubstitute.Substitute.For<IExitService>();
+            return Substitute.For<IExitService>();
         }
 
         public static IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs> GetTestEventManager()
         {
-            return NSubstitute.Substitute.For<IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs>>();
+            return Substitute.For<IScarletEventManager<INotifyPropertyChanged, PropertyChangedEventArgs>>();
         }
 
         public static Func<Action<bool>, IBusyStack> GetTestBusyStackFactory()
@@ -63,25 +60,22 @@ namespace MvvmScarletToolkit.Tests
 
         public static ICancelCommand GetTestCancelCommand()
         {
-            return NSubstitute.Substitute.For<ICancelCommand>();
+            return Substitute.For<ICancelCommand>();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for testcases")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1163:Unused parameter.", Justification = "Method signature required for testcases")]
         public static IBusyStack TestBusyStackFactory(Action<bool> lambda)
         {
-            return NSubstitute.Substitute.For<IBusyStack>();
+            return Substitute.For<IBusyStack>();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for testcases")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1163:Unused parameter.", Justification = "Method signature required for testcases")]
         public static Task TestExecute(object arg, CancellationToken token)
         {
             return Task.CompletedTask;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Method signature required for testcases")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1163:Unused parameter.", Justification = "Method signature required for testcases")]
         public static bool TestCanExecute(object arg)
         {
             return true;
