@@ -42,7 +42,7 @@ namespace Build.Tasks
                         .Append("-p:DebugSymbols=true")
                     );
 
-                context.StartProcess("dotnet", settings);
+                context.StartProcessOrFail("dotnet", settings, $"Packing {project.ProjectFile.GetFilename()}");
             }
         }
     }

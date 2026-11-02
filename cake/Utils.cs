@@ -1,6 +1,8 @@
+using Cake.Common;
 using Cake.Common.IO;
 using Cake.Common.Solution;
 using Cake.Common.Tools.ReportGenerator;
+using Cake.Core;
 using Cake.Core.IO;
 using Cake.Incubator.Project;
 
@@ -8,6 +10,19 @@ namespace Build
 {
     internal static class Utils
     {
+        /// <summary>
+        /// StartProcess only returns the exit code, a failing step would let the build carry on.
+        /// </summary>
+        /// <param name="description">names the step in the error, the arguments can contain secrets</param>
+        public static void StartProcessOrFail(this BuildContext context, FilePath fileName, ProcessSettings settings, string description)
+        {
+            var exitCode = context.StartProcess(fileName, settings);
+            if (exitCode != 0)
+            {
+                throw new CakeException($"{description} exited with {exitCode}");
+            }
+        }
+
         public static void MergeReports(this BuildContext context, string pattern, ReportGeneratorReportType type, string subFolder)
         {
             var reportGeneratorSettings = new ReportGeneratorSettings()

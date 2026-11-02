@@ -29,7 +29,7 @@ namespace Build.Tasks
                             .Append(file.FullPath)
                         );
 
-                context.StartProcess(dotnetExe.FullPath, settings);
+                context.StartProcessOrFail(dotnetExe.FullPath, settings, $"Converting {file.GetFilename()}");
             }
         }
 
