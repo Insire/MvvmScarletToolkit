@@ -1,4 +1,4 @@
-# MvvmScarletToolkit.Wpf
+![MvvmScarletToolkit.Wpf](https://raw.githubusercontent.com/Insire/MvvmScarletToolkit/master/assets/branding/packages/MvvmScarletToolkit.Wpf.png)
 
 ## Goals
 

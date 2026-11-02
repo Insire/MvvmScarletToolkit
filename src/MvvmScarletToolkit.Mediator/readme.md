@@ -1,4 +1,4 @@
-# MvvmScarletToolkit.Mediator
+![MvvmScarletToolkit.Mediator](https://raw.githubusercontent.com/Insire/MvvmScarletToolkit/master/assets/branding/packages/MvvmScarletToolkit.Mediator.png)
 
 ## Goals
 

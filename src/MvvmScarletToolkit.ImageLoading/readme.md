@@ -1,4 +1,4 @@
-# MvvmScarletToolkit.ImageLoading
+![MvvmScarletToolkit.ImageLoading](https://raw.githubusercontent.com/Insire/MvvmScarletToolkit/master/assets/branding/packages/MvvmScarletToolkit.ImageLoading.png)
 
 ## Goals
 

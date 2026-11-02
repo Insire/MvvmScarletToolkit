@@ -1,4 +1,9 @@
-# MvvmScarletToolkit
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/branding/wordmark-dark.svg">
+    <img src="assets/branding/wordmark.svg" alt="MvvmScarletToolkit" width="420">
+  </picture>
+</h1>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Insire/MvvmScarletToolkit/blob/master/LICENSE.md)
 [![NuGet](https://img.shields.io/nuget/v/MvvmScarletToolkit.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/MvvmScarletToolkit/)
