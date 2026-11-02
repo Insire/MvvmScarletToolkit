@@ -7,6 +7,7 @@ using MvvmScarletToolkit.Wpf.Tests.Util;
 using System.Globalization;
 using System.IO;
 using System.Reactive.Concurrency;
+using System.Security.AccessControl;
 
 namespace MvvmScarletToolkit.Wpf.Tests
 {
@@ -204,6 +205,16 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 Assert.False(string.IsNullOrEmpty(permissions.Owner));
                 Assert.NotEmpty(permissions.Rules);
             });
+        }
+
+        [Theory]
+        [InlineData(0x10000000, "FullControl")]
+        [InlineData(unchecked((int)0xA0000000), "ReadAndExecute")]
+        [InlineData((int)FileSystemRights.FullControl, "FullControl")]
+        [InlineData((int)(FileSystemRights.Modify | FileSystemRights.Synchronize), "Modify")]
+        public void GetRights_Should_Name_The_Rights(int rights, string expected)
+        {
+            Assert.Equal(expected, FileSystemViewModelFactory.GetRights((FileSystemRights)rights));
         }
 
         [Theory]

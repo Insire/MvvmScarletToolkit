@@ -20,6 +20,7 @@
     <PathGeometry x:Key="RefreshPath">M20 11a8 8 0 1 0-2.3 6.3M20 5v6h-6</PathGeometry>
     <PathGeometry x:Key="DetailsPath">M3 6h18M3 12h18M3 18h18M9 6v12</PathGeometry>
     <PathGeometry x:Key="ListPath">M8 6h13M8 12h13M8 18h13M3 6h2M3 12h2M3 18h2</PathGeometry>
+    <PathGeometry x:Key="CardsPath">M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z</PathGeometry>
     <PathGeometry x:Key="PanelPath">M3 5h18v14H3zM15 5v14</PathGeometry>
     <PathGeometry x:Key="SearchPath">M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4</PathGeometry>
     <PathGeometry x:Key="ClosePath">M6 6l12 12M18 6L6 18</PathGeometry>
@@ -549,24 +550,26 @@
                                 <RadioButton Margin="8 0 0 0"
                                              AutomationProperties.Name="Details"
                                              IsChecked="{Binding ViewMode, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static browser:FileSystemViewMode.Details}}"
-                                             Style="{StaticResource ToolToggleStyle}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Path Margin="0 0 6 0"
-                                              Data="{StaticResource DetailsPath}"
-                                              Style="{StaticResource ToolPathStyle}" />
-                                        <TextBlock Text="Details" />
-                                    </StackPanel>
+                                             Padding="8 0"
+                                             Style="{StaticResource ToolToggleStyle}"
+                                             ToolTip="Details">
+                                    <Path Data="{StaticResource DetailsPath}" Style="{StaticResource ToolPathStyle}" />
                                 </RadioButton>
                                 <RadioButton Margin="-1 0 0 0"
                                              AutomationProperties.Name="List"
                                              IsChecked="{Binding ViewMode, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static browser:FileSystemViewMode.List}}"
-                                             Style="{StaticResource ToolToggleStyle}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Path Margin="0 0 6 0"
-                                              Data="{StaticResource ListPath}"
-                                              Style="{StaticResource ToolPathStyle}" />
-                                        <TextBlock Text="List" />
-                                    </StackPanel>
+                                             Padding="8 0"
+                                             Style="{StaticResource ToolToggleStyle}"
+                                             ToolTip="List">
+                                    <Path Data="{StaticResource ListPath}" Style="{StaticResource ToolPathStyle}" />
+                                </RadioButton>
+                                <RadioButton Margin="-1 0 0 0"
+                                             AutomationProperties.Name="Cards"
+                                             IsChecked="{Binding ViewMode, Converter={mvvm:RadioButtonCheckedConverter}, ConverterParameter={x:Static browser:FileSystemViewMode.Cards}}"
+                                             Padding="8 0"
+                                             Style="{StaticResource ToolToggleStyle}"
+                                             ToolTip="Cards">
+                                    <Path Data="{StaticResource CardsPath}" Style="{StaticResource ToolPathStyle}" />
                                 </RadioButton>
                                 <ToggleButton Margin="8 0 0 0"
                                               AutomationProperties.Name="Preview"
@@ -884,9 +887,10 @@
                                                   VirtualizingPanel.VirtualizationMode="Standard">
                                             <ListView.Style>
                                                 <Style BasedOn="{StaticResource {x:Type ListView}}" TargetType="{x:Type ListView}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding ViewMode}" Value="{x:Static browser:FileSystemViewMode.List}">
-                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        <DataTrigger Binding="{Binding ViewMode}" Value="{x:Static browser:FileSystemViewMode.Details}">
+                                                            <Setter Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -1071,6 +1075,151 @@
                                                                        Visibility="{Binding IsContainer, Mode=OneWay, Converter={mvvm:BooleanToVisibility}}" />
                                                         </StackPanel>
                                                     </DockPanel>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="MouseDoubleClick">
+                                                    <i:InvokeCommandAction Command="{Binding OpenCommand}" CommandParameter="{Binding SelectedEntry}" />
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
+                                        </ListBox>
+
+                                        <ListBox Background="Transparent"
+                                                 BorderThickness="0"
+                                                 ItemsSource="{Binding Entries}"
+                                                 ScrollViewer.CanContentScroll="True"
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                 SelectedItem="{Binding SelectedEntry}"
+                                                 SelectionMode="Single"
+                                                 VirtualizingPanel.IsVirtualizing="True"
+                                                 VirtualizingPanel.VirtualizationMode="Standard">
+                                            <ListBox.Style>
+                                                <Style BasedOn="{StaticResource {x:Type ListBox}}" TargetType="{x:Type ListBox}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ViewMode}" Value="{x:Static browser:FileSystemViewMode.Cards}">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ListBox.Style>
+
+                                            <ListBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <mvvm:VirtualizingWrapPanel IsItemsHost="True"
+                                                                                ItemHeight="188"
+                                                                                ItemWidth="172"
+                                                                                Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </ListBox.ItemsPanel>
+
+                                            <ListBox.Resources>
+                                                <DataTemplate DataType="{x:Type files:ScarletFile}">
+                                                    <Grid ClipToBounds="True">
+                                                        <Path HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                            <Path.Style>
+                                                                <Style BasedOn="{StaticResource PathStyle}" TargetType="{x:Type Path}">
+                                                                    <Setter Property="Data" Value="{StaticResource FilePath}" />
+                                                                    <Setter Property="Height" Value="44" />
+                                                                    <Setter Property="Width" Value="44" />
+                                                                    <Style.Triggers>
+                                                                        <MultiDataTrigger>
+                                                                            <MultiDataTrigger.Conditions>
+                                                                                <Condition Binding="{Binding IsImage}" Value="True" />
+                                                                                <Condition Binding="{Binding IsPreviewFailed}" Value="False" />
+                                                                            </MultiDataTrigger.Conditions>
+                                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                                        </MultiDataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Path.Style>
+                                                        </Path>
+                                                        <ContentControl Content="{Binding}" Focusable="False">
+                                                            <ContentControl.Style>
+                                                                <Style TargetType="{x:Type ContentControl}">
+                                                                    <Setter Property="ContentTemplate">
+                                                                        <Setter.Value>
+                                                                            <DataTemplate />
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsImage}" Value="True">
+                                                                            <Setter Property="ContentTemplate">
+                                                                                <Setter.Value>
+                                                                                    <DataTemplate>
+                                                                                        <Image Stretch="UniformToFill">
+                                                                                            <i:Interaction.Behaviors>
+                                                                                                <mvvm:AsyncImageLoadingBehavior Width="240"
+                                                                                                                                Height="240"
+                                                                                                                                IsFailed="{Binding IsPreviewFailed, Mode=OneWayToSource}"
+                                                                                                                                Source="{Binding FullName}" />
+                                                                                            </i:Interaction.Behaviors>
+                                                                                        </Image>
+                                                                                    </DataTemplate>
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </ContentControl.Style>
+                                                        </ContentControl>
+                                                        <i:Interaction.Triggers>
+                                                            <i:EventTrigger EventName="Loaded">
+                                                                <i:InvokeCommandAction Command="{Binding CheckHeaderCommand}" />
+                                                            </i:EventTrigger>
+                                                        </i:Interaction.Triggers>
+                                                    </Grid>
+                                                </DataTemplate>
+                                                <DataTemplate DataType="{x:Type directories:ScarletDirectory}">
+                                                    <Path Width="44"
+                                                          Height="44"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"
+                                                          Data="{StaticResource FolderPath}"
+                                                          Fill="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                                                          Stretch="Uniform" />
+                                                </DataTemplate>
+                                            </ListBox.Resources>
+
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Width="148"
+                                                            Height="164"
+                                                            Style="{StaticResource PaneStyle}">
+                                                        <DockPanel>
+                                                            <StackPanel Margin="8 6 8 8" DockPanel.Dock="Bottom">
+                                                                <TextBlock Text="{Binding Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                                                                <TextBlock FontSize="12" TextTrimming="CharacterEllipsis">
+                                                                    <TextBlock.Style>
+                                                                        <Style BasedOn="{StaticResource MutedTextStyle}" TargetType="{x:Type TextBlock}">
+                                                                            <Setter Property="Text" Value="{Binding TypeName, Mode=OneWay}" />
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding DataContext.IsSearchActive, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="True">
+                                                                                    <Setter Property="Text">
+                                                                                        <Setter.Value>
+                                                                                            <MultiBinding Converter="{StaticResource RelativeLocationConverter}">
+                                                                                                <Binding Mode="OneWay" Path="Location" />
+                                                                                                <Binding Path="DataContext.SelectedContainer.FullName" RelativeSource="{RelativeSource AncestorType={x:Type ListBox}}" />
+                                                                                            </MultiBinding>
+                                                                                        </Setter.Value>
+                                                                                    </Setter>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBlock.Style>
+                                                                </TextBlock>
+                                                                <TextBlock FontSize="12"
+                                                                           Style="{StaticResource MutedTextStyle}"
+                                                                           Text="{Binding Length, Mode=OneWay, Converter={mvvm:ToFileSize}}" />
+                                                            </StackPanel>
+                                                            <ContentControl Margin="1 1 1 0"
+                                                                            HorizontalContentAlignment="Stretch"
+                                                                            VerticalContentAlignment="Stretch"
+                                                                            Content="{Binding}"
+                                                                            Focusable="False" />
+                                                        </DockPanel>
+                                                    </Border>
                                                 </DataTemplate>
                                             </ListBox.ItemTemplate>
 

@@ -4,5 +4,6 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
     {
         Details,
         List,
+        Cards,
     }
 }

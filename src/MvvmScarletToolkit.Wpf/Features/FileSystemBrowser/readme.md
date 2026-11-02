@@ -9,7 +9,7 @@ This library aims to provide an easy to use and extend browser control for FileS
 ``FileSystemView`` displays:
 
 - a tree of drives and folders.
-- the content of the selected tree entry, as a virtualized ``GridView`` or a virtualized list with thumbnails. Switch with ``FileSystemViewModel.ViewMode``.
+- the content of the selected tree entry, as a virtualized ``GridView``, a virtualized list with thumbnails or virtualized cards, where confirmed images show their thumbnail instead of an icon. Switch with ``FileSystemViewModel.ViewMode``.
 - a search box. It searches the selected tree entry and its subfolders through ``FileSystemViewModel.SearchText``, supports the wildcards ``*`` and ``?`` and stops after ``FileSystemViewModel.MaxSearchResults`` matches. A query with a wildcard has to match the whole name, any other query matches part of the name.
 - an image preview, toggled by ``FileSystemViewModel.IsPreviewVisible``.
 - an inspector for size, timestamps, file attributes and permissions of the selected entry, toggled by ``FileSystemViewModel.IsInspectorVisible``. The preview moves from the inspector to the list when the inspector is hidden.

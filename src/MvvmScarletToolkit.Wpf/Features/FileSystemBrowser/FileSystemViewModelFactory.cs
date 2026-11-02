@@ -100,8 +100,21 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             }, token);
         }
 
-        private static string GetRights(FileSystemRights rights)
+        internal static string GetRights(FileSystemRights rights)
         {
+            // inheritable rules on system folders use the generic bits, which have no name in FileSystemRights
+            const int genericRead = unchecked((int)0x80000000);
+            const int genericWrite = 0x40000000;
+            const int genericExecute = 0x20000000;
+            const int genericAll = 0x10000000;
+
+            var value = (int)rights;
+            rights = (FileSystemRights)(value & ~(genericRead | genericWrite | genericExecute | genericAll));
+            rights |= (value & genericRead) != 0 ? FileSystemRights.Read : 0;
+            rights |= (value & genericWrite) != 0 ? FileSystemRights.Write : 0;
+            rights |= (value & genericExecute) != 0 ? FileSystemRights.ReadAndExecute : 0;
+            rights |= (value & genericAll) != 0 ? FileSystemRights.FullControl : 0;
+
             // Synchronize is part of nearly every rule and FullControl contains it
             return rights.HasFlag(FileSystemRights.FullControl)
                 ? nameof(FileSystemRights.FullControl)
