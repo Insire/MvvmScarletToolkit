@@ -12,6 +12,8 @@
     <Copyright>© $([System.DateTime]::UtcNow.Year) Insire</Copyright>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <EnablePackageValidation>true</EnablePackageValidation>
+    <!-- pinned transitive packages would otherwise be published as direct dependencies -->
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
 
   <ItemGroup>
