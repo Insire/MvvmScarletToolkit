@@ -5,6 +5,12 @@
         <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
         <LangVersion>preview</LangVersion>
         <Nullable>enable</Nullable>
+        <NuGetAuditMode>all</NuGetAuditMode>
+    </PropertyGroup>
+
+    <!-- fail restore on packages with known vulnerabilities, direct or transitive -->
+    <PropertyGroup Condition="'$(FailOnVulnerablePackages)' != 'false'">
+        <WarningsAsErrors>$(WarningsAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsAsErrors>
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
