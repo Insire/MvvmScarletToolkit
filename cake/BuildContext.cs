@@ -17,6 +17,7 @@ namespace Build
         public DirectoryPath PackagePath { get; }
         public DirectoryPath ResultsPath { get; }
         public DirectoryPath CoveragePath { get; }
+        public DirectoryPath TestResultsPath { get; }
         public DirectoryPath CoberturaResultsPath { get; }
         public DirectoryPath ReportsPath { get; }
 
@@ -28,6 +29,11 @@ namespace Build
         public string? Branch { get; internal set; }
 
         public bool IsPublicRelease { get; internal set; }
+
+        /// <summary>
+        /// Filled by <see cref="Tasks.Test"/>, the build fails in <see cref="Tasks.TestAndUploadReport"/> once results and reports are published.
+        /// </summary>
+        public List<string> TestFailures { get; } = [];
 
         public List<(DirectoryPath Folder, FilePath ProjectFile)> NugetPackageProjects { get; }
 
@@ -42,6 +48,7 @@ namespace Build
             PackagePath = new DirectoryPath("packages").MakeAbsolute(workingDirectory);
 
             CoveragePath = ResultsPath.Combine("coverage").MakeAbsolute(workingDirectory);
+            TestResultsPath = ResultsPath.Combine("tests").MakeAbsolute(workingDirectory);
             ReportsPath = ResultsPath.Combine("reports").MakeAbsolute(workingDirectory);
             CoberturaResultsPath = ReportsPath.Combine("cobertura").MakeAbsolute(workingDirectory);
 

@@ -9,16 +9,16 @@ namespace Build.Tasks
     {
         public override void Run(BuildContext context)
         {
-            // every project runs, so that the coverage report stays complete, the task fails afterwards
-            var failures = new List<string>();
-
+            // every project runs, so that the coverage report and test results stay complete,
+            // failures are collected and fail the build in TestAndUploadReport after publishing
             foreach (var (folder, projectFile, frameworks) in context.GetTestProjects())
             {
                 var projectFilePath = context.Environment.WorkingDirectory.Combine(folder).CombineWithFilePath(projectFile);
 
                 foreach (var framework in frameworks)
                 {
-                    var projectCoverage = context.CoveragePath.CombineWithFilePath(System.IO.Path.GetFileNameWithoutExtension(projectFile) + $"_{framework}_" + ".coverage");
+                    var name = System.IO.Path.GetFileNameWithoutExtension(projectFile) + $"_{framework}";
+                    var projectCoverage = context.CoveragePath.CombineWithFilePath(name + "_.coverage");
                     var settings = new ProcessSettings()
                         .UseWorkingDirectory(".")
                         .WithArguments(builder => builder
@@ -29,6 +29,9 @@ namespace Build.Tasks
                             .Append("--coverage")
                             .Append("--coverage-output-format cobertura")
                             .AppendSwitchQuoted("--coverage-output", " ", projectCoverage.FullPath)
+                            .AppendSwitchQuoted("--results-directory", " ", context.TestResultsPath.FullPath)
+                            .Append("--report-xunit-trx")
+                            .AppendSwitchQuoted("--report-xunit-trx-filename", " ", name + ".trx")
                         );
 
                     settings.EnvironmentVariables = new Dictionary<string, string>() { ["Environment"] = "Test" };
@@ -36,14 +39,9 @@ namespace Build.Tasks
                     var exitCode = context.StartProcess("dotnet", settings);
                     if (exitCode != 0)
                     {
-                        failures.Add($"{projectFile} ({framework}) exited with {exitCode}");
+                        context.TestFailures.Add($"{projectFile} ({framework}) exited with {exitCode}");
                     }
                 }
-            }
-
-            if (failures.Count > 0)
-            {
-                throw new CakeException("Tests failed:" + Environment.NewLine + string.Join(Environment.NewLine, failures));
             }
         }
     }
