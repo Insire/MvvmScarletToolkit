@@ -7,6 +7,7 @@ namespace Build.Tasks
     [IsDependentOn(typeof(TestAndUploadReport))]
     [IsDependentOn(typeof(CleanSolutionAgain))]
     [IsDependentOn(typeof(BuildAndPack))]
+    [IsDependentOn(typeof(ValidateSymbols))]
     [IsDependentOn(typeof(PushNuget))]
     [IsDependentOn(typeof(PushGithub))]
     [IsDependentOn(typeof(PushLocally))]
