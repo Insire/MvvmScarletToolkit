@@ -48,7 +48,7 @@ The interfaces in this package keep viewmodels independent of a UI framework. Re
 
 ### Image loading
 
-These types are used by [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.ImageLoading/readme.md).
+These types are used by [MvvmScarletToolkit.ImageLoading](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.ImageLoading/readme.md).
 
 |type|summary|
 |---|---|
@@ -62,7 +62,7 @@ These types are used by [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.
 
 ### DataGrid export
 
-These types let applications export a grid without the toolkit depending on a format. See [Exporting a DataGrid](../../docs/datagrid-export.md).
+These types let applications export a grid without the toolkit depending on a format. See [Exporting a DataGrid](https://github.com/Insire/MvvmScarletToolkit/blob/master/docs/datagrid-export.md).
 
 |type|summary|
 |---|---|

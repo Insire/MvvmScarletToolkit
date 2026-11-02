@@ -8,28 +8,28 @@ This library aims to provide implementations for avalonia specific classes used 
 
 - **Toolkit services for Avalonia:** the dispatcher, command manager, exit service and weak event manager, which `ScarletCommandBuilder.Default` combines. Viewmodels and commands work the same as on WPF.
 - **Unload on exit:** business viewmodels are unloaded when a classic desktop application shuts down. Other application lifetimes are not supported by `ScarletExitService`.
-- **Async image loading:** `AsyncImageLoadingBehavior` loads images through [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.ImageLoading/readme.md).
+- **Async image loading:** `AsyncImageLoadingBehavior` loads images through [MvvmScarletToolkit.ImageLoading](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.ImageLoading/readme.md).
 - **Converters as markup extensions:** `ConverterMarkupExtension<T>` is a base class for writing converters that don't have to be declared as resources.
 - **Virtualizing panels:** `VirtualizingTilePanel` and `VirtualizingWrapPanel` keep lists with many items per row fast.
 
-Apart from these panels, the behaviors, converters and controls of [MvvmScarletToolkit.Wpf](../MvvmScarletToolkit.Wpf/readme.md) are not available for Avalonia. Text selection doesn't need the toolkit here, as Avalonia comes with a `SelectableTextBlock`.
+Apart from these panels, the behaviors, converters and controls of [MvvmScarletToolkit.Wpf](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Wpf/readme.md) are not available for Avalonia. Text selection doesn't need the toolkit here, as Avalonia comes with a `SelectableTextBlock`.
 
 ## Contents
 
 |class|summary|
 |---|---|
-|[``ScarletCommandBuilder``](./Implementations/ScarletCommandBuilder.cs)|Fluent builder for ConcurrentCommand instances.|
-|[``ScarletCommandManager``](./Implementations/ScarletCommandManager.cs)|Raises ``RequerySuggested`` on the UI thread after user input and when requested from any thread, so that commands can update their ``CanExecute`` state.|
-|[``ScarletDispatcher``](./Implementations/ScarletDispatcher.cs)|Wrapper for the Avalonia dispatcher to support Dependency Injection and Task based ICommand implementations in this library.|
-|[``ScarletExitService``](./Implementations/ScarletExitService.cs)|Takes care of executing ``IVirtualizationViewModel.UnloadCommand`` when the application exits.|
-|[``ScarletLocalizationProvider``](./Implementations/ScarletLocalizationProvider.cs)|Dummy Implementation of ``ILocalizationProvider``.|
-|[``ScarletWeakEventManager``](./Implementations/ScarletWeakEventManager.cs)|Weak event subscriptions for ``INotifyPropertyChanged``, to support Dependency Injection.|
-|[``AvaloniaImageFactory``](./Implementations/AvaloniaImageFactory.cs)|``IImageFactory<Bitmap>`` for [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.ImageLoading/readme.md). Decodes images directly to the requested size, keeping their aspect ratio. Saves them as JPEG with quality 90, or as PNG when their source can contain transparency. Reads image headers with SkiaSharp, so the native Skia library has to be available, which ``Avalonia.Skia`` provides.|
-|[``AsyncImageLoadingBehavior``](./Behaviors/AsyncImageLoadingBehavior.cs)|Attached properties for loading the source of an ``Image`` asynchronously.|
-|[``ConverterMarkupExtension<T>``](./ConverterMarkupExtension.cs)|Base class for writing your own converters as markup extensions.|
-|[``VirtualizingTilePanel``](./Controls/VirtualizingTilePanel.cs)|Virtualizing panel that lays out items as square tiles of ``ChildSize``.|
-|[``VirtualizingWrapPanel``](./Controls/VirtualizingWrapPanel.cs)|Virtualizing panel that wraps items of different sizes into rows or columns. ``ItemWidth`` and ``ItemHeight`` set a fixed size, without one the sizes of items that were not realized yet are estimated.|
-|[``VirtualizingItemsPanel``](./Controls/VirtualizingItemsPanel.cs)|Base class of both panels, it realizes and recycles containers. Derive from it to add another layout.|
+|[``ScarletCommandBuilder``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Implementations/ScarletCommandBuilder.cs)|Fluent builder for ConcurrentCommand instances.|
+|[``ScarletCommandManager``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Implementations/ScarletCommandManager.cs)|Raises ``RequerySuggested`` on the UI thread after user input and when requested from any thread, so that commands can update their ``CanExecute`` state.|
+|[``ScarletDispatcher``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Implementations/ScarletDispatcher.cs)|Wrapper for the Avalonia dispatcher to support Dependency Injection and Task based ICommand implementations in this library.|
+|[``ScarletExitService``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Implementations/ScarletExitService.cs)|Takes care of executing ``IVirtualizationViewModel.UnloadCommand`` when the application exits.|
+|[``ScarletLocalizationProvider``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Implementations/ScarletLocalizationProvider.cs)|Dummy Implementation of ``ILocalizationProvider``.|
+|[``ScarletWeakEventManager``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Implementations/ScarletWeakEventManager.cs)|Weak event subscriptions for ``INotifyPropertyChanged``, to support Dependency Injection.|
+|[``AvaloniaImageFactory``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Implementations/AvaloniaImageFactory.cs)|``IImageFactory<Bitmap>`` for [MvvmScarletToolkit.ImageLoading](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.ImageLoading/readme.md). Decodes images directly to the requested size, keeping their aspect ratio. Saves them as JPEG with quality 90, or as PNG when their source can contain transparency. Reads image headers with SkiaSharp, so the native Skia library has to be available, which ``Avalonia.Skia`` provides.|
+|[``AsyncImageLoadingBehavior``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Behaviors/AsyncImageLoadingBehavior.cs)|Attached properties for loading the source of an ``Image`` asynchronously.|
+|[``ConverterMarkupExtension<T>``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/ConverterMarkupExtension.cs)|Base class for writing your own converters as markup extensions.|
+|[``VirtualizingTilePanel``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Controls/VirtualizingTilePanel.cs)|Virtualizing panel that lays out items as square tiles of ``ChildSize``.|
+|[``VirtualizingWrapPanel``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Controls/VirtualizingWrapPanel.cs)|Virtualizing panel that wraps items of different sizes into rows or columns. ``ItemWidth`` and ``ItemHeight`` set a fixed size, without one the sizes of items that were not realized yet are estimated.|
+|[``VirtualizingItemsPanel``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Controls/VirtualizingItemsPanel.cs)|Base class of both panels, it realizes and recycles containers. Derive from it to add another layout.|
 
 ## Usage
 
@@ -52,7 +52,7 @@ public override void OnFrameworkInitializationCompleted()
 
 ### Image loading
 
-Assign the image service once at startup, as described in [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.ImageLoading/readme.md), then set the attached properties on an `Image`:
+Assign the image service once at startup, as described in [MvvmScarletToolkit.ImageLoading](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.ImageLoading/readme.md), then set the attached properties on an `Image`:
 
 ```cs
 AsyncImageLoadingBehavior.Loader = serviceProvider.GetRequiredService<Lazy<IImageService<Bitmap>>>();

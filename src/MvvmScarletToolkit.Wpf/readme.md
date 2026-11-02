@@ -125,7 +125,7 @@ Everything here works through behaviors and commands, so viewmodels don't need t
 - **Culture**: filters and summaries use the ``Language`` of the grid, like the bindings of its cells, and update when it changes. So what a user types and reads is always in the format the cells show. ``Language`` is en-US unless your application changes it, so call ``FrameworkElement.LanguageProperty.OverrideMetadata`` at startup to show values in the culture of the user, as the samples do. Without ``DataGridFilterBehavior``, set ``DataGridFilterViewModel.Culture`` yourself. A ``ConverterCulture`` on the binding of a column is not taken into account.
 - **Grouping**: ``DataGridGroupingBehavior`` groups by a column when its header is dragged out of the header row and onto ``DropTarget``. Columns need a ``SortMemberPath``. Dragging along the headers still reorders columns.
 - **Summaries**: ``DataGridSummaryBar`` shows ``Sum``, ``Average``, ``Minimum``, ``Maximum`` or ``Count`` over the filtered rows below the grid, with a tooltip that says what each value means. Users can change the function of a column at runtime, see [Changing summaries at runtime](#changing-summaries-at-runtime). The bar updates when rows are added, removed, filtered or edited through a cell. Call ``Refresh`` after changing a row in another way. Frozen columns are not supported.
-- **Export**: provide an ``IDataGridExporter`` to turn the content of a grid into anything you like. See [Exporting a DataGrid](../../docs/datagrid-export.md).
+- **Export**: provide an ``IDataGridExporter`` to turn the content of a grid into anything you like. See [Exporting a DataGrid](https://github.com/Insire/MvvmScarletToolkit/blob/master/docs/datagrid-export.md).
 
 #### Changing summaries at runtime
 
@@ -205,7 +205,7 @@ Adds proportional and limited column widths to a ``GridView``, like ``*`` sizing
 |behavior|attach to|summary|
 |---|---|---|
 |``AllowableCharactersTextBoxBehavior``|``TextBox``|Limit input by ``MaxLength``, ``AllowWhitespace`` and ``RegularExpression``. The expression is matched against the typed or pasted text, so anchor it with ``^`` and ``$``.|
-|``AsyncImageLoadingBehavior``|``Image``|Load an image through [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.ImageLoading/readme.md), and report ``State``, ``IsPending``, ``IsLoading``, ``IsLoaded`` and ``IsFailed``.|
+|``AsyncImageLoadingBehavior``|``Image``|Load an image through [MvvmScarletToolkit.ImageLoading](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.ImageLoading/readme.md), and report ``State``, ``IsPending``, ``IsLoading``, ``IsLoaded`` and ``IsFailed``.|
 |``AutoRepositionPopupBehavior``|``Popup``|Keep a popup at its position, when its window is moved.|
 |``AutoScrollBehavior``|``Selector``|Scroll to the end of e.g. a ``ListBox`` or ``DataGrid``. Pauses when the user scrolls manually.|
 |``DataGridColumnChooserBehavior``|``DataGrid``|Hide and show columns through a context menu on their headers.|
@@ -317,14 +317,14 @@ All converters are markup extensions, so they don't have to be declared as resou
 
 ## Contents
 
-These classes implement the services used by [``IScarletCommandBuilder``](../MvvmScarletToolkit.Commands/readme.md). ``ScarletCommandBuilder.Default`` combines them.
+These classes implement the services used by [``IScarletCommandBuilder``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Commands/readme.md). ``ScarletCommandBuilder.Default`` combines them.
 
 |class|summary|
 |---|---|
-|[``ScarletCommandBuilder``](./Implementations/ScarletCommandBuilder.cs)|Fluent builder for ConcurrentCommand instances.|
-|[``ScarletCommandManager``](./Implementations/ScarletCommandManager.cs)|Wrapper for [System.Windows.Input.CommandManager](https://docs.microsoft.com/en-gb/dotnet/api/system.windows.input.commandmanager) to support Dependency Injection.|
-|[``ScarletDispatcher``](./Implementations/ScarletDispatcher.cs)|Wrapper for [System.Windows.Threading.Dispatcher](https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatcher) to support Dependency Injection and Task based ICommand implementations in this library.|
-|[``ScarletExitService``](./Implementations/ScarletExitService.cs)|In WPF ui controls dont always raise their Unloaded-event, when the application is being closed. ScarletExitService takes care of executing ``IVirtualizationViewModel.UnloadCommand`` when the application exits.|
-|[``ScarletLocalizationProvider``](./Implementations/ScarletLocalizationProvider.cs)|Dummy Implementation of ``ILocalizationProvider``, which returns keys unchanged and offers no languages.|
-|[``ScarletWeakEventManager``](./Implementations/ScarletWeakEventManager.cs)|Wrapper for [System.Windows.WeakEventManager](https://docs.microsoft.com/en-us/dotnet/api/system.windows.weakeventmanager) to support Dependency Injection.|
-|[``WpfImageFactory``](./Implementations/WpfImageFactory.cs)|``IImageFactory<BitmapSource>`` for [MvvmScarletToolkit.ImageLoading](../MvvmScarletToolkit.ImageLoading/readme.md). Decodes images directly to the requested size, keeping their aspect ratio. Saves them as JPEG with quality 90, or as PNG when they can contain transparency.|
+|[``ScarletCommandBuilder``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Wpf/Implementations/ScarletCommandBuilder.cs)|Fluent builder for ConcurrentCommand instances.|
+|[``ScarletCommandManager``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Wpf/Implementations/ScarletCommandManager.cs)|Wrapper for [System.Windows.Input.CommandManager](https://docs.microsoft.com/en-gb/dotnet/api/system.windows.input.commandmanager) to support Dependency Injection.|
+|[``ScarletDispatcher``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Wpf/Implementations/ScarletDispatcher.cs)|Wrapper for [System.Windows.Threading.Dispatcher](https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatcher) to support Dependency Injection and Task based ICommand implementations in this library.|
+|[``ScarletExitService``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Wpf/Implementations/ScarletExitService.cs)|In WPF ui controls dont always raise their Unloaded-event, when the application is being closed. ScarletExitService takes care of executing ``IVirtualizationViewModel.UnloadCommand`` when the application exits.|
+|[``ScarletLocalizationProvider``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Wpf/Implementations/ScarletLocalizationProvider.cs)|Dummy Implementation of ``ILocalizationProvider``, which returns keys unchanged and offers no languages.|
+|[``ScarletWeakEventManager``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Wpf/Implementations/ScarletWeakEventManager.cs)|Wrapper for [System.Windows.WeakEventManager](https://docs.microsoft.com/en-us/dotnet/api/system.windows.weakeventmanager) to support Dependency Injection.|
+|[``WpfImageFactory``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Wpf/Implementations/WpfImageFactory.cs)|``IImageFactory<BitmapSource>`` for [MvvmScarletToolkit.ImageLoading](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.ImageLoading/readme.md). Decodes images directly to the requested size, keeping their aspect ratio. Saves them as JPEG with quality 90, or as PNG when they can contain transparency.|

@@ -3,7 +3,7 @@
   <Import Project="../../package.props" />
 
   <PropertyGroup>
-    <Description>MvvmScarletToolkit.Commands is part of the MvvmScarletToolkit framework, containing asynchrnous and synchronous implementations of the ICommand interface for .NET.</Description>
+    <Description>MvvmScarletToolkit.Commands is part of the MvvmScarletToolkit framework, containing asynchronous and synchronous implementations of the ICommand interface for .NET.</Description>
     <PackageTags>MvvmScarletToolkit,MVVM,C#,Toolkit,Scarlet,Library,.NET,OSS,OpenSource</PackageTags>
   </PropertyGroup>
 
