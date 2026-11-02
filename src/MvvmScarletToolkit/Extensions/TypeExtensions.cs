@@ -4,16 +4,14 @@ namespace MvvmScarletToolkit
     {
         public static string GetGenericTypeName(this Type type)
         {
-            var result = type.Name;
-
-            while (type.GenericTypeArguments.Length > 0)
+            // a type nested in a generic type has the arguments of its parent, but no arity in its name
+            var arity = type.Name.IndexOf('`');
+            if (arity < 0)
             {
-                var typeName = type.GenericTypeArguments[0].Name;
-                result = result.Replace("`1", $"<{typeName}>");
-                type = type.GenericTypeArguments[0];
+                return type.Name;
             }
 
-            return result;
+            return $"{type.Name.Substring(0, arity)}<{string.Join(", ", type.GenericTypeArguments.Select(GetGenericTypeName))}>";
         }
     }
 }

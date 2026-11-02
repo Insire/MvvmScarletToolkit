@@ -54,14 +54,17 @@ namespace MvvmScarletToolkit
             for (var i = 0; i < array.Length; i++)
             {
                 var targetItem = array[i];
-                var updateItem = updateCollection.FirstOrDefault(u => comparer(targetItem, u));
-                if (updateItem is null && !ignoreItem(targetItem))
+
+                // a default value can't tell a missing match apart, for value types it would be a valid item
+                var matches = updateCollection.Where(u => comparer(targetItem, u)).Take(1).ToArray();
+                if (matches.Length > 0)
+                {
+                    updater?.Invoke(targetItem, matches[0]);
+                }
+                else if (!ignoreItem(targetItem))
                 {
                     itemsToRemove.Add(targetItem);
-                    continue;
                 }
-
-                updater?.Invoke(targetItem, updateItem);
             }
         }
 

@@ -48,6 +48,7 @@
     <Project Path="tests/MvvmScarletToolkit.ImageLoading.Tests/MvvmScarletToolkit.ImageLoading.Tests.csproj" />
     <Project Path="tests/MvvmScarletToolkit.Mediator.Tests/MvvmScarletToolkit.Mediator.Tests.csproj" />
     <Project Path="tests/MvvmScarletToolkit.Observables.Tests/MvvmScarletToolkit.Observables.Tests.csproj" />
+    <Project Path="tests/MvvmScarletToolkit.Tests/MvvmScarletToolkit.Tests.csproj" />
     <Project Path="tests/MvvmScarletToolkit.Wpf.Tests/MvvmScarletToolkit.Wpf.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/shared/">

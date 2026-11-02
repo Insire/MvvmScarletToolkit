@@ -13,6 +13,16 @@ namespace MvvmScarletToolkit.Wpf.Tests.Util
             var result = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             var thread = new Thread(() =>
             {
+                try
+                {
+                    TestDesktopFixture.Enter();
+                }
+                catch (Exception ex)
+                {
+                    result.SetException(ex);
+                    return;
+                }
+
                 var dispatcher = Dispatcher.CurrentDispatcher;
                 SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(dispatcher));
 

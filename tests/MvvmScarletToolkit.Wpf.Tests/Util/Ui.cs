@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace MvvmScarletToolkit.Wpf.Tests.Util
@@ -27,6 +28,26 @@ namespace MvvmScarletToolkit.Wpf.Tests.Util
             window.Show();
 
             return window;
+        }
+
+        /// <summary>
+        /// A scrolling list using <paramref name="panel"/>. Not a ListBox, the bindings of its containers fail
+        /// while they are being generated, which <c>DataGridStylesTests</c> would notice across threads.
+        /// </summary>
+        public static ItemsControl CreateItemsControl(FrameworkElementFactory panel, System.Collections.IEnumerable items)
+        {
+            var scrollViewer = new FrameworkElementFactory(typeof(ScrollViewer));
+            scrollViewer.SetValue(ScrollViewer.CanContentScrollProperty, true);
+            scrollViewer.SetValue(ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Auto);
+            scrollViewer.SetValue(ScrollViewer.VerticalScrollBarVisibilityProperty, ScrollBarVisibility.Auto);
+            scrollViewer.AppendChild(new FrameworkElementFactory(typeof(ItemsPresenter)));
+
+            return new ItemsControl
+            {
+                ItemsPanel = new ItemsPanelTemplate(panel),
+                ItemsSource = items,
+                Template = new ControlTemplate(typeof(ItemsControl)) { VisualTree = scrollViewer },
+            };
         }
 
         public static async Task WaitUntil(Func<bool> condition)

@@ -14,7 +14,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
         }
 
         private sealed class PagedList(IScarletCommandBuilder commandBuilder, IPagedDataProvider<Entry> provider)
-            : PagedSourceListViewModelBase<Entry>(commandBuilder, new SynchronizationContext(), p => p.Name, provider)
+            : PagedSourceListViewModelBase<Entry>(commandBuilder, new InlineSynchronizationContext(), p => p.Name, provider)
         {
             public void SetTotalPageCount(int value) => TotalPageCount = value;
         }
@@ -28,7 +28,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
         }
 
         private sealed class SourceList(IScarletCommandBuilder commandBuilder)
-            : BusinessSourceListViewModelBase<Entry>(commandBuilder, new SynchronizationContext(), p => p.Name)
+            : BusinessSourceListViewModelBase<Entry>(commandBuilder, new InlineSynchronizationContext(), p => p.Name)
         {
             protected override Task RefreshInternal(CancellationToken token) => Task.CompletedTask;
         }

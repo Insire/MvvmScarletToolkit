@@ -7,6 +7,8 @@ namespace MvvmScarletToolkit.ImageLoading.Caches
     internal static class CacheFile
     {
         private const string TempExtension = ".tmp";
+        private const int ReplaceAttempts = 3;
+        private static readonly TimeSpan ReplaceRetryDelay = TimeSpan.FromMilliseconds(50);
         private const int BufferSize = 4096;
 
         /// <summary>
@@ -74,19 +76,28 @@ namespace MvvmScarletToolkit.ImageLoading.Caches
                     throw new InvalidDataException("Nothing was written to the cache file.");
                 }
 
-                try
+                for (var attempt = 1; ; attempt++)
                 {
-                    File.Move(tempPath, path, overwrite: true);
-                }
-                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException && File.Exists(path))
-                {
-                    // Windows refuses to replace a file that is currently open, the existing file is complete though
-                    TryDelete(tempPath);
+                    try
+                    {
+                        File.Move(tempPath, path, overwrite: true);
 
-                    return false;
-                }
+                        return true;
+                    }
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException && File.Exists(path))
+                    {
+                        // Windows refuses to replace a file that is currently open, the existing file is complete though.
+                        // Virus scanners and the search indexer open new files briefly, so only a lasting lock keeps the existing file
+                        if (attempt == ReplaceAttempts)
+                        {
+                            TryDelete(tempPath);
 
-                return true;
+                            return false;
+                        }
+                    }
+
+                    await Task.Delay(ReplaceRetryDelay, token).ConfigureAwait(false);
+                }
             }
             catch
             {
