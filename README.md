@@ -239,7 +239,4 @@ Parts of this codebase were written with the help of Claude, an AI assistant by 
 
 ## TODO
 
-- add more tests
-- improve documentation
-- add a nice icon for this lib
 - add Contribution guidelines

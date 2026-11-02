@@ -1,4 +1,4 @@
-![MvvmScarletToolkit.Avalonia](https://raw.githubusercontent.com/Insire/MvvmScarletToolkit/master/assets/branding/packages/MvvmScarletToolkit.Avalonia.png)
+![MvvmScarletToolkit.Avalonia](https://raw.githubusercontent.com/Insire/MvvmScarletToolkit/master/assets/branding/nuget/MvvmScarletToolkit.Avalonia.png)
 
 ## Goals
 

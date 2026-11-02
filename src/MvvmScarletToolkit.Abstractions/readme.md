@@ -1,4 +1,4 @@
-![MvvmScarletToolkit.Abstractions](https://raw.githubusercontent.com/Insire/MvvmScarletToolkit/master/assets/branding/packages/MvvmScarletToolkit.Abstractions.png)
+![MvvmScarletToolkit.Abstractions](https://raw.githubusercontent.com/Insire/MvvmScarletToolkit/master/assets/branding/nuget/MvvmScarletToolkit.Abstractions.png)
 
 ![.NET standard 2.0](https://img.shields.io/badge/.NET-standard2.0-brightgreen)
 

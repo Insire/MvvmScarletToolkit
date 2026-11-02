@@ -1,4 +1,4 @@
-![MvvmScarletToolkit.Wpf](https://raw.githubusercontent.com/Insire/MvvmScarletToolkit/master/assets/branding/packages/MvvmScarletToolkit.Wpf.png)
+![MvvmScarletToolkit.Wpf](https://raw.githubusercontent.com/Insire/MvvmScarletToolkit/master/assets/branding/nuget/MvvmScarletToolkit.Wpf.png)
 
 ## Goals
 
