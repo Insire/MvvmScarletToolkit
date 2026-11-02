@@ -2,7 +2,7 @@
 
 ## Goals
 
-This library aims to provide an easy to use and extend browser control for FileSystemAccess.
+This library aims to provide an easy to use and extend browser control for FileSystemAccess, which also works as a file and folder dialog.
 
 ## Default template
 
@@ -13,6 +13,8 @@ This library aims to provide an easy to use and extend browser control for FileS
 - a search box. It searches the selected tree entry and its subfolders through ``FileSystemViewModel.SearchText``, supports the wildcards ``*`` and ``?`` and stops after ``FileSystemViewModel.MaxSearchResults`` matches. A query with a wildcard has to match the whole name, any other query matches part of the name.
 - an image preview, toggled by ``FileSystemViewModel.IsPreviewVisible``.
 - an inspector for size, timestamps, file attributes and permissions of the selected entry, toggled by ``FileSystemViewModel.IsInspectorVisible``. The preview moves from the inspector to the list when the inspector is hidden.
+
+``FileSystemViewModel.FileFilter`` restricts the files of the content and the search, see [Dialogs](#dialogs). ``FileSystemViewModel.InitialFolder`` is opened when the drives load for the first time. A double click on a folder in the content opens it, a double click on a file raises ``FileSystemViewModel.FileOpened``.
 
 ## Dialogs
 
@@ -25,7 +27,9 @@ var file = await dialog.PickFile(initialFolder: null, token);
 var folder = await dialog.PickFolder(@"C:\Temp", token);
 ```
 
-Both start in the given folder, or the deepest part of it that exists, and in the documents folder without one. The file dialog confirms with a double click on a file. The folder dialog lists folders only and returns the selected folder, or the displayed one if none is selected. For a custom window, bind ``FilePickerViewModel`` or ``FolderPickerViewModel`` and handle their ``Confirmed`` event.
+Both start in the given folder, or the deepest part of it that exists, and in the documents folder without one. The file dialog confirms with a double click on a file. The folder dialog lists folders only and returns the selected folder, or the displayed one if none is selected. The ``FileSystemOptionsViewModel`` selects the shown drives and attributes, ``Default`` is limited to fixed drives.
+
+For a custom window, bind ``FilePickerViewModel`` or ``FolderPickerViewModel`` and handle their ``Confirmed`` event. The ``FileSystemViewModel`` stays owned by the caller, dispose it after the picker.
 
 ``PickFile`` optionally takes the files that can be selected. The first filter is applied initially, the user can switch between them in the window. With a single filter the dropdown only displays it and is disabled. Add ``FileSystemFilter.AllFiles`` to allow every file, without it only the given filters can be used.
 
@@ -36,7 +40,7 @@ var text = new FileSystemFilter("Text files", "*.txt");
 var file = await dialog.PickFile(initialFolder: null, token, images, text);
 ```
 
-Filters match the file name, not the content. They work like the search, so ``*.png`` has to match the whole name and a pattern without a wildcard matches part of it. ``FileSystemViewModel.FileFilter`` applies a filter to any browser, in the detail view and the search.
+Filters match the file name, not the content. They work like the search, so ``*.png`` has to match the whole name and a pattern without a wildcard matches part of it. ``FileSystemViewModel.FileFilter`` applies a filter to any browser. Folders stay displayed, a selected file that gets hidden is deselected. The "File and folder dialogs" scene of the WPF sample shows the different ways to use filters.
 
 All ``FileSystemViewModel``s of a factory share its messenger. They ignore selections from each other, so a dialog doesn't change the selection of another browser. ``Dispose`` stops listening.
 
@@ -49,7 +53,7 @@ The file extension is only an expectation. ``ScarletFile.MimeType`` starts out w
 |class|summary|
 |---|---|
 |[``FileSystemView``](FileSystemView.cs)|Control that displays a ``FileSystemViewModel``, styled by ``Generic.xaml``.|
-|[``FileSystemViewModel``](FileSystemViewModel.cs)|Provides the drives, the selected folder and its content, the selected entry, the search and the state of the preview and inspector.|
+|[``FileSystemViewModel``](FileSystemViewModel.cs)|Provides the drives, the selected folder and its content, the selected entry, the search, the file filter and the state of the preview and inspector.|
 |[``FileSystemSearch``](FileSystemSearch.cs)|Matches names against a search query.|
 |[``MimeTypeNames``](MimeTypeNames.cs)|Maps mime types to displayed names.|
 |[``FileSystemOptionsViewModel``](FileSystemOptionsViewModel.cs)|Selects which drive types, file attributes and folder attributes are shown. ``Default`` provides a preset.|
