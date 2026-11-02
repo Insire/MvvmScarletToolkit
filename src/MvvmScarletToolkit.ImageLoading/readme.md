@@ -7,6 +7,7 @@ MvvmScarletToolkit.ImageLoading is part of the MvvmScarletToolkit framework, con
 ## Features
 
 - **Two levels of caching:** raw data and decoded images are each cached in memory and on disk. Every cache can be enabled on its own.
+- **Memory cap:** `MaxEntries` limits how many entries each memory cache keeps, 100 by default. Above that, the least recently used entries are removed. Only the entries of that cache count, so the `IMemoryCache` can be shared with the rest of the application.
 - **Resizing:** images are decoded for the requested size, with a configurable default.
 - **Works with virtualized lists:** cancelled loads return `null` instead of throwing, because cancelling is routine for items that scroll out of view.
 - **Background disk writes:** images are handed out before they are written to disk, and `MaxConcurrentDiskCacheWrites` limits how many writes run at once. Call `FlushAsync` before the application exits to keep pending writes.
@@ -35,8 +36,8 @@ Each service reads its settings from an options class. The caches are disabled b
 |---|---|
 |[``ImageServiceOptions``](ImageServiceOptions.cs)|``DefaultHeight``, ``DefaultWidth``, ``FailedLoadRetryDelayInSeconds``, ``MaxConcurrentDiskCacheWrites``|
 |[``ImageDataProviderOptions``](ImageDataProviderOptions.cs)|``MaxDownloadSizeInBytes``, ``RequestTimeout``|
-|[``ImageMemoryCacheOptions``](Caches/ImageMemoryCacheOptions.cs)|``IsEnabled``, ``AbsoluteExpirationOffsetInSeconds``|
-|[``ImageDataMemoryCacheOptions``](Caches/Data/ImageDataMemoryCacheOptions.cs)|``IsEnabled``, ``AbsoluteExpirationOffsetInSeconds``|
+|[``ImageMemoryCacheOptions``](Caches/ImageMemoryCacheOptions.cs)|``IsEnabled``, ``AbsoluteExpirationOffsetInSeconds``, ``MaxEntries``|
+|[``ImageDataMemoryCacheOptions``](Caches/Data/ImageDataMemoryCacheOptions.cs)|``IsEnabled``, ``AbsoluteExpirationOffsetInSeconds``, ``MaxEntries``|
 |[``ImageFilesystemCacheOptions``](Caches/ImageFilesystemCacheOptions.cs)|``CacheDirectoryPath``, ``ClearCacheDirectoryOnInit``, ``CreateFolder``, ``IsEnabled``, ``MaxFileAgeInDays``|
 |[``ImageDataFileystemCacheOptions``](Caches/Data/ImageDataFileystemCacheOptions.cs)|``CacheDirectoryPath``, ``ClearCacheDirectoryOnInit``, ``CreateFolder``, ``IsEnabled``, ``MaxFileAgeInDays``|
 
@@ -55,8 +56,8 @@ services.AddSingleton(new SemaphoreSlim(Environment.ProcessorCount));
 
 services.AddSingleton(new ImageServiceOptions());
 services.AddSingleton(new ImageDataProviderOptions());
-services.AddSingleton(new ImageMemoryCacheOptions { IsEnabled = true });
-services.AddSingleton(new ImageDataMemoryCacheOptions { IsEnabled = true });
+services.AddSingleton(new ImageMemoryCacheOptions { IsEnabled = true, MaxEntries = 200 });
+services.AddSingleton(new ImageDataMemoryCacheOptions { IsEnabled = true, MaxEntries = 200 });
 services.AddSingleton(new ImageFilesystemCacheOptions());
 services.AddSingleton(new ImageDataFileystemCacheOptions());
 
