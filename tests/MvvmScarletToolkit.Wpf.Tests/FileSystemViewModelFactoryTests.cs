@@ -116,6 +116,26 @@ namespace MvvmScarletToolkit.Wpf.Tests
             Assert.Equal("image/png", Assert.IsType<ScarletFile>(Assert.Single(files)).MimeType);
         }
 
+        [Theory]
+        [InlineData(new byte[] { 0x49, 0x44, 0x33, 0x04, 0x00 })] // ID3v2 tag
+        [InlineData(new byte[] { 0xFF, 0xFB, 0x90, 0x64 })] // MPEG-1 layer III, 128 kbit/s
+        [InlineData(new byte[] { 0xFF, 0xFB, 0xE0, 0x44 })] // MPEG-1 layer III, 320 kbit/s
+        [InlineData(new byte[] { 0xFF, 0xF3, 0x40, 0xC4 })] // MPEG-2 layer III
+        public void MagicNumberMimeTypeResolver_Should_Detect_Mp3(byte[] header)
+        {
+            var path = CreateFile("audio.unknownextension", [.. header, .. new byte[16]]);
+
+            Assert.Equal("audio/mpeg", new MagicNumberMimeTypeResolver().Get(new FileInfo(path)));
+        }
+
+        [Fact]
+        public async Task IsEmpty_Should_Throw_For_Unsupported_Parent()
+        {
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _factory.IsEmpty(CreateParent(_directory), TestContext.Current.CancellationToken));
+
+            Assert.Equal("parent", exception.ParamName);
+        }
+
         [Fact]
         public void MagicNumberMimeTypeResolver_Should_Compare_Extensions_Independent_Of_Culture()
         {

@@ -405,7 +405,8 @@ namespace MvvmScarletToolkit.Observables.Tests
             var messenger = new WeakReferenceMessenger();
             using (var tracker = new PropertyChangedMessageTracker(messenger))
             {
-                Assert.Throws<InvalidOperationException>(() => tracker.SuppressChanges(new BroadCastViewModel(messenger)));
+                var exception = Assert.Throws<ArgumentOutOfRangeException>(() => tracker.SuppressChanges(new BroadCastViewModel(messenger)));
+                Assert.Equal("instance", exception.ParamName);
             }
         }
 
