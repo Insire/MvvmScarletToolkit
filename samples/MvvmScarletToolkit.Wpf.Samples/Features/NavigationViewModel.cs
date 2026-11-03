@@ -73,6 +73,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             Add("Nested Selection", new SelectionsViewModel());
             Add("Tag cloud with a VirtualizingWrapPanel", new TagCloudViewModel());
             Add("Selecting and copying text", new SelectableTextViewModel());
+            Add("Readme rendered by an HtmlTextBlock", new HtmlReadmeViewModel());
 
             Items[0].IsSelected = true;
         }

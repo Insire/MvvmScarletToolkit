@@ -10,6 +10,9 @@ namespace MvvmScarletToolkit.Wpf
         Search,
         Xml,
         Region,
+
+        /// <summary>ul, ol and li, which add bullets or numbers to the text</summary>
+        List,
         Variable,
         None
     }

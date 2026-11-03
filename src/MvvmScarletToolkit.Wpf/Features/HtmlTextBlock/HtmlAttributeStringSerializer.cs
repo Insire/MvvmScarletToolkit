@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace MvvmScarletToolkit.Wpf
 {
     /// <summary>
@@ -48,7 +50,8 @@ namespace MvvmScarletToolkit.Wpf
                 index++; // '='
                 SkipWhiteSpace(text, ref index);
 
-                yield return new Tuple<string, string>(name.ToLowerInvariant(), ReadValue(text, ref index));
+                // values may contain entities, e.g. href="?a=1&amp;b=2"
+                yield return new Tuple<string, string>(name.ToLowerInvariant(), WebUtility.HtmlDecode(ReadValue(text, ref index)));
             }
         }
 

@@ -43,18 +43,18 @@ namespace MvvmScarletToolkit.Wpf
            new HTMLTagInfo ("tr",           HTMLFlag.Table,         11),
            new HTMLTagInfo ("td",           HTMLFlag.Table,         10),
            new HTMLTagInfo ("th",           HTMLFlag.Table,         10),
-           new HTMLTagInfo ("ul",           HTMLFlag.Region,        09),
-           new HTMLTagInfo ("ol",           HTMLFlag.Region,        09),
-           new HTMLTagInfo ("li",           HTMLFlag.Region,        08),
+           new HTMLTagInfo ("ul",           HTMLFlag.List,          09),
+           new HTMLTagInfo ("ol",           HTMLFlag.List,          09),
+           new HTMLTagInfo ("li",           HTMLFlag.List,          08),
            new HTMLTagInfo ("blockquote",   HTMLFlag.TextFormat,    08),
            new HTMLTagInfo ("indent",       HTMLFlag.Region,        08),
            new HTMLTagInfo ("p",            HTMLFlag.Region,        07),
-           new HTMLTagInfo ("h1",           HTMLFlag.Region,        07),
-           new HTMLTagInfo ("h2",           HTMLFlag.Region,        07),
-           new HTMLTagInfo ("h3",           HTMLFlag.Region,        07),
-           new HTMLTagInfo ("h4",           HTMLFlag.Region,        07),
-           new HTMLTagInfo ("h5",           HTMLFlag.Region,        07),
-           new HTMLTagInfo ("h6",           HTMLFlag.Region,        07),
+           new HTMLTagInfo ("h1",           HTMLFlag.TextFormat,    07),
+           new HTMLTagInfo ("h2",           HTMLFlag.TextFormat,    07),
+           new HTMLTagInfo ("h3",           HTMLFlag.TextFormat,    07),
+           new HTMLTagInfo ("h4",           HTMLFlag.TextFormat,    07),
+           new HTMLTagInfo ("h5",           HTMLFlag.TextFormat,    07),
+           new HTMLTagInfo ("h6",           HTMLFlag.TextFormat,    07),
            new HTMLTagInfo ("span",         HTMLFlag.TextFormat,    07), // TextFormat, so its style can color the text
            new HTMLTagInfo ("font",         HTMLFlag.TextFormat,    04),
            new HTMLTagInfo ("u",            HTMLFlag.TextFormat,    04),
@@ -66,6 +66,8 @@ namespace MvvmScarletToolkit.Wpf
            new HTMLTagInfo ("sub",          HTMLFlag.TextFormat,    04),
            new HTMLTagInfo ("strong",       HTMLFlag.TextFormat,    04),
            new HTMLTagInfo ("color",        HTMLFlag.TextFormat,    04),
+           new HTMLTagInfo ("code",         HTMLFlag.TextFormat,    04),
+           new HTMLTagInfo ("pre",          HTMLFlag.TextFormat,    07),
            new HTMLTagInfo ("input",        HTMLFlag.Controls,      02),
            new HTMLTagInfo ("select",       HTMLFlag.Controls,      02),
            new HTMLTagInfo ("option",       HTMLFlag.Controls,      02),
@@ -138,6 +140,15 @@ namespace MvvmScarletToolkit.Wpf
                     case HTMLFlag.Element:
                         var inline = tag.CreateInline(textBlock, context);
                         textBlock.Inlines.Add(inline);
+                        break;
+
+                    case HTMLFlag.List:
+                        if (context.UpdateList(tag) is { } marker)
+                        {
+                            // the marker is formatted like text at its position
+                            textBlock.Inlines.Add(new HtmlTag(marker).CreateInline(textBlock, context));
+                        }
+
                         break;
                 }
             }

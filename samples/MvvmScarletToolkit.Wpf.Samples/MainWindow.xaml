@@ -2082,6 +2082,36 @@
                     </DockPanel>
                 </DataTemplate>
 
+                <DataTemplate DataType="{x:Type features:HtmlReadmeViewModel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <mvvm:HtmlTextBlock MaxWidth="960"
+                                                Margin="16"
+                                                HorizontalAlignment="Left"
+                                                mvvm:TextBlockSelection.IsEnabled="True"
+                                                Html="{Binding Html}"
+                                                OpenLinksInBrowser="True"
+                                                TextWrapping="Wrap" />
+                        </ScrollViewer>
+
+                        <Expander Grid.Row="1"
+                                  Margin="16 8"
+                                  Header="Html source">
+                            <TextBox MaxHeight="300"
+                                     FontFamily="Consolas"
+                                     HorizontalScrollBarVisibility="Auto"
+                                     IsReadOnly="True"
+                                     Text="{Binding Html, Mode=OneWay}"
+                                     VerticalScrollBarVisibility="Auto" />
+                        </Expander>
+                    </Grid>
+                </DataTemplate>
+
                 <DataTemplate DataType="{x:Type features:SelectableTextViewModel}">
                     <StackPanel Orientation="Vertical">
                         <StackPanel.Resources>

@@ -16,6 +16,9 @@
   <ItemGroup>
     <!-- loaded through a pack uri by the HtmlTextBlock sample -->
     <Resource Include="..\..\assets\branding\png\icon-32.png" Link="Resources\icon-32.png" />
+    <Resource Include="..\..\assets\branding\png\wordmark-dark.png" Link="Resources\wordmark-dark.png" />
+    <!-- README.md converted to html, shown by the HtmlTextBlock readme scene -->
+    <EmbeddedResource Include="Resources\readme.html" />
   </ItemGroup>
 
   <ItemGroup>

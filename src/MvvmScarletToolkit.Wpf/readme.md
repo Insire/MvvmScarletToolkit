@@ -35,12 +35,17 @@ Toast notifications, the FileSystemBrowser and the DataGrid extensions come with
 
 ### HtmlTextBlock
 
-``HtmlTextBlock`` supports a small subset of html. Attribute values can be double quoted, single quoted or unquoted.
+``HtmlTextBlock`` supports a small subset of html. Attribute values can be double quoted, single quoted or unquoted. Entities like ``&lt;``, ``&amp;``, ``&nbsp;`` and ``&#39;`` are decoded in text and attribute values.
+
+Unlike a browser, ``HtmlTextBlock`` keeps whitespace and line breaks of the text as they are, and block tags like headings and list items don't start a new line on their own. Put them on their own line in the html, or use ``br``.
 
 |tag|effect|
 |---|---|
 |``b``, ``i``, ``u``, ``sub``, ``sup``|Bold, italic, underlined, subscript and superscript text.|
-|``a href="…"``|Hyperlink.|
+|``h1`` to ``h6``|Bold text, scaled from 2 to 0.9 times the font size of the control at the time the html is set.|
+|``code``, ``pre``|Monospace text.|
+|``ul``, ``ol``, ``li``|Bullets or numbers in front of each ``li``, nested lists are indented.|
+|``a href="…"``|Hyperlink. Set ``OpenLinksInBrowser="True"`` to open clicked http, https and mailto links with the default application. Other links are disabled then, since a ``file:`` link could start any program.|
 |``br``|Line break.|
 |``font color="…"``, ``color color="…"``, ``span style="color: …"``|Text color: named colors, ``#rgb``, ``#rrggbb`` or ``#aarrggbb``. The innermost color wins, invalid colors are ignored.|
 |``img``|Inline image, see below.|

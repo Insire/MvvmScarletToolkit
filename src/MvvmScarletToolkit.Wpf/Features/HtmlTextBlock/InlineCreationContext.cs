@@ -14,6 +14,14 @@ namespace MvvmScarletToolkit.Wpf
         public string? HyperLink { get; private set; }
         public Color? Foreground { get; private set; }
 
+        /// <summary>1 to 6 inside h1 to h6, otherwise 0. The innermost heading wins.</summary>
+        public int HeadingLevel { get; private set; }
+
+        /// <summary>Inside code or pre.</summary>
+        public bool Monospace { get; private set; }
+
+        private readonly List<ListState> _lists = new List<ListState>();
+
         public InlineCreationContext()
         {
             Foreground = null;
@@ -51,6 +59,8 @@ namespace MvvmScarletToolkit.Wpf
             SuperScript = false;
             Foreground = null;
             HyperLink = "";
+            HeadingLevel = 0;
+            Monospace = false;
         }
 
         /// <summary>
@@ -107,7 +117,72 @@ namespace MvvmScarletToolkit.Wpf
                     case "span":
                         ApplyColor(InlineStyle.Parse(tag.Get("style")).TryGetColor("color", out var spanColor), spanColor);
                         break;
+
+                    case "h1":
+                    case "h2":
+                    case "h3":
+                    case "h4":
+                    case "h5":
+                    case "h6":
+                        Bold = true;
+                        HeadingLevel = tag.Name[1] - '0';
+                        break;
+
+                    case "code":
+                    case "pre":
+                        Monospace = true;
+                        break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Tracks ul, ol and li tags.
+        /// </summary>
+        /// <returns>The bullet or number to show for an opening li tag, otherwise <see langword="null"/>.</returns>
+        public string? UpdateList(HtmlTag tag)
+        {
+            switch (tag.Name)
+            {
+                case "ul":
+                case "ol":
+                    _lists.Add(new ListState(tag.Name == "ol"));
+                    return null;
+
+                case "/ul":
+                case "/ol":
+                    if (_lists.Count > 0)
+                    {
+                        _lists.RemoveAt(_lists.Count - 1);
+                    }
+
+                    return null;
+
+                case "li" when !tag.IsEndTag:
+                    // an li outside of a list is shown like one in an ul
+                    var list = _lists.Count > 0 ? _lists[^1] : new ListState(false);
+                    list.Count++;
+
+                    var indent = new string(' ', Math.Max(0, _lists.Count - 1) * 4);
+
+                    return list.IsOrdered
+                        ? $"{indent}{list.Count}. "
+                        : $"{indent}• ";
+
+                default:
+                    return null;
+            }
+        }
+
+        private sealed class ListState
+        {
+            public bool IsOrdered { get; }
+
+            public int Count { get; set; }
+
+            public ListState(bool isOrdered)
+            {
+                IsOrdered = isOrdered;
             }
         }
     }

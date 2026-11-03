@@ -1,7 +1,10 @@
+using CommunityToolkit.Mvvm.Input;
 using System.Diagnostics;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace MvvmScarletToolkit.Wpf
@@ -12,6 +15,18 @@ namespace MvvmScarletToolkit.Wpf
     [DebuggerDisplay("{Id} {Name}")]
     internal sealed class HtmlTag
     {
+        /// <summary>font size of h1 to h6, relative to the font size of the text block</summary>
+        private static readonly double[] _headingScales = [2.0, 1.5, 1.25, 1.1, 1.0, 0.9];
+
+        private static readonly FontFamily _monospace = new FontFamily("Consolas, Courier New, monospace");
+
+        /// <summary>shared by all links, the uri is passed as command parameter</summary>
+        private static readonly RelayCommand<Uri?> _openLinkCommand = new RelayCommand<Uri?>(
+            uri => ShellExecute.Start(ShellExecute.CreateStartInfo(uri!)),
+            ShellExecute.IsWebLink);
+
+        internal static ICommand OpenLinkCommand => _openLinkCommand;
+
         private readonly Dictionary<string, string> _variables;
 
         /// <summary>
@@ -55,7 +70,7 @@ namespace MvvmScarletToolkit.Wpf
         }
 
         public HtmlTag(string text)
-            : this("text", new Dictionary<string, string> { { "value", text } })
+            : this("text", new Dictionary<string, string> { { "value", WebUtility.HtmlDecode(text) } })
         {
         }
 
@@ -78,7 +93,7 @@ namespace MvvmScarletToolkit.Wpf
         {
             var result = CreateInlineInternal(textBlock, currentStateType);
 
-            return TryWrapInHyperLink(result, currentStateType.HyperLink);
+            return TryWrapInHyperLink(textBlock, result, currentStateType.HyperLink);
         }
 
         private Inline CreateInlineInternal(TextBlock textBlock, InlineCreationContext currentStateType)
@@ -143,13 +158,24 @@ namespace MvvmScarletToolkit.Wpf
                         result.Foreground = new SolidColorBrush(currentStateType.Foreground.Value);
                     }
 
+                    if (currentStateType.HeadingLevel > 0)
+                    {
+                        // relative to the font size at the time the html is parsed
+                        result.FontSize = textBlock.FontSize * _headingScales[currentStateType.HeadingLevel - 1];
+                    }
+
+                    if (currentStateType.Monospace)
+                    {
+                        result.FontFamily = _monospace;
+                    }
+
                     return result;
 
                 case "img":
                     var image = HtmlImageFactory.Create(this, textBlock);
 
                     return Contains("href")
-                        ? TryWrapInHyperLink(image, _variables["href"])
+                        ? TryWrapInHyperLink(textBlock, image, _variables["href"])
                         : image;
 
                 default:
@@ -157,7 +183,7 @@ namespace MvvmScarletToolkit.Wpf
             }
         }
 
-        private static Inline TryWrapInHyperLink(Inline content, string? url)
+        private static Inline TryWrapInHyperLink(TextBlock textBlock, Inline content, string? url)
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -170,6 +196,12 @@ namespace MvvmScarletToolkit.Wpf
             {
                 link.NavigateUri = uri;
                 link.ToolTip = url;
+
+                if (textBlock is HtmlTextBlock { OpenLinksInBrowser: true })
+                {
+                    link.Command = _openLinkCommand;
+                    link.CommandParameter = uri;
+                }
             }
             else
             {

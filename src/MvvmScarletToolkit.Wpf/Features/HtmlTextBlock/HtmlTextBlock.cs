@@ -19,6 +19,23 @@ namespace MvvmScarletToolkit.Wpf
             set => SetValue(HtmlProperty, value);
         }
 
+        /// <summary>Identifies the <see cref="OpenLinksInBrowser"/> dependency property.</summary>
+        public static readonly DependencyProperty OpenLinksInBrowserProperty = DependencyProperty.Register(
+            nameof(OpenLinksInBrowser),
+            typeof(bool),
+            typeof(HtmlTextBlock),
+            new PropertyMetadata(false, OnOpenLinksInBrowserChanged));
+
+        /// <summary>
+        /// Opens clicked links with the default application of the operating system, usually the browser.
+        /// Only http, https and mailto links are opened, since the html may come from an untrusted source.
+        /// </summary>
+        public bool OpenLinksInBrowser
+        {
+            get => (bool)GetValue(OpenLinksInBrowserProperty);
+            set => SetValue(OpenLinksInBrowserProperty, value);
+        }
+
         /// <summary>Identifies the <see cref="ImageService"/> dependency property.</summary>
         public static readonly DependencyProperty ImageServiceProperty = DependencyProperty.Register(
             nameof(ImageService),
@@ -61,6 +78,14 @@ namespace MvvmScarletToolkit.Wpf
             {
                 // null clears the inlines as well
                 textBlock.Parse(e.NewValue as string ?? string.Empty);
+            }
+        }
+
+        private static void OnOpenLinksInBrowserChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            if (o is HtmlTextBlock textBlock)
+            {
+                textBlock.Parse(textBlock.Html ?? string.Empty);
             }
         }
 

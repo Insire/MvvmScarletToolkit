@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 
@@ -32,7 +34,7 @@ namespace MvvmScarletToolkit.Wpf
             var highlight = Highlight;
             if (!string.IsNullOrEmpty(highlight))
             {
-                var pattern = Regex.Escape(highlight);
+                var pattern = new Regex(Regex.Escape(highlight), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
                 // only highlight text between tags, the split keeps the tags, since they are captured
                 var segments = _tagSplitter.Split(html);
@@ -40,7 +42,7 @@ namespace MvvmScarletToolkit.Wpf
                 {
                     if (!segments[i].StartsWith('<'))
                     {
-                        segments[i] = Regex.Replace(segments[i], pattern, "<b>$0</b>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+                        segments[i] = ApplyHighlight(segments[i], pattern);
                     }
                 }
 
@@ -48,6 +50,32 @@ namespace MvvmScarletToolkit.Wpf
             }
 
             this.UpdateWith(html);
+        }
+
+        /// <summary>
+        /// Matches against the decoded text, so "R&amp;D" is found in "R&amp;amp;D" and a match never splits an entity like "&amp;amp;".
+        /// </summary>
+        private static string ApplyHighlight(string segment, Regex pattern)
+        {
+            var text = WebUtility.HtmlDecode(segment);
+            var matches = pattern.Matches(text);
+            if (matches.Count == 0)
+            {
+                return segment;
+            }
+
+            var builder = new StringBuilder(segment.Length + (matches.Count * 7));
+            var last = 0;
+            foreach (Match match in matches)
+            {
+                builder.Append(WebUtility.HtmlEncode(text[last..match.Index]));
+                builder.Append("<b>").Append(WebUtility.HtmlEncode(match.Value)).Append("</b>");
+                last = match.Index + match.Length;
+            }
+
+            builder.Append(WebUtility.HtmlEncode(text[last..]));
+
+            return builder.ToString();
         }
 
         private static void OnHighlightChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
