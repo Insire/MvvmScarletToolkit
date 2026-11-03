@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace MvvmScarletToolkit.Wpf
 {
@@ -63,11 +62,19 @@ namespace MvvmScarletToolkit.Wpf
 
         public string this[string key] => _variables[key];
 
+        /// <summary>
+        /// Returns the value of an attribute, or <see langword="null"/> when the tag does not have it.
+        /// </summary>
+        public string? Get(string key)
+        {
+            return _variables.TryGetValue(key, out var value) ? value : null;
+        }
+
         public Inline CreateInline(TextBlock textBlock, InlineCreationContext currentStateType)
         {
             var result = CreateInlineInternal(textBlock, currentStateType);
 
-            return TryWrapInHyperLink(result, currentStateType.HyperLink?.Trim('\"'));
+            return TryWrapInHyperLink(result, currentStateType.HyperLink);
         }
 
         private Inline CreateInlineInternal(TextBlock textBlock, InlineCreationContext currentStateType)
@@ -135,47 +142,11 @@ namespace MvvmScarletToolkit.Wpf
                     return result;
 
                 case "img":
-                    if (!Contains("source"))
-                    {
-                        return new Run();
-                    }
+                    var image = HtmlImageFactory.Create(this, textBlock);
 
-                    var width = double.NaN;
-                    if (Contains("width") && double.TryParse(_variables["width"], out var internalWidth))
-                        width = internalWidth;
-
-                    var height = double.NaN;
-                    if (Contains("height") && double.TryParse(_variables["height"], out var internalHeight))
-                        height = internalHeight;
-
-                    if (!Uri.TryCreate(_variables["source"], UriKind.RelativeOrAbsolute, out var uri))
-                    {
-                        return new Run();
-                    }
-
-                    var bitmap = new BitmapImage
-                    {
-                        CacheOption = BitmapCacheOption.OnLoad
-                    };
-
-                    bitmap.BeginInit();
-                    bitmap.UriSource = uri;
-                    bitmap.EndInit();
-
-                    // TODO fetch and apply style
-                    var image = new Image
-                    {
-                        Source = bitmap,
-                        Width = width,
-                        Height = height
-                    };
-
-                    if (Contains("href"))
-                    {
-                        return TryWrapInHyperLink(new InlineUIContainer(image), _variables["href"]);
-                    }
-
-                    return new InlineUIContainer(image);
+                    return Contains("href")
+                        ? TryWrapInHyperLink(image, _variables["href"])
+                        : image;
 
                 default:
                     return new Run();

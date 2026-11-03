@@ -2118,6 +2118,18 @@
                                                 Html="This &lt;b&gt;selection&lt;/b&gt; is orange." />
                         </GroupBox>
 
+                        <GroupBox Margin="0 8 0 0" Header="HtmlTextBlock with colors and images">
+                            <StackPanel Orientation="Vertical">
+                                <mvvm:HtmlTextBlock Html="Text in &lt;font color='Crimson'&gt;crimson&lt;/font&gt;, &lt;span style=&quot;color: #2E8B57&quot;&gt;sea green with a &lt;b&gt;bold&lt;/b&gt; word&lt;/span&gt; and back to the default color." TextWrapping="Wrap" />
+                                <mvvm:HtmlTextBlock Margin="0 8 0 0"
+                                                    Html="An embedded icon &lt;img src='pack://application:,,,/Resources/icon-32.png' alt='toolkit icon' title='Loaded from a pack uri' style='width: 16px; height: 16px; margin: 0 4px; vertical-align: middle'&gt; inline with the text."
+                                                    TextWrapping="Wrap" />
+                                <mvvm:HtmlTextBlock Margin="0 8 0 0"
+                                                    Html="A web image through the image cache &lt;img src='https://w.wallhaven.cc/full/o5/wallhaven-o58767.jpg' alt='[image could not be loaded]' title='Cached by MvvmScarletToolkit.ImageLoading' style='width: 64px; height: 36px; vertical-align: middle; opacity: 0.8'&gt; and a missing one &lt;img src='https://example.invalid/missing.png' alt='[missing image]' style='vertical-align: middle'&gt;."
+                                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </GroupBox>
+
                         <GroupBox Margin="0 8 0 0" Header="Bound text">
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Style="{StaticResource SelectableTextStyle}" Text="{Binding Message}" />

@@ -54,7 +54,7 @@ namespace MvvmScarletToolkit.Wpf
            new HTMLTagInfo ("h4",           HTMLFlag.Region,        07),
            new HTMLTagInfo ("h5",           HTMLFlag.Region,        07),
            new HTMLTagInfo ("h6",           HTMLFlag.Region,        07),
-           new HTMLTagInfo ("span",         HTMLFlag.Region,        07),
+           new HTMLTagInfo ("span",         HTMLFlag.TextFormat,    07), // TextFormat, so its style can color the text
            new HTMLTagInfo ("font",         HTMLFlag.TextFormat,    04),
            new HTMLTagInfo ("u",            HTMLFlag.TextFormat,    04),
            new HTMLTagInfo ("b",            HTMLFlag.TextFormat,    04),

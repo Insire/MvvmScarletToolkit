@@ -14,6 +14,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- loaded through a pack uri by the HtmlTextBlock sample -->
+    <Resource Include="..\..\assets\branding\png\icon-32.png" Link="Resources\icon-32.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CsvHelper" />
     <PackageReference Include="Jot" />
     <PackageReference Include="Magick.NET-Q8-AnyCPU" />

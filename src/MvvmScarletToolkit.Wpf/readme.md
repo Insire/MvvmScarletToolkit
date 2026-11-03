@@ -30,8 +30,39 @@ Toast notifications, the FileSystemBrowser and the DataGrid extensions come with
 |[FileSystemBrowser](Features/FileSystemBrowser/readme.md)|Browse drives, folders and files through a viewmodel, with file and folder dialogs.|
 |``VirtualizingTilePanel``|Virtualizing panel that lays out items as tiles of ``ChildSize``.|
 |``VirtualizingWrapPanel``|Virtualizing panel that wraps items of ``ItemWidth`` and ``ItemHeight``.|
-|``HtmlTextBlock``|TextBlock that displays formatted text from its ``Html`` property, like ``b``, ``i``, ``u``, ``sub``, ``sup``, ``a`` and ``br``.|
+|``HtmlTextBlock``|TextBlock that displays formatted text and images from its ``Html`` property. See [HtmlTextBlock](#htmltextblock).|
 |``HtmlHighlightTextBlock``|``HtmlTextBlock`` that also highlights the text from its ``Highlight`` property, e.g. for search results.|
+
+### HtmlTextBlock
+
+``HtmlTextBlock`` supports a small subset of html. Attribute values can be double quoted, single quoted or unquoted.
+
+|tag|effect|
+|---|---|
+|``b``, ``i``, ``u``, ``sub``, ``sup``|Bold, italic, underlined, subscript and superscript text.|
+|``a href="…"``|Hyperlink.|
+|``br``|Line break.|
+|``font color="…"``, ``color color="…"``, ``span style="color: …"``|Text color: named colors, ``#rgb``, ``#rrggbb`` or ``#aarrggbb``. The innermost color wins, invalid colors are ignored.|
+|``img``|Inline image, see below.|
+
+``img`` reads these attributes:
+
+|attribute|effect|
+|---|---|
+|``src``|Image source. ``source`` still works, ``src`` wins if both are set.|
+|``width``, ``height``|Size, as a plain number or in ``px``.|
+|``alt``|Name for screen readers. Shown instead of the image, when it cannot be loaded.|
+|``title``|Tooltip.|
+|``href``|Makes the image a hyperlink.|
+|``style``|``width``, ``height``, ``margin`` (1 to 4 values), ``vertical-align`` (``baseline``, ``top``, ``middle``, ``bottom``, ``text-top``, ``text-bottom``) and ``opacity``. Lengths are plain numbers or ``px``. The style wins over the ``width`` and ``height`` attributes.|
+
+```xml
+<mvvm:HtmlTextBlock Html="Saved &lt;img src='https://example.com/check.png' alt='done' style='width: 16px; height: 16px; vertical-align: middle'&gt; &lt;font color='Green'&gt;successfully&lt;/font&gt;" />
+```
+
+Images with http(s), file and relative sources load through an ``IImageService<BitmapSource>`` from [MvvmScarletToolkit.ImageLoading](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.ImageLoading/readme.md), so they are cached and load asynchronously. ``HtmlTextBlock.ImageService`` sets the service for one control, otherwise ``ImageLoader.AsyncImageLoader`` is used. When both width and height are known in px, the image is decoded at that size. Without a service, and for other sources like ``pack://`` uris, images are loaded with a ``BitmapImage``.
+
+> Html from untrusted sources can make the control download images from any web address.
 
 ### Selecting text
 

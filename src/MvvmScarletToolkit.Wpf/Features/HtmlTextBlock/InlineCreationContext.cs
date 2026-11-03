@@ -53,6 +53,17 @@ namespace MvvmScarletToolkit.Wpf
             HyperLink = "";
         }
 
+        /// <summary>
+        /// Active tags are applied from the outside in, so the innermost valid color wins.
+        /// </summary>
+        private void ApplyColor(bool isValid, Color color)
+        {
+            if (isValid)
+            {
+                Foreground = color;
+            }
+        }
+
         private void UpdateSettings()
         {
             for (var i = 0; i < _activeStyle.Count; i++)
@@ -86,6 +97,15 @@ namespace MvvmScarletToolkit.Wpf
                             HyperLink = tag["href"];
                         }
 
+                        break;
+
+                    case "font":
+                    case "color":
+                        ApplyColor(InlineStyle.TryParseColor(tag.Get("color"), out var tagColor), tagColor);
+                        break;
+
+                    case "span":
+                        ApplyColor(InlineStyle.Parse(tag.Get("style")).TryGetColor("color", out var spanColor), spanColor);
                         break;
                 }
             }

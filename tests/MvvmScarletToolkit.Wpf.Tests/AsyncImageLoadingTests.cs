@@ -653,6 +653,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
     }
 
     // ImageLoader.AsyncImageLoader is static, tests in this class must not run in parallel with other users of it
+    [Collection(HtmlTextBlockImageTests.ImageLoaderCollection)]
     public sealed class ImageLoaderTests : AsyncImageLoadingTestsBase
     {
         protected override void SetLoader(Lazy<IImageService<BitmapSource>>? loader) => ImageLoader.AsyncImageLoader = loader;
