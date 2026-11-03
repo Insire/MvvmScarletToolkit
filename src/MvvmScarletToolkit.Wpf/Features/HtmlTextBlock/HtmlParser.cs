@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Windows.Controls;
 
 namespace MvvmScarletToolkit.Wpf
@@ -79,6 +80,37 @@ namespace MvvmScarletToolkit.Wpf
            new HTMLTagInfo ("user",         HTMLFlag.Dynamic,       00),
        };
 
+        /// <summary>
+        /// Index of each tag name in <see cref="_builtinTags"/>. Immutable, so parsing on several threads at once is safe.
+        /// Declared after <see cref="_builtinTags"/>, since static fields are initialized in declaration order.
+        /// </summary>
+        private static readonly FrozenDictionary<string, int> _tagIndices = CreateTagIndices();
+
+        private static FrozenDictionary<string, int> CreateTagIndices()
+        {
+            var indices = new Dictionary<string, int>(_builtinTags.Count, StringComparer.Ordinal);
+            for (var i = 0; i < _builtinTags.Count; i++)
+            {
+                // the first entry wins, like a linear search would
+                indices.TryAdd(_builtinTags[i].Html, i);
+            }
+
+            return indices.ToFrozenDictionary(StringComparer.Ordinal);
+        }
+
+        /// <summary>
+        /// Returns the index of a lower case tag name without its leading '/', or -1 for unknown tags.
+        /// </summary>
+        internal static int GetTagIndex(string name)
+        {
+            return _tagIndices.TryGetValue(name, out var index) ? index : -1;
+        }
+
+        internal static HTMLTagInfo GetTagInfo(int index)
+        {
+            return _builtinTags[index];
+        }
+
         public static IParamParser? ParamParser { get; set; } = new ParamParser(new HtmlAttributeStringSerializer());
 
         public static void UpdateWith(this TextBlock textBlock, string htmlInput)
@@ -88,7 +120,7 @@ namespace MvvmScarletToolkit.Wpf
 
         public static void UpdateWith(this TextBlock textBlock, string htmlInput, IParamParser paramParser)
         {
-            var tree = new HtmlTagTree(paramParser, _builtinTags);
+            var tree = new HtmlTagTree(paramParser);
 
             tree.BuildFrom(htmlInput);
 

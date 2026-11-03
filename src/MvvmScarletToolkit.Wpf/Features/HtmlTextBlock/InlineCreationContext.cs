@@ -30,7 +30,7 @@ namespace MvvmScarletToolkit.Wpf
             {
                 for (var i = _activeStyle.Count - 1; i >= 0; i--)
                 {
-                    if ('/' + _activeStyle[i].Name == tag.Name)
+                    if (_activeStyle[i].EndTagName == tag.Name)
                     {
                         _activeStyle.RemoveAt(i);
                         break;

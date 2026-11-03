@@ -6,46 +6,64 @@ namespace MvvmScarletToolkit.Wpf
     internal sealed class HtmlTagTree : HtmlTagNode
     {
         private readonly IParamParser _paramParser;
-        private readonly List<HTMLTagInfo> _builtinTags;
 
-        public HtmlTagTree(IParamParser paramParser, List<HTMLTagInfo> builtinTags)
-            : base(true, new HtmlTag(paramParser, "root", string.Empty, builtinTags))
+        public HtmlTagTree(IParamParser paramParser)
+            : base(true, new HtmlTag(paramParser, "root", string.Empty))
         {
             _paramParser = paramParser ?? throw new ArgumentNullException(nameof(paramParser));
-            _builtinTags = builtinTags ?? throw new ArgumentNullException(nameof(builtinTags));
         }
 
         /// <summary>
-        ///  build syntax tree from input
+        /// Builds the syntax tree from <paramref name="htmlInput"/>.
         /// </summary>
+        /// <remarks>
+        /// Scans the input by position, so only the text and tags that become part of the tree are copied.
+        /// </remarks>
         public void BuildFrom(string htmlInput)
         {
             HtmlTagNode? previousNode = this;
 
-            var beforeTag = string.Empty;
-            var afterTag = string.Empty;
-            var name = string.Empty;
-            var vars = string.Empty;
+            var input = htmlInput ?? string.Empty;
+            var position = 0;
 
-            do
+            while (position < input.Length)
             {
-                ReadNextTag(htmlInput, ref beforeTag, ref afterTag, ref name, ref vars);
+                var rest = input.AsSpan(position);
+                var startIndex = rest.IndexOf('<');
+                var endIndex = rest.IndexOf('>');
 
-                if (beforeTag != string.Empty)
+                // like before, a '>' ahead of the next '<' ends tag parsing, everything left is text
+                if ((startIndex == -1) || (endIndex == -1) || (endIndex < startIndex))
                 {
-                    AddTag(new HtmlTag(beforeTag, _builtinTags));
+                    AddTag(new HtmlTag(input[position..]));
+                    return;
                 }
 
-                if (name != string.Empty)
+                if (startIndex > 0)
                 {
-                    AddTag(new HtmlTag(_paramParser, name, vars, _builtinTags));
+                    AddTag(new HtmlTag(input.Substring(position, startIndex)));
                 }
 
-                htmlInput = afterTag;
+                var tag = rest.Slice(startIndex + 1, endIndex - startIndex - 1);
+                position += endIndex + 1;
+
+                if (tag.StartsWith("!--"))
+                {
+                    position = SkipComment(input, position, tag);
+                    continue;
+                }
+
+                var separator = tag.IndexOf(' ');
+                var name = separator == -1 ? tag : tag[..separator];
+                if (name.IsEmpty)
+                {
+                    continue;
+                }
+
+                var vars = separator == -1 ? string.Empty : tag[(separator + 1)..].ToString();
+
+                AddTag(new HtmlTag(_paramParser, name.ToString(), vars));
             }
-            while (afterTag.Length > 0);
-
-            return;
 
             void AddTag(HtmlTag tag)
             {
@@ -64,55 +82,26 @@ namespace MvvmScarletToolkit.Wpf
         }
 
         /// <summary>
-        /// Parse a string and return text before a tag, the tag and it's variables, and the string after that tag.
+        /// Returns the position after a comment that started with <paramref name="tag"/>.
+        /// A comment ends at the first "--&gt;", which may come after a '&gt;' inside the comment.
         /// </summary>
-        private static void ReadNextTag(string input, ref string beforeTag, ref string afterTag, ref string name, ref string vars)
+        private static int SkipComment(string input, int position, ReadOnlySpan<char> tag)
         {
-            var startIndex = input.IndexOf('<');
-            var endIndex = input.IndexOf('>');
-
-            if ((startIndex == -1) || (endIndex == -1) || (endIndex < startIndex))
+            // the comment already ended with the '>' that closed the tag, e.g. <!-- comment -->
+            var name = tag.IndexOf(' ') is var separator and >= 0 ? tag[..separator] : tag;
+            if (name.Length >= 6 && name.EndsWith("--"))
             {
-                vars = string.Empty;
-                beforeTag = input;
-                afterTag = string.Empty;
+                return position;
             }
-            else
+
+            if (tag.EndsWith("--") && tag.Length >= 5)
             {
-                var tag = input.Substring(startIndex + 1, endIndex - startIndex - 1);
-                beforeTag = input[..startIndex];
-                afterTag = input[(endIndex + 1)..];
-
-                var pos3 = tag.IndexOf(' ');
-                if ((pos3 != -1) && (tag != string.Empty))
-                {
-                    name = tag[..pos3];
-                    vars = tag.Substring(pos3 + 1, tag.Length - pos3 - 1);
-                }
-                else
-                {
-                    name = tag;
-                    vars = string.Empty;
-                }
-
-                if (!name.StartsWith("!--"))
-                {
-                    return;
-                }
-
-                if ((name.Length < 6) || (!name.EndsWith("--")))
-                {
-                    var pos4 = afterTag.IndexOf("-->", StringComparison.Ordinal);
-                    if (pos4 != -1)
-                    {
-                        // skip past the closing "-->"
-                        afterTag = afterTag[(pos4 + 3)..];
-                    }
-                }
-
-                name = string.Empty;
-                vars = string.Empty;
+                return position;
             }
+
+            var end = input.AsSpan(position).IndexOf("-->");
+
+            return end == -1 ? position : position + end + 3;
         }
     }
 }

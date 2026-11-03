@@ -14,14 +14,10 @@ namespace MvvmScarletToolkit.Wpf
     {
         private readonly Dictionary<string, string> _variables;
 
-        private readonly Lazy<int> _id;
-        private readonly Lazy<bool> _isEndTag;
-        private readonly Lazy<int> _level;
-
         /// <summary>
         /// HtmlTag Id in BuiltInTags. (without &lt;&gt;)
         /// </summary>
-        public int Id => _id.Value;
+        public int Id { get; }
 
         /// <summary>
         /// HtmlTag name. (without &lt;&gt;)
@@ -29,29 +25,37 @@ namespace MvvmScarletToolkit.Wpf
         public string Name { get; }
 
         /// <summary>
+        /// The name of the tag that closes this one, e.g. <c>/b</c> for <c>b</c>.
+        /// </summary>
+        internal string EndTagName { get; }
+
+        /// <summary>
         /// HtmlTag Level in BuiltInTags. (without &lt;&gt;)
         /// </summary>
-        internal int Level => _level.Value;
+        internal int Level { get; }
 
-        internal bool IsEndTag => _isEndTag.Value;
+        internal bool IsEndTag { get; }
 
-        private HtmlTag(string name, Dictionary<string, string> variables, List<HTMLTagInfo> builtinTags)
+        private HtmlTag(string name, Dictionary<string, string> variables)
         {
             _variables = variables ?? throw new ArgumentNullException(nameof(variables));
-            Name = name.ToLower();
 
-            _id = new Lazy<int>(() => builtinTags.FindIndex(tagInfo => tagInfo.Html.Equals(Name.TrimStart('/'))));
-            _isEndTag = new Lazy<bool>(() => Name.StartsWith('/') || _variables.ContainsKey("/"));
-            _level = new Lazy<int>(() => Id == -1 ? 0 : builtinTags[Id].TagLevel);
+            // invariant, otherwise <I> would become <ı> in turkish and no longer be recognized
+            Name = name.ToLowerInvariant();
+            EndTagName = '/' + Name;
+
+            Id = HtmlParser.GetTagIndex(Name.TrimStart('/'));
+            IsEndTag = Name.StartsWith('/') || _variables.ContainsKey("/");
+            Level = Id == -1 ? 0 : HtmlParser.GetTagInfo(Id).TagLevel;
         }
 
-        public HtmlTag(IParamParser paramParser, string name, string variableString, List<HTMLTagInfo> builtinTags)
-            : this(name, paramParser.StringToDictionary(variableString), builtinTags)
+        public HtmlTag(IParamParser paramParser, string name, string variableString)
+            : this(name, paramParser.StringToDictionary(variableString))
         {
         }
 
-        public HtmlTag(string text, List<HTMLTagInfo> builtinTags)
-            : this("text", new Dictionary<string, string> { { "value", text } }, builtinTags)
+        public HtmlTag(string text)
+            : this("text", new Dictionary<string, string> { { "value", text } })
         {
         }
 

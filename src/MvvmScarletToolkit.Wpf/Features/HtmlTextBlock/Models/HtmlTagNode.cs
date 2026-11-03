@@ -36,7 +36,7 @@ namespace MvvmScarletToolkit.Wpf
                 return false;
             }
 
-            return (tag.Name == '/' + Tag.Name) || (tag.Level < Tag.Level);
+            return (tag.Name == Tag.EndTagName) || (tag.Level < Tag.Level);
         }
 
         public HtmlTagNode? Add(HtmlTag tag)
@@ -49,28 +49,31 @@ namespace MvvmScarletToolkit.Wpf
             var result = new HtmlTagNode(this, tag);
             _items.Add(result);
 
-            return tag.Name == '/' + Tag.Name
+            return tag.Name == Tag.EndTagName
                 ? Parent
                 : result;
         }
 
+        /// <summary>
+        /// Returns the known tags of this node and its descendants in document order.
+        /// </summary>
         public IEnumerable<HtmlTag> GetTags()
         {
-            if (Tag.Id != -1)
-            {
-                yield return Tag;
-            }
+            // iterative, nested iterators would cost the depth of the tree for every tag
+            var stack = new Stack<HtmlTagNode>();
+            stack.Push(this);
 
-            for (var i = 0; i < _items.Count; i++)
+            while (stack.Count > 0)
             {
-                var subnode = _items[i];
-
-                foreach (var tag in subnode.GetTags())
+                var node = stack.Pop();
+                if (node.Tag.Id != -1)
                 {
-                    if (tag.Id != -1)
-                    {
-                        yield return tag;
-                    }
+                    yield return node.Tag;
+                }
+
+                for (var i = node._items.Count - 1; i >= 0; i--)
+                {
+                    stack.Push(node._items[i]);
                 }
             }
         }
