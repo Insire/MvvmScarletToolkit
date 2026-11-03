@@ -26,6 +26,8 @@ namespace MvvmScarletToolkit.Wpf
                 return CreateAltText(alt);
             }
 
+            uri = HtmlTextBlock.Resolve(textBlock, uri);
+
             var style = InlineStyle.Parse(tag.Get("style"));
 
             var width = GetLength(tag, style, "width");

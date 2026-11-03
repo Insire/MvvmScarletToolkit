@@ -15,6 +15,35 @@
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d">
 
+    <Window.Resources>
+        <!--  file and folder pickers show the path that gets confirmed  -->
+        <DataTemplate DataType="{x:Type browser:FileSystemPickerViewModel}">
+            <TextBlock VerticalAlignment="Center"
+                       AutomationProperties.AutomationId="SelectedPath"
+                       Text="{Binding SelectedPath}"
+                       TextTrimming="CharacterEllipsis"
+                       ToolTip="{Binding SelectedPath}" />
+        </DataTemplate>
+
+        <!--  saving needs a file name, the path that gets confirmed is its tooltip  -->
+        <DataTemplate DataType="{x:Type browser:SaveFilePickerViewModel}">
+            <DockPanel>
+                <Label Margin="0 0 8 0"
+                       VerticalAlignment="Center"
+                       Content="_File name:"
+                       Target="{Binding ElementName=FileName}" />
+
+                <TextBox x:Name="FileName"
+                         VerticalContentAlignment="Center"
+                         AutomationProperties.AutomationId="FileName"
+                         AutomationProperties.Name="File name"
+                         Loaded="FileName_Loaded"
+                         Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"
+                         ToolTip="{Binding SelectedPath}" />
+            </DockPanel>
+        </DataTemplate>
+    </Window.Resources>
+
     <DockPanel Margin="8">
         <DockPanel Margin="0 8 0 0" DockPanel.Dock="Bottom">
             <Button MinWidth="80"
@@ -52,11 +81,11 @@
                 </ComboBox.Style>
             </ComboBox>
 
-            <TextBlock VerticalAlignment="Center"
-                       AutomationProperties.AutomationId="SelectedPath"
-                       Text="{Binding SelectedPath}"
-                       TextTrimming="CharacterEllipsis"
-                       ToolTip="{Binding SelectedPath}" />
+            <!--  the templates in the window resources pick what fits the picker  -->
+            <ContentControl VerticalAlignment="Center"
+                            Content="{Binding}"
+                            Focusable="False"
+                            IsTabStop="False" />
         </DockPanel>
 
         <!--  the template of the view binds to its DataContext  -->

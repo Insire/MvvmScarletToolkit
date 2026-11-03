@@ -194,8 +194,13 @@ namespace MvvmScarletToolkit.Wpf
 
             if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var uri))
             {
-                link.NavigateUri = uri;
-                link.ToolTip = url;
+                var resolved = HtmlTextBlock.Resolve(textBlock, uri);
+
+                link.NavigateUri = resolved;
+
+                // a resolved relative link shows where it leads, other links show what was written
+                link.ToolTip = ReferenceEquals(resolved, uri) ? url : resolved.AbsoluteUri;
+                uri = resolved;
 
                 if (textBlock is HtmlTextBlock { OpenLinksInBrowser: true })
                 {

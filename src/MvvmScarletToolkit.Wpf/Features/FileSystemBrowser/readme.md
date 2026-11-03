@@ -18,18 +18,21 @@ This library aims to provide an easy to use and extend browser control for FileS
 
 ## Dialogs
 
-``FileSystemDialog`` asks for a file or folder in a modal window and returns the path, or ``null`` when the user canceled. It can be called from any thread and cancelling the token closes the window. The default template has to be available, see ``Generic.xaml`` below.
+``FileSystemDialog`` asks for a file, a folder or where to save a file in a modal window and returns the path, or ``null`` when the user canceled. It can be called from any thread and cancelling the token closes the window. The default template has to be available, see ``Generic.xaml`` below.
 
 ```cs
 var dialog = new FileSystemDialog(scheduler, factory, FileSystemOptionsViewModel.Default, commandBuilder.Dispatcher);
 
 var file = await dialog.PickFile(initialFolder: null, token);
 var folder = await dialog.PickFolder(@"C:\Temp", token);
+var target = await dialog.PickSaveFile(initialFolder: null, "readme", token, new FileSystemFilter("Html", "*.html"));
 ```
+
+``PickSaveFile`` combines the displayed folder with a file name the user can edit, starting with the suggested one. Selecting a file in the browser takes over its name, double clicking it confirms. A name without an extension gets the one of the selected filter, when its first pattern is a simple one like ``*.html``. Before an existing file is replaced, the dialog asks for confirmation. A custom window can set ``SaveFilePickerViewModel.ConfirmOverwrite`` for that.
 
 Both start in the given folder, or the deepest part of it that exists, and in the documents folder without one. The file dialog confirms with a double click on a file. The folder dialog lists folders only and returns the selected folder, or the displayed one if none is selected. The ``FileSystemOptionsViewModel`` selects the shown drives and attributes, ``Default`` is limited to fixed drives.
 
-For a custom window, bind ``FilePickerViewModel`` or ``FolderPickerViewModel`` and handle their ``Confirmed`` event. The ``FileSystemViewModel`` stays owned by the caller, dispose it after the picker.
+For a custom window, bind ``FilePickerViewModel``, ``FolderPickerViewModel`` or ``SaveFilePickerViewModel`` and handle their ``Confirmed`` event. The ``FileSystemViewModel`` stays owned by the caller, dispose it after the picker.
 
 ``PickFile`` optionally takes the files that can be selected. The first filter is applied initially, the user can switch between them in the window. With a single filter the dropdown only displays it and is disabled. Add ``FileSystemFilter.AllFiles`` to allow every file, without it only the given filters can be used.
 
@@ -57,12 +60,13 @@ The file extension is only an expectation. ``ScarletFile.MimeType`` starts out w
 |[``FileSystemSearch``](FileSystemSearch.cs)|Matches names against a search query.|
 |[``MimeTypeNames``](MimeTypeNames.cs)|Maps mime types to displayed names.|
 |[``FileSystemOptionsViewModel``](FileSystemOptionsViewModel.cs)|Selects which drive types, file attributes and folder attributes are shown. ``Default`` provides a preset.|
-|[``FileSystemDialog``](FileSystemDialog.cs)|Shows a modal window to select a file or folder.|
+|[``FileSystemDialog``](FileSystemDialog.cs)|Shows a modal window to select a file or folder, or where to save a file.|
 |[``FileSystemDialogWindow``](FileSystemDialogWindow.xaml)|The window of a ``FileSystemPickerViewModel``, a ``FileSystemView`` with confirm and cancel buttons.|
 |[``FileSystemFilter``](FileSystemFilter.cs)|Restricts the displayed files by name patterns.|
 |[``FileSystemPickerViewModel``](FileSystemPickerViewModel.cs)|Base of the pickers, provides the ``SelectedPath``, confirming it and the filters.|
 |[``FilePickerViewModel``](FilePickerViewModel.cs)|Wraps a ``FileSystemViewModel`` for selecting a file.|
 |[``FolderPickerViewModel``](FolderPickerViewModel.cs)|Wraps a ``FileSystemViewModel`` for selecting a folder.|
+|[``SaveFilePickerViewModel``](SaveFilePickerViewModel.cs)|Wraps a ``FileSystemViewModel`` for selecting where to save a file, with an editable ``FileName``.|
 |[``FileSystemViewModelFactory``](FileSystemViewModelFactory.cs)|Creates the viewmodels for drives, folders and files.|
 |[``FileSystemViewModelFactoryExtensions``](FileSystemViewModelFactoryExtensions.cs)|Loads the folders and files of a parent in a single call.|
 |[``RegistryFileExtensionMimeTypeResolver``](MimeTypeResolvers/RegistryFileExtensionMimeTypeResolver.cs), [``StaticFileExtensionMimeTypeResolver``](MimeTypeResolvers/StaticFileExtensionMimeTypeResolver.cs), [``MagicNumberMimeTypeResolver``](MimeTypeResolvers/MagicNumberMimeTypeResolver.cs)|The ``IMimeTypeResolver`` implementations used by the factory. They work from the Windows registry, a fixed list of file extensions and the content of a file.|

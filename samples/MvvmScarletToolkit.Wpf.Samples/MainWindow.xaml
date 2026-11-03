@@ -2083,32 +2083,76 @@
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type features:HtmlReadmeViewModel}">
-                    <Grid>
+                    <Grid Margin="8">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" MinWidth="200" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
 
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <mvvm:HtmlTextBlock MaxWidth="960"
-                                                Margin="16"
-                                                HorizontalAlignment="Left"
+                        <DockPanel Grid.ColumnSpan="3" Margin="0 0 0 8">
+                            <!--  the disabled reasons come from the commands, disabled buttons need ShowOnDisabled for their tooltip  -->
+                            <Button Padding="12 4"
+                                    Command="{Binding OpenCommand}"
+                                    Content="Open..."
+                                    DockPanel.Dock="Left"
+                                    ToolTip="{Binding OpenCommand.DisabledReason}"
+                                    ToolTipService.ShowOnDisabled="True" />
+                            <Button Margin="8 0 0 0"
+                                    Padding="12 4"
+                                    Command="{Binding RestoreCommand}"
+                                    Content="Restore original"
+                                    DockPanel.Dock="Left"
+                                    ToolTip="{Binding RestoreCommand.DisabledReason}"
+                                    ToolTipService.ShowOnDisabled="True" />
+                            <Button Margin="8 0 0 0"
+                                    Padding="12 4"
+                                    Command="{Binding SaveCommand}"
+                                    Content="Save as..."
+                                    DockPanel.Dock="Left"
+                                    ToolTip="{Binding SaveCommand.DisabledReason}"
+                                    ToolTipService.ShowOnDisabled="True" />
+
+                            <TextBlock Margin="16 0 0 0"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding Status}"
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip="{Binding Status}" />
+                        </DockPanel>
+
+                        <!--  the delay keeps the preview from being rebuilt on every keystroke  -->
+                        <TextBox Grid.Row="1"
+                                 AcceptsReturn="True"
+                                 AcceptsTab="True"
+                                 AutomationProperties.Name="Html"
+                                 FontFamily="Consolas"
+                                 HorizontalScrollBarVisibility="Auto"
+                                 Text="{Binding Html, UpdateSourceTrigger=PropertyChanged, Delay=300}"
+                                 VerticalContentAlignment="Top"
+                                 VerticalScrollBarVisibility="Auto" />
+
+                        <GridSplitter Grid.Row="1"
+                                      Grid.Column="1"
+                                      Width="8"
+                                      HorizontalAlignment="Stretch"
+                                      Background="Transparent"
+                                      ResizeBehavior="PreviousAndNext" />
+
+                        <ScrollViewer Grid.Row="1"
+                                      Grid.Column="2"
+                                      AutomationProperties.Name="Preview"
+                                      VerticalScrollBarVisibility="Auto">
+                            <mvvm:HtmlTextBlock Margin="8"
                                                 mvvm:TextBlockSelection.IsEnabled="True"
+                                                BaseUri="{Binding BaseUri}"
                                                 Html="{Binding Html}"
                                                 OpenLinksInBrowser="True"
                                                 TextWrapping="Wrap" />
                         </ScrollViewer>
-
-                        <Expander Grid.Row="1"
-                                  Margin="16 8"
-                                  Header="Html source">
-                            <TextBox MaxHeight="300"
-                                     FontFamily="Consolas"
-                                     HorizontalScrollBarVisibility="Auto"
-                                     IsReadOnly="True"
-                                     Text="{Binding Html, Mode=OneWay}"
-                                     VerticalScrollBarVisibility="Auto" />
-                        </Expander>
                     </Grid>
                 </DataTemplate>
 

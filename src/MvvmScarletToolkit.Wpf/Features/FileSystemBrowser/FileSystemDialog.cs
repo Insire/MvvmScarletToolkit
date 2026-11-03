@@ -1,4 +1,5 @@
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
+using System.IO;
 using System.Reactive.Concurrency;
 using System.Windows;
 
@@ -23,6 +24,9 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         }
 
+        /// <summary>
+        /// Asks for an existing file.
+        /// </summary>
         /// <param name="initialFolder">the folder to start in, the documents folder by default</param>
         /// <param name="token">closes the dialog when canceled</param>
         /// <param name="filters">the files the user can choose from, the first one is applied initially. All files by default</param>
@@ -32,6 +36,22 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return Show(_options, fileSystem => new FilePickerViewModel(fileSystem, filters), initialFolder, token);
         }
 
+        /// <summary>
+        /// Asks where to save a file: a folder and a file name. Asks before an existing file is replaced.
+        /// </summary>
+        /// <param name="initialFolder">the folder to start in, the documents folder by default</param>
+        /// <param name="fileName">the suggested file name</param>
+        /// <param name="token">closes the dialog when canceled</param>
+        /// <param name="filters">the files shown in the folder, the first one is applied initially. A name without an extension gets the one of the selected filter. All files by default</param>
+        /// <returns>the path to save to, null when the user canceled</returns>
+        public Task<string?> PickSaveFile(string? initialFolder, string fileName, CancellationToken token, params FileSystemFilter[] filters)
+        {
+            return Show(_options, fileSystem => new SaveFilePickerViewModel(fileSystem, fileName, filters), initialFolder, token);
+        }
+
+        /// <summary>
+        /// Asks for an existing folder.
+        /// </summary>
         /// <param name="initialFolder">the folder to start in, the documents folder by default</param>
         /// <param name="token">closes the dialog when canceled</param>
         /// <returns>the selected path, null when the user canceled</returns>
@@ -67,10 +87,22 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                     Owner = owner,
                 };
 
+                if (picker is SaveFilePickerViewModel savePicker)
+                {
+                    savePicker.ConfirmOverwrite ??= path => ConfirmOverwrite(window, path);
+                }
+
                 using var registration = token.Register(() => window.Dispatcher.InvokeAsync(window.Close));
 
                 return window.ShowDialog() == true ? picker.SelectedPath : null;
             }, token);
+        }
+
+        private static bool ConfirmOverwrite(Window window, string path)
+        {
+            var message = $"{Path.GetFileName(path)} already exists.{Environment.NewLine}Do you want to replace it?";
+
+            return MessageBox.Show(window, message, window.Title, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
         }
 
         private static Window? GetOwner()

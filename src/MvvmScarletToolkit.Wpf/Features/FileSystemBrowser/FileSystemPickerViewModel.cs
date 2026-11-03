@@ -49,6 +49,11 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
         [RelayCommand(CanExecute = nameof(CanConfirm))]
         private void Confirm()
         {
+            if (!CanComplete())
+            {
+                return;
+            }
+
             Confirmed?.Invoke(this, EventArgs.Empty);
         }
 
@@ -57,9 +62,36 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             return SelectedPath is not null;
         }
 
+        /// <summary>
+        /// Last check before <see cref="Confirmed"/> is raised, e.g. to ask before overwriting a file.
+        /// </summary>
+        protected virtual bool CanComplete()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Raises the change notification of <see cref="SelectedPath"/> and updates <see cref="ConfirmCommand"/>.
+        /// </summary>
+        protected void OnSelectedPathChanged()
+        {
+            OnPropertyChanged(nameof(SelectedPath));
+            ConfirmCommand.NotifyCanExecuteChanged();
+        }
+
+        /// <summary>
+        /// Called when the selected file, entry or folder of <see cref="FileSystem"/> changed.
+        /// </summary>
+        protected virtual void OnSelectionChanged(string propertyName)
+        {
+        }
+
         partial void OnSelectedFilterChanged(FileSystemFilter? value)
         {
             FileSystem.FileFilter = value;
+
+            // a save picker derives the extension from the filter
+            OnSelectedPathChanged();
         }
 
         /// <summary>
@@ -76,8 +108,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
                 case nameof(FileSystemViewModel.SelectedFile):
                 case nameof(FileSystemViewModel.SelectedEntry):
                 case nameof(FileSystemViewModel.SelectedContainer):
-                    OnPropertyChanged(nameof(SelectedPath));
-                    ConfirmCommand.NotifyCanExecuteChanged();
+                    OnSelectionChanged(e.PropertyName);
+                    OnSelectedPathChanged();
                     break;
             }
         }

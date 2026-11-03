@@ -485,6 +485,107 @@ namespace MvvmScarletToolkit.Wpf.Tests
             });
         }
 
+        [Fact]
+        public Task Relative_Image_Sources_Should_Be_Resolved_Against_The_BaseUri()
+        {
+            var path = CreatePngFile();
+
+            return StaRunner.Run(() =>
+            {
+                // the uri of the html file itself, its folder holds the image
+                var textBlock = new HtmlTextBlock
+                {
+                    BaseUri = new Uri(Path.Combine(_directory, "page.html")),
+                    Html = "<img src='image.png' alt='missing'>",
+                };
+
+                var bitmap = Assert.IsType<BitmapImage>(ImageOf(textBlock).Source);
+                Assert.Equal(new Uri(path), bitmap.UriSource);
+
+                return Task.CompletedTask;
+            });
+        }
+
+        [Fact]
+        public Task Relative_Image_Sources_Should_Reach_The_ImageService_Resolved()
+        {
+            return StaRunner.Run(async () =>
+            {
+                var textBlock = new HtmlTextBlock
+                {
+                    ImageService = Service,
+                    BaseUri = new Uri("https://example.com/docs/"),
+                    Html = "<img src='images/a.png'>",
+                };
+                var window = Show(textBlock);
+
+                await WaitUntil(() => ImageOf(textBlock).Source is not null);
+
+                await _imageService.Received(1).ProvideImageAsync(new Uri("https://example.com/docs/images/a.png"), Arg.Any<ImageSize?>(), Arg.Any<Func<bool, Task>>(), Arg.Any<CancellationToken>());
+
+                window.Close();
+            });
+        }
+
+        [Theory]
+        [InlineData("https://example.com/docs/", "page.html", "https://example.com/docs/page.html", "https://example.com/docs/page.html")]
+        [InlineData("https://example.com/docs/index.html", "../about.html", "https://example.com/about.html", "https://example.com/about.html")]
+        [InlineData("https://example.com/docs/", "https://other.com/a b", "https://other.com/a b", "https://other.com/a%20b")]
+        [InlineData(null, "page.html", "page.html", "page.html")]
+        public Task Relative_Links_Should_Be_Resolved_Against_The_BaseUri(string? baseUri, string href, string toolTip, string navigateUri)
+        {
+            return StaRunner.Run(() =>
+            {
+                var textBlock = new HtmlTextBlock
+                {
+                    BaseUri = baseUri is null ? null : new Uri(baseUri),
+                    Html = $"<a href=\"{href}\">link</a>",
+                };
+
+                var link = Descendants(textBlock.Inlines).OfType<Hyperlink>().Single();
+
+                Assert.Multiple(() =>
+                {
+                    Assert.Equal(navigateUri, link.NavigateUri!.IsAbsoluteUri ? link.NavigateUri.AbsoluteUri : link.NavigateUri.OriginalString);
+                    Assert.Equal(toolTip, link.ToolTip);
+                });
+
+                return Task.CompletedTask;
+            });
+        }
+
+        [Fact]
+        public Task A_Relative_BaseUri_Should_Be_Ignored()
+        {
+            return StaRunner.Run(() =>
+            {
+                var textBlock = new HtmlTextBlock
+                {
+                    BaseUri = new Uri("docs/", UriKind.Relative),
+                    Html = "<a href='page.html'>link</a>",
+                };
+
+                Assert.Equal(new Uri("page.html", UriKind.Relative), Descendants(textBlock.Inlines).OfType<Hyperlink>().Single().NavigateUri);
+
+                return Task.CompletedTask;
+            });
+        }
+
+        [Fact]
+        public Task Changing_The_BaseUri_Should_Rebuild_The_Content()
+        {
+            return StaRunner.Run(() =>
+            {
+                var textBlock = new HtmlTextBlock { Html = "<a href='page.html'>link</a>" };
+
+                textBlock.BaseUri = new Uri("https://example.com/");
+
+                Assert.Equal(new Uri("https://example.com/page.html"), Descendants(textBlock.Inlines).OfType<Hyperlink>().Single().NavigateUri);
+
+                return Task.CompletedTask;
+            });
+        }
+
         [Theory]
         [InlineData("<font color=\"red\">x</font>")]
         [InlineData("<font color='#FF0000'>x</font>")]

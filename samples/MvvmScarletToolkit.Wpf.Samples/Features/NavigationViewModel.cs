@@ -49,7 +49,9 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             Add("DataGrid with a million rows", largeDataGridViewModel);
             Add("Progress, -notification and dispatcher throtteling", new ProgressViewModel(commandBuilder));
             Add("FileSystemBrowser", fileSystem);
-            Add("File and folder dialogs", new FileSystemDialogsViewModel(new FileSystemDialog(scheduler, factory, FileSystemOptionsViewModel.Default, commandBuilder.Dispatcher)));
+            // shared by the dialogs scene and the readme editor
+            var fileSystemDialog = new FileSystemDialog(scheduler, factory, FileSystemOptionsViewModel.Default, commandBuilder.Dispatcher);
+            Add("File and folder dialogs", new FileSystemDialogsViewModel(fileSystemDialog));
             Add("State changes in a tree structure", new BusyViewModel(commandBuilder));
             Add("Geometry rendering", new GeometryRenderViewModel(commandBuilder));
             Add("Binding Passwordbox", new PasswordViewModel());
@@ -73,7 +75,7 @@ namespace MvvmScarletToolkit.Wpf.Samples.Features
             Add("Nested Selection", new SelectionsViewModel());
             Add("Tag cloud with a VirtualizingWrapPanel", new TagCloudViewModel());
             Add("Selecting and copying text", new SelectableTextViewModel());
-            Add("Readme rendered by an HtmlTextBlock", new HtmlReadmeViewModel());
+            Add("Readme rendered by an HtmlTextBlock", new HtmlReadmeViewModel(commandBuilder, fileSystemDialog));
 
             Items[0].IsSelected = true;
         }

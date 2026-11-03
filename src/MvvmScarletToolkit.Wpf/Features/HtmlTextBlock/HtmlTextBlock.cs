@@ -19,6 +19,24 @@ namespace MvvmScarletToolkit.Wpf
             set => SetValue(HtmlProperty, value);
         }
 
+        /// <summary>Identifies the <see cref="BaseUri"/> dependency property.</summary>
+        public static readonly DependencyProperty BaseUriProperty = DependencyProperty.Register(
+            nameof(BaseUri),
+            typeof(Uri),
+            typeof(HtmlTextBlock),
+            new PropertyMetadata(null, OnBaseUriChanged));
+
+        /// <summary>
+        /// Resolves relative image sources and links, like the location of a page in a browser.
+        /// The uri of the html file itself works, e.g. <c>file:///C:/docs/readme.html</c> resolves <c>images/logo.png</c> to <c>C:/docs/images/logo.png</c>.
+        /// A folder needs a trailing slash. Relative uris stay as they are while this is <see langword="null"/> or not absolute.
+        /// </summary>
+        public Uri? BaseUri
+        {
+            get => (Uri?)GetValue(BaseUriProperty);
+            set => SetValue(BaseUriProperty, value);
+        }
+
         /// <summary>Identifies the <see cref="OpenLinksInBrowser"/> dependency property.</summary>
         public static readonly DependencyProperty OpenLinksInBrowserProperty = DependencyProperty.Register(
             nameof(OpenLinksInBrowser),
@@ -79,6 +97,27 @@ namespace MvvmScarletToolkit.Wpf
                 // null clears the inlines as well
                 textBlock.Parse(e.NewValue as string ?? string.Empty);
             }
+        }
+
+        private static void OnBaseUriChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            if (o is HtmlTextBlock textBlock)
+            {
+                textBlock.Parse(textBlock.Html ?? string.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Combines a relative <paramref name="uri"/> with the <see cref="BaseUri"/> of <paramref name="textBlock"/>, when it has an absolute one.
+        /// </summary>
+        internal static Uri Resolve(TextBlock textBlock, Uri uri)
+        {
+            if (uri.IsAbsoluteUri || textBlock is not HtmlTextBlock { BaseUri: { IsAbsoluteUri: true } baseUri })
+            {
+                return uri;
+            }
+
+            return Uri.TryCreate(baseUri, uri, out var resolved) ? resolved : uri;
         }
 
         private static void OnOpenLinksInBrowserChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)

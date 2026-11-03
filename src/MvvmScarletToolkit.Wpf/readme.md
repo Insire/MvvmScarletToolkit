@@ -65,6 +65,8 @@ Unlike a browser, ``HtmlTextBlock`` keeps whitespace and line breaks of the text
 <mvvm:HtmlTextBlock Html="Saved &lt;img src='https://example.com/check.png' alt='done' style='width: 16px; height: 16px; vertical-align: middle'&gt; &lt;font color='Green'&gt;successfully&lt;/font&gt;" />
 ```
 
+``BaseUri`` resolves relative image sources and links, like the address of a page in a browser. Set it to the uri of the html file itself, e.g. ``new Uri(@"C:\docs\readme.html")``, and ``<img src="images/logo.png">`` loads ``C:\docs\images\logo.png``. A folder needs a trailing slash.
+
 Images with http(s), file and relative sources load through an ``IImageService<BitmapSource>`` from [MvvmScarletToolkit.ImageLoading](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.ImageLoading/readme.md), so they are cached and load asynchronously. ``HtmlTextBlock.ImageService`` sets the service for one control, otherwise ``ImageLoader.AsyncImageLoader`` is used. When both width and height are known in px, the image is decoded at that size. Without a service, and for other sources like ``pack://`` uris, images are loaded with a ``BitmapImage``.
 
 > Html from untrusted sources can make the control download images from any web address.

@@ -1,4 +1,6 @@
+using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
@@ -16,6 +18,21 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             DataContext = viewModel;
 
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// Saving starts with the file name, like the save dialog of the operating system.
+        /// </summary>
+        private void FileName_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                textBox.Focus();
+
+                // select the name without its extension, so typing replaces only the name
+                var extension = Path.GetExtension(textBox.Text);
+                textBox.Select(0, textBox.Text.Length - extension.Length);
+            }
         }
 
         private void OnConfirmed(object? sender, EventArgs e)
