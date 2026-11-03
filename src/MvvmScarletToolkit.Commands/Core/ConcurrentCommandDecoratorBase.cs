@@ -13,6 +13,9 @@ namespace MvvmScarletToolkit.Commands
         [Bindable(true, BindingDirection.OneWay)]
         public override Task? Completion => Command.Completion;
 
+        [Bindable(true, BindingDirection.OneWay)]
+        public override string? DisabledReason => Command.DisabledReason;
+
         protected ConcurrentCommandDecoratorBase(in IScarletCommandManager commandManager, in ConcurrentCommandBase command)
             : base(commandManager)
         {
@@ -22,6 +25,14 @@ namespace MvvmScarletToolkit.Commands
         }
 
         private void Command_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            OnCommandPropertyChanged(e);
+        }
+
+        /// <summary>
+        /// Called when a property of the decorated command changed. Forwards the notification by default.
+        /// </summary>
+        protected virtual void OnCommandPropertyChanged(PropertyChangedEventArgs e)
         {
             OnPropertyChanged(e);
         }

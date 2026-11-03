@@ -13,8 +13,9 @@ namespace MvvmScarletToolkit.Core.Samples.Features.Dialog
             : base(commandBuilder)
         {
             RunCommand = CommandBuilder.Create(Run, CanRun)
+                .WithDisabledReason(() => "Wait until the current operation finishes")
                 .WithBusyNotification(BusyStack)
-                .WithSingleExecution()
+                .WithSingleExecution(nameof(RunCommand), "The dialog is already open")
                 .WithAsyncCancellation()
                 .Build();
 

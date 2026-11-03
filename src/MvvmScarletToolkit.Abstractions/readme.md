@@ -23,7 +23,7 @@ The interfaces in this package keep viewmodels independent of a UI framework. Re
 
 |interface|summary|
 |---|---|
-|``IConcurrentCommand``|``ICommand`` that exposes its running ``Task`` and state.|
+|``IConcurrentCommand``|``ICommand`` that exposes its running ``Task``, its state and a ``DisabledReason`` that explains why it cannot execute.|
 |``IAsyncCommand``|Disposable ``IConcurrentCommand``.|
 |``ICancelCommand``|Command that cancels a running ``IConcurrentCommand``.|
 |``IScarletExceptionHandler``|Receives exceptions thrown by commands.|

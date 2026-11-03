@@ -58,20 +58,42 @@ namespace MvvmScarletToolkit.Commands
             return CanExecuteInternal(parameter);
         }
 
+        /// <summary>
+        /// optional evaluator for <see cref="ConcurrentCommandBase.DisabledReason"/>, only invoked when the command cannot execute
+        /// </summary>
+        internal Func<TArgument, string?>? DisabledReasonEvaluator { get; set; }
+
         private bool CanExecuteInternal(object? parameter)
         {
             if (_canExecute is null)
             {
+                DisabledReason = null;
                 return true;
             }
 
+            TArgument argument;
             if (parameter is null)
             {
-                return _canExecute.Invoke(default!);
+                argument = default!;
+            }
+            else if (parameter is TArgument arg)
+            {
+                argument = arg;
+            }
+            else
+            {
+                // there is nothing meaningful to report for an argument of the wrong type
+                DisabledReason = null;
+                return false;
             }
 
-            return parameter is TArgument arg
-                   && _canExecute.Invoke(arg);
+            var canExecute = _canExecute.Invoke(argument);
+
+            DisabledReason = canExecute || DisabledReasonEvaluator is null
+                ? null
+                : DisabledReasonEvaluator.Invoke(argument);
+
+            return canExecute;
         }
 
         [DebuggerStepThrough]

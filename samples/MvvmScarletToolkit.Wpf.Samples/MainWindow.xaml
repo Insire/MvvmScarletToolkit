@@ -1851,7 +1851,9 @@
                                       VerticalAlignment="Center"
                                       Command="{Binding RunCommand}"
                                       Content="Open Dialog"
-                                      IsChecked="{Binding DialogResult.IsOpen, Mode=OneWay}" />
+                                      IsChecked="{Binding DialogResult.IsOpen, Mode=OneWay}"
+                                      ToolTip="{Binding RunCommand.DisabledReason}"
+                                      ToolTipService.ShowOnDisabled="True" />
 
                         <Popup MinWidth="350"
                                MinHeight="325"

@@ -39,6 +39,20 @@ namespace MvvmScarletToolkit.Commands
         [Bindable(true, BindingDirection.OneWay)]
         public bool IsNotBusy => !IsBusy;
 
+        /// <summary>
+        /// Explains why the most recent <see cref="CanExecute(object?)"/> call returned <see langword="false"/>.
+        /// <see langword="null"/> while the command can execute or when no reason is available.
+        /// </summary>
+        /// <remarks>
+        /// The value reflects the last evaluated parameter. When several controls bind the same command with different parameters, the last evaluation wins.
+        /// </remarks>
+        [Bindable(true, BindingDirection.OneWay)]
+        public virtual string? DisabledReason
+        {
+            get { return field; }
+            protected set { SetValue(ref field, value); }
+        }
+
         public abstract void Execute(object? parameter);
 
         public abstract bool CanExecute(object? parameter);

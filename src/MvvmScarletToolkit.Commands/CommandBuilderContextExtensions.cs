@@ -74,17 +74,59 @@ namespace MvvmScarletToolkit
             return context.WithSingleExecution(default);
         }
 
+        /// <summary>
+        /// Configure a command as to not automatically cancel and rerun when executed again.
+        /// </summary>
+        /// <param name="context">the context to configure</param>
+        /// <param name="name">identifies the command in debug output</param>
         public static CommandBuilderContext<TArgument> WithSingleExecution<TArgument>(this CommandBuilderContext<TArgument> context, string? name)
+        {
+            return context.WithSingleExecution(name, SequentialAsyncCommandDecorator.DefaultRunningReason);
+        }
+
+        /// <summary>
+        /// Configure a command as to not automatically cancel and rerun when executed again.
+        /// </summary>
+        /// <param name="context">the context to configure</param>
+        /// <param name="name">identifies the command in debug output</param>
+        /// <param name="runningReason">reported as <see cref="ConcurrentCommandBase.DisabledReason"/> while the command is running, <see langword="null"/> reports nothing</param>
+        public static CommandBuilderContext<TArgument> WithSingleExecution<TArgument>(this CommandBuilderContext<TArgument> context, string? name, string? runningReason)
         {
             ValdiateContextForNull(context);
 
             ConcurrentCommandBase DecoratorFactory(ConcurrentCommandBase command)
             {
-                return new SequentialAsyncCommandDecorator(context.CommandManager, command, name);
+                return new SequentialAsyncCommandDecorator(context.CommandManager, command, name, runningReason);
             }
 
             context.AddDecorator(DecoratorFactory);
 
+            return context;
+        }
+
+        /// <summary>
+        /// Explain why the command cannot execute. The evaluator is only invoked when <c>canExecute</c> returned <see langword="false"/>,
+        /// and its result is exposed through <see cref="ConcurrentCommandBase.DisabledReason"/>.
+        /// </summary>
+        public static CommandBuilderContext<TArgument> WithDisabledReason<TArgument>(this CommandBuilderContext<TArgument> context, Func<string?> disabledReason)
+        {
+            if (disabledReason is null)
+            {
+                throw new ArgumentNullException(nameof(disabledReason));
+            }
+
+            return context.WithDisabledReason(_ => disabledReason());
+        }
+
+        /// <summary>
+        /// Explain why the command cannot execute. The evaluator is only invoked when <c>canExecute</c> returned <see langword="false"/>,
+        /// and its result is exposed through <see cref="ConcurrentCommandBase.DisabledReason"/>.
+        /// </summary>
+        public static CommandBuilderContext<TArgument> WithDisabledReason<TArgument>(this CommandBuilderContext<TArgument> context, Func<TArgument, string?> disabledReason)
+        {
+            ValdiateContextForNull(context);
+
+            context.DisabledReasonEvaluator = disabledReason ?? throw new ArgumentNullException(nameof(disabledReason));
             return context;
         }
 

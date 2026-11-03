@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace MvvmScarletToolkit.Commands
@@ -5,17 +6,40 @@ namespace MvvmScarletToolkit.Commands
     [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
     internal sealed class SequentialAsyncCommandDecorator : ConcurrentCommandDecoratorBase
     {
+        internal const string DefaultRunningReason = "Already running";
+
+        private readonly string? _runningReason;
         private string? _name;
 
         // generated on first access, since the name is only used for diagnostics
         public string Name => _name ??= Guid.NewGuid().ToString();
 
+        public override string? DisabledReason => IsNotRunning() ? Command.DisabledReason : _runningReason;
+
         public SequentialAsyncCommandDecorator(in IScarletCommandManager commandManager, in ConcurrentCommandBase command, string? id)
+            : this(commandManager, command, id, DefaultRunningReason)
+        {
+        }
+
+        public SequentialAsyncCommandDecorator(in IScarletCommandManager commandManager, in ConcurrentCommandBase command, string? id, string? runningReason)
             : base(commandManager, command)
         {
             if (id is not null && id.Length > 0)
             {
                 _name = id;
+            }
+
+            _runningReason = runningReason;
+        }
+
+        protected override void OnCommandPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnCommandPropertyChanged(e);
+
+            // the running state is derived from Completion, which changes on start and is followed by IsBusy on completion
+            if (e.PropertyName is nameof(Completion) or nameof(IsBusy))
+            {
+                OnPropertyChanged(nameof(DisabledReason));
             }
         }
 
