@@ -33,6 +33,7 @@ Tests use xunit v3 on Microsoft.Testing.Platform (see `global.json`). WPF projec
 - Viewmodels derive from `ViewModelBase`, `ViewModelListBase<T>` or `BusinessViewModelListBase<T>` and build commands through `IScarletCommandBuilder`. UI work goes through `Dispatcher.Invoke`.
 - `Messenger` is shared by all viewmodels from the same command builder. Handlers must filter by sender or value, otherwise they react to unrelated instances.
 - Tests that touch WPF objects run through `StaRunner.Run` (`tests/MvvmScarletToolkit.Wpf.Tests/Util`) and derive from `TraceTestBase`. `StaRunner` moves them to the hidden desktop of `TestDesktopFixture`, so windows have to be created on its thread to stay off the user's screen.
+- Tests must not assert absolute `TimeSpan` or `DateTime` values, like a fixed time limit or the current time. Make them relative instead, e.g. compare the duration of two input sizes (see `tests/shared/HtmlParserScaling.cs`) or one point in time with another. Scrub timestamps and durations from snapshots.
 - When public behavior changes, update the matching package `readme.md` and add or extend a sample.
 
 ## Git
