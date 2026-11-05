@@ -1,4 +1,6 @@
+using MvvmScarletToolkit.Html;
 using System.Diagnostics;
+using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -30,8 +32,8 @@ namespace MvvmScarletToolkit.Wpf
 
             var style = InlineStyle.Parse(tag.Get("style"));
 
-            var width = GetLength(tag, style, "width");
-            var height = GetLength(tag, style, "height");
+            var width = InlineStyle.GetLength(tag, style, "width");
+            var height = InlineStyle.GetLength(tag, style, "height");
 
             var image = new Image
             {
@@ -41,7 +43,7 @@ namespace MvvmScarletToolkit.Wpf
 
             if (style.TryGetThickness("margin", out var margin))
             {
-                image.Margin = margin;
+                image.Margin = new Thickness(margin.Left, margin.Top, margin.Right, margin.Bottom);
             }
 
             if (style.TryGetOpacity("opacity", out var opacity))
@@ -61,9 +63,9 @@ namespace MvvmScarletToolkit.Wpf
             }
 
             var container = new InlineUIContainer(image);
-            if (style.TryGetBaselineAlignment("vertical-align", out var alignment))
+            if (style.TryGetVerticalAlign("vertical-align", out var alignment))
             {
-                container.BaselineAlignment = alignment;
+                container.BaselineAlignment = ToBaselineAlignment(alignment);
             }
 
             var service = (textBlock as HtmlTextBlock)?.ImageService ?? ImageLoader.AsyncImageLoader;
@@ -94,7 +96,7 @@ namespace MvvmScarletToolkit.Wpf
 
         private static void LoadWithImageService(Image image, InlineUIContainer container, Lazy<IImageService<BitmapSource>> service, Uri uri, double width, double height, string? alt)
         {
-            var size = AsyncImageLoad.GetSize(ToDecodeSize(width), ToDecodeSize(height));
+            var size = AsyncImageLoad.GetSize(InlineStyle.ToDecodeSize(width), InlineStyle.ToDecodeSize(height));
 
             // the load is kept alive by the Loaded and Unloaded handlers it attaches to the image
             var load = new AsyncImageLoad(
@@ -153,27 +155,17 @@ namespace MvvmScarletToolkit.Wpf
             return new Run(alt ?? string.Empty);
         }
 
-        private static double GetLength(HtmlTag tag, InlineStyle style, string property)
+        private static BaselineAlignment ToBaselineAlignment(VerticalAlign alignment)
         {
-            // like in browsers, the style wins over the attribute
-            if (style.TryGetLength(property, out var length))
+            return alignment switch
             {
-                return length;
-            }
-
-            return InlineStyle.TryParseLength(tag.Get(property), out length)
-                ? length
-                : double.NaN;
-        }
-
-        private static uint? ToDecodeSize(double length)
-        {
-            if (double.IsNaN(length) || length < 1 || length > uint.MaxValue)
-            {
-                return null;
-            }
-
-            return (uint)Math.Ceiling(length);
+                VerticalAlign.Top => BaselineAlignment.Top,
+                VerticalAlign.Middle => BaselineAlignment.Center,
+                VerticalAlign.Bottom => BaselineAlignment.Bottom,
+                VerticalAlign.TextTop => BaselineAlignment.TextTop,
+                VerticalAlign.TextBottom => BaselineAlignment.TextBottom,
+                _ => BaselineAlignment.Baseline,
+            };
         }
     }
 }

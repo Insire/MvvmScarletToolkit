@@ -20,7 +20,7 @@ Each package has its own readme with the full list of what it contains.
 - [MvvmScarletToolkit.Commands](src/MvvmScarletToolkit.Commands/readme.md): fluent interface to build task based ICommands with cancellation, single execution and busy state notifications
 - [MvvmScarletToolkit.Observables](src/MvvmScarletToolkit.Observables/readme.md): viewmodel base classes, threadsafe busy state, localization, change tracking, paging and navigation
 - [MvvmScarletToolkit.Wpf](src/MvvmScarletToolkit.Wpf/readme.md): behaviors, converters as markup extensions, DataGrid extensions, FileSystemBrowser with file and folder dialogs, virtualizing panels, HtmlTextBlock, selectable text and toast notifications
-- [MvvmScarletToolkit.Avalonia](src/MvvmScarletToolkit.Avalonia/readme.md): Avalonia implementations of the toolkit services, async image loading and virtualizing panels
+- [MvvmScarletToolkit.Avalonia](src/MvvmScarletToolkit.Avalonia/readme.md): Avalonia implementations of the toolkit services, async image loading, virtualizing panels and HtmlTextBlock
 - [MvvmScarletToolkit.ImageLoading](src/MvvmScarletToolkit.ImageLoading/readme.md): loading and caching images from remote resources
 - [MvvmScarletToolkit.Mediator](src/MvvmScarletToolkit.Mediator/readme.md): simple mediator with requests and notifications
 - [MvvmScarletToolkit](src/MvvmScarletToolkit/readme.md): extension methods used across the toolkit

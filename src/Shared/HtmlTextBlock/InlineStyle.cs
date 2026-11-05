@@ -1,9 +1,30 @@
 using System.Globalization;
-using System.Windows;
-using System.Windows.Media;
 
-namespace MvvmScarletToolkit.Wpf
+namespace MvvmScarletToolkit.Html
 {
+    /// <summary>
+    /// The css <c>vertical-align</c> values an <c>img</c> supports.
+    /// </summary>
+    internal enum VerticalAlign
+    {
+        Baseline,
+        Top,
+        Middle,
+        Bottom,
+        TextTop,
+        TextBottom,
+    }
+
+    /// <summary>
+    /// A css margin, without depending on the thickness type of a UI framework.
+    /// </summary>
+    internal readonly record struct CssThickness(double Left, double Top, double Right, double Bottom);
+
+    /// <summary>
+    /// Parses a color for one UI framework, e.g. named colors and #rgb, #rrggbb and #aarrggbb.
+    /// </summary>
+    internal delegate bool ColorParser<TColor>(string value, out TColor color);
+
     /// <summary>
     /// Reads the declarations of an html <c>style</c> attribute, like <c>width: 16px; margin: 0 4px</c>.
     /// Unknown properties and invalid values are ignored, numbers are read independent of the current culture.
@@ -44,6 +65,14 @@ namespace MvvmScarletToolkit.Wpf
             return new InlineStyle(declarations);
         }
 
+        /// <summary>
+        /// Returns the raw value of a declaration, e.g. a color for the UI framework to parse.
+        /// </summary>
+        public string? Get(string property)
+        {
+            return _declarations.TryGetValue(property, out var value) ? value : null;
+        }
+
         public bool TryGetLength(string property, out double length)
         {
             length = double.NaN;
@@ -52,7 +81,7 @@ namespace MvvmScarletToolkit.Wpf
                 && TryParseLength(value, out length);
         }
 
-        public bool TryGetThickness(string property, out Thickness thickness)
+        public bool TryGetThickness(string property, out CssThickness thickness)
         {
             thickness = default;
 
@@ -82,13 +111,13 @@ namespace MvvmScarletToolkit.Wpf
             var bottom = lengths.Length > 2 ? lengths[2] : top;
             var left = lengths.Length > 3 ? lengths[3] : right;
 
-            thickness = new Thickness(left, top, right, bottom);
+            thickness = new CssThickness(left, top, right, bottom);
             return true;
         }
 
-        public bool TryGetBaselineAlignment(string property, out BaselineAlignment alignment)
+        public bool TryGetVerticalAlign(string property, out VerticalAlign alignment)
         {
-            alignment = BaselineAlignment.Baseline;
+            alignment = VerticalAlign.Baseline;
 
             if (!_declarations.TryGetValue(property, out var value))
             {
@@ -98,27 +127,27 @@ namespace MvvmScarletToolkit.Wpf
             switch (value.ToLowerInvariant())
             {
                 case "baseline":
-                    alignment = BaselineAlignment.Baseline;
+                    alignment = VerticalAlign.Baseline;
                     return true;
 
                 case "top":
-                    alignment = BaselineAlignment.Top;
+                    alignment = VerticalAlign.Top;
                     return true;
 
                 case "middle":
-                    alignment = BaselineAlignment.Center;
+                    alignment = VerticalAlign.Middle;
                     return true;
 
                 case "bottom":
-                    alignment = BaselineAlignment.Bottom;
+                    alignment = VerticalAlign.Bottom;
                     return true;
 
                 case "text-top":
-                    alignment = BaselineAlignment.TextTop;
+                    alignment = VerticalAlign.TextTop;
                     return true;
 
                 case "text-bottom":
-                    alignment = BaselineAlignment.TextBottom;
+                    alignment = VerticalAlign.TextBottom;
                     return true;
 
                 default:
@@ -139,14 +168,6 @@ namespace MvvmScarletToolkit.Wpf
 
             opacity = Math.Clamp(parsed, 0, 1);
             return true;
-        }
-
-        public bool TryGetColor(string property, out Color color)
-        {
-            color = default;
-
-            return _declarations.TryGetValue(property, out var value)
-                && TryParseColor(value, out color);
         }
 
         /// <summary>
@@ -180,35 +201,31 @@ namespace MvvmScarletToolkit.Wpf
         }
 
         /// <summary>
-        /// Reads named colors and #rgb, #rrggbb and #aarrggbb.
+        /// Reads a length from the style, or else from the attribute of the same name. Like in browsers, the style wins.
         /// </summary>
-        public static bool TryParseColor(string? value, out Color color)
+        public static double GetLength(HtmlTag tag, InlineStyle style, string property)
         {
-            color = default;
-
-            if (string.IsNullOrWhiteSpace(value))
+            if (style.TryGetLength(property, out var length))
             {
-                return false;
+                return length;
             }
 
-            try
+            return TryParseLength(tag.Get(property), out length)
+                ? length
+                : double.NaN;
+        }
+
+        /// <summary>
+        /// The size to decode an image at, or <see langword="null"/> when <paramref name="length"/> is unknown or out of range.
+        /// </summary>
+        public static uint? ToDecodeSize(double length)
+        {
+            if (double.IsNaN(length) || length < 1 || length > uint.MaxValue)
             {
-                if (ColorConverter.ConvertFromString(value.Trim()) is Color parsed)
-                {
-                    color = parsed;
-                    return true;
-                }
-            }
-            catch (FormatException)
-            {
-                // invalid colors are ignored
-            }
-            catch (NotSupportedException)
-            {
-                // invalid colors are ignored
+                return null;
             }
 
-            return false;
+            return (uint)Math.Ceiling(length);
         }
     }
 }

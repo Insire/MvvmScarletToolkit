@@ -242,7 +242,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
 
                 Assert.Multiple(() =>
                 {
-                    Assert.Same(HtmlTag.OpenLinkCommand, link.Command);
+                    Assert.Same(HtmlParser.OpenLinkCommand, link.Command);
                     Assert.Equal(link.NavigateUri, link.CommandParameter);
                     Assert.Equal(canOpen, link.Command.CanExecute(link.CommandParameter));
                 });
@@ -258,7 +258,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
             {
                 var textBlock = new HtmlTextBlock { OpenLinksInBrowser = true, Html = "<img alt='x' href='https://example.com/'>" };
 
-                Assert.Same(HtmlTag.OpenLinkCommand, Assert.IsType<Hyperlink>(Assert.Single(textBlock.Inlines)).Command);
+                Assert.Same(HtmlParser.OpenLinkCommand, Assert.IsType<Hyperlink>(Assert.Single(textBlock.Inlines)).Command);
 
                 return Task.CompletedTask;
             });

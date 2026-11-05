@@ -115,7 +115,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
         [InlineData("A = \"x y\"   B='z w'  C=v D", "x y", "z w", "v", "TRUE")]
         public void Attributes_Should_Support_Quoted_Unquoted_And_Valueless(string attributes, string a, string b, string c, string d)
         {
-            var result = new ParamParser(new HtmlAttributeStringSerializer()).StringToDictionary(attributes);
+            var result = MvvmScarletToolkit.Html.HtmlAttributes.Parse(attributes);
 
             Assert.Equal(new Dictionary<string, string> { ["a"] = a, ["b"] = b, ["c"] = c, ["d"] = d }, result);
         }
@@ -128,7 +128,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
         [InlineData("a=\"unterminated")]
         public void Attributes_Should_Not_Hang_On_Malformed_Input(string attributes)
         {
-            _ = new ParamParser(new HtmlAttributeStringSerializer()).StringToDictionary(attributes);
+            _ = MvvmScarletToolkit.Html.HtmlAttributes.Parse(attributes);
         }
 
         [Fact]

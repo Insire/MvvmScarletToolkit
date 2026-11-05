@@ -1,18 +1,19 @@
 using System.Net;
 
-namespace MvvmScarletToolkit.Wpf
+namespace MvvmScarletToolkit.Html
 {
     /// <summary>
     /// Reads html attributes like <c>name='value'</c>, <c>name="value"</c>, <c>name=value</c> and <c>name</c>.
     /// Names are returned in lower case, quotes are removed from values and attributes without a value get <c>TRUE</c>.
     /// </summary>
-    internal sealed class HtmlAttributeStringSerializer : IPropertySerializer
+    internal static class HtmlAttributes
     {
         private const string ValuelessAttribute = "TRUE";
 
-        public IEnumerable<Tuple<string, string>> StringToProperty(string propertyString)
+        public static Dictionary<string, string> Parse(string? attributes)
         {
-            var text = propertyString ?? string.Empty;
+            var result = new Dictionary<string, string>();
+            var text = attributes ?? string.Empty;
             var index = 0;
 
             while (true)
@@ -20,7 +21,7 @@ namespace MvvmScarletToolkit.Wpf
                 SkipWhiteSpace(text, ref index);
                 if (index >= text.Length)
                 {
-                    yield break;
+                    return result;
                 }
 
                 var nameStart = index;
@@ -43,7 +44,7 @@ namespace MvvmScarletToolkit.Wpf
                 if (index >= text.Length || text[index] != '=')
                 {
                     index = afterName;
-                    yield return new Tuple<string, string>(name.ToLowerInvariant(), ValuelessAttribute);
+                    result[name.ToLowerInvariant()] = ValuelessAttribute;
                     continue;
                 }
 
@@ -51,20 +52,8 @@ namespace MvvmScarletToolkit.Wpf
                 SkipWhiteSpace(text, ref index);
 
                 // values may contain entities, e.g. href="?a=1&amp;b=2"
-                yield return new Tuple<string, string>(name.ToLowerInvariant(), WebUtility.HtmlDecode(ReadValue(text, ref index)));
+                result[name.ToLowerInvariant()] = WebUtility.HtmlDecode(ReadValue(text, ref index));
             }
-        }
-
-        public string PropertyToString(IEnumerable<Tuple<string, string>> properties)
-        {
-            var retVal = string.Empty;
-
-            foreach (var prop in properties)
-            {
-                retVal += string.Format(" {0}=\"{1}\"", prop.Item1, prop.Item2);
-            }
-
-            return retVal;
         }
 
         private static string ReadValue(string text, ref int index)

@@ -1,16 +1,82 @@
-namespace MvvmScarletToolkit.Wpf
+namespace MvvmScarletToolkit.Html
 {
+    internal class HtmlTagNode
+    {
+        private readonly List<HtmlTagNode> _items = new List<HtmlTagNode>();
+
+        public HtmlTag Tag { get; }
+
+        public HtmlTagNode? Parent { get; }
+
+        protected HtmlTagNode(HtmlTag tag)
+        {
+            Tag = tag ?? throw new ArgumentNullException(nameof(tag));
+        }
+
+        private HtmlTagNode(HtmlTagNode parent, HtmlTag tag)
+            : this(tag)
+        {
+            Parent = parent;
+        }
+
+        public virtual bool CanAdd(HtmlTag tag)
+        {
+            if (Tag.IsEndTag)
+            {
+                return false;
+            }
+
+            return (tag.Name == Tag.EndTagName) || (tag.Level < Tag.Level);
+        }
+
+        public HtmlTagNode? Add(HtmlTag tag)
+        {
+            var result = new HtmlTagNode(this, tag);
+            _items.Add(result);
+
+            return tag.Name == Tag.EndTagName
+                ? Parent
+                : result;
+        }
+
+        /// <summary>
+        /// Returns the known tags of this node and its descendants in document order.
+        /// </summary>
+        public IEnumerable<HtmlTag> GetTags()
+        {
+            // iterative, nested iterators would cost the depth of the tree for every tag
+            var stack = new Stack<HtmlTagNode>();
+            stack.Push(this);
+
+            while (stack.Count > 0)
+            {
+                var node = stack.Pop();
+                if (node.Tag.Id != -1)
+                {
+                    yield return node.Tag;
+                }
+
+                for (var i = node._items.Count - 1; i >= 0; i--)
+                {
+                    stack.Push(node._items[i]);
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// html syntax tree
     /// </summary>
     internal sealed class HtmlTagTree : HtmlTagNode
     {
-        private readonly IParamParser _paramParser;
-
-        public HtmlTagTree(IParamParser paramParser)
-            : base(true, new HtmlTag(paramParser, "root", string.Empty))
+        public HtmlTagTree()
+            : base(new HtmlTag("root", string.Empty))
         {
-            _paramParser = paramParser ?? throw new ArgumentNullException(nameof(paramParser));
+        }
+
+        public override bool CanAdd(HtmlTag tag)
+        {
+            return true;
         }
 
         /// <summary>
@@ -19,7 +85,7 @@ namespace MvvmScarletToolkit.Wpf
         /// <remarks>
         /// Scans the input by position, so only the text and tags that become part of the tree are copied.
         /// </remarks>
-        public void BuildFrom(string htmlInput)
+        public void BuildFrom(string? htmlInput)
         {
             HtmlTagNode? previousNode = this;
 
@@ -32,16 +98,16 @@ namespace MvvmScarletToolkit.Wpf
                 var startIndex = rest.IndexOf('<');
                 var endIndex = rest.IndexOf('>');
 
-                // like before, a '>' ahead of the next '<' ends tag parsing, everything left is text
+                // a '>' ahead of the next '<' ends tag parsing, everything left is text
                 if ((startIndex == -1) || (endIndex == -1) || (endIndex < startIndex))
                 {
-                    AddTag(new HtmlTag(input[position..]));
+                    AddTag(HtmlTag.CreateText(input[position..]));
                     return;
                 }
 
                 if (startIndex > 0)
                 {
-                    AddTag(new HtmlTag(input.Substring(position, startIndex)));
+                    AddTag(HtmlTag.CreateText(input.Substring(position, startIndex)));
                 }
 
                 var tag = rest.Slice(startIndex + 1, endIndex - startIndex - 1);
@@ -60,25 +126,20 @@ namespace MvvmScarletToolkit.Wpf
                     continue;
                 }
 
-                var vars = separator == -1 ? string.Empty : tag[(separator + 1)..].ToString();
+                var attributes = separator == -1 ? string.Empty : tag[(separator + 1)..].ToString();
 
-                AddTag(new HtmlTag(_paramParser, name.ToString(), vars));
+                AddTag(new HtmlTag(name.ToString(), attributes));
             }
 
             void AddTag(HtmlTag tag)
             {
                 while (previousNode?.CanAdd(tag) == false)
                 {
-                    previousNode = previousNode?.Parent;
+                    previousNode = previousNode.Parent;
                 }
 
                 previousNode = previousNode?.Add(tag);
             }
-        }
-
-        public override bool CanAdd(HtmlTag? tag)
-        {
-            return true;
         }
 
         /// <summary>

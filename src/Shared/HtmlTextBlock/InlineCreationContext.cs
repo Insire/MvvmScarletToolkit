@@ -1,10 +1,20 @@
-using System.Windows.Media;
-
-namespace MvvmScarletToolkit.Wpf
+namespace MvvmScarletToolkit.Html
 {
-    internal sealed class InlineCreationContext
+    /// <summary>
+    /// The format at the current position of the html, built from the open formatting and list tags.
+    /// </summary>
+    /// <typeparam name="TColor">The color type of the UI framework, read by <see cref="_parseColor"/>.</typeparam>
+    internal sealed class InlineCreationContext<TColor>
+        where TColor : struct
     {
         private readonly List<HtmlTag> _activeStyle = new List<HtmlTag>();
+        private readonly List<ListState> _lists = new List<ListState>();
+        private readonly ColorParser<TColor> _parseColor;
+
+        public InlineCreationContext(ColorParser<TColor> parseColor)
+        {
+            _parseColor = parseColor;
+        }
 
         public bool Bold { get; private set; }
         public bool Italic { get; private set; }
@@ -12,21 +22,13 @@ namespace MvvmScarletToolkit.Wpf
         public bool SubScript { get; private set; }
         public bool SuperScript { get; private set; }
         public string? HyperLink { get; private set; }
-        public Color? Foreground { get; private set; }
+        public TColor? Foreground { get; private set; }
 
         /// <summary>1 to 6 inside h1 to h6, otherwise 0. The innermost heading wins.</summary>
         public int HeadingLevel { get; private set; }
 
         /// <summary>Inside code or pre.</summary>
         public bool Monospace { get; private set; }
-
-        private readonly List<ListState> _lists = new List<ListState>();
-
-        public InlineCreationContext()
-        {
-            Foreground = null;
-            HyperLink = "";
-        }
 
         public void UpdateStyle(HtmlTag tag)
         {
@@ -58,24 +60,14 @@ namespace MvvmScarletToolkit.Wpf
             SubScript = false;
             SuperScript = false;
             Foreground = null;
-            HyperLink = "";
+            HyperLink = null;
             HeadingLevel = 0;
             Monospace = false;
         }
 
-        /// <summary>
-        /// Active tags are applied from the outside in, so the innermost valid color wins.
-        /// </summary>
-        private void ApplyColor(bool isValid, Color color)
-        {
-            if (isValid)
-            {
-                Foreground = color;
-            }
-        }
-
         private void UpdateSettings()
         {
+            // applied from the outside in, so the innermost valid color wins
             for (var i = 0; i < _activeStyle.Count; i++)
             {
                 var tag = _activeStyle[i];
@@ -102,20 +94,20 @@ namespace MvvmScarletToolkit.Wpf
                         break;
 
                     case "a":
-                        if (tag.Contains("href"))
+                        if (tag.Get("href") is { } href)
                         {
-                            HyperLink = tag["href"];
+                            HyperLink = href;
                         }
 
                         break;
 
                     case "font":
                     case "color":
-                        ApplyColor(InlineStyle.TryParseColor(tag.Get("color"), out var tagColor), tagColor);
+                        ApplyColor(tag.Get("color"));
                         break;
 
                     case "span":
-                        ApplyColor(InlineStyle.Parse(tag.Get("style")).TryGetColor("color", out var spanColor), spanColor);
+                        ApplyColor(InlineStyle.Parse(tag.Get("style")).Get("color"));
                         break;
 
                     case "h1":
@@ -133,6 +125,17 @@ namespace MvvmScarletToolkit.Wpf
                         Monospace = true;
                         break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Invalid and missing colors are ignored, so an outer color stays.
+        /// </summary>
+        private void ApplyColor(string? value)
+        {
+            if (!string.IsNullOrWhiteSpace(value) && _parseColor(value.Trim(), out var color))
+            {
+                Foreground = color;
             }
         }
 
