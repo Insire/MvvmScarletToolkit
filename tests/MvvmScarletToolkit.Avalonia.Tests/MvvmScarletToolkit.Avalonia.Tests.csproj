@@ -15,6 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- scaling check for the html parser, which both UI packages compile from src/Shared -->
+    <Compile Include="..\shared\HtmlParserScaling.cs" Link="Util\HtmlParserScaling.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="MvvmScarletToolkit.Test.Tracing.Otel.Attributes" />
     <Using Include="MvvmScarletToolkit.Test.Tracing" />
   </ItemGroup>

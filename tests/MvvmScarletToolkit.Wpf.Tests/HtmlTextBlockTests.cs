@@ -270,22 +270,26 @@ namespace MvvmScarletToolkit.Wpf.Tests
         }
 
         [Fact]
-        public Task Should_Parse_Large_Html_In_Linear_Time()
+        public Task Should_Render_Large_Html()
         {
             return StaRunner.Run(() =>
             {
-                // 20000 tags took about 6 seconds with the previous parser, which copied the rest of the input for every tag
                 var html = string.Concat(Enumerable.Repeat("text <b>bold</b> and <i>italic</i> ", 5_000));
 
-                var watch = System.Diagnostics.Stopwatch.StartNew();
                 var textBlock = new HtmlTextBlock { Html = html };
-                watch.Stop();
 
                 Assert.Equal(5_000, HtmlTextBlockTests.BoldTextsOf(textBlock).Length);
-                Assert.True(watch.Elapsed < TimeSpan.FromSeconds(3), $"parsing took {watch.Elapsed}");
 
                 return Task.CompletedTask;
             });
+        }
+
+        [Fact]
+        public void Parser_Should_Scale_Linearly()
+        {
+            // the previous parser copied the rest of the input for every tag, 20000 tags took about 6 seconds.
+            // Compares two sizes instead of a fixed limit, which fails on slow build agents or with coverage enabled
+            HtmlParserScaling.AssertLinear();
         }
 
         private static IEnumerable<Inline> Descendants(InlineCollection inlines)

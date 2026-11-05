@@ -156,19 +156,23 @@ namespace MvvmScarletToolkit.Avalonia.Tests
         }
 
         [Fact]
-        public Task Should_Parse_Large_Html_In_Linear_Time()
+        public Task Should_Render_Large_Html()
         {
             return Run(() =>
             {
                 var html = string.Concat(Enumerable.Repeat("text <b>bold</b> and <i>italic</i> ", 5_000));
 
-                var watch = System.Diagnostics.Stopwatch.StartNew();
                 var textBlock = new HtmlTextBlock { Html = html };
-                watch.Stop();
 
                 Assert.Equal(5_000, BoldTextsOf(textBlock).Length);
-                Assert.True(watch.Elapsed < TimeSpan.FromSeconds(3), $"parsing took {watch.Elapsed}");
             });
+        }
+
+        [Fact]
+        public void Parser_Should_Scale_Linearly()
+        {
+            // compares two sizes instead of a fixed limit, which fails on slow build agents or with coverage enabled
+            HtmlParserScaling.AssertLinear();
         }
 
         [Theory]
