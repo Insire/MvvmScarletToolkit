@@ -32,7 +32,7 @@ namespace MvvmScarletToolkit.Observables
 
         public string Value => GetValue();
 
-        private void ValueChanged(object sender, PropertyChangedEventArgs e)
+        private void ValueChanged(object? sender, PropertyChangedEventArgs e)
         {
             OnPropertyChanged(nameof(Value));
         }

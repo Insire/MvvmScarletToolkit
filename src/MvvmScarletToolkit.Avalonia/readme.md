@@ -138,6 +138,7 @@ Unlike a browser, `HtmlTextBlock` keeps whitespace and line breaks of the text a
 |`br`|Line break.|
 |`font color="…"`, `color color="…"`, `span style="color: …"`|Text color: named colors, `#rgb`, `#rrggbb` or `#aarrggbb`. The innermost color wins, invalid colors are ignored.|
 |`img`|Inline image with `src`, `width`, `height`, `alt`, `title`, `href` and a `style` with `width`, `height`, `margin`, `vertical-align` and `opacity`.|
+|`binding path="…"`|Text of the named public property of the `DataContext`, read through reflection. Shows `{Binding}` if there is no such property.|
 
 Avalonia has no hyperlink inline, so each link is a `HyperlinkButton` inside an `InlineUIContainer`. A link therefore doesn't wrap within itself, it moves to the next line as a whole.
 
@@ -148,3 +149,5 @@ Images with http(s), file and relative sources load through an `IImageService<Bi
 > Html from untrusted sources can make the control download images from any web address.
 
 `HtmlTextBlock` derives from `TextBlock`, so its text can't be selected.
+
+In trimmed or Native AOT apps, the trimmer can't see which properties a `binding` tag reads. Keep them, e.g. with `[DynamicDependency(DynamicallyAccessedMemberTypes.PublicProperties, typeof(MyViewModel))]` on the code that creates the viewmodel, otherwise the tag shows `{Binding}`.

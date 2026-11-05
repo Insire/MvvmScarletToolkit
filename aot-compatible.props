@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- trim and AOT analyzers for libraries that support Native AOT, import after the target framework props -->
+  <PropertyGroup>
+    <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsAotCompatible>
+  </PropertyGroup>
+
+  <!-- netstandard2.0 lacks the trim attributes, the trimmer recognizes them by name -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <Compile Include="$(MSBuildThisFileDirectory)src\Shared\TrimAnnotations\*.cs" Link="Properties\TrimAnnotations\%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

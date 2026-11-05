@@ -46,6 +46,8 @@ dotnet add package MvvmScarletToolkit.Avalonia
 
 The current NuGet release (5.0.96) targets .NET 8 and 9, and is built against Avalonia 11. The source in this repository targets .NET 8 and 10, and Avalonia 12.
 
+All packages except MvvmScarletToolkit.Wpf are trim and Native AOT compatible. The package readmes list the few APIs that need extra care. The Avalonia sample publishes as a native executable with `dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r win-x64`.
+
 Pre-release packages are available on [GitHub](https://github.com/Insire/MvvmScarletToolkit/packages). GitHub requires a personal access token to restore from its NuGet feed.
 
 ### Create a viewmodel

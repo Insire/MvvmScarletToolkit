@@ -59,7 +59,7 @@ namespace MvvmScarletToolkit.Commands
 
         public abstract Task ExecuteAsync(object? parameter);
 
-        public event EventHandler CanExecuteChanged
+        public event EventHandler? CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }

@@ -19,30 +19,30 @@ namespace MvvmScarletToolkit.Avalonia.Samples
 {
     public sealed class ViewLocator : IDataTemplate
     {
-        private readonly Dictionary<Type, Type> _viewMap;
+        private readonly Dictionary<Type, Func<Control>> _viewMap;
 
         public ViewLocator()
         {
-            _viewMap = new Dictionary<Type, Type>()
+            _viewMap = new Dictionary<Type, Func<Control>>()
             {
-                [typeof(ProcessingImagesViewModel)] = typeof(DragAndDropView),
-                [typeof(DataEntriesViewModel)] = typeof(DataEntriesView),
-                [typeof(VirtualizedImagesViewModel)] = typeof(VirtualizedImagesView),
-                [typeof(AsyncStateListViewModel)] = typeof(AsyncStateListView),
-                [typeof(ProgressViewModel)] = typeof(ProgressView),
-                [typeof(BusyViewModel)] = typeof(BusyView),
-                [typeof(GeometryRenderViewModel)] = typeof(GeometryRenderView),
-                [typeof(PasswordViewModel)] = typeof(PasswordView),
-                [typeof(DialogViewModel)] = typeof(DialogView),
-                [typeof(ProcessViewModel)] = typeof(ProcessView),
-                [typeof(ContextMenuViewModels)] = typeof(ContextMenuView),
-                [typeof(EnumsViewModel)] = typeof(EnumsView),
-                [typeof(ToastsViewModel)] = typeof(ToastsView),
-                [typeof(FormViewModel)] = typeof(FormView),
-                [typeof(ObservableDictionaryViewModel)] = typeof(ObservableDictionaryView),
-                [typeof(SelectionsViewModel)] = typeof(SelectionsView),
-                [typeof(TagCloudViewModel)] = typeof(TagCloudView),
-                [typeof(HtmlReadmeViewModel)] = typeof(HtmlReadmeView),
+                [typeof(ProcessingImagesViewModel)] = () => new DragAndDropView(),
+                [typeof(DataEntriesViewModel)] = () => new DataEntriesView(),
+                [typeof(VirtualizedImagesViewModel)] = () => new VirtualizedImagesView(),
+                [typeof(AsyncStateListViewModel)] = () => new AsyncStateListView(),
+                [typeof(ProgressViewModel)] = () => new ProgressView(),
+                [typeof(BusyViewModel)] = () => new BusyView(),
+                [typeof(GeometryRenderViewModel)] = () => new GeometryRenderView(),
+                [typeof(PasswordViewModel)] = () => new PasswordView(),
+                [typeof(DialogViewModel)] = () => new DialogView(),
+                [typeof(ProcessViewModel)] = () => new ProcessView(),
+                [typeof(ContextMenuViewModels)] = () => new ContextMenuView(),
+                [typeof(EnumsViewModel)] = () => new EnumsView(),
+                [typeof(ToastsViewModel)] = () => new ToastsView(),
+                [typeof(FormViewModel)] = () => new FormView(),
+                [typeof(ObservableDictionaryViewModel)] = () => new ObservableDictionaryView(),
+                [typeof(SelectionsViewModel)] = () => new SelectionsView(),
+                [typeof(TagCloudViewModel)] = () => new TagCloudView(),
+                [typeof(HtmlReadmeViewModel)] = () => new HtmlReadmeView(),
             };
         }
 
@@ -53,7 +53,8 @@ namespace MvvmScarletToolkit.Avalonia.Samples
                 return new TextBlock { Text = "NULL" };
             }
 
-            return (Control)Activator.CreateInstance(_viewMap[viewmodel.GetType()])!;
+            // factories instead of Activator.CreateInstance, so the views survive trimming and Native AOT
+            return _viewMap[viewmodel.GetType()]();
         }
 
         public bool Match(object? data)

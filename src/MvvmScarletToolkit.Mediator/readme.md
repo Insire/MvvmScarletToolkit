@@ -10,6 +10,7 @@ MvvmScarletToolkit.Mediator is part of the MvvmScarletToolkit framework, contain
 - **Notifications:** publish a notification to any number of handlers, one after another.
 - **Explicit registration:** requests and handlers are registered in code through `SimpleMediatorRegistrator`, without assembly scanning.
 - **Dependency injection:** `RegisterSimpleMediator` adds the mediator as a singleton to an `IServiceCollection`, and its handlers as transient services.
+- **Native AOT:** handlers are registered with their generic types, so the mediator works in trimmed and Native AOT apps.
 
 ## Contents
 

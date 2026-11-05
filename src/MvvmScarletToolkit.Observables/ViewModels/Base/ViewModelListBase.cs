@@ -91,16 +91,16 @@ namespace MvvmScarletToolkit.Observables
             SelectedItems.CollectionChanged += OnSelectedItemsCollectionChanged;
         }
 
-        protected virtual void OnSelectedItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected virtual void OnSelectedItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             OnSelectionsChanged();
         }
 
-        protected virtual void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected virtual void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
         }
 
-        protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -110,7 +110,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        protected virtual void OnPropertyChanging(object sender, PropertyChangingEventArgs e)
+        protected virtual void OnPropertyChanging(object? sender, PropertyChangingEventArgs e)
         {
             switch (e.PropertyName)
             {

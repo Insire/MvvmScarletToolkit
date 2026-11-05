@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 
@@ -6,14 +7,14 @@ namespace MvvmScarletToolkit.Observables
 {
     public static class EnumViewModel
     {
-        public static EnumViewModel<TEnum> Create<TEnum>(in TEnum value, in IMessenger messenger)
+        public static EnumViewModel<TEnum> Create<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)] TEnum>(in TEnum value, in IMessenger messenger)
             where TEnum : Enum
         {
-            return new EnumViewModel<TEnum>(value, value.GetAttributeOfType<DescriptionAttribute>()?.Description ?? value.ToString(), messenger);
+            return new EnumViewModel<TEnum>(value, value.GetAttributeOfType<TEnum, DescriptionAttribute>()?.Description ?? value.ToString(), messenger);
         }
     }
 
-    public abstract class EnumsViewModel<TEnum> : ViewModelListBase<EnumViewModel<TEnum>>
+    public abstract class EnumsViewModel<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)] TEnum> : ViewModelListBase<EnumViewModel<TEnum>>
         where TEnum : Enum
     {
         protected EnumsViewModel(IScarletCommandBuilder commandBuilder, IEnumerable<TEnum> values)

@@ -44,7 +44,7 @@ namespace MvvmScarletToolkit.Commands
             RaiseCanExecuteChanged();
         }
 
-        public event EventHandler CanExecuteChanged
+        public event EventHandler? CanExecuteChanged
         {
             add { _commandManager.RequerySuggested += value; }
             remove { _commandManager.RequerySuggested -= value; }

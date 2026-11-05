@@ -47,7 +47,7 @@
               Grid.Column="2"
               x:DataType="image:TargetImagesViewModel"
               ColumnDefinitions="*,4,*"
-              DataContext="{ReflectionBinding Target}"
+              DataContext="{Binding $parent[local:DragAndDropView].((image:ProcessingImagesViewModel)DataContext).Target}"
               RowDefinitions="*,4,Auto,4">
             <ListBox x:Name="TargetList"
                      Grid.Row="0"
@@ -101,7 +101,7 @@
                   Grid.RowSpan="4"
                   Grid.Column="2"
                   x:DataType="image:ImageViewModel"
-                  DataContext="{ReflectionBinding SelectedItem}"
+                  DataContext="{Binding #TargetList.SelectedItem}"
                   RowDefinitions="*,4,Auto">
                 <local:ImagePlaceholder Grid.Row="0" DecodeSize="800" />
 

@@ -155,7 +155,7 @@ namespace MvvmScarletToolkit
             Exit.UnloadOnExit(this);
         }
 
-        private void OnItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(HasItems));
         }

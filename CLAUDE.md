@@ -17,7 +17,8 @@ Tests use xunit v3 on Microsoft.Testing.Platform (see `global.json`). WPF projec
 
 ## Layout
 
-- `src/MvvmScarletToolkit.Abstractions`, `MvvmScarletToolkit`, `.Commands`, `.Observables`: UI-independent and `netstandard2.0`, so newer BCL APIs are not available there.
+- `src/MvvmScarletToolkit.Abstractions`, `MvvmScarletToolkit`, `.Commands`, `.Observables`: UI-independent, targeting `netstandard2.0` and .NET 8. Code has to compile for `netstandard2.0`, so newer BCL APIs are not available there. The .NET 8 target exists for the trim and AOT analyzers.
+- All non-WPF packages import `aot-compatible.props`, which enables `IsAotCompatible` and links the trim attribute polyfills from `src/Shared/TrimAnnotations` into the `netstandard2.0` build. They must build without IL warnings.
 - `src/MvvmScarletToolkit.ImageLoading`, `.Mediator`: UI-independent, targeting .NET 8 and 10.
 - `src/MvvmScarletToolkit.Wpf`, `.Avalonia`: UI-specific packages, targeting .NET 8 and 10.
 - `src/Shared/HtmlTextBlock`: internal html parser, compiled into both UI packages as linked files. No WPF or Avalonia types there.

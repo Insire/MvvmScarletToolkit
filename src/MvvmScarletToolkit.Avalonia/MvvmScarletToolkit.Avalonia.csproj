@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../targetframeworks.props" />
   <Import Project="../../package.props" />
+  <Import Project="../../aot-compatible.props" />
 
   <PropertyGroup>
     <Description>MvvmScarletToolkit.Avalonia is part of the MvvmScarletToolkit framework, containing concrete implementations for Avalonia that have been abstracted away in the MvvmScarletToolkit.Abstractions library.</Description>

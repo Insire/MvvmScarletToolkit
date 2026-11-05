@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MvvmScarletToolkit.Observables
 {
@@ -31,6 +32,30 @@ namespace MvvmScarletToolkit.Observables
             BusyStack = new ObservableBusyStack((hasItems) => IsBusy = hasItems);
         }
 
+        /// <summary>
+        /// Does not register <see cref="CommunityToolkit.Mvvm.Messaging.IRecipient{TMessage}"/> implementations,
+        /// unlike <see cref="ObservableRecipient"/>. Register message handlers explicitly through <see cref="ObservableRecipient.Messenger"/>.
+        /// </summary>
+        /// <remarks>
+        /// The base implementation calls <c>Messenger.RegisterAll(this)</c>, which needs reflection and is not trim or AOT safe.
+        /// The attributes only mirror the overridden method and are suppressed for this implementation in <see cref="SetIsActive"/>.
+        /// </remarks>
+        [RequiresUnreferencedCode("Mirrors ObservableRecipient.OnActivated. This override does not use reflection.")]
+        [RequiresDynamicCode("Mirrors ObservableRecipient.OnActivated. This override does not use dynamic code.")]
+        protected override void OnActivated()
+        {
+        }
+
+        /// <summary>
+        /// Sets <see cref="ObservableRecipient.IsActive"/> without trim warnings, since <see cref="OnActivated"/> does not use reflection.
+        /// </summary>
+        [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "OnActivated is overridden without reflection.")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "OnActivated is overridden without dynamic code.")]
+        private protected void SetIsActive(bool value)
+        {
+            IsActive = value;
+        }
+
         public void Dispose()
         {
             Dispose(true);
@@ -47,7 +72,7 @@ namespace MvvmScarletToolkit.Observables
             if (disposing)
             {
                 BusyStack.Dispose();
-                IsActive = false;
+                SetIsActive(false);
             }
 
             IsDisposed = true;

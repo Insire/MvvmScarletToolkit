@@ -1,38 +1,14 @@
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using MoreLinq;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace MvvmScarletToolkit.Core.Samples.Features.Image
 {
     public sealed class ImageViewModelProvider
     {
-        [UsedImplicitly]
-        private sealed class ImageDto
-        {
-            [JsonPropertyName("id")]
-            public long Id { get; set; }
-
-            [JsonPropertyName("author")]
-            public string Author { get; set; } = default!;
-
-            [JsonPropertyName("width")]
-            public long Width { get; set; }
-
-            [JsonPropertyName("height")]
-            public long Height { get; set; }
-
-            [JsonPropertyName("url")]
-            public Uri Url { get; set; } = default!;
-
-            [JsonPropertyName("download_url")]
-            public Uri DownloadUrl { get; set; } = default!;
-        }
-
         private readonly string[] _urls = new string[]
         {
             "https://w.wallhaven.cc/full/o5/wallhaven-o58767.jpg",
@@ -92,7 +68,7 @@ namespace MvvmScarletToolkit.Core.Samples.Features.Image
             try
             {
                 using var timeout = new CancellationTokenSource(InitializationTimeout);
-                var models = await _httpClient.GetFromJsonAsync<List<ImageDto>>("https://picsum.photos/v2/list", timeout.Token).ConfigureAwait(false);
+                var models = await _httpClient.GetFromJsonAsync("https://picsum.photos/v2/list", PicsumJsonContext.Default.ListPicsumImage, timeout.Token).ConfigureAwait(false);
                 if (models != null)
                 {
                     _randomWebUrls.AddRange(models.Select(p => p.DownloadUrl.ToString()));
