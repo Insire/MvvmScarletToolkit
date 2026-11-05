@@ -15,7 +15,9 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Command="{Binding RunCommand}"
-                Content="Open Dialog" />
+                Content="Open Dialog"
+                ToolTip.ShowOnDisabled="True"
+                ToolTip.Tip="{Binding RunCommand.DisabledReason}" />
 
         <Popup IsLightDismissEnabled="False"
                IsOpen="{Binding DialogResult.IsOpen, Mode=OneWay}"

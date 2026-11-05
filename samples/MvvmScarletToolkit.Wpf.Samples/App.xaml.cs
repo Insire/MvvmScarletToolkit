@@ -39,6 +39,9 @@ namespace MvvmScarletToolkit.Wpf.Samples
             Ioc.Default.ConfigureServices(ConfigureServices());
 
             AsyncImageLoadingBehavior.Loader = Ioc.Default.GetRequiredService<Lazy<IImageService<BitmapSource>>>();
+
+            // also used by HtmlTextBlock for images from the web and from files
+            ImageLoader.AsyncImageLoader = AsyncImageLoadingBehavior.Loader;
         }
 
         private static ServiceProvider ConfigureServices()

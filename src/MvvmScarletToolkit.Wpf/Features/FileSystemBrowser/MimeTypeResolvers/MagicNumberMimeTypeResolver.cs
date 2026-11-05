@@ -7,7 +7,9 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
     // https://en.wikipedia.org/wiki/List_of_file_signatures
     // https://www.garykessler.net/library/file_sigs.html
     // https://github.com/Muraad/Mime-Detective
-    // TODO implement
+    /// <summary>
+    /// Detects the mime type from the first bytes of a file. Returns an empty string for unknown content.
+    /// </summary>
     public sealed class MagicNumberMimeTypeResolver : IMimeTypeResolver
     {
         public string Get(FileInfo fileInfo)
@@ -59,7 +61,7 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
             {
                 mime = "image/jpeg";
             }
-            else if (file.Take(3).SequenceEqual(MP3))
+            else if (IsMp3(file))
             {
                 mime = "audio/mpeg";
             }
@@ -133,6 +135,19 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
             return mime;
         }
 
+        private static bool IsMp3(byte[] file)
+        {
+            // tagged files start with an ID3v2 header
+            if (file.Take(3).SequenceEqual(ID3))
+            {
+                return true;
+            }
+
+            // untagged files start with an MPEG audio frame header: 11 sync bits, followed by version and layer.
+            // the third byte holds bitrate and sample rate, so it differs between files and cannot be part of the signature
+            return file[0] == 0xFF && Array.IndexOf(MP3_FRAME_HEADERS, file[1]) >= 0;
+        }
+
         private static string GetIsoMediaType(byte[] brand)
         {
             return System.Text.Encoding.ASCII.GetString(brand) switch
@@ -149,7 +164,10 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
         private static readonly byte[] GIF = [71, 73, 70, 56];
         private static readonly byte[] ICO = [0, 0, 1, 0];
         private static readonly byte[] JPG = [255, 216, 255];
-        private static readonly byte[] MP3 = [255, 251, 48];
+        private static readonly byte[] ID3 = [73, 68, 51];
+
+        // second byte of an MPEG audio layer III frame header, with and without CRC: MPEG-1, MPEG-2 and MPEG-2.5
+        private static readonly byte[] MP3_FRAME_HEADERS = [0xFB, 0xFA, 0xF3, 0xF2, 0xE3, 0xE2];
         private static readonly byte[] OGG = [79, 103, 103, 83, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0];
         private static readonly byte[] PDF = [37, 80, 68, 70, 45, 49, 46];
         private static readonly byte[] PNG = [137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82];

@@ -11,8 +11,9 @@ This library aims to provide implementations for avalonia specific classes used 
 - **Async image loading:** `AsyncImageLoadingBehavior` loads images through [MvvmScarletToolkit.ImageLoading](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.ImageLoading/readme.md).
 - **Converters as markup extensions:** `ConverterMarkupExtension<T>` is a base class for writing converters that don't have to be declared as resources.
 - **Virtualizing panels:** `VirtualizingTilePanel` and `VirtualizingWrapPanel` keep lists with many items per row fast.
+- **Html text:** `HtmlTextBlock` and `HtmlHighlightTextBlock` display formatted text, links and images from a small subset of html.
 
-Apart from these panels, the behaviors, converters and controls of [MvvmScarletToolkit.Wpf](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Wpf/readme.md) are not available for Avalonia. Text selection doesn't need the toolkit here, as Avalonia comes with a `SelectableTextBlock`.
+Apart from these panels and `HtmlTextBlock`, the behaviors, converters and controls of [MvvmScarletToolkit.Wpf](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Wpf/readme.md) are not available for Avalonia. Text selection doesn't need the toolkit here, as Avalonia comes with a `SelectableTextBlock`.
 
 ## Contents
 
@@ -30,6 +31,8 @@ Apart from these panels, the behaviors, converters and controls of [MvvmScarletT
 |[``VirtualizingTilePanel``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Controls/VirtualizingTilePanel.cs)|Virtualizing panel that lays out items as square tiles of ``ChildSize``.|
 |[``VirtualizingWrapPanel``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Controls/VirtualizingWrapPanel.cs)|Virtualizing panel that wraps items of different sizes into rows or columns. ``ItemWidth`` and ``ItemHeight`` set a fixed size, without one the sizes of items that were not realized yet are estimated.|
 |[``VirtualizingItemsPanel``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Controls/VirtualizingItemsPanel.cs)|Base class of both panels, it realizes and recycles containers. Derive from it to add another layout.|
+|[``HtmlTextBlock``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Controls/HtmlTextBlock/HtmlTextBlock.cs)|``TextBlock`` that displays formatted text, links and images from its ``Html`` property. See [HtmlTextBlock](#htmltextblock).|
+|[``HtmlHighlightTextBlock``](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/Controls/HtmlTextBlock/HtmlHighlightTextBlock.cs)|``HtmlTextBlock`` that also shows the text from its ``Highlight`` property in bold, e.g. for search results.|
 
 ## Usage
 
@@ -112,3 +115,36 @@ public sealed class IsNot : ConverterMarkupExtension<IsNot>
 ```xml
 <Button IsEnabled="{Binding IsBusy, Converter={local:IsNot}}" />
 ```
+
+### HtmlTextBlock
+
+`HtmlTextBlock` supports the same small subset of html as the [WPF version](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Wpf/readme.md#htmltextblock). Attribute values can be double quoted, single quoted or unquoted, and entities like `&lt;`, `&amp;` and `&#39;` are decoded.
+
+Unlike a browser, `HtmlTextBlock` keeps whitespace and line breaks of the text as they are, and block tags like headings and list items don't start a new line on their own. Put them on their own line in the html, or use `br`.
+
+```xml
+<mvvm:HtmlTextBlock Html="{Binding Html}" OpenLinksInBrowser="True" TextWrapping="Wrap" />
+
+<mvvm:HtmlHighlightTextBlock Highlight="{Binding SearchText}" Html="{Binding Description}" />
+```
+
+|tag|effect|
+|---|---|
+|`b`, `i`, `u`, `sub`, `sup`|Bold, italic, underlined, subscript and superscript text. Subscript and superscript are shown smaller.|
+|`h1` to `h6`|Bold text, scaled from 2 to 0.9 times the `FontSize` of the control. They follow when the font size changes, e.g. through a style.|
+|`code`, `pre`|Monospace text.|
+|`ul`, `ol`, `li`|Bullets or numbers in front of each `li`, nested lists are indented.|
+|`a href="…"`|Link. Set `OpenLinksInBrowser="True"` to open clicked http, https and mailto links through the launcher of the `TopLevel`. Other links are disabled then, since a `file:` link could start any program.|
+|`br`|Line break.|
+|`font color="…"`, `color color="…"`, `span style="color: …"`|Text color: named colors, `#rgb`, `#rrggbb` or `#aarrggbb`. The innermost color wins, invalid colors are ignored.|
+|`img`|Inline image with `src`, `width`, `height`, `alt`, `title`, `href` and a `style` with `width`, `height`, `margin`, `vertical-align` and `opacity`.|
+
+Avalonia has no hyperlink inline, so each link is a `HyperlinkButton` inside an `InlineUIContainer`. A link therefore doesn't wrap within itself, it moves to the next line as a whole.
+
+`BaseUri` resolves relative image sources and links, like the address of a page in a browser. Set it to the uri of the html file itself, e.g. `new Uri(@"C:\docs\readme.html")`, and `<img src="images/logo.png">` loads `C:\docs\images\logo.png`. A folder needs a trailing slash.
+
+Images with http(s), file and relative sources load through an `IImageService<Bitmap>`, so they are cached and load asynchronously once the control is shown. `HtmlTextBlock.ImageService` sets the service for one control, otherwise `AsyncImageLoadingBehavior.Loader` is used. When both width and height are known in px, the image is decoded at that size. Without a service, files and `avares://` assets are loaded directly, and web images show their `alt` text.
+
+> Html from untrusted sources can make the control download images from any web address.
+
+`HtmlTextBlock` derives from `TextBlock`, so its text can't be selected.

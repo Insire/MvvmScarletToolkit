@@ -30,8 +30,46 @@ Toast notifications, the FileSystemBrowser and the DataGrid extensions come with
 |[FileSystemBrowser](Features/FileSystemBrowser/readme.md)|Browse drives, folders and files through a viewmodel, with file and folder dialogs.|
 |``VirtualizingTilePanel``|Virtualizing panel that lays out items as tiles of ``ChildSize``.|
 |``VirtualizingWrapPanel``|Virtualizing panel that wraps items of ``ItemWidth`` and ``ItemHeight``.|
-|``HtmlTextBlock``|TextBlock that displays formatted text from its ``Html`` property, like ``b``, ``i``, ``u``, ``sub``, ``sup``, ``a`` and ``br``.|
+|``HtmlTextBlock``|TextBlock that displays formatted text and images from its ``Html`` property. See [HtmlTextBlock](#htmltextblock).|
 |``HtmlHighlightTextBlock``|``HtmlTextBlock`` that also highlights the text from its ``Highlight`` property, e.g. for search results.|
+
+### HtmlTextBlock
+
+``HtmlTextBlock`` supports a small subset of html. Attribute values can be double quoted, single quoted or unquoted. Entities like ``&lt;``, ``&amp;``, ``&nbsp;`` and ``&#39;`` are decoded in text and attribute values.
+
+Unlike a browser, ``HtmlTextBlock`` keeps whitespace and line breaks of the text as they are, and block tags like headings and list items don't start a new line on their own. Put them on their own line in the html, or use ``br``.
+
+|tag|effect|
+|---|---|
+|``b``, ``i``, ``u``, ``sub``, ``sup``|Bold, italic, underlined, subscript and superscript text.|
+|``h1`` to ``h6``|Bold text, scaled from 2 to 0.9 times the font size of the control at the time the html is set.|
+|``code``, ``pre``|Monospace text.|
+|``ul``, ``ol``, ``li``|Bullets or numbers in front of each ``li``, nested lists are indented.|
+|``a href="…"``|Hyperlink. Set ``OpenLinksInBrowser="True"`` to open clicked http, https and mailto links with the default application. Other links are disabled then, since a ``file:`` link could start any program.|
+|``br``|Line break.|
+|``font color="…"``, ``color color="…"``, ``span style="color: …"``|Text color: named colors, ``#rgb``, ``#rrggbb`` or ``#aarrggbb``. The innermost color wins, invalid colors are ignored.|
+|``img``|Inline image, see below.|
+
+``img`` reads these attributes:
+
+|attribute|effect|
+|---|---|
+|``src``|Image source. ``source`` still works, ``src`` wins if both are set.|
+|``width``, ``height``|Size, as a plain number or in ``px``.|
+|``alt``|Name for screen readers. Shown instead of the image, when it cannot be loaded.|
+|``title``|Tooltip.|
+|``href``|Makes the image a hyperlink.|
+|``style``|``width``, ``height``, ``margin`` (1 to 4 values), ``vertical-align`` (``baseline``, ``top``, ``middle``, ``bottom``, ``text-top``, ``text-bottom``) and ``opacity``. Lengths are plain numbers or ``px``. The style wins over the ``width`` and ``height`` attributes.|
+
+```xml
+<mvvm:HtmlTextBlock Html="Saved &lt;img src='https://example.com/check.png' alt='done' style='width: 16px; height: 16px; vertical-align: middle'&gt; &lt;font color='Green'&gt;successfully&lt;/font&gt;" />
+```
+
+``BaseUri`` resolves relative image sources and links, like the address of a page in a browser. Set it to the uri of the html file itself, e.g. ``new Uri(@"C:\docs\readme.html")``, and ``<img src="images/logo.png">`` loads ``C:\docs\images\logo.png``. A folder needs a trailing slash.
+
+Images with http(s), file and relative sources load through an ``IImageService<BitmapSource>`` from [MvvmScarletToolkit.ImageLoading](https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.ImageLoading/readme.md), so they are cached and load asynchronously. ``HtmlTextBlock.ImageService`` sets the service for one control, otherwise ``ImageLoader.AsyncImageLoader`` is used. When both width and height are known in px, the image is decoded at that size. Without a service, and for other sources like ``pack://`` uris, images are loaded with a ``BitmapImage``.
+
+> Html from untrusted sources can make the control download images from any web address.
 
 ### Selecting text
 

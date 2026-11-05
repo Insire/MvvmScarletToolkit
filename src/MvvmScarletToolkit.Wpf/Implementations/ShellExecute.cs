@@ -29,5 +29,16 @@ namespace MvvmScarletToolkit.Wpf
             using (Process.Start(info))
             { }
         }
+
+        /// <summary>
+        /// Whether <paramref name="uri"/> is a web or mail link. Other schemes like file: could start any program.
+        /// </summary>
+        public static bool IsWebLink(Uri? uri)
+        {
+            return uri is { IsAbsoluteUri: true }
+                && (uri.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)
+                    || uri.Scheme.Equals(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase)
+                    || uri.Scheme.Equals(Uri.UriSchemeMailto, StringComparison.OrdinalIgnoreCase));
+        }
     }
 }

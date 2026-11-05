@@ -253,7 +253,8 @@ namespace MvvmScarletToolkit
                 return changes.SkipChanges();
             }
 
-            throw new InvalidOperationException("The provided instance is not being tracked"); // TODO ? either this throws or we return a nullable disposeable
+            // throwing instead of returning a no-op subscription, since suppressing changes of an untracked instance is most likely a bug
+            throw new ArgumentOutOfRangeException(nameof(instance), "The provided instance is not being tracked");
         }
 
         private void Dispose(bool disposing)

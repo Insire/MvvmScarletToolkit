@@ -9,6 +9,12 @@
 
     <ItemGroup>
         <AvaloniaResource Include="Assets\**" />
+        <AvaloniaResource Include="..\..\assets\branding\png\wordmark-dark.png" Link="Assets\wordmark-dark.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- README.md converted to html, shared with the WPF sample -->
+        <EmbeddedResource Include="..\MvvmScarletToolkit.Wpf.Samples\Resources\readme.html" Link="Resources\readme.html" LogicalName="MvvmScarletToolkit.Avalonia.Samples.Resources.readme.html" />
     </ItemGroup>
 
     <ItemGroup>

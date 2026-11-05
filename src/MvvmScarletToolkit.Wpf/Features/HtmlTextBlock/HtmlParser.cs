@@ -1,114 +1,209 @@
+using CommunityToolkit.Mvvm.Input;
+using MvvmScarletToolkit.Html;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace MvvmScarletToolkit.Wpf
 {
+    /// <summary>
+    /// Fills the inlines of a <see cref="TextBlock"/> from html, parsed by the shared <see cref="HtmlTagTree"/>.
+    /// </summary>
     internal static class HtmlParser
     {
-        private static readonly List<HTMLTagInfo> _builtinTags = new List<HTMLTagInfo>(51)
-        {
-           //HtmlTag Level guide
-           // 50 Master
-           // 40 Xml
-           // 30 var(Variables tag for search)
-           // 15 Html
-           // 14 Title, Head, Body
-           // 13 selection, hi, DIV, SPAN
-           // 12 Table, centre, Form
-           // 11 Tr (Table Row)
-           // 10 Td, Th (Table Cell, Header)
-           // 09 ul, ol (Numbering)
-           // 08 li (List), Indent, blockquote
-           // 07 P (Paragraph),  H1-H6
-           // 06
-           // 05 A HtmlTag, Input
-           // 04 Text formating tags (B, strong, U, S, I, FONT, sub, sup),
-           // 03
-           // 02
-           // 01 Unknown Tags, script
-           // 00 Text, hr, user, Img, Dynamic, BR, Meta, Binding
-           new HTMLTagInfo ("master",       HTMLFlag.Region,        50),
-           new HTMLTagInfo ("xml",          HTMLFlag.Xml,           40),
-           new HTMLTagInfo ("var",          HTMLFlag.Search,        30),
-           new HTMLTagInfo ("html",         HTMLFlag.Region,        15),
-           new HTMLTagInfo ("head",         HTMLFlag.Region,        14),
-           new HTMLTagInfo ("body",         HTMLFlag.Region,        14),
-           new HTMLTagInfo ("title",        HTMLFlag.Region,        14),
-           new HTMLTagInfo ("div",          HTMLFlag.Region,        13),
-           new HTMLTagInfo ("selection",    HTMLFlag.TextFormat,    13),
-           new HTMLTagInfo ("hi",           HTMLFlag.TextFormat,    13),
-           new HTMLTagInfo ("table",        HTMLFlag.Table,         13),
-           new HTMLTagInfo ("centre",       HTMLFlag.Region,        13),
-           new HTMLTagInfo ("form",         HTMLFlag.Controls,      12),
-           new HTMLTagInfo ("tr",           HTMLFlag.Table,         11),
-           new HTMLTagInfo ("td",           HTMLFlag.Table,         10),
-           new HTMLTagInfo ("th",           HTMLFlag.Table,         10),
-           new HTMLTagInfo ("ul",           HTMLFlag.Region,        09),
-           new HTMLTagInfo ("ol",           HTMLFlag.Region,        09),
-           new HTMLTagInfo ("li",           HTMLFlag.Region,        08),
-           new HTMLTagInfo ("blockquote",   HTMLFlag.TextFormat,    08),
-           new HTMLTagInfo ("indent",       HTMLFlag.Region,        08),
-           new HTMLTagInfo ("p",            HTMLFlag.Region,        07),
-           new HTMLTagInfo ("h1",           HTMLFlag.Region,        07),
-           new HTMLTagInfo ("h2",           HTMLFlag.Region,        07),
-           new HTMLTagInfo ("h3",           HTMLFlag.Region,        07),
-           new HTMLTagInfo ("h4",           HTMLFlag.Region,        07),
-           new HTMLTagInfo ("h5",           HTMLFlag.Region,        07),
-           new HTMLTagInfo ("h6",           HTMLFlag.Region,        07),
-           new HTMLTagInfo ("span",         HTMLFlag.Region,        07),
-           new HTMLTagInfo ("font",         HTMLFlag.TextFormat,    04),
-           new HTMLTagInfo ("u",            HTMLFlag.TextFormat,    04),
-           new HTMLTagInfo ("b",            HTMLFlag.TextFormat,    04),
-           new HTMLTagInfo ("s",            HTMLFlag.TextFormat,    04),
-           new HTMLTagInfo ("i",            HTMLFlag.TextFormat,    04),
-           new HTMLTagInfo ("a",            HTMLFlag.TextFormat,    04),
-           new HTMLTagInfo ("sup",          HTMLFlag.TextFormat,    04),
-           new HTMLTagInfo ("sub",          HTMLFlag.TextFormat,    04),
-           new HTMLTagInfo ("strong",       HTMLFlag.TextFormat,    04),
-           new HTMLTagInfo ("color",        HTMLFlag.TextFormat,    04),
-           new HTMLTagInfo ("input",        HTMLFlag.Controls,      02),
-           new HTMLTagInfo ("select",       HTMLFlag.Controls,      02),
-           new HTMLTagInfo ("option",       HTMLFlag.Controls,      02),
-           new HTMLTagInfo ("script",       HTMLFlag.None,          01),
-           new HTMLTagInfo ("meta",         HTMLFlag.Variable,      00),
-           new HTMLTagInfo ("br",           HTMLFlag.Element,       00),
-           new HTMLTagInfo ("hr",           HTMLFlag.Element,       00),
-           new HTMLTagInfo ("img",          HTMLFlag.Element,       00),
-           new HTMLTagInfo ("text",         HTMLFlag.Element,       00),
-           new HTMLTagInfo ("binding",      HTMLFlag.Element,       00),
-           new HTMLTagInfo ("dynamic",      HTMLFlag.Dynamic,       00),
-           new HTMLTagInfo ("user",         HTMLFlag.Dynamic,       00),
-       };
+        /// <summary>font size of h1 to h6, relative to the font size of the text block</summary>
+        private static readonly double[] _headingScales = [2.0, 1.5, 1.25, 1.1, 1.0, 0.9];
 
-        public static IParamParser? ParamParser { get; set; } = new ParamParser(new HtmlAttributeStringSerializer());
+        private static readonly FontFamily _monospace = new FontFamily("Consolas, Courier New, monospace");
+
+        /// <summary>shared by all links, the uri is passed as command parameter</summary>
+        private static readonly RelayCommand<Uri?> _openLinkCommand = new RelayCommand<Uri?>(
+            uri => ShellExecute.Start(ShellExecute.CreateStartInfo(uri!)),
+            ShellExecute.IsWebLink);
+
+        internal static ICommand OpenLinkCommand => _openLinkCommand;
 
         public static void UpdateWith(this TextBlock textBlock, string htmlInput)
         {
-            textBlock.UpdateWith(htmlInput, ParamParser ?? new ParamParser(new HtmlAttributeStringSerializer()));
-        }
-
-        public static void UpdateWith(this TextBlock textBlock, string htmlInput, IParamParser paramParser)
-        {
-            var tree = new HtmlTagTree(paramParser, _builtinTags);
-
+            var tree = new HtmlTagTree();
             tree.BuildFrom(htmlInput);
 
-            // update textbox with inline elements according to syntax tree items
-            var context = new InlineCreationContext();
+            var context = new InlineCreationContext<Color>(TryParseColor);
 
             foreach (var tag in tree.GetTags())
             {
-                switch (_builtinTags[tag.Id].Flags)
+                switch (tag.Kind)
                 {
-                    case HTMLFlag.TextFormat:
+                    case HtmlTagKind.TextFormat:
                         context.UpdateStyle(tag);
                         break;
 
-                    case HTMLFlag.Element:
-                        var inline = tag.CreateInline(textBlock, context);
-                        textBlock.Inlines.Add(inline);
+                    case HtmlTagKind.Element:
+                        textBlock.Inlines.Add(CreateInline(tag, textBlock, context));
+                        break;
+
+                    case HtmlTagKind.List:
+                        if (context.UpdateList(tag) is { } marker)
+                        {
+                            // the marker is formatted like text at its position
+                            textBlock.Inlines.Add(CreateInline(HtmlTag.CreateText(marker), textBlock, context));
+                        }
+
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Reads named colors and #rgb, #rrggbb and #aarrggbb.
+        /// </summary>
+        internal static bool TryParseColor(string value, out Color color)
+        {
+            color = default;
+
+            try
+            {
+                if (ColorConverter.ConvertFromString(value) is Color parsed)
+                {
+                    color = parsed;
+                    return true;
+                }
+            }
+            catch (FormatException)
+            {
+                // invalid colors are ignored
+            }
+            catch (NotSupportedException)
+            {
+                // invalid colors are ignored
+            }
+
+            return false;
+        }
+
+        private static Inline CreateInline(HtmlTag tag, TextBlock textBlock, InlineCreationContext<Color> context)
+        {
+            var result = CreateInlineInternal(tag, textBlock, context);
+
+            return TryWrapInHyperLink(textBlock, result, context.HyperLink);
+        }
+
+        private static Inline CreateInlineInternal(HtmlTag tag, TextBlock textBlock, InlineCreationContext<Color> context)
+        {
+            switch (tag.Name)
+            {
+                case "br":
+                    return new LineBreak();
+
+                case "binding":
+                case "text":
+                    return CreateText(tag, textBlock, context);
+
+                case "img":
+                    var image = HtmlImageFactory.Create(tag, textBlock);
+
+                    return TryWrapInHyperLink(textBlock, image, tag.Get("href"));
+
+                default:
+                    return new Run();
+            }
+        }
+
+        private static Inline CreateText(HtmlTag tag, TextBlock textBlock, InlineCreationContext<Color> context)
+        {
+            Inline result;
+            if (tag.Name == "binding")
+            {
+                result = new Bold(new Run("{Binding}"));
+                if (tag.Get("path") is { } propertyName
+                    && textBlock.DataContext is { } dataContext
+                    && dataContext.GetType().GetProperty(propertyName) is { CanRead: true } property)
+                {
+                    var value = property.GetValue(dataContext, null);
+                    result = new Run(value?.ToString() ?? "");
+                }
+            }
+            else
+            {
+                result = new Run(tag.Get("value"));
+            }
+
+            if (context.SubScript)
+            {
+                result.SetCurrentValue(Typography.VariantsProperty, FontVariants.Subscript);
+            }
+
+            if (context.SuperScript)
+            {
+                result.SetCurrentValue(Typography.VariantsProperty, FontVariants.Superscript);
+            }
+
+            if (context.Bold)
+            {
+                result = new Bold(result);
+            }
+
+            if (context.Italic)
+            {
+                result = new Italic(result);
+            }
+
+            if (context.Underline)
+            {
+                result = new Underline(result);
+            }
+
+            if (context.Foreground.HasValue)
+            {
+                result.Foreground = new SolidColorBrush(context.Foreground.Value);
+            }
+
+            if (context.HeadingLevel > 0)
+            {
+                // relative to the font size at the time the html is parsed
+                result.FontSize = textBlock.FontSize * _headingScales[context.HeadingLevel - 1];
+            }
+
+            if (context.Monospace)
+            {
+                result.FontFamily = _monospace;
+            }
+
+            return result;
+        }
+
+        private static Inline TryWrapInHyperLink(TextBlock textBlock, Inline content, string? url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                return content;
+            }
+
+            var link = new Hyperlink(content);
+
+            if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var uri))
+            {
+                var resolved = HtmlTextBlock.Resolve(textBlock, uri);
+
+                link.NavigateUri = resolved;
+
+                // a resolved relative link shows where it leads, other links show what was written
+                link.ToolTip = ReferenceEquals(resolved, uri) ? url : resolved.AbsoluteUri;
+
+                if (textBlock is HtmlTextBlock { OpenLinksInBrowser: true })
+                {
+                    link.Command = _openLinkCommand;
+                    link.CommandParameter = resolved;
+                }
+            }
+            else
+            {
+                link.NavigateUri = null;
+            }
+
+            return link;
         }
     }
 }

@@ -51,6 +51,7 @@ namespace MvvmScarletToolkit.Avalonia.Samples.Features
             Add("ObservableDictionary", new ObservableDictionaryViewModel());
             Add("Nested Selection", new SelectionsViewModel());
             Add("Tag cloud with a VirtualizingWrapPanel", new TagCloudViewModel());
+            Add("Readme rendered by an HtmlTextBlock", new HtmlReadmeViewModel(commandBuilder));
 
             Items[0].IsSelected = true;
             SelectedItem = Items[0];

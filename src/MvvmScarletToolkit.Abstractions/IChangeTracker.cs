@@ -76,6 +76,7 @@ namespace MvvmScarletToolkit
         /// <returns>the subscription</returns>
         /// <exception cref="ObjectDisposedException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="instance"/> is not being tracked</exception>
         IDisposable SuppressChanges<T>(T instance)
             where T : class, INotifyPropertyChanged;
     }

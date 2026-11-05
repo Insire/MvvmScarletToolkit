@@ -22,14 +22,15 @@ This library aims to provide easy to use [ICommand](https://docs.microsoft.com/e
 |``IScarletCommandBuilder``|Entry point for creating commands. It also exposes the dispatcher, command manager, messenger, exit service and weak event manager of the current UI framework.|
 |``CommandBuilderContext<TArgument>``|Holds the configuration of a command, until ``Build`` creates it.|
 |``ConcurrentCommand<TArgument>``|A Task based ``ICommand`` implementation supporting fluent configuration via ``IScarletCommandBuilder``.|
-|``ConcurrentCommandBase``|Base class of all commands returned by ``Build``, exposing ``Completion``, ``CancelCommand``, ``IsBusy``, ``IsNotBusy`` and ``ExecuteAsync``.|
+|``ConcurrentCommandBase``|Base class of all commands returned by ``Build``, exposing ``Completion``, ``CancelCommand``, ``IsBusy``, ``IsNotBusy``, ``DisabledReason`` and ``ExecuteAsync``.|
 |``IgnoreExceptionHandler``|Default ``IScarletExceptionHandler``. It writes exceptions to the debug output in debug builds and otherwise ignores them.|
 
 ### Builder options
 
 |method|summary|
 |---|---|
-|``WithSingleExecution()``|Only allow one execution at a time. An optional name identifies the command in debug output.|
+|``WithSingleExecution()``|Only allow one execution at a time. An optional name identifies the command in debug output. While running, ``DisabledReason`` reports ``"Already running"``. Pass a different text, or ``null`` for none, through ``WithSingleExecution(name, runningReason)``.|
+|``WithDisabledReason(Func<string?>)``|Explain why the command cannot execute, exposed through ``DisabledReason``. A ``Func<TArgument, string?>`` overload receives the command argument.|
 |``WithBusyNotification(IBusyStack)``|Notify an ``IBusyStack`` while the command is running.|
 |``WithCancellation()``|Synchronous cancellation through ``CancelCommand``.|
 |``WithAsyncCancellation()``|Task based cancellation through ``CancelCommand``.|
@@ -93,6 +94,40 @@ private bool CanSave(string path)
     return !string.IsNullOrEmpty(path);
 }
 ```
+
+### Explaining why a command is disabled
+
+``WithDisabledReason`` supplies a text that explains why ``canExecute`` returned ``false``. The evaluator only runs while the command is disabled, so ``canExecute`` alone decides whether the command can run. ``DisabledReason`` is ``null`` while the command can execute.
+
+```cs
+SaveCommand = commandBuilder
+    .Create(Save, () => Items.Count > 0)
+    .WithDisabledReason(() => "Add at least one item")
+    .WithSingleExecution(nameof(SaveCommand), "Saving...") // reported while the command is running
+    .Build();
+```
+
+Disabled controls don't show tooltips by default, so enable that in the view.
+
+WPF:
+
+```xml
+<Button Command="{Binding SaveCommand}"
+        Content="Save"
+        ToolTip="{Binding SaveCommand.DisabledReason}"
+        ToolTipService.ShowOnDisabled="True" />
+```
+
+Avalonia:
+
+```xml
+<Button Command="{Binding SaveCommand}"
+        Content="Save"
+        ToolTip.Tip="{Binding SaveCommand.DisabledReason}"
+        ToolTip.ShowOnDisabled="True" />
+```
+
+``DisabledReason`` reflects the most recent ``CanExecute`` call. When several controls bind the same command with different ``CommandParameter`` values, the last evaluated one wins.
 
 ### Handling exceptions
 

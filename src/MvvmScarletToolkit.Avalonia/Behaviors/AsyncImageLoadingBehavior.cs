@@ -27,6 +27,9 @@ namespace MvvmScarletToolkit
             public bool IsScheduled { get; set; }
 
             public ImageLoadState State { get; set; }
+
+            /// <summary>Overrides <see cref="AsyncImageLoadingBehavior.Loader"/> for one image, e.g. from <see cref="HtmlTextBlock.ImageService"/>.</summary>
+            public Lazy<IImageService<Bitmap>>? Loader { get; set; }
         }
 
         private static readonly ConditionalWeakTable<Image, LoadState> _states = new();
@@ -92,6 +95,14 @@ namespace MvvmScarletToolkit
 
         public static void SetIsFailed(Image image, bool value) => image.SetValue(IsFailedProperty, value);
 
+        /// <summary>
+        /// Loads the source of <paramref name="image"/> with <paramref name="loader"/> instead of <see cref="Loader"/>. Set it before the source.
+        /// </summary>
+        internal static void SetLoader(Image image, Lazy<IImageService<Bitmap>>? loader)
+        {
+            GetLoadState(image).Loader = loader;
+        }
+
         private static LoadState GetLoadState(Image image)
         {
             if (_states.TryGetValue(image, out var state))
@@ -130,10 +141,18 @@ namespace MvvmScarletToolkit
 
         private static void OnDetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
-            // stop wasting bandwidth on images that are not shown anymore, e.g. in virtualized lists
-            if (sender is Image image && _states.TryGetValue(image, out var state))
+            // stop wasting bandwidth on images that are not shown anymore, e.g. in virtualized lists.
+            // Deferred, since some panels detach and attach their children again within the same layout pass,
+            // e.g. a TextBlock with an InlineUIContainer whenever its layout changes
+            if (sender is Image image && _states.TryGetValue(image, out var state) && state.CancellationTokenSource is { } cancellationTokenSource)
             {
-                state.CancellationTokenSource?.Cancel();
+                Dispatcher.UIThread.Post(() =>
+                {
+                    if (!image.IsAttachedToVisualTree() && ReferenceEquals(state.CancellationTokenSource, cancellationTokenSource))
+                    {
+                        cancellationTokenSource.Cancel();
+                    }
+                }, DispatcherPriority.Background);
             }
         }
 
@@ -173,7 +192,7 @@ namespace MvvmScarletToolkit
                 return;
             }
 
-            var loader = Loader;
+            var loader = state.Loader ?? Loader;
             if (loader is null)
             {
                 Logger.TryGet(LogEventLevel.Warning, LogArea.Control)?.Log(image, "No image service has been configured to load {Uri}", uri);
@@ -191,6 +210,7 @@ namespace MvvmScarletToolkit
 
             var cancellationTokenSource = new CancellationTokenSource();
             state.CancellationTokenSource = cancellationTokenSource;
+            var isDetachCancellation = false;
 
             try
             {
@@ -204,6 +224,7 @@ namespace MvvmScarletToolkit
                 {
                     // detached, the image service reports cancellation with null, resumes once attached again
                     UpdateState(image, state, ImageLoadState.Pending);
+                    isDetachCancellation = true;
                 }
                 else
                 {
@@ -218,6 +239,7 @@ namespace MvvmScarletToolkit
                 if (state.Version == version)
                 {
                     UpdateState(image, state, ImageLoadState.Pending);
+                    isDetachCancellation = true;
                 }
             }
             catch (Exception ex)
@@ -238,6 +260,12 @@ namespace MvvmScarletToolkit
                 }
 
                 cancellationTokenSource.Dispose();
+            }
+
+            // attached again while the cancelled load was still running, OnAttachedToVisualTree skipped it then
+            if (isDetachCancellation && image.IsAttachedToVisualTree())
+            {
+                Invalidate(image);
             }
         }
 

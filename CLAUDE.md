@@ -20,6 +20,7 @@ Tests use xunit v3 on Microsoft.Testing.Platform (see `global.json`). WPF projec
 - `src/MvvmScarletToolkit.Abstractions`, `MvvmScarletToolkit`, `.Commands`, `.Observables`: UI-independent and `netstandard2.0`, so newer BCL APIs are not available there.
 - `src/MvvmScarletToolkit.ImageLoading`, `.Mediator`: UI-independent, targeting .NET 8 and 10.
 - `src/MvvmScarletToolkit.Wpf`, `.Avalonia`: UI-specific packages, targeting .NET 8 and 10.
+- `src/Shared/HtmlTextBlock`: internal html parser, compiled into both UI packages as linked files. No WPF or Avalonia types there.
 - `samples/`: working demos. `MvvmScarletToolkit.Wpf.Samples/MainWindow.xaml` holds the scene templates, `Features/NavigationViewModel.cs` registers the scenes.
 - `tests/`: one test project per package, plus `shared/MvvmScarletToolkit.Test.Tracing`.
 - Package versions are managed centrally in `Directory.Packages.props`.

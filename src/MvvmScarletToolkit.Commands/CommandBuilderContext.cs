@@ -29,6 +29,11 @@ namespace MvvmScarletToolkit.Commands
         /// </summary>
         internal IBusyStack? BusyStack { get; set; }
 
+        /// <summary>
+        /// optional evaluator that explains why the command cannot execute, exposed through <see cref="ConcurrentCommandBase.DisabledReason"/>
+        /// </summary>
+        internal Func<TArgument, string?>? DisabledReasonEvaluator { get; set; }
+
         public CommandBuilderContext(in IScarletCommandManager commandManager,
                                      in IScarletExceptionHandler exceptionHandler,
                                      in Func<Action<bool>, IBusyStack> busyStackFactory,
@@ -66,12 +71,13 @@ namespace MvvmScarletToolkit.Commands
         {
             var cancelCommand = CancelCommandFactory?.Invoke() ?? NoCancellationCommand.Default;
 
-            if (BusyStack is null)
-            {
-                return new ConcurrentCommand<TArgument>(CommandManager, ExceptionHandler, cancelCommand, _busyStackFactory, _execute, _canExecute);
-            }
+            var command = BusyStack is null
+                ? new ConcurrentCommand<TArgument>(CommandManager, ExceptionHandler, cancelCommand, _busyStackFactory, _execute, _canExecute)
+                : new ConcurrentCommand<TArgument>(CommandManager, ExceptionHandler, cancelCommand, _busyStackFactory, BusyStack, _execute, _canExecute);
 
-            return new ConcurrentCommand<TArgument>(CommandManager, ExceptionHandler, cancelCommand, _busyStackFactory, BusyStack, _execute, _canExecute);
+            command.DisabledReasonEvaluator = DisabledReasonEvaluator;
+
+            return command;
         }
 
         private ConcurrentCommandBase WrapInDecorators(in ConcurrentCommandBase command)

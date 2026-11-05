@@ -1,0 +1,60 @@
+<UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.HtmlReadmeView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:features="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Features"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="features:HtmlReadmeViewModel"
+             mc:Ignorable="d">
+
+    <Grid Margin="8"
+          ColumnDefinitions="*,8,*"
+          RowDefinitions="Auto,*">
+        <DockPanel Grid.ColumnSpan="3" Margin="0 0 0 8">
+            <Button Command="{Binding RestoreCommand}"
+                    Content="Restore original"
+                    DockPanel.Dock="Left"
+                    ToolTip.ShowOnDisabled="True"
+                    ToolTip.Tip="{Binding RestoreCommand.DisabledReason}" />
+
+            <TextBox Width="200"
+                     Margin="8 0 0 0"
+                     DockPanel.Dock="Left"
+                     PlaceholderText="Highlight in the preview"
+                     Text="{Binding Highlight}" />
+
+            <TextBlock Margin="16 0 0 0"
+                       VerticalAlignment="Center"
+                       Text="Edit the html on the left, the preview follows."
+                       TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+
+        <!--  the delay keeps the preview from being rebuilt on every keystroke  -->
+        <TextBox Grid.Row="1"
+                 AcceptsReturn="True"
+                 AcceptsTab="True"
+                 AutomationProperties.Name="Html"
+                 FontFamily="Consolas, Menlo, monospace"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 Text="{Binding Html, Delay=300}"
+                 VerticalContentAlignment="Top" />
+
+        <GridSplitter Grid.Row="1"
+                      Grid.Column="1"
+                      Background="Transparent"
+                      ResizeDirection="Columns" />
+
+        <ScrollViewer Grid.Row="1"
+                      Grid.Column="2"
+                      AutomationProperties.Name="Preview">
+            <mvvm:HtmlHighlightTextBlock Margin="8"
+                                         Highlight="{Binding Highlight}"
+                                         Html="{Binding Html}"
+                                         OpenLinksInBrowser="True"
+                                         TextWrapping="Wrap" />
+        </ScrollViewer>
+    </Grid>
+</UserControl>

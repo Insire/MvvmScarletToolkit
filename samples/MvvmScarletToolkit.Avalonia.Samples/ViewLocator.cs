@@ -42,6 +42,7 @@ namespace MvvmScarletToolkit.Avalonia.Samples
                 [typeof(ObservableDictionaryViewModel)] = typeof(ObservableDictionaryView),
                 [typeof(SelectionsViewModel)] = typeof(SelectionsView),
                 [typeof(TagCloudViewModel)] = typeof(TagCloudView),
+                [typeof(HtmlReadmeViewModel)] = typeof(HtmlReadmeView),
             };
         }
 

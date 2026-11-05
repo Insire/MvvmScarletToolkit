@@ -1851,7 +1851,9 @@
                                       VerticalAlignment="Center"
                                       Command="{Binding RunCommand}"
                                       Content="Open Dialog"
-                                      IsChecked="{Binding DialogResult.IsOpen, Mode=OneWay}" />
+                                      IsChecked="{Binding DialogResult.IsOpen, Mode=OneWay}"
+                                      ToolTip="{Binding RunCommand.DisabledReason}"
+                                      ToolTipService.ShowOnDisabled="True" />
 
                         <Popup MinWidth="350"
                                MinHeight="325"
@@ -2080,6 +2082,80 @@
                     </DockPanel>
                 </DataTemplate>
 
+                <DataTemplate DataType="{x:Type features:HtmlReadmeViewModel}">
+                    <Grid Margin="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" MinWidth="200" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel Grid.ColumnSpan="3" Margin="0 0 0 8">
+                            <!--  the disabled reasons come from the commands, disabled buttons need ShowOnDisabled for their tooltip  -->
+                            <Button Padding="12 4"
+                                    Command="{Binding OpenCommand}"
+                                    Content="Open..."
+                                    DockPanel.Dock="Left"
+                                    ToolTip="{Binding OpenCommand.DisabledReason}"
+                                    ToolTipService.ShowOnDisabled="True" />
+                            <Button Margin="8 0 0 0"
+                                    Padding="12 4"
+                                    Command="{Binding RestoreCommand}"
+                                    Content="Restore original"
+                                    DockPanel.Dock="Left"
+                                    ToolTip="{Binding RestoreCommand.DisabledReason}"
+                                    ToolTipService.ShowOnDisabled="True" />
+                            <Button Margin="8 0 0 0"
+                                    Padding="12 4"
+                                    Command="{Binding SaveCommand}"
+                                    Content="Save as..."
+                                    DockPanel.Dock="Left"
+                                    ToolTip="{Binding SaveCommand.DisabledReason}"
+                                    ToolTipService.ShowOnDisabled="True" />
+
+                            <TextBlock Margin="16 0 0 0"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding Status}"
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip="{Binding Status}" />
+                        </DockPanel>
+
+                        <!--  the delay keeps the preview from being rebuilt on every keystroke  -->
+                        <TextBox Grid.Row="1"
+                                 AcceptsReturn="True"
+                                 AcceptsTab="True"
+                                 AutomationProperties.Name="Html"
+                                 FontFamily="Consolas"
+                                 HorizontalScrollBarVisibility="Auto"
+                                 Text="{Binding Html, UpdateSourceTrigger=PropertyChanged, Delay=300}"
+                                 VerticalContentAlignment="Top"
+                                 VerticalScrollBarVisibility="Auto" />
+
+                        <GridSplitter Grid.Row="1"
+                                      Grid.Column="1"
+                                      Width="8"
+                                      HorizontalAlignment="Stretch"
+                                      Background="Transparent"
+                                      ResizeBehavior="PreviousAndNext" />
+
+                        <ScrollViewer Grid.Row="1"
+                                      Grid.Column="2"
+                                      AutomationProperties.Name="Preview"
+                                      VerticalScrollBarVisibility="Auto">
+                            <mvvm:HtmlTextBlock Margin="8"
+                                                mvvm:TextBlockSelection.IsEnabled="True"
+                                                BaseUri="{Binding BaseUri}"
+                                                Html="{Binding Html}"
+                                                OpenLinksInBrowser="True"
+                                                TextWrapping="Wrap" />
+                        </ScrollViewer>
+                    </Grid>
+                </DataTemplate>
+
                 <DataTemplate DataType="{x:Type features:SelectableTextViewModel}">
                     <StackPanel Orientation="Vertical">
                         <StackPanel.Resources>
@@ -2114,6 +2190,18 @@
                                                 mvvm:TextBlockSelection.SelectionBrush="Orange"
                                                 mvvm:TextBlockSelection.SelectionOpacity="0.6"
                                                 Html="This &lt;b&gt;selection&lt;/b&gt; is orange." />
+                        </GroupBox>
+
+                        <GroupBox Margin="0 8 0 0" Header="HtmlTextBlock with colors and images">
+                            <StackPanel Orientation="Vertical">
+                                <mvvm:HtmlTextBlock Html="Text in &lt;font color='Crimson'&gt;crimson&lt;/font&gt;, &lt;span style=&quot;color: #2E8B57&quot;&gt;sea green with a &lt;b&gt;bold&lt;/b&gt; word&lt;/span&gt; and back to the default color." TextWrapping="Wrap" />
+                                <mvvm:HtmlTextBlock Margin="0 8 0 0"
+                                                    Html="An embedded icon &lt;img src='pack://application:,,,/Resources/icon-32.png' alt='toolkit icon' title='Loaded from a pack uri' style='width: 16px; height: 16px; margin: 0 4px; vertical-align: middle'&gt; inline with the text."
+                                                    TextWrapping="Wrap" />
+                                <mvvm:HtmlTextBlock Margin="0 8 0 0"
+                                                    Html="A web image through the image cache &lt;img src='https://w.wallhaven.cc/full/o5/wallhaven-o58767.jpg' alt='[image could not be loaded]' title='Cached by MvvmScarletToolkit.ImageLoading' style='width: 64px; height: 36px; vertical-align: middle; opacity: 0.8'&gt; and a missing one &lt;img src='https://example.invalid/missing.png' alt='[missing image]' style='vertical-align: middle'&gt;."
+                                                    TextWrapping="Wrap" />
+                            </StackPanel>
                         </GroupBox>
 
                         <GroupBox Margin="0 8 0 0" Header="Bound text">

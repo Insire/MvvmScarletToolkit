@@ -7,8 +7,11 @@ using MvvmScarletToolkit.Avalonia.Tests.Util;
 namespace MvvmScarletToolkit.Avalonia.Tests
 {
     // AsyncImageLoadingBehavior.Loader is static, tests in this class must not run in parallel with other users of it
+    [Collection(LoaderCollection)]
     public sealed class AsyncImageLoadingBehaviorTests : TraceTestBase, IDisposable
     {
+        public const string LoaderCollection = "AsyncImageLoadingBehavior.Loader";
+
         private static readonly Uri First = new("https://example.com/first.png");
         private static readonly Uri Second = new("https://example.com/second.png");
 
@@ -435,6 +438,74 @@ namespace MvvmScarletToolkit.Avalonia.Tests
 
                 await WaitUntil(() => image.Source is not null);
                 Assert.Same(_firstBitmap, image.Source);
+                AssertState(image, ImageLoadState.Loaded);
+                Assert.Equal(2, _imageService.ReceivedCalls().Count());
+                window.Close();
+            });
+        }
+
+        [Fact]
+        public Task Detaching_And_Attaching_Within_One_Pass_Should_Not_Cancel()
+        {
+            // a TextBlock detaches and attaches its embedded controls whenever its layout changes
+            return _platform.RunOnUIThread(async () =>
+            {
+                var started = new TaskCompletionSource();
+                var result = ReturnsLater(First, started);
+
+                var (window, image) = CreateShownImage();
+                AsyncImageLoadingBehavior.SetSource(image, First);
+                await WaitUntil(() => started.Task.IsCompleted);
+
+                window.Content = null;
+                window.Content = image;
+                await Settle();
+
+                result.SetResult(_firstBitmap);
+
+                await WaitUntil(() => image.Source is not null);
+                AssertState(image, ImageLoadState.Loaded);
+                Assert.Single(_imageService.ReceivedCalls());
+                window.Close();
+            });
+        }
+
+        [Fact]
+        public Task Reattaching_While_A_Cancelled_Load_Is_Still_Running_Should_Resume()
+        {
+            return _platform.RunOnUIThread(async () =>
+            {
+                CancellationToken firstToken = default;
+                var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                _imageService.ProvideImageAsync(First, Arg.Any<ImageSize?>(), Arg.Any<Func<bool, Task>>(), Arg.Any<CancellationToken>())
+                    .Returns(async call =>
+                    {
+                        var token = call.Arg<CancellationToken>();
+                        if (!started.Task.IsCompleted)
+                        {
+                            firstToken = token;
+                            started.SetResult();
+
+                            // notices the cancellation only after the image was attached again
+                            await release.Task;
+                            token.ThrowIfCancellationRequested();
+                        }
+
+                        return (Bitmap?)_firstBitmap;
+                    });
+
+                var (window, image) = CreateShownImage();
+                AsyncImageLoadingBehavior.SetSource(image, First);
+                await WaitUntil(() => started.Task.IsCompleted);
+
+                window.Content = null;
+                await WaitUntil(() => firstToken.IsCancellationRequested);
+                window.Content = image;
+                await Settle();
+                release.SetResult();
+
+                await WaitUntil(() => image.Source is not null);
                 AssertState(image, ImageLoadState.Loaded);
                 Assert.Equal(2, _imageService.ReceivedCalls().Count());
                 window.Close();

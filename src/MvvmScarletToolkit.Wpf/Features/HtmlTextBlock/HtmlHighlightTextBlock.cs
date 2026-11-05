@@ -1,12 +1,10 @@
-using System.Text.RegularExpressions;
+using MvvmScarletToolkit.Html;
 using System.Windows;
 
 namespace MvvmScarletToolkit.Wpf
 {
     public class HtmlHighlightTextBlock : HtmlTextBlock
     {
-        private static readonly Regex _tagSplitter = new Regex("(<[^>]*>)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-
         /// <summary>Identifies the <see cref="Highlight"/> dependency property.</summary>
         public static readonly DependencyProperty HighlightProperty = DependencyProperty.Register(
             nameof(Highlight),
@@ -29,25 +27,7 @@ namespace MvvmScarletToolkit.Wpf
                 return;
             }
 
-            var highlight = Highlight;
-            if (!string.IsNullOrEmpty(highlight))
-            {
-                var pattern = Regex.Escape(highlight);
-
-                // only highlight text between tags, the split keeps the tags, since they are captured
-                var segments = _tagSplitter.Split(html);
-                for (var i = 0; i < segments.Length; i++)
-                {
-                    if (!segments[i].StartsWith('<'))
-                    {
-                        segments[i] = Regex.Replace(segments[i], pattern, "<b>$0</b>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-                    }
-                }
-
-                html = string.Concat(segments);
-            }
-
-            this.UpdateWith(html);
+            this.UpdateWith(HtmlHighlighter.Apply(html, Highlight));
         }
 
         private static void OnHighlightChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)

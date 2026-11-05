@@ -233,6 +233,173 @@ namespace MvvmScarletToolkit.Wpf.Tests
             });
         }
 
+        private static readonly FileSystemFilter _html = new("Html", "*.html");
+
+        [Fact]
+        public Task PickSaveFile_Should_Return_The_Folder_And_Name_With_The_Filter_Extension()
+        {
+            return StaRunner.Run(async () =>
+            {
+                var result = await Show(() => CreateDialog().PickSaveFile(_directory, "readme", CancellationToken.None, _html, FileSystemFilter.AllFiles), async (window, picker) =>
+                {
+                    await Load(picker);
+
+                    var save = Assert.IsType<SaveFilePickerViewModel>(picker);
+                    Assert.Multiple(() =>
+                    {
+                        Assert.Equal("Save", save.ConfirmText);
+                        Assert.Equal(Path.Combine(_directory, "readme.html"), save.SelectedPath, ignoreCase: true);
+                    });
+
+                    picker.ConfirmCommand.Execute(null);
+                });
+
+                Assert.Equal(Path.Combine(_directory, "readme.html"), result, ignoreCase: true);
+            });
+        }
+
+        [Fact]
+        public Task PickSaveFile_Should_Show_A_Focused_File_Name_Box()
+        {
+            return StaRunner.Run(async () =>
+            {
+                await Show(() => CreateDialog().PickSaveFile(_directory, "readme.html", CancellationToken.None), async (window, picker) =>
+                {
+                    await Load(picker);
+                    await Ui.WaitUntil(() => FindTextBox(window, "FileName") is not null);
+
+                    var textBox = FindTextBox(window, "FileName")!;
+                    Assert.Multiple(() =>
+                    {
+                        Assert.Equal("readme.html", textBox.Text);
+                        Assert.True(textBox.IsKeyboardFocusWithin);
+
+                        // typing replaces the name, the extension stays
+                        Assert.Equal("readme", textBox.SelectedText);
+                    });
+
+                    textBox.Text = "other.html";
+                    Assert.Equal("other.html", ((SaveFilePickerViewModel)picker).FileName);
+
+                    window.Close();
+                });
+            });
+        }
+
+        [Fact]
+        public Task PickSaveFile_Should_Take_The_Name_Of_A_Selected_File()
+        {
+            return StaRunner.Run(async () =>
+            {
+                CreateFile("existing.html");
+
+                await Show(() => CreateDialog().PickSaveFile(_directory, "readme.html", CancellationToken.None), async (window, picker) =>
+                {
+                    await Load(picker);
+                    await Ui.WaitUntil(() => picker.FileSystem.Entries?.Count > 0);
+
+                    picker.FileSystem.SelectedEntry = picker.FileSystem.Entries!.Single();
+
+                    Assert.Equal("existing.html", ((SaveFilePickerViewModel)picker).FileName);
+
+                    window.Close();
+                });
+            });
+        }
+
+        [Fact]
+        public Task PickSaveFile_Should_Ask_Before_Replacing_A_File()
+        {
+            return StaRunner.Run(async () =>
+            {
+                var existing = CreateFile("readme.html");
+                var asked = new List<string>();
+
+                var result = await Show(() => CreateDialog().PickSaveFile(_directory, "readme.html", CancellationToken.None), async (window, picker) =>
+                {
+                    await Load(picker);
+
+                    var save = (SaveFilePickerViewModel)picker;
+
+                    // declining keeps the dialog open
+                    save.ConfirmOverwrite = path =>
+                    {
+                        asked.Add(path);
+                        return false;
+                    };
+                    picker.ConfirmCommand.Execute(null);
+
+                    Assert.True(window.IsVisible);
+
+                    save.ConfirmOverwrite = path =>
+                    {
+                        asked.Add(path);
+                        return true;
+                    };
+                    picker.ConfirmCommand.Execute(null);
+                });
+
+                Assert.Equal(existing, result, ignoreCase: true);
+                Assert.Equal(2, asked.Count);
+            });
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("   ")]
+        [InlineData("a/b.html")]
+        [InlineData("a:b.html")]
+        public Task PickSaveFile_Should_Not_Confirm_Invalid_Names(string fileName)
+        {
+            return StaRunner.Run(async () =>
+            {
+                await Show(() => CreateDialog().PickSaveFile(_directory, fileName, CancellationToken.None), async (window, picker) =>
+                {
+                    await Load(picker);
+
+                    Assert.Multiple(() =>
+                    {
+                        Assert.Null(picker.SelectedPath);
+                        Assert.False(picker.ConfirmCommand.CanExecute(null));
+                    });
+
+                    window.Close();
+                });
+            });
+        }
+
+        [Theory]
+        [InlineData("readme", "*.html", "readme.html")]
+        [InlineData("readme.txt", "*.html", "readme.txt")]
+        [InlineData("readme", "*", "readme")]
+        [InlineData("readme", "*.htm*", "readme")]
+        [InlineData("readme", null, "readme")]
+        public void WithDefaultExtension_Should_Only_Use_Simple_Patterns(string fileName, string? pattern, string expected)
+        {
+            var filter = pattern is null ? null : new FileSystemFilter("filter", pattern);
+
+            Assert.Equal(expected, SaveFilePickerViewModel.WithDefaultExtension(fileName, filter));
+        }
+
+        private static System.Windows.Controls.TextBox? FindTextBox(DependencyObject parent, string automationId)
+        {
+            for (var i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+                if (child is System.Windows.Controls.TextBox textBox && System.Windows.Automation.AutomationProperties.GetAutomationId(textBox) == automationId)
+                {
+                    return textBox;
+                }
+
+                if (FindTextBox(child, automationId) is { } found)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
         [Fact]
         public void Should_Require_Its_Dependencies()
         {

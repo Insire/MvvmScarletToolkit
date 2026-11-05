@@ -383,7 +383,8 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             {
                 IFileSystemDrive drive => Task.Run<bool?>(() => IsDriveEmpty(drive), token),
                 IFileSystemDirectory directory => Task.Run(() => IsDirectoryEmpty(directory), token),
-                _ => throw new NotImplementedException(),
+                null => throw new ArgumentNullException(nameof(parent)),
+                _ => throw new ArgumentException($"{parent.GetType().FullName} is not supported. Expected an {nameof(IFileSystemDrive)} or an {nameof(IFileSystemDirectory)}.", nameof(parent)),
             };
         }
 

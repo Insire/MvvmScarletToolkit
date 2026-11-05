@@ -1,0 +1,205 @@
+<!-- README.md converted for HtmlTextBlock: whitespace and line breaks are kept as written, so block tags stay on the lines they open. -->
+<img src="pack://application:,,,/Resources/wordmark-dark.png" alt="MvvmScarletToolkit" title="MvvmScarletToolkit" style="width: 420px; margin: 0 0 8px 0">
+
+<img src="https://raster.shields.io/badge/License-MIT-blue.png" alt="[License: MIT]" title="License: MIT" href="https://github.com/Insire/MvvmScarletToolkit/blob/master/LICENSE.md" style="height: 20px; vertical-align: middle; margin: 0 4px 0 0"><img src="https://raster.shields.io/nuget/v/MvvmScarletToolkit.png?style=flat-square&amp;label=nuget" alt="[NuGet]" title="NuGet" href="https://www.nuget.org/packages/MvvmScarletToolkit/" style="height: 20px; vertical-align: middle; margin: 0 4px 0 0"><img src="https://raster.shields.io/azure-devops/build/SoftThorn/MvvmScarletToolkit/1.png" alt="[Build status]" title="Build status" href="https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_build/latest?definitionId=1" style="height: 20px; vertical-align: middle; margin: 0 4px 0 0"><img src="https://raster.shields.io/codefactor/grade/github/insire/mvvmscarlettoolkit.png" alt="[CodeFactor]" title="CodeFactor" href="https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit" style="height: 20px; vertical-align: middle; margin: 0 4px 0 0"><img src="https://raster.shields.io/codecov/c/github/Insire/MvvmScarletToolkit.png" alt="[codecov]" title="codecov" href="https://codecov.io/gh/Insire/MvvmScarletToolkit" style="height: 20px; vertical-align: middle">
+
+MvvmScarletToolkit provides classes to speed up the MVVM development process for XAML-based applications using the viewmodel first approach. It supports WPF and Avalonia.
+
+<h2>Features</h2>
+
+Each package has its own readme with the full list of what it contains.
+
+<ul><li><a href="https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Commands/readme.md">MvvmScarletToolkit.Commands</a>: fluent interface to build task based ICommands with cancellation, single execution and busy state notifications</li>
+<li><a href="https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Observables/readme.md">MvvmScarletToolkit.Observables</a>: viewmodel base classes, threadsafe busy state, localization, change tracking, paging and navigation</li>
+<li><a href="https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Wpf/readme.md">MvvmScarletToolkit.Wpf</a>: behaviors, converters as markup extensions, DataGrid extensions, FileSystemBrowser with file and folder dialogs, virtualizing panels, HtmlTextBlock, selectable text and toast notifications</li>
+<li><a href="https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Avalonia/readme.md">MvvmScarletToolkit.Avalonia</a>: Avalonia implementations of the toolkit services, async image loading and virtualizing panels</li>
+<li><a href="https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.ImageLoading/readme.md">MvvmScarletToolkit.ImageLoading</a>: loading and caching images from remote resources</li>
+<li><a href="https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Mediator/readme.md">MvvmScarletToolkit.Mediator</a>: simple mediator with requests and notifications</li>
+<li><a href="https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit/readme.md">MvvmScarletToolkit</a>: extension methods used across the toolkit</li>
+<li><a href="https://github.com/Insire/MvvmScarletToolkit/blob/master/src/MvvmScarletToolkit.Abstractions/readme.md">MvvmScarletToolkit.Abstractions</a>: interfaces shared by the rest of the toolkit</li></ul>
+
+<h2>Getting Started</h2>
+
+<h3>Install</h3>
+
+Install the package for your UI framework. It brings in the commands, viewmodel base classes and abstractions.
+
+For WPF:
+
+<pre>dotnet add package MvvmScarletToolkit.Wpf</pre>
+
+For Avalonia:
+
+<pre>dotnet add package MvvmScarletToolkit.Avalonia</pre>
+
+The current NuGet release (5.0.96) targets .NET 8 and 9, and is built against Avalonia 11. The source in this repository targets .NET 8 and 10, and Avalonia 12.
+
+Pre-release packages are available on <a href="https://github.com/Insire/MvvmScarletToolkit/packages">GitHub</a>. GitHub requires a personal access token to restore from its NuGet feed.
+
+<h3>Create a viewmodel</h3>
+
+Derive from <code>ViewModelBase</code> and create commands through the <code>IScarletCommandBuilder</code> passed to the constructor:
+
+<pre>using MvvmScarletToolkit;
+using MvvmScarletToolkit.Observables;
+using System.Windows.Input;
+
+public sealed class CounterViewModel : ViewModelBase
+{
+    private int _count;
+    public int Count
+    {
+        get { return _count; }
+        private set { SetProperty(ref _count, value); }
+    }
+
+    public ICommand IncrementCommand { get; }
+
+    public CounterViewModel(IScarletCommandBuilder commandBuilder)
+        : base(commandBuilder)
+    {
+        IncrementCommand = commandBuilder
+            .Create(Increment)
+            .WithSingleExecution() <font color="#6A9955">// only one execution at a time</font>
+            .WithBusyNotification(BusyStack) <font color="#6A9955">// sets IsBusy while running</font>
+            .WithAsyncCancellation() <font color="#6A9955">// adds cancellation support</font>
+            .Build();
+    }
+
+    private async Task Increment(CancellationToken token)
+    {
+        await Task.Delay(500, token);
+        await Dispatcher.Invoke(() =&gt; Count++);
+    }
+}</pre>
+
+For viewmodels that load their content, derive from <code>BusinessViewModelBase</code> or <code>BusinessViewModelListBase&lt;T&gt;</code> instead. They provide <code>LoadCommand</code>, <code>RefreshCommand</code> and <code>UnloadCommand</code>, and unload when the application exits.
+
+<h3>Create the viewmodel at startup</h3>
+
+<code>ScarletCommandBuilder.Default</code> provides the services for the current UI framework. Use it once the application has started, because it depends on the running application. It can also be registered in a DI container as a singleton.
+
+For WPF, in <code>App.xaml.cs</code> (remove <code>StartupUri</code> from <code>App.xaml</code>):
+
+<pre>protected override void OnStartup(StartupEventArgs e)
+{
+    base.OnStartup(e);
+
+    var window = new MainWindow
+    {
+        DataContext = new CounterViewModel(ScarletCommandBuilder.Default),
+    };
+
+    window.Show();
+}</pre>
+
+For Avalonia, in <code>App.axaml.cs</code>:
+
+<pre>public override void OnFrameworkInitializationCompleted()
+{
+    if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        desktop.MainWindow = new MainWindow
+        {
+            DataContext = new CounterViewModel(ScarletCommandBuilder.Default),
+        };
+    }
+
+    base.OnFrameworkInitializationCompleted();
+}</pre>
+
+<h3>Bind the view</h3>
+
+<pre>&lt;StackPanel&gt;
+    &lt;TextBlock Text="{Binding Count}" /&gt;
+    &lt;Button Command="{Binding IncrementCommand}" Content="Increment" /&gt;
+    &lt;ProgressBar IsIndeterminate="{Binding IsBusy}" /&gt;
+&lt;/StackPanel&gt;</pre>
+
+The toolkit's XAML types share a single namespace in both frameworks. The WPF package has the larger set of converters and behaviors:
+
+<pre>xmlns:mvvm="http://SoftThorn.MvvmScarletToolkit.com/winfx/xaml/shared"</pre>
+
+<h3>Explore the samples</h3>
+
+The <a href="https://github.com/Insire/MvvmScarletToolkit#samples">samples</a> show these features in working applications. Requires the <a href="https://dotnet.microsoft.com/download/dotnet/10.0">.NET 10 SDK</a>:
+
+<pre>git clone https://github.com/Insire/MvvmScarletToolkit.git</pre>
+
+<pre>cd MvvmScarletToolkit</pre>
+
+Run the WPF samples (Windows only):
+
+<pre>dotnet run --project samples/MvvmScarletToolkit.Wpf.Samples</pre>
+
+Run the Avalonia samples:
+
+<pre>dotnet run --project samples/MvvmScarletToolkit.Avalonia.Samples</pre>
+
+<h2>Samples</h2>
+
+<ul><li>MvvmScarletToolkit.Core.Samples: viewmodels shared by the WPF and Avalonia samples</li>
+<li>MvvmScarletToolkit.Incubator: experimental WPF image code referenced by the WPF samples</li>
+<li>MvvmScarletToolkit.Wpf.Samples
+<ul><li>navigation</li>
+<li>async cancelable commands using ICommand</li>
+<li>file/folder browser</li>
+<li>file and folder dialogs with file filters</li>
+<li>image loading with drag and drop, and in a virtualized list</li>
+<li>lazy loading and data virtualization</li>
+<li>live sorting and grouping in bound collections</li>
+<li>DataGrid extensions: column filters, drag and drop grouping, hiding columns, summaries, saved layouts and exporting</li>
+<li>a DataGrid with a million rows and the most common data types</li>
+<li>an implementation of IProgress (e.g. for a progressbar) to send any amount of updates without locking up the UI thread</li>
+<li>stress test for rendering lots of characters converted to geometry objects</li>
+<li>a passwordbox with binding support</li>
+<li>watermark support and a clear button for textboxes</li>
+<li>dialogs and toast notifications</li>
+<li>terminal/console and context menus using MVVM</li>
+<li>nested selection</li>
+<li>binding enum values and an ObservableDictionary</li>
+<li>a tag cloud with a VirtualizingWrapPanel</li>
+<li>selecting and copying the text of a TextBlock</li>
+<li>this readme, rendered by an HtmlTextBlock</li></ul></li>
+<li>MvvmScarletToolkit.Avalonia.Samples: the same scenes as the WPF samples, apart from the DataGrid, grouping, the file/folder browser and text selection, as those are not part of the Avalonia package
+<ul><li>navigation</li>
+<li>async cancelable commands using ICommand</li>
+<li>image loading with drag and drop, and in a virtualized list</li>
+<li>lazy loading and data virtualization</li>
+<li>progress notifications and state changes in a tree structure</li>
+<li>stress test for rendering lots of characters converted to geometry objects, in a VirtualizingTilePanel</li>
+<li>a passwordbox with binding support</li>
+<li>input prevention for textboxes</li>
+<li>dialogs and toast notifications</li>
+<li>terminal/console and context menus using MVVM</li>
+<li>nested selection</li>
+<li>binding enum values and an ObservableDictionary</li>
+<li>a tag cloud with a VirtualizingWrapPanel</li></ul></li></ul>
+
+<h2>Build Requirements</h2>
+
+This repository requires the .NET 10 SDK, as configured in <a href="https://github.com/Insire/MvvmScarletToolkit/blob/master/global.json">global.json</a>. The easiest way to get everything is <a href="https://visualstudio.microsoft.com/vs/community/">Visual Studio 2026</a> or newer, which prompts you to install any missing components when you open the <a href="https://github.com/Insire/MvvmScarletToolkit/blob/master/MvvmScarletToolkit.slnx">slnx</a> file.
+
+Otherwise, you need:
+
+<ul><li>Windows 10 or newer, or Linux (building only: the WPF projects and their tests and samples only run on Windows)</li>
+<li><a href="https://dotnet.microsoft.com/download/dotnet/10.0">.NET 10 SDK</a></li>
+<li><a href="https://dotnet.microsoft.com/download/dotnet/8.0">.NET 8 Runtime</a> to run the tests for that target</li>
+<li><a href="https://code.visualstudio.com/">Visual Studio Code</a> with the <a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit">C# Dev Kit</a> provided by Microsoft</li>
+<li><a href="https://git-scm.com/">git</a></li></ul>
+
+Build the solution:
+
+<pre>dotnet build MvvmScarletToolkit.slnx</pre>
+
+Run the tests:
+
+<pre>dotnet test --solution MvvmScarletToolkit.slnx</pre>
+
+<h2>AI Disclaimer</h2>
+
+Parts of this codebase were written with the help of Claude, an AI assistant by Anthropic.
+
+<h2>TODO</h2>
+
+<ul><li>add Contribution guidelines</li></ul>
