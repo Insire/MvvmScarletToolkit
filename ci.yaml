@@ -51,6 +51,10 @@ variables:
     value: 'true'
   - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
     value: 'true'
+  # NuGet's global packages folder, restored and saved by the Cache@2 step of each job.
+  # Also used by "dotnet tool restore" and the Cake build itself
+  - name: NUGET_PACKAGES
+    value: $(Pipeline.Workspace)/.nuget/packages
 
 # Test and Pack run at the same time on separate agents, Publish only pushes once both succeeded.
 # The Cake targets RunTests, CreatePackages and PushPackages split the Default target the same way.
@@ -66,6 +70,17 @@ jobs:
         # YAML pipelines clone shallow by default
         fetchDepth: 0
         fetchTags: true
+
+      # Restoring took about 1 minute per job on a fresh agent. One cache per job, the Test job also needs the test packages.
+      # There are no lock files, the key hashes everything that decides which packages are restored.
+      # A changed key starts from the last cache of the job (restoreKeys), restore adds what's missing and the job saves it under the new key.
+      - task: Cache@2
+        displayName: Cache NuGet packages
+        inputs:
+          key: 'nuget | "$(Agent.OS)" | Test | Directory.Packages.props | .config/dotnet-tools.json | global.json | **/*.csproj'
+          restoreKeys: |
+            nuget | "$(Agent.OS)" | Test
+          path: $(NUGET_PACKAGES)
 
       # builds and runs the tests, publishes their trx results through ##vso[results.publish] and uploads the coverage to Codecov
       - task: PowerShell@2
@@ -98,6 +113,15 @@ jobs:
       - checkout: self
         fetchDepth: 0
         fetchTags: true
+
+      # see the Test job
+      - task: Cache@2
+        displayName: Cache NuGet packages
+        inputs:
+          key: 'nuget | "$(Agent.OS)" | Pack | Directory.Packages.props | .config/dotnet-tools.json | global.json | **/*.csproj'
+          restoreKeys: |
+            nuget | "$(Agent.OS)" | Pack
+          path: $(NUGET_PACKAGES)
 
       # without PublicRelease, so packages get a pre-release version. Packs all packages in one parallel build and validates their symbols
       - task: PowerShell@2
@@ -146,6 +170,15 @@ jobs:
       - checkout: self
         fetchDepth: 0
         fetchTags: true
+
+      # see the Test job, here only the tools and the packages of the Cake build itself
+      - task: Cache@2
+        displayName: Cache NuGet packages
+        inputs:
+          key: 'nuget | "$(Agent.OS)" | Publish | Directory.Packages.props | .config/dotnet-tools.json | global.json | cake/Build.csproj'
+          restoreKeys: |
+            nuget | "$(Agent.OS)" | Publish
+          path: $(NUGET_PACKAGES)
 
       - task: DownloadPipelineArtifact@2
         displayName: Download packages
