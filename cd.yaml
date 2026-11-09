@@ -31,7 +31,7 @@ variables:
 # Same layout as ci.yaml: Test, Pack, the Native AOT jobs and the XAML format check run at the same time,
 # from the templates in the pipelines folder. Publish only releases once all of them succeeded.
 # Differences to CI: public release versions, symbols go to nuget.org as snupkg instead of the symbol server of Azure DevOps,
-# Publish pushes to nuget.org instead of GitHub Packages and the Azure Artifacts feed, and creates a draft GitHub release.
+# Publish pushes to nuget.org instead of GitHub Packages and the Azure Artifacts feed, and publishes a GitHub release.
 # See ci.yaml for why there are no UseDotNet steps and why Cake starts directly.
 jobs:
   - template: pipelines/test-job.yml
@@ -83,7 +83,7 @@ jobs:
 
       # Replaces the classic release pipeline "Release to github" (release definition 1).
       # The tag is the version the Cake setup of the previous step computed (e.g. 5.0.96), so nobody has to tag by hand.
-      # The release is a draft, so GitHub only creates the tag on the built commit once the draft is published.
+      # The release is published right away under the same name, and GitHub creates the tag on the built commit with it.
       - task: GitHubRelease@1
         displayName: GitHub release (create)
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
@@ -96,7 +96,8 @@ jobs:
           target: $(Build.SourceVersion)
           tagSource: userSpecifiedTag
           tag: $(ReleaseVersion)
-          isDraft: true
+          title: $(ReleaseVersion)
+          isDraft: false
           isPreRelease: false
           # the classic release pointed at an empty folder and never attached files
           assets: |
