@@ -187,7 +187,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
             Assert.Equal("Already running", command.DisabledReason);
 
             release.SetResult();
-            await running.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await running.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             Assert.True(command.CanExecute(null));
             Assert.Null(command.DisabledReason);
@@ -207,7 +207,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
             Assert.Equal("Saving...", command.DisabledReason);
 
             release.SetResult();
-            await running.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await running.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
         }
 
         [Fact]
@@ -225,7 +225,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
             Assert.Null(command.DisabledReason);
 
             release.SetResult();
-            await running.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await running.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
         }
 
         [Fact]
@@ -251,7 +251,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
             Assert.Contains("Already running", reasons);
 
             release.SetResult();
-            await running.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await running.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             Assert.Null(reasons[^1]);
         }

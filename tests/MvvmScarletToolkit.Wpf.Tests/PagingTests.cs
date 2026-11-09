@@ -276,7 +276,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
 
             await sut.Add(new Entry("a"), TestContext.Current.CancellationToken);
 
-            var (hasItems, count) = await raised.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            var (hasItems, count) = await raised.Task.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             Assert.Multiple(() =>
             {

@@ -95,19 +95,9 @@ namespace MvvmScarletToolkit.Wpf.Tests
             return window;
         }
 
-        private static async Task WaitUntil(Func<bool> condition)
+        private static Task WaitUntil(Func<bool> condition)
         {
-            var timeout = DateTime.UtcNow.AddSeconds(5);
-            while (!condition())
-            {
-                if (DateTime.UtcNow > timeout)
-                {
-                    throw new TimeoutException();
-                }
-
-                await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
-                await Task.Delay(5);
-            }
+            return Ui.WaitUntil(condition);
         }
 
         [Theory]

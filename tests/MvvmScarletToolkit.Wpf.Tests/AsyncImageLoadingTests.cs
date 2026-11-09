@@ -129,28 +129,14 @@ namespace MvvmScarletToolkit.Wpf.Tests
             return (Show(image), image);
         }
 
-        protected static async Task WaitUntil(Func<bool> condition)
+        protected static Task WaitUntil(Func<bool> condition)
         {
-            var timeout = DateTime.UtcNow.AddSeconds(5);
-            while (!condition())
-            {
-                if (DateTime.UtcNow > timeout)
-                {
-                    throw new TimeoutException();
-                }
-
-                await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
-                await Task.Delay(5);
-            }
+            return Ui.WaitUntil(condition);
         }
 
-        protected static async Task Settle()
+        protected static Task Settle()
         {
-            for (var i = 0; i < 10; i++)
-            {
-                await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
-                await Task.Delay(5);
-            }
+            return Ui.Settle();
         }
 
         [Fact]

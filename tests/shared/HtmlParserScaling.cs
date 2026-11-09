@@ -28,31 +28,61 @@ namespace MvvmScarletToolkit
     internal static class HtmlParserScaling
     {
         private const string Fragment = "text <b>bold</b> and <i>italic</i> ";
+        private const int Factor = 8;
         private const int SmallRepetitions = 5_000;
-        private const int LargeRepetitions = 4 * SmallRepetitions;
-        private const long NoGCRegionSize = 128L * 1024 * 1024;
+        private const int LargeRepetitions = Factor * SmallRepetitions;
+        private const long NoGCRegionSize = 240L * 1024 * 1024;
 
         /// <summary>
-        /// Parses the same content at two sizes and compares the times. Linear parsing takes about 4 times as long for 4 times the input,
-        /// quadratic parsing about 16 times. A ratio is independent of how fast the machine is, unlike a fixed time limit.
+        /// Linear parsing allocates about <see cref="Factor"/> times as much for <see cref="Factor"/> times the input, quadratic parsing,
+        /// like the previous parser that copied the rest of the input for every tag, about <see cref="Factor"/> squared.
+        /// </summary>
+        private const double MaxAllocationRatio = 2 * Factor;
+
+        /// <summary>
+        /// Linear about 8, quadratic about 64. Far above the linear ratio, because other test processes run at the same time
+        /// on the build agent and slow down the large run more than the small one, an 8 for 4 times the input was measured there.
+        /// </summary>
+        private const double MaxTimeRatio = 4 * Factor;
+
+        /// <summary>
+        /// Parses the same content at two sizes and compares allocations and times. Ratios are independent of how fast the machine is,
+        /// unlike a fixed limit. Allocations are also independent of how busy the machine is, so they catch a quadratic parser reliably,
+        /// the times catch quadratic work without allocations.
         /// </summary>
         public static void AssertLinear()
         {
             // warm up at full size, so the first measurement doesn't include jitting or the switch to optimized code
             Parse(SmallRepetitions);
 
-            var (small, smallTags) = Measure(SmallRepetitions);
-            var (large, largeTags) = Measure(LargeRepetitions);
+            var (smallBytes, smallTags) = MeasureAllocations(SmallRepetitions);
+            var (largeBytes, largeTags) = MeasureAllocations(LargeRepetitions);
+            var small = MeasureTime(SmallRepetitions);
+            var large = MeasureTime(LargeRepetitions);
+
+            var allocationRatio = (double)largeBytes / Math.Max(smallBytes, 1);
 
             // below a millisecond the timer resolution would decide the ratio
-            var ratio = large.TotalMilliseconds / Math.Max(small.TotalMilliseconds, 1);
+            var timeRatio = large.TotalMilliseconds / Math.Max(small.TotalMilliseconds, 1);
 
             Assert.Multiple(() =>
             {
-                // about 4 times, apart from the text after the last fragment
-                Assert.InRange(largeTags, (4 * smallTags) - 4, 4 * smallTags);
-                Assert.True(ratio < 8, $"parsing {SmallRepetitions} fragments took {small}, {LargeRepetitions} took {large}, a ratio of {ratio:0.0}");
+                // Factor times, apart from the text after the last fragment
+                Assert.InRange(largeTags, (Factor * smallTags) - Factor, Factor * smallTags);
+                Assert.True(allocationRatio < MaxAllocationRatio, $"parsing {SmallRepetitions} fragments allocated {smallBytes} bytes, {LargeRepetitions} allocated {largeBytes}, a ratio of {allocationRatio:0.0}");
+                Assert.True(timeRatio < MaxTimeRatio, $"parsing {SmallRepetitions} fragments took {small}, {LargeRepetitions} took {large}, a ratio of {timeRatio:0.0}");
             });
+        }
+
+        /// <summary>
+        /// Counts the bytes allocated by this thread, which other tests and processes don't influence.
+        /// </summary>
+        private static (long Bytes, int Tags) MeasureAllocations(int repetitions)
+        {
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            var tags = Parse(repetitions);
+
+            return (GC.GetAllocatedBytesForCurrentThread() - before, tags);
         }
 
         /// <summary>
@@ -63,11 +93,10 @@ namespace MvvmScarletToolkit
         /// during the large run walks a much bigger tree than one during the small run, which made the ratio about 8 to 14 for a linear parser.
         /// Runs whose region a parallel test ended with its allocations only count when no run kept its region.
         /// </remarks>
-        private static (TimeSpan Elapsed, int Tags) Measure(int repetitions)
+        private static TimeSpan MeasureTime(int repetitions)
         {
             var best = TimeSpan.MaxValue;
             var bestWithGc = TimeSpan.MaxValue;
-            var tags = 0;
 
             for (var i = 0; i < 3; i++)
             {
@@ -77,7 +106,7 @@ namespace MvvmScarletToolkit
 
                 var inRegion = TryStartNoGCRegion();
                 var watch = Stopwatch.StartNew();
-                tags = Parse(repetitions);
+                Parse(repetitions);
                 watch.Stop();
 
                 if (inRegion && TryEndNoGCRegion())
@@ -90,7 +119,7 @@ namespace MvvmScarletToolkit
                 }
             }
 
-            return (best == TimeSpan.MaxValue ? bestWithGc : best, tags);
+            return best == TimeSpan.MaxValue ? bestWithGc : best;
         }
 
         private static TimeSpan Min(TimeSpan left, TimeSpan right)
@@ -102,7 +131,7 @@ namespace MvvmScarletToolkit
         {
             try
             {
-                // the large run allocates about 60 MB
+                // the large run allocates about 130 MB
                 return GC.TryStartNoGCRegion(NoGCRegionSize);
             }
             catch (Exception ex) when (ex is InvalidOperationException or ArgumentOutOfRangeException)
