@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled Condition="'$(CentralPackageTransitivePinningEnabled)' == ''">true</CentralPackageTransitivePinningEnabled>
-    <Avalonia>12.1.4</Avalonia>
+    <Avalonia>12.1.6</Avalonia>
     <Dotnet>10.0.14</Dotnet>
   </PropertyGroup>
   <!-- samples -->
@@ -10,14 +10,14 @@
     <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />
     <PackageVersion Include="CsvHelper" Version="34.0.0" />
     <PackageVersion Include="Jot" Version="2.1.17" />
-    <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="15.0.0" />
-    <PackageVersion Include="Magick.NET.SystemWindowsMedia" Version="9.0.0" />
+    <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="15.1.0" />
+    <PackageVersion Include="Magick.NET.SystemWindowsMedia" Version="9.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(Dotnet)" />
     <PackageVersion Include="morelinq" Version="4.4.0" />
     <PackageVersion Include="NuGet.Packaging" Version="7.9.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.20.1" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.20.1" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.20.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.20.2" />
     <PackageVersion Include="Serilog" Version="4.4.0" />
     <PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />
     <PackageVersion Include="Serilog.Formatting.Compact" Version="3.0.0" />
@@ -56,11 +56,11 @@
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
-    <PackageVersion Include="xunit.analyzers" Version="2.2.0" />
+    <PackageVersion Include="xunit.analyzers" Version="2.3.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
-    <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.2" />
-    <PackageVersion Include="xunit.v3.runner.console" Version="4.0.2" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.2" />
+    <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.3" />
+    <PackageVersion Include="xunit.v3.runner.console" Version="4.0.3" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.3" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.20.1" />
   </ItemGroup>
