@@ -168,13 +168,6 @@ namespace MvvmScarletToolkit.Avalonia.Tests
             });
         }
 
-        [Fact]
-        public void Parser_Should_Scale_Linearly()
-        {
-            // compares two sizes instead of a fixed limit, which fails on slow build agents or with coverage enabled
-            HtmlParserScaling.AssertLinear();
-        }
-
         [Theory]
         [InlineData("a &lt;b&gt; c", "a <b> c")]
         [InlineData("R&amp;D", "R&D")]

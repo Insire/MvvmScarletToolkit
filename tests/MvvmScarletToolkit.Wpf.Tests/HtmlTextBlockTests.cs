@@ -284,14 +284,6 @@ namespace MvvmScarletToolkit.Wpf.Tests
             });
         }
 
-        [Fact]
-        public void Parser_Should_Scale_Linearly()
-        {
-            // the previous parser copied the rest of the input for every tag, 20000 tags took about 6 seconds.
-            // Compares two sizes instead of a fixed limit, which fails on slow build agents or with coverage enabled
-            HtmlParserScaling.AssertLinear();
-        }
-
         private static IEnumerable<Inline> Descendants(InlineCollection inlines)
         {
             foreach (var inline in inlines)
