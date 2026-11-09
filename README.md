@@ -251,7 +251,7 @@ dotnet test --solution MvvmScarletToolkit.slnx
 
 ### Native AOT
 
-Only needed to publish the Avalonia sample as a native executable, not to build the repository. It needs a platform C toolchain:
+Only needed to publish the Avalonia sample or the AOT tests as a native executable, not to build the repository. It needs a platform C toolchain:
 
 - Windows: [Visual Studio 2026](https://visualstudio.microsoft.com/vs/community/) or the Build Tools with the **Desktop development with C++** workload
 - Linux: a C compiler and linker (`clang` or `gcc`) and the zlib headers, e.g. `sudo apt install clang zlib1g-dev` (Debian, Ubuntu) or `sudo dnf install clang zlib-devel` (Fedora)
@@ -261,6 +261,12 @@ dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r win-x64
 ```
 
 Use `-r linux-x64` on Linux.
+
+`MvvmScarletToolkit.Aot.Tests` runs the tests of the AOT compatible packages as a native executable. Publish it, then start it from its publish folder:
+
+```bash
+dotnet publish tests/MvvmScarletToolkit.Aot.Tests -c Release -r win-x64
+```
 
 ## AI Disclaimer
 
