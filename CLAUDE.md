@@ -11,7 +11,7 @@ dotnet run --project samples/MvvmScarletToolkit.Wpf.Samples
 dotnet run --project samples/MvvmScarletToolkit.Avalonia.Samples
 ```
 
-`build.ps1` / `build.sh` run the Cake pipeline in `cake/`. `build.ps1` also formats XAML in `src` with XamlStyler (`Settings.XamlStyler`).
+`build.ps1` / `build.sh` run the Cake pipeline in `cake/`. Both also format XAML in `src` with XamlStyler (`Settings.XamlStyler`). CI fails for unformatted XAML in `src`, so after changing XAML there run `dotnet xstyler -d src -r -c Settings.XamlStyler` (after `dotnet tool restore`).
 
 Tests use xunit v3 on Microsoft.Testing.Platform (see `global.json`). WPF projects, tests and samples only run on Windows.
 
@@ -23,8 +23,9 @@ Tests use xunit v3 on Microsoft.Testing.Platform (see `global.json`). WPF projec
 - `src/MvvmScarletToolkit.Wpf`, `.Avalonia`: UI-specific packages, targeting .NET 8 and 10.
 - `src/Shared/HtmlTextBlock`: internal html parser, compiled into both UI packages as linked files. No WPF or Avalonia types there.
 - `samples/`: working demos. `MvvmScarletToolkit.Wpf.Samples/MainWindow.xaml` holds the scene templates, `Features/NavigationViewModel.cs` registers the scenes.
-- `tests/`: one test project per package, plus `shared/MvvmScarletToolkit.Test.Tracing`.
+- `tests/`: one test project per package, plus `shared/MvvmScarletToolkit.Test.Tracing`. `MvvmScarletToolkit.Aot.Tests` has no tests of its own: it compiles the test files of the AOT compatible packages as linked files and runs them as a Native AOT executable. It leaves out files that use NSubstitute, and test files compiled into it have to build with `XUNIT_AOT` (no `IXunitSerializable`, no generic test methods, no `Assert.Equivalent`).
 - Package versions are managed centrally in `Directory.Packages.props`.
+- `ci.yaml` (dev, pre-release packages) and `cd.yaml` (master, nuget.org) are the Azure Pipelines. Their Test, Pack, Native AOT and XAML format jobs are shared templates in `pipelines/`, only the Publish jobs differ. Change a job in its template, not in one of the pipelines.
 
 ## Conventions
 

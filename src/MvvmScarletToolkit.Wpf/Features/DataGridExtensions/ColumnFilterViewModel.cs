@@ -216,13 +216,38 @@ namespace MvvmScarletToolkit
 
             return _appliedOperator switch
             {
-                ColumnFilterOperator.Contains => ToText(value) is { } text && EffectiveCulture.CompareInfo.IndexOf(text, _appliedText!, CompareOptions.IgnoreCase) >= 0,
+                ColumnFilterOperator.Contains => ContainsText(value),
                 ColumnFilterOperator.Equals => Compare(value) == 0,
                 ColumnFilterOperator.NotEquals => Compare(value) != 0,
-                ColumnFilterOperator.GreaterThan => value is not null && Compare(value) > 0,
-                ColumnFilterOperator.GreaterThanOrEqual => value is not null && Compare(value) >= 0,
-                ColumnFilterOperator.LessThan => value is not null && Compare(value) < 0,
-                ColumnFilterOperator.LessThanOrEqual => value is not null && Compare(value) <= 0,
+                _ => value is null ? !IsOrderingOperator(_appliedOperator) : IsOrderedMatch(value),
+            };
+        }
+
+        private bool ContainsText(object? value)
+        {
+            return ToText(value) is { } text
+                && EffectiveCulture.CompareInfo.IndexOf(text, _appliedText!, CompareOptions.IgnoreCase) >= 0;
+        }
+
+        private static bool IsOrderingOperator(ColumnFilterOperator filterOperator)
+        {
+            return filterOperator is ColumnFilterOperator.GreaterThan
+                or ColumnFilterOperator.GreaterThanOrEqual
+                or ColumnFilterOperator.LessThan
+                or ColumnFilterOperator.LessThanOrEqual;
+        }
+
+        /// <summary>
+        /// Applies the ordering operators to a value, that isn't <see langword="null"/>. Missing values never match them.
+        /// </summary>
+        private bool IsOrderedMatch(object value)
+        {
+            return _appliedOperator switch
+            {
+                ColumnFilterOperator.GreaterThan => Compare(value) > 0,
+                ColumnFilterOperator.GreaterThanOrEqual => Compare(value) >= 0,
+                ColumnFilterOperator.LessThan => Compare(value) < 0,
+                ColumnFilterOperator.LessThanOrEqual => Compare(value) <= 0,
                 _ => true,
             };
         }

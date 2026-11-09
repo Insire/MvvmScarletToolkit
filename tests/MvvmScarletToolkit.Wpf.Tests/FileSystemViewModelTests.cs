@@ -4,6 +4,7 @@ using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Directories;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Files;
 using MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.Interfaces;
 using MvvmScarletToolkit.Wpf.Tests.Util;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reactive.Concurrency;
@@ -80,14 +81,19 @@ namespace MvvmScarletToolkit.Wpf.Tests
             return (viewModel, root);
         }
 
+        /// <summary>
+        /// Polls without a dispatcher, the view model runs on the <see cref="ImmediateScheduler"/>.
+        /// Fails only after <see cref="TestTimeouts.Hang"/>, a fixed number of polls failed on busy build agents.
+        /// </summary>
         private static async Task WaitFor(Func<bool> condition)
         {
-            for (var i = 0; i < 200 && !condition(); i++)
+            var watch = Stopwatch.StartNew();
+            while (!condition() && watch.Elapsed < TestTimeouts.Hang)
             {
                 await Task.Delay(10, TestContext.Current.CancellationToken);
             }
 
-            Assert.True(condition());
+            Assert.True(condition(), $"The condition was not met within {TestTimeouts.Hang}.");
         }
 
         [Fact]

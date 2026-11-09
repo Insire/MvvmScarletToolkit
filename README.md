@@ -7,7 +7,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Insire/MvvmScarletToolkit/blob/master/LICENSE.md)
 [![NuGet](https://img.shields.io/nuget/v/MvvmScarletToolkit.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/MvvmScarletToolkit/)
-[![Build status](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_apis/build/status/MvvmScarletToolkit-CD)](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_build/latest?definitionId=1)
+[![Build status](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_apis/build/status/CD?branchName=master)](https://dev.azure.com/SoftThorn/MvvmScarletToolkit/_build/latest?definitionId=10&branchName=master)
 [![CodeFactor](https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit/badge)](https://www.codefactor.io/repository/github/insire/mvvmscarlettoolkit)
 [![codecov](https://codecov.io/gh/Insire/MvvmScarletToolkit/branch/master/graph/badge.svg)](https://codecov.io/gh/Insire/MvvmScarletToolkit)
 
@@ -46,7 +46,7 @@ dotnet add package MvvmScarletToolkit.Avalonia
 
 The current NuGet release (5.0.96) targets .NET 8 and 9, and is built against Avalonia 11. The source in this repository targets .NET 8 and 10, and Avalonia 12.
 
-All packages except MvvmScarletToolkit.Wpf are trim and Native AOT compatible. The package readmes list the few APIs that need extra care. The Avalonia sample publishes as a native executable with `dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r win-x64` (or `linux-x64`). See [Build Requirements](#build-requirements) for the required native toolchain.
+All packages except MvvmScarletToolkit.Wpf are trim and Native AOT compatible. The package readmes list the few APIs that need extra care. The Avalonia sample publishes as a native executable with `dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r win-x64` (or `linux-x64`). See [Native AOT](#native-aot) for the required native toolchain.
 
 Pre-release packages are available on [GitHub](https://github.com/Insire/MvvmScarletToolkit/packages). GitHub requires a personal access token to restore from its NuGet feed.
 
@@ -211,52 +211,21 @@ dotnet run --project samples/MvvmScarletToolkit.Avalonia.Samples
   - binding enum values and an ObservableDictionary
   - a tag cloud with a VirtualizingWrapPanel
 
-## Build Requirements
+## Building
 
-This repository requires the .NET 10 SDK, as configured in [global.json](./global.json). The easiest way to get everything is [Visual Studio 2026](https://visualstudio.microsoft.com/vs/community/) or newer, which prompts you to install any missing components when you open the [slnx](./MvvmScarletToolkit.slnx) file.
+### Requirements
 
-Otherwise, you need:
+- Windows 10 or newer, or Linux. On Linux the WPF projects build, but their tests and samples only run on Windows.
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0), as configured in [global.json](./global.json)
+- [.NET 8 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0), only to run the tests that target .NET 8
 
-- Windows 10 or newer, or Linux (on Linux the WPF projects only build, their tests and samples only run on Windows)
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-- [.NET 8 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) to run the tests for that target
-- [Visual Studio Code](https://code.visualstudio.com/) with the [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit) provided by Microsoft
-- [git](https://git-scm.com/)
-
-Publishing the Avalonia sample as a native executable (`PublishAot`) additionally needs a platform C toolchain, see below.
-
-### Windows
-
-- Install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) and [.NET 8 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0), for example with `winget install Microsoft.DotNet.SDK.10 Microsoft.DotNet.Runtime.8`.
-- For Native AOT, install [Visual Studio 2026](https://visualstudio.microsoft.com/vs/community/) or the Build Tools with the **Desktop development with C++** workload.
-- Everything builds, and the WPF tests and samples run.
-
-Publish the Avalonia sample as a native executable:
+On Windows, both install with:
 
 ```bash
-dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r win-x64
+winget install Microsoft.DotNet.SDK.10 Microsoft.DotNet.Runtime.8
 ```
 
-### Linux
-
-- Install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) and the [.NET 8 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) with your package manager or the Microsoft install script.
-- For Native AOT, install a C compiler/linker (`clang` or `gcc`) and the zlib headers:
-
-  ```bash
-  # Fedora
-  sudo dnf install clang zlib-devel
-
-  # Debian / Ubuntu
-  sudo apt install clang zlib1g-dev
-  ```
-
-- The WPF projects build, but their tests and samples only run on Windows. `dotnet test` on Linux therefore only covers the other test projects.
-
-Publish the Avalonia sample as a native executable:
-
-```bash
-dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r linux-x64
-```
+On Linux, install them with your package manager or the [install script](https://learn.microsoft.com/dotnet/core/install/linux-scripted-manual).
 
 ### Build and test
 
@@ -270,6 +239,33 @@ Run the tests:
 
 ```bash
 dotnet test --solution MvvmScarletToolkit.slnx
+```
+
+### Build like the CI
+
+`build.ps1` (Windows) and `build.sh` (Linux) run the [Cake](./cake) build used by the pipelines. It formats the XAML files, runs the tests with code coverage and packs the NuGet packages into `packages`. Reports end up in `results`.
+
+```bash
+./build.ps1
+```
+
+### Native AOT
+
+Only needed to publish the Avalonia sample or the AOT tests as a native executable, not to build the repository. It needs a platform C toolchain:
+
+- Windows: [Visual Studio 2026](https://visualstudio.microsoft.com/vs/community/) or the Build Tools with the **Desktop development with C++** workload
+- Linux: a C compiler and linker (`clang` or `gcc`) and the zlib headers, e.g. `sudo apt install clang zlib1g-dev` (Debian, Ubuntu) or `sudo dnf install clang zlib-devel` (Fedora)
+
+```bash
+dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r win-x64
+```
+
+Use `-r linux-x64` on Linux.
+
+`MvvmScarletToolkit.Aot.Tests` runs the tests of the AOT compatible packages as a native executable. Publish it, then start it from its publish folder:
+
+```bash
+dotnet publish tests/MvvmScarletToolkit.Aot.Tests -c Release -r win-x64
 ```
 
 ## AI Disclaimer

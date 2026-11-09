@@ -164,10 +164,10 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 .Build();
 
             var execution = command.ExecuteAsync(null);
-            await started.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await started.Task.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             command.CancelCommand!.Execute(null);
-            await execution.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await execution.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             Assert.True(command.Execution.IsCanceled);
             await exceptionHandler.DidNotReceive().Handle(Arg.Any<Exception>());
@@ -200,10 +200,10 @@ namespace MvvmScarletToolkit.Wpf.Tests
             var command = (asyncCancellation ? context.WithAsyncCancellation() : context.WithCancellation()).Build();
 
             var first = command.ExecuteAsync(null);
-            await firstStarted.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await firstStarted.Task.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             var second = command.ExecuteAsync(null);
-            await first.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await first.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             Assert.Equal(2, tokens.Count);
             Assert.True(tokens[0].IsCancellationRequested);
@@ -214,7 +214,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
             Assert.True(command.CancelCommand!.CanExecute(null));
 
             secondRelease.SetResult();
-            await second.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await second.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             Assert.False(command.IsBusy);
             Assert.False(command.CancelCommand.CanExecute(null));
@@ -236,7 +236,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
             var command = (asyncCancellation ? context.WithAsyncCancellation() : context.WithCancellation()).Build();
 
             var execution = command.ExecuteAsync(null);
-            await started.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await started.Task.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             Assert.True(command.CancelCommand!.CanExecute(null));
             command.CancelCommand.Execute(null);
@@ -244,7 +244,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
             // a source that was cancelled can't be cancelled again
             Assert.False(command.CancelCommand.CanExecute(null));
 
-            await execution.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await execution.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             Assert.False(command.IsBusy);
             Assert.False(command.CancelCommand.CanExecute(null));
@@ -264,7 +264,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
 
             var execution = command.ExecuteAsync(null);
             release.SetResult();
-            await execution.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await execution.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             // once when starting, once when finishing
             Assert.Equal(new[] { true, false }, completionWasRunning);

@@ -62,7 +62,7 @@ namespace MvvmScarletToolkit.Avalonia.Tests
 
         private static Control Text(int item)
         {
-            return new Border { Width = 40 + (item % 7 * 20), Height = 20 + (item % 3 * 10) };
+            return new Border { Width = 40 + ((item % 7) * 20), Height = 20 + ((item % 3) * 10) };
         }
 
         [Fact]

@@ -114,7 +114,6 @@ namespace MvvmScarletToolkit.Observables
         /// <inheritdoc/>
         public void StopTracking<T>(T instance)
             where T : class, INotifyPropertyChanged
-
         {
             if (instance is null)
             {
@@ -149,7 +148,6 @@ namespace MvvmScarletToolkit.Observables
         /// <inheritdoc/>
         public void ClearChanges<T>(T instance)
             where T : class, INotifyPropertyChanged
-
         {
             if (instance is null)
             {

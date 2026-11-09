@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -50,18 +51,23 @@ namespace MvvmScarletToolkit.Wpf.Tests.Util
             };
         }
 
+        /// <summary>
+        /// Lets the dispatcher run until <paramref name="condition"/> is met. Fails only after <see cref="TestTimeouts.Hang"/>, or when the test is cancelled.
+        /// </summary>
         public static async Task WaitUntil(Func<bool> condition)
         {
-            var timeout = DateTime.UtcNow.AddSeconds(5);
+            var cancellationToken = TestContext.Current.CancellationToken;
+            var watch = Stopwatch.StartNew();
             while (!condition())
             {
-                if (DateTime.UtcNow > timeout)
+                cancellationToken.ThrowIfCancellationRequested();
+                if (watch.Elapsed > TestTimeouts.Hang)
                 {
-                    throw new TimeoutException();
+                    throw new TimeoutException($"The condition was not met within {TestTimeouts.Hang}.");
                 }
 
                 await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
-                await Task.Delay(5);
+                await Task.Delay(5, cancellationToken);
             }
         }
 

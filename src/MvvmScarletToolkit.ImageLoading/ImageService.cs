@@ -151,6 +151,25 @@ namespace MvvmScarletToolkit.ImageLoading
         /// </remarks>
         private async Task<TImage?> LoadAsync(Uri uri, ImageSize requestedSize, Func<bool, Task> requestedImageLoadsSlowly, CancellationToken cancellationToken)
         {
+            var image = await LoadFromMemoryAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+            if (image is not null || cancellationToken.IsCancellationRequested)
+            {
+                return image;
+            }
+
+            await NotifyLoadsSlowlyAsync(requestedImageLoadsSlowly).ConfigureAwait(false);
+
+            image = await LoadFromDiskAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+            if (image is not null || cancellationToken.IsCancellationRequested)
+            {
+                return image;
+            }
+
+            return await LoadFromSourceAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+        }
+
+        private async Task<TImage?> LoadFromMemoryAsync(Uri uri, ImageSize requestedSize, CancellationToken cancellationToken)
+        {
             // memory image
             var image = await _memoryCacheImageProvider.GetImageAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
             if (image is not null)
@@ -162,26 +181,24 @@ namespace MvvmScarletToolkit.ImageLoading
             await using (var memoryStream = await _memoryCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false))
             {
                 image = await TryCreateImageAsync(memoryStream, uri, requestedSize, LogLevel.Warning).ConfigureAwait(false);
-                if (image is not null)
+                if (image is null)
                 {
-                    await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, CancellationToken.None).ConfigureAwait(false);
-
-                    var encoded = image;
-                    QueueDiskCacheWrite(() => _diskCachedImageProvider.CacheImageAsync(encoded, uri, requestedSize, CancellationToken.None));
-
-                    return image;
+                    return null;
                 }
+
+                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, CancellationToken.None).ConfigureAwait(false);
+
+                var encoded = image;
+                QueueDiskCacheWrite(() => _diskCachedImageProvider.CacheImageAsync(encoded, uri, requestedSize, CancellationToken.None));
+
+                return image;
             }
+        }
 
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return null;
-            }
-
-            await NotifyLoadsSlowlyAsync(requestedImageLoadsSlowly).ConfigureAwait(false);
-
+        private async Task<TImage?> LoadFromDiskAsync(Uri uri, ImageSize requestedSize, CancellationToken cancellationToken)
+        {
             // filesystem image
-            image = await _diskCachedImageProvider.GetImageAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
+            var image = await _diskCachedImageProvider.GetImageAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false);
             if (image is not null)
             {
                 await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, CancellationToken.None).ConfigureAwait(false);
@@ -198,24 +215,26 @@ namespace MvvmScarletToolkit.ImageLoading
             await using (var fileStream = await _diskCachedImageDataProvider.GetStreamAsync(uri, requestedSize, cancellationToken).ConfigureAwait(false))
             {
                 image = await TryCreateImageAsync(fileStream, uri, requestedSize, LogLevel.Warning).ConfigureAwait(false);
-                if (image is not null)
+                if (image is null)
                 {
-                    await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, CancellationToken.None).ConfigureAwait(false);
-
-                    // copies the data, the file stream is not needed afterwards
-                    await _memoryCachedImageDataProvider.CacheStreamAsync(fileStream, uri, requestedSize, CancellationToken.None).ConfigureAwait(false);
-
-                    var encoded = image;
-                    QueueDiskCacheWrite(() => _diskCachedImageProvider.CacheImageAsync(encoded, uri, requestedSize, CancellationToken.None));
-
-                    return image;
+                    return null;
                 }
-            }
 
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return null;
+                await _memoryCacheImageProvider.CacheImageAsync(image, uri, requestedSize, CancellationToken.None).ConfigureAwait(false);
+
+                // copies the data, the file stream is not needed afterwards
+                await _memoryCachedImageDataProvider.CacheStreamAsync(fileStream, uri, requestedSize, CancellationToken.None).ConfigureAwait(false);
+
+                var encoded = image;
+                QueueDiskCacheWrite(() => _diskCachedImageProvider.CacheImageAsync(encoded, uri, requestedSize, CancellationToken.None));
+
+                return image;
             }
+        }
+
+        private async Task<TImage?> LoadFromSourceAsync(Uri uri, ImageSize requestedSize, CancellationToken cancellationToken)
+        {
+            TImage? image;
 
             // remote (web) or filesystem data
             var remoteStream = await ToSeekableAsync(await _imageDataProvider.GetStreamAsync(uri, cancellationToken).ConfigureAwait(false), uri, cancellationToken).ConfigureAwait(false);

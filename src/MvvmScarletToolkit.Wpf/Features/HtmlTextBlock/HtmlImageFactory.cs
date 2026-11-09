@@ -35,6 +35,26 @@ namespace MvvmScarletToolkit.Wpf
             var width = InlineStyle.GetLength(tag, style, "width");
             var height = InlineStyle.GetLength(tag, style, "height");
 
+            var image = CreateImage(tag, style, width, height, alt);
+            var container = new InlineUIContainer(image);
+            if (style.TryGetVerticalAlign("vertical-align", out var alignment))
+            {
+                container.BaselineAlignment = ToBaselineAlignment(alignment);
+            }
+
+            var service = (textBlock as HtmlTextBlock)?.ImageService ?? ImageLoader.AsyncImageLoader;
+            if (service is not null && CanUseImageService(uri))
+            {
+                LoadWithImageService(image, container, service, uri, width, height, alt);
+
+                return container;
+            }
+
+            return LoadWithBitmapImage(image, container, uri, alt) ? container : CreateAltText(alt);
+        }
+
+        private static Image CreateImage(HtmlTag tag, InlineStyle style, double width, double height, string? alt)
+        {
             var image = new Image
             {
                 Width = width,
@@ -62,21 +82,7 @@ namespace MvvmScarletToolkit.Wpf
                 AutomationProperties.SetName(image, alt);
             }
 
-            var container = new InlineUIContainer(image);
-            if (style.TryGetVerticalAlign("vertical-align", out var alignment))
-            {
-                container.BaselineAlignment = ToBaselineAlignment(alignment);
-            }
-
-            var service = (textBlock as HtmlTextBlock)?.ImageService ?? ImageLoader.AsyncImageLoader;
-            if (service is not null && CanUseImageService(uri))
-            {
-                LoadWithImageService(image, container, service, uri, width, height, alt);
-
-                return container;
-            }
-
-            return LoadWithBitmapImage(image, container, uri, alt) ? container : CreateAltText(alt);
+            return image;
         }
 
         /// <summary>

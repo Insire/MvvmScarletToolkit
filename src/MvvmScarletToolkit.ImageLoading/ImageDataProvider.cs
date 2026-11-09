@@ -35,38 +35,9 @@ namespace MvvmScarletToolkit.ImageLoading
 
             try
             {
-                if (IsWebResource(uri))
-                {
-                    return await DownloadAsync(uri, cancellationToken).ConfigureAwait(false);
-                }
-
-                var source = uri.IsAbsoluteUri && !uri.IsFile
-                    ? await GetImageStreamFromChildImplementation(uri, cancellationToken).ConfigureAwait(false)
-                    : OpenFile(uri);
-
-                if (source is null || source == Stream.Null)
-                {
-                    _logger.LogWarning("{Type} could not provide a stream for '{Url}'", GetType().Name, uri);
-
-                    return Stream.Null;
-                }
-
-                await using (source)
-                {
-                    if (!source.CanRead || (source.CanSeek && source.Length == 0))
-                    {
-                        return Stream.Null;
-                    }
-
-                    if (source.CanSeek && source.Length > _maxSize)
-                    {
-                        _logger.LogWarning("Resource '{Url}' exceeds the size limit of {Limit} bytes", uri, _maxSize);
-
-                        return Stream.Null;
-                    }
-
-                    return await CopyAsync(source, uri, cancellationToken, cancellationToken).ConfigureAwait(false);
-                }
+                return IsWebResource(uri)
+                    ? await DownloadAsync(uri, cancellationToken).ConfigureAwait(false)
+                    : await ReadLocalAsync(uri, cancellationToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
             {
@@ -95,6 +66,40 @@ namespace MvvmScarletToolkit.ImageLoading
         {
             return uri.IsAbsoluteUri
                 && (uri.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase) || uri.Scheme.Equals(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>
+        /// Reads files and relative paths directly, other schemes through <see cref="GetImageStreamFromChildImplementation"/>
+        /// </summary>
+        private async Task<Stream> ReadLocalAsync(Uri uri, CancellationToken cancellationToken)
+        {
+            var source = uri.IsAbsoluteUri && !uri.IsFile
+                ? await GetImageStreamFromChildImplementation(uri, cancellationToken).ConfigureAwait(false)
+                : OpenFile(uri);
+
+            if (source is null || source == Stream.Null)
+            {
+                _logger.LogWarning("{Type} could not provide a stream for '{Url}'", GetType().Name, uri);
+
+                return Stream.Null;
+            }
+
+            await using (source)
+            {
+                if (!source.CanRead || (source.CanSeek && source.Length == 0))
+                {
+                    return Stream.Null;
+                }
+
+                if (source.CanSeek && source.Length > _maxSize)
+                {
+                    _logger.LogWarning("Resource '{Url}' exceeds the size limit of {Limit} bytes", uri, _maxSize);
+
+                    return Stream.Null;
+                }
+
+                return await CopyAsync(source, uri, cancellationToken, cancellationToken).ConfigureAwait(false);
+            }
         }
 
         private static FileStream OpenFile(Uri uri)

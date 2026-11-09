@@ -6,10 +6,15 @@ namespace MvvmScarletToolkit.Observables.Tests
 {
     public sealed class PropertyChangedMessageTrackerTests : TraceTestBase
     {
-        public sealed class XunitDataModel : IXunitSerializable
+        // MvvmScarletToolkit.Aot.Tests compiles this file with XUNIT_AOT, xunit.net doesn't support serialization in Native AOT
+        public sealed class XunitDataModel
+#if !XUNIT_AOT
+            : IXunitSerializable
+#endif
         {
             required public Func<IMessenger, ITestViewModel> Factory { get; set; }
 
+#if !XUNIT_AOT
             public void Deserialize(IXunitSerializationInfo info)
             {
                 Factory = info.GetValue<Func<IMessenger, ITestViewModel>>(nameof(Factory))!;
@@ -19,6 +24,7 @@ namespace MvvmScarletToolkit.Observables.Tests
             {
                 info.AddValue(nameof(Factory), Factory);
             }
+#endif
         }
 
         public static IEnumerable<TheoryDataRow<XunitDataModel>> ViewModelFactories =

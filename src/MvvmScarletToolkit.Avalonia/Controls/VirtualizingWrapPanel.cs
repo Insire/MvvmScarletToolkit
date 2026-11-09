@@ -83,19 +83,7 @@ namespace MvvmScarletToolkit
                 _bounds = new Rect[count];
             }
 
-            var limit = isHorizontal ? availableSize.Width : availableSize.Height;
-            if (double.IsInfinity(limit))
-            {
-                limit = isHorizontal ? viewport.Width : viewport.Height;
-            }
-
-            var first = isHorizontal ? viewport.Top : viewport.Left;
-            var last = isHorizontal ? viewport.Bottom : viewport.Right;
-            var slot = new Size(
-                double.IsNaN(ItemWidth) ? double.PositiveInfinity : ItemWidth,
-                double.IsNaN(ItemHeight) ? double.PositiveInfinity : ItemHeight);
-            var isFixedSize = !double.IsNaN(ItemWidth) && !double.IsNaN(ItemHeight);
-            var estimate = GetEstimatedSize();
+            var context = CreateContext(availableSize, viewport, isHorizontal);
 
             var u = 0d;
             var v = 0d;
@@ -106,22 +94,13 @@ namespace MvvmScarletToolkit
             for (var index = 0; index < count; index++)
             {
                 var item = Items[index];
-                var size = isFixedSize ? slot : item is not null && _measuredSizes.TryGetValue(item, out var known) ? known : estimate;
+                var size = GetKnownSize(item, context);
+                var wraps = context.Wraps(u, size);
 
-                var wraps = u > 0 && u + GetU(size, isHorizontal) > limit;
-                var position = wraps ? v + sectionSize : v;
-
-                if (position <= last && position + Math.Max(wraps ? 0 : sectionSize, GetV(size, isHorizontal)) >= first)
+                if (context.IsInViewport(v, sectionSize, size, wraps))
                 {
-                    var container = Realize(index);
-                    container.Measure(slot);
-
-                    if (!isFixedSize)
-                    {
-                        size = container.DesiredSize;
-                        Remember(item, size);
-                        wraps = u > 0 && u + GetU(size, isHorizontal) > limit;
-                    }
+                    size = MeasureRealized(index, item, context, size);
+                    wraps = context.Wraps(u, size);
                 }
 
                 if (wraps)
@@ -144,10 +123,83 @@ namespace MvvmScarletToolkit
 
             FinishSection(sectionStart, count, sectionSize, isHorizontal);
 
-            var totalU = double.IsInfinity(isHorizontal ? availableSize.Width : availableSize.Height) ? largestU : limit;
+            var totalU = double.IsInfinity(GetU(availableSize, isHorizontal)) ? largestU : context.Limit;
             var totalV = v + sectionSize;
 
             return isHorizontal ? new Size(totalU, totalV) : new Size(totalV, totalU);
+        }
+
+        private LayoutContext CreateContext(Size availableSize, Rect viewport, bool isHorizontal)
+        {
+            var limit = GetU(availableSize, isHorizontal);
+            if (double.IsInfinity(limit))
+            {
+                limit = GetU(viewport.Size, isHorizontal);
+            }
+
+            var slot = new Size(
+                double.IsNaN(ItemWidth) ? double.PositiveInfinity : ItemWidth,
+                double.IsNaN(ItemHeight) ? double.PositiveInfinity : ItemHeight);
+
+            return new LayoutContext(
+                isHorizontal,
+                limit,
+                First: isHorizontal ? viewport.Top : viewport.Left,
+                Last: isHorizontal ? viewport.Bottom : viewport.Right,
+                slot,
+                IsFixedSize: !double.IsNaN(ItemWidth) && !double.IsNaN(ItemHeight),
+                Estimate: GetEstimatedSize());
+        }
+
+        /// <summary>
+        /// The fixed size, the last measured size, or an estimate for items that never got realized
+        /// </summary>
+        private Size GetKnownSize(object? item, LayoutContext context)
+        {
+            if (context.IsFixedSize)
+            {
+                return context.Slot;
+            }
+
+            return item is not null && _measuredSizes.TryGetValue(item, out var known)
+                ? known
+                : context.Estimate;
+        }
+
+        private Size MeasureRealized(int index, object? item, LayoutContext context, Size size)
+        {
+            var container = Realize(index);
+            container.Measure(context.Slot);
+
+            if (context.IsFixedSize)
+            {
+                return size;
+            }
+
+            Remember(item, container.DesiredSize);
+            return container.DesiredSize;
+        }
+
+        /// <summary>
+        /// Settings of one layout pass. U is the direction items are placed in, V the one sections are stacked in.
+        /// </summary>
+        private readonly record struct LayoutContext(bool IsHorizontal, double Limit, double First, double Last, Size Slot, bool IsFixedSize, Size Estimate)
+        {
+            public bool Wraps(double u, Size size)
+            {
+                return u > 0 && u + GetU(size, IsHorizontal) > Limit;
+            }
+
+            /// <summary>
+            /// Whether an item of <paramref name="size"/> overlaps the viewport, when placed in the current section or at the start of the next one
+            /// </summary>
+            public bool IsInViewport(double v, double sectionSize, Size size, bool wraps)
+            {
+                var position = wraps ? v + sectionSize : v;
+
+                return position <= Last
+                    && position + Math.Max(wraps ? 0 : sectionSize, GetV(size, IsHorizontal)) >= First;
+            }
         }
 
         protected override Rect GetItemBounds(int index)

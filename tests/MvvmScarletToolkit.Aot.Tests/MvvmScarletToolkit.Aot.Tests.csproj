@@ -1,0 +1,64 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Runs the tests of the AOT compatible packages as a Native AOT executable, to find what only breaks after trimming and AOT compilation.
+    Compiles the test files of the other test projects, without its own tests. Left out are tests that need NSubstitute,
+    which creates its proxies at runtime, and the OpenTelemetry tracing of MvvmScarletToolkit.Test.Tracing.
+    Publish and run it with: dotnet publish tests/MvvmScarletToolkit.Aot.Tests -c Release -r win-x64 (or linux-x64), then start the executable.
+  -->
+  <PropertyGroup>
+    <!-- xunit.net supports Native AOT from .NET 9 -->
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <PublishAot>true</PublishAot>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <!-- trim and AOT warnings would hide behaviour that differs from the regular test runs -->
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <!-- lets the linked test files leave out what xunit.net doesn't support in Native AOT, like IXunitSerializable -->
+    <DefineConstants>$(DefineConstants);XUNIT_AOT</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3.aot.mtp-v2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit\MvvmScarletToolkit.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Abstractions\MvvmScarletToolkit.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Commands\MvvmScarletToolkit.Commands.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.ImageLoading\MvvmScarletToolkit.ImageLoading.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Mediator\MvvmScarletToolkit.Mediator.csproj" />
+    <ProjectReference Include="..\..\src\MvvmScarletToolkit.Observables\MvvmScarletToolkit.Observables.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+  <!--
+    test files of the other projects, without their AssemblyInfo.cs, which registers the OpenTelemetry fixture,
+    and without the files that use NSubstitute.
+    QueryExtensionsTests is left out as well: it builds its queries with AsQueryable() on lists, which needs MakeGenericMethod at runtime
+    and fails in Native AOT ("Enumerable.Skip is missing native code"). That is a limitation of EnumerableQuery, AsQueryable warns about it
+    with IL2026/IL3050, not of QueryExtensions, which builds without AOT warnings.
+  -->
+  <ItemGroup>
+    <Compile Include="..\MvvmScarletToolkit.Mediator.Tests\**\*.cs" Exclude="..\MvvmScarletToolkit.Mediator.Tests\bin\**;..\MvvmScarletToolkit.Mediator.Tests\obj\**;..\MvvmScarletToolkit.Mediator.Tests\Properties\**" LinkBase="Mediator" />
+
+    <Compile Include="..\MvvmScarletToolkit.Tests\**\*.cs" Exclude="..\MvvmScarletToolkit.Tests\bin\**;..\MvvmScarletToolkit.Tests\obj\**;..\MvvmScarletToolkit.Tests\Properties\**;..\MvvmScarletToolkit.Tests\CommandExtensionsTests.cs;..\MvvmScarletToolkit.Tests\EnumerableExtensionsTests.cs;..\MvvmScarletToolkit.Tests\QueryExtensionsTests.cs" LinkBase="Toolkit" />
+
+    <Compile Include="..\MvvmScarletToolkit.Observables.Tests\**\*.cs" Exclude="..\MvvmScarletToolkit.Observables.Tests\bin\**;..\MvvmScarletToolkit.Observables.Tests\obj\**;..\MvvmScarletToolkit.Observables.Tests\Properties\**;..\MvvmScarletToolkit.Observables.Tests\ObservableBusyStackTests.cs;..\MvvmScarletToolkit.Observables.Tests\ViewModelBaseActivationTests.cs;..\MvvmScarletToolkit.Observables.Tests\ViewModelTests.cs" LinkBase="Observables" />
+
+    <Compile Include="..\MvvmScarletToolkit.ImageLoading.Tests\**\*.cs" Exclude="..\MvvmScarletToolkit.ImageLoading.Tests\bin\**;..\MvvmScarletToolkit.ImageLoading.Tests\obj\**;..\MvvmScarletToolkit.ImageLoading.Tests\Properties\**;..\MvvmScarletToolkit.ImageLoading.Tests\FilesystemCacheTests.cs;..\MvvmScarletToolkit.ImageLoading.Tests\ImageServiceTests.cs" LinkBase="ImageLoading" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\xunit.runner.json" CopyToOutputDirectory="PreserveNewest" Link="xunit.runner.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="Xunit.v3" />
+    <Using Include="MvvmScarletToolkit.Test.Tracing" />
+  </ItemGroup>
+</Project>

@@ -26,10 +26,10 @@ namespace MvvmScarletToolkit.Wpf.Tests
             Assert.False(command.CanExecute(null));
 
             // has to return right away instead of waiting for the running execution
-            await command.ExecuteAsync(null).WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await command.ExecuteAsync(null).WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             release.SetResult();
-            await first.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await first.WaitAsync(TestTimeouts.Hang, TestContext.Current.CancellationToken);
 
             Assert.Equal(1, executions);
             Assert.True(command.CanExecute(null));

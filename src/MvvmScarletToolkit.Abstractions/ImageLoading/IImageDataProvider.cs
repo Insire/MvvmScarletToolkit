@@ -1,5 +1,4 @@
 namespace MvvmScarletToolkit
-
 {
     /// <summary>
     /// Fetches the resource behind an uri and returns it as <see cref="Stream"/>

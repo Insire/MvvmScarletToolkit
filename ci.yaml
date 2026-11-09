@@ -2,8 +2,8 @@
 #
 # Secrets are not stored here. They come from the variable group "MvvmScarletToolkit-Secrets"
 # (Pipelines > Library), marked as secret, with this pipeline allowed under "Pipeline permissions":
-#   CODECOV_TOKEN    - coverage upload (UploadCodecovReport)
-#   GITHUB_APIKEY    - push pre-release packages to GitHub Packages (PushGithub)
+#   CODECOV_TOKEN    - coverage upload (UploadCodecovReport), mapped in the Test job
+#   GITHUB_APIKEY    - push pre-release packages to GitHub Packages (PushGithub), mapped in the Publish job
 #   NUGETORG_APIKEY  - not mapped here, so PushNuget can't run in CI
 # Secret variables are not exposed to scripts automatically, so they are mapped through `env` below.
 # Both must be defined: an undefined $(NAME) is passed on as the literal text "$(NAME)",
@@ -38,13 +38,8 @@ pr:
     include:
       - dev
 
-pool:
-  vmImage: windows-latest
-
 variables:
   - group: MvvmScarletToolkit-Secrets
-  - name: BuildConfiguration
-    value: Release
   - name: DOTNET_NOLOGO
     value: 'true'
   - name: DOTNET_CLI_TELEMETRY_OPTOUT
@@ -52,70 +47,68 @@ variables:
   - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
     value: 'true'
 
+# Test, Pack, the Native AOT jobs and the XAML format check run at the same time on separate agents, Publish only pushes once all of them succeeded.
+# The Cake targets RunTests, CreatePackages and PushPackages split the Default target the same way.
+# All jobs but Publish are templates in the pipelines folder, shared with cd.yaml.
+#
+# There are no UseDotNet steps: the hosted Windows image already has the .NET 10 SDK, which global.json asks for,
+# and the .NET 8 runtimes for the net8.0(-windows) test runs. Installing them took about 50 seconds per job.
+#
+# The jobs start Cake directly instead of through build.ps1/build.sh. Those also restore the local dotnet tools and format the XAML files,
+# which Cake doesn't need (it installs its own GitVersion and ReportGenerator) and which only changes the checked out files here.
+# That took 11 to 18 seconds per job. The Format job checks the formatting instead.
 jobs:
-  - job: Build
-    displayName: Build Job
+  - template: pipelines/test-job.yml
+
+  # pre-release versions, symbols to the symbol server of Azure DevOps
+  - template: pipelines/pack-job.yml
+    parameters:
+      publishSymbols: true
+
+  - template: pipelines/format-job.yml
+
+  - template: pipelines/aot-job.yml
+
+  # Pushes the packages of the Pack job, nothing is built here. Linux, because its agents start faster than the Windows ones.
+  # Only possible because the Cake task PushNuget, which needs nuget.exe and therefore Windows, never runs in CI.
+  # Waits for the AOT tests too, the packages claim to be Native AOT compatible, and for the XAML format check.
+  - job: Publish
+    displayName: Publish
+    dependsOn:
+      - Test
+      - Pack
+      - Aot
+      - Format
+    pool:
+      vmImage: ubuntu-latest
     steps:
+      # the Cake setup computes the version and branch from the history, even though it only pushes
       - checkout: self
-        # Nerdbank.GitVersioning and GitVersion compute the version from the history,
-        # YAML pipelines clone shallow by default
         fetchDepth: 0
         fetchTags: true
 
-      # net8.0 is needed for the net8.0(-windows) test runs, net10.0 for the cake project and global.json
-      - task: UseDotNet@2
-        displayName: Use .NET SDK 8.0.x
+      # No NuGet cache here: restoring its 650 MB took 10 seconds and saved 2 in the Cake build, which only restores its own packages and tools
+      - task: DownloadPipelineArtifact@2
+        displayName: Download packages
         inputs:
-          packageType: sdk
-          version: 8.0.x
-          useGlobalJson: false
+          artifact: NugetPackages
+          path: $(Build.SourcesDirectory)/packages
 
-      - task: UseDotNet@2
-        displayName: Use .NET SDK 10.0.x
-        inputs:
-          packageType: sdk
-          version: 10.0.x
-          useGlobalJson: false
-
-      # runs the Default target without PublicRelease, so packages get a pre-release version:
-      # clean, assembly info, test (+ publishes trx results and uploads coverage), pack, validate symbols,
-      # push to GitHub Packages. PushNuget is skipped, it needs PublicRelease and NUGETORG_APIKEY.
-      - task: PowerShell@2
-        displayName: Build with Cake
-        inputs:
-          targetType: filePath
-          filePath: ./build.ps1
-          errorActionPreference: stop
-          pwsh: false
+      # pushes to GitHub Packages. PushNuget is skipped, it needs PublicRelease and NUGETORG_APIKEY.
+      - pwsh: dotnet run --project cake/Build.csproj -- --target=PushPackages
+        displayName: Push with Cake
         env:
-          CODECOV_TOKEN: $(CODECOV_TOKEN)
           GITHUB_APIKEY: $(GITHUB_APIKEY)
 
-      # The classic pipeline also had a "Publish Test Results" step for **/results/coverage/*.trx.
-      # It never matched anything: the trx files are written to results/tests and the Cake task
-      # PublishTestResults already publishes them through ##vso[results.publish]. Dropped here.
-
-      - task: PublishSymbols@2
-        displayName: Publish symbols path
-        inputs:
-          SymbolsFolder: $(Build.SourcesDirectory)
-          SearchPattern: '**/bin/**/*.pdb'
-          IndexSources: true
-          PublishSymbols: true
-          SymbolServerType: TeamServices
-          SymbolExpirationInDays: '36530'
-          DetailedLog: true
-          TreatNotIndexedAsWarning: false
-          SymbolsArtifactName: Symbols_$(BuildConfiguration)
-
-      - task: NuGetCommand@2
+      # NuGetCommand@2 runs nuget.exe, which needs Mono on Linux, and the Ubuntu 24.04 images no longer have it.
+      # Unlike NuGetCommand, this task has no allowPackageConflicts: running this job again for the same build fails for packages
+      # that already reached the feed. Every CI build has its own version, so only such a rerun is affected.
+      - task: DotNetCoreCLI@2
         displayName: NuGet push to Azure
         inputs:
           command: push
-          packagesToPush: './packages/*.nupkg;!./packages/*.symbols.nupkg'
+          packagesToPush: 'packages/*.nupkg;!packages/*.symbols.nupkg'
           nuGetFeedType: internal
           # organization-scoped feed; a project-scoped one would be "<project>/<feed id>"
           publishVstsFeed: b2cb5bea-1571-49ae-a2b4-fc9709f5a4fe
           publishPackageMetadata: true
-          allowPackageConflicts: true
-          verbosityPush: Detailed

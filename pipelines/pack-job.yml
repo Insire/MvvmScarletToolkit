@@ -1,0 +1,53 @@
+# Packs all packages with the Cake target CreatePackages and publishes them as the artifact NugetPackages,
+# which the Publish job of ci.yaml and cd.yaml pushes. Runs in parallel to the tests.
+parameters:
+  # true in CD: release versions, false in CI: pre-release versions with the commit id
+  - name: publicRelease
+    type: boolean
+    default: false
+  # CI publishes the symbols to the symbol server of Azure DevOps, CD pushes them to nuget.org as snupkg along with the packages
+  - name: publishSymbols
+    type: boolean
+    default: false
+
+jobs:
+  - job: Pack
+    displayName: Pack
+    pool:
+      vmImage: windows-latest
+    steps:
+      - checkout: self
+        fetchDepth: 0
+        fetchTags: true
+
+      # packs all packages in one parallel build and validates their symbols
+      - pwsh: dotnet run --project cake/Build.csproj -- --target=CreatePackages
+        displayName: Pack with Cake
+        env:
+          PublicRelease: ${{ parameters.publicRelease }}
+
+      - ${{ if parameters.publishSymbols }}:
+          # only after a successful pack, unlike the packages the symbols don't wait for the tests
+          - task: PublishSymbols@2
+            displayName: Publish symbols path
+            inputs:
+              SymbolsFolder: $(Build.SourcesDirectory)
+              SearchPattern: '**/bin/**/*.pdb'
+              # the task can't index GitHub sources ("Unsupported source provider 'GitHub'"),
+              # the packages link their sources through SourceLink (PublishRepositoryUrl, EmbedUntrackedSources) instead
+              IndexSources: false
+              PublishSymbols: true
+              SymbolServerType: TeamServices
+              SymbolExpirationInDays: '36530'
+              DetailedLog: true
+              TreatNotIndexedAsWarning: false
+              # the task publishes under this name as the symbol request. Requests get sealed, a fixed name made every later build fail
+              # with "Request ... is sealed. Only expirationDate may be modified.", so each build needs its own
+              SymbolsArtifactName: Symbols_$(Build.BuildNumber)
+
+      - task: PublishPipelineArtifact@1
+        displayName: Publish packages
+        inputs:
+          targetPath: packages
+          artifact: NugetPackages
+          publishLocation: pipeline

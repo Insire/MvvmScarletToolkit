@@ -38,6 +38,36 @@ namespace MvvmScarletToolkit
             var width = InlineStyle.GetLength(tag, style, "width");
             var height = InlineStyle.GetLength(tag, style, "height");
 
+            var image = CreateImage(tag, style, width, height, alt);
+
+            // the host swaps the image for its alt text, even after the image was moved into a link
+            var host = new Decorator { Child = image };
+            var container = new InlineUIContainer(host);
+            if (style.TryGetVerticalAlign("vertical-align", out var alignment))
+            {
+                container.BaselineAlignment = ToBaselineAlignment(alignment);
+            }
+
+            var service = owner.ImageService ?? AsyncImageLoadingBehavior.Loader;
+            if (service is not null && CanUseImageService(uri))
+            {
+                LoadWithImageService(image, host, service, uri, width, height, alt);
+
+                return container;
+            }
+
+            if (TryLoadDirectly(uri) is { } bitmap)
+            {
+                image.Source = bitmap;
+
+                return container;
+            }
+
+            return CreateAltText(alt);
+        }
+
+        private static Image CreateImage(HtmlTag tag, InlineStyle style, double width, double height, string? alt)
+        {
             var image = new Image
             {
                 Width = width,
@@ -65,30 +95,7 @@ namespace MvvmScarletToolkit
                 AutomationProperties.SetName(image, alt);
             }
 
-            // the host swaps the image for its alt text, even after the image was moved into a link
-            var host = new Decorator { Child = image };
-            var container = new InlineUIContainer(host);
-            if (style.TryGetVerticalAlign("vertical-align", out var alignment))
-            {
-                container.BaselineAlignment = ToBaselineAlignment(alignment);
-            }
-
-            var service = owner.ImageService ?? AsyncImageLoadingBehavior.Loader;
-            if (service is not null && CanUseImageService(uri))
-            {
-                LoadWithImageService(image, host, service, uri, width, height, alt);
-
-                return container;
-            }
-
-            if (TryLoadDirectly(uri) is { } bitmap)
-            {
-                image.Source = bitmap;
-
-                return container;
-            }
-
-            return CreateAltText(alt);
+            return image;
         }
 
         /// <summary>

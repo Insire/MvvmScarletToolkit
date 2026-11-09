@@ -1,0 +1,55 @@
+# Builds and runs the tests with the Cake target RunTests, publishes their results and the coverage. Used by ci.yaml and cd.yaml.
+parameters:
+  # true in CD: the assembly info and the version are built like for a public release
+  - name: publicRelease
+    type: boolean
+    default: false
+
+jobs:
+  - job: Test
+    displayName: Test
+    pool:
+      vmImage: windows-latest
+    variables:
+      # NuGet's global packages folder, restored and saved by the Cache@2 step
+      NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
+    steps:
+      - checkout: self
+        # Nerdbank.GitVersioning and GitVersion compute the version from the history,
+        # YAML pipelines clone shallow by default
+        fetchDepth: 0
+        fetchTags: true
+
+      # The only NuGet cache: this job takes the longest, so its restore decides how long a run takes.
+      # Restoring the 2.2 GB cache takes about 20 seconds and saves about 45 in the Cake build.
+      # The other jobs had caches too, they saved little or nothing and don't decide the duration of a run.
+      # There are no lock files, the key hashes everything that decides which packages are restored.
+      # A changed key starts from the last cache (restoreKeys), restore adds what's missing and the job saves it under the new key.
+      # Caches belong to a pipeline, CI and CD each have their own.
+      - task: Cache@2
+        displayName: Cache NuGet packages
+        inputs:
+          key: 'nuget | "$(Agent.OS)" | Test | Directory.Packages.props | global.json | **/*.csproj'
+          restoreKeys: |
+            nuget | "$(Agent.OS)" | Test
+          path: $(NUGET_PACKAGES)
+
+      # builds and runs the tests, publishes their trx results through ##vso[results.publish] and uploads the coverage to Codecov
+      - pwsh: dotnet run --project cake/Build.csproj -- --target=RunTests
+        displayName: Test with Cake
+        env:
+          PublicRelease: ${{ parameters.publicRelease }}
+          CODECOV_TOKEN: $(CODECOV_TOKEN)
+
+      # The classic pipeline also had a "Publish Test Results" step for **/results/coverage/*.trx.
+      # It never matched anything: the trx files are written to results/tests and the Cake task
+      # PublishTestResults already publishes them through ##vso[results.publish]. Dropped here.
+
+      # Fills the "Code Coverage" tab. Cake merges the coverage of all test runs into this file and only uploads it to Codecov.
+      # Also after failed tests, Cake writes the report before it fails the build for them.
+      - task: PublishCodeCoverageResults@2
+        displayName: Publish code coverage
+        condition: succeededOrFailed()
+        inputs:
+          summaryFileLocation: results/reports/cobertura/Cobertura.xml
+          failIfCoverageEmpty: false

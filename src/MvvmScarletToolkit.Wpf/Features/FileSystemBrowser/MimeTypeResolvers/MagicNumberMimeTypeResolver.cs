@@ -36,103 +36,41 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
 
         private static string GetInternal(byte[] file, string extension)
         {
-            var mime = "";
-            if (file.Take(2).SequenceEqual(BMP))
+            // checked in order, the first match wins
+            foreach (var (isMatch, getMime) in MagicNumbers)
             {
-                mime = "image/bmp";
-            }
-            else if (file.Take(8).SequenceEqual(DOC))
-            {
-                mime = "application/msword";
-            }
-            else if (file.Take(2).SequenceEqual(EXE_DLL))
-            {
-                mime = "application/x-msdownload"; //both use same mime type
-            }
-            else if (file.Take(4).SequenceEqual(GIF))
-            {
-                mime = "image/gif";
-            }
-            else if (file.Take(4).SequenceEqual(ICO))
-            {
-                mime = "image/x-icon";
-            }
-            else if (file.Take(3).SequenceEqual(JPG))
-            {
-                mime = "image/jpeg";
-            }
-            else if (IsMp3(file))
-            {
-                mime = "audio/mpeg";
-            }
-            else if (file.Take(14).SequenceEqual(OGG))
-            {
-                if (extension == ".OGX")
+                if (isMatch(file))
                 {
-                    mime = "application/ogg";
+                    return getMime(file, extension);
                 }
-                else if (extension == ".OGA")
-                {
-                    mime = "audio/ogg";
-                }
-                else
-                {
-                    mime = "video/ogg";
-                }
-            }
-            else if (file.Take(7).SequenceEqual(PDF))
-            {
-                mime = "application/pdf";
-            }
-            else if (file.Take(16).SequenceEqual(PNG))
-            {
-                mime = "image/png";
-            }
-            else if (file.Take(7).SequenceEqual(RAR))
-            {
-                mime = "application/x-rar-compressed";
-            }
-            else if (file.Take(3).SequenceEqual(SWF))
-            {
-                mime = "application/x-shockwave-flash";
-            }
-            else if (file.Take(4).SequenceEqual(TIFF) || file.Take(4).SequenceEqual(TIFF_BIG_ENDIAN))
-            {
-                mime = "image/tiff";
-            }
-            else if (file.Skip(4).Take(4).SequenceEqual(FTYP))
-            {
-                mime = GetIsoMediaType(file.Skip(8).Take(4).ToArray());
-            }
-            else if (file.Take(11).SequenceEqual(TORRENT))
-            {
-                mime = "application/x-bittorrent";
-            }
-            else if (file.Take(5).SequenceEqual(TTF))
-            {
-                mime = "application/x-font-ttf";
-            }
-            else if (file.Take(4).SequenceEqual(WAV_AVI))
-            {
-                if (file.Skip(8).Take(4).SequenceEqual(WEBP))
-                {
-                    mime = "image/webp";
-                }
-                else
-                {
-                    mime = extension == ".AVI" ? "video/x-msvideo" : "audio/x-wav";
-                }
-            }
-            else if (file.Take(16).SequenceEqual(WMV_WMA))
-            {
-                mime = extension == ".WMA" ? "audio/x-ms-wma" : "video/x-ms-wmv";
-            }
-            else if (file.Take(4).SequenceEqual(ZIP_DOCX))
-            {
-                mime = extension == ".DOCX" ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" : "application/x-zip-compressed";
             }
 
-            return mime;
+            return string.Empty;
+        }
+
+        private static bool StartsWith(byte[] file, byte[] signature, int offset = 0)
+        {
+            return file.Skip(offset).Take(signature.Length).SequenceEqual(signature);
+        }
+
+        private static string GetOggMediaType(string extension)
+        {
+            return extension switch
+            {
+                ".OGX" => "application/ogg",
+                ".OGA" => "audio/ogg",
+                _ => "video/ogg",
+            };
+        }
+
+        private static string GetRiffMediaType(byte[] file, string extension)
+        {
+            if (StartsWith(file, WEBP, 8))
+            {
+                return "image/webp";
+            }
+
+            return extension == ".AVI" ? "video/x-msvideo" : "audio/x-wav";
         }
 
         private static bool IsMp3(byte[] file)
@@ -182,5 +120,28 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser.MimeTypeResolvers
         private static readonly byte[] WAV_AVI = [82, 73, 70, 70];
         private static readonly byte[] WMV_WMA = [48, 38, 178, 117, 142, 102, 207, 17, 166, 217, 0, 170, 0, 98, 206, 108];
         private static readonly byte[] ZIP_DOCX = [80, 75, 3, 4];
+
+        private static readonly (Func<byte[], bool> IsMatch, Func<byte[], string, string> GetMime)[] MagicNumbers =
+        [
+            (f => StartsWith(f, BMP), (_, _) => "image/bmp"),
+            (f => StartsWith(f, DOC), (_, _) => "application/msword"),
+            (f => StartsWith(f, EXE_DLL), (_, _) => "application/x-msdownload"), //both use same mime type
+            (f => StartsWith(f, GIF), (_, _) => "image/gif"),
+            (f => StartsWith(f, ICO), (_, _) => "image/x-icon"),
+            (f => StartsWith(f, JPG), (_, _) => "image/jpeg"),
+            (IsMp3, (_, _) => "audio/mpeg"),
+            (f => StartsWith(f, OGG), (_, extension) => GetOggMediaType(extension)),
+            (f => StartsWith(f, PDF), (_, _) => "application/pdf"),
+            (f => StartsWith(f, PNG), (_, _) => "image/png"),
+            (f => StartsWith(f, RAR), (_, _) => "application/x-rar-compressed"),
+            (f => StartsWith(f, SWF), (_, _) => "application/x-shockwave-flash"),
+            (f => StartsWith(f, TIFF) || StartsWith(f, TIFF_BIG_ENDIAN), (_, _) => "image/tiff"),
+            (f => StartsWith(f, FTYP, 4), (f, _) => GetIsoMediaType(f.Skip(8).Take(4).ToArray())),
+            (f => StartsWith(f, TORRENT), (_, _) => "application/x-bittorrent"),
+            (f => StartsWith(f, TTF), (_, _) => "application/x-font-ttf"),
+            (f => StartsWith(f, WAV_AVI), GetRiffMediaType),
+            (f => StartsWith(f, WMV_WMA), (_, extension) => extension == ".WMA" ? "audio/x-ms-wma" : "video/x-ms-wmv"),
+            (f => StartsWith(f, ZIP_DOCX), (_, extension) => extension == ".DOCX" ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" : "application/x-zip-compressed"),
+        ];
     }
 }

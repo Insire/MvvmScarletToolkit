@@ -1,0 +1,17 @@
+# Fails when a XAML file in src isn't formatted like build.ps1 formats it with XamlStyler (Settings.XamlStyler). Run build.ps1, or
+# dotnet xstyler -d src -r -c Settings.XamlStyler, and commit the result. Used by ci.yaml and cd.yaml.
+# Windows, because XamlStyler compares against the line endings of the platform and the Windows agents check out CRLF, like a local clone.
+jobs:
+  - job: Format
+    displayName: XAML format
+    pool:
+      vmImage: windows-latest
+    steps:
+      - checkout: self
+        fetchDepth: 1
+
+      - pwsh: |
+          dotnet tool restore
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet xstyler -d src -r -c Settings.XamlStyler --passive
+        displayName: Check XAML formatting

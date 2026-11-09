@@ -45,6 +45,7 @@
     <Project Path="src/MvvmScarletToolkit/MvvmScarletToolkit.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/MvvmScarletToolkit.Aot.Tests/MvvmScarletToolkit.Aot.Tests.csproj" />
     <Project Path="tests/MvvmScarletToolkit.Avalonia.Tests/MvvmScarletToolkit.Avalonia.Tests.csproj" />
     <Project Path="tests/MvvmScarletToolkit.ImageLoading.Tests/MvvmScarletToolkit.ImageLoading.Tests.csproj" />
     <Project Path="tests/MvvmScarletToolkit.Mediator.Tests/MvvmScarletToolkit.Mediator.Tests.csproj" />
