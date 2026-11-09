@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "avalonia-docs": {
+      "type": "http",
+      "url": "https://docs-mcp.avaloniaui.net/mcp"
+    },
+    "microsoft-learn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp"
+    },
+    "nuget": {
+      "type": "stdio",
+      "command": "dnx",
+      "args": [
+        "NuGet.Mcp.Server",
+        "--source",
+        "https://api.nuget.org/v3/index.json",
+        "--yes"
+      ],
+      "env": {}
+    }
+  }
+}
