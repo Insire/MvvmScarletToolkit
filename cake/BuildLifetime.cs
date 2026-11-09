@@ -17,6 +17,17 @@ namespace Build
 
             context.Information("Branch: {0}", context.Branch);
 
+            // The CD pipeline names the git tag of its GitHub release after this version (e.g. 5.0.96).
+            // Later steps of the same job read it as $(ReleaseVersion).
+            context.ReleaseVersion = context.GitVersion.Version.ToString(3);
+            context.Information("Release version: {0}", context.ReleaseVersion);
+
+            var azurePipelines = context.AzurePipelines();
+            if (azurePipelines.IsRunningOnAzurePipelines)
+            {
+                azurePipelines.Commands.SetVariable("ReleaseVersion", context.ReleaseVersion);
+            }
+
             if (context.IsPublicRelease && context.Branch == "master")
             {
                 context.Information("Building a {0} release.", "public");
