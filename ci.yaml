@@ -132,12 +132,15 @@ jobs:
           artifact: NugetPackages
           publishLocation: pipeline
 
-  # Windows, because the Cake task PushNuget uses nuget.exe. Pushes the packages of the Pack job, nothing is built here.
+  # Pushes the packages of the Pack job, nothing is built here. Linux, because its agents start faster than the Windows ones.
+  # Only possible because the Cake task PushNuget, which needs nuget.exe and therefore Windows, never runs in CI.
   - job: Publish
     displayName: Publish
     dependsOn:
       - Test
       - Pack
+    pool:
+      vmImage: ubuntu-latest
     steps:
       # the Cake setup computes the version and branch from the history, even though it only pushes
       - checkout: self
@@ -150,26 +153,26 @@ jobs:
           artifact: NugetPackages
           path: $(Build.SourcesDirectory)/packages
 
-      # pushes to GitHub Packages. PushNuget is skipped, it needs PublicRelease and NUGETORG_APIKEY
-      - task: PowerShell@2
+      # pushes to GitHub Packages. PushNuget is skipped, it needs PublicRelease and NUGETORG_APIKEY.
+      # Through bash, the executable bit of build.sh is not tracked by git
+      - task: Bash@3
         displayName: Push with Cake
         inputs:
-          targetType: filePath
-          filePath: ./build.ps1
-          arguments: --target=PushPackages
-          errorActionPreference: stop
-          pwsh: false
+          targetType: inline
+          script: bash ./build.sh --target=PushPackages
+          failOnStderr: false
         env:
           GITHUB_APIKEY: $(GITHUB_APIKEY)
 
-      - task: NuGetCommand@2
+      # NuGetCommand@2 runs nuget.exe, which needs Mono on Linux, and the Ubuntu 24.04 images no longer have it.
+      # Unlike NuGetCommand, this task has no allowPackageConflicts: running this job again for the same build fails for packages
+      # that already reached the feed. Every CI build has its own version, so only such a rerun is affected.
+      - task: DotNetCoreCLI@2
         displayName: NuGet push to Azure
         inputs:
           command: push
-          packagesToPush: './packages/*.nupkg;!./packages/*.symbols.nupkg'
+          packagesToPush: 'packages/*.nupkg;!packages/*.symbols.nupkg'
           nuGetFeedType: internal
           # organization-scoped feed; a project-scoped one would be "<project>/<feed id>"
           publishVstsFeed: b2cb5bea-1571-49ae-a2b4-fc9709f5a4fe
           publishPackageMetadata: true
-          allowPackageConflicts: true
-          verbosityPush: Detailed
