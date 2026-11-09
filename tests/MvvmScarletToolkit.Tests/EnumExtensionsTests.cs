@@ -11,6 +11,9 @@ namespace MvvmScarletToolkit.Tests
             WithoutAttribute,
         }
 
+        // MvvmScarletToolkit.Aot.Tests compiles this file with XUNIT_AOT. The overload without the enum type isn't trim safe (IL2026),
+        // the tests of GetAttributeOfType<TEnum, TAttribute> below cover the overload meant for Native AOT
+#if !XUNIT_AOT
         [Fact]
         public void GetAttributeOfType_Should_Return_The_Attribute_Of_The_Value()
         {
@@ -28,6 +31,7 @@ namespace MvvmScarletToolkit.Tests
         {
             Assert.Null(((Sample)99).GetAttributeOfType<DescriptionAttribute>());
         }
+#endif
 
         [Fact]
         public void GetAttributeOfType_With_Enum_Type_Should_Return_The_Attribute_Of_The_Value()

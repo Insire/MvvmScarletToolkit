@@ -111,8 +111,7 @@ jobs:
             [MvvmScarletToolkit.Commands](https://www.nuget.org/packages/MvvmScarletToolkit.Commands/)
             [MvvmScarletToolkit.Observables](https://www.nuget.org/packages/MvvmScarletToolkit.Observables/)
             [MvvmScarletToolkit.ImageLoading](https://www.nuget.org/packages/MvvmScarletToolkit.ImageLoading/)
-            [MvvmScarletToolkit.Mediator ](https://www.nuget.org/packages/MvvmScarletToolkit.Mediator/)
-            [MvvmScarletToolkit.Messenger](https://www.nuget.org/packages/MvvmScarletToolkit.Messenger/)
+            [MvvmScarletToolkit.Mediator](https://www.nuget.org/packages/MvvmScarletToolkit.Mediator/)
 
             ## framework specific
 
