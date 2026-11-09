@@ -46,7 +46,7 @@ dotnet add package MvvmScarletToolkit.Avalonia
 
 The current NuGet release (5.0.96) targets .NET 8 and 9, and is built against Avalonia 11. The source in this repository targets .NET 8 and 10, and Avalonia 12.
 
-All packages except MvvmScarletToolkit.Wpf are trim and Native AOT compatible. The package readmes list the few APIs that need extra care. The Avalonia sample publishes as a native executable with `dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r win-x64`.
+All packages except MvvmScarletToolkit.Wpf are trim and Native AOT compatible. The package readmes list the few APIs that need extra care. The Avalonia sample publishes as a native executable with `dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r win-x64` (or `linux-x64`). See [Build Requirements](#build-requirements) for the required native toolchain.
 
 Pre-release packages are available on [GitHub](https://github.com/Insire/MvvmScarletToolkit/packages). GitHub requires a personal access token to restore from its NuGet feed.
 
@@ -217,11 +217,48 @@ This repository requires the .NET 10 SDK, as configured in [global.json](./globa
 
 Otherwise, you need:
 
-- Windows 10 or newer, or Linux (building only: the WPF projects and their tests and samples only run on Windows)
+- Windows 10 or newer, or Linux (on Linux the WPF projects only build, their tests and samples only run on Windows)
 - [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [.NET 8 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) to run the tests for that target
 - [Visual Studio Code](https://code.visualstudio.com/) with the [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit) provided by Microsoft
 - [git](https://git-scm.com/)
+
+Publishing the Avalonia sample as a native executable (`PublishAot`) additionally needs a platform C toolchain, see below.
+
+### Windows
+
+- Install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) and [.NET 8 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0), for example with `winget install Microsoft.DotNet.SDK.10 Microsoft.DotNet.Runtime.8`.
+- For Native AOT, install [Visual Studio 2026](https://visualstudio.microsoft.com/vs/community/) or the Build Tools with the **Desktop development with C++** workload.
+- Everything builds, and the WPF tests and samples run.
+
+Publish the Avalonia sample as a native executable:
+
+```bash
+dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r win-x64
+```
+
+### Linux
+
+- Install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) and the [.NET 8 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) with your package manager or the Microsoft install script.
+- For Native AOT, install a C compiler/linker (`clang` or `gcc`) and the zlib headers:
+
+  ```bash
+  # Fedora
+  sudo dnf install clang zlib-devel
+
+  # Debian / Ubuntu
+  sudo apt install clang zlib1g-dev
+  ```
+
+- The WPF projects build, but their tests and samples only run on Windows. `dotnet test` on Linux therefore only covers the other test projects.
+
+Publish the Avalonia sample as a native executable:
+
+```bash
+dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r linux-x64
+```
+
+### Build and test
 
 Build the solution:
 

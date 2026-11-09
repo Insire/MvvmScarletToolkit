@@ -1,0 +1,7 @@
+{
+  "enabledMcpjsonServers": [
+    "avalonia-docs",
+    "microsoft-learn",
+    "nuget"
+  ]
+}
