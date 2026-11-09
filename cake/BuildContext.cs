@@ -24,9 +24,15 @@ namespace Build
         public FilePath SolutionFile { get; }
         public FilePath AssemblyInfoFile { get; }
         public FilePath CoberturaResultFile { get; }
+        public FilePath ReleaseNotesFile { get; }
 
         public VersionOracle? GitVersion { get; internal set; }
         public string? Branch { get; internal set; }
+
+        /// <summary>
+        /// Major.Minor.Height of <see cref="GitVersion"/> (e.g. 5.0.96), the name of the git tag of a GitHub release.
+        /// </summary>
+        public string ReleaseVersion { get; internal set; } = "";
 
         public bool IsPublicRelease { get; internal set; }
 
@@ -67,11 +73,15 @@ namespace Build
             SolutionFile = FilePath.FromString("MvvmScarletToolkit.slnx").MakeAbsolute(workingDirectory);
             AssemblyInfoFile = SourcePath.CombineWithFilePath("SharedAssemblyInfo.cs").MakeAbsolute(workingDirectory);
             CoberturaResultFile = CoberturaResultsPath.CombineWithFilePath("Cobertura.xml").MakeAbsolute(workingDirectory);
+            ReleaseNotesFile = ResultsPath.CombineWithFilePath("release-notes.md").MakeAbsolute(workingDirectory);
 
             IsPublicRelease = context.EnvironmentVariable("PublicRelease", false);
         }
 
-        private static IEnumerable<(string Folder, string ProjectFile)> GetWindowsNugetPackageProjects()
+        /// <summary>
+        /// Every package of a release, the Linux agents only leave out MvvmScarletToolkit.Wpf because they can't build it.
+        /// </summary>
+        internal static IEnumerable<(string Folder, string ProjectFile)> GetWindowsNugetPackageProjects()
         {
             return
             [

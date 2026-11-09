@@ -85,7 +85,6 @@ jobs:
       # the Cake setup computes the version and branch from the history, even though it only pushes
       - checkout: self
         fetchDepth: 0
-        fetchTags: true
 
       # No NuGet cache here: restoring its 650 MB took 10 seconds and saved 2 in the Cake build, which only restores its own packages and tools
       - task: DownloadPipelineArtifact@2

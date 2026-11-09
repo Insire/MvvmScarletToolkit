@@ -18,7 +18,6 @@ jobs:
     steps:
       - checkout: self
         fetchDepth: 0
-        fetchTags: true
 
       # packs all packages in one parallel build and validates their symbols
       - pwsh: dotnet run --project cake/Build.csproj -- --target=CreatePackages

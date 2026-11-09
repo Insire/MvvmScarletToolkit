@@ -249,6 +249,12 @@ dotnet test --solution MvvmScarletToolkit.slnx
 ./build.ps1
 ```
 
+The CD pipeline creates a draft GitHub release for every build of `master`, tagged with the computed version (e.g. `5.0.96`). Publishing the draft creates the tag. Its notes come from the Cake target `CreateReleaseNotes`, which lists the commits since the previous release tag. Preview them in `results/release-notes.md` with:
+
+```bash
+./build.ps1 --target=CreateReleaseNotes
+```
+
 ### Native AOT
 
 Only needed to publish the Avalonia sample or the AOT tests as a native executable, not to build the repository. It needs a platform C toolchain:
