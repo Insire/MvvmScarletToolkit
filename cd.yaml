@@ -2,10 +2,10 @@
 #
 # Secrets are not stored here. They come from the variable group "MvvmScarletToolkit-Secrets"
 # (Pipelines > Library), marked as secret, with this pipeline allowed under "Pipeline permissions":
-#   NUGETORG_APIKEY  - push to nuget.org (PushNuget, only when PublicRelease is true)
-#   CODECOV_TOKEN    - coverage upload (UploadCodecovReport)
+#   NUGETORG_APIKEY  - push to nuget.org (PushNuget, only when PublicRelease is true), mapped in the Publish job
+#   CODECOV_TOKEN    - coverage upload (UploadCodecovReport), mapped in the Test job
 #   GITHUB_APIKEY    - push to GitHub Packages (PushGithub, only when PublicRelease is false), not mapped here
-# Secret variables are not exposed to scripts automatically, so they are mapped through `env` below.
+# Secret variables are not exposed to scripts automatically, so they are mapped through `env`.
 
 trigger:
   batch: false
@@ -19,13 +19,8 @@ trigger:
 
 pr: none
 
-pool:
-  vmImage: windows-latest
-
 variables:
   - group: MvvmScarletToolkit-Secrets
-  - name: PublicRelease
-    value: 'true'
   - name: DOTNET_NOLOGO
     value: 'true'
   - name: DOTNET_CLI_TELEMETRY_OPTOUT
@@ -33,67 +28,53 @@ variables:
   - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
     value: 'true'
 
+# Same layout as ci.yaml: Test, Pack, the Native AOT jobs and the XAML format check run at the same time,
+# from the templates in the pipelines folder. Publish only releases once all of them succeeded.
+# Differences to CI: public release versions, symbols go to nuget.org as snupkg instead of the symbol server of Azure DevOps,
+# Publish pushes to nuget.org instead of GitHub Packages and the Azure Artifacts feed, and creates a draft GitHub release.
+# See ci.yaml for why there are no UseDotNet steps and why Cake starts directly.
 jobs:
-  - job: Build
-    displayName: Build Job
+  - template: pipelines/test-job.yml
+    parameters:
+      publicRelease: true
+
+  - template: pipelines/pack-job.yml
+    parameters:
+      publicRelease: true
+
+  - template: pipelines/format-job.yml
+
+  - template: pipelines/aot-job.yml
+
+  # Pushes the packages of the Pack job to nuget.org, nothing is built here.
+  # Windows, because the Cake task PushNuget pushes with nuget.exe, which Linux agents don't have.
+  - job: Publish
+    displayName: Publish
+    dependsOn:
+      - Test
+      - Pack
+      - Aot
+      - Format
+    pool:
+      vmImage: windows-latest
     steps:
+      # the Cake setup computes the version and branch from the history, even though it only pushes
       - checkout: self
-        # Nerdbank.GitVersioning and GitVersion compute the version from the history,
-        # YAML pipelines clone shallow by default
         fetchDepth: 0
         fetchTags: true
 
-      # net8.0 is needed for the net8.0(-windows) test runs, net10.0 for the cake project and global.json
-      - task: UseDotNet@2
-        displayName: Use .NET SDK 8.0.x
+      - task: DownloadPipelineArtifact@2
+        displayName: Download packages
         inputs:
-          packageType: sdk
-          version: 8.0.x
-          useGlobalJson: false
-
-      - task: UseDotNet@2
-        displayName: Use .NET SDK 10.0.x
-        inputs:
-          packageType: sdk
-          version: 10.0.x
-          useGlobalJson: false
-
-      # runs the Default target: clean, assembly info, test (+ publishes trx results and uploads coverage),
-      # pack, validate symbols, push
-      - task: PowerShell@2
-        displayName: Build with Cake
-        inputs:
-          targetType: filePath
-          filePath: ./build.ps1
-          errorActionPreference: stop
-          pwsh: false
-        env:
-          PublicRelease: $(PublicRelease)
-          NUGETORG_APIKEY: $(NUGETORG_APIKEY)
-          CODECOV_TOKEN: $(CODECOV_TOKEN)
-          # Only map variables that exist: an undefined $(NAME) is passed on as the literal text "$(NAME)",
-          # which the Cake ShouldRun checks treat as a set key.
-          # GITHUB_APIKEY: $(GITHUB_APIKEY)
-
-      # The classic pipeline also had a "Publish Test Results" step for **/results/coverage/*.trx.
-      # It never matched anything: the trx files are written to results/tests and the Cake task
-      # PublishTestResults already publishes them through ##vso[results.publish]. Dropped here.
-
-      # Fills the "Code Coverage" tab. Cake merges the coverage of all test runs into this file and only uploads it to Codecov.
-      # Also after failed tests, Cake writes the report before it fails the build for them.
-      - task: PublishCodeCoverageResults@2
-        displayName: Publish code coverage
-        condition: succeededOrFailed()
-        inputs:
-          summaryFileLocation: results/reports/cobertura/Cobertura.xml
-          failIfCoverageEmpty: false
-
-      - task: PublishPipelineArtifact@1
-        displayName: Publish Pipeline Artifact
-        inputs:
-          targetPath: packages
           artifact: NugetPackages
-          publishLocation: pipeline
+          path: $(Build.SourcesDirectory)/packages
+
+      # pushes the packages and their snupkg to nuget.org. PushGithub is skipped, it only runs for pre-releases.
+      - pwsh: dotnet run --project cake/Build.csproj -- --target=PushPackages
+        displayName: Push with Cake
+        env:
+          PublicRelease: true
+          NUGETORG_APIKEY: $(NUGETORG_APIKEY)
 
       # Replaces the classic release pipeline "Release to github" (release definition 1).
       # Only creates a draft when the built commit carries a git tag (e.g. 5.0.96), otherwise the task

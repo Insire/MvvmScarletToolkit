@@ -25,6 +25,7 @@ Tests use xunit v3 on Microsoft.Testing.Platform (see `global.json`). WPF projec
 - `samples/`: working demos. `MvvmScarletToolkit.Wpf.Samples/MainWindow.xaml` holds the scene templates, `Features/NavigationViewModel.cs` registers the scenes.
 - `tests/`: one test project per package, plus `shared/MvvmScarletToolkit.Test.Tracing`. `MvvmScarletToolkit.Aot.Tests` has no tests of its own: it compiles the test files of the AOT compatible packages as linked files and runs them as a Native AOT executable. It leaves out files that use NSubstitute, and test files compiled into it have to build with `XUNIT_AOT` (no `IXunitSerializable`, no generic test methods, no `Assert.Equivalent`).
 - Package versions are managed centrally in `Directory.Packages.props`.
+- `ci.yaml` (dev, pre-release packages) and `cd.yaml` (master, nuget.org) are the Azure Pipelines. Their Test, Pack, Native AOT and XAML format jobs are shared templates in `pipelines/`, only the Publish jobs differ. Change a job in its template, not in one of the pipelines.
 
 ## Conventions
 

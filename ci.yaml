@@ -38,25 +38,18 @@ pr:
     include:
       - dev
 
-pool:
-  vmImage: windows-latest
-
 variables:
   - group: MvvmScarletToolkit-Secrets
-  - name: BuildConfiguration
-    value: Release
   - name: DOTNET_NOLOGO
     value: 'true'
   - name: DOTNET_CLI_TELEMETRY_OPTOUT
     value: 'true'
   - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
     value: 'true'
-  # NuGet's global packages folder, restored and saved by the Cache@2 step of the Test job
-  - name: NUGET_PACKAGES
-    value: $(Pipeline.Workspace)/.nuget/packages
 
 # Test, Pack, the Native AOT jobs and the XAML format check run at the same time on separate agents, Publish only pushes once all of them succeeded.
 # The Cake targets RunTests, CreatePackages and PushPackages split the Default target the same way.
+# All jobs but Publish are templates in the pipelines folder, shared with cd.yaml.
 #
 # There are no UseDotNet steps: the hosted Windows image already has the .NET 10 SDK, which global.json asks for,
 # and the .NET 8 runtimes for the net8.0(-windows) test runs. Installing them took about 50 seconds per job.
@@ -65,156 +58,16 @@ variables:
 # which Cake doesn't need (it installs its own GitVersion and ReportGenerator) and which only changes the checked out files here.
 # That took 11 to 18 seconds per job. The Format job checks the formatting instead.
 jobs:
-  - job: Test
-    displayName: Test
-    steps:
-      - checkout: self
-        # Nerdbank.GitVersioning and GitVersion compute the version from the history,
-        # YAML pipelines clone shallow by default
-        fetchDepth: 0
-        fetchTags: true
+  - template: pipelines/test-job.yml
 
-      # The only NuGet cache: this job takes the longest, so its restore decides how long a run takes.
-      # Restoring the 2.2 GB cache takes about 20 seconds and saves about 45 in the Cake build.
-      # The other jobs had caches too, they saved little or nothing and don't decide the duration of a run.
-      # There are no lock files, the key hashes everything that decides which packages are restored.
-      # A changed key starts from the last cache (restoreKeys), restore adds what's missing and the job saves it under the new key.
-      - task: Cache@2
-        displayName: Cache NuGet packages
-        inputs:
-          key: 'nuget | "$(Agent.OS)" | Test | Directory.Packages.props | global.json | **/*.csproj'
-          restoreKeys: |
-            nuget | "$(Agent.OS)" | Test
-          path: $(NUGET_PACKAGES)
+  # pre-release versions, symbols to the symbol server of Azure DevOps
+  - template: pipelines/pack-job.yml
+    parameters:
+      publishSymbols: true
 
-      # builds and runs the tests, publishes their trx results through ##vso[results.publish] and uploads the coverage to Codecov
-      - pwsh: dotnet run --project cake/Build.csproj -- --target=RunTests
-        displayName: Test with Cake
-        env:
-          CODECOV_TOKEN: $(CODECOV_TOKEN)
+  - template: pipelines/format-job.yml
 
-      # The classic pipeline also had a "Publish Test Results" step for **/results/coverage/*.trx.
-      # It never matched anything: the trx files are written to results/tests and the Cake task
-      # PublishTestResults already publishes them through ##vso[results.publish]. Dropped here.
-
-      # Fills the "Code Coverage" tab. Cake merges the coverage of all test runs into this file and only uploads it to Codecov.
-      # Also after failed tests, Cake writes the report before it fails the build for them.
-      - task: PublishCodeCoverageResults@2
-        displayName: Publish code coverage
-        condition: succeededOrFailed()
-        inputs:
-          summaryFileLocation: results/reports/cobertura/Cobertura.xml
-          failIfCoverageEmpty: false
-
-  - job: Pack
-    displayName: Pack
-    steps:
-      - checkout: self
-        fetchDepth: 0
-        fetchTags: true
-
-      # without PublicRelease, so packages get a pre-release version. Packs all packages in one parallel build and validates their symbols
-      - pwsh: dotnet run --project cake/Build.csproj -- --target=CreatePackages
-        displayName: Pack with Cake
-
-      # only after a successful pack, unlike the packages the symbols don't wait for the tests
-      - task: PublishSymbols@2
-        displayName: Publish symbols path
-        inputs:
-          SymbolsFolder: $(Build.SourcesDirectory)
-          SearchPattern: '**/bin/**/*.pdb'
-          # the task can't index GitHub sources ("Unsupported source provider 'GitHub'"),
-          # the packages link their sources through SourceLink (PublishRepositoryUrl, EmbedUntrackedSources) instead
-          IndexSources: false
-          PublishSymbols: true
-          SymbolServerType: TeamServices
-          SymbolExpirationInDays: '36530'
-          DetailedLog: true
-          TreatNotIndexedAsWarning: false
-          SymbolsArtifactName: Symbols_$(BuildConfiguration)
-
-      - task: PublishPipelineArtifact@1
-        displayName: Publish packages
-        inputs:
-          targetPath: packages
-          artifact: NugetPackages
-          publishLocation: pipeline
-
-  # Fails when a XAML file in src isn't formatted like build.ps1 formats it with XamlStyler (Settings.XamlStyler). Run build.ps1, or
-  # dotnet xstyler -d src -r -c Settings.XamlStyler, and commit the result.
-  # Windows, because XamlStyler compares against the line endings of the platform and the Windows agents check out CRLF, like a local clone.
-  - job: Format
-    displayName: XAML format
-    steps:
-      - checkout: self
-        fetchDepth: 1
-
-      - pwsh: |
-          dotnet tool restore
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          dotnet xstyler -d src -r -c Settings.XamlStyler --passive
-        displayName: Check XAML formatting
-
-  # Native AOT on both operating systems, the native code and the libraries it links differ between them:
-  # runs the tests of the AOT compatible packages as a native executable (MvvmScarletToolkit.Aot.Tests)
-  # and publishes the Avalonia sample natively, failing on trim and AOT warnings of the native compiler.
-  - job: Aot
-    displayName: Native AOT
-    strategy:
-      matrix:
-        Windows:
-          vmImage: windows-latest
-          rid: win-x64
-        Linux:
-          vmImage: ubuntu-latest
-          rid: linux-x64
-    pool:
-      vmImage: $(vmImage)
-    steps:
-      # the packages compute their version from the history with Nerdbank.GitVersioning
-      - checkout: self
-        fetchDepth: 0
-        fetchTags: true
-
-      # Native AOT links against zlib on Linux, the hosted image lists clang but not the zlib headers
-      - bash: dpkg -s zlib1g-dev > /dev/null 2>&1 || (sudo apt-get update && sudo apt-get install -y zlib1g-dev)
-        displayName: Install zlib headers
-        condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
-
-      - pwsh: dotnet publish tests/MvvmScarletToolkit.Aot.Tests -c Release -r $(rid) -o "$(Agent.TempDirectory)/aot-tests"
-        displayName: Publish AOT tests
-
-      - pwsh: |
-          $name = if ($IsWindows) { 'MvvmScarletToolkit.Aot.Tests.exe' } else { 'MvvmScarletToolkit.Aot.Tests' }
-          & "$(Agent.TempDirectory)/aot-tests/$name" --progress off --results-directory "$(Agent.TempDirectory)/aot-results" --report-xunit-trx --report-xunit-trx-filename "aot-$(rid).trx"
-        displayName: Run AOT tests
-
-      # the run step already fails for failed tests, this only shows them in the Tests tab
-      - task: PublishTestResults@2
-        displayName: Publish AOT test results
-        condition: succeededOrFailed()
-        inputs:
-          testRunner: VSTest
-          testResultsFiles: '$(Agent.TempDirectory)/aot-results/*.trx'
-          testRunTitle: Native AOT tests ($(rid))
-          failTaskOnFailedTests: false
-          failTaskOnMissingResultsFile: false
-
-      # IlcTreatWarningsAsErrors only applies to the native compiler, not to the C# warnings of the build.
-      # The symbol files are left out of the artifact, they are about 200 of its 260 MB
-      - pwsh: |
-          $output = "$(Build.ArtifactStagingDirectory)/avalonia-sample"
-          dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r $(rid) -o $output -p:IlcTreatWarningsAsErrors=true
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          Get-ChildItem $output -Recurse -Include *.pdb, *.dbg | Remove-Item
-        displayName: Publish Avalonia sample
-
-      - task: PublishPipelineArtifact@1
-        displayName: Publish sample artifact
-        inputs:
-          targetPath: $(Build.ArtifactStagingDirectory)/avalonia-sample
-          artifact: AvaloniaSample-$(rid)
-          publishLocation: pipeline
+  - template: pipelines/aot-job.yml
 
   # Pushes the packages of the Pack job, nothing is built here. Linux, because its agents start faster than the Windows ones.
   # Only possible because the Cake task PushNuget, which needs nuget.exe and therefore Windows, never runs in CI.

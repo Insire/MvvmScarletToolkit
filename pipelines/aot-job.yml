@@ -1,0 +1,61 @@
+# Native AOT on both operating systems, the native code and the libraries it links differ between them:
+# runs the tests of the AOT compatible packages as a native executable (MvvmScarletToolkit.Aot.Tests)
+# and publishes the Avalonia sample natively, failing on trim and AOT warnings of the native compiler. Used by ci.yaml and cd.yaml.
+jobs:
+  - job: Aot
+    displayName: Native AOT
+    strategy:
+      matrix:
+        Windows:
+          vmImage: windows-latest
+          rid: win-x64
+        Linux:
+          vmImage: ubuntu-latest
+          rid: linux-x64
+    pool:
+      vmImage: $(vmImage)
+    steps:
+      # the packages compute their version from the history with Nerdbank.GitVersioning
+      - checkout: self
+        fetchDepth: 0
+        fetchTags: true
+
+      # Native AOT links against zlib on Linux, the hosted image lists clang but not the zlib headers
+      - bash: dpkg -s zlib1g-dev > /dev/null 2>&1 || (sudo apt-get update && sudo apt-get install -y zlib1g-dev)
+        displayName: Install zlib headers
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
+      - pwsh: dotnet publish tests/MvvmScarletToolkit.Aot.Tests -c Release -r $(rid) -o "$(Agent.TempDirectory)/aot-tests"
+        displayName: Publish AOT tests
+
+      - pwsh: |
+          $name = if ($IsWindows) { 'MvvmScarletToolkit.Aot.Tests.exe' } else { 'MvvmScarletToolkit.Aot.Tests' }
+          & "$(Agent.TempDirectory)/aot-tests/$name" --progress off --results-directory "$(Agent.TempDirectory)/aot-results" --report-xunit-trx --report-xunit-trx-filename "aot-$(rid).trx"
+        displayName: Run AOT tests
+
+      # the run step already fails for failed tests, this only shows them in the Tests tab
+      - task: PublishTestResults@2
+        displayName: Publish AOT test results
+        condition: succeededOrFailed()
+        inputs:
+          testRunner: VSTest
+          testResultsFiles: '$(Agent.TempDirectory)/aot-results/*.trx'
+          testRunTitle: Native AOT tests ($(rid))
+          failTaskOnFailedTests: false
+          failTaskOnMissingResultsFile: false
+
+      # IlcTreatWarningsAsErrors only applies to the native compiler, not to the C# warnings of the build.
+      # The symbol files are left out of the artifact, they are about 200 of its 260 MB
+      - pwsh: |
+          $output = "$(Build.ArtifactStagingDirectory)/avalonia-sample"
+          dotnet publish samples/MvvmScarletToolkit.Avalonia.Samples -c Release -r $(rid) -o $output -p:IlcTreatWarningsAsErrors=true
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-ChildItem $output -Recurse -Include *.pdb, *.dbg | Remove-Item
+        displayName: Publish Avalonia sample
+
+      - task: PublishPipelineArtifact@1
+        displayName: Publish sample artifact
+        inputs:
+          targetPath: $(Build.ArtifactStagingDirectory)/avalonia-sample
+          artifact: AvaloniaSample-$(rid)
+          publishLocation: pipeline
