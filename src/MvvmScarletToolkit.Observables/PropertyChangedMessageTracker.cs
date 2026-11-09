@@ -80,7 +80,6 @@ namespace MvvmScarletToolkit
         /// <inheritdoc/>
         public void StopTracking<T>(T instance)
             where T : class, INotifyPropertyChanged
-
         {
             if (instance is null)
             {

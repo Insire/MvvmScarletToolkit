@@ -61,44 +61,54 @@ namespace MvvmScarletToolkit
             for (var i = 0; i < VisualTreeHelper.GetChildrenCount(start); i++)
             {
                 var childVisual = VisualTreeHelper.GetChild(start, i) as Visual;
-                if (childVisual is Thumb)
+                switch (childVisual)
                 {
-                    var gridViewColumn = FindParentColumn(childVisual);
-                    if (gridViewColumn != null)
-                    {
-                        if (childVisual is Thumb thumb)
-                        {
-                            if (ProportionalColumn.IsProportionalColumn(gridViewColumn) || FixedColumn.IsFixedColumn(gridViewColumn) || IsFillColumn(gridViewColumn))
-                            {
-                                thumb.SetCurrentValue(UIElement.IsHitTestVisibleProperty, false);
-                            }
-                            else
-                            {
-                                thumb.PreviewMouseMove += ThumbPreviewMouseMove;
-                                thumb.PreviewMouseLeftButtonDown += ThumbPreviewMouseLeftButtonDown;
-                                DependencyPropertyDescriptor.FromProperty(
-                                    GridViewColumn.WidthProperty,
-                                    typeof(GridViewColumn)).AddValueChanged(gridViewColumn, GridColumnWidthChanged);
-                            }
-                        }
-                    }
-                }
-                else if (childVisual is GridViewColumnHeader columnHeader)
-                {
-                    columnHeader.SizeChanged += GridColumnHeaderSizeChanged;
-                }
-                else if (_scrollViewer is null && childVisual is ScrollViewer scrollViewer)
-                {
-                    _scrollViewer = scrollViewer;
-                    _scrollViewer.ScrollChanged += ScrollViewerScrollChanged;
+                    case Thumb thumb:
+                        RegisterThumb(thumb);
+                        break;
 
-                    // assume we do the regulation of the horizontal scrollbar
-                    _scrollViewer.SetCurrentValue(ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Hidden);
-                    _scrollViewer.SetCurrentValue(ScrollViewer.VerticalScrollBarVisibilityProperty, VerticalScrollBarVisibility);
+                    case GridViewColumnHeader columnHeader:
+                        columnHeader.SizeChanged += GridColumnHeaderSizeChanged;
+                        break;
+
+                    case ScrollViewer scrollViewer when _scrollViewer is null:
+                        RegisterScrollViewer(scrollViewer);
+                        break;
                 }
 
                 RegisterEvents(childVisual);
             }
+        }
+
+        private void RegisterThumb(Thumb thumb)
+        {
+            var gridViewColumn = FindParentColumn(thumb);
+            if (gridViewColumn is null)
+            {
+                return;
+            }
+
+            if (IsResizeSuppressed(gridViewColumn))
+            {
+                thumb.SetCurrentValue(UIElement.IsHitTestVisibleProperty, false);
+                return;
+            }
+
+            thumb.PreviewMouseMove += ThumbPreviewMouseMove;
+            thumb.PreviewMouseLeftButtonDown += ThumbPreviewMouseLeftButtonDown;
+            DependencyPropertyDescriptor.FromProperty(
+                GridViewColumn.WidthProperty,
+                typeof(GridViewColumn)).AddValueChanged(gridViewColumn, GridColumnWidthChanged);
+        }
+
+        private void RegisterScrollViewer(ScrollViewer scrollViewer)
+        {
+            _scrollViewer = scrollViewer;
+            _scrollViewer.ScrollChanged += ScrollViewerScrollChanged;
+
+            // assume we do the regulation of the horizontal scrollbar
+            _scrollViewer.SetCurrentValue(ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Hidden);
+            _scrollViewer.SetCurrentValue(ScrollViewer.VerticalScrollBarVisibilityProperty, VerticalScrollBarVisibility);
         }
 
         private void UnregisterEvents(DependencyObject? start)
@@ -111,41 +121,56 @@ namespace MvvmScarletToolkit
             for (var i = 0; i < VisualTreeHelper.GetChildrenCount(start); i++)
             {
                 var childVisual = VisualTreeHelper.GetChild(start, i) as Visual;
-                if (childVisual is Thumb)
+                switch (childVisual)
                 {
-                    var gridViewColumn = FindParentColumn(childVisual);
-                    if (gridViewColumn != null)
-                    {
-                        if (childVisual is Thumb thumb)
-                        {
-                            if (ProportionalColumn.IsProportionalColumn(gridViewColumn) || FixedColumn.IsFixedColumn(gridViewColumn) || IsFillColumn(gridViewColumn))
-                            {
-                                thumb.SetCurrentValue(UIElement.IsHitTestVisibleProperty, true);
-                            }
-                            else
-                            {
-                                thumb.PreviewMouseMove -= ThumbPreviewMouseMove;
-                                thumb.PreviewMouseLeftButtonDown -= ThumbPreviewMouseLeftButtonDown;
-                                DependencyPropertyDescriptor.FromProperty(
-                                    GridViewColumn.WidthProperty,
-                                    typeof(GridViewColumn)).RemoveValueChanged(gridViewColumn, GridColumnWidthChanged);
-                            }
-                        }
-                    }
-                }
-                else if (childVisual is GridViewColumnHeader columnHeader)
-                {
-                    columnHeader.SizeChanged -= GridColumnHeaderSizeChanged;
-                }
-                else if (childVisual is ScrollViewer scrollViewer && ReferenceEquals(scrollViewer, _scrollViewer))
-                {
-                    _scrollViewer.ScrollChanged -= ScrollViewerScrollChanged;
-                    // so that RegisterEvents picks it up again, once the ListView is loaded again
-                    _scrollViewer = null;
+                    case Thumb thumb:
+                        UnregisterThumb(thumb);
+                        break;
+
+                    case GridViewColumnHeader columnHeader:
+                        columnHeader.SizeChanged -= GridColumnHeaderSizeChanged;
+                        break;
+
+                    case ScrollViewer scrollViewer when ReferenceEquals(scrollViewer, _scrollViewer):
+                        scrollViewer.ScrollChanged -= ScrollViewerScrollChanged;
+                        // so that RegisterEvents picks it up again, once the ListView is loaded again
+                        _scrollViewer = null;
+                        break;
                 }
 
                 UnregisterEvents(childVisual);
             }
+        }
+
+        private void UnregisterThumb(Thumb thumb)
+        {
+            var gridViewColumn = FindParentColumn(thumb);
+            if (gridViewColumn is null)
+            {
+                return;
+            }
+
+            if (IsResizeSuppressed(gridViewColumn))
+            {
+                thumb.SetCurrentValue(UIElement.IsHitTestVisibleProperty, true);
+                return;
+            }
+
+            thumb.PreviewMouseMove -= ThumbPreviewMouseMove;
+            thumb.PreviewMouseLeftButtonDown -= ThumbPreviewMouseLeftButtonDown;
+            DependencyPropertyDescriptor.FromProperty(
+                GridViewColumn.WidthProperty,
+                typeof(GridViewColumn)).RemoveValueChanged(gridViewColumn, GridColumnWidthChanged);
+        }
+
+        /// <summary>
+        /// proportional, fixed and range fill columns size themselves, so the user can't resize them
+        /// </summary>
+        private bool IsResizeSuppressed(GridViewColumn? gridViewColumn)
+        {
+            return ProportionalColumn.IsProportionalColumn(gridViewColumn)
+                || FixedColumn.IsFixedColumn(gridViewColumn)
+                || IsFillColumn(gridViewColumn);
         }
 
         private static GridViewColumn? FindParentColumn(DependencyObject? element)
@@ -210,61 +235,59 @@ namespace MvvmScarletToolkit
 
             foreach (var gridViewColumn in gridView.Columns)
             {
-                if (!RangeColumn.IsRangeColumn(gridViewColumn))
-                {
-                    continue;
-                }
+                InitRangeColumn(gridViewColumn);
+            }
+        }
 
-                var minWidth = RangeColumn.GetRangeMinWidth(gridViewColumn);
-                var maxWidth = RangeColumn.GetRangeMaxWidth(gridViewColumn);
-                if (!minWidth.HasValue && !maxWidth.HasValue)
-                {
-                    continue;
-                }
+        private void InitRangeColumn(GridViewColumn gridViewColumn)
+        {
+            if (!RangeColumn.IsRangeColumn(gridViewColumn))
+            {
+                return;
+            }
 
-                var columnHeader = FindColumnHeader(ListView, gridViewColumn);
-                if (columnHeader is null)
-                {
-                    continue;
-                }
+            var minWidth = RangeColumn.GetRangeMinWidth(gridViewColumn);
+            var maxWidth = RangeColumn.GetRangeMaxWidth(gridViewColumn);
+            if (!minWidth.HasValue && !maxWidth.HasValue)
+            {
+                return;
+            }
 
-                var actualWidth = columnHeader.ActualWidth;
-                if (minWidth.HasValue)
+            var columnHeader = FindColumnHeader(ListView, gridViewColumn);
+            if (columnHeader is null)
+            {
+                return;
+            }
+
+            var actualWidth = columnHeader.ActualWidth;
+            var hasActualWidth = !double.IsInfinity(actualWidth);
+            if (minWidth.HasValue)
+            {
+                columnHeader.SetCurrentValue(FrameworkElement.MinWidthProperty, minWidth.Value);
+                if (hasActualWidth && actualWidth < columnHeader.MinWidth)
                 {
-                    columnHeader.SetCurrentValue(FrameworkElement.MinWidthProperty, minWidth.Value);
-                    if (!double.IsInfinity(actualWidth) && actualWidth < columnHeader.MinWidth)
-                    {
-                        gridViewColumn.SetCurrentValue(GridViewColumn.WidthProperty, columnHeader.MinWidth);
-                    }
+                    gridViewColumn.SetCurrentValue(GridViewColumn.WidthProperty, columnHeader.MinWidth);
                 }
-                if (maxWidth.HasValue)
+            }
+
+            if (maxWidth.HasValue)
+            {
+                columnHeader.SetCurrentValue(FrameworkElement.MaxWidthProperty, maxWidth.Value);
+                if (hasActualWidth && actualWidth > columnHeader.MaxWidth)
                 {
-                    columnHeader.SetCurrentValue(FrameworkElement.MaxWidthProperty, maxWidth.Value);
-                    if (!double.IsInfinity(actualWidth) && actualWidth > columnHeader.MaxWidth)
-                    {
-                        gridViewColumn.SetCurrentValue(GridViewColumn.WidthProperty, columnHeader.MaxWidth);
-                    }
+                    gridViewColumn.SetCurrentValue(GridViewColumn.WidthProperty, columnHeader.MaxWidth);
                 }
             }
         }
 
         private void ResizeColumns()
         {
-            var view = ListView.View as GridView;
-            if (view is null || view.Columns.Count == 0)
+            if (ListView.View is not GridView view || view.Columns.Count == 0)
             {
                 return;
             }
 
-            var actualWidth = double.PositiveInfinity;
-            if (_scrollViewer != null)
-            {
-                actualWidth = _scrollViewer.ViewportWidth;
-            }
-            if (double.IsInfinity(actualWidth))
-            {
-                actualWidth = ListView.ActualWidth;
-            }
+            var actualWidth = GetAvailableWidth();
             if (double.IsInfinity(actualWidth) || actualWidth <= 0)
             {
                 return;
@@ -278,11 +301,7 @@ namespace MvvmScarletToolkit
             {
                 if (ProportionalColumn.IsProportionalColumn(gridViewColumn))
                 {
-                    var proportionalWidth = ProportionalColumn.GetProportionalWidth(gridViewColumn);
-                    if (proportionalWidth != null)
-                    {
-                        resizeableRegionCount += proportionalWidth.Value;
-                    }
+                    resizeableRegionCount += ProportionalColumn.GetProportionalWidth(gridViewColumn) ?? 0;
                 }
                 else
                 {
@@ -292,62 +311,69 @@ namespace MvvmScarletToolkit
 
             if (resizeableRegionCount <= 0)
             {
-                // no proportional columns present: commit the regulation to the scroll viewer
-                _scrollViewer?.SetCurrentValue(ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Auto);
-
-                // search the first fill column
-                GridViewColumn? fillColumn = null;
-                for (var i = 0; i < view.Columns.Count; i++)
-                {
-                    var gridViewColumn = view.Columns[i];
-                    if (IsFillColumn(gridViewColumn))
-                    {
-                        fillColumn = gridViewColumn;
-                        break;
-                    }
-                }
-
-                if (fillColumn != null)
-                {
-                    var otherColumnsWithoutFillWidth = otherColumnsWidth - fillColumn.ActualWidth;
-                    var fillWidth = actualWidth - otherColumnsWithoutFillWidth;
-                    if (fillWidth > 0)
-                    {
-                        var minWidth = RangeColumn.GetRangeMinWidth(fillColumn);
-                        var maxWidth = RangeColumn.GetRangeMaxWidth(fillColumn);
-
-                        var setWidth = !(minWidth.HasValue && fillWidth < minWidth.Value);
-                        if (maxWidth.HasValue && fillWidth > maxWidth.Value)
-                        {
-                            setWidth = false;
-                        }
-                        if (setWidth)
-                        {
-                            _scrollViewer?.SetCurrentValue(ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Hidden);
-                            fillColumn.SetCurrentValue(GridViewColumn.WidthProperty, fillWidth);
-                        }
-                    }
-                }
+                ResizeFillColumn(view, actualWidth, otherColumnsWidth);
                 return;
             }
 
-            var resizeableColumnsWidth = actualWidth - otherColumnsWidth;
+            ResizeProportionalColumns(view, actualWidth - otherColumnsWidth, resizeableRegionCount);
+        }
+
+        private double GetAvailableWidth()
+        {
+            var actualWidth = _scrollViewer?.ViewportWidth ?? double.PositiveInfinity;
+            return double.IsInfinity(actualWidth)
+                ? ListView.ActualWidth
+                : actualWidth;
+        }
+
+        private void ResizeFillColumn(GridView view, double actualWidth, double otherColumnsWidth)
+        {
+            // no proportional columns present: commit the regulation to the scroll viewer
+            _scrollViewer?.SetCurrentValue(ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Auto);
+
+            var fillColumn = view.Columns.FirstOrDefault(IsFillColumn);
+            if (fillColumn is null)
+            {
+                return;
+            }
+
+            var otherColumnsWithoutFillWidth = otherColumnsWidth - fillColumn.ActualWidth;
+            var fillWidth = actualWidth - otherColumnsWithoutFillWidth;
+            if (fillWidth <= 0)
+            {
+                return;
+            }
+
+            var minWidth = RangeColumn.GetRangeMinWidth(fillColumn);
+            var maxWidth = RangeColumn.GetRangeMaxWidth(fillColumn);
+            if (fillWidth < minWidth || fillWidth > maxWidth)
+            {
+                return;
+            }
+
+            _scrollViewer?.SetCurrentValue(ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Hidden);
+            fillColumn.SetCurrentValue(GridViewColumn.WidthProperty, fillWidth);
+        }
+
+        private static void ResizeProportionalColumns(GridView view, double resizeableColumnsWidth, double resizeableRegionCount)
+        {
             if (resizeableColumnsWidth <= 0)
             {
                 return;
             }
 
-            // resize columns
             var resizeableRegionWidth = resizeableColumnsWidth / resizeableRegionCount;
             foreach (var gridViewColumn in view.Columns)
             {
-                if (ProportionalColumn.IsProportionalColumn(gridViewColumn))
+                if (!ProportionalColumn.IsProportionalColumn(gridViewColumn))
                 {
-                    var proportionalWidth = ProportionalColumn.GetProportionalWidth(gridViewColumn);
-                    if (proportionalWidth != null)
-                    {
-                        gridViewColumn.SetCurrentValue(GridViewColumn.WidthProperty, proportionalWidth.Value * resizeableRegionWidth);
-                    }
+                    continue;
+                }
+
+                var proportionalWidth = ProportionalColumn.GetProportionalWidth(gridViewColumn);
+                if (proportionalWidth.HasValue)
+                {
+                    gridViewColumn.SetCurrentValue(GridViewColumn.WidthProperty, proportionalWidth.Value * resizeableRegionWidth);
                 }
             }
         }
@@ -442,39 +468,32 @@ namespace MvvmScarletToolkit
                 return;
             }
 
-            // suppress column resizing for proportional, fixed and range fill columns
-            if (ProportionalColumn.IsProportionalColumn(gridViewColumn) || FixedColumn.IsFixedColumn(gridViewColumn) || IsFillColumn(gridViewColumn))
+            if (IsResizeSuppressed(gridViewColumn))
             {
                 thumb.SetCurrentValue(FrameworkElement.CursorProperty, null);
                 return;
             }
 
-            // check range column bounds
             if (thumb.IsMouseCaptured && RangeColumn.IsRangeColumn(gridViewColumn))
             {
-                var minWidth = RangeColumn.GetRangeMinWidth(gridViewColumn);
-                var maxWidth = RangeColumn.GetRangeMaxWidth(gridViewColumn);
-
-                if (minWidth.HasValue && maxWidth.HasValue && (minWidth > maxWidth))
-                {
-                    return; // invalid case
-                }
-
-                _resizeCursor ??= thumb.Cursor; // save the resize cursor
-
-                if (minWidth.HasValue && gridViewColumn.Width <= minWidth.Value)
-                {
-                    thumb.SetCurrentValue(FrameworkElement.CursorProperty, Cursors.No);
-                }
-                else if (maxWidth.HasValue && gridViewColumn.Width >= maxWidth.Value)
-                {
-                    thumb.SetCurrentValue(FrameworkElement.CursorProperty, Cursors.No);
-                }
-                else
-                {
-                    thumb.SetCurrentValue(FrameworkElement.CursorProperty, _resizeCursor); // between valid min/max
-                }
+                UpdateRangeResizeCursor(thumb, gridViewColumn);
             }
+        }
+
+        private void UpdateRangeResizeCursor(Thumb thumb, GridViewColumn gridViewColumn)
+        {
+            var minWidth = RangeColumn.GetRangeMinWidth(gridViewColumn);
+            var maxWidth = RangeColumn.GetRangeMaxWidth(gridViewColumn);
+
+            if (minWidth > maxWidth)
+            {
+                return; // invalid case
+            }
+
+            _resizeCursor ??= thumb.Cursor; // save the resize cursor
+
+            var isAtBounds = gridViewColumn.Width <= minWidth || gridViewColumn.Width >= maxWidth;
+            thumb.SetCurrentValue(FrameworkElement.CursorProperty, isAtBounds ? Cursors.No : _resizeCursor);
         }
 
         private void ThumbPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -485,9 +504,7 @@ namespace MvvmScarletToolkit
             }
 
             var gridViewColumn = FindParentColumn(thumb);
-
-            // suppress column resizing for proportional, fixed and range fill columns
-            if (ProportionalColumn.IsProportionalColumn(gridViewColumn) || FixedColumn.IsFixedColumn(gridViewColumn) || IsFillColumn(gridViewColumn))
+            if (IsResizeSuppressed(gridViewColumn))
             {
                 e.Handled = true;
             }

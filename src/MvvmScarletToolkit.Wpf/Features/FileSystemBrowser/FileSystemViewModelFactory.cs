@@ -170,31 +170,16 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             {
                 foreach (var entry in new DirectoryInfo(path).EnumerateFileSystemInfos())
                 {
-                    if (entry is DirectoryInfo directory)
+                    IFileSystemChild? match = entry switch
                     {
-                        if (!folderAttributes.Any(q => directory.Attributes.HasFlag(q)))
-                        {
-                            continue;
-                        }
+                        DirectoryInfo directory => SearchDirectoryEntry(directory, parent, query, fileAttributes, folderAttributes, pending),
+                        FileInfo file => SearchFileEntry(file, parent, query, fileAttributes),
+                        _ => null,
+                    };
 
-                        // junctions can point back to one of their parents
-                        if (!directory.Attributes.HasFlag(FileAttributes.ReparsePoint))
-                        {
-                            pending.Push(directory.FullName);
-                        }
-
-                        if (FileSystemSearch.IsMatch(directory.Name, query))
-                        {
-                            result.Add(new ScarletDirectory(_scheduler, new ScarletDirectoryInfo(directory), fileAttributes, folderAttributes, parent, this));
-                        }
-                    }
-                    else if (entry is FileInfo file
-                        && FileSystemSearch.IsMatch(file.Name, query)
-                        && fileAttributes.Any(q => file.Attributes.HasFlag(q)))
+                    if (match is not null)
                     {
-                        var mimeType = GetMimeType(file, _extensionMimetypeResolvers);
-
-                        result.Add(new ScarletFile(_scheduler, new ScarletFileInfo(file, mimeType ?? string.Empty), parent, this));
+                        result.Add(match);
                     }
                 }
             }
@@ -207,6 +192,49 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
             }
 
             return new FileSystemSearchBatch(result, false);
+        }
+
+        /// <summary>
+        /// Queues <paramref name="directory"/> for the search and returns it, when its name matches <paramref name="query"/>
+        /// </summary>
+        private ScarletDirectory? SearchDirectoryEntry(
+            DirectoryInfo directory,
+            IFileSystemParent parent,
+            string query,
+            IReadOnlyCollection<FileAttributes> fileAttributes,
+            IReadOnlyCollection<FileAttributes> folderAttributes,
+            Stack<string> pending)
+        {
+            if (!folderAttributes.Any(q => directory.Attributes.HasFlag(q)))
+            {
+                return null;
+            }
+
+            // junctions can point back to one of their parents
+            if (!directory.Attributes.HasFlag(FileAttributes.ReparsePoint))
+            {
+                pending.Push(directory.FullName);
+            }
+
+            return FileSystemSearch.IsMatch(directory.Name, query)
+                ? new ScarletDirectory(_scheduler, new ScarletDirectoryInfo(directory), fileAttributes, folderAttributes, parent, this)
+                : null;
+        }
+
+        private ScarletFile? SearchFileEntry(
+            FileInfo file,
+            IFileSystemParent parent,
+            string query,
+            IReadOnlyCollection<FileAttributes> fileAttributes)
+        {
+            if (!FileSystemSearch.IsMatch(file.Name, query) || !fileAttributes.Any(q => file.Attributes.HasFlag(q)))
+            {
+                return null;
+            }
+
+            var mimeType = GetMimeType(file, _extensionMimetypeResolvers);
+
+            return new ScarletFile(_scheduler, new ScarletFileInfo(file, mimeType ?? string.Empty), parent, this);
         }
 
         public async Task<ScarletFileInfo?> GetFileInfo(string filePath, CancellationToken token)

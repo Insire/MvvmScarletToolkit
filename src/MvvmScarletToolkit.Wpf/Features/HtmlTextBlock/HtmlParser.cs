@@ -113,23 +113,31 @@ namespace MvvmScarletToolkit.Wpf
 
         private static Inline CreateText(HtmlTag tag, TextBlock textBlock, InlineCreationContext<Color> context)
         {
-            Inline result;
-            if (tag.Name == "binding")
+            var result = tag.Name == "binding"
+                ? CreateBindingText(tag, textBlock)
+                : new Run(tag.Get("value"));
+
+            return ApplyFormatting(result, textBlock, context);
+        }
+
+        /// <summary>
+        /// Reads the property named by the <c>path</c> attribute from the data context, or shows a placeholder when it can't be read
+        /// </summary>
+        private static Inline CreateBindingText(HtmlTag tag, TextBlock textBlock)
+        {
+            if (tag.Get("path") is { } propertyName
+                && textBlock.DataContext is { } dataContext
+                && dataContext.GetType().GetProperty(propertyName) is { CanRead: true } property)
             {
-                result = new Bold(new Run("{Binding}"));
-                if (tag.Get("path") is { } propertyName
-                    && textBlock.DataContext is { } dataContext
-                    && dataContext.GetType().GetProperty(propertyName) is { CanRead: true } property)
-                {
-                    var value = property.GetValue(dataContext, null);
-                    result = new Run(value?.ToString() ?? "");
-                }
-            }
-            else
-            {
-                result = new Run(tag.Get("value"));
+                var value = property.GetValue(dataContext, null);
+                return new Run(value?.ToString() ?? "");
             }
 
+            return new Bold(new Run("{Binding}"));
+        }
+
+        private static Inline ApplyFormatting(Inline result, TextBlock textBlock, InlineCreationContext<Color> context)
+        {
             if (context.SubScript)
             {
                 result.SetCurrentValue(Typography.VariantsProperty, FontVariants.Subscript);

@@ -531,111 +531,147 @@ namespace MvvmScarletToolkit
                 return availableSize;
             }
 
+            if (_children is null)
+            {
+                return availableSize;
+            }
+
             var startPos = _generator.GeneratorPositionFromIndex(firstVisibleIndex);
 
             var childIndex = (startPos.Offset == 0) ? startPos.Index : startPos.Index + 1;
             var current = firstVisibleIndex;
-            var visibleSections = 1;
+            var cursor = new LayoutCursor(GetFirstVisibleSection());
 
             using (_generator.StartAt(startPos, GeneratorDirection.Forward, true))
             {
-                var stop = false;
                 var isHorizontal = Orientation == Orientation.Horizontal;
-                var currentX = 0d;
-                var currentY = 0d;
-                var maxItemSize = 0d;
-                var currentSection = GetFirstVisibleSection();
-
-                if (_children is null)
-                {
-                    return availableSize;
-                }
 
                 while (current < itemCount)
                 {
                     // Get or create the child
-                    if (_generator.GenerateNext(out var newlyRealized) is UIElement child)
+                    if (_generator.GenerateNext(out var newlyRealized) is not UIElement child)
                     {
-                        if (newlyRealized)
-                        {
-                            // Figure out if we need to insert the child at the end or somewhere in the middle
-                            if (childIndex >= _children.Count)
-                            {
-                                AddInternalChild(child);
-                            }
-                            else
-                            {
-                                InsertInternalChild(childIndex, child);
-                            }
-                            _generator.PrepareItemContainer(child);
-                            child.Measure(ChildSlotSize);
-                        }
-                        else
-                        {
-                            // The child has already been created, let's be sure it's in the right spot
-                            Debug.Assert(child == _children[childIndex], "Wrong child was generated");
-                        }
-
-                        _childSize = child.DesiredSize;
-                        var childRect = new Rect(new Point(currentX, currentY), _childSize);
-                        if (isHorizontal)
-                        {
-                            maxItemSize = Math.Max(maxItemSize, childRect.Height);
-                            if (childRect.Right > realizedFrameSize.Width) //wrap to a new line
-                            {
-                                currentY += maxItemSize;
-                                currentX = 0;
-                                maxItemSize = childRect.Height;
-                                childRect.X = currentX;
-                                childRect.Y = currentY;
-                                currentSection++;
-                                visibleSections++;
-                            }
-                            if (currentY > realizedFrameSize.Height)
-                            {
-                                stop = true;
-                            }
-
-                            currentX = childRect.Right;
-                        }
-                        else
-                        {
-                            maxItemSize = Math.Max(maxItemSize, childRect.Width);
-                            if (childRect.Bottom > realizedFrameSize.Height) //wrap to a new column
-                            {
-                                currentX += maxItemSize;
-                                currentY = 0;
-                                maxItemSize = childRect.Width;
-                                childRect.X = currentX;
-                                childRect.Y = currentY;
-                                currentSection++;
-                                visibleSections++;
-                            }
-                            if (currentX > realizedFrameSize.Width)
-                            {
-                                stop = true;
-                            }
-
-                            currentY = childRect.Bottom;
-                        }
-                        _realizedChildLayout.Add(child, childRect);
-                        _abstractPanel.SetItemSection(current, currentSection);
-
-                        if (stop)
-                        {
-                            break;
-                        }
-
-                        current++;
-                        childIndex++;
+                        break;
                     }
+
+                    RealizeChild(_generator, _children, child, childIndex, newlyRealized);
+
+                    _childSize = child.DesiredSize;
+                    var childRect = isHorizontal
+                        ? cursor.PlaceInRow(_childSize, realizedFrameSize)
+                        : cursor.PlaceInColumn(_childSize, realizedFrameSize);
+
+                    _realizedChildLayout.Add(child, childRect);
+                    _abstractPanel.SetItemSection(current, cursor.Section);
+
+                    if (cursor.IsBeyondFrame(realizedFrameSize, isHorizontal))
+                    {
+                        break;
+                    }
+
+                    current++;
+                    childIndex++;
                 }
             }
             CleanUpItems(firstVisibleIndex, current - 1);
 
-            ComputeExtentAndViewport(availableSize, visibleSections);
+            ComputeExtentAndViewport(availableSize, cursor.VisibleSections);
 
             return availableSize;
+        }
+
+        private void RealizeChild(IItemContainerGenerator generator, UIElementCollection children, UIElement child, int childIndex, bool newlyRealized)
+        {
+            if (!newlyRealized)
+            {
+                // The child has already been created, let's be sure it's in the right spot
+                Debug.Assert(child == children[childIndex], "Wrong child was generated");
+                return;
+            }
+
+            // Figure out if we need to insert the child at the end or somewhere in the middle
+            if (childIndex >= children.Count)
+            {
+                AddInternalChild(child);
+            }
+            else
+            {
+                InsertInternalChild(childIndex, child);
+            }
+
+            generator.PrepareItemContainer(child);
+            child.Measure(ChildSlotSize);
+        }
+
+        /// <summary>
+        /// Tracks where the next child goes, while <see cref="MeasureOverride"/> lays them out in rows or columns
+        /// </summary>
+        private sealed class LayoutCursor
+        {
+            private double _x;
+            private double _y;
+            private double _maxItemSize;
+
+            public int Section { get; private set; }
+
+            public int VisibleSections { get; private set; } = 1;
+
+            public LayoutCursor(int firstSection)
+            {
+                Section = firstSection;
+            }
+
+            public Rect PlaceInRow(Size childSize, Size frameSize)
+            {
+                var childRect = new Rect(new Point(_x, _y), childSize);
+                _maxItemSize = Math.Max(_maxItemSize, childRect.Height);
+                if (childRect.Right > frameSize.Width) //wrap to a new line
+                {
+                    _y += _maxItemSize;
+                    _x = 0;
+                    _maxItemSize = childRect.Height;
+                    childRect.X = _x;
+                    childRect.Y = _y;
+                    Wrap();
+                }
+
+                _x = childRect.Right;
+                return childRect;
+            }
+
+            public Rect PlaceInColumn(Size childSize, Size frameSize)
+            {
+                var childRect = new Rect(new Point(_x, _y), childSize);
+                _maxItemSize = Math.Max(_maxItemSize, childRect.Width);
+                if (childRect.Bottom > frameSize.Height) //wrap to a new column
+                {
+                    _x += _maxItemSize;
+                    _y = 0;
+                    _maxItemSize = childRect.Width;
+                    childRect.X = _x;
+                    childRect.Y = _y;
+                    Wrap();
+                }
+
+                _y = childRect.Bottom;
+                return childRect;
+            }
+
+            /// <summary>
+            /// Whether the current row (or column) starts outside of <paramref name="frameSize"/>, so no further children are visible
+            /// </summary>
+            public bool IsBeyondFrame(Size frameSize, bool isHorizontal)
+            {
+                return isHorizontal
+                    ? _y > frameSize.Height
+                    : _x > frameSize.Width;
+            }
+
+            private void Wrap()
+            {
+                Section++;
+                VisibleSections++;
+            }
         }
 
         protected override Size ArrangeOverride(Size finalSize)

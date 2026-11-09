@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using MvvmScarletToolkit.Observables;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MvvmScarletToolkit
 {
@@ -23,65 +24,76 @@ namespace MvvmScarletToolkit
             _collectionViewFactory = collectionViewFactory ?? throw new ArgumentNullException(nameof(collectionViewFactory));
             _owner = owner;
 
-            Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, async (r, m) =>
+            Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanging<GroupViewModel>>(this, async (r, m) => await r.OnSelectionChanging(m));
+            Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, async (r, m) => await r.OnSelectionChanged(m));
+            Messenger.Register<GroupsViewModel, GroupsViewModelRemoved>(this, async (r, m) => await r.OnGroupsRemoved(m));
+        }
+
+        /// <summary>
+        /// Whether <paramref name="group"/> belongs to the same <see cref="GroupingViewModel"/> as this instance
+        /// </summary>
+        private bool IsSibling([NotNullWhen(true)] GroupViewModel? group)
+        {
+            return group is not null && ReferenceEquals(group.Owner, _owner);
+        }
+
+        private async Task OnSelectionChanging(ViewModelListBaseSelectionChanging<GroupViewModel> message)
+        {
+            var group = message.Value;
+            if (!IsSibling(group))
             {
-                if (m.Value is null || !ReferenceEquals(m.Value.Owner, r._owner))
-                {
-                    return;
-                }
+                return;
+            }
 
-                if (ReferenceEquals(m.Sender, r))
-                {
-                    //Debug.WriteLine($"1 this instance({r.GetDebuggerDisplay()}) selection is changing => remove the previous value({m.Value.Name}) from the view");
-                    // this instance selection is changing
-                    // => remove the previous value from the view
-                    var view = _collectionViewFactory.Invoke();
-                    await Dispatcher.Invoke(() => view.GroupDescriptions.Remove(m.Value.GroupDescription));
-                }
-                else
-                {
-                    //Debug.WriteLine($"2 another instance selection is changing => add the last value({m.Value.Name}) to the possible selections");
-                    // another instance selection is changing
-                    // => add the last value to the possible selections
-                    await r.Add(m.Value);
-                }
-            });
-
-            Messenger.Register<GroupsViewModel, ViewModelListBaseSelectionChanged<GroupViewModel>>(this, async (r, m) =>
+            if (ReferenceEquals(message.Sender, this))
             {
-                if (m.Value is null || !ReferenceEquals(m.Value.Owner, r._owner))
-                {
-                    return;
-                }
-
-                if (ReferenceEquals(m.Sender, r))
-                {
-                    //Debug.WriteLine($"3 this instance({r.GetDebuggerDisplay()}) selection changed => add the current value({m.Value.Name}) to the view");
-                    // this instance selection changed
-                    // => add the current value to the view
-                    var view = _collectionViewFactory.Invoke();
-                    await Dispatcher.Invoke(() => view.GroupDescriptions.Add(m.Value.GroupDescription));
-                }
-                else
-                {
-                    //Debug.WriteLine($"4 another instance selection changed =>  remove the current value({m.Value.Name}) from the possible selections");
-                    // another instance selection changed
-                    // => remove the current value from the possible selections
-                    // m.Value is now selected by the sender, so it has to stay usable
-                    await r.Remove(m.Value);
-                }
-            });
-
-            Messenger.Register<GroupsViewModel, GroupsViewModelRemoved>(this, async (r, m) =>
+                // this instance selection is changing
+                // => remove the previous value from the view
+                var view = _collectionViewFactory.Invoke();
+                await Dispatcher.Invoke(() => view.GroupDescriptions.Remove(group.GroupDescription));
+            }
+            else
             {
-                if (m.Value.SelectedItem is null || ReferenceEquals(m.Value, r) || !ReferenceEquals(m.Value._owner, r._owner))
-                {
-                    return;
-                }
+                // another instance selection is changing
+                // => add the last value to the possible selections
+                await Add(group);
+            }
+        }
 
-                // another instance was removed, so if the selection was valid, add it back to the pool of possible selections
-                await r.Add(m.Value.SelectedItem);
-            });
+        private async Task OnSelectionChanged(ViewModelListBaseSelectionChanged<GroupViewModel> message)
+        {
+            var group = message.Value;
+            if (!IsSibling(group))
+            {
+                return;
+            }
+
+            if (ReferenceEquals(message.Sender, this))
+            {
+                // this instance selection changed
+                // => add the current value to the view
+                var view = _collectionViewFactory.Invoke();
+                await Dispatcher.Invoke(() => view.GroupDescriptions.Add(group.GroupDescription));
+            }
+            else
+            {
+                // another instance selection changed
+                // => remove the current value from the possible selections
+                // the group is now selected by the sender, so it has to stay usable
+                await Remove(group);
+            }
+        }
+
+        private async Task OnGroupsRemoved(GroupsViewModelRemoved message)
+        {
+            var removed = message.Value;
+            if (removed.SelectedItem is null || ReferenceEquals(removed, this) || !ReferenceEquals(removed._owner, _owner))
+            {
+                return;
+            }
+
+            // another instance was removed, so if the selection was valid, add it back to the pool of possible selections
+            await Add(removed.SelectedItem);
         }
 
         public override async Task Clear(CancellationToken token)

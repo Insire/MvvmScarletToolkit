@@ -4,86 +4,46 @@ namespace MvvmScarletToolkit.Wpf.Features.FileSystemBrowser
 {
     public static class FileExtensions
     {
-        private const char CR = '\r';
-        private const char LF = '\n';
-        private const char NULL = (char)0;
-
-        private const int BytesAtTheTime = 4;
+        private const byte CR = (byte)'\r';
+        private const byte LF = (byte)'\n';
+        private const byte NULL = 0;
 
         // source: https://stackoverflow.com/questions/119559/determine-the-number-of-lines-within-a-text-file/50508830#50508830
+        /// <summary>
+        /// Counts the lines of a text stream. The first line break found decides, whether lines end with <c>\n</c> or <c>\r</c>.
+        /// </summary>
         public static long CountLinesMaybe(this Stream stream)
         {
             var lineCount = 0L;
 
             var byteBuffer = new byte[1024 * 1024];
             var detectedEOL = NULL;
-            var currentChar = NULL;
+            var lastByte = NULL;
 
             int bytesRead;
             while ((bytesRead = stream.Read(byteBuffer, 0, byteBuffer.Length)) > 0)
             {
-                var i = 0;
-                for (; i <= bytesRead - BytesAtTheTime; i += BytesAtTheTime)
+                ReadOnlySpan<byte> chunk = byteBuffer.AsSpan(0, bytesRead);
+                lastByte = chunk[^1];
+
+                if (detectedEOL == NULL)
                 {
-                    currentChar = (char)byteBuffer[i];
-
-                    if (detectedEOL != NULL)
+                    var index = chunk.IndexOfAny(LF, CR);
+                    if (index < 0)
                     {
-                        if (currentChar == detectedEOL)
-                        {
-                            lineCount++;
-                        }
-
-                        currentChar = (char)byteBuffer[i + 1];
-                        if (currentChar == detectedEOL)
-                        {
-                            lineCount++;
-                        }
-
-                        currentChar = (char)byteBuffer[i + 2];
-                        if (currentChar == detectedEOL)
-                        {
-                            lineCount++;
-                        }
-
-                        currentChar = (char)byteBuffer[i + 3];
-                        if (currentChar == detectedEOL)
-                        {
-                            lineCount++;
-                        }
+                        continue;
                     }
-                    else
-                    {
-                        if (currentChar == LF || currentChar == CR)
-                        {
-                            detectedEOL = currentChar;
-                            lineCount++;
-                        }
-                        i -= BytesAtTheTime - 1;
-                    }
+
+                    detectedEOL = chunk[index];
+                    lineCount++;
+                    chunk = chunk[(index + 1)..];
                 }
 
-                for (; i < bytesRead; i++)
-                {
-                    currentChar = (char)byteBuffer[i];
-
-                    if (detectedEOL != NULL)
-                    {
-                        if (currentChar == detectedEOL)
-                        { lineCount++; }
-                    }
-                    else
-                    {
-                        if (currentChar == LF || currentChar == CR)
-                        {
-                            detectedEOL = currentChar;
-                            lineCount++;
-                        }
-                    }
-                }
+                lineCount += chunk.Count(detectedEOL);
             }
 
-            if (currentChar != LF && currentChar != CR && currentChar != NULL)
+            // the last line has no line break of its own
+            if (lastByte != LF && lastByte != CR && lastByte != NULL)
             {
                 lineCount++;
             }

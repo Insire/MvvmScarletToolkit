@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -103,29 +104,8 @@ namespace MvvmScarletToolkit.Wpf
             _isScheduled = false;
 
             var version = _version;
-            var uri = _getSource();
-
-            if (uri is null)
+            if (!TryGetRequest(out var uri, out var loader))
             {
-                _image.Source = null;
-                SetState(ImageLoadState.None);
-
-                return;
-            }
-
-            var loader = _getLoader();
-            if (loader is null)
-            {
-                Trace.TraceWarning("No image service has been configured to load {0}", uri);
-                _image.Source = null;
-                SetState(ImageLoadState.Failed);
-
-                return;
-            }
-
-            if (!_image.IsLoaded)
-            {
-                // not shown, stays pending until OnLoaded picks it up
                 return;
             }
 
@@ -140,31 +120,12 @@ namespace MvvmScarletToolkit.Wpf
             {
                 var bitmap = await loader.Value.ProvideImageAsync(uri, _getSize(), isLoading => SetIsLoadingAsync(version, isLoading), cancellationTokenSource.Token);
 
-                if (_version != version)
-                {
-                    // superseded
-                }
-                else if (bitmap is null && cancellationTokenSource.IsCancellationRequested)
-                {
-                    // unloaded, the image service reports cancellation with null, resumes once loaded again
-                    SetState(ImageLoadState.Pending);
-                    resume = _image.IsLoaded;
-                }
-                else
-                {
-                    // otherwise null means anything went wrong, e.g. a 404
-                    _image.Source = bitmap;
-                    SetState(bitmap is null ? ImageLoadState.Failed : ImageLoadState.Loaded);
-                }
+                resume = ApplyResult(version, bitmap, cancellationTokenSource.IsCancellationRequested);
             }
             catch (OperationCanceledException)
             {
                 // superseded or unloaded, the latter resumes once loaded again
-                if (_version == version)
-                {
-                    SetState(ImageLoadState.Pending);
-                    resume = _image.IsLoaded;
-                }
+                resume = ApplyCancellation(version);
             }
             catch (Exception ex)
             {
@@ -190,6 +151,70 @@ namespace MvvmScarletToolkit.Wpf
             {
                 Invalidate();
             }
+        }
+
+        /// <summary>
+        /// Reads what to load. Returns <see langword="false"/> after applying the outcome, when there is nothing to load right now.
+        /// </summary>
+        private bool TryGetRequest([NotNullWhen(true)] out Uri? uri, [NotNullWhen(true)] out Lazy<IImageService<BitmapSource>>? loader)
+        {
+            loader = null;
+            uri = _getSource();
+
+            if (uri is null)
+            {
+                _image.Source = null;
+                SetState(ImageLoadState.None);
+
+                return false;
+            }
+
+            loader = _getLoader();
+            if (loader is null)
+            {
+                Trace.TraceWarning("No image service has been configured to load {0}", uri);
+                _image.Source = null;
+                SetState(ImageLoadState.Failed);
+
+                return false;
+            }
+
+            // not shown, stays pending until OnLoaded picks it up
+            return _image.IsLoaded;
+        }
+
+        /// <returns>Whether the load has to be resumed</returns>
+        private bool ApplyResult(int version, BitmapSource? bitmap, bool isCancellationRequested)
+        {
+            if (_version != version)
+            {
+                // superseded
+                return false;
+            }
+
+            if (bitmap is null && isCancellationRequested)
+            {
+                // unloaded, the image service reports cancellation with null, resumes once loaded again
+                return ApplyCancellation(version);
+            }
+
+            // otherwise null means anything went wrong, e.g. a 404
+            _image.Source = bitmap;
+            SetState(bitmap is null ? ImageLoadState.Failed : ImageLoadState.Loaded);
+
+            return false;
+        }
+
+        /// <returns>Whether the load has to be resumed</returns>
+        private bool ApplyCancellation(int version)
+        {
+            if (_version != version)
+            {
+                return false;
+            }
+
+            SetState(ImageLoadState.Pending);
+            return _image.IsLoaded;
         }
 
         private Task SetIsLoadingAsync(int version, bool isLoading)

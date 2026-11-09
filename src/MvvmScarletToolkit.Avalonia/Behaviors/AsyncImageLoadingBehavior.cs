@@ -4,6 +4,7 @@ using Avalonia.Logging;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace MvvmScarletToolkit
@@ -182,29 +183,8 @@ namespace MvvmScarletToolkit
         private static async void Load(Image image, LoadState state)
         {
             var version = state.Version;
-            var uri = GetSource(image);
-
-            if (uri is null)
+            if (!TryGetRequest(image, state, out var uri, out var loader))
             {
-                image.Source = null;
-                UpdateState(image, state, ImageLoadState.None);
-
-                return;
-            }
-
-            var loader = state.Loader ?? Loader;
-            if (loader is null)
-            {
-                Logger.TryGet(LogEventLevel.Warning, LogArea.Control)?.Log(image, "No image service has been configured to load {Uri}", uri);
-                image.Source = null;
-                UpdateState(image, state, ImageLoadState.Failed);
-
-                return;
-            }
-
-            if (!image.IsAttachedToVisualTree())
-            {
-                // not shown, stays pending until OnAttachedToVisualTree picks it up
                 return;
             }
 
@@ -216,31 +196,12 @@ namespace MvvmScarletToolkit
             {
                 var bitmap = await loader.Value.ProvideImageAsync(uri, GetSize(image), isLoading => SetIsLoadingAsync(image, state, version, isLoading), cancellationTokenSource.Token);
 
-                if (state.Version != version)
-                {
-                    // superseded
-                }
-                else if (bitmap is null && cancellationTokenSource.IsCancellationRequested)
-                {
-                    // detached, the image service reports cancellation with null, resumes once attached again
-                    UpdateState(image, state, ImageLoadState.Pending);
-                    isDetachCancellation = true;
-                }
-                else
-                {
-                    // otherwise null means anything went wrong, e.g. a 404
-                    image.Source = bitmap;
-                    UpdateState(image, state, bitmap is null ? ImageLoadState.Failed : ImageLoadState.Loaded);
-                }
+                isDetachCancellation = ApplyResult(image, state, version, bitmap, cancellationTokenSource.IsCancellationRequested);
             }
             catch (OperationCanceledException)
             {
                 // superseded or detached, the latter resumes once attached again
-                if (state.Version == version)
-                {
-                    UpdateState(image, state, ImageLoadState.Pending);
-                    isDetachCancellation = true;
-                }
+                isDetachCancellation = ApplyCancellation(image, state, version);
             }
             catch (Exception ex)
             {
@@ -267,6 +228,70 @@ namespace MvvmScarletToolkit
             {
                 Invalidate(image);
             }
+        }
+
+        /// <summary>
+        /// Reads what to load. Returns <see langword="false"/> after applying the outcome, when there is nothing to load right now.
+        /// </summary>
+        private static bool TryGetRequest(Image image, LoadState state, [NotNullWhen(true)] out Uri? uri, [NotNullWhen(true)] out Lazy<IImageService<Bitmap>>? loader)
+        {
+            loader = null;
+            uri = GetSource(image);
+
+            if (uri is null)
+            {
+                image.Source = null;
+                UpdateState(image, state, ImageLoadState.None);
+
+                return false;
+            }
+
+            loader = state.Loader ?? Loader;
+            if (loader is null)
+            {
+                Logger.TryGet(LogEventLevel.Warning, LogArea.Control)?.Log(image, "No image service has been configured to load {Uri}", uri);
+                image.Source = null;
+                UpdateState(image, state, ImageLoadState.Failed);
+
+                return false;
+            }
+
+            // not shown, stays pending until OnAttachedToVisualTree picks it up
+            return image.IsAttachedToVisualTree();
+        }
+
+        /// <returns>Whether the load got cancelled by detaching the image</returns>
+        private static bool ApplyResult(Image image, LoadState state, int version, Bitmap? bitmap, bool isCancellationRequested)
+        {
+            if (state.Version != version)
+            {
+                // superseded
+                return false;
+            }
+
+            if (bitmap is null && isCancellationRequested)
+            {
+                // detached, the image service reports cancellation with null, resumes once attached again
+                return ApplyCancellation(image, state, version);
+            }
+
+            // otherwise null means anything went wrong, e.g. a 404
+            image.Source = bitmap;
+            UpdateState(image, state, bitmap is null ? ImageLoadState.Failed : ImageLoadState.Loaded);
+
+            return false;
+        }
+
+        /// <returns>Whether the load got cancelled by detaching the image</returns>
+        private static bool ApplyCancellation(Image image, LoadState state, int version)
+        {
+            if (state.Version != version)
+            {
+                return false;
+            }
+
+            UpdateState(image, state, ImageLoadState.Pending);
+            return true;
         }
 
         private static Task SetIsLoadingAsync(Image image, LoadState state, int version, bool isLoading)
