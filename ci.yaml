@@ -1,0 +1,121 @@
+# YAML version of the classic "MvvmScarletToolkit-CI" pipeline (definition 2, revision 71).
+#
+# Secrets are not stored here. They come from the variable group "MvvmScarletToolkit-Secrets"
+# (Pipelines > Library), marked as secret, with this pipeline allowed under "Pipeline permissions":
+#   CODECOV_TOKEN    - coverage upload (UploadCodecovReport)
+#   GITHUB_APIKEY    - push pre-release packages to GitHub Packages (PushGithub)
+#   NUGETORG_APIKEY  - not mapped here, so PushNuget can't run in CI
+# Secret variables are not exposed to scripts automatically, so they are mapped through `env` below.
+# Both must be defined: an undefined $(NAME) is passed on as the literal text "$(NAME)",
+# which the Cake ShouldRun checks treat as a set key.
+#
+# Fork builds are disabled in the classic definition. That is a pipeline setting, not YAML:
+# Pipelines > Edit > Triggers > Pull request validation > "Build pull requests from forks".
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - dev
+    exclude:
+      - pages
+  paths:
+    exclude:
+      # Cake never builds the samples, it only builds tests and package projects
+      - samples
+      - .vscode
+      - .editorconfig
+      - .gitattributes
+      - .gitignore
+      - .vsconfig
+      - codecov.yml
+      - LICENSE.md
+      - MvvmScarletToolkit.ruleset
+      - README.md
+
+pr:
+  branches:
+    include:
+      - dev
+
+pool:
+  vmImage: windows-latest
+
+variables:
+  - group: MvvmScarletToolkit-Secrets
+  - name: BuildConfiguration
+    value: Release
+  - name: DOTNET_NOLOGO
+    value: 'true'
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 'true'
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 'true'
+
+jobs:
+  - job: Build
+    displayName: Build Job
+    steps:
+      - checkout: self
+        # Nerdbank.GitVersioning and GitVersion compute the version from the history,
+        # YAML pipelines clone shallow by default
+        fetchDepth: 0
+        fetchTags: true
+
+      # net8.0 is needed for the net8.0(-windows) test runs, net10.0 for the cake project and global.json
+      - task: UseDotNet@2
+        displayName: Use .NET SDK 8.0.x
+        inputs:
+          packageType: sdk
+          version: 8.0.x
+          useGlobalJson: false
+
+      - task: UseDotNet@2
+        displayName: Use .NET SDK 10.0.x
+        inputs:
+          packageType: sdk
+          version: 10.0.x
+          useGlobalJson: false
+
+      # runs the Default target without PublicRelease, so packages get a pre-release version:
+      # clean, assembly info, test (+ publishes trx results and uploads coverage), pack, validate symbols,
+      # push to GitHub Packages. PushNuget is skipped, it needs PublicRelease and NUGETORG_APIKEY.
+      - task: PowerShell@2
+        displayName: Build with Cake
+        inputs:
+          targetType: filePath
+          filePath: ./build.ps1
+          errorActionPreference: stop
+          pwsh: false
+        env:
+          CODECOV_TOKEN: $(CODECOV_TOKEN)
+          GITHUB_APIKEY: $(GITHUB_APIKEY)
+
+      # The classic pipeline also had a "Publish Test Results" step for **/results/coverage/*.trx.
+      # It never matched anything: the trx files are written to results/tests and the Cake task
+      # PublishTestResults already publishes them through ##vso[results.publish]. Dropped here.
+
+      - task: PublishSymbols@2
+        displayName: Publish symbols path
+        inputs:
+          SymbolsFolder: $(Build.SourcesDirectory)
+          SearchPattern: '**/bin/**/*.pdb'
+          IndexSources: true
+          PublishSymbols: true
+          SymbolServerType: TeamServices
+          SymbolExpirationInDays: '36530'
+          DetailedLog: true
+          TreatNotIndexedAsWarning: false
+          SymbolsArtifactName: Symbols_$(BuildConfiguration)
+
+      - task: NuGetCommand@2
+        displayName: NuGet push to Azure
+        inputs:
+          command: push
+          packagesToPush: './packages/*.nupkg;!./packages/*.symbols.nupkg'
+          nuGetFeedType: internal
+          # organization-scoped feed; a project-scoped one would be "<project>/<feed id>"
+          publishVstsFeed: b2cb5bea-1571-49ae-a2b4-fc9709f5a4fe
+          publishPackageMetadata: true
+          allowPackageConflicts: true
+          verbosityPush: Detailed
