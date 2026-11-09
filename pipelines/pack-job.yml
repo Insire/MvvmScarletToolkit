@@ -41,7 +41,9 @@ jobs:
               SymbolExpirationInDays: '36530'
               DetailedLog: true
               TreatNotIndexedAsWarning: false
-              SymbolsArtifactName: Symbols_Release
+              # the task publishes under this name as the symbol request. Requests get sealed, a fixed name made every later build fail
+              # with "Request ... is sealed. Only expirationDate may be modified.", so each build needs its own
+              SymbolsArtifactName: Symbols_$(Build.BuildNumber)
 
       - task: PublishPipelineArtifact@1
         displayName: Publish packages
