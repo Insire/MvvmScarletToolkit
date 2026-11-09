@@ -88,9 +88,9 @@ jobs:
         displayName: GitHub release (create)
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          # GitHub service connection of the classic release pipeline, by id;
-          # its name works too. The pipeline has to be allowed to use it on the first run.
-          gitHubConnection: 13bc84df-9fb7-41dd-b04b-9a8b9e05db90
+          # GitHub service connection with a personal access token that can write releases and contents of the repository.
+          # Referenced by name. The pipeline has to be allowed to use it on the first run.
+          gitHubConnection: MvvmScarletToolkit-Release
           repositoryName: $(Build.Repository.Name)
           action: create
           target: $(Build.SourceVersion)
