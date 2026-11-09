@@ -67,7 +67,7 @@ namespace Build.Tasks
         }
 
         /// <summary>
-        /// The newest release tag reachable from HEAD. Skips the tag of this release, which exists when the job runs again after the draft was published.
+        /// The newest release tag reachable from HEAD. Skips the tag of this release, which already exists when the job runs again.
         /// </summary>
         private static string GetPreviousRelease(BuildContext context)
         {
