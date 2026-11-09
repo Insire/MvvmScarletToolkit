@@ -253,3 +253,6 @@ ModelManifest.xml
 .dotnet
 
 **/launchSettings.json
+
+# Claude Code local settings
+.claude/settings.local.json
