@@ -51,16 +51,19 @@ variables:
     value: 'true'
   - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
     value: 'true'
-  # NuGet's global packages folder, restored and saved by the Cache@2 step of each job.
-  # Also used by "dotnet tool restore" and the Cake build itself
+  # NuGet's global packages folder, restored and saved by the Cache@2 step of the Test job
   - name: NUGET_PACKAGES
     value: $(Pipeline.Workspace)/.nuget/packages
 
-# Test, Pack and the Native AOT jobs run at the same time on separate agents, Publish only pushes once all of them succeeded.
+# Test, Pack, the Native AOT jobs and the XAML format check run at the same time on separate agents, Publish only pushes once all of them succeeded.
 # The Cake targets RunTests, CreatePackages and PushPackages split the Default target the same way.
 #
 # There are no UseDotNet steps: the hosted Windows image already has the .NET 10 SDK, which global.json asks for,
 # and the .NET 8 runtimes for the net8.0(-windows) test runs. Installing them took about 50 seconds per job.
+#
+# The jobs start Cake directly instead of through build.ps1/build.sh. Those also restore the local dotnet tools and format the XAML files,
+# which Cake doesn't need (it installs its own GitVersion and ReportGenerator) and which only changes the checked out files here.
+# That took 11 to 18 seconds per job. The Format job checks the formatting instead.
 jobs:
   - job: Test
     displayName: Test
@@ -71,26 +74,22 @@ jobs:
         fetchDepth: 0
         fetchTags: true
 
-      # Restoring took about 1 minute per job on a fresh agent. One cache per job, the Test job also needs the test packages.
+      # The only NuGet cache: this job takes the longest, so its restore decides how long a run takes.
+      # Restoring the 2.2 GB cache takes about 20 seconds and saves about 45 in the Cake build.
+      # The other jobs had caches too, they saved little or nothing and don't decide the duration of a run.
       # There are no lock files, the key hashes everything that decides which packages are restored.
-      # A changed key starts from the last cache of the job (restoreKeys), restore adds what's missing and the job saves it under the new key.
+      # A changed key starts from the last cache (restoreKeys), restore adds what's missing and the job saves it under the new key.
       - task: Cache@2
         displayName: Cache NuGet packages
         inputs:
-          key: 'nuget | "$(Agent.OS)" | Test | Directory.Packages.props | .config/dotnet-tools.json | global.json | **/*.csproj'
+          key: 'nuget | "$(Agent.OS)" | Test | Directory.Packages.props | global.json | **/*.csproj'
           restoreKeys: |
             nuget | "$(Agent.OS)" | Test
           path: $(NUGET_PACKAGES)
 
       # builds and runs the tests, publishes their trx results through ##vso[results.publish] and uploads the coverage to Codecov
-      - task: PowerShell@2
+      - pwsh: dotnet run --project cake/Build.csproj -- --target=RunTests
         displayName: Test with Cake
-        inputs:
-          targetType: filePath
-          filePath: ./build.ps1
-          arguments: --target=RunTests
-          errorActionPreference: stop
-          pwsh: false
         env:
           CODECOV_TOKEN: $(CODECOV_TOKEN)
 
@@ -114,24 +113,9 @@ jobs:
         fetchDepth: 0
         fetchTags: true
 
-      # see the Test job
-      - task: Cache@2
-        displayName: Cache NuGet packages
-        inputs:
-          key: 'nuget | "$(Agent.OS)" | Pack | Directory.Packages.props | .config/dotnet-tools.json | global.json | **/*.csproj'
-          restoreKeys: |
-            nuget | "$(Agent.OS)" | Pack
-          path: $(NUGET_PACKAGES)
-
       # without PublicRelease, so packages get a pre-release version. Packs all packages in one parallel build and validates their symbols
-      - task: PowerShell@2
+      - pwsh: dotnet run --project cake/Build.csproj -- --target=CreatePackages
         displayName: Pack with Cake
-        inputs:
-          targetType: filePath
-          filePath: ./build.ps1
-          arguments: --target=CreatePackages
-          errorActionPreference: stop
-          pwsh: false
 
       # only after a successful pack, unlike the packages the symbols don't wait for the tests
       - task: PublishSymbols@2
@@ -156,6 +140,21 @@ jobs:
           artifact: NugetPackages
           publishLocation: pipeline
 
+  # Fails when a XAML file in src isn't formatted like build.ps1 formats it with XamlStyler (Settings.XamlStyler). Run build.ps1, or
+  # dotnet xstyler -d src -r -c Settings.XamlStyler, and commit the result.
+  # Windows, because XamlStyler compares against the line endings of the platform and the Windows agents check out CRLF, like a local clone.
+  - job: Format
+    displayName: XAML format
+    steps:
+      - checkout: self
+        fetchDepth: 1
+
+      - pwsh: |
+          dotnet tool restore
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet xstyler -d src -r -c Settings.XamlStyler --passive
+        displayName: Check XAML formatting
+
   # Native AOT on both operating systems, the native code and the libraries it links differ between them:
   # runs the tests of the AOT compatible packages as a native executable (MvvmScarletToolkit.Aot.Tests)
   # and publishes the Avalonia sample natively, failing on trim and AOT warnings of the native compiler.
@@ -176,15 +175,6 @@ jobs:
       - checkout: self
         fetchDepth: 0
         fetchTags: true
-
-      # see the Test job, one cache per operating system
-      - task: Cache@2
-        displayName: Cache NuGet packages
-        inputs:
-          key: 'nuget | "$(Agent.OS)" | Aot | Directory.Packages.props | global.json | **/*.csproj'
-          restoreKeys: |
-            nuget | "$(Agent.OS)" | Aot
-          path: $(NUGET_PACKAGES)
 
       # Native AOT links against zlib on Linux, the hosted image lists clang but not the zlib headers
       - bash: dpkg -s zlib1g-dev > /dev/null 2>&1 || (sudo apt-get update && sudo apt-get install -y zlib1g-dev)
@@ -228,13 +218,14 @@ jobs:
 
   # Pushes the packages of the Pack job, nothing is built here. Linux, because its agents start faster than the Windows ones.
   # Only possible because the Cake task PushNuget, which needs nuget.exe and therefore Windows, never runs in CI.
-  # Waits for the AOT tests too, the packages claim to be Native AOT compatible.
+  # Waits for the AOT tests too, the packages claim to be Native AOT compatible, and for the XAML format check.
   - job: Publish
     displayName: Publish
     dependsOn:
       - Test
       - Pack
       - Aot
+      - Format
     pool:
       vmImage: ubuntu-latest
     steps:
@@ -251,13 +242,8 @@ jobs:
           path: $(Build.SourcesDirectory)/packages
 
       # pushes to GitHub Packages. PushNuget is skipped, it needs PublicRelease and NUGETORG_APIKEY.
-      # Through bash, the executable bit of build.sh is not tracked by git
-      - task: Bash@3
+      - pwsh: dotnet run --project cake/Build.csproj -- --target=PushPackages
         displayName: Push with Cake
-        inputs:
-          targetType: inline
-          script: bash ./build.sh --target=PushPackages
-          failOnStderr: false
         env:
           GITHUB_APIKEY: $(GITHUB_APIKEY)
 

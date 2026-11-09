@@ -11,7 +11,7 @@ dotnet run --project samples/MvvmScarletToolkit.Wpf.Samples
 dotnet run --project samples/MvvmScarletToolkit.Avalonia.Samples
 ```
 
-`build.ps1` / `build.sh` run the Cake pipeline in `cake/`. `build.ps1` also formats XAML in `src` with XamlStyler (`Settings.XamlStyler`).
+`build.ps1` / `build.sh` run the Cake pipeline in `cake/`. Both also format XAML in `src` with XamlStyler (`Settings.XamlStyler`). CI fails for unformatted XAML in `src`, so after changing XAML there run `dotnet xstyler -d src -r -c Settings.XamlStyler` (after `dotnet tool restore`).
 
 Tests use xunit v3 on Microsoft.Testing.Platform (see `global.json`). WPF projects, tests and samples only run on Windows.
 
