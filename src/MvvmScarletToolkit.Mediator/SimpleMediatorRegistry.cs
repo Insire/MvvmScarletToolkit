@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Frozen;
 
 namespace MvvmScarletToolkit.Mediator
@@ -9,15 +10,18 @@ namespace MvvmScarletToolkit.Mediator
         private readonly FrozenDictionary<Type, Type> _requestMap;
         private readonly FrozenDictionary<Type, IReadOnlyList<Type>> _notificationMap;
         private readonly FrozenDictionary<Type, NotificationPublisher> _notificationPublishers;
+        private readonly IReadOnlyList<ServiceDescriptor> _handlerDescriptors;
 
         internal SimpleMediatorRegistry(
             FrozenDictionary<Type, Type> requestMap,
             FrozenDictionary<Type, IReadOnlyList<Type>> notificationMap,
-            FrozenDictionary<Type, NotificationPublisher> notificationPublishers)
+            FrozenDictionary<Type, NotificationPublisher> notificationPublishers,
+            IReadOnlyList<ServiceDescriptor> handlerDescriptors)
         {
             _requestMap = requestMap;
             _notificationMap = notificationMap;
             _notificationPublishers = notificationPublishers;
+            _handlerDescriptors = handlerDescriptors;
         }
 
         public Type GetRequestHandlerType(ISimpleRequest request)
@@ -64,20 +68,12 @@ namespace MvvmScarletToolkit.Mediator
             return publisher;
         }
 
-        internal IEnumerable<Type> GetHandlers()
+        /// <summary>
+        /// Transient registrations of all handlers, created with their statically known types.
+        /// </summary>
+        internal IReadOnlyList<ServiceDescriptor> GetHandlerDescriptors()
         {
-            foreach (var handlerType in _requestMap.Values)
-            {
-                yield return handlerType;
-            }
-
-            foreach (var handlerTypes in _notificationMap.Values)
-            {
-                foreach (var handlerType in handlerTypes)
-                {
-                    yield return handlerType;
-                }
-            }
+            return _handlerDescriptors;
         }
     }
 }

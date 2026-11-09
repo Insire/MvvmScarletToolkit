@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 namespace MvvmScarletToolkit.Observables
 {
     public sealed class ObservableDictionary<TKey, TValue> : ObservableCollection<KeyValuePair<TKey, TValue>>, IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
+        where TKey : notnull
     {
         private readonly Dictionary<TKey, TValue> _dictionary;
 
@@ -135,7 +136,7 @@ namespace MvvmScarletToolkit.Observables
         /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}.TryGetValue(TKey, out TValue)" />
         public bool TryGetValue(TKey key, out TValue value)
         {
-            return _dictionary.TryGetValue(key, out value);
+            return _dictionary.TryGetValue(key, out value!);
         }
 
         /// <inheritdoc/>

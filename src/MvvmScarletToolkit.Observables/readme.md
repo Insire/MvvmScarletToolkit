@@ -105,6 +105,8 @@ internal sealed class DerivedViewModel : ViewModelBase
 }
 ```
 
+`ViewModelBase` derives from `ObservableRecipient`, but activating it doesn't register `IRecipient<TMessage>` implementations. `ObservableRecipient` does that through reflection, which isn't trim or Native AOT safe. Register handlers explicitly instead, e.g. `Messenger.Register<DerivedViewModel, MyMessage>(this, (r, m) => r.Receive(m))`. Deactivating still unregisters all handlers of the viewmodel.
+
 ### ViewModelBase\<TModel>
 
 ```cs

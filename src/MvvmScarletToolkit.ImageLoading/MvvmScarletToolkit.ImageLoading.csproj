@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../targetframeworks.props" />
   <Import Project="../../package.props" />
+  <Import Project="../../aot-compatible.props" />
 
   <PropertyGroup>
     <Description>MvvmScarletToolkit.ImageLoading is part of the MvvmScarletToolkit framework, containing services and platform abstractions for loading and caching images from remote resources like the web.</Description>

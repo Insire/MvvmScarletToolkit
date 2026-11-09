@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../targetframeworks-none.props" />
   <Import Project="../../package.props" />
+  <Import Project="../../aot-compatible.props" />
 
   <PropertyGroup>
     <Description>MvvmScarletToolkit.Observables is part of the MvvmScarletToolkit framework, containing opinionated base classes for viewmodels of the MVVM pattern.</Description>

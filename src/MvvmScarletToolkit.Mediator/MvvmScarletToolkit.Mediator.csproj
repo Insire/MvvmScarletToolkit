@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../targetframeworks.props" />
   <Import Project="../../package.props" />
+  <Import Project="../../aot-compatible.props" />
   
   <PropertyGroup>
     <Description>MvvmScarletToolkit.Mediator is part of the MvvmScarletToolkit framework, containing a simple implementation of the mediator pattern.</Description>

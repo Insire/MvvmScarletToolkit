@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MvvmScarletToolkit.Mediator
 {
@@ -11,9 +11,9 @@ namespace MvvmScarletToolkit.Mediator
             services.AddSingleton<ISimpleMediator, SimpleMediator>();
             services.AddSingleton(registry);
 
-            foreach (var handler in registry.GetHandlers())
+            foreach (var descriptor in registry.GetHandlerDescriptors())
             {
-                services.AddTransient(handler);
+                services.Add(descriptor);
             }
 
             return services;

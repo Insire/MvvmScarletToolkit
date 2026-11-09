@@ -1,13 +1,12 @@
-<!--  the commands are declared as ICommand, their IsBusy and CancelCommand can only be reached with reflection bindings  -->
 <UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.AsyncStateListView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:asyncState="clr-namespace:MvvmScarletToolkit.Core.Samples.Features.AsyncState;assembly=MvvmScarletToolkit.Core.Samples"
+             xmlns:commands="clr-namespace:MvvmScarletToolkit.Commands;assembly=MvvmScarletToolkit.Commands"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:DesignHeight="450"
              d:DesignWidth="800"
-             x:CompileBindings="False"
              x:DataType="asyncState:AsyncStateListViewModel"
              mc:Ignorable="d">
 
@@ -42,7 +41,7 @@
                  SelectionChanged="SortedList_SelectionChanged"
                  SelectionMode="Multiple">
             <ListBox.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="asyncState:AsyncStateViewModel">
                     <StackPanel Orientation="Horizontal">
                         <Button Margin="5"
                                 Command="{Binding LoadCommand}"
@@ -53,7 +52,7 @@
                                 Content="Refresh"
                                 ToolTip.Tip="Refresh" />
                         <Button Margin="5"
-                                Command="{Binding RefreshCommand.CancelCommand}"
+                                Command="{Binding ((commands:ConcurrentCommandBase)RefreshCommand).CancelCommand}"
                                 Content="Cancel"
                                 ToolTip.Tip="Cancel" />
                         <TextBlock VerticalAlignment="Center"
@@ -79,7 +78,7 @@
             <ScrollViewer>
                 <ItemsControl ItemsSource="{Binding SelectedItems}">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="asyncState:AsyncStateViewModel">
                             <TextBlock Margin="4 0"
                                        VerticalAlignment="Center"
                                        Classes.busy="{Binding IsBusy}"
@@ -111,7 +110,7 @@
                      SelectedItem="{Binding SelectedItem}"
                      SelectionMode="Multiple">
                 <ListBox.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="asyncState:AsyncStateViewModel">
                         <Grid ColumnDefinitions="100,100">
                             <TextBlock Text="{Binding DisplayName}" />
                             <TextBlock Grid.Column="1" Text="{Binding IsBusy}" />
@@ -127,14 +126,14 @@
                 BorderThickness="0.5">
             <ContentControl Content="{Binding SelectedItem}">
                 <ContentControl.ContentTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="asyncState:AsyncStateViewModel">
                         <StackPanel Margin="4" Orientation="Vertical">
                             <TextBlock Text="{Binding DisplayName, StringFormat='DisplayName: {0}'}" />
                             <TextBlock Text="{Binding IsBusy, StringFormat='IsSelfBusy: {0}'}" />
                             <TextBlock Text="{Binding IsSelected, StringFormat='IsSelected: {0}'}" />
-                            <TextBlock Text="{Binding RefreshCommand.IsBusy, StringFormat='IsRefreshCommandBusy: {0}'}" />
-                            <TextBlock Text="{Binding LoadCommand.IsBusy, StringFormat='IsLoadCommandBusy: {0}'}" />
-                            <TextBlock Text="{Binding UnloadCommand.IsBusy, StringFormat='IsUnloadCommandBusy: {0}'}" />
+                            <TextBlock Text="{Binding ((commands:ConcurrentCommandBase)RefreshCommand).IsBusy, StringFormat='IsRefreshCommandBusy: {0}'}" />
+                            <TextBlock Text="{Binding ((commands:ConcurrentCommandBase)LoadCommand).IsBusy, StringFormat='IsLoadCommandBusy: {0}'}" />
+                            <TextBlock Text="{Binding ((commands:ConcurrentCommandBase)UnloadCommand).IsBusy, StringFormat='IsUnloadCommandBusy: {0}'}" />
                         </StackPanel>
                     </DataTemplate>
                 </ContentControl.ContentTemplate>

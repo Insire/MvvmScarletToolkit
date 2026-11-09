@@ -34,7 +34,7 @@ This library aims to provide concrete classes and implementations for the rest o
 |---|---|
 |``CommandExtensions.TryExecute``|Execute an ``ICommand``, if ``CanExecute`` allows it.|
 |``DispatcherExtensions.Invoke``|Run an action or function through an ``IScarletDispatcher``, without passing a ``CancellationToken``.|
-|``EnumExtensions.GetAttributeOfType``|Read an attribute from an enum value, e.g. a ``DescriptionAttribute``.|
+|``EnumExtensions.GetAttributeOfType``|Read an attribute from an enum value, e.g. a ``DescriptionAttribute``. Use ``value.GetAttributeOfType<TEnum, TAttribute>()`` in trimmed or Native AOT apps, the overload with only the attribute type is not trim safe.|
 |``EventExtension.Raise``|Raise an ``EventHandler``, if it has subscribers.|
 |``TypeExtensions.GetGenericTypeName``|Get a readable name for a generic type, like ``List<Int32>``.|
 |``CancellableGenericScarletMessage<T>``|Message for the ``IMessenger``, that carries content and a ``Cancel`` action for the receiver.|

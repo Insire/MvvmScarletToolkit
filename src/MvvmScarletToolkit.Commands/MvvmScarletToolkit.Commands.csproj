@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../targetframeworks-none.props" />
   <Import Project="../../package.props" />
+  <Import Project="../../aot-compatible.props" />
 
   <PropertyGroup>
     <Description>MvvmScarletToolkit.Commands is part of the MvvmScarletToolkit framework, containing asynchronous and synchronous implementations of the ICommand interface for .NET.</Description>

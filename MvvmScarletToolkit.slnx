@@ -17,6 +17,7 @@
     <File Path=".XamlStyler" />
     <File Path="build.ps1" />
     <File Path="build.sh" />
+    <File Path="aot-compatible.props" />
     <File Path="codecov.yml" />
     <File Path="compose.yaml" />
     <File Path="Directory.Build.targets" />

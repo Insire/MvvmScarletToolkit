@@ -76,7 +76,7 @@ namespace MvvmScarletToolkit.Observables
             {
                 await LoadInternal(token).ConfigureAwait(false);
                 await Dispatcher.Invoke(() => IsLoaded = true).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => IsActive = true).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => SetIsActive(true)).ConfigureAwait(false);
             }
         }
 
@@ -106,7 +106,7 @@ namespace MvvmScarletToolkit.Observables
             {
                 await UnloadInternal(token).ConfigureAwait(false);
                 await Dispatcher.Invoke(() => IsLoaded = false).ConfigureAwait(false);
-                await Dispatcher.Invoke(() => IsActive = false).ConfigureAwait(false);
+                await Dispatcher.Invoke(() => SetIsActive(false)).ConfigureAwait(false);
             }
         }
 

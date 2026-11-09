@@ -1,9 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using JetBrains.Annotations;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace MvvmScarletToolkit.Core.Samples.Features.Image
 {
@@ -12,16 +10,6 @@ namespace MvvmScarletToolkit.Core.Samples.Features.Image
     /// </summary>
     public sealed partial class VirtualizedImagesViewModel : BusinessSourceListViewModelBase<VirtualizedImageViewModel>
     {
-        [UsedImplicitly]
-        private sealed class ImageDto
-        {
-            [JsonPropertyName("id")]
-            public string Id { get; set; } = default!;
-
-            [JsonPropertyName("author")]
-            public string Author { get; set; } = default!;
-        }
-
         private const int Pages = 5;
         private const int PageSize = 100;
         private const int BrokenImageInterval = 25;
@@ -64,7 +52,7 @@ namespace MvvmScarletToolkit.Core.Samples.Features.Image
             try
             {
                 var pages = await Task.WhenAll(Enumerable.Range(1, Pages)
-                    .Select(page => _httpClient.GetFromJsonAsync<List<ImageDto>>($"https://picsum.photos/v2/list?page={page}&limit={PageSize}", token)));
+                    .Select(page => _httpClient.GetFromJsonAsync($"https://picsum.photos/v2/list?page={page}&limit={PageSize}", PicsumJsonContext.Default.ListPicsumImage, token)));
 
                 var viewModels = pages
                     .SelectMany(page => page ?? [])

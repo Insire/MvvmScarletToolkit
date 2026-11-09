@@ -17,7 +17,8 @@ Tests use xunit v3 on Microsoft.Testing.Platform (see `global.json`). WPF projec
 
 ## Layout
 
-- `src/MvvmScarletToolkit.Abstractions`, `MvvmScarletToolkit`, `.Commands`, `.Observables`: UI-independent and `netstandard2.0`, so newer BCL APIs are not available there.
+- `src/MvvmScarletToolkit.Abstractions`, `MvvmScarletToolkit`, `.Commands`, `.Observables`: UI-independent, targeting `netstandard2.0` and .NET 8. Code has to compile for `netstandard2.0`, so newer BCL APIs are not available there. The .NET 8 target exists for the trim and AOT analyzers.
+- All non-WPF packages import `aot-compatible.props`, which enables `IsAotCompatible` and links the trim attribute polyfills from `src/Shared/TrimAnnotations` into the `netstandard2.0` build. They must build without IL warnings.
 - `src/MvvmScarletToolkit.ImageLoading`, `.Mediator`: UI-independent, targeting .NET 8 and 10.
 - `src/MvvmScarletToolkit.Wpf`, `.Avalonia`: UI-specific packages, targeting .NET 8 and 10.
 - `src/Shared/HtmlTextBlock`: internal html parser, compiled into both UI packages as linked files. No WPF or Avalonia types there.
@@ -33,6 +34,7 @@ Tests use xunit v3 on Microsoft.Testing.Platform (see `global.json`). WPF projec
 - Viewmodels derive from `ViewModelBase`, `ViewModelListBase<T>` or `BusinessViewModelListBase<T>` and build commands through `IScarletCommandBuilder`. UI work goes through `Dispatcher.Invoke`.
 - `Messenger` is shared by all viewmodels from the same command builder. Handlers must filter by sender or value, otherwise they react to unrelated instances.
 - Tests that touch WPF objects run through `StaRunner.Run` (`tests/MvvmScarletToolkit.Wpf.Tests/Util`) and derive from `TraceTestBase`. `StaRunner` moves them to the hidden desktop of `TestDesktopFixture`, so windows have to be created on its thread to stay off the user's screen.
+- Tests must not assert absolute `TimeSpan` or `DateTime` values, like a fixed time limit or the current time. Make them relative instead, e.g. compare the duration of two input sizes (see `tests/shared/HtmlParserScaling.cs`) or one point in time with another. Scrub timestamps and durations from snapshots.
 - When public behavior changes, update the matching package `readme.md` and add or extend a sample.
 
 ## Git

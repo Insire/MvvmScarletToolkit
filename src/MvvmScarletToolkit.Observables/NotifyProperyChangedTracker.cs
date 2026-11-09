@@ -202,7 +202,7 @@ namespace MvvmScarletToolkit.Observables
             }
         }
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (_disposedValue || _suppressAllChangesCount != 0)
             {
@@ -250,7 +250,7 @@ namespace MvvmScarletToolkit.Observables
 
         private sealed class ChangeState
         {
-            private readonly HashSet<string> _changes;
+            private readonly HashSet<string?> _changes;
 
             private int _suppressedState = 0;
 
@@ -260,7 +260,7 @@ namespace MvvmScarletToolkit.Observables
 
             public ChangeState()
             {
-                _changes = new HashSet<string>();
+                _changes = new HashSet<string?>();
             }
 
             public void Add(PropertyChangedEventArgs args)

@@ -1,13 +1,13 @@
-<!--  KeyValuePair<int, Guid> can't be named in xaml, so the item template uses reflection bindings  -->
 <UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.ObservableDictionaryView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Runtime"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              xmlns:features="clr-namespace:MvvmScarletToolkit.Core.Samples.Features;assembly=MvvmScarletToolkit.Core.Samples"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:DesignHeight="450"
              d:DesignWidth="800"
-             x:CompileBindings="False"
              x:DataType="features:ObservableDictionaryViewModel"
              mc:Ignorable="d">
 
@@ -22,7 +22,7 @@
 
         <ListBox ItemsSource="{Binding Items}">
             <ListBox.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="{x:Type scg:KeyValuePair, x:TypeArguments='x:Int32, sys:Guid'}">
                     <StackPanel Orientation="Horizontal" Spacing="4">
                         <TextBlock Text="{Binding Key, StringFormat='Key: {0}'}" />
                         <TextBlock Text="{Binding Value, StringFormat='Value: {0}'}" />

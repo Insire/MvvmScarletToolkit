@@ -7,6 +7,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Media.TextFormatting;
 using MvvmScarletToolkit.Html;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
 
 namespace MvvmScarletToolkit
@@ -210,6 +211,10 @@ namespace MvvmScarletToolkit
         /// <summary>
         /// Reads the property named by the <c>path</c> attribute from the data context, or shows <c>{Binding}</c>.
         /// </summary>
+        /// <remarks>
+        /// In trimmed or Native AOT apps the property has to be preserved, otherwise it is not found and <c>{Binding}</c> is shown.
+        /// </remarks>
+        [UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "A trimmed property is not found and falls back to {Binding}, see the package readme.")]
         private string ReadBinding(HtmlTag tag)
         {
             _dependsOnDataContext = true;

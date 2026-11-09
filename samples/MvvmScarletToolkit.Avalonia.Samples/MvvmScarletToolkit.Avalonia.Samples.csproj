@@ -2,7 +2,10 @@
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net10.0</TargetFramework>
-        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <!-- Native AOT, which also enables the trim and AOT analyzers on build -->
+        <PublishAot>true</PublishAot>
+        <!-- the AOT optimized publish of the .NET 11 SDK only compiles, which leaves out the Avalonia resources and therefore the compiled xaml -->
+        <UseOptimizedPublish>false</UseOptimizedPublish>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>

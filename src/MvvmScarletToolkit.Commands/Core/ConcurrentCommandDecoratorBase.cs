@@ -24,7 +24,7 @@ namespace MvvmScarletToolkit.Commands
             CancelCommand = Command.CancelCommand;
         }
 
-        private void Command_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Command_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             OnCommandPropertyChanged(e);
         }

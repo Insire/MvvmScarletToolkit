@@ -1,8 +1,8 @@
-<!--  the commands are declared as ICommand, their IsBusy and CancelCommand can only be reached with reflection bindings  -->
 <UserControl x:Class="MvvmScarletToolkit.Avalonia.Samples.Views.ProgressView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:behaviors="clr-namespace:MvvmScarletToolkit.Avalonia.Samples.Behaviors"
+             xmlns:commands="clr-namespace:MvvmScarletToolkit.Commands;assembly=MvvmScarletToolkit.Commands"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:features="clr-namespace:MvvmScarletToolkit.Core.Samples.Features;assembly=MvvmScarletToolkit.Core.Samples"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -10,7 +10,6 @@
              behaviors:ViewLifecycle.UnloadCommand="{Binding UnloadCommand}"
              d:DesignHeight="450"
              d:DesignWidth="800"
-             x:CompileBindings="False"
              x:DataType="features:ProgressViewModel"
              mc:Ignorable="d">
 
@@ -26,11 +25,11 @@
 
             <Button Command="{Binding RefreshCommand}"
                     Content="Refresh"
-                    IsVisible="{Binding !RefreshCommand.IsBusy}" />
+                    IsVisible="{Binding !((commands:ConcurrentCommandBase)RefreshCommand).IsBusy}" />
 
-            <Button Command="{Binding RefreshCommand.CancelCommand}"
+            <Button Command="{Binding ((commands:ConcurrentCommandBase)RefreshCommand).CancelCommand}"
                     Content="Cancel"
-                    IsVisible="{Binding RefreshCommand.IsBusy}" />
+                    IsVisible="{Binding ((commands:ConcurrentCommandBase)RefreshCommand).IsBusy}" />
         </StackPanel>
 
         <ProgressBar Height="20"
