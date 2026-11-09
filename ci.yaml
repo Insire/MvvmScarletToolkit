@@ -95,12 +95,23 @@ jobs:
       # It never matched anything: the trx files are written to results/tests and the Cake task
       # PublishTestResults already publishes them through ##vso[results.publish]. Dropped here.
 
+      # Fills the "Code Coverage" tab. Cake merges the coverage of all test runs into this file and only uploads it to Codecov.
+      # Also after failed tests, Cake writes the report before it fails the build for them.
+      - task: PublishCodeCoverageResults@2
+        displayName: Publish code coverage
+        condition: succeededOrFailed()
+        inputs:
+          summaryFileLocation: results/reports/cobertura/Cobertura.xml
+          failIfCoverageEmpty: false
+
       - task: PublishSymbols@2
         displayName: Publish symbols path
         inputs:
           SymbolsFolder: $(Build.SourcesDirectory)
           SearchPattern: '**/bin/**/*.pdb'
-          IndexSources: true
+          # the task can't index GitHub sources ("Unsupported source provider 'GitHub'"),
+          # the packages link their sources through SourceLink (PublishRepositoryUrl, EmbedUntrackedSources) instead
+          IndexSources: false
           PublishSymbols: true
           SymbolServerType: TeamServices
           SymbolExpirationInDays: '36530'
