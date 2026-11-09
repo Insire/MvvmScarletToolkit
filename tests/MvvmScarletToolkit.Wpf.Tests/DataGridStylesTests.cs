@@ -53,6 +53,15 @@ namespace MvvmScarletToolkit.Wpf.Tests
             await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
         }
 
+        /// <summary>
+        /// The summary bar calculates on the thread pool, <see cref="Rendered"/> is too short for that on busy build agents.
+        /// </summary>
+        private static async Task Calculated(DataGridSummaryBar bar)
+        {
+            await Ui.WaitUntil(() => !bar.IsCalculating);
+            await Rendered();
+        }
+
         [Fact]
         public Task Default_Styles_Should_Work_Together()
         {
@@ -112,6 +121,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
                 {
                     window.Show();
                     await Rendered();
+                    await Calculated(bar);
 
                     var headers = grid.GetVisualDescendants().OfType<DataGridColumnHeader>().Where(p => p.Column is not null).ToArray();
                     Assert.Equal(3, headers.Length);
@@ -157,6 +167,7 @@ namespace MvvmScarletToolkit.Wpf.Tests
                     // keys of the popup travel through the header
                     input.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(input), 0, Key.Enter) { RoutedEvent = Keyboard.KeyDownEvent });
                     await Rendered();
+                    await Calculated(bar);
 
                     Assert.False(button.IsOpen);
                     Assert.Single(grid.Items);
