@@ -2,8 +2,8 @@
 #
 # Secrets are not stored here. They come from the variable group "MvvmScarletToolkit-Secrets"
 # (Pipelines > Library), marked as secret, with this pipeline allowed under "Pipeline permissions":
-#   CODECOV_TOKEN    - coverage upload (UploadCodecovReport)
-#   GITHUB_APIKEY    - push pre-release packages to GitHub Packages (PushGithub)
+#   CODECOV_TOKEN    - coverage upload (UploadCodecovReport), mapped in the Test job
+#   GITHUB_APIKEY    - push pre-release packages to GitHub Packages (PushGithub), mapped in the Publish job
 #   NUGETORG_APIKEY  - not mapped here, so PushNuget can't run in CI
 # Secret variables are not exposed to scripts automatically, so they are mapped through `env` below.
 # Both must be defined: an undefined $(NAME) is passed on as the literal text "$(NAME)",
@@ -52,9 +52,14 @@ variables:
   - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
     value: 'true'
 
+# Test and Pack run at the same time on separate agents, Publish only pushes once both succeeded.
+# The Cake targets RunTests, CreatePackages and PushPackages split the Default target the same way.
+#
+# There are no UseDotNet steps: the hosted Windows image already has the .NET 10 SDK, which global.json asks for,
+# and the .NET 8 runtimes for the net8.0(-windows) test runs. Installing them took about 50 seconds per job.
 jobs:
-  - job: Build
-    displayName: Build Job
+  - job: Test
+    displayName: Test
     steps:
       - checkout: self
         # Nerdbank.GitVersioning and GitVersion compute the version from the history,
@@ -62,34 +67,17 @@ jobs:
         fetchDepth: 0
         fetchTags: true
 
-      # net8.0 is needed for the net8.0(-windows) test runs, net10.0 for the cake project and global.json
-      - task: UseDotNet@2
-        displayName: Use .NET SDK 8.0.x
-        inputs:
-          packageType: sdk
-          version: 8.0.x
-          useGlobalJson: false
-
-      - task: UseDotNet@2
-        displayName: Use .NET SDK 10.0.x
-        inputs:
-          packageType: sdk
-          version: 10.0.x
-          useGlobalJson: false
-
-      # runs the Default target without PublicRelease, so packages get a pre-release version:
-      # clean, assembly info, test (+ publishes trx results and uploads coverage), pack, validate symbols,
-      # push to GitHub Packages. PushNuget is skipped, it needs PublicRelease and NUGETORG_APIKEY.
+      # builds and runs the tests, publishes their trx results through ##vso[results.publish] and uploads the coverage to Codecov
       - task: PowerShell@2
-        displayName: Build with Cake
+        displayName: Test with Cake
         inputs:
           targetType: filePath
           filePath: ./build.ps1
+          arguments: --target=RunTests
           errorActionPreference: stop
           pwsh: false
         env:
           CODECOV_TOKEN: $(CODECOV_TOKEN)
-          GITHUB_APIKEY: $(GITHUB_APIKEY)
 
       # The classic pipeline also had a "Publish Test Results" step for **/results/coverage/*.trx.
       # It never matched anything: the trx files are written to results/tests and the Cake task
@@ -104,6 +92,24 @@ jobs:
           summaryFileLocation: results/reports/cobertura/Cobertura.xml
           failIfCoverageEmpty: false
 
+  - job: Pack
+    displayName: Pack
+    steps:
+      - checkout: self
+        fetchDepth: 0
+        fetchTags: true
+
+      # without PublicRelease, so packages get a pre-release version. Packs all packages in one parallel build and validates their symbols
+      - task: PowerShell@2
+        displayName: Pack with Cake
+        inputs:
+          targetType: filePath
+          filePath: ./build.ps1
+          arguments: --target=CreatePackages
+          errorActionPreference: stop
+          pwsh: false
+
+      # only after a successful pack, unlike the packages the symbols don't wait for the tests
       - task: PublishSymbols@2
         displayName: Publish symbols path
         inputs:
@@ -118,6 +124,43 @@ jobs:
           DetailedLog: true
           TreatNotIndexedAsWarning: false
           SymbolsArtifactName: Symbols_$(BuildConfiguration)
+
+      - task: PublishPipelineArtifact@1
+        displayName: Publish packages
+        inputs:
+          targetPath: packages
+          artifact: NugetPackages
+          publishLocation: pipeline
+
+  # Windows, because the Cake task PushNuget uses nuget.exe. Pushes the packages of the Pack job, nothing is built here.
+  - job: Publish
+    displayName: Publish
+    dependsOn:
+      - Test
+      - Pack
+    steps:
+      # the Cake setup computes the version and branch from the history, even though it only pushes
+      - checkout: self
+        fetchDepth: 0
+        fetchTags: true
+
+      - task: DownloadPipelineArtifact@2
+        displayName: Download packages
+        inputs:
+          artifact: NugetPackages
+          path: $(Build.SourcesDirectory)/packages
+
+      # pushes to GitHub Packages. PushNuget is skipped, it needs PublicRelease and NUGETORG_APIKEY
+      - task: PowerShell@2
+        displayName: Push with Cake
+        inputs:
+          targetType: filePath
+          filePath: ./build.ps1
+          arguments: --target=PushPackages
+          errorActionPreference: stop
+          pwsh: false
+        env:
+          GITHUB_APIKEY: $(GITHUB_APIKEY)
 
       - task: NuGetCommand@2
         displayName: NuGet push to Azure
