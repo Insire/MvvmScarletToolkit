@@ -1,0 +1,87 @@
+# YAML version of the classic "MvvmScarletToolkit-CD" pipeline (definition 1, revision 59).
+#
+# Secrets are not stored here. They come from the variable group "MvvmScarletToolkit-Secrets"
+# (Pipelines > Library), marked as secret, with this pipeline allowed under "Pipeline permissions":
+#   NUGETORG_APIKEY  - push to nuget.org (PushNuget, only when PublicRelease is true)
+#   CODECOV_TOKEN    - coverage upload (UploadCodecovReport)
+#   GITHUB_APIKEY    - push to GitHub Packages (PushGithub, only when PublicRelease is false), not mapped here
+# Secret variables are not exposed to scripts automatically, so they are mapped through `env` below.
+
+trigger:
+  batch: false
+  branches:
+    include:
+      - master
+  paths:
+    exclude:
+      - README.md
+      - '*.md'
+
+pr: none
+
+pool:
+  vmImage: windows-latest
+
+variables:
+  - group: MvvmScarletToolkit-Secrets
+  - name: PublicRelease
+    value: 'true'
+  - name: DOTNET_NOLOGO
+    value: 'true'
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 'true'
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 'true'
+
+jobs:
+  - job: Build
+    displayName: Build Job
+    steps:
+      - checkout: self
+        # Nerdbank.GitVersioning and GitVersion compute the version from the history,
+        # YAML pipelines clone shallow by default
+        fetchDepth: 0
+        fetchTags: true
+
+      # net8.0 is needed for the net8.0(-windows) test runs, net10.0 for the cake project and global.json
+      - task: UseDotNet@2
+        displayName: Use .NET SDK 8.0.x
+        inputs:
+          packageType: sdk
+          version: 8.0.x
+          useGlobalJson: false
+
+      - task: UseDotNet@2
+        displayName: Use .NET SDK 10.0.x
+        inputs:
+          packageType: sdk
+          version: 10.0.x
+          useGlobalJson: false
+
+      # runs the Default target: clean, assembly info, test (+ publishes trx results and uploads coverage),
+      # pack, validate symbols, push
+      - task: PowerShell@2
+        displayName: Build with Cake
+        inputs:
+          targetType: filePath
+          filePath: ./build.ps1
+          errorActionPreference: stop
+          pwsh: false
+        env:
+          PublicRelease: $(PublicRelease)
+          NUGETORG_APIKEY: $(NUGETORG_APIKEY)
+          CODECOV_TOKEN: $(CODECOV_TOKEN)
+          # Only map variables that exist: an undefined $(NAME) is passed on as the literal text "$(NAME)",
+          # which the Cake ShouldRun checks treat as a set key.
+          # GITHUB_APIKEY: $(GITHUB_APIKEY)
+
+      # The classic pipeline also had a "Publish Test Results" step for **/results/coverage/*.trx.
+      # It never matched anything: the trx files are written to results/tests and the Cake task
+      # PublishTestResults already publishes them through ##vso[results.publish]. Dropped here.
+
+      - task: PublishPipelineArtifact@1
+        displayName: Publish Pipeline Artifact
+        inputs:
+          targetPath: packages
+          artifact: NugetPackages
+          publishLocation: pipeline
