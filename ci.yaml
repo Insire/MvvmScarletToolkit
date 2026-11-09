@@ -243,15 +243,7 @@ jobs:
         fetchDepth: 0
         fetchTags: true
 
-      # see the Test job, here only the tools and the packages of the Cake build itself
-      - task: Cache@2
-        displayName: Cache NuGet packages
-        inputs:
-          key: 'nuget | "$(Agent.OS)" | Publish | Directory.Packages.props | .config/dotnet-tools.json | global.json | cake/Build.csproj'
-          restoreKeys: |
-            nuget | "$(Agent.OS)" | Publish
-          path: $(NUGET_PACKAGES)
-
+      # No NuGet cache here: restoring its 650 MB took 10 seconds and saved 2 in the Cake build, which only restores its own packages and tools
       - task: DownloadPipelineArtifact@2
         displayName: Download packages
         inputs:
