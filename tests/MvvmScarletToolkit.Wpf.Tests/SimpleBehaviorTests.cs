@@ -1,6 +1,7 @@
 using Microsoft.Xaml.Behaviors;
 using MvvmScarletToolkit.Wpf.Tests.Util;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 
 namespace MvvmScarletToolkit.Wpf.Tests
@@ -136,25 +137,32 @@ namespace MvvmScarletToolkit.Wpf.Tests
 
     public sealed class SmoothProgressBehaviorTests : TraceTestBase
     {
+        /// <summary>
+        /// Checks that the value is animated instead of set. Waiting for the animation to reach its end depends on
+        /// WPF's animation clock, which only ticks with rendering and stalls on the hidden desktop under parallel load.
+        /// </summary>
         [Fact]
-        public Task Should_Animate_The_Value_To_The_Percentage()
+        public Task Should_Animate_The_Value_Instead_Of_Setting_It()
         {
-            return StaRunner.Run(async () =>
+            return StaRunner.Run(() =>
             {
                 var progressBar = new ProgressBar { Maximum = 100 };
                 var behavior = new SmoothProgressBehavior();
                 Interaction.GetBehaviors(progressBar).Add(behavior);
 
-                var window = Ui.Show(progressBar);
-                await Ui.Settle();
+                var animatedBefore = progressBar.HasAnimatedProperties;
 
                 behavior.Percentage = 80;
 
-                var valueWhenSet = progressBar.Value;
-                await Ui.WaitUntil(() => progressBar.Value == 80);
+                Assert.Multiple(() =>
+                {
+                    Assert.False(animatedBefore);
+                    Assert.True(progressBar.HasAnimatedProperties);
+                    Assert.Equal(0d, (double)progressBar.GetAnimationBaseValue(RangeBase.ValueProperty));
+                    Assert.Equal(80, behavior.Percentage);
+                });
 
-                Assert.Equal(0, valueWhenSet);
-                window.Close();
+                return Task.CompletedTask;
             });
         }
 
