@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled Condition="'$(CentralPackageTransitivePinningEnabled)' == ''">true</CentralPackageTransitivePinningEnabled>
     <Avalonia>12.1.6</Avalonia>
-    <Dotnet>10.0.14</Dotnet>
+    <Dotnet>11.0.0</Dotnet>
   </PropertyGroup>
   <!-- samples -->
   <ItemGroup Label="samples">
